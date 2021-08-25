@@ -2,7 +2,7 @@
 
 (in development)
 
-ACTIN is a system that determines and ranks treatment options for cancer patients based on the following data:
+ACTIN is a system that determines and ranks treatment options for cancer patients based on the following inputs:
  - Comprehensive clinical record of the patient
  - Comprehensive molecular analysis of the tumor
  - Data from all patients previously evaluated and collected by ACTIN
