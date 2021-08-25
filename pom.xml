@@ -25,11 +25,11 @@
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
-        <maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+        <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
 
         <intellij.annotations.version>12.0</intellij.annotations.version>
-        <apache.log4j.version>2.8.1</apache.log4j.version>
+        <apache.log4j.version>2.14.1</apache.log4j.version>
     </properties>
 
     <build>
