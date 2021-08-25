@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hartwig</groupId>
+    <artifactId>actin</artifactId>
+    <packaging>pom</packaging>
+    <version>local-SNAPSHOT</version>
+
+    <modules>
+
+    </modules>
+
+    <properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
+        <maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
+        <maven.jaxb2.plugin.version>0.14.0</maven.jaxb2.plugin.version>
+        <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
+        <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
+        <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
+        <maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
+
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <build>
+        <pluginManagement>
+
+        </pluginManagement>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>

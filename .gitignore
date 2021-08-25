@@ -1,0 +1,6 @@
+# Ignore intellij project files
+*.iml
+.idea
+
+# Ignore target directories
+target
