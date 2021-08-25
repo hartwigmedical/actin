@@ -6,37 +6,66 @@
     <artifactId>actin</artifactId>
     <packaging>pom</packaging>
     <version>local-SNAPSHOT</version>
+    <name>HMF ACTIN</name>
 
     <modules>
-
+        <module>actin-common</module>
+        <module>actin-clinical</module>
+        <module>actin-treatment</module>
+        <module>actin-algo</module>
     </modules>
 
     <properties>
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
-        <maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
-        <maven.jaxb2.plugin.version>0.14.0</maven.jaxb2.plugin.version>
-        <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
-        <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
-        <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
-        <maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
+        <actin.common.version>local-SNAPSHOT</actin.common.version>
+        <actin.clinical.version>0.1</actin.clinical.version>
+        <actin.treatment.version>0.1</actin.treatment.version>
+        <actin.algo.version>0.1</actin.algo.version>
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
+        <maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
+
+        <intellij.annotations.version>12.0</intellij.annotations.version>
+        <apache.log4j.version>2.8.1</apache.log4j.version>
     </properties>
 
     <build>
         <pluginManagement>
-
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven.assembly.plugin.version}</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
 
     <dependencyManagement>
         <dependencies>
-
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>actin-common</artifactId>
+                <version>${actin.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.intellij</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${intellij.annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${apache.log4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
