@@ -1,22 +1,20 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.util.List;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class SampleData {
+public abstract class Allergy {
 
     @NotNull
-    public abstract String sampleId();
+    public abstract String name();
 
     @NotNull
-    public abstract PatientDetails patient();
+    public abstract String category();
 
     @NotNull
-    public abstract List<HistoryTumorTreatment> historyTumorTreatments();
+    public abstract String criticality();
 
 }
