@@ -11,21 +11,21 @@ CREATE TABLE patient
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS historyTumorTreatment;
-CREATE TABLE historyTumorTreatment
+DROP TABLE IF EXISTS historyTumor;
+CREATE TABLE historyTumor
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     name varchar(50),
     year int,
+    category varchar(50),
     isSystemic BOOLEAN,
-    isChemotherapy BOOLEAN,
-    isImmunotherapy BOOLEAN,
-    immunotherapyType varchar(50),
-    isTargetedTherapy BOOLEAN,
-    isHormoneTherapy BOOLEAN,
-    isStemCellTransplant BOOLEAN,
-    isRadiotherapy BOOLEAN,
-    isSurgery BOOLEAN,
+    chemoType varchar(50),
+    immunoType varchar(50),
+    targetedType varchar(50),
+    hormoneType varchar(50),
+    stemCellTransType varchar(50),
+    radiotherapyType varchar(50),
+    surgeryType varchar(50),
     PRIMARY KEY (id)
 );
 
