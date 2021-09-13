@@ -1,0 +1,35 @@
+Run the following commands as root (admin) on mysql prior to building
+
+NOTE: Below is tested on mysql servers 5.7.21 and 8.0.18
+
+mysql> CREATE USER 'build'@'localhost' IDENTIFIED WITH mysql_native_password BY 'build';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE DATABASE actin_test;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> GRANT ALL on actin_test.* TO 'build'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+Maven automatically rebuilds the actin_test database based on DDL statements provided
+in file generate_database.sql via this additional Maven build step we are automatically
+sure the jOOQ generated Java entity code always matches the DDL statements.
+
+MySQL database setup is triggered via setup_database.sh script that is assuming MySQL
+login credentials to be provided via actin.login located in your home directory.
+
+Create actin.login file:
+
+cat ~/actin.login << HERE
+[client]
+database=actin_test
+user=build
+password=build
+HERE
+
+For MySQL to accept the login file, make sure that the login file is only readable by you:
+
+chmod 600 ~/actin.login
+
+From new any change made to the database definition in generate_database.sql is
+automatically taken into account by the generated Java code.
