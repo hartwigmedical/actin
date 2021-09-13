@@ -19,8 +19,9 @@ CREATE TABLE tumor
     primaryTumorSubLocation varchar(50),
     primaryTumorType varchar(50),
     primaryTumorSubType varchar(50),
-    doid varchar(50),
+    doids varchar(50),
     stage varchar(50),
+    hasMeasurableLesionRecist BOOLEAN,
     hasBrainLesions BOOLEAN,
     hasActiveBrainLesions BOOLEAN,
     hasSymptomaticBrainLesions BOOLEAN,
@@ -31,15 +32,6 @@ CREATE TABLE tumor
     hasLiverLesions BOOLEAN,
     hasOtherLesions BOOLEAN,
     otherLesions varchar(50),
-    hasMeasurableLesionRecist BOOLEAN,
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS cancerRelatedComplication;
-CREATE TABLE cancerRelatedComplication
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
-    name varchar(50),
     PRIMARY KEY (id)
 );
 
@@ -52,6 +44,14 @@ CREATE TABLE clinicalStatus
     infectionDescription varchar(50),
     hasSigAberrationLatestEcg BOOLEAN,
     ecgAberrationDescription varchar(50),
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS cancerRelatedComplication;
+CREATE TABLE cancerRelatedComplication
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50),
+    name varchar(50),
     PRIMARY KEY (id)
 );
 
@@ -81,9 +81,9 @@ CREATE TABLE priorSecondPrimary
     tumorSubLocation varchar(50),
     tumorType varchar(50),
     tumorSubType varchar(50),
-    doid varchar(50),
+    doids varchar(50),
     year int,
-    isSecondPrimaryCurated BOOLEAN,
+    isSecondPrimaryCured BOOLEAN,
     curedDate DATE,
     PRIMARY KEY (id)
 );
@@ -111,8 +111,8 @@ CREATE TABLE complication
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS laboratoryValue;
-CREATE TABLE laboratoryValue
+DROP TABLE IF EXISTS labValue;
+CREATE TABLE labValue
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50),
     date DATE,
@@ -133,9 +133,9 @@ DROP TABLE IF EXISTS toxicity;
 CREATE TABLE toxicity
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50),
-    source varchar(50),
-    evaluatedDate DATE,
     name varchar(50),
+    evaluatedDate DATE,
+    source varchar(50),
     grade int,
     PRIMARY KEY (id)
 );

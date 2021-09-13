@@ -23,6 +23,9 @@ public abstract class ClinicalRecord {
     public abstract ClinicalStatus clinicalStatus();
 
     @NotNull
+    public abstract List<CancerRelatedComplication> cancerRelatedComplications();
+
+    @NotNull
     public abstract List<PriorTumorTreatment> priorTumorTreatments();
 
     @NotNull
@@ -35,7 +38,7 @@ public abstract class ClinicalRecord {
     public abstract List<Complication> complications();
 
     @NotNull
-    public abstract List<LaboratoryValue> laboratoryValues();
+    public abstract List<LabValue> labValues();
 
     @NotNull
     public abstract List<Toxicity> toxicities();
@@ -52,6 +55,7 @@ public abstract class ClinicalRecord {
     @NotNull
     public abstract List<BloodTransfusion> bloodTransfusions();
 
-
+    @NotNull
+    public abstract List<Medication> medications();
 
 }

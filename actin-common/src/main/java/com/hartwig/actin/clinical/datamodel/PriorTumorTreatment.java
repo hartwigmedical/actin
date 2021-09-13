@@ -13,23 +13,30 @@ public abstract class PriorTumorTreatment {
 
     public abstract int year();
 
+    @NotNull
+    public abstract String category();
+
     public abstract boolean isSystemic();
 
-    public abstract boolean isChemotherapy();
-
-    public abstract boolean isImmunotherapy();
+    @Nullable
+    public abstract String chemoType();
 
     @Nullable
-    public abstract String immunotherapyType();
+    public abstract String immunoType();
 
-    public abstract boolean isTargetedTherapy();
+    @Nullable
+    public abstract String targetedType();
 
-    public abstract boolean isHormoneTherapy();
+    @Nullable
+    public abstract String hormoneType();
 
-    public abstract boolean isStemCellTransplant();
+    @Nullable
+    public abstract String stemCellTransType();
 
-    public abstract boolean isRadiotherapy();
+    @Nullable
+    public abstract String radiotherapyType();
 
-    public abstract boolean isSurgery();
+    @Nullable
+    public abstract String surgeryType();
 
 }

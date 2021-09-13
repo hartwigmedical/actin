@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class LaboratoryValue {
+public abstract class LabValue {
 
     @NotNull
     public abstract LocalDate date();
@@ -24,15 +24,15 @@ public abstract class LaboratoryValue {
     @NotNull
     public abstract String unit();
 
-    public abstract double refLow();
+    public abstract double refLimitLow();
 
-    public abstract double refUp();
+    public abstract double refLimitUp();
 
     public abstract boolean isOutsideRef();
 
-    public abstract double alertLow();
+    public abstract double alertLimitLow();
 
-    public abstract double alertUp();
+    public abstract double alertLimitUp();
 
     public abstract boolean isWithinAlert();
 }

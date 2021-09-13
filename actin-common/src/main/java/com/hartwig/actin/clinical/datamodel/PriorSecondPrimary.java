@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public abstract class PriorSecondPrimary {
     public abstract String tumorSubType();
 
     @NotNull
-    public abstract String doid();
+    public abstract Set<String> doids();
 
     public abstract int year();
 
