@@ -64,7 +64,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.clinical.ClinicalDataLoader
+                            <mainClass>com.hartwig.actin.database.ClinicalDataLoader
                             </mainClass>
                         </manifest>
                     </archive>

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical;
+package com.hartwig.actin.database;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
