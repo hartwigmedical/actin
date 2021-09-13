@@ -184,7 +184,10 @@ CREATE TABLE medication
     sampleId varchar(50),
     name varchar(50),
     type varchar(50),
-    dosageInstruction varchar(50),
+    dosage double precision,
+    unit varchar(50),
+    frequencyUnit varchar(50),
+    ifNeeded BOOLEAN,
     startDate DATE,
     endDate DATE,
     PRIMARY KEY (id)
