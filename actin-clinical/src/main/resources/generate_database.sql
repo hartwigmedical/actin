@@ -8,13 +8,11 @@ CREATE TABLE patient
     birthYear int,
     registrationDate DATE,
     questionnaireDate DATE,
-    arrivalDate DATE,
-    reportDate DATE,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS historyTumor;
-CREATE TABLE historyTumor
+DROP TABLE IF EXISTS historyTumorTreatment;
+CREATE TABLE historyTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     name varchar(50),
