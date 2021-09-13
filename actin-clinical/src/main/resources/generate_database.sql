@@ -11,8 +11,8 @@ CREATE TABLE patient
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS historyTumor;
-CREATE TABLE historyTumor
+DROP TABLE IF EXISTS priorTumorTreatment;
+CREATE TABLE priorTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     name varchar(50),
@@ -29,8 +29,8 @@ CREATE TABLE historyTumor
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS historySecondPrimary;
-CREATE TABLE historySecondPrimary
+DROP TABLE IF EXISTS priorSecondPrimary;
+CREATE TABLE priorSecondPrimary
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     tumorLocation varchar(50),
@@ -44,19 +44,18 @@ CREATE TABLE historySecondPrimary
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS historyRelevantOther;
-CREATE TABLE historyRelevantOther
+DROP TABLE IF EXISTS priorOtherCondtion;
+CREATE TABLE priorOtherCondtion
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     name varchar(500),
-    nameDoid varchar(50),
+    doids varchar(50),
     category varchar(50),
-    categoryDoid varchar(50),
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS currentStatus;
-CREATE TABLE currentStatus
+DROP TABLE IF EXISTS clinicalStatus;
+CREATE TABLE clinicalStatus
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     who int,
@@ -64,13 +63,6 @@ CREATE TABLE currentStatus
     infectionDescription varchar(50),
     hasSigAberrationLatestEcg BOOLEAN,
     ecgAberrationDescription varchar(50),
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS currentCancerComplication;
-CREATE TABLE currentCancerComplication
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) UNIQUE,
     cancerRelatedComplication varchar(50),
     PRIMARY KEY (id)
 );
@@ -95,7 +87,7 @@ CREATE TABLE tumor
     hasLiverLesions BOOLEAN,
     hasOtherLesions BOOLEAN,
     otherLesions varchar(50),
-    hasMeasurableBiopsyRecist BOOLEAN,
+    hasMeasurableLesionRecist BOOLEAN,
     PRIMARY KEY (id)
 );
 
