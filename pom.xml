@@ -10,7 +10,7 @@
 
     <modules>
         <module>actin-common</module>
-        <module>actin-clinical</module>
+        <module>actin-database</module>
         <module>actin-treatment</module>
         <module>actin-algo</module>
     </modules>
@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <actin.common.version>local-SNAPSHOT</actin.common.version>
-        <actin.clinical.version>0.1</actin.clinical.version>
+        <actin.database.version>0.1</actin.database.version>
         <actin.treatment.version>0.1</actin.treatment.version>
         <actin.algo.version>0.1</actin.algo.version>
 

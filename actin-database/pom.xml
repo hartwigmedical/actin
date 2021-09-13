@@ -8,10 +8,10 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>actin-clinical</artifactId>
+    <artifactId>actin-database</artifactId>
     <packaging>jar</packaging>
-    <version>${actin.clinical.version}</version>
-    <name>HMF ACTIN - Clinical</name>
+    <version>${actin.database.version}</version>
+    <name>HMF ACTIN - Database</name>
 
     <dependencies>
         <dependency>
