@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PatientDetails {
 
     @NotNull
-    public abstract String sex();
+    public abstract Sex sex();
 
     public abstract int birthYear();
 

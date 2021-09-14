@@ -10,7 +10,7 @@ public final class ClinicalModelFactory {
     }
 
     @NotNull
-    public static ClinicalModel buildFromClinicalDataDump() {
+    public static ClinicalModel loadFromClinicalDataDirectory(@NotNull String clinicalDataDirectory) {
         // TODO implement
         return new ClinicalModel(Lists.newArrayList());
     }
