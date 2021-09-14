@@ -98,8 +98,8 @@ CREATE TABLE priorOtherCondition
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS complication;
-CREATE TABLE complication
+DROP TABLE IF EXISTS otherComplication;
+CREATE TABLE otherComplication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50),
     name varchar(50),
