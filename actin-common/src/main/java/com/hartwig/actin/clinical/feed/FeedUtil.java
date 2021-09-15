@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +29,7 @@ public final class FeedUtil {
 
     @NotNull
     public static String[] splitFeedLine(@NotNull String line, @NotNull String delimiter) {
-        return removeQuotes(line.split(delimiter));
+        return cleanQuotes(line.split(delimiter));
     }
 
     @NotNull
@@ -44,25 +45,29 @@ public final class FeedUtil {
     }
 
     @NotNull
-    public static String[] removeQuotes(@NotNull String[] inputs) {
+    @VisibleForTesting
+    static String[] cleanQuotes(@NotNull String[] inputs) {
         String[] cleaned = new String[inputs.length];
 
         for (int i = 0; i < inputs.length; i++) {
-            cleaned[i] = removeQuotes(inputs[i]);
+            cleaned[i] = cleanQuotes(inputs[i]);
         }
 
         return cleaned;
     }
 
     @NotNull
-    private static String removeQuotes(@NotNull String input) {
+    private static String cleanQuotes(@NotNull String input) {
         int firstQuote = input.indexOf("\"");
         int lastQuote = input.lastIndexOf("\"");
+        String cleaned = input;
         if (firstQuote >= 0 && lastQuote >= 0 && lastQuote > firstQuote) {
-            return input.substring(firstQuote + 1, lastQuote);
+            cleaned = input.substring(firstQuote + 1, lastQuote);
         } else {
-            LOGGER.warn("No quotes required to remove for '{}'!", input);
-            return input;
+            LOGGER.warn("No starting/trailing quotes required to remove for '{}'!", input);
         }
+
+        // Replace all double quotes with single quotes.
+        return cleaned.replaceAll("\"\"", "\"");
     }
 }

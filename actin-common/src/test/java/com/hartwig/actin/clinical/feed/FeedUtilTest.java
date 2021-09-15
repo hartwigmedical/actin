@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -27,8 +26,14 @@ public class FeedUtilTest {
     }
 
     @Test
-    public void canRemoveQuotes() {
-        assertArrayEquals(new String[]{"test"}, FeedUtil.removeQuotes(new String[]{"\"test\""}));
-        assertArrayEquals(new String[]{"test"}, FeedUtil.removeQuotes(new String[]{"test"}));
+    public void canCleanQuotes() {
+        String[] input = new String[]{"\"test\"", "test", "\"test \"\" test\"", "test \" test"};
+
+        String[] cleaned = FeedUtil.cleanQuotes(input);
+
+        assertEquals("test", cleaned[0]);
+        assertEquals("test", cleaned[1]);
+        assertEquals("test \" test", cleaned[2]);
+        assertEquals("test \" test", cleaned[3]);
     }
 }

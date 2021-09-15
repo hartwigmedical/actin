@@ -15,7 +15,7 @@ public final class LabFile {
 
     private static final String DELIMITER = "\t";
 
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm");
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd-M-yyyy HH:mm");
 
     private LabFile() {
     }
