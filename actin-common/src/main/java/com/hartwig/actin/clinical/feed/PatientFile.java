@@ -1,24 +1,18 @@
 package com.hartwig.actin.clinical.feed;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Sex;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class PatientFile {
-
-    private static final Logger LOGGER = LogManager.getLogger(PatientFile.class);
 
     private static final String DELIMITER = "\t";
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm");
@@ -28,46 +22,29 @@ public final class PatientFile {
 
     @NotNull
     public static List<PatientEntry> read(@NotNull String patientTsv) throws IOException {
-        List<String> lines = Files.readAllLines(new File(patientTsv).toPath(), StandardCharsets.UTF_16LE);
+        List<String> lines = FeedUtil.readFeedFile(patientTsv);
 
-        // skip header
+        Map<String, Integer> fieldIndexMap = FeedUtil.createFieldIndexMap(lines.get(0), DELIMITER);
         List<PatientEntry> entries = Lists.newArrayList();
         for (String line : lines.subList(1, lines.size())) {
-            entries.add(fromLine(line));
+            entries.add(fromLine(fieldIndexMap, line));
         }
 
         return entries;
     }
 
     @NotNull
-    private static PatientEntry fromLine(@NotNull String line) {
-        String[] parts = clean(line.split(DELIMITER));
+    private static PatientEntry fromLine(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String line) {
+        String[] parts = FeedUtil.splitFeedLine(line, DELIMITER);
 
         return ImmutablePatientEntry.builder()
-                .id(parts[0])
-                .subject(parts[1])
-                .birthYear(Integer.parseInt(parts[2]))
-                .sex(Sex.parseSex(parts[3]))
-                .periodStart(parseDate(parts[4]))
-                .periodEnd(parseOptionalDate(parts[5]))
+                .id(parts[fieldIndexMap.get("ID")])
+                .subject(parts[fieldIndexMap.get("subject")])
+                .birthYear(Integer.parseInt(parts[fieldIndexMap.get("birth_year")]))
+                .sex(Sex.parseSex(parts[fieldIndexMap.get("gender")]))
+                .periodStart(parseDate(parts[fieldIndexMap.get("period_start")]))
+                .periodEnd(parseOptionalDate(parts[fieldIndexMap.get("period_end")]))
                 .build();
-    }
-
-    @NotNull
-    private static String[] clean(@NotNull String[] inputs) {
-        String[] cleaned = new String[inputs.length];
-
-        for (int i = 0; i < inputs.length; i++) {
-            String input = inputs[i];
-            if (input.startsWith("\"") && input.endsWith("\"")) {
-                cleaned[i] = input.substring(1, input.length() - 1);
-            } else {
-                LOGGER.warn("No cleaning needed for '{}'!", input);
-                cleaned[i] = input;
-            }
-        }
-
-        return cleaned;
     }
 
     @Nullable

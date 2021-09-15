@@ -8,12 +8,12 @@ import com.google.common.io.Resources;
 
 import org.junit.Test;
 
-public class PatientFileTest {
+public class LabFileTest {
 
-    private static final String TEST_PATIENT_TSV = Resources.getResource("clinical/patient.tsv").getPath();
+    private static final String TEST_LAB_TSV = Resources.getResource("clinical/lab.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {
-        assertEquals(1, PatientFile.read(TEST_PATIENT_TSV).size());
+        assertEquals(2, LabFile.read(TEST_LAB_TSV).size());
     }
 }
