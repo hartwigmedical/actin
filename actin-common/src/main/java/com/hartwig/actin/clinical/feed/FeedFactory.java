@@ -3,6 +3,9 @@ package com.hartwig.actin.clinical.feed;
 import java.io.File;
 import java.io.IOException;
 
+import com.hartwig.actin.clinical.feed.lab.LabFile;
+import com.hartwig.actin.clinical.feed.patient.PatientFile;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class FeedFactory {

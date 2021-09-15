@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.Feed;
 import com.hartwig.actin.clinical.feed.FeedFactory;
-import com.hartwig.actin.clinical.feed.PatientEntry;
+import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

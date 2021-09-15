@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed.lab;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
 

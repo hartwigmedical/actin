@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed.patient;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Sex;
+import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

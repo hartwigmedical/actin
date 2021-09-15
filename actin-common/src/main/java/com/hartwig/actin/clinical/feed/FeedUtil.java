@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-final class FeedUtil {
+public final class FeedUtil {
 
     private static final Logger LOGGER = LogManager.getLogger(FeedUtil.class);
 

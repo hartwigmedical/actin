@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed.patient;
 
 import static org.junit.Assert.assertEquals;
 

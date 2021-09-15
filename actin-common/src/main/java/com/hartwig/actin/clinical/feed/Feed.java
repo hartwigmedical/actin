@@ -2,6 +2,9 @@ package com.hartwig.actin.clinical.feed;
 
 import java.util.List;
 
+import com.hartwig.actin.clinical.feed.lab.LabEntry;
+import com.hartwig.actin.clinical.feed.patient.PatientEntry;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
