@@ -16,7 +16,6 @@ public class ClinicalModel {
         this.records = records;
     }
 
-    // TODO Implement properly and use.
     @Nullable
     public ClinicalRecord findClinicalRecordForSample(@NotNull String sampleId) {
         for (ClinicalRecord record : records) {
