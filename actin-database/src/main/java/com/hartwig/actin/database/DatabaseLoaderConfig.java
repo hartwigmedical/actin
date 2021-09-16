@@ -20,7 +20,7 @@ public interface DatabaseLoaderConfig {
 
     Logger LOGGER = LogManager.getLogger(DatabaseLoaderConfig.class);
 
-    String CLINICAL_DATA_DIRECTORY = "tumor_sample_id";
+    String CLINICAL_DATA_DIRECTORY = "clinical_data_directory";
 
     String LOG_DEBUG = "log_debug";
 
