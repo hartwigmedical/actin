@@ -10,13 +10,9 @@ import java.util.Map;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class FeedUtil {
-
-    private static final Logger LOGGER = LogManager.getLogger(FeedUtil.class);
 
     private FeedUtil() {
     }
@@ -63,8 +59,6 @@ public final class FeedUtil {
         String cleaned = input;
         if (firstQuote >= 0 && lastQuote >= 0 && lastQuote > firstQuote) {
             cleaned = input.substring(firstQuote + 1, lastQuote);
-        } else {
-            LOGGER.warn("No starting/trailing quotes required to remove for '{}'!", input);
         }
 
         // Replace all double quotes with single quotes.

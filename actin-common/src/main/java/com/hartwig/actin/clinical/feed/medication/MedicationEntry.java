@@ -36,9 +36,11 @@ public abstract class MedicationEntry {
     @NotNull
     public abstract String dosageInstructionFrequencyUnit();
 
-    public abstract double dosageInstructionFrequencyValue();
+    @Nullable
+    public abstract Double dosageInstructionFrequencyValue();
 
-    public abstract double dosageInstructionMaxDosePerAdministration();
+    @Nullable
+    public abstract Double dosageInstructionMaxDosePerAdministration();
 
     @NotNull
     public abstract String dosageInstructionPatientInstruction();
@@ -49,7 +51,8 @@ public abstract class MedicationEntry {
     @NotNull
     public abstract String dosageInstructionPeriodBetweenDosagesUnit();
 
-    public abstract double dosageInstructionPeriodBetweenDosagesValue();
+    @Nullable
+    public abstract Double dosageInstructionPeriodBetweenDosagesValue();
 
     @NotNull
     public abstract String dosageInstructionText();

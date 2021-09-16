@@ -40,7 +40,7 @@ public final class ClinicalModelFactory {
         for (PatientEntry patient : feed.patientEntries()) {
             String sampleId = toSampleId(patient.subject());
 
-            LOGGER.debug(" Adding data for sample '{}'", sampleId);
+            LOGGER.info(" Adding data for sample '{}'", sampleId);
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(createPatientDetails(patient))

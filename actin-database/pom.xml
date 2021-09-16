@@ -41,7 +41,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>Create development patient DB</id>
+                        <id>Create development ACTIN database</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>exec</goal>
@@ -70,8 +70,9 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.database.DatabaseLoaderApplication
-                            </mainClass>
+                            <mainClass>com.hartwig.actin.database.DatabaseLoaderApplication</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
 

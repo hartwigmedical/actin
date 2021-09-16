@@ -6,10 +6,8 @@ import java.nio.file.Files;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,15 +20,11 @@ public interface DatabaseLoaderConfig {
 
     String CLINICAL_DATA_DIRECTORY = "clinical_data_directory";
 
-    String LOG_DEBUG = "log_debug";
-
     @NotNull
     static Options createOptions() {
         Options options = new Options();
 
         options.addOption(CLINICAL_DATA_DIRECTORY, true, "Directory holding the clinical data");
-
-        options.addOption(LOG_DEBUG, false, "If provided, set the log level to debug rather than default.");
 
         return options;
     }
@@ -40,11 +34,6 @@ public interface DatabaseLoaderConfig {
 
     @NotNull
     static DatabaseLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        if (cmd.hasOption(LOG_DEBUG)) {
-            Configurator.setRootLevel(Level.DEBUG);
-            LOGGER.debug("Switched root level logging to DEBUG");
-        }
-
         return ImmutableDatabaseLoaderConfig.builder().clinicalDataDirectory(nonOptionalDir(cmd, CLINICAL_DATA_DIRECTORY)).build();
     }
 

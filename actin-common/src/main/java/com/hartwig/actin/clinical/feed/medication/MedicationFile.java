@@ -46,15 +46,15 @@ public final class MedicationFile {
                 .code5ATCDisplay(parts[fieldIndexMap.get("code5_ATC_display")])
                 .indicationDisplay(parts[fieldIndexMap.get("indication_display")])
                 .dosageInstructionDoseQuantityUnit(parts[fieldIndexMap.get("dosageInstruction_doseQuantity_unit")])
-                .dosageInstructionDoseQuantityValue(Double.parseDouble(parts[fieldIndexMap.get("dosageInstruction_doseQuantity_value")]))
+                .dosageInstructionDoseQuantityValue(parseDouble(parts[fieldIndexMap.get("dosageInstruction_doseQuantity_value")]))
                 .dosageInstructionFrequencyUnit(parts[fieldIndexMap.get("dosageInstruction_frequency_unit")])
-                .dosageInstructionFrequencyValue(Double.parseDouble(parts[fieldIndexMap.get("dosageInstruction_frequency_value")]))
-                .dosageInstructionMaxDosePerAdministration(Double.parseDouble(parts[fieldIndexMap.get(
+                .dosageInstructionFrequencyValue(parseOptionalDouble(parts[fieldIndexMap.get("dosageInstruction_frequency_value")]))
+                .dosageInstructionMaxDosePerAdministration(parseOptionalDouble(parts[fieldIndexMap.get(
                         "dosageInstruction_maxDosePerAdministration")]))
                 .dosageInstructionPatientInstruction(parts[fieldIndexMap.get("dosageInstruction_patientInstruction")])
                 .dosageInstructionAsNeededDisplay(parts[fieldIndexMap.get("dosageInstruction_asNeeded_display")])
                 .dosageInstructionPeriodBetweenDosagesUnit(parts[fieldIndexMap.get("dosageInstruction_period_between_dosages_unit")])
-                .dosageInstructionPeriodBetweenDosagesValue(Double.parseDouble(parts[fieldIndexMap.get(
+                .dosageInstructionPeriodBetweenDosagesValue(parseOptionalDouble(parts[fieldIndexMap.get(
                         "dosageInstruction_period_between_dosages_value")]))
                 .dosageInstructionText(parts[fieldIndexMap.get("dosageInstruction_text")])
                 .status(parts[fieldIndexMap.get("status")])
@@ -78,6 +78,16 @@ public final class MedicationFile {
     @NotNull
     private static LocalDate parseDate(@NotNull String date) {
         return LocalDate.parse(date, FORMAT);
+    }
+
+    @Nullable
+    private static Double parseOptionalDouble(@NotNull String number) {
+        return !number.isEmpty() ? parseDouble(number) : null;
+    }
+
+    private static double parseDouble(@NotNull String number) {
+        String formatted = number.replace(",", ".");
+        return Double.parseDouble(formatted);
     }
 
 }
