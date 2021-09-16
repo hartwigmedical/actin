@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public final class PatientFile {
 
     private static final String DELIMITER = "\t";
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd-M-yyyy HH:mm");
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("d-M-yyyy HH:mm");
 
     private PatientFile() {
     }
