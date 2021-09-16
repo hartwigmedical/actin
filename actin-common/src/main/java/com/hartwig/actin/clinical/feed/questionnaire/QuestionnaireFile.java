@@ -31,7 +31,8 @@ public final class QuestionnaireFile {
             for (String line : lines.subList(2, lines.size())) {
                 // Questionnaires appear on multiple lines so need to split and append to the end.
                 if (FeedUtil.splitFeedLine(line, DELIMITER).length != 7) {
-                    curLine.append("\n").append(line);
+                    // Need to remove all DELIMITER since we split further down the track.
+                    curLine.append("\n").append(line.replaceAll(DELIMITER, ""));
                 } else {
                     entries.add(fromLine(fieldIndexMap, curLine.toString()));
                     curLine = new StringBuilder(line);
