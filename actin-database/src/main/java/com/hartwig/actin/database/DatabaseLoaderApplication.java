@@ -20,7 +20,7 @@ public class DatabaseLoaderApplication {
     public static final String VERSION = DatabaseLoaderApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running ORANGE v{}", VERSION);
+        LOGGER.info("Running ACTIN Database Loader v{}", VERSION);
 
         Options options = DatabaseLoaderConfig.createOptions();
 
