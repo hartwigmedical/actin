@@ -26,6 +26,12 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -64,7 +70,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.database.ClinicalDataLoader
+                            <mainClass>com.hartwig.actin.database.DatabaseLoaderApplication
                             </mainClass>
                         </manifest>
                     </archive>

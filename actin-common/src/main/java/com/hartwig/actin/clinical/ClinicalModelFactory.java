@@ -19,10 +19,14 @@ import com.hartwig.actin.clinical.feed.Feed;
 import com.hartwig.actin.clinical.feed.FeedFactory;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class ClinicalModelFactory {
+
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalModelFactory.class);
 
     private ClinicalModelFactory() {
     }
@@ -31,10 +35,12 @@ public final class ClinicalModelFactory {
     public static ClinicalModel loadFromClinicalDataDirectory(@NotNull String clinicalDataDirectory) throws IOException {
         Feed feed = FeedFactory.loadFromClinicalDataDirectory(clinicalDataDirectory);
 
+        LOGGER.info("Creating clinical datamodel");
         List<ClinicalRecord> records = Lists.newArrayList();
         for (PatientEntry patient : feed.patientEntries()) {
             String sampleId = toSampleId(patient.subject());
 
+            LOGGER.debug(" Adding data for sample '{}'", sampleId);
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(createPatientDetails(patient))
