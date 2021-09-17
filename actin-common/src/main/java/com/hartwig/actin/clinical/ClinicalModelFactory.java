@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.curation.ClinicalCuration;
+import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
@@ -15,39 +15,48 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.feed.ClinicalFeed;
-import com.hartwig.actin.clinical.feed.ClinicalFeedReader;
-import com.hartwig.actin.clinical.feed.patient.PatientEntry;
+import com.hartwig.actin.clinical.feed.FeedModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class ClinicalModelFactory {
+public class ClinicalModelFactory {
 
     private static final Logger LOGGER = LogManager.getLogger(ClinicalModelFactory.class);
 
-    private ClinicalModelFactory() {
+    @NotNull
+    private final FeedModel feed;
+    @NotNull
+    private final CurationModel curation;
+
+    @NotNull
+    public static ClinicalModelFactory fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
+            @NotNull String clinicalCurationDirectory) throws IOException {
+        return new ClinicalModelFactory(FeedModel.fromFeedDirectory(clinicalFeedDirectory),
+                CurationModel.fromCurationDirectory(clinicalCurationDirectory));
+    }
+
+    public ClinicalModelFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
+        this.feed = feed;
+        this.curation = curation;
     }
 
     @NotNull
-    public static ClinicalModel build(@NotNull String clinicalFeedDirectory, @NotNull String clinicalCurationDirectory) throws IOException {
-        ClinicalFeed clinicalFeed = ClinicalFeedReader.read(clinicalFeedDirectory);
-        ClinicalCuration clinicalCuration = ClinicalCuration.fromCurationDirectory(clinicalCurationDirectory);
-
-        LOGGER.info("Creating clinical datamodel");
+    public ClinicalModel create() {
+        LOGGER.info("Creating clinical model");
         List<ClinicalRecord> records = Lists.newArrayList();
-        for (PatientEntry patient : clinicalFeed.patientEntries()) {
-            String sampleId = toSampleId(patient.subject());
+        for (String subject : feed.subjects()) {
+            String sampleId = toSampleId(subject);
 
             LOGGER.info(" Adding data for sample '{}'", sampleId);
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
-                    .patient(createPatientDetails(patient))
+                    .patient(createPatientDetails())
                     .tumor(createTumorDetails())
                     .clinicalStatus(createClinicalStatus())
-                    .priorTumorTreatments(extractPriorTumorTreatments(clinicalFeed, patient.subject()))
+                    .priorTumorTreatments(extractPriorTumorTreatments(subject))
                     .build());
         }
 
@@ -55,14 +64,14 @@ public final class ClinicalModelFactory {
     }
 
     @NotNull
-    private static List<PriorTumorTreatment> extractPriorTumorTreatments(@NotNull ClinicalFeed clinicalFeed, @NotNull String subject) {
+    private List<PriorTumorTreatment> extractPriorTumorTreatments(@NotNull String subject) {
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
 
         return priorTumorTreatments;
     }
 
     @NotNull
-    private static PatientDetails createPatientDetails(@NotNull PatientEntry patient) {
+    private static PatientDetails createPatientDetails() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         return ImmutablePatientDetails.builder()

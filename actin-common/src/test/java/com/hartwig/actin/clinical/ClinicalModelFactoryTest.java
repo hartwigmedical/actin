@@ -18,16 +18,18 @@ public class ClinicalModelFactoryTest {
 
     @Test
     public void canBuildClinicalModelFromTestDir() throws IOException {
-        ClinicalModel model = ClinicalModelFactory.build(CLINICAL_FEED_DIRECTORY, CLINICAL_CURATION_DIRECTORY);
+        ClinicalModelFactory clinicalModelFactory =
+                ClinicalModelFactory.fromFeedAndCurationDirectories(CLINICAL_FEED_DIRECTORY, CLINICAL_CURATION_DIRECTORY);
+        ClinicalModel model = clinicalModelFactory.create();
 
         ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
 
         assertNotNull(record);
         assertEquals(TEST_SAMPLE, record.sampleId());
 
-//        assertEquals(1953, record.patient().birthYear());
-//        assertEquals(Sex.MALE, record.patient().sex());
-//        assertEquals(LocalDate.parse("2020-07-13"), record.patient().registrationDate());
+        //        assertEquals(1953, record.patient().birthYear());
+        //        assertEquals(Sex.MALE, record.patient().sex());
+        //        assertEquals(LocalDate.parse("2020-07-13"), record.patient().registrationDate());
 
     }
 }

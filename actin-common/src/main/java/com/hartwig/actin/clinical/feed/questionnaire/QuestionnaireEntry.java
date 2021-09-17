@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class QuestionnaireEntry implements FeedEntry {
 
     @NotNull
+    @Override
     public abstract String subject();
 
     @NotNull

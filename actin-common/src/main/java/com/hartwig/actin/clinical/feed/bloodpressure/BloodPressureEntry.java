@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BloodPressureEntry implements FeedEntry {
 
     @NotNull
+    @Override
     public abstract String subject();
 
     @NotNull

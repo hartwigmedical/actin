@@ -17,9 +17,9 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryCreator;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class FeedEntryCreatorFactory {
+public final class FeedFileReaderFactory {
 
-    private FeedEntryCreatorFactory() {
+    private FeedFileReaderFactory() {
     }
 
     @NotNull

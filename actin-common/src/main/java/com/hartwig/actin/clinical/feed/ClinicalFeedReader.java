@@ -49,49 +49,49 @@ public final class ClinicalFeedReader {
 
     @NotNull
     private static List<PatientEntry> readPatientEntries(@NotNull String patientTsv) throws IOException {
-        List<PatientEntry> entries = FeedEntryCreatorFactory.createPatientReader().read(patientTsv);
+        List<PatientEntry> entries = FeedFileReaderFactory.createPatientReader().read(patientTsv);
         LOGGER.info(" Read {} patient entries from {}", entries.size(), patientTsv);
         return entries;
     }
 
     @NotNull
     private static List<QuestionnaireEntry> readQuestionnaireEntries(@NotNull String questionnaireTsv) throws IOException {
-        List<QuestionnaireEntry> entries = FeedEntryCreatorFactory.createQuestionnaireReader().read(questionnaireTsv);
+        List<QuestionnaireEntry> entries = FeedFileReaderFactory.createQuestionnaireReader().read(questionnaireTsv);
         LOGGER.info(" Read {} questionnaire entries from {}", entries.size(), questionnaireTsv);
         return entries;
     }
 
     @NotNull
     private static List<MedicationEntry> readMedicationEntries(@NotNull String medicationTsv) throws IOException {
-        List<MedicationEntry> entries = FeedEntryCreatorFactory.createMedicationReader().read(medicationTsv);
+        List<MedicationEntry> entries = FeedFileReaderFactory.createMedicationReader().read(medicationTsv);
         LOGGER.info(" Read {} medication entries from {}", entries.size(), medicationTsv);
         return entries;
     }
 
     @NotNull
     private static List<LabEntry> readLabEntries(@NotNull String labTsv) throws IOException {
-        List<LabEntry> entries = FeedEntryCreatorFactory.createLabReader().read(labTsv);
+        List<LabEntry> entries = FeedFileReaderFactory.createLabReader().read(labTsv);
         LOGGER.info(" Read {} lab entries from {}", entries.size(), labTsv);
         return entries;
     }
 
     @NotNull
     private static List<BloodPressureEntry> readBloodPressureEntries(@NotNull String bloodPressureTsv) throws IOException {
-        List<BloodPressureEntry> entries = FeedEntryCreatorFactory.createBloodPressureReader().read(bloodPressureTsv);
+        List<BloodPressureEntry> entries = FeedFileReaderFactory.createBloodPressureReader().read(bloodPressureTsv);
         LOGGER.info(" Read {} blood pressure entries from {}", entries.size(), bloodPressureTsv);
         return entries;
     }
 
     @NotNull
     private static List<ComplicationEntry> readComplicationEntries(@NotNull String complicationTsv) throws IOException {
-        List<ComplicationEntry> entries = FeedEntryCreatorFactory.createComplicationReader().read(complicationTsv);
+        List<ComplicationEntry> entries = FeedFileReaderFactory.createComplicationReader().read(complicationTsv);
         LOGGER.info(" Read {} complication entries from {}", entries.size(), complicationTsv);
         return entries;
     }
 
     @NotNull
     private static List<IntoleranceEntry> readIntoleranceEntries(@NotNull String intoleranceTsv) throws IOException {
-        List<IntoleranceEntry> entries = FeedEntryCreatorFactory.createIntoleranceReader().read(intoleranceTsv);
+        List<IntoleranceEntry> entries = FeedFileReaderFactory.createIntoleranceReader().read(intoleranceTsv);
         LOGGER.info(" Read {} intolerance entries from {}", entries.size(), intoleranceTsv);
         return entries;
     }

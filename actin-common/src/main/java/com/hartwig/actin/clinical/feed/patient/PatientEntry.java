@@ -17,6 +17,7 @@ public abstract class PatientEntry implements FeedEntry {
     public abstract String id();
 
     @NotNull
+    @Override
     public abstract String subject();
 
     public abstract int birthYear();
