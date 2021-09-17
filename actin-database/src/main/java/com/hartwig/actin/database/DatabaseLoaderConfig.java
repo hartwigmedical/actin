@@ -15,12 +15,14 @@ import org.jetbrains.annotations.Nullable;
 public interface DatabaseLoaderConfig {
 
     String CLINICAL_FEED_DIRECTORY = "clinical_feed_directory";
+    String CLINICAL_CURATION_DIRECTORY = "clinical_curation_directory";
 
     @NotNull
     static Options createOptions() {
         Options options = new Options();
 
         options.addOption(CLINICAL_FEED_DIRECTORY, true, "Directory containing the clinical feed data");
+        options.addOption(CLINICAL_CURATION_DIRECTORY, true, "Directory containing the clinical curation config data");
 
         return options;
     }
@@ -29,8 +31,14 @@ public interface DatabaseLoaderConfig {
     String clinicalFeedDirectory();
 
     @NotNull
+    String clinicalCurationDirectory();
+
+    @NotNull
     static DatabaseLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        return ImmutableDatabaseLoaderConfig.builder().clinicalFeedDirectory(nonOptionalDir(cmd, CLINICAL_FEED_DIRECTORY)).build();
+        return ImmutableDatabaseLoaderConfig.builder()
+                .clinicalFeedDirectory(nonOptionalDir(cmd, CLINICAL_FEED_DIRECTORY))
+                .clinicalCurationDirectory(nonOptionalDir(cmd, CLINICAL_CURATION_DIRECTORY))
+                .build();
     }
 
     @NotNull

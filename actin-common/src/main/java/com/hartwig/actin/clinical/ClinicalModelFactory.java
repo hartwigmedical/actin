@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.curation.ClinicalCuration;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
@@ -15,7 +16,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.ClinicalFeed;
-import com.hartwig.actin.clinical.feed.ClinicalFeedFactory;
+import com.hartwig.actin.clinical.feed.ClinicalFeedReader;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,8 +32,9 @@ public final class ClinicalModelFactory {
     }
 
     @NotNull
-    public static ClinicalModel loadFromClinicalFeedDirectory(@NotNull String clinicalFeedDirectory) throws IOException {
-        ClinicalFeed clinicalFeed = ClinicalFeedFactory.read(clinicalFeedDirectory);
+    public static ClinicalModel build(@NotNull String clinicalFeedDirectory, @NotNull String clinicalCurationDirectory) throws IOException {
+        ClinicalFeed clinicalFeed = ClinicalFeedReader.read(clinicalFeedDirectory);
+        ClinicalCuration clinicalCuration = ClinicalCuration.fromCurationDirectory(clinicalCurationDirectory);
 
         LOGGER.info("Creating clinical datamodel");
         List<ClinicalRecord> records = Lists.newArrayList();

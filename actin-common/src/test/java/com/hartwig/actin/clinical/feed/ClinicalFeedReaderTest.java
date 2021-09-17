@@ -22,15 +22,15 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class ClinicalFeedFactoryTest {
+public class ClinicalFeedReaderTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
 
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canLoadFeedFromTestDirectory() throws IOException {
-        ClinicalFeed feed = ClinicalFeedFactory.read(CLINICAL_FEED_DIRECTORY);
+    public void canReadFromTestDirectory() throws IOException {
+        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY);
 
         assertPatient(feed.patientEntries());
         assertQuestionnaire(feed.questionnaireEntries());

@@ -44,7 +44,7 @@ public class DatabaseLoaderApplication {
     }
 
     public void run() throws IOException {
-        ClinicalModel clinicalModel = ClinicalModelFactory.loadFromClinicalFeedDirectory(config.clinicalFeedDirectory());
+        ClinicalModel clinicalModel = ClinicalModelFactory.build(config.clinicalFeedDirectory(), config.clinicalCurationDirectory());
 
         LOGGER.debug("Create clinical model '{}'", clinicalModel);
         LOGGER.info("Done!");

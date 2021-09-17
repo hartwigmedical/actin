@@ -12,11 +12,13 @@ import org.junit.Test;
 public class ClinicalModelFactoryTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
+    private static final String CLINICAL_CURATION_DIRECTORY = Resources.getResource("clinical/curation").getPath();
+
     private static final String TEST_SAMPLE = "ACTN01029999T";
 
     @Test
     public void canBuildClinicalModelFromTestDir() throws IOException {
-        ClinicalModel model = ClinicalModelFactory.loadFromClinicalFeedDirectory(CLINICAL_FEED_DIRECTORY);
+        ClinicalModel model = ClinicalModelFactory.build(CLINICAL_FEED_DIRECTORY, CLINICAL_CURATION_DIRECTORY);
 
         ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
 

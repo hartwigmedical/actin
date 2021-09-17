@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,14 +10,15 @@ import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.util.FileUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class ClinicalFeedFactory {
+public final class ClinicalFeedReader {
 
-    private static final Logger LOGGER = LogManager.getLogger(ClinicalFeedFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalFeedReader.class);
 
     private static final String PATIENT_TSV = "patient.tsv";
     private static final String QUESTIONNAIRE_TSV = "questionnaire.tsv";
@@ -28,14 +28,14 @@ public final class ClinicalFeedFactory {
     private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
 
-    private ClinicalFeedFactory() {
+    private ClinicalFeedReader() {
     }
 
     @NotNull
     public static ClinicalFeed read(@NotNull String clinicalFeedDirectory) throws IOException {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory);
 
-        String basePath = clinicalFeedDirectory.endsWith(File.separator) ? clinicalFeedDirectory : clinicalFeedDirectory + File.separator;
+        String basePath = FileUtil.appendFileSeparator(clinicalFeedDirectory);
         return ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
                 .questionnaireEntries(readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV))

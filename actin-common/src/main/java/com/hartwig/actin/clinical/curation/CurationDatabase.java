@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.curation;
 
-import java.util.Map;
+import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +13,6 @@ import org.jetbrains.annotations.Nullable;
 public abstract class CurationDatabase {
 
     @NotNull
-    public abstract Map<String, PriorTumorTreatment> priorTumorTreatmentMap();
+    public abstract List<OncologicalHistoryConfig> oncologicalHistoryConfigs();
 
 }
