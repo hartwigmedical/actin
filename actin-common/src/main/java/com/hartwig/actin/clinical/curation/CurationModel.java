@@ -34,7 +34,7 @@ public class CurationModel {
         for (String treatmentHistory : treatmentHistories) {
             OncologicalHistoryConfig config = find(treatmentHistory);
             if (config == null) {
-                LOGGER.warn("Could not find oncological history config for '{}'" + treatmentHistory);
+                LOGGER.warn("  Could not find curation entry in oncological history for '{}'", treatmentHistory);
             } else if (!config.ignore()) {
                 if (config.curatedObject() instanceof PriorTumorTreatment) {
                     priorTumorTreatments.add((PriorTumorTreatment) config.curatedObject());

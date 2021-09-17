@@ -51,7 +51,7 @@ public class FeedModel {
     @NotNull
     private static <T extends FeedEntry> List<T> entriesForSubject(@NotNull List<T> allEntries, @NotNull String subject) {
         List<T> entries = Lists.newArrayList();
-        for (T entry : entries) {
+        for (T entry : allEntries) {
             if (entry.subject().equals(subject)) {
                 entries.add(entry);
             }

@@ -73,9 +73,12 @@ public class ClinicalModelFactory {
         if (latestQuestionnaire != null) {
             List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(latestQuestionnaire);
             if (treatmentHistories == null) {
-                LOGGER.warn("Could not extract treatment histories current tumor from latest questionnaire for '{}'", subject);
+                LOGGER.warn("  Could not extract treatment histories current tumor from latest questionnaire for '{}'", subject);
             } else {
                 priorTumorTreatments = curation.toPriorTumorTreatments(treatmentHistories);
+                if (!priorTumorTreatments.isEmpty()) {
+                    LOGGER.info(" Extracted prior treatments for {}: {}", subject, priorTumorTreatments);
+                }
             }
         }
 
