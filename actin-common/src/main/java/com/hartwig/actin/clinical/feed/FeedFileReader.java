@@ -47,7 +47,7 @@ public abstract class FeedFileReader<T extends FeedEntry> {
 
     @NotNull
     private static List<String> readFeedFile(@NotNull String feedTsv) throws IOException {
-        // EMC delivers the feed files encoded in UTF_16LE so need to convert.
+        // Feed files are delivered in UTF_16LE so need to convert.
         return Files.readAllLines(new File(feedTsv).toPath(), StandardCharsets.UTF_16LE);
     }
 
