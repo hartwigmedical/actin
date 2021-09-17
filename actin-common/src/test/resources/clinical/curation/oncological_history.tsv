@@ -1,2 +1,2 @@
-input	name	year	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	stemCellTransplantType	radiotherapyType	surgeryType	isSecondPrimary	tumorLocation	tumorType	doid	secondPrimaryCured	curedDate
-Capecitabine/Oxaliplatin 2020	Capecitabine+Oxaliplatin	2020	chemotherapy	1	antimetabolite,platinum
+input	name	year	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	stemCellTransplantType	radiotherapyType	surgeryType	isSecondPrimary	tumorLocation	tumorSubLocation	tumorType	tumorSubType	doids	isSecondPrimaryCured	curedDate
+Capecitabine/Oxaliplatin 2020	Capecitabine+Oxaliplatin	2020	chemotherapy	1	antimetabolite,platinum														

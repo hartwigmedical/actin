@@ -11,7 +11,8 @@ public abstract class PriorTumorTreatment {
     @NotNull
     public abstract String name();
 
-    public abstract int year();
+    @Nullable
+    public abstract Integer year();
 
     @NotNull
     public abstract String category();
