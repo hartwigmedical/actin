@@ -16,6 +16,8 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +67,17 @@ public class ClinicalModelFactory {
 
     @NotNull
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@NotNull String subject) {
+        QuestionnaireEntry latestQuestionnaire = feed.latestQuestionnaireForSubject(subject);
+
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
+        if (latestQuestionnaire != null) {
+            List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(latestQuestionnaire);
+            if (treatmentHistories == null) {
+                LOGGER.warn("Could not extract treatment histories current tumor from latest questionnaire for '{}'", subject);
+            } else {
+                priorTumorTreatments = curation.toPriorTumorTreatments(treatmentHistories);
+            }
+        }
 
         return priorTumorTreatments;
     }
