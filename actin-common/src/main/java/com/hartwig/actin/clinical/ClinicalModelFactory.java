@@ -32,7 +32,7 @@ public final class ClinicalModelFactory {
 
     @NotNull
     public static ClinicalModel loadFromClinicalFeedDirectory(@NotNull String clinicalFeedDirectory) throws IOException {
-        ClinicalFeed clinicalFeed = ClinicalFeedFactory.loadFromClinicalFeedDirectory(clinicalFeedDirectory);
+        ClinicalFeed clinicalFeed = ClinicalFeedFactory.read(clinicalFeedDirectory);
 
         LOGGER.info("Creating clinical datamodel");
         List<ClinicalRecord> records = Lists.newArrayList();

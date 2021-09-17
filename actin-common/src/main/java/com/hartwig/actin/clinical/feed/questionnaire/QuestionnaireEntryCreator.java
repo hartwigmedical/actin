@@ -3,16 +3,16 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import com.hartwig.actin.clinical.feed.FeedFileReader;
+import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-public class QuestionnaireFileReader extends FeedFileReader<QuestionnaireEntry> {
+public class QuestionnaireEntryCreator implements FeedEntryCreator<QuestionnaireEntry> {
 
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
-    public QuestionnaireFileReader() {
+    public QuestionnaireEntryCreator() {
     }
 
     @NotNull

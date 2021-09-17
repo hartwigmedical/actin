@@ -3,16 +3,16 @@ package com.hartwig.actin.clinical.feed.bloodpressure;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import com.hartwig.actin.clinical.feed.FeedFileReader;
+import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-public class BloodPressureFileReader extends FeedFileReader<BloodPressureEntry> {
+public class BloodPressureEntryCreator implements FeedEntryCreator<BloodPressureEntry> {
 
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("d-M-yyyy HH:mm");
 
-    public BloodPressureFileReader() {
+    public BloodPressureEntryCreator() {
     }
 
     @NotNull

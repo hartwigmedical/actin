@@ -13,9 +13,15 @@ import com.hartwig.actin.util.FileUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class FeedFileReader<T extends FeedEntry> {
+class FeedFileReader<T extends FeedEntry> {
 
     private static final String DELIMITER = "\t";
+
+    private final FeedEntryCreator<T> feedEntryCreator;
+
+    public FeedFileReader(final FeedEntryCreator<T> feedEntryCreator) {
+        this.feedEntryCreator = feedEntryCreator;
+    }
 
     @NotNull
     public List<T> read(@NotNull String feedTsv) throws IOException {
@@ -31,19 +37,16 @@ public abstract class FeedFileReader<T extends FeedEntry> {
                     // Need to remove all DELIMITER since we split further down the track.
                     curLine.append("\n").append(line.replaceAll(DELIMITER, ""));
                 } else {
-                    entries.add(fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
+                    entries.add(feedEntryCreator.fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
                     curLine = new StringBuilder(line);
                 }
             }
             // Need to add the final accumulated entry
-            entries.add(fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
+            entries.add(feedEntryCreator.fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
         }
 
         return entries;
     }
-
-    @NotNull
-    public abstract T fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts);
 
     @NotNull
     private static List<String> readFeedFile(@NotNull String feedTsv) throws IOException {

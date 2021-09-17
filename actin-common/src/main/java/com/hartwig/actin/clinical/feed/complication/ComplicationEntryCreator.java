@@ -3,16 +3,16 @@ package com.hartwig.actin.clinical.feed.complication;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import com.hartwig.actin.clinical.feed.FeedFileReader;
+import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ComplicationFileReader extends FeedFileReader<ComplicationEntry> {
+public class ComplicationEntryCreator implements FeedEntryCreator<ComplicationEntry> {
 
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("d-M-yyyy HH:mm");
 
-    public ComplicationFileReader() {
+    public ComplicationEntryCreator() {
     }
 
     @NotNull
