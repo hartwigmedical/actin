@@ -2,13 +2,15 @@ package com.hartwig.actin.clinical.feed.bloodpressure;
 
 import java.time.LocalDate;
 
+import com.hartwig.actin.clinical.feed.FeedEntry;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class BloodPressureEntry {
+public abstract class BloodPressureEntry implements FeedEntry {
 
     @NotNull
     public abstract String subject();

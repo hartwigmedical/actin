@@ -12,13 +12,13 @@ import com.hartwig.actin.clinical.datamodel.Sex;
 
 import org.junit.Test;
 
-public class PatientFileTest {
+public class PatientFileReaderTest {
 
     private static final String TEST_PATIENT_TSV = Resources.getResource("clinical/patient.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {
-        List<PatientEntry> entries = PatientFile.read(TEST_PATIENT_TSV);
+        List<PatientEntry> entries = new PatientFileReader().read(TEST_PATIENT_TSV);
         assertEquals(1, entries.size());
 
         PatientEntry entry = entries.get(0);

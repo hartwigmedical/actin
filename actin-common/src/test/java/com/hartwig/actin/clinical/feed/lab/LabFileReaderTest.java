@@ -12,7 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class LabFileTest {
+public class LabFileReaderTest {
 
     private static final String TEST_LAB_TSV = Resources.getResource("clinical/lab.tsv").getPath();
 
@@ -20,7 +20,7 @@ public class LabFileTest {
 
     @Test
     public void canReadTestFile() throws IOException {
-        List<LabEntry> entries =  LabFile.read(TEST_LAB_TSV);
+        List<LabEntry> entries = new LabFileReader().read(TEST_LAB_TSV);
         assertEquals(2, entries.size());
 
         LabEntry entry1 = findByCodeCodeOriginal(entries, "HT");

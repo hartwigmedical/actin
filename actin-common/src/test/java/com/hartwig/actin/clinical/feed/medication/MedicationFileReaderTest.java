@@ -11,7 +11,7 @@ import com.google.common.io.Resources;
 
 import org.junit.Test;
 
-public class MedicationFileTest {
+public class MedicationFileReaderTest {
 
     private static final String TEST_MEDICATION_TSV = Resources.getResource("clinical/medication.tsv").getPath();
 
@@ -19,7 +19,7 @@ public class MedicationFileTest {
 
     @Test
     public void canReadTestFile() throws IOException {
-        List<MedicationEntry> entries = MedicationFile.read(TEST_MEDICATION_TSV);
+        List<MedicationEntry> entries = new MedicationFileReader().read(TEST_MEDICATION_TSV);
         assertEquals(1, entries.size());
 
         MedicationEntry entry = entries.get(0);
@@ -51,5 +51,4 @@ public class MedicationFileTest {
         assertEquals("Inpatient", entry.categoryMedicationRequestCategoryDisplay());
         assertEquals("K", entry.categoryMedicationRequestCategoryCodeOriginal());
     }
-
 }

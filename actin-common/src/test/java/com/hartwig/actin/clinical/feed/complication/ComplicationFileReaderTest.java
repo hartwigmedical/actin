@@ -12,13 +12,13 @@ import com.google.common.io.Resources;
 
 import org.junit.Test;
 
-public class ComplicationFileTest {
+public class ComplicationFileReaderTest {
 
     private static final String TEST_COMPLICATION_TSV = Resources.getResource("clinical/complication.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {
-        List<ComplicationEntry> entries = ComplicationFile.read(TEST_COMPLICATION_TSV);
+        List<ComplicationEntry> entries = new ComplicationFileReader().read(TEST_COMPLICATION_TSV);
         assertEquals(1, entries.size());
 
         ComplicationEntry entry = entries.get(0);

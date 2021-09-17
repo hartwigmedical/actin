@@ -2,13 +2,15 @@ package com.hartwig.actin.clinical.feed.intolerance;
 
 import java.time.LocalDate;
 
+import com.hartwig.actin.clinical.feed.FeedEntry;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class IntoleranceEntry {
+public abstract class IntoleranceEntry implements FeedEntry {
 
     @NotNull
     public abstract String subject();

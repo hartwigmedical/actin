@@ -10,13 +10,13 @@ import com.google.common.io.Resources;
 
 import org.junit.Test;
 
-public class IntoleranceFileTest {
+public class IntoleranceFileReaderTest {
 
     private static final String TEST_INTOLERANCE_TSV = Resources.getResource("clinical/intolerance.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {
-        List<IntoleranceEntry> entries = IntoleranceFile.read(TEST_INTOLERANCE_TSV);
+        List<IntoleranceEntry> entries = new IntoleranceFileReader().read(TEST_INTOLERANCE_TSV);
         assertEquals(1, entries.size());
 
         IntoleranceEntry entry = entries.get(0);

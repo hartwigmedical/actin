@@ -12,13 +12,13 @@ import com.google.common.io.Resources;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class QuestionnaireFileTest {
+public class QuestionnaireFileReaderTest {
 
     private static final String TEST_QUESTIONNAIRE_TSV = Resources.getResource("clinical/questionnaire.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {
-        List<QuestionnaireEntry> entries = QuestionnaireFile.read(TEST_QUESTIONNAIRE_TSV);
+        List<QuestionnaireEntry> entries = new QuestionnaireFileReader().read(TEST_QUESTIONNAIRE_TSV);
         assertEquals(2, entries.size());
 
         QuestionnaireEntry entry1 = findByParentIdentifierValue(entries, "XX");
