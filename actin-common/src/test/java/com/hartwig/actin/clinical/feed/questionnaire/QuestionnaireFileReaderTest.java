@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class QuestionnaireFileReaderTest {
 
-    private static final String TEST_QUESTIONNAIRE_TSV = Resources.getResource("clinical/questionnaire.tsv").getPath();
+    private static final String TEST_QUESTIONNAIRE_TSV = Resources.getResource("clinical/feed/questionnaire.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {

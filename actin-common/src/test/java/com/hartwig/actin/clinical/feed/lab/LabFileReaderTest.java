@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class LabFileReaderTest {
 
-    private static final String TEST_LAB_TSV = Resources.getResource("clinical/lab.tsv").getPath();
+    private static final String TEST_LAB_TSV = Resources.getResource("clinical/feed/lab.tsv").getPath();
 
     private static final double EPSILON = 1.0E-10;
 

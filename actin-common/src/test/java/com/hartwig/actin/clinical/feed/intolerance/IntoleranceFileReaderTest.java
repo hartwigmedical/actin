@@ -12,7 +12,7 @@ import org.junit.Test;
 
 public class IntoleranceFileReaderTest {
 
-    private static final String TEST_INTOLERANCE_TSV = Resources.getResource("clinical/intolerance.tsv").getPath();
+    private static final String TEST_INTOLERANCE_TSV = Resources.getResource("clinical/feed/intolerance.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {

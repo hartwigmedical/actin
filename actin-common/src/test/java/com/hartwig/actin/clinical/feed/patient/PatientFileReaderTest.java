@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class PatientFileReaderTest {
 
-    private static final String TEST_PATIENT_TSV = Resources.getResource("clinical/patient.tsv").getPath();
+    private static final String TEST_PATIENT_TSV = Resources.getResource("clinical/feed/patient.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {

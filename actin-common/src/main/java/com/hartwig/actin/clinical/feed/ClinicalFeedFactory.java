@@ -23,9 +23,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class FeedFactory {
+public final class ClinicalFeedFactory {
 
-    private static final Logger LOGGER = LogManager.getLogger(FeedFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalFeedFactory.class);
 
     private static final String PATIENT_TSV = "patient.tsv";
     private static final String QUESTIONNAIRE_TSV = "questionnaire.tsv";
@@ -35,15 +35,15 @@ public final class FeedFactory {
     private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
 
-    private FeedFactory() {
+    private ClinicalFeedFactory() {
     }
 
     @NotNull
-    public static Feed loadFromClinicalDataDirectory(@NotNull String clinicalDataDirectory) throws IOException {
-        LOGGER.info("Reading clinical data from {}", clinicalDataDirectory);
+    public static ClinicalFeed loadFromClinicalFeedDirectory(@NotNull String clinicalFeedDirectory) throws IOException {
+        LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory);
 
-        String basePath = clinicalDataDirectory.endsWith(File.separator) ? clinicalDataDirectory : clinicalDataDirectory + File.separator;
-        return ImmutableFeed.builder()
+        String basePath = clinicalFeedDirectory.endsWith(File.separator) ? clinicalFeedDirectory : clinicalFeedDirectory + File.separator;
+        return ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
                 .questionnaireEntries(readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV))
                 .medicationEntries(readMedicationEntries(basePath + MEDICATION_TSV))

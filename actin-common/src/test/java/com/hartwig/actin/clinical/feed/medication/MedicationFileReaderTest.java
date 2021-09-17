@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class MedicationFileReaderTest {
 
-    private static final String TEST_MEDICATION_TSV = Resources.getResource("clinical/medication.tsv").getPath();
+    private static final String TEST_MEDICATION_TSV = Resources.getResource("clinical/feed/medication.tsv").getPath();
 
     private static final double EPSILON = 1.0E-10;
 

@@ -8,12 +8,12 @@ import com.google.common.io.Resources;
 
 import org.junit.Test;
 
-public class FeedFactoryTest {
+public class ClinicalFeedFactoryTest {
 
-    private static final String CLINICAL_DATA_DIRECTORY = Resources.getResource("clinical").getPath();
+    private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
 
     @Test
     public void canLoadFeedFromTestDirectory() throws IOException {
-        assertNotNull(FeedFactory.loadFromClinicalDataDirectory(CLINICAL_DATA_DIRECTORY));
+        assertNotNull(ClinicalFeedFactory.loadFromClinicalFeedDirectory(CLINICAL_FEED_DIRECTORY));
     }
 }

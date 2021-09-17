@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class ComplicationFileReaderTest {
 
-    private static final String TEST_COMPLICATION_TSV = Resources.getResource("clinical/complication.tsv").getPath();
+    private static final String TEST_COMPLICATION_TSV = Resources.getResource("clinical/feed/complication.tsv").getPath();
 
     @Test
     public void canReadTestFile() throws IOException {

@@ -13,10 +13,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.feed.Feed;
-import com.hartwig.actin.clinical.feed.FeedFactory;
+import com.hartwig.actin.clinical.feed.ClinicalFeed;
+import com.hartwig.actin.clinical.feed.ClinicalFeedFactory;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,12 +33,12 @@ public final class ClinicalModelFactory {
     }
 
     @NotNull
-    public static ClinicalModel loadFromClinicalDataDirectory(@NotNull String clinicalDataDirectory) throws IOException {
-        Feed feed = FeedFactory.loadFromClinicalDataDirectory(clinicalDataDirectory);
+    public static ClinicalModel loadFromClinicalFeedDirectory(@NotNull String clinicalFeedDirectory) throws IOException {
+        ClinicalFeed clinicalFeed = ClinicalFeedFactory.loadFromClinicalFeedDirectory(clinicalFeedDirectory);
 
         LOGGER.info("Creating clinical datamodel");
         List<ClinicalRecord> records = Lists.newArrayList();
-        for (PatientEntry patient : feed.patientEntries()) {
+        for (PatientEntry patient : clinicalFeed.patientEntries()) {
             String sampleId = toSampleId(patient.subject());
 
             LOGGER.info(" Adding data for sample '{}'", sampleId);
@@ -46,10 +47,18 @@ public final class ClinicalModelFactory {
                     .patient(createPatientDetails(patient))
                     .tumor(createTumorDetails())
                     .clinicalStatus(createClinicalStatus())
+                    .priorTumorTreatments(extractPriorTumorTreatments(clinicalFeed, patient.subject()))
                     .build());
         }
 
         return new ClinicalModel(records);
+    }
+
+    @NotNull
+    private static List<PriorTumorTreatment> extractPriorTumorTreatments(@NotNull ClinicalFeed clinicalFeed, @NotNull String subject) {
+        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
+
+        return priorTumorTreatments;
     }
 
     @NotNull

@@ -14,23 +14,23 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public interface DatabaseLoaderConfig {
 
-    String CLINICAL_DATA_DIRECTORY = "clinical_data_directory";
+    String CLINICAL_FEED_DIRECTORY = "clinical_feed_directory";
 
     @NotNull
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(CLINICAL_DATA_DIRECTORY, true, "Directory holding the clinical data");
+        options.addOption(CLINICAL_FEED_DIRECTORY, true, "Directory containing the clinical feed data");
 
         return options;
     }
 
     @NotNull
-    String clinicalDataDirectory();
+    String clinicalFeedDirectory();
 
     @NotNull
     static DatabaseLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        return ImmutableDatabaseLoaderConfig.builder().clinicalDataDirectory(nonOptionalDir(cmd, CLINICAL_DATA_DIRECTORY)).build();
+        return ImmutableDatabaseLoaderConfig.builder().clinicalFeedDirectory(nonOptionalDir(cmd, CLINICAL_FEED_DIRECTORY)).build();
     }
 
     @NotNull

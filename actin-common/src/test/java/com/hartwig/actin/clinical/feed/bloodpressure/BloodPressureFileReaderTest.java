@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class BloodPressureFileReaderTest {
 
-    private static final String TEST_BLOOD_PRESSURE_TSV = Resources.getResource("clinical/bloodpressure.tsv").getPath();
+    private static final String TEST_BLOOD_PRESSURE_TSV = Resources.getResource("clinical/feed/bloodpressure.tsv").getPath();
 
     private static final double EPSILON = 1.0E-10;
 

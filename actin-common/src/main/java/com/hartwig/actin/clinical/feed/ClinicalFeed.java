@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Feed {
+public abstract class ClinicalFeed {
 
     @NotNull
     public abstract List<PatientEntry> patientEntries();
