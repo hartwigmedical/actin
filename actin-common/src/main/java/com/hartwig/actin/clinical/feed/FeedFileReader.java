@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.hartwig.actin.util.FileUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,22 +21,22 @@ public abstract class FeedFileReader<T extends FeedEntry> {
     public List<T> read(@NotNull String feedTsv) throws IOException {
         List<String> lines = readFeedFile(feedTsv);
 
-        Map<String, Integer> fieldIndexMap = createFieldIndexMap(lines.get(0), DELIMITER);
+        Map<String, Integer> fieldIndexMap = FileUtil.createFieldIndexMap(splitFeedLine(lines.get(0)));
         List<T> entries = Lists.newArrayList();
         if (lines.size() > 1) {
             StringBuilder curLine = new StringBuilder(lines.get(1));
             for (String line : lines.subList(2, lines.size())) {
                 // Entries appear on multiple lines in case they contain hard line breaks so need to split and append to the end.
-                if (splitFeedLine(line, DELIMITER).length != fieldIndexMap.size()) {
+                if (splitFeedLine(line).length != fieldIndexMap.size()) {
                     // Need to remove all DELIMITER since we split further down the track.
                     curLine.append("\n").append(line.replaceAll(DELIMITER, ""));
                 } else {
-                    entries.add(fromParts(fieldIndexMap, splitFeedLine(curLine.toString(), DELIMITER)));
+                    entries.add(fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
                     curLine = new StringBuilder(line);
                 }
             }
             // Need to add the final accumulated entry
-            entries.add(fromParts(fieldIndexMap, splitFeedLine(curLine.toString(), DELIMITER)));
+            entries.add(fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
         }
 
         return entries;
@@ -52,21 +52,8 @@ public abstract class FeedFileReader<T extends FeedEntry> {
     }
 
     @NotNull
-    @VisibleForTesting
-    static Map<String, Integer> createFieldIndexMap(@NotNull String header, @NotNull String delimiter) {
-        String[] items = splitFeedLine(header, delimiter);
-        Map<String, Integer> fieldIndexMap = Maps.newHashMap();
-
-        for (int i = 0; i < items.length; ++i) {
-            fieldIndexMap.put(items[i], i);
-        }
-
-        return fieldIndexMap;
-    }
-
-    @NotNull
-    private static String[] splitFeedLine(@NotNull String line, @NotNull String delimiter) {
-        return cleanQuotes(line.split(delimiter));
+    private static String[] splitFeedLine(@NotNull String line) {
+        return cleanQuotes(line.split(DELIMITER));
     }
 
     @NotNull

@@ -11,7 +11,9 @@ public abstract class OncologicalHistory {
     @NotNull
     public abstract String input();
 
-    @NotNull
+    public abstract boolean ignore();
+
+    @Nullable
     public abstract Object curatedObject();
 
 }
