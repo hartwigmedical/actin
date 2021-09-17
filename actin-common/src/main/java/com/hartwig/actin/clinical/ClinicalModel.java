@@ -2,8 +2,6 @@ package com.hartwig.actin.clinical;
 
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

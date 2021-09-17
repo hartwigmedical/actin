@@ -6,9 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
