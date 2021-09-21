@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
+import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
@@ -23,6 +24,9 @@ public abstract class ClinicalFeed {
 
     @NotNull
     public abstract List<QuestionnaireEntry> questionnaireEntries();
+
+    @NotNull
+    public abstract List<EncounterEntry> encounterEntries();
 
     @NotNull
     public abstract List<MedicationEntry> medicationEntries();

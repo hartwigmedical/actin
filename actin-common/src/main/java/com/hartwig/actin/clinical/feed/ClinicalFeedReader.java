@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
+import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
@@ -22,6 +23,7 @@ public final class ClinicalFeedReader {
 
     private static final String PATIENT_TSV = "patient.tsv";
     private static final String QUESTIONNAIRE_TSV = "questionnaire.tsv";
+    private static final String ENCOUNTER_TSV = "encounter.tsv";
     private static final String MEDICATION_TSV = "medication.tsv";
     private static final String LAB_TSV = "lab.tsv";
     private static final String BLOOD_PRESSURE_TSV = "bloodpressure.tsv";
@@ -39,6 +41,7 @@ public final class ClinicalFeedReader {
         return ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
                 .questionnaireEntries(readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV))
+                .encounterEntries(readEncounterEntries(basePath + ENCOUNTER_TSV))
                 .medicationEntries(readMedicationEntries(basePath + MEDICATION_TSV))
                 .labEntries(readLabEntries(basePath + LAB_TSV))
                 .bloodPressureEntries(readBloodPressureEntries(basePath + BLOOD_PRESSURE_TSV))
@@ -58,6 +61,13 @@ public final class ClinicalFeedReader {
     private static List<QuestionnaireEntry> readQuestionnaireEntries(@NotNull String questionnaireTsv) throws IOException {
         List<QuestionnaireEntry> entries = FeedFileReaderFactory.createQuestionnaireReader().read(questionnaireTsv);
         LOGGER.info(" Read {} questionnaire entries from {}", entries.size(), questionnaireTsv);
+        return entries;
+    }
+
+    @NotNull
+    private static List<EncounterEntry> readEncounterEntries(@NotNull String encounterTsv) throws IOException {
+        List<EncounterEntry> entries = FeedFileReaderFactory.createEncounterReader().read(encounterTsv);
+        LOGGER.info(" Read {} encounter entries from {}", entries.size(), encounterTsv);
         return entries;
     }
 

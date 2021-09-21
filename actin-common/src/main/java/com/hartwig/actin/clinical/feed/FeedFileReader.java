@@ -37,12 +37,12 @@ class FeedFileReader<T extends FeedEntry> {
                     // Need to remove all DELIMITER since we split further down the track.
                     curLine.append("\n").append(line.replaceAll(DELIMITER, ""));
                 } else {
-                    entries.add(feedEntryCreator.fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
+                    addToEntries(entries, fieldIndexMap, curLine.toString());
                     curLine = new StringBuilder(line);
                 }
             }
             // Need to add the final accumulated entry
-            entries.add(feedEntryCreator.fromParts(fieldIndexMap, splitFeedLine(curLine.toString())));
+            addToEntries(entries, fieldIndexMap, curLine.toString());
         }
 
         return entries;
@@ -82,5 +82,22 @@ class FeedFileReader<T extends FeedEntry> {
 
         // Replace all double quotes with single quotes.
         return cleaned.replaceAll("\"\"", "\"");
+    }
+
+    private void addToEntries(@NotNull List<T> entries, @NotNull Map<String, Integer> fieldIndexMap, @NotNull String line) {
+        String[] parts = splitFeedLine(line);
+        if (!allEmpty(parts)) {
+            entries.add(feedEntryCreator.fromParts(fieldIndexMap, parts));
+        }
+    }
+
+    private static boolean allEmpty(@NotNull String[] array) {
+        for (String entry : array) {
+            if (!entry.isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

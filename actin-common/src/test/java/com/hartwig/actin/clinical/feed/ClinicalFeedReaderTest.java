@@ -12,6 +12,7 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
+import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
@@ -34,6 +35,7 @@ public class ClinicalFeedReaderTest {
 
         assertPatients(feed.patientEntries());
         assertQuestionnaires(feed.questionnaireEntries());
+        assertEncounters(feed.encounterEntries());
         assertMedication(feed.medicationEntries());
         assertLab(feed.labEntries());
         assertBloodPressures(feed.bloodPressureEntries());
@@ -76,6 +78,10 @@ public class ClinicalFeedReaderTest {
         assertEquals("ONC Kuuroverzicht", entry2.description());
         assertEquals("Nausea", entry2.itemText());
         assertEquals("0", entry2.itemAnswerValueValueString());
+    }
+
+    private static void assertEncounters(@NotNull List<EncounterEntry> entries) {
+        assertTrue(entries.isEmpty());
     }
 
     @NotNull
