@@ -32,16 +32,16 @@ public class ClinicalFeedReaderTest {
     public void canReadFromTestDirectory() throws IOException {
         ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY);
 
-        assertPatient(feed.patientEntries());
-        assertQuestionnaire(feed.questionnaireEntries());
+        assertPatients(feed.patientEntries());
+        assertQuestionnaires(feed.questionnaireEntries());
         assertMedication(feed.medicationEntries());
         assertLab(feed.labEntries());
-        assertBloodPressure(feed.bloodPressureEntries());
-        assertComplication(feed.complicationEntries());
-        assertIntolerance(feed.intoleranceEntries());
+        assertBloodPressures(feed.bloodPressureEntries());
+        assertComplications(feed.complicationEntries());
+        assertIntolerances(feed.intoleranceEntries());
     }
 
-    private static void assertPatient(@NotNull List<PatientEntry> entries) {
+    private static void assertPatients(@NotNull List<PatientEntry> entries) {
         assertEquals(1, entries.size());
 
         PatientEntry entry = entries.get(0);
@@ -54,7 +54,7 @@ public class ClinicalFeedReaderTest {
         assertNull(entry.periodEnd());
     }
 
-    private static void assertQuestionnaire(@NotNull List<QuestionnaireEntry> entries) {
+    private static void assertQuestionnaires(@NotNull List<QuestionnaireEntry> entries) {
         assertEquals(2, entries.size());
 
         QuestionnaireEntry entry1 = findByParentIdentifierValue(entries, "XX");
@@ -162,7 +162,7 @@ public class ClinicalFeedReaderTest {
         throw new IllegalStateException("No lab entry found with codeCodeOriginal '" + codeCodeOriginal + "'");
     }
 
-    private static void assertBloodPressure(@NotNull List<BloodPressureEntry> entries) {
+    private static void assertBloodPressures(@NotNull List<BloodPressureEntry> entries) {
         assertEquals(1, entries.size());
 
         BloodPressureEntry entry = entries.get(0);
@@ -179,7 +179,7 @@ public class ClinicalFeedReaderTest {
         assertEquals(108, entry.componentValueQuantityValue(), EPSILON);
     }
 
-    private static void assertComplication(@NotNull List<ComplicationEntry> entries) {
+    private static void assertComplications(@NotNull List<ComplicationEntry> entries) {
         assertEquals(1, entries.size());
 
         ComplicationEntry entry = entries.get(0);
@@ -204,7 +204,7 @@ public class ClinicalFeedReaderTest {
         assertTrue(entry.verificationStatusCode().isEmpty());
     }
 
-    private static void assertIntolerance(@NotNull List<IntoleranceEntry> entries) {
+    private static void assertIntolerances(@NotNull List<IntoleranceEntry> entries) {
         assertEquals(1, entries.size());
 
         IntoleranceEntry entry = entries.get(0);
