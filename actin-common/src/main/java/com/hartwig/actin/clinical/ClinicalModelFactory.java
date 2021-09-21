@@ -52,7 +52,7 @@ public class ClinicalModelFactory {
         for (String subject : feed.subjects()) {
             String sampleId = toSampleId(subject);
 
-            LOGGER.info(" Adding data for sample '{}'", sampleId);
+            LOGGER.info(" Extracting data for sample {}", sampleId);
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(extractPatientDetails(subject))
@@ -88,9 +88,6 @@ public class ClinicalModelFactory {
                 LOGGER.warn("  Could not extract treatment history current tumor from latest questionnaire for '{}'", subject);
             } else {
                 priorTumorTreatments = curation.toPriorTumorTreatments(treatmentHistories);
-                if (!priorTumorTreatments.isEmpty()) {
-                    LOGGER.info(" Extracted prior treatments for {}: {}", subject, priorTumorTreatments);
-                }
             }
         }
 
