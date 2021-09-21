@@ -55,7 +55,7 @@ public class ClinicalModelFactory {
             LOGGER.info(" Adding data for sample '{}'", sampleId);
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
-                    .patient(createPatientDetails())
+                    .patient(extractPatientDetails(subject))
                     .tumor(createTumorDetails())
                     .clinicalStatus(createClinicalStatus())
                     .priorTumorTreatments(extractPriorTumorTreatments(subject))
@@ -63,6 +63,18 @@ public class ClinicalModelFactory {
         }
 
         return new ClinicalModel(records);
+    }
+
+    @NotNull
+    private PatientDetails extractPatientDetails(@NotNull String subject) {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        return ImmutablePatientDetails.builder()
+                .sex(Sex.MALE)
+                .birthYear(0)
+                .registrationDate(LocalDate.parse("01-01-2020", format))
+                .questionnaireDate(LocalDate.parse("01-01-2020", format))
+                .build();
     }
 
     @NotNull
@@ -83,18 +95,6 @@ public class ClinicalModelFactory {
         }
 
         return priorTumorTreatments;
-    }
-
-    @NotNull
-    private static PatientDetails createPatientDetails() {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        return ImmutablePatientDetails.builder()
-                .sex(Sex.MALE)
-                .birthYear(0)
-                .registrationDate(LocalDate.parse("01-01-2020", format))
-                .questionnaireDate(LocalDate.parse("01-01-2020", format))
-                .build();
     }
 
     @NotNull
