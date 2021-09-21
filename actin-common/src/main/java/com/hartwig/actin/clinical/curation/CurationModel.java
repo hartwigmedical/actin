@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -24,7 +25,8 @@ public class CurationModel {
         return new CurationModel(CurationDatabaseReader.read(clinicalCurationDirectory));
     }
 
-    private CurationModel(@NotNull final CurationDatabase database) {
+    @VisibleForTesting
+    CurationModel(@NotNull final CurationDatabase database) {
         this.database = database;
     }
 

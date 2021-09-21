@@ -15,7 +15,7 @@ public class QuestionnaireExtractionTest {
                 QuestionnaireExtraction.treatmentHistoriesCurrentTumor(TestQuestionnaireFactory.createTestQuestionnaireEntry());
 
         assertEquals(2, treatmentHistories.size());
-        assertTrue(treatmentHistories.contains("Resectie 2020"));
-        assertTrue(treatmentHistories.contains("geen systemische behandeling"));
+        assertTrue(treatmentHistories.contains("Resection 2020"));
+        assertTrue(treatmentHistories.contains("no systemic treatment"));
     }
 }
