@@ -1,19 +1,26 @@
 package com.hartwig.actin.clinical.feed;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
+import com.hartwig.actin.clinical.feed.patient.ImmutablePatientEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.ImmutableQuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory;
 
 import org.jetbrains.annotations.NotNull;
 
 public final class TestFeedFactory {
+
+    static final String TEST_SUBJECT = "ACTN-01-02-9999";
 
     private TestFeedFactory() {
     }
@@ -33,12 +40,23 @@ public final class TestFeedFactory {
 
     @NotNull
     private static List<PatientEntry> createTestPatientEntries() {
-        return Lists.newArrayList();
+        return Lists.newArrayList(ImmutablePatientEntry.builder()
+                .id("ID")
+                .subject(TEST_SUBJECT)
+                .birthYear(1960)
+                .sex(Sex.MALE)
+                .periodStart(LocalDate.of(2021, 6, 1))
+                .periodEnd(LocalDate.of(2021, 10, 1))
+                .build());
     }
 
     @NotNull
     private static List<QuestionnaireEntry> createTestQuestionnaireEntries() {
-        return Lists.newArrayList();
+        ImmutableQuestionnaireEntry.Builder baseBuilder =
+                ImmutableQuestionnaireEntry.builder().from(TestQuestionnaireFactory.createTestQuestionnaireEntry());
+
+        return Lists.newArrayList(baseBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 7, 1)).build(),
+                baseBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 8, 1)).build());
     }
 
     @NotNull
