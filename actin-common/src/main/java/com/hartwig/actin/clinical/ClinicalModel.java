@@ -14,6 +14,11 @@ public class ClinicalModel {
         this.records = records;
     }
 
+    @NotNull
+    public List<ClinicalRecord> records() {
+        return records;
+    }
+
     @Nullable
     public ClinicalRecord findClinicalRecordForSample(@NotNull String sampleId) {
         for (ClinicalRecord record : records) {

@@ -34,19 +34,19 @@ public class ClinicalModelFactory {
     private final CurationModel curation;
 
     @NotNull
-    public static ClinicalModelFactory fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
+    public static ClinicalModel fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
             @NotNull String clinicalCurationDirectory) throws IOException {
         return new ClinicalModelFactory(FeedModel.fromFeedDirectory(clinicalFeedDirectory),
-                CurationModel.fromCurationDirectory(clinicalCurationDirectory));
+                CurationModel.fromCurationDirectory(clinicalCurationDirectory)).create();
     }
 
-    public ClinicalModelFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
+    private ClinicalModelFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
         this.feed = feed;
         this.curation = curation;
     }
 
     @NotNull
-    public ClinicalModel create() {
+    private ClinicalModel create() {
         LOGGER.info("Creating clinical model");
         List<ClinicalRecord> records = Lists.newArrayList();
         for (String subject : feed.subjects()) {

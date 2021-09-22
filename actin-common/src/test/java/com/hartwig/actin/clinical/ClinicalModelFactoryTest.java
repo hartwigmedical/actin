@@ -18,9 +18,7 @@ public class ClinicalModelFactoryTest {
 
     @Test
     public void canBuildClinicalModelFromTestDir() throws IOException {
-        ClinicalModelFactory clinicalModelFactory =
-                ClinicalModelFactory.fromFeedAndCurationDirectories(CLINICAL_FEED_DIRECTORY, CLINICAL_CURATION_DIRECTORY);
-        ClinicalModel model = clinicalModelFactory.create();
+        ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(CLINICAL_FEED_DIRECTORY, CLINICAL_CURATION_DIRECTORY);
 
         ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
 

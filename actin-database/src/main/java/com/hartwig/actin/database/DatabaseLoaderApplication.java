@@ -1,9 +1,11 @@
 package com.hartwig.actin.database;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import com.hartwig.actin.clinical.ClinicalModel;
 import com.hartwig.actin.clinical.ClinicalModelFactory;
+import com.hartwig.actin.database.dao.DatabaseAccess;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -19,7 +21,7 @@ public class DatabaseLoaderApplication {
 
     public static final String VERSION = DatabaseLoaderApplication.class.getPackage().getImplementationVersion();
 
-    public static void main(@NotNull String... args) throws IOException {
+    public static void main(@NotNull String... args) throws IOException, SQLException {
         LOGGER.info("Running ACTIN Database Loader v{}", VERSION);
 
         Options options = DatabaseLoaderConfig.createOptions();
@@ -43,11 +45,17 @@ public class DatabaseLoaderApplication {
         this.config = config;
     }
 
-    public void run() throws IOException {
-        ClinicalModelFactory clinicalModelFactory =
-                ClinicalModelFactory.fromFeedAndCurationDirectories(config.clinicalFeedDirectory(), config.clinicalCurationDirectory());
+    public void run() throws IOException, SQLException {
+        String feedDirectory = config.clinicalFeedDirectory();
+        String curationDirectory = config.clinicalCurationDirectory();
 
-        ClinicalModel clinicalModel = clinicalModelFactory.create();
+        LOGGER.info("Creating clinical model from {}", feedDirectory);
+        ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
+
+        String url = config.dbUrl();
+        LOGGER.info("Writing clinical model to database '{}'", url);
+        DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), url);
+        access.writeClinicalRecords(model.records());
 
         LOGGER.info("Done!");
     }

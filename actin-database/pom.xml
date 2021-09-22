@@ -32,6 +32,12 @@
             <artifactId>value</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -106,7 +112,7 @@
                             <inputSchema>actin_test</inputSchema>
                         </database>
                         <target>
-                            <packageName>com.hartwig.actin.clinical.database</packageName>
+                            <packageName>com.hartwig.actin.database</packageName>
                             <directory>target/generated-sources/jooq</directory>
                         </target>
                     </generator>
