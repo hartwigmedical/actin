@@ -22,20 +22,17 @@ public class DatabaseAccess {
 
     private static final Logger LOGGER = LogManager.getLogger(DatabaseAccess.class);
 
-    private static final String DB_DEFAULT_ARGS = "&serverTimezone=CET&useSSL=false";
     private static final String DEV_CATALOG = "actin_test";
 
     @NotNull
     private final ClinicalDAO clinicalDAO;
 
     public static DatabaseAccess fromCredentials(@NotNull String user, @NotNull String pass, @NotNull String url) throws SQLException {
-        // Disable annoying jooq self-ad message
+        // Disable annoying jooq self-ad messages
         System.setProperty("org.jooq.no-logo", "true");
+        System.setProperty("org.jooq.no-tips", "true");
 
         String jdbcUrl = "jdbc:" + url;
-        if (!jdbcUrl.contains("serverTimezone") && !jdbcUrl.contains("useSSL")) {
-            jdbcUrl += DB_DEFAULT_ARGS;
-        }
 
         Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
         String catalog = conn.getCatalog();

@@ -52,9 +52,8 @@ public class DatabaseLoaderApplication {
         LOGGER.info("Creating clinical model from {}", feedDirectory);
         ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
 
-        String url = config.dbUrl();
-        LOGGER.info("Writing clinical model to database '{}'", url);
-        DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), url);
+        DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());
+        LOGGER.info("Writing {} clinical records to database", model.records().size());
         access.writeClinicalRecords(model.records());
 
         LOGGER.info("Done!");
