@@ -23,7 +23,7 @@ public final class TestQuestionnaireFactory {
     }
 
     @NotNull
-    private static String createTestQuestionnaireValueV1() {
+    static String createTestQuestionnaireValueV1() {
         return "ACTIN Questionnaire\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonimized data!\n" + "\n" + "Relevant clinical history\n"
@@ -37,5 +37,21 @@ public final class TestQuestionnaireFactory {
                 + "Clinical information\n" + "WHO status:0\n" + "Unresolved toxicities grade =>2:NA\n"
                 + "Significant current infection: NO\n" + "Significant aberration on latest ECG: UNKNOWN\n"
                 + "Other(e.g.pleural effusion):chronic diarrhea (likely cancer related)";
+    }
+
+    @NotNull
+    static String createTestQuestionnaireValueV0() {
+        return "ACTIN Questionnaire\n"
+                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+                + "Please make sure that these fields never contain non-anonimized data!\n" + "\n" + "Patient history\n"
+                + "Oncological: Cholangiocarcinoom (retroperitoneaal)\n" + "Other: Diabetes Mellitus type 2\n" + "\n" + "Information\n"
+                + "WHO status: 1\n" + "TNM criteria: T N M : Unknown\n" + "CNS lesions yes/no/unknown: unknown\n"
+                + "- Active yes/no: n.v.t.\n" + "- Symptomatic yes/no: n.v.t\n" + "Brain lesions yes/no/unknown: unknown\n"
+                + "- Active yes/no: n.v.t\n" + "- Symptomatic yes/no: n.v.t.\n" + "Bone lesions yes/no/unknown: Yes\n"
+                + "Liver lesions yes/no/unknown: yes\n" + "Has bioptable lesion yes/no: yes\n"
+                + "Has measurable lesion (RECIST) yes/no: yes\n" + "Significant current infection: No\n"
+                + "Significant aberration on latest ECG: No\n" + "Significant aberration on latest lung function test:\n"
+                + "Latest LVEF (%): Unknown\n" + "Unresolved toxicities from prior anti-tumor therapy grade => 2: Neuropathy GR3\n"
+                + "Other (e.g. Osteoporosis, Pleural effusion):";
     }
 }

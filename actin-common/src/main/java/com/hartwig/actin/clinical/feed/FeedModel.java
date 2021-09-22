@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +44,8 @@ public class FeedModel {
         List<QuestionnaireEntry> questionnaires = entriesForSubject(feed.questionnaireEntries(), subject);
         QuestionnaireEntry latest = null;
         for (QuestionnaireEntry questionnaire : questionnaires) {
-            if (latest == null || questionnaire.authoredDateTime().isAfter(latest.authoredDateTime())) {
+            if (QuestionnaireExtraction.isActualQuestionnaire(questionnaire) && (latest == null || questionnaire.authoredDateTime()
+                    .isAfter(latest.authoredDateTime()))) {
                 latest = questionnaire;
             }
         }

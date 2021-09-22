@@ -81,17 +81,12 @@ public class ClinicalModelFactory {
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@NotNull String subject) {
         QuestionnaireEntry latestQuestionnaire = feed.latestQuestionnaireForSubject(subject);
 
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         if (latestQuestionnaire != null) {
             List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(latestQuestionnaire);
-            if (treatmentHistories == null) {
-                LOGGER.warn("  Could not extract treatment history current tumor from latest questionnaire for '{}'", subject);
-            } else {
-                priorTumorTreatments = curation.toPriorTumorTreatments(treatmentHistories);
-            }
+            return curation.toPriorTumorTreatments(treatmentHistories);
+        } else {
+            return Lists.newArrayList();
         }
-
-        return priorTumorTreatments;
     }
 
     @NotNull
