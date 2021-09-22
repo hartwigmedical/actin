@@ -32,7 +32,6 @@ class ClinicalDAO {
     }
 
     private void writeClinicalRecord(@NotNull ClinicalRecord record) {
-
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             context.insertInto(PRIORTUMORTREATMENT,
                     PRIORTUMORTREATMENT.SAMPLEID,

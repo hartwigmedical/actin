@@ -27,6 +27,7 @@ public class DatabaseAccess {
     @NotNull
     private final ClinicalDAO clinicalDAO;
 
+    @NotNull
     public static DatabaseAccess fromCredentials(@NotNull String user, @NotNull String pass, @NotNull String url) throws SQLException {
         // Disable annoying jooq self-ad messages
         System.setProperty("org.jooq.no-logo", "true");
