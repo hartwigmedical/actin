@@ -1,8 +1,6 @@
 package com.hartwig.actin.clinical;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -13,9 +11,9 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
+import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 
@@ -67,13 +65,14 @@ public class ClinicalModelFactory {
 
     @NotNull
     private PatientDetails extractPatientDetails(@NotNull String subject) {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        PatientEntry patientEntry = feed.patient(subject);
+        QuestionnaireEntry latestQuestionnaire = feed.latestQuestionnaireForSubject(subject);
 
         return ImmutablePatientDetails.builder()
-                .sex(Sex.MALE)
-                .birthYear(0)
-                .registrationDate(LocalDate.parse("01-01-2020", format))
-                .questionnaireDate(LocalDate.parse("01-01-2020", format))
+                .sex(patientEntry.sex())
+                .birthYear(patientEntry.birthYear())
+                .registrationDate(patientEntry.periodStart())
+                .questionnaireDate(latestQuestionnaire != null ? latestQuestionnaire.authoredDateTime() : null)
                 .build();
     }
 

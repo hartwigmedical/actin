@@ -1,10 +1,12 @@
 package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
+import static com.hartwig.actin.database.tables.Patient.PATIENT;
 
 import java.util.List;
 
 import com.hartwig.actin.clinical.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,7 @@ class ClinicalDAO {
 
     public void clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;");
+        context.truncate(PATIENT).execute();
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
@@ -32,7 +35,20 @@ class ClinicalDAO {
     }
 
     private void writeClinicalRecord(@NotNull ClinicalRecord record) {
-        for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
+        String sampleId = record.sampleId();
+
+        writePatientDetails(sampleId, record.patient());
+        writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
+    }
+
+    private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
+        context.insertInto(PATIENT, PATIENT.SAMPLEID, PATIENT.BIRTHYEAR, PATIENT.SEX, PATIENT.REGISTRATIONDATE, PATIENT.QUESTIONNAIREDATE)
+                .values(sampleId, patient.birthYear(), patient.sex().toString(), patient.registrationDate(), patient.questionnaireDate())
+                .execute();
+    }
+
+    private void writePriorTumorTreatments(@NotNull String sampleId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
             context.insertInto(PRIORTUMORTREATMENT,
                     PRIORTUMORTREATMENT.SAMPLEID,
                     PRIORTUMORTREATMENT.NAME,
@@ -46,7 +62,7 @@ class ClinicalDAO {
                     PRIORTUMORTREATMENT.STEMCELLTRANSTYPE,
                     PRIORTUMORTREATMENT.RADIOTHERAPYTYPE,
                     PRIORTUMORTREATMENT.SURGERYTYPE)
-                    .values(record.sampleId(),
+                    .values(sampleId,
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
                             priorTumorTreatment.category(),

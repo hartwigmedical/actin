@@ -38,7 +38,7 @@ public final class ClinicalFeedReader {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory);
 
         String basePath = FileUtil.appendFileSeparator(clinicalFeedDirectory);
-        return ImmutableClinicalFeed.builder()
+        ClinicalFeed feed = ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
                 .questionnaireEntries(readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV))
                 .encounterEntries(readEncounterEntries(basePath + ENCOUNTER_TSV))
@@ -48,6 +48,10 @@ public final class ClinicalFeedReader {
                 .complicationEntries(readComplicationEntries(basePath + COMPLICATION_TSV))
                 .intoleranceEntries(readIntoleranceEntries(basePath + INTOLERANCE_TSV))
                 .build();
+
+        ClinicalFeedValidation.validate(feed);
+
+        return feed;
     }
 
     @NotNull

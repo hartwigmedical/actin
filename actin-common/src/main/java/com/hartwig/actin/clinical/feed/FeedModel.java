@@ -39,6 +39,17 @@ public class FeedModel {
         return subjects;
     }
 
+    @NotNull
+    public PatientEntry patient(@NotNull String subject) {
+        for (PatientEntry entry : feed.patientEntries()) {
+            if (entry.subject().equals(subject)) {
+                return entry;
+            }
+        }
+
+        throw new IllegalStateException("Could not find patient for subject " + subject);
+    }
+
     @Nullable
     public QuestionnaireEntry latestQuestionnaireForSubject(@NotNull String subject) {
         List<QuestionnaireEntry> questionnaires = entriesForSubject(feed.questionnaireEntries(), subject);

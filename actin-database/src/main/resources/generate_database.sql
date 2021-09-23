@@ -3,10 +3,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) UNIQUE,
-    sex varchar(50),
-    birthYear int,
-    registrationDate DATE,
+    sampleId varchar(20) UNIQUE,
+    sex varchar(10) NOT NULL,
+    birthYear int NOT NULL,
+    registrationDate DATE NOT NULL,
     questionnaireDate DATE,
     PRIMARY KEY (id)
 );

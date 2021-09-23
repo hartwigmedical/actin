@@ -18,7 +18,7 @@ public abstract class PatientDetails {
     @NotNull
     public abstract LocalDate registrationDate();
 
-    @NotNull
+    @Nullable
     public abstract LocalDate questionnaireDate();
 
 }

@@ -31,7 +31,7 @@ public final class TestFeedFactory {
     }
 
     @NotNull
-    private static ClinicalFeed createTestClinicalFeed() {
+    public static ClinicalFeed createTestClinicalFeed() {
         return ImmutableClinicalFeed.builder()
                 .patientEntries(createTestPatientEntries())
                 .questionnaireEntries(createTestQuestionnaireEntries())
