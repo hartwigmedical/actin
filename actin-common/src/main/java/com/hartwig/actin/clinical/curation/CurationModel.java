@@ -14,7 +14,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,11 +35,14 @@ public class CurationModel {
     }
 
     @NotNull
-    public TumorDetails toTumorDetails(@NotNull String inputTumorLocation, @NotNull String inputTumorType) {
-        String inputPrimaryTumor = inputTumorLocation + " | " + inputTumorType;
-        PrimaryTumorConfig primaryTumorConfig = find(database.primaryTumorConfigs(), inputPrimaryTumor);
-        if (primaryTumorConfig == null) {
-            LOGGER.warn("  Could not find primary tumor config for input '{}'", inputPrimaryTumor);
+    public TumorDetails toTumorDetails(@Nullable String inputTumorLocation, @Nullable String inputTumorType) {
+        PrimaryTumorConfig primaryTumorConfig = null;
+        if (inputTumorLocation != null && inputTumorType != null) {
+            String inputPrimaryTumor = inputTumorLocation + " | " + inputTumorType;
+            primaryTumorConfig = find(database.primaryTumorConfigs(), inputPrimaryTumor);
+            if (primaryTumorConfig == null) {
+                LOGGER.warn("  Could not find primary tumor config for input '{}'", inputPrimaryTumor);
+            }
         }
 
         return ImmutableTumorDetails.builder()
@@ -50,17 +52,6 @@ public class CurationModel {
                 .primaryTumorSubType(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorSubType() : null)
                 .primaryTumorExtraDetails(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorExtraDetails() : null)
                 .doids(primaryTumorConfig != null ? primaryTumorConfig.doids() : null)
-                .stage(Strings.EMPTY)
-                .hasMeasurableLesionRecist(false)
-                .hasBrainLesions(false)
-                .hasActiveBrainLesions(false)
-                .hasSymptomaticBrainLesions(false)
-                .hasCnsLesions(false)
-                .hasActiveCnsLesions(false)
-                .hasSymptomaticCnsLesions(false)
-                .hasBoneLesions(false)
-                .hasLiverLesions(false)
-                .hasOtherLesions(false)
                 .build();
     }
 

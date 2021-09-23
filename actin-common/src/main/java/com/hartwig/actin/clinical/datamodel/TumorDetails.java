@@ -28,28 +28,38 @@ public abstract class TumorDetails {
     @Nullable
     public abstract Set<String> doids();
 
-    @NotNull
+    @Nullable
     public abstract String stage();
 
-    public abstract boolean hasMeasurableLesionRecist();
+    @Nullable
+    public abstract Boolean hasMeasurableLesionRecist();
 
-    public abstract boolean hasBrainLesions();
+    @Nullable
+    public abstract Boolean hasBrainLesions();
 
-    public abstract boolean hasActiveBrainLesions();
+    @Nullable
+    public abstract Boolean hasActiveBrainLesions();
 
-    public abstract boolean hasSymptomaticBrainLesions();
+    @Nullable
+    public abstract Boolean hasSymptomaticBrainLesions();
 
-    public abstract boolean hasCnsLesions();
+    @Nullable
+    public abstract Boolean hasCnsLesions();
 
-    public abstract boolean hasActiveCnsLesions();
+    @Nullable
+    public abstract Boolean hasActiveCnsLesions();
 
-    public abstract boolean hasSymptomaticCnsLesions();
+    @Nullable
+    public abstract Boolean hasSymptomaticCnsLesions();
 
-    public abstract boolean hasBoneLesions();
+    @Nullable
+    public abstract Boolean hasBoneLesions();
 
-    public abstract boolean hasLiverLesions();
+    @Nullable
+    public abstract Boolean hasLiverLesions();
 
-    public abstract boolean hasOtherLesions();
+    @Nullable
+    public abstract Boolean hasOtherLesions();
 
     @Nullable
     public abstract String otherLesions();

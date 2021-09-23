@@ -51,14 +51,14 @@ public class ClinicalModelFactory {
         List<ClinicalRecord> records = Lists.newArrayList();
         for (String subject : feed.subjects()) {
             String sampleId = toSampleId(subject);
-            QuestionnaireEntry questionnaire = feed.latestQuestionnaireForSubject(subject);
-
             LOGGER.info(" Extracting data for sample {}", sampleId);
+
+            QuestionnaireEntry questionnaire = feed.latestQuestionnaireForSubject(subject);
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(createTumorDetails(questionnaire))
-                    .clinicalStatus(createClinicalStatus())
+                    .clinicalStatus(extractClinicalStatus())
                     .priorTumorTreatments(extractPriorTumorTreatments(subject))
                     .build());
         }
@@ -92,14 +92,14 @@ public class ClinicalModelFactory {
 
         if (latestQuestionnaire != null) {
             List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(latestQuestionnaire);
-            return curation.toPriorTumorTreatments(treatmentHistories);
+            return treatmentHistories != null ? curation.toPriorTumorTreatments(treatmentHistories) : Lists.newArrayList();
         } else {
             return Lists.newArrayList();
         }
     }
 
     @NotNull
-    private static ClinicalStatus createClinicalStatus() {
+    private static ClinicalStatus extractClinicalStatus() {
         return ImmutableClinicalStatus.builder()
                 .who(0)
                 .hasCurrentInfection(false)
@@ -110,7 +110,7 @@ public class ClinicalModelFactory {
 
     @NotNull
     private static String toSampleId(@NotNull String subject) {
-        // Assume a single sample per patient
+        // Assume a single sample per patient ending with "T". No "TII" supported yet.
         return subject.replaceAll("-", "") + "T";
     }
 }

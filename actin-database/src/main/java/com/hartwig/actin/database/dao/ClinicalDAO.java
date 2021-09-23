@@ -1,6 +1,7 @@
 package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
+import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.tables.Patient.PATIENT;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import com.hartwig.actin.clinical.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -24,6 +26,7 @@ class ClinicalDAO {
     public void clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;");
         context.truncate(PATIENT).execute();
+        context.truncate(TUMOR).execute();
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
@@ -38,12 +41,56 @@ class ClinicalDAO {
         String sampleId = record.sampleId();
 
         writePatientDetails(sampleId, record.patient());
+        writeTumorDetails(sampleId, record.tumor());
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
     }
 
     private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
         context.insertInto(PATIENT, PATIENT.SAMPLEID, PATIENT.BIRTHYEAR, PATIENT.SEX, PATIENT.REGISTRATIONDATE, PATIENT.QUESTIONNAIREDATE)
                 .values(sampleId, patient.birthYear(), patient.sex().toString(), patient.registrationDate(), patient.questionnaireDate())
+                .execute();
+    }
+
+    private void writeTumorDetails(@NotNull String sampleId, @NotNull TumorDetails tumor) {
+        context.insertInto(TUMOR,
+                TUMOR.SAMPLEID,
+                TUMOR.PRIMARYTUMORLOCATION,
+                TUMOR.PRIMARYTUMORSUBLOCATION,
+                TUMOR.PRIMARYTUMORTYPE,
+                TUMOR.PRIMARYTUMORSUBTYPE,
+                TUMOR.PRIMARYTUMOREXTRADETAILS,
+                TUMOR.DOIDS,
+                TUMOR.STAGE,
+                TUMOR.HASMEASURABLELESIONRECIST,
+                TUMOR.HASBRAINLESIONS,
+                TUMOR.HASACTIVEBRAINLESIONS,
+                TUMOR.HASSYMPTOMATICBRAINLESIONS,
+                TUMOR.HASCNSLESIONS,
+                TUMOR.HASACTIVECNSLESIONS,
+                TUMOR.HASSYMPTOMATICCNSLESIONS,
+                TUMOR.HASBONELESIONS,
+                TUMOR.HASLIVERLESIONS,
+                TUMOR.HASOTHERLESIONS,
+                TUMOR.OTHERLESIONS)
+                .values(sampleId,
+                        tumor.primaryTumorLocation(),
+                        tumor.primaryTumorSubLocation(),
+                        tumor.primaryTumorType(),
+                        tumor.primaryTumorSubType(),
+                        tumor.primaryTumorExtraDetails(),
+                        DataUtil.concat(tumor.doids()),
+                        tumor.stage(),
+                        DataUtil.toByte(tumor.hasMeasurableLesionRecist()),
+                        DataUtil.toByte(tumor.hasBrainLesions()),
+                        DataUtil.toByte(tumor.hasActiveBrainLesions()),
+                        DataUtil.toByte(tumor.hasSymptomaticBrainLesions()),
+                        DataUtil.toByte(tumor.hasCnsLesions()),
+                        DataUtil.toByte(tumor.hasActiveCnsLesions()),
+                        DataUtil.toByte(tumor.hasSymptomaticCnsLesions()),
+                        DataUtil.toByte(tumor.hasBoneLesions()),
+                        DataUtil.toByte(tumor.hasLiverLesions()),
+                        DataUtil.toByte(tumor.hasOtherLesions()),
+                        tumor.otherLesions())
                 .execute();
     }
 
@@ -66,7 +113,7 @@ class ClinicalDAO {
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
                             priorTumorTreatment.category(),
-                            DatabaseUtil.toByte(priorTumorTreatment.isSystemic()),
+                            DataUtil.toByte(priorTumorTreatment.isSystemic()),
                             priorTumorTreatment.chemoType(),
                             priorTumorTreatment.immunoType(),
                             priorTumorTreatment.targetedType(),
