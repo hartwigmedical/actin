@@ -14,13 +14,25 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void canDetermineIsActualQuestionnaire() {
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0B())));
+        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
         assertFalse(QuestionnaireExtraction.isActualQuestionnaire(entry("Does not exist")));
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_0B() {
-        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0B());
+    public void canExtractFromQuestionnaireV1_1() {
+        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1());
+
+        assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
+        assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
+
+        List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire);
+        assertEquals(1, treatmentHistories.size());
+        assertTrue(treatmentHistories.contains("capecitabine JAN 2020- JUL 2021"));
+    }
+
+    @Test
+    public void canExtractFromQuestionnaireV1_0() {
+        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0());
 
         assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
         assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
@@ -32,20 +44,8 @@ public class QuestionnaireExtractionTest {
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_0A() {
-        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0A());
-
-        assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
-        assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
-
-        List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire);
-        assertEquals(1, treatmentHistories.size());
-        assertTrue(treatmentHistories.contains("capecitabine JAN 2020- JUL 2021"));
-    }
-
-    @Test
-    public void canExtractFromQuestionnaireV0() {
-        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0());
+    public void canExtractFromQuestionnaireV0_1() {
+        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1());
 
         assertNull(QuestionnaireExtraction.tumorLocation(questionnaire));
         assertNull(QuestionnaireExtraction.tumorType(questionnaire));

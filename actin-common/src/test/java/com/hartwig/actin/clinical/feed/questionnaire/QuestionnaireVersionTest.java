@@ -9,12 +9,12 @@ public class QuestionnaireVersionTest {
 
     @Test
     public void canResolveAllVersions() {
-        assertEquals(QuestionnaireVersion.V1_0B,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0B())));
-        assertEquals(QuestionnaireVersion.V1_0A,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0A())));
-        assertEquals(QuestionnaireVersion.V0,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0())));
+        assertEquals(QuestionnaireVersion.V1_1,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
+        assertEquals(QuestionnaireVersion.V1_0,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())));
+        assertEquals(QuestionnaireVersion.V0_1,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
     }
 
     @NotNull

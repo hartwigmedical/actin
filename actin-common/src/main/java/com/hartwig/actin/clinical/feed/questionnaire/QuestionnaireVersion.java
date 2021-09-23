@@ -3,9 +3,9 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 import org.jetbrains.annotations.NotNull;
 
 enum QuestionnaireVersion {
-    V0,
-    V1_0A,
-    V1_0B;
+    V0_1,
+    V1_0,
+    V1_1;
 
     @NotNull
     public static QuestionnaireVersion version(@NotNull QuestionnaireEntry questionnaire) {
@@ -13,12 +13,12 @@ enum QuestionnaireVersion {
 
         for (String line : lines) {
             switch (line) {
-                case "Relevant clinical history":
-                    return V1_0B;
-                case "Relevant patient history":
-                    return V1_0A;
                 case "Patient history":
-                    return V0;
+                    return V0_1;
+                case "Relevant clinical history":
+                    return V1_0;
+                case "Relevant patient history":
+                    return V1_1;
             }
         }
 

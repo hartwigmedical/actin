@@ -18,29 +18,12 @@ public final class TestQuestionnaireFactory {
                 .questionnaireQuestionnaireValue("A")
                 .description("Description")
                 .itemText("ItemText")
-                .itemAnswerValueValueString(createTestQuestionnaireValueV1_0B())
+                .itemAnswerValueValueString(createTestQuestionnaireValueV1_1())
                 .build();
     }
 
     @NotNull
-    static String createTestQuestionnaireValueV1_0B() {
-        return "ACTIN Questionnaire\n"
-                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
-                + "Please make sure that these fields never contain non-anonimized data!\n" + "\n" + "Relevant clinical history\n"
-                + "Treatment history current tumor:Resection 2020, no systemic treatment\n"
-                + "Other oncological history(e.g.second primary):NA\n" + "Non-oncological history: Migraine\n" + "\n" + "Tumor details\n"
-                + "Tumor location: lung\n" + "Tumor type: small-cell carcinoma\n" + "Biopsy location: liver\n"
-                + "Stage(I / II / III / IV):IV\n" + "CNS lesions yes / no / unknown:NO\n" + "Active? : \n" + "Symptomatic? : \n"
-                + "Brain lesions yes / no / unknown:Unknown\n" + "Active? : \n" + "Symptomatic? : \n"
-                + "Bone lesions yes / no / unknown:NO\n" + "Liver lesions yes / no / unknown:NO\n"
-                + "Biopsy amenable yes / no / unknown:UNKNOWN\n" + "Measurable disease (RECIST) yes / no / unknown:YES\n" + "\n"
-                + "Clinical information\n" + "WHO status:0\n" + "Unresolved toxicities grade =>2:NA\n"
-                + "Significant current infection: NO\n" + "Significant aberration on latest ECG: UNKNOWN\n"
-                + "Other(e.g.pleural effusion):chronic diarrhea (likely cancer related)";
-    }
-
-    @NotNull
-    static String createTestQuestionnaireValueV1_0A() {
+    static String createTestQuestionnaireValueV1_1() {
         return "ACTIN Questionnaire V1.0\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonymized data!\n" + "\n" + "Relevant patient history\n"
@@ -58,7 +41,24 @@ public final class TestQuestionnaireFactory {
     }
 
     @NotNull
-    static String createTestQuestionnaireValueV0() {
+    static String createTestQuestionnaireValueV1_0() {
+        return "ACTIN Questionnaire\n"
+                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+                + "Please make sure that these fields never contain non-anonimized data!\n" + "\n" + "Relevant clinical history\n"
+                + "Treatment history current tumor:Resection 2020, no systemic treatment\n"
+                + "Other oncological history(e.g.second primary):NA\n" + "Non-oncological history: Migraine\n" + "\n" + "Tumor details\n"
+                + "Tumor location: lung\n" + "Tumor type: small-cell carcinoma\n" + "Biopsy location: liver\n"
+                + "Stage(I / II / III / IV):IV\n" + "CNS lesions yes / no / unknown:NO\n" + "Active? : \n" + "Symptomatic? : \n"
+                + "Brain lesions yes / no / unknown:Unknown\n" + "Active? : \n" + "Symptomatic? : \n"
+                + "Bone lesions yes / no / unknown:NO\n" + "Liver lesions yes / no / unknown:NO\n"
+                + "Biopsy amenable yes / no / unknown:UNKNOWN\n" + "Measurable disease (RECIST) yes / no / unknown:YES\n" + "\n"
+                + "Clinical information\n" + "WHO status:0\n" + "Unresolved toxicities grade =>2:NA\n"
+                + "Significant current infection: NO\n" + "Significant aberration on latest ECG: UNKNOWN\n"
+                + "Other(e.g.pleural effusion):chronic diarrhea (likely cancer related)";
+    }
+
+    @NotNull
+    static String createTestQuestionnaireValueV0_1() {
         return "ACTIN Questionnaire\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonimized data!\n" + "\n" + "Patient history\n"
@@ -67,7 +67,9 @@ public final class TestQuestionnaireFactory {
                 + "- Active yes/no: n.v.t.\n" + "- Symptomatic yes/no: n.v.t\n" + "Brain lesions yes/no/unknown: unknown\n"
                 + "- Active yes/no: n.v.t\n" + "- Symptomatic yes/no: n.v.t.\n" + "Bone lesions yes/no/unknown: Yes\n"
                 + "Liver lesions yes/no/unknown: yes\n" + "Has bioptable lesion yes/no: yes\n"
-                + "Has measurable lesion (RECIST) yes/no: yes\n" + "Significant current infection: No\n" + "Significant aberration on latest ECG: No\n" + "Significant aberration on latest lung function test:\n"
-                + "Latest LVEF (%): Unknown\n" + "Unresolved toxicities from prior anti-tumor therapy grade => 2: Neuropathy GR3\n" + "Other (e.g. Osteoporosis, Pleural effusion):";
+                + "Has measurable lesion (RECIST) yes/no: yes\n" + "Significant current infection: No\n"
+                + "Significant aberration on latest ECG: No\n" + "Significant aberration on latest lung function test:\n"
+                + "Latest LVEF (%): Unknown\n" + "Unresolved toxicities from prior anti-tumor therapy grade => 2: Neuropathy GR3\n"
+                + "Other (e.g. Osteoporosis, Pleural effusion):";
     }
 }
