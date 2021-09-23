@@ -7,24 +7,20 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.logging.log4j.util.Strings;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class QuestionnaireExtractionTest {
 
     @Test
     public void canDetermineIsActualQuestionnaire() {
-        QuestionnaireEntry correct = TestQuestionnaireFactory.createTestQuestionnaireEntry();
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(correct));
-        assertFalse(QuestionnaireExtraction.isActualQuestionnaire(ImmutableQuestionnaireEntry.builder()
-                .from(correct)
-                .itemAnswerValueValueString(Strings.EMPTY)
-                .build()));
+        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0B())));
+        assertFalse(QuestionnaireExtraction.isActualQuestionnaire(entry("Does not exist")));
     }
 
     @Test
-    public void canExtractFromTestQuestionnaire() {
-        QuestionnaireEntry questionnaire = TestQuestionnaireFactory.createTestQuestionnaireEntry();
+    public void canExtractFromQuestionnaireV1_0B() {
+        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0B());
 
         assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
         assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
@@ -36,14 +32,31 @@ public class QuestionnaireExtractionTest {
     }
 
     @Test
-    public void canExtractFromQuestionnaireV0() {
-        QuestionnaireEntry questionnaireV0 = ImmutableQuestionnaireEntry.builder()
-                .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
-                .itemAnswerValueValueString(TestQuestionnaireFactory.createTestQuestionnaireValueV0())
-                .build();
+    public void canExtractFromQuestionnaireV1_0A() {
+        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0A());
 
-        assertNull(QuestionnaireExtraction.tumorLocation(questionnaireV0));
-        assertNull(QuestionnaireExtraction.tumorType(questionnaireV0));
-        assertNull(QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaireV0));
+        assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
+        assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
+
+        List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire);
+        assertEquals(1, treatmentHistories.size());
+        assertTrue(treatmentHistories.contains("capecitabine JAN 2020- JUL 2021"));
+    }
+
+    @Test
+    public void canExtractFromQuestionnaireV0() {
+        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0());
+
+        assertNull(QuestionnaireExtraction.tumorLocation(questionnaire));
+        assertNull(QuestionnaireExtraction.tumorType(questionnaire));
+        assertNull(QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire));
+    }
+
+    @NotNull
+    private static QuestionnaireEntry entry(@NotNull String questionnaire) {
+        return ImmutableQuestionnaireEntry.builder()
+                .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
+                .itemAnswerValueValueString(questionnaire)
+                .build();
     }
 }

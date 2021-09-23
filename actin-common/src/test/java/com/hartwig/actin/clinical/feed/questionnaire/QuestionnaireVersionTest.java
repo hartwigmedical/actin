@@ -8,11 +8,13 @@ import org.junit.Test;
 public class QuestionnaireVersionTest {
 
     @Test
-    public void canResolveVersion() {
+    public void canResolveAllVersions() {
+        assertEquals(QuestionnaireVersion.V1_0B,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0B())));
+        assertEquals(QuestionnaireVersion.V1_0A,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0A())));
         assertEquals(QuestionnaireVersion.V0,
                 QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0())));
-        assertEquals(QuestionnaireVersion.V1,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1())));
     }
 
     @NotNull
