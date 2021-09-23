@@ -25,27 +25,17 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     public static String tumorLocation(@NotNull QuestionnaireEntry questionnaire) {
-        return lookup(questionnaire, QuestionnaireKey.TUMOR_LOCATION);
+        return lookup(questionnaire, QuestionnaireKey.PRIMARY_TUMOR_LOCATION);
     }
 
     @Nullable
     public static String tumorType(@NotNull QuestionnaireEntry questionnaire) {
-        return lookup(questionnaire, QuestionnaireKey.TUMOR_TYPE);
+        return lookup(questionnaire, QuestionnaireKey.PRIMARY_TUMOR_TYPE);
     }
 
     @Nullable
     public static List<String> treatmentHistoriesCurrentTumor(@NotNull QuestionnaireEntry questionnaire) {
         return toList(lookup(questionnaire, QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR));
-    }
-
-    @Nullable
-    public static String otherOncologicalHistory(@NotNull QuestionnaireEntry questionnaire) {
-        return lookup(questionnaire, QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY);
-    }
-
-    @Nullable
-    public static String nonOncologicalHistory(@NotNull QuestionnaireEntry questionnaire) {
-        return lookup(questionnaire, QuestionnaireKey.NON_ONCOLOGICAL_HISTORY);
     }
 
     @Nullable
