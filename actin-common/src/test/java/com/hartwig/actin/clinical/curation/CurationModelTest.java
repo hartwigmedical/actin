@@ -15,7 +15,7 @@ public class CurationModelTest {
 
     @Test
     public void canCurateTumorDetails() {
-        CurationModel model = TestCurationFactory.createTestCurationModel();
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         TumorDetails curated = model.toTumorDetails("Unknown", "Carcinoma");
         assertEquals("Unknown", curated.primaryTumorLocation());
@@ -26,7 +26,7 @@ public class CurationModelTest {
 
     @Test
     public void canCuratePriorTreatments() {
-        CurationModel model = TestCurationFactory.createTestCurationModel();
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         List<PriorTumorTreatment> priorTreatments =
                 model.toPriorTumorTreatments(Lists.newArrayList("Resection 2020", "no systemic treatment", "cannot curate"));

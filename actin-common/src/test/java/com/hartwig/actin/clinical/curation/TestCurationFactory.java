@@ -18,8 +18,13 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    public static CurationModel createTestCurationModel() {
+    public static CurationModel createProperTestCurationModel() {
         return new CurationModel(createTestCurationDatabase());
+    }
+
+    @NotNull
+    public static CurationModel createMinimalTestCurationModel() {
+        return new CurationModel(ImmutableCurationDatabase.builder().build());
     }
 
     @NotNull

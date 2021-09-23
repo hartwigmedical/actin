@@ -15,7 +15,7 @@ public class FeedModelTest {
 
     @Test
     public void canRetrieveSubjects() {
-        FeedModel model = TestFeedFactory.createTestFeedModel();
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
         Set<String> subjects = model.subjects();
         assertEquals(1, subjects.size());
@@ -24,7 +24,7 @@ public class FeedModelTest {
 
     @Test
     public void canDetermineLatestQuestionnaire() {
-        FeedModel model = TestFeedFactory.createTestFeedModel();
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
         QuestionnaireEntry entry = model.latestQuestionnaireForSubject(TestFeedFactory.TEST_SUBJECT);
         assertNotNull(entry);

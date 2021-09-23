@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ClinicalModelFactory {
 
@@ -67,7 +68,7 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private PatientDetails extractPatientDetails(@NotNull String subject, @NotNull QuestionnaireEntry questionnaire) {
+    private PatientDetails extractPatientDetails(@NotNull String subject, @Nullable QuestionnaireEntry questionnaire) {
         PatientEntry patient = feed.patient(subject);
 
         return ImmutablePatientDetails.builder()
@@ -79,9 +80,9 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private TumorDetails createTumorDetails(@NotNull QuestionnaireEntry questionnaire) {
-        String tumorLocation = QuestionnaireExtraction.tumorLocation(questionnaire);
-        String tumorType = QuestionnaireExtraction.tumorType(questionnaire);
+    private TumorDetails createTumorDetails(@Nullable QuestionnaireEntry questionnaire) {
+        String tumorLocation = questionnaire != null ? QuestionnaireExtraction.tumorLocation(questionnaire) : null;
+        String tumorType = questionnaire != null ? QuestionnaireExtraction.tumorType(questionnaire) : null;
 
         return curation.toTumorDetails(tumorLocation, tumorType);
     }

@@ -26,8 +26,13 @@ public final class TestFeedFactory {
     }
 
     @NotNull
-    public static FeedModel createTestFeedModel() {
+    public static FeedModel createProperTestFeedModel() {
         return new FeedModel(createTestClinicalFeed());
+    }
+
+    @NotNull
+    public static FeedModel createMinimalTestFeedModel() {
+        return new FeedModel(ImmutableClinicalFeed.builder().patientEntries(createTestPatientEntries()).build());
     }
 
     @NotNull

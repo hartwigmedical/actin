@@ -18,8 +18,18 @@ public class ClinicalModelFactoryTest {
     private static final String TEST_SAMPLE = "ACTN01029999T";
 
     @Test
-    public void canCreateClinicalModelFromTestData() {
-        ClinicalModel model = createTestClinicalModel();
+    public void canCreateClinicalModelFromMinimalTestData() {
+        ClinicalModel model = createMinimalTestClinicalModel();
+        assertEquals(1, model.records().size());
+
+        ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
+        assertNotNull(record);
+        assertEquals(TEST_SAMPLE, record.sampleId());
+    }
+
+    @Test
+    public void canCreateClinicalModelFromProperTestData() {
+        ClinicalModel model = createProperTestClinicalModel();
 
         assertEquals(1, model.records().size());
         ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
@@ -38,7 +48,14 @@ public class ClinicalModelFactoryTest {
     }
 
     @NotNull
-    private static ClinicalModel createTestClinicalModel() {
-        return new ClinicalModelFactory(TestFeedFactory.createTestFeedModel(), TestCurationFactory.createTestCurationModel()).create();
+    private static ClinicalModel createMinimalTestClinicalModel() {
+        return new ClinicalModelFactory(TestFeedFactory.createMinimalTestFeedModel(),
+                TestCurationFactory.createMinimalTestCurationModel()).create();
+    }
+
+    @NotNull
+    private static ClinicalModel createProperTestClinicalModel() {
+        return new ClinicalModelFactory(TestFeedFactory.createProperTestFeedModel(),
+                TestCurationFactory.createProperTestCurationModel()).create();
     }
 }
