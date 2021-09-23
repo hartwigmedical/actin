@@ -3,8 +3,10 @@ package com.hartwig.actin.clinical;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
+import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
@@ -15,7 +17,15 @@ import org.junit.Test;
 
 public class ClinicalModelFactoryTest {
 
+    private static final String FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
+    private static final String CURATION_DIRECTORY = Resources.getResource("clinical/curation").getPath();
+
     private static final String TEST_SAMPLE = "ACTN01029999T";
+
+    @Test
+    public void canCreateFromFeedAndCurationDirectories() throws IOException {
+        assertNotNull(ClinicalModelFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
+    }
 
     @Test
     public void canCreateClinicalModelFromMinimalTestData() {
