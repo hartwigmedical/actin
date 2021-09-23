@@ -54,7 +54,7 @@ public class ClinicalModelFactory {
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(extractPatientDetails(subject))
-                    .tumor(createTumorDetails())
+                    .tumor(createTumorDetails(subject))
                     .clinicalStatus(createClinicalStatus())
                     .priorTumorTreatments(extractPriorTumorTreatments(subject))
                     .build());
@@ -89,12 +89,13 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private static TumorDetails createTumorDetails() {
+    private TumorDetails createTumorDetails(@NotNull String subject) {
         return ImmutableTumorDetails.builder()
                 .primaryTumorLocation(Strings.EMPTY)
                 .primaryTumorSubLocation(Strings.EMPTY)
                 .primaryTumorType(Strings.EMPTY)
                 .primaryTumorSubType(Strings.EMPTY)
+                .primaryTumorExtraDetails(Strings.EMPTY)
                 .stage(Strings.EMPTY)
                 .hasMeasurableLesionRecist(false)
                 .hasBrainLesions(false)

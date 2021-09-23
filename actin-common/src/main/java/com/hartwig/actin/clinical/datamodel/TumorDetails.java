@@ -23,6 +23,9 @@ public abstract class TumorDetails {
     public abstract String primaryTumorSubType();
 
     @NotNull
+    public abstract String primaryTumorExtraDetails();
+
+    @NotNull
     public abstract Set<String> doids();
 
     @NotNull

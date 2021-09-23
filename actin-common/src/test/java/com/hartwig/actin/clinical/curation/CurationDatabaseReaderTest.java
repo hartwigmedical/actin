@@ -10,8 +10,10 @@ import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -23,7 +25,22 @@ public class CurationDatabaseReaderTest {
     public void canReadFromTestDirectory() throws IOException {
         CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
 
+        assertPrimaryTumorConfigs(database.primaryTumorConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
+    }
+
+    private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> primaryTumorConfigs) {
+        assertEquals(1, primaryTumorConfigs.size());
+
+        PrimaryTumorConfig config = primaryTumorConfigs.get(0);
+        assertEquals("Unknown | Carcinoma", config.input());
+        assertEquals("Unknown", config.primaryTumorLocation());
+        assertEquals("CUP", config.primaryTumorSubLocation());
+        assertEquals("Carcinoma", config.primaryTumorType());
+        assertEquals(Strings.EMPTY, config.primaryTumorSubType());
+        assertEquals(Strings.EMPTY, config.primaryTumorExtraDetails());
+        assertEquals(1, config.doids().size());
+        assertTrue(config.doids().contains("299"));
     }
 
     private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> oncologicalHistoryConfigs) {

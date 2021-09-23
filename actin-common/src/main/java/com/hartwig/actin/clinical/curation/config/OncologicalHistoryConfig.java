@@ -6,9 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class OncologicalHistoryConfig {
+public abstract class OncologicalHistoryConfig implements CurationConfig {
 
     @NotNull
+    @Override
     public abstract String input();
 
     public abstract boolean ignore();
