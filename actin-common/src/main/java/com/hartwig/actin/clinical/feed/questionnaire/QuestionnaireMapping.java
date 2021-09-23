@@ -18,10 +18,14 @@ final class QuestionnaireMapping {
         KEYS_V0.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
         KEYS_V0.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, null);
         KEYS_V0.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, null);
+        KEYS_V0.put(QuestionnaireKey.TUMOR_LOCATION, null);
+        KEYS_V0.put(QuestionnaireKey.TUMOR_TYPE, null);
 
         KEYS_V1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
         KEYS_V1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
+        KEYS_V1.put(QuestionnaireKey.TUMOR_LOCATION, "Tumor location");
+        KEYS_V1.put(QuestionnaireKey.TUMOR_TYPE, "Tumor type");
     }
 
     @NotNull

@@ -10,22 +10,22 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class TumorDetails {
 
-    @NotNull
+    @Nullable
     public abstract String primaryTumorLocation();
 
-    @NotNull
+    @Nullable
     public abstract String primaryTumorSubLocation();
 
-    @NotNull
+    @Nullable
     public abstract String primaryTumorType();
 
-    @NotNull
+    @Nullable
     public abstract String primaryTumorSubType();
 
-    @NotNull
+    @Nullable
     public abstract String primaryTumorExtraDetails();
 
-    @NotNull
+    @Nullable
     public abstract Set<String> doids();
 
     @NotNull

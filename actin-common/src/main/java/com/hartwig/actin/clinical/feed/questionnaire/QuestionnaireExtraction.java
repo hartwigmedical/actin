@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +23,17 @@ public final class QuestionnaireExtraction {
         return entry.itemAnswerValueValueString().contains(ACTIN_QUESTIONNAIRE_KEYWORD);
     }
 
-    @NotNull
+    @Nullable
+    public static String tumorLocation(@NotNull QuestionnaireEntry questionnaire) {
+        return lookup(questionnaire, QuestionnaireKey.TUMOR_LOCATION);
+    }
+
+    @Nullable
+    public static String tumorType(@NotNull QuestionnaireEntry questionnaire) {
+        return lookup(questionnaire, QuestionnaireKey.TUMOR_TYPE);
+    }
+
+    @Nullable
     public static List<String> treatmentHistoriesCurrentTumor(@NotNull QuestionnaireEntry questionnaire) {
         return toList(lookup(questionnaire, QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR));
     }
@@ -39,8 +48,12 @@ public final class QuestionnaireExtraction {
         return lookup(questionnaire, QuestionnaireKey.NON_ONCOLOGICAL_HISTORY);
     }
 
-    @NotNull
+    @Nullable
     private static List<String> toList(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+
         String[] split;
         if (value.contains(VALUE_LIST_SEPARATOR_1)) {
             split = value.split(VALUE_LIST_SEPARATOR_1);
@@ -63,13 +76,13 @@ public final class QuestionnaireExtraction {
         return trimmed;
     }
 
-    @NotNull
+    @Nullable
     private static String lookup(@NotNull QuestionnaireEntry questionnaire, @NotNull QuestionnaireKey key) {
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(questionnaire);
 
         String keyValue = mapping.get(key);
         if (keyValue == null) {
-            return Strings.EMPTY;
+            return null;
         } else {
             String[] lines = questionnaire.itemAnswerValueValueString().split("\n");
 

@@ -4,9 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestCurationFactory {
@@ -21,7 +24,27 @@ public final class TestCurationFactory {
 
     @NotNull
     private static CurationDatabase createTestCurationDatabase() {
-        return ImmutableCurationDatabase.builder().oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs()).build();
+        return ImmutableCurationDatabase.builder()
+                .primaryTumorConfigs(createTestPrimaryTumorConfigs())
+                .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
+                .build();
+    }
+
+    @NotNull
+    private static List<PrimaryTumorConfig> createTestPrimaryTumorConfigs() {
+        List<PrimaryTumorConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutablePrimaryTumorConfig.builder()
+                .input("Unknown | Carcinoma")
+                .primaryTumorLocation("Unknown")
+                .primaryTumorSubLocation("CUP")
+                .primaryTumorType("Carcinoma")
+                .primaryTumorSubType(Strings.EMPTY)
+                .primaryTumorExtraDetails(Strings.EMPTY)
+                .addDoids("299")
+                .build());
+
+        return configs;
     }
 
     @NotNull
