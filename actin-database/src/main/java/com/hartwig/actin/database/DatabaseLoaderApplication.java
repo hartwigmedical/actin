@@ -49,7 +49,6 @@ public class DatabaseLoaderApplication {
         String feedDirectory = config.clinicalFeedDirectory();
         String curationDirectory = config.clinicalCurationDirectory();
 
-        LOGGER.info("Creating clinical model from {}", feedDirectory);
         ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
 
         DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());
