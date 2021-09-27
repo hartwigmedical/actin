@@ -54,6 +54,7 @@ final class QuestionnaireUtil {
             case "n.v.t.":
             case "nvt":
             case "nvt.":
+            case "n.v.t":
             case "unknown":
             case "-":
                 return null;
