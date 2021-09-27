@@ -20,6 +20,7 @@ public class QuestionnaireUtilTest {
         assertEquals(TumorStage.IV, QuestionnaireUtil.parseStage("4"));
 
         assertNull(QuestionnaireUtil.parseStage(null));
+        assertNull(QuestionnaireUtil.parseStage(Strings.EMPTY));
         assertNull(QuestionnaireUtil.parseStage("not a stage"));
     }
 

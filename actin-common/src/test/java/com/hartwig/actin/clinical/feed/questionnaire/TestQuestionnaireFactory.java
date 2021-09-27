@@ -48,13 +48,12 @@ public final class TestQuestionnaireFactory {
                 + "Treatment history current tumor:Resection 2020, no systemic treatment\n"
                 + "Other oncological history(e.g.second primary):NA\n" + "Non-oncological history: Migraine\n" + "\n" + "Tumor details\n"
                 + "Tumor location: lung\n" + "Tumor type: small-cell carcinoma\n" + "Biopsy location: liver\n"
-                + "Stage(I / II / III / IV):IV\n" + "CNS lesions yes / no / unknown:NO\n" + "Active? : \n" + "Symptomatic? : \n"
-                + "Brain lesions yes / no / unknown:Unknown\n" + "Active? : \n" + "Symptomatic? : \n"
-                + "Bone lesions yes / no / unknown:NO\n" + "Liver lesions yes / no / unknown:NO\n"
-                + "Biopsy amenable yes / no / unknown:UNKNOWN\n" + "Measurable disease (RECIST) yes / no / unknown:YES\n" + "\n"
-                + "Clinical information\n" + "WHO status:0\n" + "Unresolved toxicities grade =>2:NA\n"
-                + "Significant current infection: NO\n" + "Significant aberration on latest ECG: UNKNOWN\n"
-                + "Other(e.g.pleural effusion):chronic diarrhea (likely cancer related)";
+                + "Stage(I / II / III / IV):IV\n" + "CNS lesions yes/no/unknown:NO\n" + "Active? : \n" + "Symptomatic? : \n"
+                + "Brain lesions yes/no/unknown:Unknown\n" + "Active? : \n" + "Symptomatic? : \n" + "Bone lesions yes/no/unknown:NO\n"
+                + "Liver lesions yes/no/unknown:NO\n" + "Biopsy amenable yes/no/unknown:UNKNOWN\n"
+                + "Measurable disease (RECIST) yes/no/unknown:YES\n" + "\n" + "Clinical information\n" + "WHO status:0\n"
+                + "Unresolved toxicities grade =>2:NA\n" + "Significant current infection: NO\n"
+                + "Significant aberration on latest ECG: UNKNOWN\n" + "Other(e.g.pleural effusion):chronic diarrhea (likely cancer related)";
     }
 
     @NotNull

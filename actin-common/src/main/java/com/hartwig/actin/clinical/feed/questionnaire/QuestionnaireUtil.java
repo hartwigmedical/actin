@@ -15,7 +15,7 @@ final class QuestionnaireUtil {
 
     @Nullable
     public static TumorStage parseStage(@Nullable String stage) {
-        if (stage == null) {
+        if (stage == null || stage.isEmpty()) {
             return null;
         }
 

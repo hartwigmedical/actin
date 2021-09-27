@@ -41,11 +41,11 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Tumor location");
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Tumor type");
         KEYS_V1_0.put(QuestionnaireKey.STAGE, "Stage");
-        KEYS_V1_0.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST) yes / no / unknown");
-        KEYS_V1_0.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes / no / unknown");
-        KEYS_V1_0.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes / no / unknown");
-        KEYS_V1_0.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes / no / unknown");
-        KEYS_V1_0.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes / no / unknown");
+        KEYS_V1_0.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST) yes/no/unknown");
+        KEYS_V1_0.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes/no/unknown");
+        KEYS_V1_0.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
+        KEYS_V1_0.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
+        KEYS_V1_0.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
         KEYS_V1_0.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_0.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");

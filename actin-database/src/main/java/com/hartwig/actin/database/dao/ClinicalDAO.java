@@ -79,7 +79,7 @@ class ClinicalDAO {
                         tumor.primaryTumorSubType(),
                         tumor.primaryTumorExtraDetails(),
                         DataUtil.concat(tumor.doids()),
-                        tumor.stage().display(),
+                        tumor.stage() != null ? tumor.stage().display() : null,
                         DataUtil.toByte(tumor.hasMeasurableLesionRecist()),
                         DataUtil.toByte(tumor.hasBrainLesions()),
                         DataUtil.toByte(tumor.hasActiveBrainLesions()),
