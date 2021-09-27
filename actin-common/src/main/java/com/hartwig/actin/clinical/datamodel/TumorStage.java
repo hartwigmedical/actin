@@ -2,14 +2,18 @@ package com.hartwig.actin.clinical.datamodel;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum Sex {
-    MALE("Male"),
-    FEMALE("Female");
+public enum TumorStage {
+    I("I"),
+    II("II"),
+    IIB("IIb"),
+    III("III"),
+    IIIC("IIIc"),
+    IV("IV");
 
     @NotNull
     private final String display;
 
-    Sex(@NotNull final String display) {
+    TumorStage(@NotNull final String display) {
         this.display = display;
     }
 

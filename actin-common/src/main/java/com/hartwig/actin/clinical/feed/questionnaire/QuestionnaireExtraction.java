@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,68 @@ public final class QuestionnaireExtraction {
     @Nullable
     public static String tumorType(@NotNull QuestionnaireEntry questionnaire) {
         return lookup(questionnaire, QuestionnaireKey.PRIMARY_TUMOR_TYPE);
+    }
+
+    @Nullable
+    public static TumorStage stage(@NotNull QuestionnaireEntry questionnaire) {
+        return QuestionnaireUtil.parseStage(lookup(questionnaire, QuestionnaireKey.STAGE));
+    }
+
+    @Nullable
+    public static Boolean hasMeasurableLesionRecist(@NotNull QuestionnaireEntry questionnaire) {
+        return QuestionnaireUtil.parseOption(lookup(questionnaire, QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST));
+    }
+
+    @Nullable
+    public static Boolean hasBrainLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return QuestionnaireUtil.parseOption(lookup(questionnaire, QuestionnaireKey.HAS_BRAIN_LESIONS));
+    }
+
+    @Nullable
+    public static Boolean hasActiveBrainLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return null;
+    }
+
+    @Nullable
+    public static Boolean hasSymptomaticBrainLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return null;
+    }
+
+    @Nullable
+    public static Boolean hasCnsLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return QuestionnaireUtil.parseOption(lookup(questionnaire, QuestionnaireKey.HAS_CNS_LESIONS));
+    }
+
+    @Nullable
+    public static Boolean hasActiveCnsLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return null;
+    }
+
+    @Nullable
+    public static Boolean hasSymptomaticCnsLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return null;
+    }
+
+    @Nullable
+    public static Boolean hasBoneLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return QuestionnaireUtil.parseOption(lookup(questionnaire, QuestionnaireKey.HAS_BONE_LESIONS));
+    }
+
+    @Nullable
+    public static Boolean hasLiverLesions(@NotNull QuestionnaireEntry questionnaire) {
+        return QuestionnaireUtil.parseOption(lookup(questionnaire, QuestionnaireKey.HAS_LIVER_LESIONS));
+    }
+
+    @Nullable
+    public static Boolean hasOtherLesions(@NotNull QuestionnaireEntry questionnaire) {
+        // TODO Coming in later version.
+        return null;
+    }
+
+    @Nullable
+    public static String otherLesions(@NotNull QuestionnaireEntry questionnaire) {
+        // TODO Coming in later version.
+        return null;
     }
 
     @Nullable

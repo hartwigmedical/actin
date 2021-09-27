@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.feed.patient;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedUtil;
 
@@ -23,7 +22,7 @@ public class PatientEntryCreator implements FeedEntryCreator<PatientEntry> {
                 .id(parts[fieldIndexMap.get("ID")])
                 .subject(parts[fieldIndexMap.get("subject")])
                 .birthYear(Integer.parseInt(parts[fieldIndexMap.get("birth_year")]))
-                .sex(Sex.parseSex(parts[fieldIndexMap.get("gender")]))
+                .sex(FeedUtil.parseSex(parts[fieldIndexMap.get("gender")]))
                 .periodStart(FeedUtil.parseDate(parts[fieldIndexMap.get("period_start")], FORMAT))
                 .periodEnd(FeedUtil.parseOptionalDate(parts[fieldIndexMap.get("period_end")], FORMAT))
                 .build();

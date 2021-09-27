@@ -29,7 +29,7 @@ public abstract class TumorDetails {
     public abstract Set<String> doids();
 
     @Nullable
-    public abstract String stage();
+    public abstract TumorStage stage();
 
     @Nullable
     public abstract Boolean hasMeasurableLesionRecist();

@@ -3,12 +3,25 @@ package com.hartwig.actin.clinical.feed;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import com.hartwig.actin.clinical.datamodel.Sex;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class FeedUtil {
 
     private FeedUtil() {
+    }
+
+    @NotNull
+    public static Sex parseSex(@NotNull String sex) {
+        if (sex.equalsIgnoreCase("male")) {
+            return Sex.MALE;
+        } else if (sex.equalsIgnoreCase("female")) {
+            return Sex.FEMALE;
+        }
+
+        throw new IllegalArgumentException("Could not resolve sex: " + sex);
     }
 
     @Nullable

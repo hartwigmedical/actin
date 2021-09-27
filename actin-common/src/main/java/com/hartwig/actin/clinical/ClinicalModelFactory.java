@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -81,10 +82,28 @@ public class ClinicalModelFactory {
 
     @NotNull
     private TumorDetails createTumorDetails(@Nullable QuestionnaireEntry questionnaire) {
-        String tumorLocation = questionnaire != null ? QuestionnaireExtraction.tumorLocation(questionnaire) : null;
-        String tumorType = questionnaire != null ? QuestionnaireExtraction.tumorType(questionnaire) : null;
+        if (questionnaire == null) {
+            return ImmutableTumorDetails.builder().build();
+        }
 
-        return curation.toTumorDetails(tumorLocation, tumorType);
+        String tumorLocation = QuestionnaireExtraction.tumorLocation(questionnaire);
+        String tumorType = QuestionnaireExtraction.tumorType(questionnaire);
+
+        return ImmutableTumorDetails.builder()
+                .from(curation.toTumorDetails(tumorLocation, tumorType))
+                .stage(QuestionnaireExtraction.stage(questionnaire))
+                .hasMeasurableLesionRecist(QuestionnaireExtraction.hasMeasurableLesionRecist(questionnaire))
+                .hasBrainLesions(QuestionnaireExtraction.hasBrainLesions(questionnaire))
+                .hasActiveBrainLesions(QuestionnaireExtraction.hasActiveBrainLesions(questionnaire))
+                .hasSymptomaticBrainLesions(QuestionnaireExtraction.hasSymptomaticBrainLesions(questionnaire))
+                .hasCnsLesions(QuestionnaireExtraction.hasCnsLesions(questionnaire))
+                .hasActiveCnsLesions(QuestionnaireExtraction.hasActiveCnsLesions(questionnaire))
+                .hasSymptomaticCnsLesions(QuestionnaireExtraction.hasSymptomaticCnsLesions(questionnaire))
+                .hasBoneLesions(QuestionnaireExtraction.hasBoneLesions(questionnaire))
+                .hasLiverLesions(QuestionnaireExtraction.hasLiverLesions(questionnaire))
+                .hasOtherLesions(QuestionnaireExtraction.hasOtherLesions(questionnaire))
+                .otherLesions(QuestionnaireExtraction.otherLesions(questionnaire))
+                .build();
     }
 
     @NotNull

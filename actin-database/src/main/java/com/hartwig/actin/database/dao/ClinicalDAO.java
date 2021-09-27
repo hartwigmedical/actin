@@ -47,7 +47,7 @@ class ClinicalDAO {
 
     private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
         context.insertInto(PATIENT, PATIENT.SAMPLEID, PATIENT.BIRTHYEAR, PATIENT.SEX, PATIENT.REGISTRATIONDATE, PATIENT.QUESTIONNAIREDATE)
-                .values(sampleId, patient.birthYear(), patient.sex().toString(), patient.registrationDate(), patient.questionnaireDate())
+                .values(sampleId, patient.birthYear(), patient.sex().display(), patient.registrationDate(), patient.questionnaireDate())
                 .execute();
     }
 
@@ -79,7 +79,7 @@ class ClinicalDAO {
                         tumor.primaryTumorSubType(),
                         tumor.primaryTumorExtraDetails(),
                         DataUtil.concat(tumor.doids()),
-                        tumor.stage(),
+                        tumor.stage().display(),
                         DataUtil.toByte(tumor.hasMeasurableLesionRecist()),
                         DataUtil.toByte(tumor.hasBrainLesions()),
                         DataUtil.toByte(tumor.hasActiveBrainLesions()),
