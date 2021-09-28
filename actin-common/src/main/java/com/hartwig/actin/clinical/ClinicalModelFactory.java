@@ -130,12 +130,15 @@ public class ClinicalModelFactory {
 
     @NotNull
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
+        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         if (questionnaire != null) {
             List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
-            return curation.curatePriorTumorTreatments(treatmentHistories);
-        } else {
-            return Lists.newArrayList();
+            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistories));
+
+            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistories();
+            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologyHistory));
         }
+        return priorTumorTreatments;
     }
 
     @NotNull

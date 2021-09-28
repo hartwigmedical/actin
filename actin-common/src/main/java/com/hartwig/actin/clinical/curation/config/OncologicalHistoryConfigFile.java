@@ -12,9 +12,13 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.util.FileUtil;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class OncologicalHistoryConfigFile {
+
+    private static final Logger LOGGER = LogManager.getLogger(OncologicalHistoryConfigFile.class);
 
     private static final String DELIMITER = "\t";
 
@@ -45,7 +49,17 @@ public final class OncologicalHistoryConfigFile {
 
     @NotNull
     private static Object curateObject(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
-        boolean isSecondPrimary = !parts[fieldIndexMap.get("isSecondPrimary")].isEmpty();
+        String secondPrimaryField = parts[fieldIndexMap.get("isSecondPrimary")];
+        boolean isSecondPrimary;
+        if (secondPrimaryField.equals("1")) {
+            isSecondPrimary = true;
+        } else {
+            isSecondPrimary = false;
+            if (!secondPrimaryField.equals("0")) {
+                LOGGER.warn("Suspicious value detected for isSecondPrimary in oncological history config: '{}'", secondPrimaryField);
+            }
+        }
+
         if (isSecondPrimary) {
             return ImmutablePriorSecondPrimary.builder()
                     .tumorLocation(parts[fieldIndexMap.get("tumorLocation")])
@@ -53,7 +67,7 @@ public final class OncologicalHistoryConfigFile {
                     .tumorType(parts[fieldIndexMap.get("tumorType")])
                     .tumorSubType(parts[fieldIndexMap.get("tumorSubType")])
                     .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
-                    .year(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("year")]))
+                    .year(CurationUtil.parseInteger(parts[fieldIndexMap.get("year")]))
                     .isSecondPrimaryCured(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSecondPrimaryCured")]))
                     .curedDate(CurationUtil.parseOptionalDate(parts[fieldIndexMap.get("curedDate")]))
                     .build();

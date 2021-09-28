@@ -50,6 +50,10 @@ public final class CurationUtil {
 
     @Nullable
     public static Integer parseOptionalInteger(@NotNull String integer) {
-        return !integer.isEmpty() ? Integer.parseInt(integer) : null;
+        return !integer.isEmpty() ? parseInteger(integer) : null;
+    }
+
+    public static int parseInteger(@NotNull String integer) {
+        return Integer.parseInt(integer);
     }
 }
