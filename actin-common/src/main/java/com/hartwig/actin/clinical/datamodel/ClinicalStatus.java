@@ -8,18 +8,21 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class ClinicalStatus {
 
-    public abstract int who();
+    @Nullable
+    public abstract Integer who();
 
-    public abstract boolean hasCurrentInfection();
+    @Nullable
+    public abstract Boolean hasCurrentInfection();
 
     @Nullable
     public abstract String infectionDescription();
 
-    public abstract boolean hasSigAberrationLatestEcg();
+    @Nullable
+    public abstract Boolean hasSigAberrationLatestEcg();
 
     @Nullable
     public abstract String ecgAberrationDescription();
 
-    @NotNull
+    @Nullable
     public abstract String cancerRelatedComplication();
 }

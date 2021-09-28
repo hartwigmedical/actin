@@ -32,7 +32,7 @@ final class QuestionnaireMapping {
         KEYS_V1_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
-        KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
+        KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_1.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
 
         KEYS_V1_0.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
@@ -50,7 +50,7 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_0.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
-        KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_CURRENT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
+        KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_0.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
 
         KEYS_V0_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
@@ -65,10 +65,10 @@ final class QuestionnaireMapping {
         KEYS_V0_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.OTHER_LESIONS, null);
-        KEYS_V0_1.put(QuestionnaireKey.WHO_STATUS, null);
+        KEYS_V0_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V0_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, null);
-        KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, null);
-        KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_ABERRATION_LATEST_ECG, null);
+        KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
+        KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V0_1.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, null);
     }
 

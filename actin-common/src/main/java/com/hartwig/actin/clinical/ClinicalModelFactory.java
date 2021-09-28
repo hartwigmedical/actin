@@ -63,7 +63,7 @@ public class ClinicalModelFactory {
                     .sampleId(sampleId)
                     .patient(extractPatientDetails(subject, entry))
                     .tumor(createTumorDetails(questionnaire))
-                    .clinicalStatus(extractClinicalStatus())
+                    .clinicalStatus(extractClinicalStatus(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .build());
         }
@@ -115,7 +115,7 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private static ClinicalStatus extractClinicalStatus() {
+    private ClinicalStatus extractClinicalStatus(@Nullable Questionnaire questionnaire) {
         return ImmutableClinicalStatus.builder()
                 .who(0)
                 .hasCurrentInfection(false)

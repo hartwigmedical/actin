@@ -45,17 +45,20 @@ public final class QuestionnaireExtraction {
                 .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
                 .stage(toStage(value(entry, mapping.get(QuestionnaireKey.STAGE))))
                 .treatmentHistoriesCurrentTumor(toList(value(entry, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
-                .hasMeasurableLesionRecist(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST))))
-                .hasBrainLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
-                .hasActiveBrainLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))
-                .hasSymptomaticBrainLesions(toBoolean(value(entry,
+                .hasMeasurableLesionRecist(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST))))
+                .hasBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
+                .hasActiveBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))
+                .hasSymptomaticBrainLesions(toOption(value(entry,
                         mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS),
                         SYMPTOMATIC_LINE_OFFSET)))
-                .hasCnsLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS))))
-                .hasActiveCnsLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)))
-                .hasSymptomaticCnsLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
-                .hasBoneLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
-                .hasLiverLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
+                .hasCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS))))
+                .hasActiveCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)))
+                .hasSymptomaticCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
+                .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
+                .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
+                .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
+                .significantCurrentInfection(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION)))
+                .significantAberrationLatestECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG)))
                 .build();
     }
 
@@ -89,7 +92,7 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     @VisibleForTesting
-    static Boolean toBoolean(@Nullable String option) {
+    static Boolean toOption(@Nullable String option) {
         if (option == null || option.isEmpty()) {
             return null;
         }
@@ -110,6 +113,22 @@ public final class QuestionnaireExtraction {
                 LOGGER.warn("Unrecognized questionnaire option: '{}'", option);
                 return null;
             }
+        }
+    }
+
+    @Nullable
+    @VisibleForTesting
+    static Integer toWHO(@Nullable String integer) {
+        if (integer == null || integer.isEmpty()) {
+            return null;
+        }
+
+        int value = Integer.parseInt(integer);
+        if (value >= 0 && value <= 4) {
+            return value;
+        } else {
+            LOGGER.warn("Unrecognized WHO status: '{}'", value);
+            return null;
         }
     }
 

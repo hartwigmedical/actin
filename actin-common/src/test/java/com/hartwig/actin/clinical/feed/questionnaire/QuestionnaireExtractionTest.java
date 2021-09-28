@@ -46,6 +46,9 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
+        assertEquals(1, (int) questionnaire.whoStatus());
+        assertEquals("NO", questionnaire.significantCurrentInfection());
+        assertEquals("NA", questionnaire.significantAberrationLatestECG());
     }
 
     @Test
@@ -71,6 +74,9 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
+        assertEquals(0, (int) questionnaire.whoStatus());
+        assertEquals("NO", questionnaire.significantCurrentInfection());
+        assertEquals("UNKNOWN", questionnaire.significantAberrationLatestECG());
     }
 
     @Test
@@ -93,6 +99,9 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertTrue(questionnaire.hasBoneLesions());
         assertTrue(questionnaire.hasLiverLesions());
+        assertEquals(1, (int) questionnaire.whoStatus());
+        assertEquals("No", questionnaire.significantCurrentInfection());
+        assertEquals("No", questionnaire.significantAberrationLatestECG());
     }
 
     @Test
@@ -114,14 +123,24 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void canParseOption() {
-        assertTrue(QuestionnaireExtraction.toBoolean("YES"));
-        assertFalse(QuestionnaireExtraction.toBoolean("no"));
+        assertTrue(QuestionnaireExtraction.toOption("YES"));
+        assertFalse(QuestionnaireExtraction.toOption("no"));
 
-        assertNull(QuestionnaireExtraction.toBoolean(null));
-        assertNull(QuestionnaireExtraction.toBoolean(Strings.EMPTY));
-        assertNull(QuestionnaireExtraction.toBoolean("-"));
-        assertNull(QuestionnaireExtraction.toBoolean("nvt"));
-        assertNull(QuestionnaireExtraction.toBoolean("not an option"));
+        assertNull(QuestionnaireExtraction.toOption(null));
+        assertNull(QuestionnaireExtraction.toOption(Strings.EMPTY));
+        assertNull(QuestionnaireExtraction.toOption("-"));
+        assertNull(QuestionnaireExtraction.toOption("nvt"));
+        assertNull(QuestionnaireExtraction.toOption("not an option"));
+    }
+
+    @Test
+    public void canParseWHO() {
+        assertEquals(1, (int) QuestionnaireExtraction.toWHO("1"));
+
+        assertNull(QuestionnaireExtraction.toWHO(null));
+        assertNull(QuestionnaireExtraction.toWHO(Strings.EMPTY));
+        assertNull(QuestionnaireExtraction.toWHO("-1"));
+        assertNull(QuestionnaireExtraction.toWHO("5"));
     }
 
     @NotNull
