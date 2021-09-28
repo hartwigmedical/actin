@@ -21,7 +21,6 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,11 +115,14 @@ public class ClinicalModelFactory {
 
     @NotNull
     private ClinicalStatus extractClinicalStatus(@Nullable Questionnaire questionnaire) {
+        if (questionnaire == null) {
+            return ImmutableClinicalStatus.builder().build();
+
+        }
         return ImmutableClinicalStatus.builder()
-                .who(0)
-                .hasCurrentInfection(false)
-                .hasSigAberrationLatestEcg(false)
-                .cancerRelatedComplication(Strings.EMPTY)
+                .who(questionnaire.whoStatus())
+                .hasCurrentInfection(questionnaire.hasSignificantCurrentInfection())
+                .ecgAberrationDescription(questionnaire.significantAberrationLatestECG())
                 .build();
     }
 
