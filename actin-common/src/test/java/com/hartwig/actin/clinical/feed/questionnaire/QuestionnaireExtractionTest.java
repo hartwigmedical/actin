@@ -112,40 +112,6 @@ public class QuestionnaireExtractionTest {
         assertNull(QuestionnaireExtraction.extract(null));
     }
 
-    @Test
-    public void canParseStage() {
-        assertEquals(TumorStage.IIB, QuestionnaireExtraction.toStage("IIb"));
-        assertEquals(TumorStage.II, QuestionnaireExtraction.toStage("2"));
-        assertEquals(TumorStage.III, QuestionnaireExtraction.toStage("3"));
-        assertEquals(TumorStage.IV, QuestionnaireExtraction.toStage("4"));
-
-        assertNull(QuestionnaireExtraction.toStage(null));
-        assertNull(QuestionnaireExtraction.toStage(Strings.EMPTY));
-        assertNull(QuestionnaireExtraction.toStage("not a stage"));
-    }
-
-    @Test
-    public void canParseOption() {
-        assertTrue(QuestionnaireExtraction.toOption("YES"));
-        assertFalse(QuestionnaireExtraction.toOption("no"));
-
-        assertNull(QuestionnaireExtraction.toOption(null));
-        assertNull(QuestionnaireExtraction.toOption(Strings.EMPTY));
-        assertNull(QuestionnaireExtraction.toOption("-"));
-        assertNull(QuestionnaireExtraction.toOption("nvt"));
-        assertNull(QuestionnaireExtraction.toOption("not an option"));
-    }
-
-    @Test
-    public void canParseWHO() {
-        assertEquals(1, (int) QuestionnaireExtraction.toWHO("1"));
-
-        assertNull(QuestionnaireExtraction.toWHO(null));
-        assertNull(QuestionnaireExtraction.toWHO(Strings.EMPTY));
-        assertNull(QuestionnaireExtraction.toWHO("-1"));
-        assertNull(QuestionnaireExtraction.toWHO("5"));
-    }
-
     @NotNull
     private static QuestionnaireEntry entry(@NotNull String questionnaire) {
         return ImmutableQuestionnaireEntry.builder()

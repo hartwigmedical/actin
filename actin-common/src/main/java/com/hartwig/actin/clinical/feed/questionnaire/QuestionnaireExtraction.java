@@ -1,21 +1,19 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
+import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toOption;
+import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toStage;
+import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toWHO;
+
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class QuestionnaireExtraction {
-
-    private static final Logger LOGGER = LogManager.getLogger(QuestionnaireExtraction.class);
 
     private static final String KEY_VALUE_SEPARATOR = ":";
     private static final String VALUE_LIST_SEPARATOR_1 = ",";
@@ -44,7 +42,7 @@ public final class QuestionnaireExtraction {
         String significantAberrationLatestECG = value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG));
 
         Boolean hasSignificantAberrationLatestECG = significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty();
-        if (isConfiguredOption(significantAberrationLatestECG)) {
+        if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
             hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
             if (hasSignificantAberrationLatestECG == null) {
                 significantAberrationLatestECG = null;
@@ -73,60 +71,6 @@ public final class QuestionnaireExtraction {
                 .hasSignificantAberrationLatestECG(hasSignificantAberrationLatestECG)
                 .significantAberrationLatestECG(significantAberrationLatestECG)
                 .build();
-    }
-
-    @Nullable
-    @VisibleForTesting
-    static TumorStage toStage(@Nullable String stage) {
-        if (stage == null || stage.isEmpty()) {
-            return null;
-        }
-
-        if (!QuestionnaireConstants.STAGE_MAPPING.containsKey(stage)) {
-            LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage);
-            return null;
-        }
-
-        return QuestionnaireConstants.STAGE_MAPPING.get(stage);
-    }
-
-    @Nullable
-    @VisibleForTesting
-    static Boolean toOption(@Nullable String option) {
-        if (option == null || option.isEmpty()) {
-            return null;
-        }
-
-        if (!isConfiguredOption(option)) {
-            LOGGER.warn("Unrecognized questionnaire option: '{}'", option);
-            return null;
-        }
-
-        return QuestionnaireConstants.OPTION_MAPPING.get(option);
-    }
-
-    private static boolean isConfiguredOption(@Nullable String option) {
-        if (option == null) {
-            return false;
-        }
-
-        return QuestionnaireConstants.OPTION_MAPPING.containsKey(option);
-    }
-
-    @Nullable
-    @VisibleForTesting
-    static Integer toWHO(@Nullable String integer) {
-        if (integer == null || integer.isEmpty()) {
-            return null;
-        }
-
-        int value = Integer.parseInt(integer);
-        if (value >= 0 && value <= 4) {
-            return value;
-        } else {
-            LOGGER.warn("Unrecognized WHO status: '{}'", value);
-            return null;
-        }
     }
 
     @Nullable
@@ -176,7 +120,7 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        String[] lines = read(entry);
+        String[] lines = QuestionnaireReader.read(entry);
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains(key)) {
@@ -185,22 +129,6 @@ public final class QuestionnaireExtraction {
         }
 
         throw new IllegalStateException("Could not find key " + key + " in questionnaire " + entry);
-    }
-
-    @NotNull
-    private static String[] read(@NotNull QuestionnaireEntry entry) {
-        String[] lines = entry.itemAnswerValueValueString().split("\n");
-        String[] cleaned = new String[lines.length];
-        for (int i = 0; i < lines.length; i++) {
-            String clean = lines[i];
-            for (String term : QuestionnaireConstants.TERMS_TO_CLEAN) {
-                while (clean.contains(term)) {
-                    clean = clean.replace(term, Strings.EMPTY);
-                }
-            }
-            cleaned[i] = clean;
-        }
-        return cleaned;
     }
 
     private static class LookupResult {

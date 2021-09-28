@@ -9,7 +9,7 @@ enum QuestionnaireVersion {
 
     @NotNull
     public static QuestionnaireVersion version(@NotNull QuestionnaireEntry questionnaire) {
-        String[] lines = questionnaire.itemAnswerValueValueString().split("\n");
+        String[] lines = QuestionnaireReader.read(questionnaire);
 
         for (String line : lines) {
             switch (line) {
