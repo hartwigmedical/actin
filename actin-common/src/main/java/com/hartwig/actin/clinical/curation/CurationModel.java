@@ -1,12 +1,19 @@
 package com.hartwig.actin.clinical.curation;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
@@ -24,6 +31,8 @@ public class CurationModel {
 
     @NotNull
     private final CurationDatabase database;
+    @NotNull
+    private final Multimap<Class<? extends CurationConfig>, String> evaluatedInputs = HashMultimap.create();
 
     @NotNull
     public static CurationModel fromCurationDirectory(@NotNull String clinicalCurationDirectory) throws IOException {
@@ -42,7 +51,7 @@ public class CurationModel {
             String inputPrimaryTumor = inputTumorLocation + " | " + inputTumorType;
             primaryTumorConfig = find(database.primaryTumorConfigs(), inputPrimaryTumor);
             if (primaryTumorConfig == null) {
-                LOGGER.warn("  Could not find primary tumor config for input '{}'", inputPrimaryTumor);
+                LOGGER.warn(" Could not find primary tumor config for input '{}'", inputPrimaryTumor);
             }
         }
 
@@ -62,7 +71,7 @@ public class CurationModel {
         for (String treatmentHistory : treatmentHistories) {
             OncologicalHistoryConfig config = find(database.oncologicalHistoryConfigs(), treatmentHistory);
             if (config == null) {
-                LOGGER.warn("  Could not oncological history config for input '{}'", treatmentHistory);
+                LOGGER.warn(" Could not oncological history config for input '{}'", treatmentHistory);
             } else if (!config.ignore()) {
                 if (config.curatedObject() instanceof PriorTumorTreatment) {
                     priorTumorTreatments.add((PriorTumorTreatment) config.curatedObject());
@@ -84,11 +93,39 @@ public class CurationModel {
         return config != null ? config.interpretation() : inputAberration;
     }
 
+    public void evaluate() {
+        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedInputs.asMap().entrySet()) {
+            List<? extends CurationConfig> configs = configsForClass(entry.getKey());
+            Collection<String> evaluated = entry.getValue();
+            for (CurationConfig config : configs) {
+                if (!evaluated.contains(config.input())) {
+                    LOGGER.warn(" Curation key '{}' not used for class {}", config.input(), entry.getKey().getSimpleName());
+                }
+            }
+        }
+    }
+
+    @NotNull
+    private List<? extends CurationConfig> configsForClass(@NotNull Class<? extends CurationConfig> classToLookUp) {
+        if (classToLookUp == ImmutableECGConfig.class) {
+            return database.ecgConfigs();
+        } else if (classToLookUp == ImmutableOncologicalHistoryConfig.class) {
+            return database.oncologicalHistoryConfigs();
+        } else if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
+            return database.primaryTumorConfigs();
+        }
+
+        throw new IllegalStateException("Class not found in curation database: " + classToLookUp);
+    }
+
     @Nullable
-    private static <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
-        for (T config : configs) {
-            if (config.input().equals(input)) {
-                return config;
+    private <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
+        if (!configs.isEmpty()) {
+            evaluatedInputs.put(configs.get(0).getClass(), input);
+            for (T config : configs) {
+                if (config.input().equals(input)) {
+                    return config;
+                }
             }
         }
         return null;

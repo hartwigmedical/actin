@@ -67,6 +67,9 @@ public class ClinicalModelFactory {
                     .build());
         }
 
+        LOGGER.info("Evaluating curation database");
+        curation.evaluate();
+
         return new ClinicalModel(records);
     }
 

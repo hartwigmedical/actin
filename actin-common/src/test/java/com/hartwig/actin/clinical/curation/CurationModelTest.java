@@ -32,6 +32,8 @@ public class CurationModelTest {
 
         TumorDetails missing = model.toTumorDetails("Does not", "Exist");
         assertNull(missing.primaryTumorLocation());
+
+        model.evaluate();
     }
 
     @Test
@@ -43,5 +45,18 @@ public class CurationModelTest {
 
         assertEquals(1, priorTreatments.size());
         assertEquals("Primary Resection", priorTreatments.get(0).surgeryType());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateECGAberrations() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals("Cleaned aberration", model.curateAberrationECG("Weird aberration"));
+        assertEquals("No curation needed", model.curateAberrationECG("No curation needed"));
+        assertNull(model.curateAberrationECG(null));
+
+        model.evaluate();
     }
 }
