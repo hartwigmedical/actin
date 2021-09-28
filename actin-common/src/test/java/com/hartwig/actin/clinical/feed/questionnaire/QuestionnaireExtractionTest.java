@@ -108,8 +108,9 @@ public class QuestionnaireExtractionTest {
     }
 
     @Test
-    public void canExtractFromMissingEntry() {
+    public void canExtractFromMissingOrInvalidEntry() {
         assertNull(QuestionnaireExtraction.extract(null));
+        assertNull(QuestionnaireExtraction.extract(entry("Does not exist")));
     }
 
     @NotNull

@@ -33,7 +33,7 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     public static Questionnaire extract(@Nullable QuestionnaireEntry entry) {
-        if (entry == null) {
+        if (entry == null || !isActualQuestionnaire(entry)) {
             return null;
         }
 
