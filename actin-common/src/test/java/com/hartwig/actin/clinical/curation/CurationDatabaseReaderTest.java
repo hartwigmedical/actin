@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -27,6 +28,7 @@ public class CurationDatabaseReaderTest {
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
+        assertECGConfigs(database.ecgConfigs());
     }
 
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> primaryTumorConfigs) {
@@ -62,5 +64,13 @@ public class CurationDatabaseReaderTest {
         assertNull(curated.stemCellTransType());
         assertNull(curated.radiotherapyType());
         assertNull(curated.surgeryType());
+    }
+
+    private static void assertECGConfigs(@NotNull List<ECGConfig> ecgConfigs) {
+        assertEquals(1, ecgConfigs.size());
+
+        ECGConfig config = ecgConfigs.get(0);
+        assertEquals("Sinus Tachycardia", config.input());
+        assertEquals("Sinus tachycardia", config.interpretation());
     }
 }

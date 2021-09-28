@@ -123,7 +123,7 @@ public class ClinicalModelFactory {
                 .who(questionnaire.whoStatus())
                 .hasCurrentInfection(questionnaire.hasSignificantCurrentInfection())
                 .hasSigAberrationLatestEcg(questionnaire.hasSignificantAberrationLatestECG())
-                .ecgAberrationDescription(questionnaire.significantAberrationLatestECG())
+                .ecgAberrationDescription(curation.curateAberrationECG(questionnaire.significantAberrationLatestECG()))
                 .build();
     }
 

@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -32,7 +34,24 @@ public final class TestCurationFactory {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
+                .ecgConfigs(createTestECGConfigs())
                 .build();
+    }
+
+    @NotNull
+    private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
+        List<OncologicalHistoryConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Resection 2020")
+                .ignore(false)
+                .curatedObject(ImmutablePriorTumorTreatment.builder()
+                        .name("Resection")
+                        .year(2020).category("Surgery").isSystemic(false).surgeryType("Primary Resection").build()).build());
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
+
+        return configs;
     }
 
     @NotNull
@@ -53,22 +72,10 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
-        List<OncologicalHistoryConfig> configs = Lists.newArrayList();
+    private static List<ECGConfig> createTestECGConfigs() {
+        List<ECGConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Resection 2020")
-                .ignore(false)
-                .curatedObject(ImmutablePriorTumorTreatment.builder()
-                        .name("Resection")
-                        .year(2020)
-                        .category("Surgery")
-                        .isSystemic(false)
-                        .surgeryType("Primary Resection")
-                        .build())
-                .build());
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
+        configs.add(ImmutableECGConfig.builder().input("Weird aberration").interpretation("Cleaned aberration").build());
 
         return configs;
     }

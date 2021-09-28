@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
+import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
@@ -69,6 +70,18 @@ public class CurationModel {
             }
         }
         return priorTumorTreatments;
+    }
+
+    @Nullable
+    public String curateAberrationECG(@Nullable String inputAberration) {
+        if (inputAberration == null) {
+            return null;
+        }
+
+        ECGConfig config = find(database.ecgConfigs(), inputAberration);
+
+        // Assume ECGs can also be pass-through.
+        return config != null ? config.interpretation() : inputAberration;
     }
 
     @Nullable
