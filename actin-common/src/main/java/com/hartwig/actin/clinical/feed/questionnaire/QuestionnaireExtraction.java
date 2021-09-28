@@ -97,13 +97,12 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        String lower = option.toLowerCase();
-        if (!isConfiguredOption(lower)) {
+        if (!isConfiguredOption(option)) {
             LOGGER.warn("Unrecognized questionnaire option: '{}'", option);
             return null;
         }
 
-        return QuestionnaireConstants.OPTION_MAPPING.get(lower);
+        return QuestionnaireConstants.OPTION_MAPPING.get(option);
     }
 
     private static boolean isConfiguredOption(@Nullable String option) {
@@ -111,7 +110,7 @@ public final class QuestionnaireExtraction {
             return false;
         }
 
-        return QuestionnaireConstants.OPTION_MAPPING.containsKey(option.toLowerCase());
+        return QuestionnaireConstants.OPTION_MAPPING.containsKey(option);
     }
 
     @Nullable
@@ -159,25 +158,25 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry questionnaire, @Nullable String key) {
-        return value(questionnaire, key, 0);
+    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key) {
+        return value(entry, key, 0);
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry questionnaire, @Nullable String key, int lineOffset) {
-        LookupResult result = lookup(questionnaire, key);
+    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, int lineOffset) {
+        LookupResult result = lookup(entry, key);
 
         String line = result != null ? result.lines[result.lineIndex + lineOffset] : null;
         return line != null ? line.substring(line.indexOf(KEY_VALUE_SEPARATOR) + 1).trim() : null;
     }
 
     @Nullable
-    private static LookupResult lookup(@NotNull QuestionnaireEntry questionnaire, @Nullable String key) {
+    private static LookupResult lookup(@NotNull QuestionnaireEntry entry, @Nullable String key) {
         if (key == null) {
             return null;
         }
 
-        String[] lines = questionnaire.itemAnswerValueValueString().split("\n");
+        String[] lines = read(entry);
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains(key)) {
@@ -185,7 +184,23 @@ public final class QuestionnaireExtraction {
             }
         }
 
-        throw new IllegalStateException("Could not find key " + key + " in questionnaire " + questionnaire);
+        throw new IllegalStateException("Could not find key " + key + " in questionnaire " + entry);
+    }
+
+    @NotNull
+    private static String[] read(@NotNull QuestionnaireEntry entry) {
+        String[] lines = entry.itemAnswerValueValueString().split("\n");
+        String[] cleaned = new String[lines.length];
+        for (int i = 0; i < lines.length; i++) {
+            String clean = lines[i];
+            for (String term : QuestionnaireConstants.TERMS_TO_CLEAN) {
+                while (clean.contains(term)) {
+                    clean = clean.replace(term, Strings.EMPTY);
+                }
+            }
+            cleaned[i] = clean;
+        }
+        return cleaned;
     }
 
     private static class LookupResult {
