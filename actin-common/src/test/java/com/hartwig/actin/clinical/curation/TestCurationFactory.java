@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 
 import org.apache.logging.log4j.util.Strings;
@@ -47,7 +48,25 @@ public final class TestCurationFactory {
                 .ignore(false)
                 .curatedObject(ImmutablePriorTumorTreatment.builder()
                         .name("Resection")
-                        .year(2020).category("Surgery").isSystemic(false).surgeryType("Primary Resection").build()).build());
+                        .year(2020)
+                        .category("Surgery")
+                        .isSystemic(false)
+                        .surgeryType("Primary Resection")
+                        .build())
+                .build());
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Breast cancer 2018")
+                .ignore(false)
+                .curatedObject(ImmutablePriorSecondPrimary.builder()
+                        .tumorLocation("Breast")
+                        .tumorSubLocation(Strings.EMPTY)
+                        .tumorType("Carcinoma")
+                        .tumorSubType(Strings.EMPTY)
+                        .year(2018)
+                        .isSecondPrimaryCured(false)
+                        .build())
+                .build());
 
         configs.add(ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
 

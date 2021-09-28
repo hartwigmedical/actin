@@ -3,12 +3,14 @@ package com.hartwig.actin.clinical.curation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
@@ -27,10 +29,10 @@ public class CurationModelTest {
     public void canCurateTumorDetails() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        TumorDetails curated = model.toTumorDetails("Unknown", "Carcinoma");
+        TumorDetails curated = model.curateTumorDetails("Unknown", "Carcinoma");
         assertEquals("Unknown", curated.primaryTumorLocation());
 
-        TumorDetails missing = model.toTumorDetails("Does not", "Exist");
+        TumorDetails missing = model.curateTumorDetails("Does not", "Exist");
         assertNull(missing.primaryTumorLocation());
 
         model.evaluate();
@@ -41,11 +43,26 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         List<PriorTumorTreatment> priorTreatments =
-                model.toPriorTumorTreatments(Lists.newArrayList("Resection 2020", "no systemic treatment", "cannot curate"));
+                model.curatePriorTumorTreatments(Lists.newArrayList("Resection 2020", "no systemic treatment", "cannot curate"));
 
         assertEquals(1, priorTreatments.size());
         assertEquals("Primary Resection", priorTreatments.get(0).surgeryType());
 
+        assertTrue(model.curatePriorTumorTreatments(null).isEmpty());
+        model.evaluate();
+    }
+
+    @Test
+    public void canCuratePriorSecondPrimaries() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        List<PriorSecondPrimary> priorSecondPrimaries =
+                model.curatePriorSecondPrimaries(Lists.newArrayList("Breast cancer 2018", "no a second primary", "cannot curate"));
+
+        assertEquals(1, priorSecondPrimaries.size());
+        assertEquals("Breast", priorSecondPrimaries.get(0).tumorLocation());
+
+        assertTrue(model.curatePriorSecondPrimaries(null).isEmpty());
         model.evaluate();
     }
 

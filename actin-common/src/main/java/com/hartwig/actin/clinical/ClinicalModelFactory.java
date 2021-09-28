@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
@@ -61,9 +62,10 @@ public class ClinicalModelFactory {
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(extractPatientDetails(subject, entry))
-                    .tumor(createTumorDetails(questionnaire))
+                    .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
+                    .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .build());
         }
 
@@ -71,6 +73,12 @@ public class ClinicalModelFactory {
         curation.evaluate();
 
         return new ClinicalModel(records);
+    }
+
+    @NotNull
+    private static String toSampleId(@NotNull String subject) {
+        // Assume a single sample per patient ending with "T". No "TII" supported yet.
+        return subject.replaceAll("-", "") + "T";
     }
 
     @NotNull
@@ -86,13 +94,13 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private TumorDetails createTumorDetails(@Nullable Questionnaire questionnaire) {
+    private TumorDetails extractTumorDetails(@Nullable Questionnaire questionnaire) {
         if (questionnaire == null) {
             return ImmutableTumorDetails.builder().build();
         }
 
         return ImmutableTumorDetails.builder()
-                .from(curation.toTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
+                .from(curation.curateTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
                 .stage(questionnaire.stage())
                 .hasMeasurableLesionRecist(questionnaire.hasMeasurableLesionRecist())
                 .hasBrainLesions(questionnaire.hasBrainLesions())
@@ -104,16 +112,6 @@ public class ClinicalModelFactory {
                 .hasBoneLesions(questionnaire.hasBoneLesions())
                 .hasLiverLesions(questionnaire.hasLiverLesions())
                 .build();
-    }
-
-    @NotNull
-    private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
-        if (questionnaire != null) {
-            List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
-            return treatmentHistories != null ? curation.toPriorTumorTreatments(treatmentHistories) : Lists.newArrayList();
-        } else {
-            return Lists.newArrayList();
-        }
     }
 
     @NotNull
@@ -131,8 +129,23 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private static String toSampleId(@NotNull String subject) {
-        // Assume a single sample per patient ending with "T". No "TII" supported yet.
-        return subject.replaceAll("-", "") + "T";
+    private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
+        if (questionnaire != null) {
+            List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
+            return curation.curatePriorTumorTreatments(treatmentHistories);
+        } else {
+            return Lists.newArrayList();
+        }
     }
+
+    @NotNull
+    private List<PriorSecondPrimary> extractPriorSecondPrimaries(@Nullable Questionnaire questionnaire) {
+        if (questionnaire != null) {
+            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistories();
+            return curation.curatePriorSecondPrimaries(otherOncologyHistory);
+        } else {
+            return Lists.newArrayList();
+        }
+    }
+
 }

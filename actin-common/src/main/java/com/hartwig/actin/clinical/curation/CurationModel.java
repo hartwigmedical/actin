@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
@@ -45,7 +46,7 @@ public class CurationModel {
     }
 
     @NotNull
-    public TumorDetails toTumorDetails(@Nullable String inputTumorLocation, @Nullable String inputTumorType) {
+    public TumorDetails curateTumorDetails(@Nullable String inputTumorLocation, @Nullable String inputTumorType) {
         PrimaryTumorConfig primaryTumorConfig = null;
         if (inputTumorLocation != null && inputTumorType != null) {
             String inputPrimaryTumor = inputTumorLocation + " | " + inputTumorType;
@@ -66,12 +67,16 @@ public class CurationModel {
     }
 
     @NotNull
-    public List<PriorTumorTreatment> toPriorTumorTreatments(@NotNull List<String> treatmentHistories) {
+    public List<PriorTumorTreatment> curatePriorTumorTreatments(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        for (String treatmentHistory : treatmentHistories) {
-            OncologicalHistoryConfig config = find(database.oncologicalHistoryConfigs(), treatmentHistory);
+        for (String input : inputs) {
+            OncologicalHistoryConfig config = find(database.oncologicalHistoryConfigs(), input);
             if (config == null) {
-                LOGGER.warn(" Could not oncological history config for input '{}'", treatmentHistory);
+                LOGGER.warn(" Could not find oncological history config for input '{}'", input);
             } else if (!config.ignore()) {
                 if (config.curatedObject() instanceof PriorTumorTreatment) {
                     priorTumorTreatments.add((PriorTumorTreatment) config.curatedObject());
@@ -81,16 +86,36 @@ public class CurationModel {
         return priorTumorTreatments;
     }
 
+    @NotNull
+    public List<PriorSecondPrimary> curatePriorSecondPrimaries(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
+        List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
+        for (String input : inputs) {
+            OncologicalHistoryConfig config = find(database.oncologicalHistoryConfigs(), input);
+            if (config == null) {
+                LOGGER.warn(" Could not find oncological history config for input '{}'", input);
+            } else if (!config.ignore()) {
+                if (config.curatedObject() instanceof PriorSecondPrimary) {
+                    priorSecondPrimaries.add((PriorSecondPrimary) config.curatedObject());
+                }
+            }
+        }
+        return priorSecondPrimaries;
+    }
+
     @Nullable
-    public String curateAberrationECG(@Nullable String inputAberration) {
-        if (inputAberration == null) {
+    public String curateAberrationECG(@Nullable String input) {
+        if (input == null) {
             return null;
         }
 
-        ECGConfig config = find(database.ecgConfigs(), inputAberration);
+        ECGConfig config = find(database.ecgConfigs(), input);
 
         // Assume ECGs can also be pass-through.
-        return config != null ? config.interpretation() : inputAberration;
+        return config != null ? config.interpretation() : input;
     }
 
     public void evaluate() {

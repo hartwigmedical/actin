@@ -25,6 +25,9 @@ public abstract class Questionnaire {
     public abstract List<String> treatmentHistoriesCurrentTumor();
 
     @Nullable
+    public abstract List<String> otherOncologicalHistories();
+
+    @Nullable
     public abstract Boolean hasMeasurableLesionRecist();
 
     @Nullable

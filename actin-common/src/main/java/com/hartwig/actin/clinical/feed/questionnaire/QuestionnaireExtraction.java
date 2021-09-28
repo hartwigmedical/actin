@@ -55,6 +55,7 @@ public final class QuestionnaireExtraction {
                 .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
                 .stage(toStage(value(entry, mapping.get(QuestionnaireKey.STAGE))))
                 .treatmentHistoriesCurrentTumor(toList(value(entry, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
+                .otherOncologicalHistories(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
                 .hasMeasurableLesionRecist(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST))))
                 .hasBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
                 .hasActiveBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))

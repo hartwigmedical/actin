@@ -36,6 +36,10 @@ public class QuestionnaireExtractionTest {
         assertEquals(1, treatmentHistories.size());
         assertTrue(treatmentHistories.contains("capecitabine JAN 2020- JUL 2021"));
 
+        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistories();
+        assertEquals(1, otherOncologicalHistories.size());
+        assertTrue(otherOncologicalHistories.contains("surgery JUN 2021"));
+
         assertEquals(TumorStage.IV, questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());
         assertNull(questionnaire.hasBrainLesions());
@@ -65,6 +69,10 @@ public class QuestionnaireExtractionTest {
         assertTrue(treatmentHistories.contains("Resection 2020"));
         assertTrue(treatmentHistories.contains("no systemic treatment"));
 
+        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistories();
+        assertEquals(1, otherOncologicalHistories.size());
+        assertTrue(otherOncologicalHistories.contains("NA"));
+
         assertEquals(TumorStage.IV, questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());
         assertNull(questionnaire.hasBrainLesions());
@@ -90,6 +98,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.tumorLocation());
         assertNull(questionnaire.tumorType());
         assertNull(questionnaire.treatmentHistoriesCurrentTumor());
+        assertNull(questionnaire.otherOncologicalHistories());
 
         assertNull(questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());
