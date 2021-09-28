@@ -94,15 +94,19 @@ public class CurationModel {
     }
 
     public void evaluate() {
+        int warnCount = 0;
         for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedInputs.asMap().entrySet()) {
             List<? extends CurationConfig> configs = configsForClass(entry.getKey());
             Collection<String> evaluated = entry.getValue();
             for (CurationConfig config : configs) {
                 if (!evaluated.contains(config.input())) {
+                    warnCount++;
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input(), entry.getKey().getSimpleName());
                 }
             }
         }
+
+        LOGGER.info(" {} warnings raised during curation model evaluation", warnCount);
     }
 
     @NotNull
