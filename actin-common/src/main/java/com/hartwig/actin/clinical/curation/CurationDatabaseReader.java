@@ -7,6 +7,8 @@ import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfi
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFile;
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFile;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFile;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -23,6 +25,7 @@ public final class CurationDatabaseReader {
 
     private static final String PRIMARY_TUMOR_TSV = "primary_tumor.tsv";
     private static final String ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv";
+    private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
 
@@ -38,6 +41,7 @@ public final class CurationDatabaseReader {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
+                .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .build();
@@ -54,6 +58,14 @@ public final class CurationDatabaseReader {
     private static List<OncologicalHistoryConfig> readOncologicalHistoryConfigs(@NotNull String oncologicalHistoryTsv) throws IOException {
         List<OncologicalHistoryConfig> configs = OncologicalHistoryConfigFile.read(oncologicalHistoryTsv);
         LOGGER.info(" Read {} oncological history configs from {}", configs.size(), oncologicalHistoryTsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<NonOncologicalHistoryConfig> readNonOncologicalHistoryConfigs(@NotNull String nonOncologicalHistoryTsv)
+            throws IOException {
+        List<NonOncologicalHistoryConfig> configs = NonOncologicalHistoryConfigFile.read(nonOncologicalHistoryTsv);
+        LOGGER.info(" Read {} non-oncological history configs from {}", configs.size(), nonOncologicalHistoryTsv);
         return configs;
     }
 

@@ -7,10 +7,13 @@ import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfi
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 
@@ -37,9 +40,27 @@ public final class TestCurationFactory {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
+                .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .build();
+    }
+
+    @NotNull
+    private static List<PrimaryTumorConfig> createTestPrimaryTumorConfigs() {
+        List<PrimaryTumorConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutablePrimaryTumorConfig.builder()
+                .input("Unknown | Carcinoma")
+                .primaryTumorLocation("Unknown")
+                .primaryTumorSubLocation("CUP")
+                .primaryTumorType("Carcinoma")
+                .primaryTumorSubType(Strings.EMPTY)
+                .primaryTumorExtraDetails(Strings.EMPTY)
+                .addDoids("299")
+                .build());
+
+        return configs;
     }
 
     @NotNull
@@ -49,8 +70,7 @@ public final class TestCurationFactory {
         configs.add(ImmutableOncologicalHistoryConfig.builder()
                 .input("Resection 2020")
                 .ignore(false)
-                .curatedObject(ImmutablePriorTumorTreatment.builder()
-                        .name("Resection")
+                .curatedObject(ImmutablePriorTumorTreatment.builder().name("Resection")
                         .year(2020)
                         .category("Surgery")
                         .isSystemic(false)
@@ -77,18 +97,16 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    private static List<PrimaryTumorConfig> createTestPrimaryTumorConfigs() {
-        List<PrimaryTumorConfig> configs = Lists.newArrayList();
+    private static List<NonOncologicalHistoryConfig> createTestNonOncologicalHistoryConfigs() {
+        List<NonOncologicalHistoryConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutablePrimaryTumorConfig.builder()
-                .input("Unknown | Carcinoma")
-                .primaryTumorLocation("Unknown")
-                .primaryTumorSubLocation("CUP")
-                .primaryTumorType("Carcinoma")
-                .primaryTumorSubType(Strings.EMPTY)
-                .primaryTumorExtraDetails(Strings.EMPTY)
-                .addDoids("299")
+        configs.add(ImmutableNonOncologicalHistoryConfig.builder()
+                .input("sickness")
+                .ignore(false)
+                .curated(ImmutablePriorOtherCondition.builder().name("sick").category("being sick").build())
                 .build());
+
+        configs.add(ImmutableNonOncologicalHistoryConfig.builder().input("not a condition").ignore(true).build());
 
         return configs;
     }

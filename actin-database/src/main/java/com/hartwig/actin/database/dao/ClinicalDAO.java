@@ -1,6 +1,7 @@
 package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
+import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.TUMOR;
@@ -13,6 +14,7 @@ import com.hartwig.actin.clinical.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -37,6 +39,7 @@ class ClinicalDAO {
         context.truncate(CANCERRELATEDCOMPLICATION).execute();
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
+        context.truncate(PRIOROTHERCONDITION).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
 
@@ -55,6 +58,7 @@ class ClinicalDAO {
         writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
+        writePriorOtherConditions(sampleId, record.priorOtherConditions());
     }
 
     private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
@@ -110,7 +114,9 @@ class ClinicalDAO {
                 CLINICALSTATUS.SAMPLEID,
                 CLINICALSTATUS.WHO,
                 CLINICALSTATUS.HASCURRENTINFECTION,
-                CLINICALSTATUS.INFECTIONDESCRIPTION, CLINICALSTATUS.HASSIGABERRATIONLATESTECG, CLINICALSTATUS.ECGABERRATIONDESCRIPTION)
+                CLINICALSTATUS.INFECTIONDESCRIPTION,
+                CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
+                CLINICALSTATUS.ECGABERRATIONDESCRIPTION)
                 .values(sampleId,
                         clinicalStatus.who(),
                         DataUtil.toByte(clinicalStatus.hasCurrentInfection()),
@@ -179,9 +185,24 @@ class ClinicalDAO {
                             DataUtil.concat(priorSecondPrimary.doids()),
                             priorSecondPrimary.year(),
                             DataUtil.toByte(priorSecondPrimary.isSecondPrimaryCured()),
-                            priorSecondPrimary.curedDate())
-                    .execute();
+                            priorSecondPrimary.curedDate()).execute();
 
         }
     }
+
+    private void writePriorOtherConditions(@NotNull String sampleId, @NotNull List<PriorOtherCondition> priorOtherConditions) {
+        for (PriorOtherCondition priorOtherCondition : priorOtherConditions) {
+            context.insertInto(PRIOROTHERCONDITION,
+                    PRIOROTHERCONDITION.SAMPLEID,
+                    PRIOROTHERCONDITION.NAME,
+                    PRIOROTHERCONDITION.DOIDS,
+                    PRIOROTHERCONDITION.CATEGORY)
+                    .values(sampleId,
+                            priorOtherCondition.name(),
+                            DataUtil.concat(priorOtherCondition.doids()),
+                            priorOtherCondition.category())
+                    .execute();
+        }
+    }
+
 }

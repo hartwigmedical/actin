@@ -22,10 +22,13 @@ public abstract class Questionnaire {
     public abstract TumorStage stage();
 
     @Nullable
-    public abstract List<String> treatmentHistoriesCurrentTumor();
+    public abstract List<String> treatmentHistoryCurrentTumor();
 
     @Nullable
-    public abstract List<String> otherOncologicalHistories();
+    public abstract List<String> otherOncologicalHistory();
+
+    @Nullable
+    public abstract List<String> nonOncologicalHistory();
 
     @Nullable
     public abstract Boolean hasMeasurableLesionRecist();

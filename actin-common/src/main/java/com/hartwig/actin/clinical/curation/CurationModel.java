@@ -14,13 +14,16 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -71,6 +74,22 @@ public class CurationModel {
     }
 
     @NotNull
+    public List<CancerRelatedComplication> curateCancerRelatedComplications(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
+        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+        for (String input : inputs) {
+            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
+            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
+                    .name(config != null ? config.name() : input)
+                    .build());
+        }
+        return cancerRelatedComplications;
+    }
+
+    @NotNull
     public List<PriorTumorTreatment> curatePriorTumorTreatments(@Nullable List<String> inputs) {
         if (inputs == null) {
             return Lists.newArrayList();
@@ -110,6 +129,24 @@ public class CurationModel {
         return priorSecondPrimaries;
     }
 
+    @NotNull
+    public List<PriorOtherCondition> curatePriorOtherConditions(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
+        List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
+        for (String input : inputs) {
+            NonOncologicalHistoryConfig config = find(database.nonOncologicalHistoryConfigs(), input);
+            if (config == null) {
+                LOGGER.warn(" Could not find non-oncological history config for input '{}'", input);
+            } else if (!config.ignore()) {
+                priorOtherConditions.add(config.curated());
+            }
+        }
+        return priorOtherConditions;
+    }
+
     @Nullable
     public String curateAberrationECG(@Nullable String input) {
         if (input == null) {
@@ -120,22 +157,6 @@ public class CurationModel {
 
         // Assume ECGs can also be pass-through.
         return config != null ? config.interpretation() : input;
-    }
-
-    @NotNull
-    public List<CancerRelatedComplication> curateCancerRelatedComplications(@Nullable List<String> inputs) {
-        if (inputs == null) {
-            return Lists.newArrayList();
-        }
-
-        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
-        for (String input : inputs) {
-            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
-            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
-                    .name(config != null ? config.name() : input)
-                    .build());
-        }
-        return cancerRelatedComplications;
     }
 
     public void evaluate() {
@@ -160,6 +181,8 @@ public class CurationModel {
             return database.ecgConfigs();
         } else if (classToLookUp == ImmutableOncologicalHistoryConfig.class) {
             return database.oncologicalHistoryConfigs();
+        } else if (classToLookUp == ImmutableNonOncologicalHistoryConfig.class) {
+            return database.nonOncologicalHistoryConfigs();
         } else if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
             return database.primaryTumorConfigs();
         } else if (classToLookUp == ImmutableCancerRelatedComplicationConfig.class) {

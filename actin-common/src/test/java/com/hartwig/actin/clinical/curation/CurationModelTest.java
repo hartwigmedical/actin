@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -37,6 +38,21 @@ public class CurationModelTest {
         TumorDetails missing = model.curateTumorDetails("Does not", "Exist");
         assertNull(missing.primaryTumorLocation());
 
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateCancerRelatedComplications() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        List<CancerRelatedComplication> cancerRelatedComplications =
+                model.curateCancerRelatedComplications(Lists.newArrayList("term", "no curation"));
+
+        assertEquals(2, cancerRelatedComplications.size());
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("curated").build()));
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("no curation").build()));
+
+        assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
         model.evaluate();
     }
 
@@ -69,17 +85,16 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canCurateCancerRelatedComplications() {
+    public void canCuratePriorOtherConditions() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        List<CancerRelatedComplication> cancerRelatedComplications =
-                model.curateCancerRelatedComplications(Lists.newArrayList("term", "no curation"));
+        List<PriorOtherCondition> priorOtherConditions =
+                model.curatePriorOtherConditions(Lists.newArrayList("sickness", "not a condition", "cannot curate"));
 
-        assertEquals(2, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("curated").build()));
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("no curation").build()));
+        assertEquals(1, priorOtherConditions.size());
+        assertEquals("sick", priorOtherConditions.get(0).name());
 
-        assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
+        assertTrue(model.curatePriorOtherConditions(null).isEmpty());
         model.evaluate();
     }
 

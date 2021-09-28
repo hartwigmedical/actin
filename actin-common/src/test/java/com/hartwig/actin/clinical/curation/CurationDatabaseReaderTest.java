@@ -13,6 +13,7 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -32,6 +33,7 @@ public class CurationDatabaseReaderTest {
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
+        assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
     }
@@ -80,6 +82,22 @@ public class CurationDatabaseReaderTest {
         assertTrue(curated2.doids().isEmpty());
         assertTrue(curated2.isSecondPrimaryCured());
         assertEquals(LocalDate.of(2019, 6, 20), curated2.curedDate());
+    }
+
+    private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {
+        assertEquals(2, configs.size());
+        NonOncologicalHistoryConfig config1 = find(configs, "Levercirrose/ sarcoidose");
+        assertFalse(config1.ignore());
+
+        assertEquals("Liver cirrhosis and sarcoidosis", config1.curated().name());
+        assertEquals("Liver disease", config1.curated().category());
+        assertEquals(2, config1.curated().doids().size());
+        assertTrue(config1.curated().doids().contains("5082"));
+        assertTrue(config1.curated().doids().contains("11335"));
+
+        NonOncologicalHistoryConfig config2 = find(configs, "NA");
+        assertTrue(config2.ignore());
+        assertNull(config2.curated());
     }
 
     private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {

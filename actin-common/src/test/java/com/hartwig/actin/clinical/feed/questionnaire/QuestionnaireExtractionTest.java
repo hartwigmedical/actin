@@ -32,13 +32,17 @@ public class QuestionnaireExtractionTest {
         assertEquals("lung", questionnaire.tumorLocation());
         assertEquals("small-cell carcinoma", questionnaire.tumorType());
 
-        List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
-        assertEquals(1, treatmentHistories.size());
-        assertTrue(treatmentHistories.contains("capecitabine JAN 2020- JUL 2021"));
+        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
+        assertEquals(1, treatmentHistory.size());
+        assertTrue(treatmentHistory.contains("capecitabine JAN 2020- JUL 2021"));
 
-        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistories();
-        assertEquals(1, otherOncologicalHistories.size());
-        assertTrue(otherOncologicalHistories.contains("surgery JUN 2021"));
+        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
+        assertEquals(1, otherOncologicalHistory.size());
+        assertTrue(otherOncologicalHistory.contains("surgery JUN 2021"));
+
+        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
+        assertEquals(1, nonOncologicalHistory.size());
+        assertTrue(nonOncologicalHistory.contains("NO"));
 
         assertEquals(TumorStage.IV, questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());
@@ -68,14 +72,18 @@ public class QuestionnaireExtractionTest {
         assertEquals("lung", questionnaire.tumorLocation());
         assertEquals("small-cell carcinoma", questionnaire.tumorType());
 
-        List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
-        assertEquals(2, treatmentHistories.size());
-        assertTrue(treatmentHistories.contains("Resection 2020"));
-        assertTrue(treatmentHistories.contains("no systemic treatment"));
+        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
+        assertEquals(2, treatmentHistory.size());
+        assertTrue(treatmentHistory.contains("Resection 2020"));
+        assertTrue(treatmentHistory.contains("no systemic treatment"));
 
-        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistories();
-        assertEquals(1, otherOncologicalHistories.size());
-        assertTrue(otherOncologicalHistories.contains("NA"));
+        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
+        assertEquals(1, otherOncologicalHistory.size());
+        assertTrue(otherOncologicalHistory.contains("NA"));
+
+        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
+        assertEquals(1, nonOncologicalHistory.size());
+        assertTrue(nonOncologicalHistory.contains("Migraine"));
 
         assertEquals(TumorStage.IV, questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());
@@ -105,8 +113,9 @@ public class QuestionnaireExtractionTest {
 
         assertNull(questionnaire.tumorLocation());
         assertNull(questionnaire.tumorType());
-        assertNull(questionnaire.treatmentHistoriesCurrentTumor());
-        assertNull(questionnaire.otherOncologicalHistories());
+        assertNull(questionnaire.treatmentHistoryCurrentTumor());
+        assertNull(questionnaire.otherOncologicalHistory());
+        assertNull(questionnaire.nonOncologicalHistory());
 
         assertNull(questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());

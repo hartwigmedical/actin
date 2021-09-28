@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -68,6 +69,7 @@ public class ClinicalModelFactory {
                     .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
+                    .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                     .build());
         }
 
@@ -143,10 +145,10 @@ public class ClinicalModelFactory {
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         if (questionnaire != null) {
-            List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
-            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistories));
+            List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
+            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistory));
 
-            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistories();
+            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistory();
             priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologyHistory));
         }
         return priorTumorTreatments;
@@ -155,11 +157,21 @@ public class ClinicalModelFactory {
     @NotNull
     private List<PriorSecondPrimary> extractPriorSecondPrimaries(@Nullable Questionnaire questionnaire) {
         if (questionnaire != null) {
-            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistories();
+            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistory();
             return curation.curatePriorSecondPrimaries(otherOncologyHistory);
         } else {
             return Lists.newArrayList();
         }
     }
 
+    @NotNull
+    private List<PriorOtherCondition> extractPriorOtherConditions(@Nullable Questionnaire questionnaire) {
+        if (questionnaire != null) {
+            List<String> nonOncologyHistory = questionnaire.nonOncologicalHistory();
+            return curation.curatePriorOtherConditions(nonOncologyHistory);
+        } else {
+            return Lists.newArrayList();
+        }
+
+    }
 }
