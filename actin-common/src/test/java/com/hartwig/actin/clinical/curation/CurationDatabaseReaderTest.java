@@ -6,13 +6,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.apache.logging.log4j.util.Strings;
@@ -48,24 +51,35 @@ public class CurationDatabaseReaderTest {
     }
 
     private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {
-        assertEquals(1, configs.size());
+        assertEquals(2, configs.size());
 
-        OncologicalHistoryConfig config = configs.get(0);
-        assertEquals("Capecitabine/Oxaliplatin 2020", config.input());
-        assertFalse(config.ignore());
+        OncologicalHistoryConfig config1 = find(configs, "Capecitabine/Oxaliplatin 2020");
+        assertFalse(config1.ignore());
 
-        PriorTumorTreatment curated = (PriorTumorTreatment) config.curatedObject();
-        assertEquals("Capecitabine+Oxaliplatin", curated.name());
-        assertEquals(2020, (int) curated.year());
-        assertEquals("chemotherapy", curated.category());
-        assertTrue(curated.isSystemic());
-        assertEquals("antimetabolite,platinum", curated.chemoType());
-        assertNull(curated.immunoType());
-        assertNull(curated.targetedType());
-        assertNull(curated.hormoneType());
-        assertNull(curated.stemCellTransType());
-        assertNull(curated.radiotherapyType());
-        assertNull(curated.surgeryType());
+        PriorTumorTreatment curated1 = (PriorTumorTreatment) config1.curatedObject();
+        assertEquals("Capecitabine+Oxaliplatin", curated1.name());
+        assertEquals(2020, (int) curated1.year());
+        assertEquals("chemotherapy", curated1.category());
+        assertTrue(curated1.isSystemic());
+        assertEquals("antimetabolite,platinum", curated1.chemoType());
+        assertNull(curated1.immunoType());
+        assertNull(curated1.targetedType());
+        assertNull(curated1.hormoneType());
+        assertNull(curated1.stemCellTransType());
+        assertNull(curated1.radiotherapyType());
+        assertNull(curated1.surgeryType());
+
+        OncologicalHistoryConfig config2 = find(configs, "Breast 2018");
+        assertFalse(config2.ignore());
+
+        PriorSecondPrimary curated2 = (PriorSecondPrimary) config2.curatedObject();
+        assertEquals("Breast", curated2.tumorLocation());
+        assertEquals(Strings.EMPTY, curated2.tumorSubLocation());
+        assertEquals("Carcinoma", curated2.tumorType());
+        assertEquals(Strings.EMPTY, curated2.tumorSubType());
+        assertTrue(curated2.doids().isEmpty());
+        assertTrue(curated2.isSecondPrimaryCured());
+        assertEquals(LocalDate.of(2019, 6, 20), curated2.curedDate());
     }
 
     private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {
@@ -82,5 +96,16 @@ public class CurationDatabaseReaderTest {
         CancerRelatedComplicationConfig config = configs.get(0);
         assertEquals("something", config.input());
         assertEquals("curated something", config.name());
+    }
+
+    @NotNull
+    private static <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
+        for (T config : configs) {
+            if (config.input().equals(input)) {
+                return config;
+            }
+        }
+
+        throw new IllegalStateException("Could not find input '" + input + "' in configs");
     }
 }

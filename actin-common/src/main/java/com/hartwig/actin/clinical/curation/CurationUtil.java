@@ -25,7 +25,11 @@ public final class CurationUtil {
 
     @NotNull
     public static Set<String> parseDOID(@NotNull String doidString) {
-        return Sets.newHashSet(doidString.split(DOID_SEPARATOR));
+        if (!doidString.isEmpty()) {
+            return Sets.newHashSet(doidString.split(DOID_SEPARATOR));
+        } else {
+            return Sets.newHashSet();
+        }
     }
 
     public static boolean parseBoolean(@NotNull String bool) {

@@ -29,6 +29,8 @@ public class CurationUtilTest {
         assertEquals(2, multiple.size());
         assertTrue(multiple.contains("123"));
         assertTrue(multiple.contains("456"));
+
+        assertTrue(CurationUtil.parseDOID(Strings.EMPTY).isEmpty());
     }
 
     @Test
