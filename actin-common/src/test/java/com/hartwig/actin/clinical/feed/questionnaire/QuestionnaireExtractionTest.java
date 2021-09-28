@@ -48,7 +48,8 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasLiverLesions());
         assertEquals(1, (int) questionnaire.whoStatus());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertEquals("NA", questionnaire.significantAberrationLatestECG());
+        assertNull(questionnaire.hasSignificantAberrationLatestECG());
+        assertNull(questionnaire.significantAberrationLatestECG());
     }
 
     @Test
@@ -76,7 +77,8 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasLiverLesions());
         assertEquals(0, (int) questionnaire.whoStatus());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertEquals("UNKNOWN", questionnaire.significantAberrationLatestECG());
+        assertNull(questionnaire.hasSignificantAberrationLatestECG());
+        assertNull(questionnaire.significantAberrationLatestECG());
     }
 
     @Test
@@ -101,7 +103,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasLiverLesions());
         assertEquals(1, (int) questionnaire.whoStatus());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertEquals("No", questionnaire.significantAberrationLatestECG());
+        assertFalse(questionnaire.hasSignificantAberrationLatestECG());
+        assertEquals(Strings.EMPTY, questionnaire.significantAberrationLatestECG());
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,6 +41,17 @@ public final class QuestionnaireExtraction {
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
 
+        String significantAberrationLatestECG = value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG));
+
+        Boolean hasSignificantAberrationLatestECG = significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty();
+        if (isConfiguredOption(significantAberrationLatestECG)) {
+            hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
+            if (hasSignificantAberrationLatestECG == null) {
+                significantAberrationLatestECG = null;
+            } else if (!hasSignificantAberrationLatestECG) {
+                significantAberrationLatestECG = Strings.EMPTY;
+            }
+        }
         return ImmutableQuestionnaire.builder()
                 .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
                 .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
@@ -58,7 +70,8 @@ public final class QuestionnaireExtraction {
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
                 .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
-                .significantAberrationLatestECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG)))
+                .hasSignificantAberrationLatestECG(hasSignificantAberrationLatestECG)
+                .significantAberrationLatestECG(significantAberrationLatestECG)
                 .build();
     }
 
@@ -69,25 +82,12 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        switch (stage) {
-            case "II":
-            case "2":
-                return TumorStage.II;
-            case "IIb":
-                return TumorStage.IIB;
-            case "III":
-            case "3":
-                return TumorStage.III;
-            case "IIIc":
-                return TumorStage.IIIC;
-            case "IV":
-            case "4":
-                return TumorStage.IV;
-            default: {
-                LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage);
-                return null;
-            }
+        if (!QuestionnaireConstants.STAGE_MAPPING.containsKey(stage)) {
+            LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage);
+            return null;
         }
+
+        return QuestionnaireConstants.STAGE_MAPPING.get(stage);
     }
 
     @Nullable
@@ -97,23 +97,21 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        switch (option.toLowerCase()) {
-            case "no":
-                return false;
-            case "yes":
-                return true;
-            case "n.v.t.":
-            case "nvt":
-            case "nvt.":
-            case "n.v.t":
-            case "unknown":
-            case "-":
-                return null;
-            default: {
-                LOGGER.warn("Unrecognized questionnaire option: '{}'", option);
-                return null;
-            }
+        String lower = option.toLowerCase();
+        if (!isConfiguredOption(lower)) {
+            LOGGER.warn("Unrecognized questionnaire option: '{}'", option);
+            return null;
         }
+
+        return QuestionnaireConstants.OPTION_MAPPING.get(lower);
+    }
+
+    private static boolean isConfiguredOption(@Nullable String option) {
+        if (option == null) {
+            return false;
+        }
+
+        return QuestionnaireConstants.OPTION_MAPPING.containsKey(option.toLowerCase());
     }
 
     @Nullable
