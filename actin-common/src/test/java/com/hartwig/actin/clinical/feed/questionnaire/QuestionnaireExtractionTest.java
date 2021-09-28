@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -25,75 +26,102 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void canExtractFromQuestionnaireV1_1() {
-        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1());
+        QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1());
 
-        assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
-        assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+        assertEquals("lung", questionnaire.tumorLocation());
+        assertEquals("small-cell carcinoma", questionnaire.tumorType());
 
-        List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire);
+        List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
         assertEquals(1, treatmentHistories.size());
         assertTrue(treatmentHistories.contains("capecitabine JAN 2020- JUL 2021"));
 
-        assertEquals(TumorStage.IV, QuestionnaireExtraction.stage(questionnaire));
-        assertTrue(QuestionnaireExtraction.hasMeasurableLesionRecist(questionnaire));
-        assertNull(QuestionnaireExtraction.hasBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasActiveBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasSymptomaticBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasCnsLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasActiveCnsLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasSymptomaticCnsLesions(questionnaire));
-        assertFalse(QuestionnaireExtraction.hasBoneLesions(questionnaire));
-        assertFalse(QuestionnaireExtraction.hasLiverLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasOtherLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.otherLesions(questionnaire));
+        assertEquals(TumorStage.IV, questionnaire.stage());
+        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertNull(questionnaire.hasBrainLesions());
+        assertNull(questionnaire.hasActiveBrainLesions());
+        assertNull(questionnaire.hasSymptomaticBrainLesions());
+        assertNull(questionnaire.hasCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
+        assertNull(questionnaire.hasSymptomaticCnsLesions());
+        assertFalse(questionnaire.hasBoneLesions());
+        assertFalse(questionnaire.hasLiverLesions());
     }
 
     @Test
     public void canExtractFromQuestionnaireV1_0() {
-        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0());
+        QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0());
 
-        assertEquals("lung", QuestionnaireExtraction.tumorLocation(questionnaire));
-        assertEquals("small-cell carcinoma", QuestionnaireExtraction.tumorType(questionnaire));
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+        assertEquals("lung", questionnaire.tumorLocation());
+        assertEquals("small-cell carcinoma", questionnaire.tumorType());
 
-        List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire);
+        List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
         assertEquals(2, treatmentHistories.size());
         assertTrue(treatmentHistories.contains("Resection 2020"));
         assertTrue(treatmentHistories.contains("no systemic treatment"));
 
-        assertEquals(TumorStage.IV, QuestionnaireExtraction.stage(questionnaire));
-        assertTrue(QuestionnaireExtraction.hasMeasurableLesionRecist(questionnaire));
-        assertNull(QuestionnaireExtraction.hasBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasActiveBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasSymptomaticBrainLesions(questionnaire));
-        assertFalse(QuestionnaireExtraction.hasCnsLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasActiveCnsLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasSymptomaticCnsLesions(questionnaire));
-        assertFalse(QuestionnaireExtraction.hasBoneLesions(questionnaire));
-        assertFalse(QuestionnaireExtraction.hasLiverLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasOtherLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.otherLesions(questionnaire));
+        assertEquals(TumorStage.IV, questionnaire.stage());
+        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertNull(questionnaire.hasBrainLesions());
+        assertNull(questionnaire.hasActiveBrainLesions());
+        assertNull(questionnaire.hasSymptomaticBrainLesions());
+        assertFalse(questionnaire.hasCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
+        assertNull(questionnaire.hasSymptomaticCnsLesions());
+        assertFalse(questionnaire.hasBoneLesions());
+        assertFalse(questionnaire.hasLiverLesions());
     }
 
     @Test
     public void canExtractFromQuestionnaireV0_1() {
-        QuestionnaireEntry questionnaire = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1());
+        QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1());
 
-        assertNull(QuestionnaireExtraction.tumorLocation(questionnaire));
-        assertNull(QuestionnaireExtraction.tumorType(questionnaire));
-        assertNull(QuestionnaireExtraction.treatmentHistoriesCurrentTumor(questionnaire));
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
 
-        assertNull(QuestionnaireExtraction.stage(questionnaire));
-        assertTrue(QuestionnaireExtraction.hasMeasurableLesionRecist(questionnaire));
-        assertNull(QuestionnaireExtraction.hasBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasActiveBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasSymptomaticBrainLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasCnsLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasActiveCnsLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasSymptomaticCnsLesions(questionnaire));
-        assertTrue(QuestionnaireExtraction.hasBoneLesions(questionnaire));
-        assertTrue(QuestionnaireExtraction.hasLiverLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.hasOtherLesions(questionnaire));
-        assertNull(QuestionnaireExtraction.otherLesions(questionnaire));
+        assertNull(questionnaire.tumorLocation());
+        assertNull(questionnaire.tumorType());
+        assertNull(questionnaire.treatmentHistoriesCurrentTumor());
+
+        assertNull(questionnaire.stage());
+        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertNull(questionnaire.hasBrainLesions());
+        assertNull(questionnaire.hasActiveBrainLesions());
+        assertNull(questionnaire.hasSymptomaticBrainLesions());
+        assertNull(questionnaire.hasCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
+        assertNull(questionnaire.hasSymptomaticCnsLesions());
+        assertTrue(questionnaire.hasBoneLesions());
+        assertTrue(questionnaire.hasLiverLesions());
+    }
+
+    @Test
+    public void canExtractFromMissingEntry() {
+        assertNull(QuestionnaireExtraction.extract(null));
+    }
+
+    @Test
+    public void canParseStage() {
+        assertEquals(TumorStage.IIB, QuestionnaireExtraction.toStage("IIb"));
+        assertEquals(TumorStage.II, QuestionnaireExtraction.toStage("2"));
+        assertEquals(TumorStage.III, QuestionnaireExtraction.toStage("3"));
+        assertEquals(TumorStage.IV, QuestionnaireExtraction.toStage("4"));
+
+        assertNull(QuestionnaireExtraction.toStage(null));
+        assertNull(QuestionnaireExtraction.toStage(Strings.EMPTY));
+        assertNull(QuestionnaireExtraction.toStage("not a stage"));
+    }
+
+    @Test
+    public void canParseOption() {
+        assertTrue(QuestionnaireExtraction.toBoolean("YES"));
+        assertFalse(QuestionnaireExtraction.toBoolean("no"));
+
+        assertNull(QuestionnaireExtraction.toBoolean(null));
+        assertNull(QuestionnaireExtraction.toBoolean(Strings.EMPTY));
+        assertNull(QuestionnaireExtraction.toBoolean("-"));
+        assertNull(QuestionnaireExtraction.toBoolean("nvt"));
+        assertNull(QuestionnaireExtraction.toBoolean("not an option"));
     }
 
     @NotNull

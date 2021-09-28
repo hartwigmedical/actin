@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 
@@ -55,13 +56,15 @@ public class ClinicalModelFactory {
             String sampleId = toSampleId(subject);
             LOGGER.info(" Extracting data for sample {}", sampleId);
 
-            QuestionnaireEntry questionnaire = feed.latestQuestionnaireForSubject(subject);
+            QuestionnaireEntry entry = feed.latestQuestionnaireForSubject(subject);
+            Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
-                    .patient(extractPatientDetails(subject, questionnaire))
+                    .patient(extractPatientDetails(subject, entry))
                     .tumor(createTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus())
-                    .priorTumorTreatments(extractPriorTumorTreatments(subject))
+                    .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .build());
         }
 
@@ -69,49 +72,42 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private PatientDetails extractPatientDetails(@NotNull String subject, @Nullable QuestionnaireEntry questionnaire) {
+    private PatientDetails extractPatientDetails(@NotNull String subject, @Nullable QuestionnaireEntry entry) {
         PatientEntry patient = feed.patient(subject);
 
         return ImmutablePatientDetails.builder()
                 .sex(patient.sex())
                 .birthYear(patient.birthYear())
                 .registrationDate(patient.periodStart())
-                .questionnaireDate(questionnaire != null ? questionnaire.authoredDateTime() : null)
+                .questionnaireDate(entry != null ? entry.authoredDateTime() : null)
                 .build();
     }
 
     @NotNull
-    private TumorDetails createTumorDetails(@Nullable QuestionnaireEntry questionnaire) {
+    private TumorDetails createTumorDetails(@Nullable Questionnaire questionnaire) {
         if (questionnaire == null) {
             return ImmutableTumorDetails.builder().build();
         }
 
-        String tumorLocation = QuestionnaireExtraction.tumorLocation(questionnaire);
-        String tumorType = QuestionnaireExtraction.tumorType(questionnaire);
-
         return ImmutableTumorDetails.builder()
-                .from(curation.toTumorDetails(tumorLocation, tumorType))
-                .stage(QuestionnaireExtraction.stage(questionnaire))
-                .hasMeasurableLesionRecist(QuestionnaireExtraction.hasMeasurableLesionRecist(questionnaire))
-                .hasBrainLesions(QuestionnaireExtraction.hasBrainLesions(questionnaire))
-                .hasActiveBrainLesions(QuestionnaireExtraction.hasActiveBrainLesions(questionnaire))
-                .hasSymptomaticBrainLesions(QuestionnaireExtraction.hasSymptomaticBrainLesions(questionnaire))
-                .hasCnsLesions(QuestionnaireExtraction.hasCnsLesions(questionnaire))
-                .hasActiveCnsLesions(QuestionnaireExtraction.hasActiveCnsLesions(questionnaire))
-                .hasSymptomaticCnsLesions(QuestionnaireExtraction.hasSymptomaticCnsLesions(questionnaire))
-                .hasBoneLesions(QuestionnaireExtraction.hasBoneLesions(questionnaire))
-                .hasLiverLesions(QuestionnaireExtraction.hasLiverLesions(questionnaire))
-                .hasOtherLesions(QuestionnaireExtraction.hasOtherLesions(questionnaire))
-                .otherLesions(QuestionnaireExtraction.otherLesions(questionnaire))
+                .from(curation.toTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
+                .stage(questionnaire.stage())
+                .hasMeasurableLesionRecist(questionnaire.hasMeasurableLesionRecist())
+                .hasBrainLesions(questionnaire.hasBrainLesions())
+                .hasActiveBrainLesions(questionnaire.hasActiveBrainLesions())
+                .hasSymptomaticBrainLesions(questionnaire.hasSymptomaticBrainLesions())
+                .hasCnsLesions(questionnaire.hasCnsLesions())
+                .hasActiveCnsLesions(questionnaire.hasActiveCnsLesions())
+                .hasSymptomaticCnsLesions(questionnaire.hasSymptomaticCnsLesions())
+                .hasBoneLesions(questionnaire.hasBoneLesions())
+                .hasLiverLesions(questionnaire.hasLiverLesions())
                 .build();
     }
 
     @NotNull
-    private List<PriorTumorTreatment> extractPriorTumorTreatments(@NotNull String subject) {
-        QuestionnaireEntry latestQuestionnaire = feed.latestQuestionnaireForSubject(subject);
-
-        if (latestQuestionnaire != null) {
-            List<String> treatmentHistories = QuestionnaireExtraction.treatmentHistoriesCurrentTumor(latestQuestionnaire);
+    private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
+        if (questionnaire != null) {
+            List<String> treatmentHistories = questionnaire.treatmentHistoriesCurrentTumor();
             return treatmentHistories != null ? curation.toPriorTumorTreatments(treatmentHistories) : Lists.newArrayList();
         } else {
             return Lists.newArrayList();

@@ -3,13 +3,18 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class QuestionnaireExtraction {
+
+    private static final Logger LOGGER = LogManager.getLogger(QuestionnaireExtraction.class);
 
     private static final String KEY_VALUE_SEPARATOR = ":";
     private static final String VALUE_LIST_SEPARATOR_1 = ",";
@@ -28,80 +33,84 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    public static String tumorLocation(@NotNull QuestionnaireEntry questionnaire) {
-        return value(questionnaire, QuestionnaireKey.PRIMARY_TUMOR_LOCATION);
+    public static Questionnaire extract(@Nullable QuestionnaireEntry entry) {
+        if (entry == null) {
+            return null;
+        }
+
+        Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
+
+        return ImmutableQuestionnaire.builder()
+                .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
+                .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
+                .stage(toStage(value(entry, mapping.get(QuestionnaireKey.STAGE))))
+                .treatmentHistoriesCurrentTumor(toList(value(entry, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
+                .hasMeasurableLesionRecist(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST))))
+                .hasBrainLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
+                .hasActiveBrainLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))
+                .hasSymptomaticBrainLesions(toBoolean(value(entry,
+                        mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS),
+                        SYMPTOMATIC_LINE_OFFSET)))
+                .hasCnsLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS))))
+                .hasActiveCnsLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)))
+                .hasSymptomaticCnsLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
+                .hasBoneLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
+                .hasLiverLesions(toBoolean(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
+                .build();
     }
 
     @Nullable
-    public static String tumorType(@NotNull QuestionnaireEntry questionnaire) {
-        return value(questionnaire, QuestionnaireKey.PRIMARY_TUMOR_TYPE);
+    @VisibleForTesting
+    static TumorStage toStage(@Nullable String stage) {
+        if (stage == null || stage.isEmpty()) {
+            return null;
+        }
+
+        switch (stage) {
+            case "II":
+            case "2":
+                return TumorStage.II;
+            case "IIb":
+                return TumorStage.IIB;
+            case "III":
+            case "3":
+                return TumorStage.III;
+            case "IIIc":
+                return TumorStage.IIIC;
+            case "IV":
+            case "4":
+                return TumorStage.IV;
+            default: {
+                LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage);
+                return null;
+            }
+        }
     }
 
     @Nullable
-    public static TumorStage stage(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseStage(value(questionnaire, QuestionnaireKey.STAGE));
-    }
+    @VisibleForTesting
+    static Boolean toBoolean(@Nullable String option) {
+        if (option == null || option.isEmpty()) {
+            return null;
+        }
 
-    @Nullable
-    public static Boolean hasMeasurableLesionRecist(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST));
-    }
-
-    @Nullable
-    public static Boolean hasBrainLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_BRAIN_LESIONS));
-    }
-
-    @Nullable
-    public static Boolean hasActiveBrainLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_BRAIN_LESIONS, ACTIVE_LINE_OFFSET));
-    }
-
-    @Nullable
-    public static Boolean hasSymptomaticBrainLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_BRAIN_LESIONS, SYMPTOMATIC_LINE_OFFSET));
-    }
-
-    @Nullable
-    public static Boolean hasCnsLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_CNS_LESIONS));
-    }
-
-    @Nullable
-    public static Boolean hasActiveCnsLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_CNS_LESIONS, ACTIVE_LINE_OFFSET));
-    }
-
-    @Nullable
-    public static Boolean hasSymptomaticCnsLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_CNS_LESIONS, SYMPTOMATIC_LINE_OFFSET));
-    }
-
-    @Nullable
-    public static Boolean hasBoneLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_BONE_LESIONS));
-    }
-
-    @Nullable
-    public static Boolean hasLiverLesions(@NotNull QuestionnaireEntry questionnaire) {
-        return QuestionnaireUtil.parseOption(value(questionnaire, QuestionnaireKey.HAS_LIVER_LESIONS));
-    }
-
-    @Nullable
-    public static Boolean hasOtherLesions(@NotNull QuestionnaireEntry questionnaire) {
-        // TODO Coming in later version.
-        return null;
-    }
-
-    @Nullable
-    public static String otherLesions(@NotNull QuestionnaireEntry questionnaire) {
-        // TODO Coming in later version.
-        return null;
-    }
-
-    @Nullable
-    public static List<String> treatmentHistoriesCurrentTumor(@NotNull QuestionnaireEntry questionnaire) {
-        return toList(value(questionnaire, QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR));
+        switch (option.toLowerCase()) {
+            case "no":
+                return false;
+            case "yes":
+                return true;
+            case "n.v.t.":
+            case "nvt":
+            case "nvt.":
+            case "n.v.t":
+            case "unknown":
+            case "-":
+                return null;
+            default: {
+                LOGGER.warn("Unrecognized questionnaire option: '{}'", option);
+                return null;
+            }
+        }
     }
 
     @Nullable
@@ -133,12 +142,12 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry questionnaire, @NotNull QuestionnaireKey key) {
+    private static String value(@NotNull QuestionnaireEntry questionnaire, @Nullable String key) {
         return value(questionnaire, key, 0);
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry questionnaire, @NotNull QuestionnaireKey key, int lineOffset) {
+    private static String value(@NotNull QuestionnaireEntry questionnaire, @Nullable String key, int lineOffset) {
         LookupResult result = lookup(questionnaire, key);
 
         String line = result != null ? result.lines[result.lineIndex + lineOffset] : null;
@@ -146,19 +155,16 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    private static LookupResult lookup(@NotNull QuestionnaireEntry questionnaire, @NotNull QuestionnaireKey key) {
-        Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(questionnaire);
-
-        String keyValue = mapping.get(key);
-        if (keyValue == null) {
+    private static LookupResult lookup(@NotNull QuestionnaireEntry questionnaire, @Nullable String key) {
+        if (key == null) {
             return null;
-        } else {
-            String[] lines = questionnaire.itemAnswerValueValueString().split("\n");
+        }
 
-            for (int i = 0; i < lines.length; i++) {
-                if (lines[i].contains(keyValue)) {
-                    return new LookupResult(lines, i);
-                }
+        String[] lines = questionnaire.itemAnswerValueValueString().split("\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains(key)) {
+                return new LookupResult(lines, i);
             }
         }
 
