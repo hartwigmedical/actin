@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.util.List;
 
+import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFile;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -22,6 +24,7 @@ public final class CurationDatabaseReader {
     private static final String PRIMARY_TUMOR_TSV = "primary_tumor.tsv";
     private static final String ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
+    private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
 
     private CurationDatabaseReader() {
     }
@@ -36,6 +39,7 @@ public final class CurationDatabaseReader {
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
+                .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .build();
     }
 
@@ -57,6 +61,14 @@ public final class CurationDatabaseReader {
     private static List<ECGConfig> readECGConfigs(final String ecgTsv) throws IOException {
         List<ECGConfig> configs = ECGConfigFile.read(ecgTsv);
         LOGGER.info(" Read {} ECG configs from {}", configs.size(), ecgTsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<CancerRelatedComplicationConfig> readCancerRelatedComplicationConfigs(@NotNull String cancerRelationComplicationTsv)
+            throws IOException {
+        List<CancerRelatedComplicationConfig> configs = CancerRelatedComplicationConfigFile.read(cancerRelationComplicationTsv);
+        LOGGER.info(" Read {} cancer related complication configs from {}", configs.size(), cancerRelationComplicationTsv);
         return configs;
     }
 }

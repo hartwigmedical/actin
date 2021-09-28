@@ -9,13 +9,17 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -118,6 +122,22 @@ public class CurationModel {
         return config != null ? config.interpretation() : input;
     }
 
+    @NotNull
+    public List<CancerRelatedComplication> curateCancerRelatedComplications(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
+        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+        for (String input : inputs) {
+            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
+            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
+                    .name(config != null ? config.name() : input)
+                    .build());
+        }
+        return cancerRelatedComplications;
+    }
+
     public void evaluate() {
         int warnCount = 0;
         for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedInputs.asMap().entrySet()) {
@@ -142,6 +162,8 @@ public class CurationModel {
             return database.oncologicalHistoryConfigs();
         } else if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
             return database.primaryTumorConfigs();
+        } else if (classToLookUp == ImmutableCancerRelatedComplicationConfig.class) {
+            return database.cancerRelatedComplicationConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);

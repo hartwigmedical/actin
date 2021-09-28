@@ -1,5 +1,6 @@
 package com.hartwig.actin.database.dao;
 
+import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.TUMOR;
@@ -9,6 +10,7 @@ import static com.hartwig.actin.database.tables.Patient.PATIENT;
 import java.util.List;
 
 import com.hartwig.actin.clinical.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -32,6 +34,7 @@ class ClinicalDAO {
         context.truncate(PATIENT).execute();
         context.truncate(TUMOR).execute();
         context.truncate(CLINICALSTATUS).execute();
+        context.truncate(CANCERRELATEDCOMPLICATION).execute();
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
@@ -49,6 +52,7 @@ class ClinicalDAO {
         writePatientDetails(sampleId, record.patient());
         writeTumorDetails(sampleId, record.tumor());
         writeClinicalStatus(sampleId, record.clinicalStatus());
+        writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
     }
@@ -106,9 +110,7 @@ class ClinicalDAO {
                 CLINICALSTATUS.SAMPLEID,
                 CLINICALSTATUS.WHO,
                 CLINICALSTATUS.HASCURRENTINFECTION,
-                CLINICALSTATUS.INFECTIONDESCRIPTION,
-                CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
-                CLINICALSTATUS.ECGABERRATIONDESCRIPTION)
+                CLINICALSTATUS.INFECTIONDESCRIPTION, CLINICALSTATUS.HASSIGABERRATIONLATESTECG, CLINICALSTATUS.ECGABERRATIONDESCRIPTION)
                 .values(sampleId,
                         clinicalStatus.who(),
                         DataUtil.toByte(clinicalStatus.hasCurrentInfection()),
@@ -116,6 +118,15 @@ class ClinicalDAO {
                         DataUtil.toByte(clinicalStatus.hasSigAberrationLatestEcg()),
                         clinicalStatus.ecgAberrationDescription())
                 .execute();
+    }
+
+    private void writeCancerRelatedComplications(@NotNull String sampleId,
+            @NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
+        for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
+            context.insertInto(CANCERRELATEDCOMPLICATION, CANCERRELATEDCOMPLICATION.SAMPLEID, CANCERRELATEDCOMPLICATION.NAME)
+                    .values(sampleId, cancerRelatedComplication.name())
+                    .execute();
+        }
     }
 
     private void writePriorTumorTreatments(@NotNull String sampleId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {

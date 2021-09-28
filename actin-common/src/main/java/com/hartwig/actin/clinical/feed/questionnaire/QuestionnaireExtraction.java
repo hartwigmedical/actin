@@ -60,8 +60,7 @@ public final class QuestionnaireExtraction {
                 .hasBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
                 .hasActiveBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))
                 .hasSymptomaticBrainLesions(toOption(value(entry,
-                        mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS),
-                        SYMPTOMATIC_LINE_OFFSET)))
+                        mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
                 .hasCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS))))
                 .hasActiveCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)))
                 .hasSymptomaticCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
@@ -71,6 +70,7 @@ public final class QuestionnaireExtraction {
                 .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
                 .hasSignificantAberrationLatestECG(hasSignificantAberrationLatestECG)
                 .significantAberrationLatestECG(significantAberrationLatestECG)
+                .cancerRelatedComplications(toList(value(entry, mapping.get(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS))))
                 .build();
     }
 

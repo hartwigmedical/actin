@@ -53,7 +53,8 @@ public final class TestQuestionnaireFactory {
                 + "Liver lesions yes/no/unknown:NO\n" + "Biopsy amenable yes/no/unknown:UNKNOWN\n"
                 + "Measurable disease (RECIST) yes/no/unknown:YES\n" + "\n" + "Clinical information\n" + "WHO status:0\n"
                 + "Unresolved toxicities grade =>2:NA\n" + "Significant current infection: NO\n"
-                + "Significant aberration on latest ECG: UNKNOWN\n" + "Other(e.g.pleural effusion):chronic diarrhea (likely cancer related)";
+                + "Significant aberration on latest ECG: UNKNOWN\n"
+                + "Other (e.g. pleural effusion): chronic diarrhea (likely cancer related)";
     }
 
     @NotNull

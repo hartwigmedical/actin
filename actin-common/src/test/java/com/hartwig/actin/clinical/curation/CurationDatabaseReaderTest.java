@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -29,12 +30,13 @@ public class CurationDatabaseReaderTest {
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
+        assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
     }
 
-    private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> primaryTumorConfigs) {
-        assertEquals(1, primaryTumorConfigs.size());
+    private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
+        assertEquals(1, configs.size());
 
-        PrimaryTumorConfig config = primaryTumorConfigs.get(0);
+        PrimaryTumorConfig config = configs.get(0);
         assertEquals("Unknown | Carcinoma", config.input());
         assertEquals("Unknown", config.primaryTumorLocation());
         assertEquals("CUP", config.primaryTumorSubLocation());
@@ -45,10 +47,10 @@ public class CurationDatabaseReaderTest {
         assertTrue(config.doids().contains("299"));
     }
 
-    private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> oncologicalHistoryConfigs) {
-        assertEquals(1, oncologicalHistoryConfigs.size());
+    private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {
+        assertEquals(1, configs.size());
 
-        OncologicalHistoryConfig config = oncologicalHistoryConfigs.get(0);
+        OncologicalHistoryConfig config = configs.get(0);
         assertEquals("Capecitabine/Oxaliplatin 2020", config.input());
         assertFalse(config.ignore());
 
@@ -66,11 +68,19 @@ public class CurationDatabaseReaderTest {
         assertNull(curated.surgeryType());
     }
 
-    private static void assertECGConfigs(@NotNull List<ECGConfig> ecgConfigs) {
-        assertEquals(1, ecgConfigs.size());
+    private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {
+        assertEquals(1, configs.size());
 
-        ECGConfig config = ecgConfigs.get(0);
+        ECGConfig config = configs.get(0);
         assertEquals("Sinus Tachycardia", config.input());
         assertEquals("Sinus tachycardia", config.interpretation());
+    }
+
+    private static void assertCancerRelatedComplicationConfigs(@NotNull List<CancerRelatedComplicationConfig> configs) {
+        assertEquals(1, configs.size());
+
+        CancerRelatedComplicationConfig config = configs.get(0);
+        assertEquals("something", config.input());
+        assertEquals("curated something", config.name());
     }
 }

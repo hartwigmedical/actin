@@ -54,6 +54,10 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertNull(questionnaire.hasSignificantAberrationLatestECG());
         assertNull(questionnaire.significantAberrationLatestECG());
+
+        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
+        assertEquals(1, cancerRelatedComplications.size());
+        assertTrue(cancerRelatedComplications.contains("ascites"));
     }
 
     @Test
@@ -87,6 +91,10 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertNull(questionnaire.hasSignificantAberrationLatestECG());
         assertNull(questionnaire.significantAberrationLatestECG());
+
+        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
+        assertEquals(1, cancerRelatedComplications.size());
+        assertTrue(cancerRelatedComplications.contains("chronic diarrhea (likely cancer related)"));
     }
 
     @Test
@@ -114,6 +122,8 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertFalse(questionnaire.hasSignificantAberrationLatestECG());
         assertEquals(Strings.EMPTY, questionnaire.significantAberrationLatestECG());
+
+        assertTrue(questionnaire.cancerRelatedComplications().isEmpty());
     }
 
     @Test

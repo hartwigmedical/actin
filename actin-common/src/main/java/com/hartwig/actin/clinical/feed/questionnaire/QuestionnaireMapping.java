@@ -51,7 +51,7 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
-        KEYS_V1_0.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_0.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, "Other (e.g. pleural effusion)");
 
         KEYS_V0_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
         KEYS_V0_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, null);
@@ -69,7 +69,7 @@ final class QuestionnaireMapping {
         KEYS_V0_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, null);
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
-        KEYS_V0_1.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, null);
+        KEYS_V0_1.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, "Other (e.g. Osteoporosis, Pleural effusion)");
     }
 
     @NotNull

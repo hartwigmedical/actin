@@ -10,6 +10,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -63,6 +65,21 @@ public class CurationModelTest {
         assertEquals("Breast", priorSecondPrimaries.get(0).tumorLocation());
 
         assertTrue(model.curatePriorSecondPrimaries(null).isEmpty());
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateCancerRelatedComplications() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        List<CancerRelatedComplication> cancerRelatedComplications =
+                model.curateCancerRelatedComplications(Lists.newArrayList("term", "no curation"));
+
+        assertEquals(2, cancerRelatedComplications.size());
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("curated").build()));
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("no curation").build()));
+
+        assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
         model.evaluate();
     }
 

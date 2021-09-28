@@ -66,4 +66,7 @@ public abstract class Questionnaire {
     @Nullable
     public abstract String significantAberrationLatestECG();
 
+    @Nullable
+    public abstract List<String> cancerRelatedComplications();
+
 }

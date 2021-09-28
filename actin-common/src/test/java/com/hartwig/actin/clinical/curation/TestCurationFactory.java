@@ -3,7 +3,9 @@ package com.hartwig.actin.clinical.curation;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
@@ -36,6 +38,7 @@ public final class TestCurationFactory {
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
+                .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .build();
     }
 
@@ -98,4 +101,14 @@ public final class TestCurationFactory {
 
         return configs;
     }
+
+    @NotNull
+    private static List<CancerRelatedComplicationConfig> createTestCancerRelatedComplicationConfigs() {
+        List<CancerRelatedComplicationConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableCancerRelatedComplicationConfig.builder().input("term").name("curated").build());
+
+        return configs;
+    }
+
 }

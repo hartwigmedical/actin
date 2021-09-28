@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
+import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
@@ -64,6 +65,7 @@ public class ClinicalModelFactory {
                     .patient(extractPatientDetails(subject, entry))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
+                    .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .build());
@@ -126,6 +128,15 @@ public class ClinicalModelFactory {
                 .hasSigAberrationLatestEcg(questionnaire.hasSignificantAberrationLatestECG())
                 .ecgAberrationDescription(curation.curateAberrationECG(questionnaire.significantAberrationLatestECG()))
                 .build();
+    }
+
+    @NotNull
+    private List<CancerRelatedComplication> extractCancerRelatedComplications(@Nullable Questionnaire questionnaire) {
+        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+        if (questionnaire != null) {
+            cancerRelatedComplications.addAll(curation.curateCancerRelatedComplications(questionnaire.cancerRelatedComplications()));
+        }
+        return cancerRelatedComplications;
     }
 
     @NotNull
