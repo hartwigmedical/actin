@@ -55,7 +55,7 @@ public abstract class Questionnaire {
     public abstract Integer whoStatus();
 
     @Nullable
-    public abstract String significantCurrentInfection();
+    public abstract Boolean hasSignificantCurrentInfection();
 
     @Nullable
     public abstract String significantAberrationLatestECG();

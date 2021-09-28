@@ -57,7 +57,7 @@ public final class QuestionnaireExtraction {
                 .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
-                .significantCurrentInfection(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION)))
+                .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
                 .significantAberrationLatestECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG)))
                 .build();
     }
