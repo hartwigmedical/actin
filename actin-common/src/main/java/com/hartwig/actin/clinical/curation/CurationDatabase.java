@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -30,5 +31,8 @@ public abstract class CurationDatabase {
 
     @NotNull
     public abstract List<CancerRelatedComplicationConfig> cancerRelatedComplicationConfigs();
+
+    @NotNull
+    public abstract List<ToxicityConfig> toxicityConfigs();
 
 }

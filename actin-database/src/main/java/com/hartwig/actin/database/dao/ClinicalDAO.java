@@ -186,7 +186,6 @@ class ClinicalDAO {
                             priorSecondPrimary.year(),
                             DataUtil.toByte(priorSecondPrimary.isSecondPrimaryCured()),
                             priorSecondPrimary.curedDate()).execute();
-
         }
     }
 
@@ -204,5 +203,4 @@ class ClinicalDAO {
                     .execute();
         }
     }
-
 }

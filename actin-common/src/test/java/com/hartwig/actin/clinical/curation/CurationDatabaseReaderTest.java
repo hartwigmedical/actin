@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
@@ -36,6 +37,7 @@ public class CurationDatabaseReaderTest {
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
+        assertToxicityConfigs(database.toxicityConfigs());
     }
 
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
@@ -114,6 +116,15 @@ public class CurationDatabaseReaderTest {
         CancerRelatedComplicationConfig config = configs.get(0);
         assertEquals("something", config.input());
         assertEquals("curated something", config.name());
+    }
+
+    private static void assertToxicityConfigs(@NotNull List<ToxicityConfig> configs) {
+        assertEquals(1, configs.size());
+
+        ToxicityConfig config = configs.get(0);
+        assertEquals("Neuropathy GR3", config.input());
+        assertEquals("Neuropathy", config.standardizedTerm());
+        assertEquals(3, config.grade());
     }
 
     @NotNull

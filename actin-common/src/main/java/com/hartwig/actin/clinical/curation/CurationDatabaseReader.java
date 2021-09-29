@@ -13,6 +13,8 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFile;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFile;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfigFile;
 import com.hartwig.actin.util.FileUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +30,7 @@ public final class CurationDatabaseReader {
     private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
+    private static final String TOXICITY_TSV = "toxicity.tsv";
 
     private CurationDatabaseReader() {
     }
@@ -44,6 +47,7 @@ public final class CurationDatabaseReader {
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
+                .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .build();
     }
 
@@ -81,6 +85,13 @@ public final class CurationDatabaseReader {
             throws IOException {
         List<CancerRelatedComplicationConfig> configs = CancerRelatedComplicationConfigFile.read(cancerRelationComplicationTsv);
         LOGGER.info(" Read {} cancer related complication configs from {}", configs.size(), cancerRelationComplicationTsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<ToxicityConfig> readToxicityConfigs(@NotNull String toxicityTsv) throws IOException {
+        List<ToxicityConfig> configs = ToxicityConfigFile.read(toxicityTsv);
+        LOGGER.info(" Read {} toxicity configs from {}", configs.size(), toxicityTsv);
         return configs;
     }
 }
