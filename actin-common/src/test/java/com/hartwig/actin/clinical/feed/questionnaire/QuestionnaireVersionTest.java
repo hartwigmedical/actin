@@ -13,6 +13,8 @@ public class QuestionnaireVersionTest {
                 QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
         assertEquals(QuestionnaireVersion.V1_0,
                 QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())));
+        assertEquals(QuestionnaireVersion.V0_2,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())));
         assertEquals(QuestionnaireVersion.V0_1,
                 QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
     }

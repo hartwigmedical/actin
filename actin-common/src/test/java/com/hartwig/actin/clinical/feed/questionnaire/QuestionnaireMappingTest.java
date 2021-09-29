@@ -13,6 +13,7 @@ public class QuestionnaireMappingTest {
         for (QuestionnaireKey key : QuestionnaireKey.values()) {
             assertTrue(QuestionnaireMapping.KEYS_V1_1.containsKey(key));
             assertTrue(QuestionnaireMapping.KEYS_V1_0.containsKey(key));
+            assertTrue(QuestionnaireMapping.KEYS_V0_2.containsKey(key));
             assertTrue(QuestionnaireMapping.KEYS_V0_1.containsKey(key));
         }
     }
@@ -23,6 +24,8 @@ public class QuestionnaireMappingTest {
                 QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
         assertEquals(QuestionnaireMapping.KEYS_V1_0,
                 QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())));
+        assertEquals(QuestionnaireMapping.KEYS_V0_2,
+                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())));
         assertEquals(QuestionnaireMapping.KEYS_V0_1,
                 QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
     }
