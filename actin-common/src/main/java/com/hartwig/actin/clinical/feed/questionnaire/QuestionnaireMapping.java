@@ -66,7 +66,7 @@ final class QuestionnaireMapping {
         KEYS_V0_1.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.OTHER_LESIONS, null);
         KEYS_V0_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
-        KEYS_V0_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, null);
+        KEYS_V0_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities from prior anti-tumor therapy grade => 2");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V0_1.put(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS, "Other (e.g. Osteoporosis, Pleural effusion)");

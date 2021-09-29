@@ -61,13 +61,15 @@ public final class QuestionnaireExtraction {
                 .hasBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
                 .hasActiveBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))
                 .hasSymptomaticBrainLesions(toOption(value(entry,
-                        mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
+                        mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS),
+                        SYMPTOMATIC_LINE_OFFSET)))
                 .hasCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS))))
                 .hasActiveCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)))
                 .hasSymptomaticCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
                 .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
+                .unresolvedToxicities(toList(value(entry, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
                 .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
                 .hasSignificantAberrationLatestECG(hasSignificantAberrationLatestECG)
                 .significantAberrationLatestECG(significantAberrationLatestECG)

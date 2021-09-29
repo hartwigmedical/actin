@@ -55,6 +55,7 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
         assertEquals(1, (int) questionnaire.whoStatus());
+        assertTrue(questionnaire.unresolvedToxicities().isEmpty());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertNull(questionnaire.hasSignificantAberrationLatestECG());
         assertNull(questionnaire.significantAberrationLatestECG());
@@ -96,6 +97,11 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
         assertEquals(0, (int) questionnaire.whoStatus());
+
+        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
+        assertEquals(1, unresolvedToxicities.size());
+        assertTrue(unresolvedToxicities.contains("NA"));
+
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertNull(questionnaire.hasSignificantAberrationLatestECG());
         assertNull(questionnaire.significantAberrationLatestECG());
@@ -128,6 +134,11 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasBoneLesions());
         assertTrue(questionnaire.hasLiverLesions());
         assertEquals(1, (int) questionnaire.whoStatus());
+
+        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
+        assertEquals(1, unresolvedToxicities.size());
+        assertTrue(unresolvedToxicities.contains("Neuropathy GR3"));
+
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertFalse(questionnaire.hasSignificantAberrationLatestECG());
         assertEquals(Strings.EMPTY, questionnaire.significantAberrationLatestECG());

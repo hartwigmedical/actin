@@ -61,6 +61,9 @@ public abstract class Questionnaire {
     public abstract Integer whoStatus();
 
     @Nullable
+    public abstract List<String> unresolvedToxicities();
+
+    @Nullable
     public abstract Boolean hasSignificantCurrentInfection();
 
     @Nullable
