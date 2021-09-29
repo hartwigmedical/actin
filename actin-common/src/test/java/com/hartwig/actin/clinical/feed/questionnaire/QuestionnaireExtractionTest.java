@@ -164,7 +164,10 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.tumorType());
         assertNull(questionnaire.treatmentHistoryCurrentTumor());
         assertNull(questionnaire.otherOncologicalHistory());
-        assertNull(questionnaire.nonOncologicalHistory());
+
+        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
+        assertEquals(1, nonOncologicalHistory.size());
+        assertTrue(nonOncologicalHistory.contains("Diabetes Mellitus type 2"));
 
         assertNull(questionnaire.stage());
         assertTrue(questionnaire.hasMeasurableLesionRecist());

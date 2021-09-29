@@ -75,7 +75,7 @@ final class QuestionnaireMapping {
 
         KEYS_V0_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
         KEYS_V0_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, null);
-        KEYS_V0_1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, null);
+        KEYS_V0_1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Other");
         KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, null);
         KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, null);
         KEYS_V0_1.put(QuestionnaireKey.STAGE, null);
