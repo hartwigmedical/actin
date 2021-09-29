@@ -123,8 +123,8 @@ public class CurationDatabaseReaderTest {
 
         ToxicityConfig config = configs.get(0);
         assertEquals("Neuropathy GR3", config.input());
-        assertEquals("Neuropathy", config.standardizedTerm());
-        assertEquals(3, config.grade());
+        assertEquals("Neuropathy", config.name());
+        assertEquals(3, (int) config.grade());
     }
 
     @NotNull

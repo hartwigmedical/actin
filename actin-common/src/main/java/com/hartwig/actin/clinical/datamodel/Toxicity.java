@@ -17,7 +17,7 @@ public abstract class Toxicity {
     public abstract LocalDate evaluatedDate();
 
     @NotNull
-    public abstract String source();
+    public abstract ToxicitySource source();
 
     public abstract int grade();
 

@@ -4,6 +4,7 @@ import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
+import static com.hartwig.actin.database.Tables.TOXICITY;
 import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.tables.Clinicalstatus.CLINICALSTATUS;
 import static com.hartwig.actin.database.tables.Patient.PATIENT;
@@ -17,6 +18,7 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +42,7 @@ class ClinicalDAO {
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
+        context.truncate(TOXICITY).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
 
@@ -59,6 +62,7 @@ class ClinicalDAO {
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
         writePriorOtherConditions(sampleId, record.priorOtherConditions());
+        writeToxicities(sampleId, record.toxicities());
     }
 
     private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
@@ -174,9 +178,7 @@ class ClinicalDAO {
                     PRIORSECONDPRIMARY.TUMORTYPE,
                     PRIORSECONDPRIMARY.TUMORSUBTYPE,
                     PRIORSECONDPRIMARY.DOIDS,
-                    PRIORSECONDPRIMARY.YEAR,
-                    PRIORSECONDPRIMARY.ISSECONDPRIMARYCURED,
-                    PRIORSECONDPRIMARY.CUREDDATE)
+                    PRIORSECONDPRIMARY.YEAR, PRIORSECONDPRIMARY.ISSECONDPRIMARYCURED, PRIORSECONDPRIMARY.CUREDDATE)
                     .values(sampleId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
@@ -185,21 +187,27 @@ class ClinicalDAO {
                             DataUtil.concat(priorSecondPrimary.doids()),
                             priorSecondPrimary.year(),
                             DataUtil.toByte(priorSecondPrimary.isSecondPrimaryCured()),
-                            priorSecondPrimary.curedDate()).execute();
+                            priorSecondPrimary.curedDate())
+                    .execute();
         }
     }
 
     private void writePriorOtherConditions(@NotNull String sampleId, @NotNull List<PriorOtherCondition> priorOtherConditions) {
         for (PriorOtherCondition priorOtherCondition : priorOtherConditions) {
             context.insertInto(PRIOROTHERCONDITION,
-                    PRIOROTHERCONDITION.SAMPLEID,
-                    PRIOROTHERCONDITION.NAME,
-                    PRIOROTHERCONDITION.DOIDS,
-                    PRIOROTHERCONDITION.CATEGORY)
+                    PRIOROTHERCONDITION.SAMPLEID, PRIOROTHERCONDITION.NAME, PRIOROTHERCONDITION.DOIDS, PRIOROTHERCONDITION.CATEGORY)
                     .values(sampleId,
                             priorOtherCondition.name(),
                             DataUtil.concat(priorOtherCondition.doids()),
                             priorOtherCondition.category())
+                    .execute();
+        }
+    }
+
+    private void writeToxicities(@NotNull String sampleId, @NotNull List<Toxicity> toxicities) {
+        for (Toxicity toxicity : toxicities) {
+            context.insertInto(TOXICITY, TOXICITY.SAMPLEID, TOXICITY.NAME, TOXICITY.EVALUATEDDATE, TOXICITY.SOURCE, TOXICITY.GRADE)
+                    .values(sampleId, toxicity.name(), toxicity.evaluatedDate(), toxicity.source().display(), toxicity.grade())
                     .execute();
         }
     }

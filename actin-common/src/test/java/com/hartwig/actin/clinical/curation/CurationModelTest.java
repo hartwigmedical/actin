@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -15,6 +16,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.junit.Test;
@@ -95,6 +98,26 @@ public class CurationModelTest {
         assertEquals("sick", priorOtherConditions.get(0).name());
 
         assertTrue(model.curatePriorOtherConditions(null).isEmpty());
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateQuestionnaireToxicities() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        LocalDate date = LocalDate.of(2018, 5, 21);
+        List<Toxicity> toxicities = model.curateQuestionnaireToxicities(date, Lists.newArrayList("neuropathy gr3", "cannot curate"));
+
+        assertEquals(1, toxicities.size());
+
+        Toxicity toxicity = toxicities.get(0);
+        assertEquals("neuropathy", toxicity.name());
+        assertEquals(date, toxicity.evaluatedDate());
+        assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source());
+        assertEquals(3, toxicity.grade());
+
+        assertTrue(model.curateQuestionnaireToxicities(null, Lists.newArrayList("something")).isEmpty());
+        assertTrue(model.curateQuestionnaireToxicities(date, null).isEmpty());
         model.evaluate();
     }
 

@@ -12,8 +12,11 @@ public abstract class ToxicityConfig implements CurationConfig {
     @Override
     public abstract String input();
 
-    @NotNull
-    public abstract String standardizedTerm();
+    public abstract boolean ignore();
 
-    public abstract int grade();
+    @NotNull
+    public abstract String name();
+
+    @Nullable
+    public abstract Integer grade();
 }

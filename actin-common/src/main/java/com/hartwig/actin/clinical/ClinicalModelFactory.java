@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
@@ -70,6 +71,7 @@ public class ClinicalModelFactory {
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                    .toxicities(extractToxicities(questionnaire, entry))
                     .build());
         }
 
@@ -172,6 +174,15 @@ public class ClinicalModelFactory {
         } else {
             return Lists.newArrayList();
         }
+    }
 
+    @NotNull
+    private List<Toxicity> extractToxicities(@Nullable Questionnaire questionnaire, @Nullable QuestionnaireEntry entry) {
+        if (questionnaire != null && entry != null) {
+            List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
+            return curation.curateQuestionnaireToxicities(entry.authoredDateTime(), unresolvedToxicities);
+        } else {
+            return Lists.newArrayList();
+        }
     }
 }

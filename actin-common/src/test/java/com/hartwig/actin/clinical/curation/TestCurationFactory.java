@@ -10,9 +10,11 @@ import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
@@ -43,6 +45,7 @@ public final class TestCurationFactory {
                 .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
+                .toxicityConfigs(createTestToxicityConfigs())
                 .build();
     }
 
@@ -70,7 +73,8 @@ public final class TestCurationFactory {
         configs.add(ImmutableOncologicalHistoryConfig.builder()
                 .input("Resection 2020")
                 .ignore(false)
-                .curatedObject(ImmutablePriorTumorTreatment.builder().name("Resection")
+                .curatedObject(ImmutablePriorTumorTreatment.builder()
+                        .name("Resection")
                         .year(2020)
                         .category("Surgery")
                         .isSystemic(false)
@@ -129,4 +133,12 @@ public final class TestCurationFactory {
         return configs;
     }
 
+    @NotNull
+    private static List<ToxicityConfig> createTestToxicityConfigs() {
+        List<ToxicityConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableToxicityConfig.builder().ignore(false).input("neuropathy gr3").name("neuropathy").grade(3).build());
+
+        return configs;
+    }
 }

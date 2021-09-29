@@ -51,7 +51,7 @@ CREATE TABLE clinicalStatus
 DROP TABLE IF EXISTS cancerRelatedComplication;
 CREATE TABLE cancerRelatedComplication
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     name varchar(50),
     PRIMARY KEY (id)
 );
@@ -59,7 +59,7 @@ CREATE TABLE cancerRelatedComplication
 DROP TABLE IF EXISTS priorTumorTreatment;
 CREATE TABLE priorTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     name varchar(50),
     year int,
     category varchar(50),
@@ -77,7 +77,7 @@ CREATE TABLE priorTumorTreatment
 DROP TABLE IF EXISTS priorSecondPrimary;
 CREATE TABLE priorSecondPrimary
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     tumorLocation varchar(50),
     tumorSubLocation varchar(50),
     tumorType varchar(50),
@@ -92,7 +92,7 @@ CREATE TABLE priorSecondPrimary
 DROP TABLE IF EXISTS priorOtherCondition;
 CREATE TABLE priorOtherCondition
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     name varchar(500),
     category varchar(50),
     doids varchar(50),
@@ -102,7 +102,7 @@ CREATE TABLE priorOtherCondition
 DROP TABLE IF EXISTS otherComplication;
 CREATE TABLE otherComplication
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     name varchar(50),
     doids varchar(50),
     specialty varchar(50),
@@ -115,7 +115,7 @@ CREATE TABLE otherComplication
 DROP TABLE IF EXISTS labValue;
 CREATE TABLE labValue
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     date DATE,
     code varchar(50),
     name varchar(50),
@@ -133,10 +133,10 @@ CREATE TABLE labValue
 DROP TABLE IF EXISTS toxicity;
 CREATE TABLE toxicity
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
-    name varchar(50),
-    evaluatedDate DATE,
-    source varchar(50),
+    sampleId varchar(50) NOT NULL,
+    name varchar(50) NOT NULL,
+    evaluatedDate DATE NOT NULL,
+    source varchar(50) NOT NULL,
     grade int,
     PRIMARY KEY (id)
 );
@@ -144,7 +144,7 @@ CREATE TABLE toxicity
 DROP TABLE IF EXISTS allergy;
 CREATE TABLE allergy
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     name varchar(50),
     category varchar(50),
     criticality varchar(50),
@@ -154,7 +154,7 @@ CREATE TABLE allergy
 DROP TABLE IF EXISTS surgery;
 CREATE TABLE surgery
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     endDate DATE,
     PRIMARY KEY (id)
 );
@@ -162,7 +162,7 @@ CREATE TABLE surgery
 DROP TABLE IF EXISTS bloodPressure;
 CREATE TABLE bloodPressure
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     date DATE,
     category varchar(50),
     value double precision,
@@ -173,7 +173,7 @@ CREATE TABLE bloodPressure
 DROP TABLE IF EXISTS bloodTransfusion;
 CREATE TABLE bloodTransfusion
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     date DATE,
     product varchar(50),
     PRIMARY KEY (id)
@@ -182,7 +182,7 @@ CREATE TABLE bloodTransfusion
 DROP TABLE IF EXISTS medication;
 CREATE TABLE medication
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50),
+    sampleId varchar(50) NOT NULL,
     name varchar(50),
     type varchar(50),
     dosage double precision,

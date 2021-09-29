@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +18,20 @@ import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.apache.logging.log4j.LogManager;
@@ -147,6 +153,29 @@ public class CurationModel {
         return priorOtherConditions;
     }
 
+    @NotNull
+    public List<Toxicity> curateQuestionnaireToxicities(@Nullable LocalDate date, @Nullable List<String> inputs) {
+        if (inputs == null || date == null) {
+            return Lists.newArrayList();
+        }
+
+        List<Toxicity> toxicities = Lists.newArrayList();
+        for (String input : inputs) {
+            ToxicityConfig config = find(database.toxicityConfigs(), input);
+            if (config == null) {
+                LOGGER.warn(" Could not find toxicity config for input '{}'", input);
+            } else if (!config.ignore()) {
+                toxicities.add(ImmutableToxicity.builder()
+                        .name(config.name())
+                        .evaluatedDate(date)
+                        .source(ToxicitySource.QUESTIONNAIRE)
+                        .grade(config.grade())
+                        .build());
+            }
+        }
+        return toxicities;
+    }
+
     @Nullable
     public String curateAberrationECG(@Nullable String input) {
         if (input == null) {
@@ -187,6 +216,8 @@ public class CurationModel {
             return database.primaryTumorConfigs();
         } else if (classToLookUp == ImmutableCancerRelatedComplicationConfig.class) {
             return database.cancerRelatedComplicationConfigs();
+        } else if (classToLookUp == ImmutableToxicityConfig.class) {
+            return database.toxicityConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);

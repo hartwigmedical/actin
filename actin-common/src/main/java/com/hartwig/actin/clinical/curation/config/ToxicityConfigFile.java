@@ -16,6 +16,8 @@ public final class ToxicityConfigFile {
 
     private static final String DELIMITER = "\t";
 
+    private static final String IGNORE_STRING = "<ignore>";
+
     private ToxicityConfigFile() {
     }
 
@@ -33,10 +35,12 @@ public final class ToxicityConfigFile {
 
     @NotNull
     private static ToxicityConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+        String name = parts[fieldIndexMap.get("name")];
         return ImmutableToxicityConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
-                .standardizedTerm(parts[fieldIndexMap.get("standardizedTerm")])
-                .grade(CurationUtil.parseInteger(parts[fieldIndexMap.get("grade")]))
+                .ignore(name.equals(IGNORE_STRING))
+                .name(parts[fieldIndexMap.get("name")])
+                .grade(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("grade")]))
                 .build();
     }
 }
