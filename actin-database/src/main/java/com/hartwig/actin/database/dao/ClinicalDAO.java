@@ -91,7 +91,8 @@ class ClinicalDAO {
                 TUMOR.HASBONELESIONS,
                 TUMOR.HASLIVERLESIONS,
                 TUMOR.HASOTHERLESIONS,
-                TUMOR.OTHERLESIONS)
+                TUMOR.OTHERLESIONS,
+                TUMOR.BIOPSYLOCATION)
                 .values(sampleId,
                         tumor.primaryTumorLocation(),
                         tumor.primaryTumorSubLocation(),
@@ -110,7 +111,8 @@ class ClinicalDAO {
                         DataUtil.toByte(tumor.hasBoneLesions()),
                         DataUtil.toByte(tumor.hasLiverLesions()),
                         DataUtil.toByte(tumor.hasOtherLesions()),
-                        tumor.otherLesions()).execute();
+                        tumor.otherLesions(),
+                        tumor.biopsyLocation()).execute();
     }
 
     private void writeClinicalStatus(@NotNull String sampleId, @NotNull ClinicalStatus clinicalStatus) {

@@ -64,4 +64,7 @@ public abstract class TumorDetails {
     @Nullable
     public abstract String otherLesions();
 
+    @Nullable
+    public abstract String biopsyLocation();
+
 }
