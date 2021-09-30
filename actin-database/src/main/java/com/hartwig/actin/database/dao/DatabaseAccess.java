@@ -37,7 +37,7 @@ public class DatabaseAccess {
 
         Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
         String catalog = conn.getCatalog();
-        LOGGER.info("Connecting to database {}", catalog);
+        LOGGER.info("Connecting to database '{}'", catalog);
 
         DSLContext context = DSL.using(conn, SQLDialect.MYSQL, settings(catalog));
         return new DatabaseAccess(new ClinicalDAO(context));
