@@ -23,6 +23,7 @@ public final class OncologicalHistoryConfigFile {
     private static final String DELIMITER = "\t";
 
     private static final String IGNORE_STRING = "<ignore>";
+    private static final String SECOND_PRIMARY_STRING = "second primary";
 
     private OncologicalHistoryConfigFile() {
     }
@@ -49,18 +50,7 @@ public final class OncologicalHistoryConfigFile {
 
     @NotNull
     private static Object curateObject(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
-        String secondPrimaryField = parts[fieldIndexMap.get("isSecondPrimary")];
-        boolean isSecondPrimary;
-        if (secondPrimaryField.equals("1")) {
-            isSecondPrimary = true;
-        } else {
-            isSecondPrimary = false;
-            if (!secondPrimaryField.equals("0")) {
-                LOGGER.warn("Suspicious value detected for isSecondPrimary in oncological history config: '{}'", secondPrimaryField);
-            }
-        }
-
-        if (isSecondPrimary) {
+        if (parts[fieldIndexMap.get("category")].equals(SECOND_PRIMARY_STRING)) {
             return ImmutablePriorSecondPrimary.builder()
                     .tumorLocation(parts[fieldIndexMap.get("tumorLocation")])
                     .tumorSubLocation(parts[fieldIndexMap.get("tumorSubLocation")])
