@@ -45,6 +45,17 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateBiopsyLocations() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals("Liver", model.curateBiopsyLocation("liver"));
+        assertEquals("No curation needed", model.curateBiopsyLocation("No curation needed"));
+        assertNull(model.curateBiopsyLocation(null));
+
+        model.evaluate();
+    }
+
+    @Test
     public void canCurateCancerRelatedComplications() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 

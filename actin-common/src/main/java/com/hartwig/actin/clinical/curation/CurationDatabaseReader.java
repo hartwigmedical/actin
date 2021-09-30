@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.util.List;
 
+import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
+import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfigFile;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
@@ -26,6 +28,7 @@ public final class CurationDatabaseReader {
     private static final Logger LOGGER = LogManager.getLogger(CurationDatabaseReader.class);
 
     private static final String PRIMARY_TUMOR_TSV = "primary_tumor.tsv";
+    private static final String BIOPSY_LOCATION_TSV = "biopsy_location.tsv";
     private static final String ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv";
     private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
@@ -43,6 +46,7 @@ public final class CurationDatabaseReader {
 
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
+                .biopsyLocationConfigs(readBiopsyLocationConfigs(basePath + BIOPSY_LOCATION_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
@@ -55,6 +59,13 @@ public final class CurationDatabaseReader {
     private static List<PrimaryTumorConfig> readPrimaryTumorConfigs(@NotNull String primaryTumorTsv) throws IOException {
         List<PrimaryTumorConfig> configs = PrimaryTumorConfigFile.read(primaryTumorTsv);
         LOGGER.info(" Read {} primary tumor configs from {}", configs.size(), primaryTumorTsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<BiopsyLocationConfig> readBiopsyLocationConfigs(@NotNull String biopsyLocationTsv) throws IOException {
+        List<BiopsyLocationConfig> configs = BiopsyLocationConfigFile.read(biopsyLocationTsv);
+        LOGGER.info(" Read {} biopsy location configs from {}", configs.size(), biopsyLocationTsv);
         return configs;
     }
 

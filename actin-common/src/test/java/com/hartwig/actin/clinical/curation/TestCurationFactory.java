@@ -3,8 +3,10 @@ package com.hartwig.actin.clinical.curation;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableBiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
@@ -41,12 +43,22 @@ public final class TestCurationFactory {
     private static CurationDatabase createTestCurationDatabase() {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
+                .biopsyLocationConfigs(createTestBiopsyLocationConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
                 .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .build();
+    }
+
+    @NotNull
+    private static List<BiopsyLocationConfig> createTestBiopsyLocationConfigs() {
+        List<BiopsyLocationConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableBiopsyLocationConfig.builder().input("liver").location("Liver").build());
+
+        return configs;
     }
 
     @NotNull

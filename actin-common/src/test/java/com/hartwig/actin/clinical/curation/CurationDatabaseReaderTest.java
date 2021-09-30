@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
@@ -32,6 +33,7 @@ public class CurationDatabaseReaderTest {
         CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
+        assertBiopsyLocationConfigs(database.biopsyLocationConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
@@ -51,6 +53,14 @@ public class CurationDatabaseReaderTest {
         assertEquals(Strings.EMPTY, config.primaryTumorExtraDetails());
         assertEquals(1, config.doids().size());
         assertTrue(config.doids().contains("299"));
+    }
+
+    private static void assertBiopsyLocationConfigs(@NotNull List<BiopsyLocationConfig> configs) {
+        assertEquals(1, configs.size());
+
+        BiopsyLocationConfig config = configs.get(0);
+        assertEquals("Lever", config.input());
+        assertEquals("Liver", config.location());
     }
 
     private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {

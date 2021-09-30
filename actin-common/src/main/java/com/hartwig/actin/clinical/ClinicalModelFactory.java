@@ -105,10 +105,9 @@ public class ClinicalModelFactory {
             return ImmutableTumorDetails.builder().build();
         }
 
-        // TODO Curate biopsy location
         return ImmutableTumorDetails.builder()
                 .from(curation.curateTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
-                .biopsyLocation(questionnaire.biopsyLocation())
+                .biopsyLocation(curation.curateBiopsyLocation(questionnaire.biopsyLocation()))
                 .stage(questionnaire.stage())
                 .hasMeasurableLesionRecist(questionnaire.hasMeasurableLesionRecist())
                 .hasBrainLesions(questionnaire.hasBrainLesions())

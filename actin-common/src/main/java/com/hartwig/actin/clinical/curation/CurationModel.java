@@ -10,9 +10,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableBiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
@@ -77,6 +79,18 @@ public class CurationModel {
                 .primaryTumorExtraDetails(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorExtraDetails() : null)
                 .doids(primaryTumorConfig != null ? primaryTumorConfig.doids() : null)
                 .build();
+    }
+
+    @Nullable
+    public String curateBiopsyLocation(@Nullable String input) {
+        if (input == null) {
+            return null;
+        }
+
+        BiopsyLocationConfig config = find(database.biopsyLocationConfigs(), input);
+
+        // Assume biopsy locations can also be pass-through.
+        return config != null ? config.location() : input;
     }
 
     @NotNull
@@ -206,16 +220,18 @@ public class CurationModel {
 
     @NotNull
     private List<? extends CurationConfig> configsForClass(@NotNull Class<? extends CurationConfig> classToLookUp) {
-        if (classToLookUp == ImmutableECGConfig.class) {
-            return database.ecgConfigs();
+        if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
+            return database.primaryTumorConfigs();
+        } else if (classToLookUp == ImmutableBiopsyLocationConfig.class) {
+            return database.biopsyLocationConfigs();
         } else if (classToLookUp == ImmutableOncologicalHistoryConfig.class) {
             return database.oncologicalHistoryConfigs();
         } else if (classToLookUp == ImmutableNonOncologicalHistoryConfig.class) {
             return database.nonOncologicalHistoryConfigs();
-        } else if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
-            return database.primaryTumorConfigs();
         } else if (classToLookUp == ImmutableCancerRelatedComplicationConfig.class) {
             return database.cancerRelatedComplicationConfigs();
+        } else if (classToLookUp == ImmutableECGConfig.class) {
+            return database.ecgConfigs();
         } else if (classToLookUp == ImmutableToxicityConfig.class) {
             return database.toxicityConfigs();
         }
