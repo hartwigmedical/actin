@@ -1,0 +1,31 @@
+﻿"subject"	"parent_identifier_value"	"authored_datetime"	"questionnaire_Questionnaire_value"	"description"	"item_text"	"item_answer_value_valueString"
+"ACTN-01-02-9999"	"XX"	"2020-08-28 12:18:00.0000000"	"A"	"INT Consult"	"Beloop"	"ACTIN Questionnaire V1.0
+Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonimized data!
+
+Relevant patient history
+Treatment history current tumor: Resectie 2020, geen systemische behandeling
+Other oncological history (e.g. second primary): NA
+Non-oncological history: Migraine
+
+Tumor details
+Primary tumor location: lung
+Primary tumor type: small-cell carcinoma
+Biopsy location: liver
+Stage: IV
+CNS lesions yes/no/unknown: NO
+	- Active:
+	- Symptomatic:
+Brain lesions yes/no/unknown: Unknown
+	- Active:
+	- Symptomatic:
+Bone lesions yes/no/unknown: NO
+Liver lesions yes/no/unknown: NO
+Measurable disease (RECIST) yes/no/unknown: YES
+
+Clinical information
+WHO status: 0
+Unresolved toxicities grade => 2: NA
+Significant current infection: NO
+Significant aberration on latest ECG: UNKNOWN
+Cancer-related complications (e.g. pleural effusion): chronisch diarree (ws ziektegerelateerd)"
+"ACTN-01-02-9999"	"YY"	"2021-06-06 18:10:00.0000000"	"B"	"ONC Kuuroverzicht"	"Nausea"	"0"

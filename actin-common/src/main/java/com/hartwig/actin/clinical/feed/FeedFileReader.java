@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.feed;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,7 @@ class FeedFileReader<T extends FeedEntry> {
 
     @NotNull
     public List<T> read(@NotNull String feedTsv) throws IOException {
-        List<String> lines = readFeedFile(feedTsv);
+        List<String> lines = Files.readAllLines(new File(feedTsv).toPath());
 
         Map<String, Integer> fieldIndexMap = FileUtil.createFieldIndexMap(splitFeedLine(lines.get(0)));
         List<T> entries = Lists.newArrayList();
@@ -46,12 +45,6 @@ class FeedFileReader<T extends FeedEntry> {
         }
 
         return entries;
-    }
-
-    @NotNull
-    private static List<String> readFeedFile(@NotNull String feedTsv) throws IOException {
-        // Feed files are delivered in UTF_16LE so need to convert.
-        return Files.readAllLines(new File(feedTsv).toPath(), StandardCharsets.UTF_16LE);
     }
 
     @NotNull

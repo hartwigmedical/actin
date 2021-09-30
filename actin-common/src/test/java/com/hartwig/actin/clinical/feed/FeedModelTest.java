@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class FeedModelTest {
 
-    private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
+    private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("clinical/feed2").getPath();
 
     @Test
     public void canCreateFromFeedDirectory() throws IOException {
