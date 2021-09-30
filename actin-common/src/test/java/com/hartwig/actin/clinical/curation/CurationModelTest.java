@@ -114,7 +114,7 @@ public class CurationModelTest {
         assertEquals("neuropathy", toxicity.name());
         assertEquals(date, toxicity.evaluatedDate());
         assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source());
-        assertEquals(3, toxicity.grade());
+        assertEquals(3, (int) toxicity.grade());
 
         assertTrue(model.curateQuestionnaireToxicities(null, Lists.newArrayList("something")).isEmpty());
         assertTrue(model.curateQuestionnaireToxicities(date, null).isEmpty());

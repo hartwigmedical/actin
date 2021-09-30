@@ -19,6 +19,7 @@ public abstract class Toxicity {
     @NotNull
     public abstract ToxicitySource source();
 
-    public abstract int grade();
+    @Nullable
+    public abstract Integer grade();
 
 }
