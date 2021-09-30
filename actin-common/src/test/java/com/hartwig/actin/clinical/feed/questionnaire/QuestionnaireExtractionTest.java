@@ -31,6 +31,7 @@ public class QuestionnaireExtractionTest {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
         assertEquals("ovary", questionnaire.tumorLocation());
         assertEquals("serous", questionnaire.tumorType());
+        assertEquals("Lymph node", questionnaire.biopsyLocation());
 
         List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
         assertEquals(2, treatmentHistory.size());
@@ -73,6 +74,7 @@ public class QuestionnaireExtractionTest {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
         assertEquals("lung", questionnaire.tumorLocation());
         assertEquals("small-cell carcinoma", questionnaire.tumorType());
+        assertEquals("Liver", questionnaire.biopsyLocation());
 
         List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
         assertEquals(1, treatmentHistory.size());
@@ -118,6 +120,7 @@ public class QuestionnaireExtractionTest {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
         assertEquals("cholangio", questionnaire.tumorLocation());
         assertEquals("carcinoma", questionnaire.tumorType());
+        assertEquals("liver", questionnaire.biopsyLocation());
 
         List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
         assertEquals(1, treatmentHistory.size());
@@ -162,6 +165,7 @@ public class QuestionnaireExtractionTest {
 
         assertNull(questionnaire.tumorLocation());
         assertNull(questionnaire.tumorType());
+        assertNull(questionnaire.biopsyLocation());
         assertNull(questionnaire.treatmentHistoryCurrentTumor());
         assertNull(questionnaire.otherOncologicalHistory());
 

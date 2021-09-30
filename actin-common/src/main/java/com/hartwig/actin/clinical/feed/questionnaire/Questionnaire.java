@@ -19,6 +19,9 @@ public abstract class Questionnaire {
     public abstract String tumorType();
 
     @Nullable
+    public abstract String biopsyLocation();
+
+    @Nullable
     public abstract TumorStage stage();
 
     @Nullable

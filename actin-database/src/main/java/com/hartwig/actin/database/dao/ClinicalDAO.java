@@ -180,7 +180,9 @@ class ClinicalDAO {
                     PRIORSECONDPRIMARY.TUMORTYPE,
                     PRIORSECONDPRIMARY.TUMORSUBTYPE,
                     PRIORSECONDPRIMARY.DOIDS,
-                    PRIORSECONDPRIMARY.YEAR, PRIORSECONDPRIMARY.ISSECONDPRIMARYCURED, PRIORSECONDPRIMARY.CUREDDATE)
+                    PRIORSECONDPRIMARY.YEAR,
+                    PRIORSECONDPRIMARY.ISSECONDPRIMARYCURED,
+                    PRIORSECONDPRIMARY.CUREDYEAR)
                     .values(sampleId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
@@ -189,7 +191,7 @@ class ClinicalDAO {
                             DataUtil.concat(priorSecondPrimary.doids()),
                             priorSecondPrimary.year(),
                             DataUtil.toByte(priorSecondPrimary.isSecondPrimaryCured()),
-                            priorSecondPrimary.curedDate())
+                            priorSecondPrimary.curedYear())
                     .execute();
         }
     }

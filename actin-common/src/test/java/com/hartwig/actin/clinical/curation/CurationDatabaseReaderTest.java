@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.io.Resources;
@@ -83,7 +82,7 @@ public class CurationDatabaseReaderTest {
         assertEquals(Strings.EMPTY, curated2.tumorSubType());
         assertTrue(curated2.doids().isEmpty());
         assertTrue(curated2.isSecondPrimaryCured());
-        assertEquals(LocalDate.of(2019, 6, 20), curated2.curedDate());
+        assertEquals(2019, (int) curated2.curedYear());
     }
 
     private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {

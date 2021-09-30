@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -31,6 +30,6 @@ public abstract class PriorSecondPrimary {
     public abstract boolean isSecondPrimaryCured();
 
     @Nullable
-    public abstract LocalDate curedDate();
+    public abstract Integer curedYear();
 
 }

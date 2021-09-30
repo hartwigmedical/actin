@@ -59,7 +59,7 @@ public final class OncologicalHistoryConfigFile {
                     .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
                     .year(CurationUtil.parseInteger(parts[fieldIndexMap.get("year")]))
                     .isSecondPrimaryCured(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSecondPrimaryCured")]))
-                    .curedDate(CurationUtil.parseOptionalDate(parts[fieldIndexMap.get("curedDate")]))
+                    .curedYear(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("curedYear")]))
                     .build();
         } else {
             return ImmutablePriorTumorTreatment.builder()
