@@ -61,6 +61,9 @@ public abstract class Questionnaire {
     public abstract Boolean hasLiverLesions();
 
     @Nullable
+    public abstract List<String> otherLesions();
+
+    @Nullable
     public abstract Integer whoStatus();
 
     @Nullable

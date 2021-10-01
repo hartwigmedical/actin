@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -62,7 +63,7 @@ public abstract class TumorDetails {
     public abstract Boolean hasOtherLesions();
 
     @Nullable
-    public abstract String otherLesions();
+    public abstract List<String> otherLesions();
 
     @Nullable
     public abstract String biopsyLocation();

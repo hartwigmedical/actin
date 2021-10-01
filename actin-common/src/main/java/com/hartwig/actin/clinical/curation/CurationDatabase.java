@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical.curation;
 
 import java.util.List;
 
-import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -22,7 +22,7 @@ public abstract class CurationDatabase {
     public abstract List<PrimaryTumorConfig> primaryTumorConfigs();
 
     @NotNull
-    public abstract List<BiopsyLocationConfig> biopsyLocationConfigs();
+    public abstract List<LesionLocationConfig> lesionLocationConfigs();
 
     @NotNull
     public abstract List<OncologicalHistoryConfig> oncologicalHistoryConfigs();

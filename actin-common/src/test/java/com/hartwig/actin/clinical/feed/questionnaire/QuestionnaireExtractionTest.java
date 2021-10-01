@@ -56,6 +56,11 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
+
+        List<String> otherLesions = questionnaire.otherLesions();
+        assertEquals(1, otherLesions.size());
+        assertTrue(otherLesions.contains("pulmonal"));
+
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
@@ -98,6 +103,12 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
+
+        List<String> otherLesions = questionnaire.otherLesions();
+        assertEquals(2, otherLesions.size());
+        assertTrue(otherLesions.contains("peritoneal"));
+        assertTrue(otherLesions.contains("lymph nodes"));
+
         assertEquals(1, (int) questionnaire.whoStatus());
 
         List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
@@ -144,6 +155,8 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
+        assertNull(questionnaire.otherLesions());
+
         assertEquals(2, (int) questionnaire.whoStatus());
 
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
@@ -183,6 +196,8 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertTrue(questionnaire.hasBoneLesions());
         assertTrue(questionnaire.hasLiverLesions());
+        assertNull(questionnaire.otherLesions());
+
         assertEquals(1, (int) questionnaire.whoStatus());
 
         List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();

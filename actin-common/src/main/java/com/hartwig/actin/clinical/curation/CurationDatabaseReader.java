@@ -3,12 +3,12 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
-import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfigFile;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFile;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFile;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFile;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -28,7 +28,7 @@ public final class CurationDatabaseReader {
     private static final Logger LOGGER = LogManager.getLogger(CurationDatabaseReader.class);
 
     private static final String PRIMARY_TUMOR_TSV = "primary_tumor.tsv";
-    private static final String BIOPSY_LOCATION_TSV = "biopsy_location.tsv";
+    private static final String LESION_LOCATION_TSV = "lesion_location.tsv";
     private static final String ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv";
     private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
@@ -46,7 +46,7 @@ public final class CurationDatabaseReader {
 
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
-                .biopsyLocationConfigs(readBiopsyLocationConfigs(basePath + BIOPSY_LOCATION_TSV))
+                .lesionLocationConfigs(readLesionLocationConfigs(basePath + LESION_LOCATION_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
@@ -63,9 +63,9 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<BiopsyLocationConfig> readBiopsyLocationConfigs(@NotNull String biopsyLocationTsv) throws IOException {
-        List<BiopsyLocationConfig> configs = BiopsyLocationConfigFile.read(biopsyLocationTsv);
-        LOGGER.info(" Read {} biopsy location configs from {}", configs.size(), biopsyLocationTsv);
+    private static List<LesionLocationConfig> readLesionLocationConfigs(@NotNull String lesionLocationTsv) throws IOException {
+        List<LesionLocationConfig> configs = LesionLocationConfigFile.read(lesionLocationTsv);
+        LOGGER.info(" Read {} lesion location configs from {}", configs.size(), lesionLocationTsv);
         return configs;
     }
 

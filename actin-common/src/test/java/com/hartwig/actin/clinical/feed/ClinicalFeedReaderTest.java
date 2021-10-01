@@ -66,7 +66,7 @@ public class ClinicalFeedReaderTest {
         assertEquals("INT Consult", entry1.description());
         assertEquals("Beloop", entry1.itemText());
 
-        assertEquals(29, entry1.itemAnswerValueValueString().split("\n").length);
+        assertEquals(30, entry1.itemAnswerValueValueString().split("\n").length);
         assertTrue(entry1.itemAnswerValueValueString().startsWith("ACTIN Questionnaire"));
         assertTrue(entry1.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
         assertTrue(entry1.itemAnswerValueValueString().contains("Cancer-related complications (e.g. pleural effusion)"));

@@ -47,7 +47,7 @@ public final class TestQuestionnaireFactory {
                 + "- Symptomatic:\n"
                 + "Bone lesions yes/no/unknown: NO\n"
                 + "Liver lesions yes/no/unknown: NO\n"
-                + "Other lesions (e.g. lymph node, pulmonal):\n"
+                + "Other lesions (e.g. lymph node, pulmonal): pulmonal\n"
                 + "Measurable disease (RECIST) yes/no: YES\n"
                 + "\n"
                 + "Clinical details\n"

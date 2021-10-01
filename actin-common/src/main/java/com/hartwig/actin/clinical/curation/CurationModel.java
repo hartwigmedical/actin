@@ -10,17 +10,17 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableBiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -82,14 +82,14 @@ public class CurationModel {
     }
 
     @Nullable
-    public String curateBiopsyLocation(@Nullable String input) {
+    public String curateLesionLocation(@Nullable String input) {
         if (input == null) {
             return null;
         }
 
-        BiopsyLocationConfig config = find(database.biopsyLocationConfigs(), input);
+        LesionLocationConfig config = find(database.lesionLocationConfigs(), input);
 
-        // Assume biopsy locations can also be pass-through.
+        // Assume lesion locations can also be pass-through.
         return config != null ? config.location() : CurationUtil.capitalizeFirstLetter(input);
     }
 
@@ -222,8 +222,8 @@ public class CurationModel {
     private List<? extends CurationConfig> configsForClass(@NotNull Class<? extends CurationConfig> classToLookUp) {
         if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
             return database.primaryTumorConfigs();
-        } else if (classToLookUp == ImmutableBiopsyLocationConfig.class) {
-            return database.biopsyLocationConfigs();
+        } else if (classToLookUp == ImmutableLesionLocationConfig.class) {
+            return database.lesionLocationConfigs();
         } else if (classToLookUp == ImmutableOncologicalHistoryConfig.class) {
             return database.oncologicalHistoryConfigs();
         } else if (classToLookUp == ImmutableNonOncologicalHistoryConfig.class) {

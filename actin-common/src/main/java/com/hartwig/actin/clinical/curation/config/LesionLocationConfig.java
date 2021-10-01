@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class BiopsyLocationConfig implements CurationConfig {
+public abstract class LesionLocationConfig implements CurationConfig {
 
     @NotNull
     @Override

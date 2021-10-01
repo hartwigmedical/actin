@@ -1,6 +1,5 @@
 package com.hartwig.actin.database.dao;
 
-import java.util.Set;
 import java.util.StringJoiner;
 
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ final class DataUtil {
     }
 
     @Nullable
-    public static String concat(@Nullable Set<String> strings) {
+    public static String concat(@Nullable Iterable<String> strings) {
         if (strings == null) {
             return null;
         }

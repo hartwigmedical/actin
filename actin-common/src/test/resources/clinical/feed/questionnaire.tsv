@@ -20,9 +20,10 @@ Brain lesions yes/no/unknown: Unknown
 	- Symptomatic:
 Bone lesions yes/no/unknown: NO
 Liver lesions yes/no/unknown: NO
+Other lesions (e.g. lymph node, pulmonal): pulmonal
 Measurable disease (RECIST) yes/no/unknown: YES
 
-Clinical information
+Clinical details
 WHO status: 0
 Unresolved toxicities grade => 2: NA
 Significant current infection: NO

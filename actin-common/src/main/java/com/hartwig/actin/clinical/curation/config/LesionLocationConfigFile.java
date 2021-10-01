@@ -11,18 +11,18 @@ import com.hartwig.actin.util.FileUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class BiopsyLocationConfigFile {
+public final class LesionLocationConfigFile {
 
     private static final String DELIMITER = "\t";
 
-    private BiopsyLocationConfigFile() {
+    private LesionLocationConfigFile() {
     }
 
     @NotNull
-    public static List<BiopsyLocationConfig> read(@NotNull String biopsyLocationTsv) throws IOException {
-        List<String> lines = Files.readAllLines(new File(biopsyLocationTsv).toPath());
+    public static List<LesionLocationConfig> read(@NotNull String lesionLocationTsv) throws IOException {
+        List<String> lines = Files.readAllLines(new File(lesionLocationTsv).toPath());
 
-        List<BiopsyLocationConfig> configs = Lists.newArrayList();
+        List<LesionLocationConfig> configs = Lists.newArrayList();
         Map<String, Integer> fieldIndexMap = FileUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             configs.add(fromParts(fieldIndexMap, line.split(DELIMITER, -1)));
@@ -31,8 +31,8 @@ public final class BiopsyLocationConfigFile {
     }
 
     @NotNull
-    private static BiopsyLocationConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
-        return ImmutableBiopsyLocationConfig.builder()
+    private static LesionLocationConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+        return ImmutableLesionLocationConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
                 .location(parts[fieldIndexMap.get("location")])
                 .build();

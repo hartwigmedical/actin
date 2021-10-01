@@ -3,16 +3,16 @@ package com.hartwig.actin.clinical.curation;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.curation.config.BiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableBiopsyLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -43,7 +43,7 @@ public final class TestCurationFactory {
     private static CurationDatabase createTestCurationDatabase() {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
-                .biopsyLocationConfigs(createTestBiopsyLocationConfigs())
+                .lesionLocationConfigs(createTestLesionLocationConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
                 .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
@@ -53,10 +53,10 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    private static List<BiopsyLocationConfig> createTestBiopsyLocationConfigs() {
-        List<BiopsyLocationConfig> configs = Lists.newArrayList();
+    private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
+        List<LesionLocationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableBiopsyLocationConfig.builder().input("liver").location("Liver").build());
+        configs.add(ImmutableLesionLocationConfig.builder().input("lever").location("Liver").build());
 
         return configs;
     }

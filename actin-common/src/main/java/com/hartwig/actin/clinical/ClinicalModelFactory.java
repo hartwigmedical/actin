@@ -105,9 +105,17 @@ public class ClinicalModelFactory {
             return ImmutableTumorDetails.builder().build();
         }
 
+        List<String> curatedOtherLesions = null;
+        if (questionnaire.otherLesions() != null) {
+            curatedOtherLesions = Lists.newArrayList();
+            for (String lesion : questionnaire.otherLesions()) {
+                curatedOtherLesions.add(curation.curateLesionLocation(lesion));
+            }
+        }
+
         return ImmutableTumorDetails.builder()
                 .from(curation.curateTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
-                .biopsyLocation(curation.curateBiopsyLocation(questionnaire.biopsyLocation()))
+                .biopsyLocation(curation.curateLesionLocation(questionnaire.biopsyLocation()))
                 .stage(questionnaire.stage())
                 .hasMeasurableLesionRecist(questionnaire.hasMeasurableLesionRecist())
                 .hasBrainLesions(questionnaire.hasBrainLesions())
@@ -118,6 +126,8 @@ public class ClinicalModelFactory {
                 .hasSymptomaticCnsLesions(questionnaire.hasSymptomaticCnsLesions())
                 .hasBoneLesions(questionnaire.hasBoneLesions())
                 .hasLiverLesions(questionnaire.hasLiverLesions())
+                .hasOtherLesions(curatedOtherLesions != null ? !curatedOtherLesions.isEmpty() : null)
+                .otherLesions(curatedOtherLesions)
                 .build();
     }
 
