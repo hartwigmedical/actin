@@ -86,7 +86,7 @@ CREATE TABLE priorSecondPrimary
     doids varchar(50),
     year int,
     isSecondPrimaryCured BOOLEAN,
-    curedYear int,
+    diagnosedYear int,
     PRIMARY KEY (id)
 );
 
