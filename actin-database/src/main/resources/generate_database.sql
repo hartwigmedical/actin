@@ -42,7 +42,7 @@ CREATE TABLE clinicalStatus
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) UNIQUE,
     who int,
-    hasCurrentInfection BOOLEAN,
+    hasActiveInfection BOOLEAN,
     hasSigAberrationLatestEcg BOOLEAN,
     ecgAberrationDescription varchar(50),
     PRIMARY KEY (id)
