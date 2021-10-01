@@ -69,8 +69,6 @@ CREATE TABLE priorTumorTreatment
     targetedType varchar(50),
     hormoneType varchar(50),
     stemCellTransType varchar(50),
-    radiotherapyType varchar(50),
-    surgeryType varchar(50),
     PRIMARY KEY (id)
 );
 
