@@ -19,6 +19,19 @@ public final class CurationUtil {
     }
 
     @Nullable
+    public static String capitalizeFirstLetter(@Nullable String string) {
+        if (string == null) {
+            return null;
+        }
+
+        if (string.isEmpty()) {
+            return string;
+        }
+
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
+
+    @Nullable
     public static String optionalString(@NotNull String string) {
         return !string.isEmpty() ? string : null;
     }

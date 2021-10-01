@@ -90,7 +90,7 @@ public class CurationModel {
         BiopsyLocationConfig config = find(database.biopsyLocationConfigs(), input);
 
         // Assume biopsy locations can also be pass-through.
-        return config != null ? config.location() : input;
+        return config != null ? config.location() : CurationUtil.capitalizeFirstLetter(input);
     }
 
     @NotNull

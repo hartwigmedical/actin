@@ -16,6 +16,18 @@ import org.junit.Test;
 public class CurationUtilTest {
 
     @Test
+    public void canCapitalizeFirstLetter() {
+        assertEquals("Hi", CurationUtil.capitalizeFirstLetter("hi"));
+        assertEquals("Hi", CurationUtil.capitalizeFirstLetter("Hi"));
+        assertEquals("HI", CurationUtil.capitalizeFirstLetter("hI"));
+        assertEquals("H", CurationUtil.capitalizeFirstLetter("h"));
+        assertEquals("H", CurationUtil.capitalizeFirstLetter("H"));
+
+        assertEquals(Strings.EMPTY, CurationUtil.capitalizeFirstLetter(Strings.EMPTY));
+        assertNull(CurationUtil.capitalizeFirstLetter(null));
+    }
+
+    @Test
     public void canConvertOptionalString() {
         assertNull(CurationUtil.optionalString(Strings.EMPTY));
         assertEquals("hi", CurationUtil.optionalString("hi"));
