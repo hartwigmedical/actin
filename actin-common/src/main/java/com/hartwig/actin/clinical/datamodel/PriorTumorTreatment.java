@@ -34,10 +34,4 @@ public abstract class PriorTumorTreatment {
     @Nullable
     public abstract String stemCellTransType();
 
-    @Nullable
-    public abstract String radiotherapyType();
-
-    @Nullable
-    public abstract String surgeryType();
-
 }

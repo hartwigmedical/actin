@@ -129,7 +129,7 @@ public class ClinicalModelFactory {
         }
         return ImmutableClinicalStatus.builder()
                 .who(questionnaire.whoStatus())
-                .hasCurrentInfection(questionnaire.hasSignificantCurrentInfection())
+                .hasActiveInfection(questionnaire.hasSignificantCurrentInfection())
                 .hasSigAberrationLatestEcg(questionnaire.hasSignificantAberrationLatestECG())
                 .ecgAberrationDescription(curation.curateAberrationECG(questionnaire.significantAberrationLatestECG()))
                 .build();

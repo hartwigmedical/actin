@@ -79,8 +79,6 @@ public class CurationDatabaseReaderTest {
         assertNull(curated1.targetedType());
         assertNull(curated1.hormoneType());
         assertNull(curated1.stemCellTransType());
-        assertNull(curated1.radiotherapyType());
-        assertNull(curated1.surgeryType());
 
         OncologicalHistoryConfig config2 = find(configs, "Breast 2018");
         assertFalse(config2.ignore());
@@ -91,8 +89,8 @@ public class CurationDatabaseReaderTest {
         assertEquals("Carcinoma", curated2.tumorType());
         assertEquals(Strings.EMPTY, curated2.tumorSubType());
         assertTrue(curated2.doids().isEmpty());
-        assertTrue(curated2.isSecondPrimaryCured());
-        assertEquals(2019, (int) curated2.curedYear());
+        assertTrue(curated2.isSecondPrimaryActive());
+        assertEquals(2019, (int) curated2.diagnosedYear());
     }
 
     private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {

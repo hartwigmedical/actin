@@ -119,14 +119,12 @@ class ClinicalDAO {
         context.insertInto(CLINICALSTATUS,
                 CLINICALSTATUS.SAMPLEID,
                 CLINICALSTATUS.WHO,
-                CLINICALSTATUS.HASCURRENTINFECTION,
-                CLINICALSTATUS.INFECTIONDESCRIPTION,
+                CLINICALSTATUS.HASACTIVEINFECTION,
                 CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
                 CLINICALSTATUS.ECGABERRATIONDESCRIPTION)
                 .values(sampleId,
                         clinicalStatus.who(),
-                        DataUtil.toByte(clinicalStatus.hasCurrentInfection()),
-                        clinicalStatus.infectionDescription(),
+                        DataUtil.toByte(clinicalStatus.hasActiveInfection()),
                         DataUtil.toByte(clinicalStatus.hasSigAberrationLatestEcg()),
                         clinicalStatus.ecgAberrationDescription())
                 .execute();
@@ -153,9 +151,7 @@ class ClinicalDAO {
                     PRIORTUMORTREATMENT.IMMUNOTYPE,
                     PRIORTUMORTREATMENT.TARGETEDTYPE,
                     PRIORTUMORTREATMENT.HORMONETYPE,
-                    PRIORTUMORTREATMENT.STEMCELLTRANSTYPE,
-                    PRIORTUMORTREATMENT.RADIOTHERAPYTYPE,
-                    PRIORTUMORTREATMENT.SURGERYTYPE)
+                    PRIORTUMORTREATMENT.STEMCELLTRANSTYPE)
                     .values(sampleId,
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
@@ -165,9 +161,8 @@ class ClinicalDAO {
                             priorTumorTreatment.immunoType(),
                             priorTumorTreatment.targetedType(),
                             priorTumorTreatment.hormoneType(),
-                            priorTumorTreatment.stemCellTransType(),
-                            priorTumorTreatment.radiotherapyType(),
-                            priorTumorTreatment.surgeryType()).execute();
+                            priorTumorTreatment.stemCellTransType())
+                    .execute();
         }
     }
 
@@ -181,8 +176,8 @@ class ClinicalDAO {
                     PRIORSECONDPRIMARY.TUMORSUBTYPE,
                     PRIORSECONDPRIMARY.DOIDS,
                     PRIORSECONDPRIMARY.YEAR,
-                    PRIORSECONDPRIMARY.ISSECONDPRIMARYCURED,
-                    PRIORSECONDPRIMARY.CUREDYEAR)
+                    PRIORSECONDPRIMARY.ISSECONDPRIMARYACTIVE,
+                    PRIORSECONDPRIMARY.DIAGNOSEDYEAR)
                     .values(sampleId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
@@ -190,8 +185,8 @@ class ClinicalDAO {
                             priorSecondPrimary.tumorSubType(),
                             DataUtil.concat(priorSecondPrimary.doids()),
                             priorSecondPrimary.year(),
-                            DataUtil.toByte(priorSecondPrimary.isSecondPrimaryCured()),
-                            priorSecondPrimary.curedYear())
+                            DataUtil.toByte(priorSecondPrimary.isSecondPrimaryActive()),
+                            priorSecondPrimary.diagnosedYear())
                     .execute();
         }
     }

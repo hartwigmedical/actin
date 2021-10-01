@@ -105,8 +105,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(unresolvedToxicities.contains("NA"));
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertNull(questionnaire.hasSignificantAberrationLatestECG());
-        assertNull(questionnaire.significantAberrationLatestECG());
+        assertFalse(questionnaire.hasSignificantAberrationLatestECG());
+        assertTrue(questionnaire.significantAberrationLatestECG().isEmpty());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());

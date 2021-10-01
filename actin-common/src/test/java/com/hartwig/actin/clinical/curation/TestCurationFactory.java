@@ -82,15 +82,14 @@ public final class TestCurationFactory {
     private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
         List<OncologicalHistoryConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Resection 2020")
+        configs.add(ImmutableOncologicalHistoryConfig.builder().input("Cis 2020")
                 .ignore(false)
                 .curatedObject(ImmutablePriorTumorTreatment.builder()
-                        .name("Resection")
+                        .name("Cisplatin")
                         .year(2020)
-                        .category("Surgery")
-                        .isSystemic(false)
-                        .surgeryType("Primary Resection")
+                        .category("Chemotherapy")
+                        .isSystemic(true)
+                        .chemoType("platinum")
                         .build())
                 .build());
 
@@ -103,7 +102,7 @@ public final class TestCurationFactory {
                         .tumorType("Carcinoma")
                         .tumorSubType(Strings.EMPTY)
                         .year(2018)
-                        .isSecondPrimaryCured(false)
+                        .isSecondPrimaryActive(false)
                         .build())
                 .build());
 

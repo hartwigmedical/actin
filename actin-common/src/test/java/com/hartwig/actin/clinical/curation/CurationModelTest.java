@@ -75,10 +75,10 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         List<PriorTumorTreatment> priorTreatments =
-                model.curatePriorTumorTreatments(Lists.newArrayList("Resection 2020", "no systemic treatment", "cannot curate"));
+                model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020", "no systemic treatment", "cannot curate"));
 
         assertEquals(1, priorTreatments.size());
-        assertEquals("Primary Resection", priorTreatments.get(0).surgeryType());
+        assertEquals("platinum", priorTreatments.get(0).chemoType());
 
         assertTrue(model.curatePriorTumorTreatments(null).isEmpty());
         model.evaluate();

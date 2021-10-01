@@ -12,13 +12,9 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.util.FileUtil;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class OncologicalHistoryConfigFile {
-
-    private static final Logger LOGGER = LogManager.getLogger(OncologicalHistoryConfigFile.class);
 
     private static final String DELIMITER = "\t";
 
@@ -58,8 +54,8 @@ public final class OncologicalHistoryConfigFile {
                     .tumorSubType(parts[fieldIndexMap.get("tumorSubType")])
                     .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
                     .year(CurationUtil.parseInteger(parts[fieldIndexMap.get("year")]))
-                    .isSecondPrimaryCured(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSecondPrimaryCured")]))
-                    .curedYear(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("curedYear")]))
+                    .isSecondPrimaryActive(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSecondPrimaryActive")]))
+                    .diagnosedYear(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("diagnosedYear")]))
                     .build();
         } else {
             return ImmutablePriorTumorTreatment.builder()
@@ -72,8 +68,6 @@ public final class OncologicalHistoryConfigFile {
                     .targetedType(CurationUtil.optionalString(parts[fieldIndexMap.get("targetedType")]))
                     .hormoneType(CurationUtil.optionalString(parts[fieldIndexMap.get("hormoneType")]))
                     .stemCellTransType(CurationUtil.optionalString(parts[fieldIndexMap.get("stemCellTransplantType")]))
-                    .radiotherapyType(CurationUtil.optionalString(parts[fieldIndexMap.get("radiotherapyType")]))
-                    .surgeryType(CurationUtil.optionalString(parts[fieldIndexMap.get("surgeryType")]))
                     .build();
         }
     }
