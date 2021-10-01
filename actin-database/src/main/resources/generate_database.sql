@@ -66,7 +66,7 @@ CREATE TABLE priorTumorTreatment
     isSystemic BOOLEAN,
     chemoType varchar(50),
     immunoType varchar(50),
-    targetedType varchar(50),
+    targetedType varchar(200),
     hormoneType varchar(50),
     stemCellTransType varchar(50),
     PRIMARY KEY (id)
