@@ -89,8 +89,8 @@ public class CurationDatabaseReaderTest {
         assertEquals("Carcinoma", curated2.tumorType());
         assertEquals(Strings.EMPTY, curated2.tumorSubType());
         assertTrue(curated2.doids().isEmpty());
+        assertEquals(2018, (int) curated2.diagnosedYear());
         assertTrue(curated2.isSecondPrimaryActive());
-        assertEquals(2019, (int) curated2.diagnosedYear());
     }
 
     private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {

@@ -1,3 +1,3 @@
-input	name	year	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	stemCellTransplantType	tumorLocation	tumorSubLocation	tumorType	tumorSubType	doids	isSecondPrimaryActive	diagnosedYear
+input	name	year	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	stemCellTransplantType	tumorLocation	tumorSubLocation	tumorType	tumorSubType	doids	isSecondPrimaryActive
 Capecitabine/Oxaliplatin 2020	Capecitabine+Oxaliplatin	2020	chemotherapy	1	antimetabolite,platinum					
-Breast 2018		2018	second primary							Breast		Carcinoma			1	2019
+Breast 2018		2018	second primary							Breast		Carcinoma			1

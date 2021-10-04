@@ -1,9 +1,15 @@
 package com.hartwig.actin.database.dao;
 
+import static com.hartwig.actin.database.Tables.ALLERGY;
+import static com.hartwig.actin.database.Tables.BLOODPRESSURE;
+import static com.hartwig.actin.database.Tables.BLOODTRANSFUSION;
 import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
+import static com.hartwig.actin.database.Tables.MEDICATION;
+import static com.hartwig.actin.database.Tables.OTHERCOMPLICATION;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
+import static com.hartwig.actin.database.Tables.SURGERY;
 import static com.hartwig.actin.database.Tables.TOXICITY;
 import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.tables.Clinicalstatus.CLINICALSTATUS;
@@ -13,13 +19,19 @@ import static com.hartwig.actin.database.tables.Patient.PATIENT;
 import java.util.List;
 
 import com.hartwig.actin.clinical.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.BloodPressure;
+import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
@@ -40,33 +52,39 @@ class ClinicalDAO {
         context.truncate(PATIENT).execute();
         context.truncate(TUMOR).execute();
         context.truncate(CLINICALSTATUS).execute();
-        context.truncate(CANCERRELATEDCOMPLICATION).execute();
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
+        context.truncate(CANCERRELATEDCOMPLICATION).execute();
+        context.truncate(OTHERCOMPLICATION).execute();
         context.truncate(LABVALUE).execute();
         context.truncate(TOXICITY).execute();
+        context.truncate(ALLERGY).execute();
+        context.truncate(SURGERY).execute();
+        context.truncate(BLOODPRESSURE).execute();
+        context.truncate(BLOODTRANSFUSION).execute();
+        context.truncate(MEDICATION).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
 
-    public void writeClinicalRecords(@NotNull List<ClinicalRecord> records) {
-        for (ClinicalRecord record : records) {
-            writeClinicalRecord(record);
-        }
-    }
-
-    private void writeClinicalRecord(@NotNull ClinicalRecord record) {
+    public void writeClinicalRecord(@NotNull ClinicalRecord record) {
         String sampleId = record.sampleId();
 
         writePatientDetails(sampleId, record.patient());
         writeTumorDetails(sampleId, record.tumor());
         writeClinicalStatus(sampleId, record.clinicalStatus());
-        writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
         writePriorOtherConditions(sampleId, record.priorOtherConditions());
+        writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
+        writeOtherComplications(sampleId, record.otherComplications());
         writeLabValues(sampleId, record.labValues());
         writeToxicities(sampleId, record.toxicities());
+        writeAllergies(sampleId, record.allergies());
+        writeSurgeries(sampleId, record.surgeries());
+        writeBloodPressures(sampleId, record.bloodPressures());
+        writeBloodTransfusions(sampleId, record.bloodTransfusions());
+        writeMedications(sampleId, record.medications());
     }
 
     private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
@@ -134,15 +152,6 @@ class ClinicalDAO {
                 .execute();
     }
 
-    private void writeCancerRelatedComplications(@NotNull String sampleId,
-            @NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
-        for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
-            context.insertInto(CANCERRELATEDCOMPLICATION, CANCERRELATEDCOMPLICATION.SAMPLEID, CANCERRELATEDCOMPLICATION.NAME)
-                    .values(sampleId, cancerRelatedComplication.name())
-                    .execute();
-        }
-    }
-
     private void writePriorTumorTreatments(@NotNull String sampleId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
             context.insertInto(PRIORTUMORTREATMENT,
@@ -179,18 +188,16 @@ class ClinicalDAO {
                     PRIORSECONDPRIMARY.TUMORTYPE,
                     PRIORSECONDPRIMARY.TUMORSUBTYPE,
                     PRIORSECONDPRIMARY.DOIDS,
-                    PRIORSECONDPRIMARY.YEAR,
-                    PRIORSECONDPRIMARY.ISSECONDPRIMARYACTIVE,
-                    PRIORSECONDPRIMARY.DIAGNOSEDYEAR)
+                    PRIORSECONDPRIMARY.DIAGNOSEDYEAR,
+                    PRIORSECONDPRIMARY.ISSECONDPRIMARYACTIVE)
                     .values(sampleId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
                             priorSecondPrimary.tumorType(),
                             priorSecondPrimary.tumorSubType(),
                             DataUtil.concat(priorSecondPrimary.doids()),
-                            priorSecondPrimary.year(),
-                            DataUtil.toByte(priorSecondPrimary.isSecondPrimaryActive()),
-                            priorSecondPrimary.diagnosedYear())
+                            priorSecondPrimary.diagnosedYear(),
+                            DataUtil.toByte(priorSecondPrimary.isSecondPrimaryActive()))
                     .execute();
         }
     }
@@ -210,6 +217,36 @@ class ClinicalDAO {
         }
     }
 
+    private void writeCancerRelatedComplications(@NotNull String sampleId,
+            @NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
+        for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
+            context.insertInto(CANCERRELATEDCOMPLICATION, CANCERRELATEDCOMPLICATION.SAMPLEID, CANCERRELATEDCOMPLICATION.NAME)
+                    .values(sampleId, cancerRelatedComplication.name())
+                    .execute();
+        }
+    }
+
+    private void writeOtherComplications(@NotNull String sampleId, @NotNull List<Complication> complications) {
+        for (Complication complication : complications) {
+            context.insertInto(OTHERCOMPLICATION,
+                    OTHERCOMPLICATION.SAMPLEID,
+                    OTHERCOMPLICATION.NAME,
+                    OTHERCOMPLICATION.DOIDS,
+                    OTHERCOMPLICATION.SPECIALTY,
+                    OTHERCOMPLICATION.ONSETDATE,
+                    OTHERCOMPLICATION.CATEGORY,
+                    OTHERCOMPLICATION.STATUS)
+                    .values(sampleId,
+                            complication.name(),
+                            DataUtil.concat(complication.doids()),
+                            complication.specialty(),
+                            complication.onsetDate(),
+                            complication.category(),
+                            complication.status())
+                    .execute();
+        }
+    }
+
     private void writeLabValues(@NotNull String sampleId, @NotNull List<LabValue> labValues) {
         for (LabValue lab : labValues) {
             context.insertInto(LABVALUE,
@@ -221,10 +258,7 @@ class ClinicalDAO {
                     LABVALUE.UNIT,
                     LABVALUE.REFLIMITLOW,
                     LABVALUE.REFLIMITUP,
-                    LABVALUE.ISOUTSIDEREF,
-                    LABVALUE.ALERTLIMITLOW,
-                    LABVALUE.ALERTLIMITUP,
-                    LABVALUE.ISWITHINALERT)
+                    LABVALUE.ISOUTSIDEREF)
                     .values(sampleId,
                             lab.date(),
                             lab.code(),
@@ -233,10 +267,7 @@ class ClinicalDAO {
                             lab.unit(),
                             lab.refLimitLow(),
                             lab.refLimitUp(),
-                            DataUtil.toByte(lab.isOutsideRef()),
-                            lab.alertLimitLow(),
-                            lab.alertLimitUp(),
-                            DataUtil.toByte(lab.isWithinAlert()))
+                            DataUtil.toByte(lab.isOutsideRef()))
                     .execute();
         }
     }
@@ -245,6 +276,66 @@ class ClinicalDAO {
         for (Toxicity toxicity : toxicities) {
             context.insertInto(TOXICITY, TOXICITY.SAMPLEID, TOXICITY.NAME, TOXICITY.EVALUATEDDATE, TOXICITY.SOURCE, TOXICITY.GRADE)
                     .values(sampleId, toxicity.name(), toxicity.evaluatedDate(), toxicity.source().display(), toxicity.grade())
+                    .execute();
+        }
+    }
+
+    private void writeAllergies(@NotNull String sampleId, @NotNull List<Allergy> allergies) {
+        for (Allergy allergy : allergies) {
+            context.insertInto(ALLERGY, ALLERGY.SAMPLEID, ALLERGY.NAME, ALLERGY.CATEGORY, ALLERGY.CRITICALITY)
+                    .values(sampleId, allergy.name(), allergy.category(), allergy.criticality())
+                    .execute();
+        }
+    }
+
+    private void writeSurgeries(@NotNull String sampleId, @NotNull List<Surgery> surgeries) {
+        for (Surgery surgery : surgeries) {
+            context.insertInto(SURGERY, SURGERY.SAMPLEID, SURGERY.ENDDATE).values(sampleId, surgery.endDate()).execute();
+        }
+    }
+
+    private void writeBloodPressures(@NotNull String sampleId, @NotNull List<BloodPressure> bloodPressures) {
+        for (BloodPressure bloodPressure : bloodPressures) {
+            context.insertInto(BLOODPRESSURE,
+                    BLOODPRESSURE.SAMPLEID,
+                    BLOODPRESSURE.DATE,
+                    BLOODPRESSURE.CATEGORY,
+                    BLOODPRESSURE.VALUE,
+                    BLOODPRESSURE.UNIT)
+                    .values(sampleId, bloodPressure.date(), bloodPressure.category(), bloodPressure.value(), bloodPressure.unit())
+                    .execute();
+        }
+    }
+
+    private void writeBloodTransfusions(@NotNull String sampleId, @NotNull List<BloodTransfusion> bloodTransfusions) {
+        for (BloodTransfusion bloodTransfusion : bloodTransfusions) {
+            context.insertInto(BLOODTRANSFUSION, BLOODTRANSFUSION.SAMPLEID, BLOODTRANSFUSION.DATE, BLOODTRANSFUSION.PRODUCT)
+                    .values(sampleId, bloodTransfusion.date(), bloodTransfusion.product())
+                    .execute();
+        }
+    }
+
+    private void writeMedications(@NotNull String sampleId, @NotNull List<Medication> medications) {
+        for (Medication medication : medications) {
+            context.insertInto(MEDICATION,
+                    MEDICATION.SAMPLEID,
+                    MEDICATION.NAME,
+                    MEDICATION.TYPE,
+                    MEDICATION.DOSAGE,
+                    MEDICATION.UNIT,
+                    MEDICATION.FREQUENCYUNIT,
+                    MEDICATION.IFNEEDED,
+                    MEDICATION.STARTDATE,
+                    MEDICATION.STOPDATE)
+                    .values(sampleId,
+                            medication.name(),
+                            medication.type(),
+                            medication.dosage(),
+                            medication.unit(),
+                            medication.frequencyUnit(),
+                            DataUtil.toByte(medication.ifNeeded()),
+                            medication.startDate(),
+                            medication.stopDate())
                     .execute();
         }
     }

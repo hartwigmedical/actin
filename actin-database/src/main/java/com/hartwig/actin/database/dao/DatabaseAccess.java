@@ -57,6 +57,9 @@ public class DatabaseAccess {
 
     public void writeClinicalRecords(@NotNull List<ClinicalRecord> records) {
         clinicalDAO.clear();
-        clinicalDAO.writeClinicalRecords(records);
+        for (ClinicalRecord record : records) {
+            LOGGER.info(" Writing clinical data for {}", record.sampleId());
+            clinicalDAO.writeClinicalRecord(record);
+        }
     }
 }
