@@ -101,7 +101,7 @@ public final class TestCurationFactory {
                         .tumorSubLocation(Strings.EMPTY)
                         .tumorType("Carcinoma")
                         .tumorSubType(Strings.EMPTY)
-                        .year(2018)
+                        .diagnosedYear(2018)
                         .isSecondPrimaryActive(false)
                         .build())
                 .build());

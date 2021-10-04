@@ -30,9 +30,4 @@ public abstract class LabValue {
 
     public abstract boolean isOutsideRef();
 
-    public abstract double alertLimitLow();
-
-    public abstract double alertLimitUp();
-
-    public abstract boolean isWithinAlert();
 }

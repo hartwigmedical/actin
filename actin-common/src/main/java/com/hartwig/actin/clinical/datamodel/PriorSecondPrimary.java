@@ -25,11 +25,9 @@ public abstract class PriorSecondPrimary {
     @NotNull
     public abstract Set<String> doids();
 
-    public abstract int year();
-
-    public abstract boolean isSecondPrimaryActive();
-
     @Nullable
     public abstract Integer diagnosedYear();
+
+    public abstract boolean isSecondPrimaryActive();
 
 }

@@ -48,14 +48,6 @@ CREATE TABLE clinicalStatus
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS cancerRelatedComplication;
-CREATE TABLE cancerRelatedComplication
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
-    name varchar(50),
-    PRIMARY KEY (id)
-);
-
 DROP TABLE IF EXISTS priorTumorTreatment;
 CREATE TABLE priorTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
@@ -93,6 +85,14 @@ CREATE TABLE priorOtherCondition
     name varchar(500),
     doids varchar(50),
     category varchar(50),
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS cancerRelatedComplication;
+CREATE TABLE cancerRelatedComplication
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    name varchar(50),
     PRIMARY KEY (id)
 );
 

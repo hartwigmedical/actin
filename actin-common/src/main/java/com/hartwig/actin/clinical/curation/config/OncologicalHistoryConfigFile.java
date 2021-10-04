@@ -53,9 +53,8 @@ public final class OncologicalHistoryConfigFile {
                     .tumorType(parts[fieldIndexMap.get("tumorType")])
                     .tumorSubType(parts[fieldIndexMap.get("tumorSubType")])
                     .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
-                    .year(CurationUtil.parseInteger(parts[fieldIndexMap.get("year")]))
+                    .diagnosedYear(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("year")]))
                     .isSecondPrimaryActive(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSecondPrimaryActive")]))
-                    .diagnosedYear(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("diagnosedYear")]))
                     .build();
         } else {
             return ImmutablePriorTumorTreatment.builder()

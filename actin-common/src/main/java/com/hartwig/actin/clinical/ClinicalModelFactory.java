@@ -98,9 +98,6 @@ public class ClinicalModelFactory {
                     .refLimitLow(0D)
                     .refLimitUp(0D)
                     .isOutsideRef(false)
-                    .alertLimitLow(0D)
-                    .alertLimitUp(0D)
-                    .isWithinAlert(true)
                     .build());
         }
         return values;

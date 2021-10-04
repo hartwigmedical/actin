@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
+import com.hartwig.actin.clinical.feed.lab.ImmutableLabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.ImmutablePatientEntry;
@@ -16,6 +17,7 @@ import com.hartwig.actin.clinical.feed.questionnaire.ImmutableQuestionnaireEntry
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestFeedFactory {
@@ -76,7 +78,41 @@ public final class TestFeedFactory {
 
     @NotNull
     private static List<LabEntry> createTestLabEntries() {
-        return Lists.newArrayList();
+        List<LabEntry> entries = Lists.newArrayList();
+
+        ImmutableLabEntry.Builder baseBuilder = ImmutableLabEntry.builder()
+                .subject(TEST_SUBJECT)
+                .valueQuantityComparator(Strings.EMPTY)
+                .valueString(Strings.EMPTY)
+                .codeCode(Strings.EMPTY);
+
+        entries.add(baseBuilder.codeCodeOriginal("LAB1")
+                .codeDisplayOriginal("Lab Value 1")
+                .issued(LocalDate.of(2018, 5, 29))
+                .valueQuantityValue(30D)
+                .valueQuantityUnit("U/l")
+                .interpretationDisplayOriginal("ok").referenceRangeText("20 - 40").build());
+
+        entries.add(baseBuilder.codeCodeOriginal("LAB2")
+                .codeDisplayOriginal("Lab Value 2")
+                .issued(LocalDate.of(2018, 5, 29))
+                .valueQuantityValue(22D)
+                .valueQuantityUnit("mmol/l")
+                .interpretationDisplayOriginal("too low")
+                .referenceRangeText("> 30")
+                .build());
+
+        entries.add(baseBuilder.codeCodeOriginal("LAB3")
+                .codeDisplayOriginal("Lab Value 3")
+                .issued(LocalDate.of(2018, 5, 29))
+                .valueQuantityComparator(">")
+                .valueQuantityValue(50D)
+                .valueQuantityUnit("mL/min")
+                .interpretationDisplayOriginal("ok")
+                .referenceRangeText("> 50")
+                .build());
+
+        return entries;
     }
 
     @NotNull

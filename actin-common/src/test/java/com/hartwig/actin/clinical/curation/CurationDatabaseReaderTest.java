@@ -33,7 +33,7 @@ public class CurationDatabaseReaderTest {
         CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
-        assertBiopsyLocationConfigs(database.lesionLocationConfigs());
+        assertLesionLocationConfigs(database.lesionLocationConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
@@ -55,7 +55,7 @@ public class CurationDatabaseReaderTest {
         assertTrue(config.doids().contains("299"));
     }
 
-    private static void assertBiopsyLocationConfigs(@NotNull List<LesionLocationConfig> configs) {
+    private static void assertLesionLocationConfigs(@NotNull List<LesionLocationConfig> configs) {
         assertEquals(1, configs.size());
 
         LesionLocationConfig config = configs.get(0);
@@ -89,8 +89,8 @@ public class CurationDatabaseReaderTest {
         assertEquals("Carcinoma", curated2.tumorType());
         assertEquals(Strings.EMPTY, curated2.tumorSubType());
         assertTrue(curated2.doids().isEmpty());
+        assertEquals(2018, (int) curated2.diagnosedYear());
         assertTrue(curated2.isSecondPrimaryActive());
-        assertEquals(2019, (int) curated2.diagnosedYear());
     }
 
     private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {
