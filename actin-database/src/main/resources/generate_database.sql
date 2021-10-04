@@ -116,6 +116,7 @@ CREATE TABLE labValue
     date DATE,
     code varchar(50),
     name varchar(50),
+    comparator varchar(50),
     value double precision,
     unit varchar(50),
     refLimitLow double precision,
