@@ -81,9 +81,8 @@ CREATE TABLE priorSecondPrimary
     tumorType varchar(50),
     tumorSubType varchar(50),
     doids varchar(50),
-    year int,
-    isSecondPrimaryActive BOOLEAN,
     diagnosedYear int,
+    isSecondPrimaryActive BOOLEAN,
     PRIMARY KEY (id)
 );
 
@@ -122,9 +121,6 @@ CREATE TABLE labValue
     refLimitLow double precision,
     refLimitUp double precision,
     isOutsideRef BOOLEAN,
-    alertLimitLow double precision,
-    alertLimitUp double precision,
-    isWithinAlert BOOLEAN,
     PRIMARY KEY (id)
 );
 
