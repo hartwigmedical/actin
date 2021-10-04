@@ -19,6 +19,9 @@ public abstract class LabValue {
     @NotNull
     public abstract String name();
 
+    @NotNull
+    public abstract String comparator();
+
     public abstract double value();
 
     @NotNull

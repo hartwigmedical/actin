@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -21,6 +20,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
+import com.hartwig.actin.clinical.feed.lab.LabExtraction;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
@@ -89,16 +89,7 @@ public class ClinicalModelFactory {
     private List<LabValue> extractLabValues(@NotNull String subject) {
         List<LabValue> values = Lists.newArrayList();
         for (LabEntry entry : feed.labEntries(subject)) {
-            values.add(ImmutableLabValue.builder()
-                    .date(entry.issued())
-                    .code(entry.codeCodeOriginal())
-                    .name(entry.codeDisplayOriginal())
-                    .value(entry.valueQuantityValue())
-                    .unit(entry.valueQuantityUnit())
-                    .refLimitLow(0D)
-                    .refLimitUp(0D)
-                    .isOutsideRef(false)
-                    .build());
+            values.add(LabExtraction.extract(entry));
         }
         return values;
     }
