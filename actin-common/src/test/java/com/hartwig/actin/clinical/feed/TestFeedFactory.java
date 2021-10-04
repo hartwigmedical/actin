@@ -91,9 +91,7 @@ public final class TestFeedFactory {
                 .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(30D)
                 .valueQuantityUnit("U/l")
-                .interpretationDisplayOriginal("ok")
-                .referenceRangeText("20 - 40")
-                .build());
+                .interpretationDisplayOriginal("ok").referenceRangeText("20 - 40").build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB2")
                 .codeDisplayOriginal("Lab Value 2")
@@ -102,6 +100,16 @@ public final class TestFeedFactory {
                 .valueQuantityUnit("mmol/l")
                 .interpretationDisplayOriginal("too low")
                 .referenceRangeText("> 30")
+                .build());
+
+        entries.add(baseBuilder.codeCodeOriginal("LAB3")
+                .codeDisplayOriginal("Lab Value 3")
+                .issued(LocalDate.of(2018, 5, 29))
+                .valueQuantityComparator(">")
+                .valueQuantityValue(50D)
+                .valueQuantityUnit("mL/min")
+                .interpretationDisplayOriginal("ok")
+                .referenceRangeText("> 50")
                 .build());
 
         return entries;
