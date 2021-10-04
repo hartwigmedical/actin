@@ -33,7 +33,7 @@ public class CurationDatabaseReaderTest {
         CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
-        assertBiopsyLocationConfigs(database.lesionLocationConfigs());
+        assertLesionLocationConfigs(database.lesionLocationConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
@@ -55,7 +55,7 @@ public class CurationDatabaseReaderTest {
         assertTrue(config.doids().contains("299"));
     }
 
-    private static void assertBiopsyLocationConfigs(@NotNull List<LesionLocationConfig> configs) {
+    private static void assertLesionLocationConfigs(@NotNull List<LesionLocationConfig> configs) {
         assertEquals(1, configs.size());
 
         LesionLocationConfig config = configs.get(0);
