@@ -7,6 +7,7 @@ import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.TOXICITY;
 import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.tables.Clinicalstatus.CLINICALSTATUS;
+import static com.hartwig.actin.database.tables.Labvalue.LABVALUE;
 import static com.hartwig.actin.database.tables.Patient.PATIENT;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 import com.hartwig.actin.clinical.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -42,6 +44,7 @@ class ClinicalDAO {
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
+        context.truncate(LABVALUE).execute();
         context.truncate(TOXICITY).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
@@ -62,6 +65,7 @@ class ClinicalDAO {
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
         writePriorOtherConditions(sampleId, record.priorOtherConditions());
+        writeLabValues(sampleId, record.labValues());
         writeToxicities(sampleId, record.toxicities());
     }
 
@@ -194,11 +198,45 @@ class ClinicalDAO {
     private void writePriorOtherConditions(@NotNull String sampleId, @NotNull List<PriorOtherCondition> priorOtherConditions) {
         for (PriorOtherCondition priorOtherCondition : priorOtherConditions) {
             context.insertInto(PRIOROTHERCONDITION,
-                    PRIOROTHERCONDITION.SAMPLEID, PRIOROTHERCONDITION.NAME, PRIOROTHERCONDITION.DOIDS, PRIOROTHERCONDITION.CATEGORY)
+                    PRIOROTHERCONDITION.SAMPLEID,
+                    PRIOROTHERCONDITION.NAME,
+                    PRIOROTHERCONDITION.DOIDS,
+                    PRIOROTHERCONDITION.CATEGORY)
                     .values(sampleId,
                             priorOtherCondition.name(),
                             DataUtil.concat(priorOtherCondition.doids()),
                             priorOtherCondition.category())
+                    .execute();
+        }
+    }
+
+    private void writeLabValues(@NotNull String sampleId, @NotNull List<LabValue> labValues) {
+        for (LabValue lab : labValues) {
+            context.insertInto(LABVALUE,
+                    LABVALUE.SAMPLEID,
+                    LABVALUE.DATE,
+                    LABVALUE.CODE,
+                    LABVALUE.NAME,
+                    LABVALUE.VALUE,
+                    LABVALUE.UNIT,
+                    LABVALUE.REFLIMITLOW,
+                    LABVALUE.REFLIMITUP,
+                    LABVALUE.ISOUTSIDEREF,
+                    LABVALUE.ALERTLIMITLOW,
+                    LABVALUE.ALERTLIMITUP,
+                    LABVALUE.ISWITHINALERT)
+                    .values(sampleId,
+                            lab.date(),
+                            lab.code(),
+                            lab.name(),
+                            lab.value(),
+                            lab.unit(),
+                            lab.refLimitLow(),
+                            lab.refLimitUp(),
+                            DataUtil.toByte(lab.isOutsideRef()),
+                            lab.alertLimitLow(),
+                            lab.alertLimitUp(),
+                            DataUtil.toByte(lab.isWithinAlert()))
                     .execute();
         }
     }

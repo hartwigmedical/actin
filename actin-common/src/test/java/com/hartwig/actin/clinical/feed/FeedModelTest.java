@@ -32,13 +32,25 @@ public class FeedModelTest {
     }
 
     @Test
+    public void canRetrievePatientEntry() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.patientEntry(TestFeedFactory.TEST_SUBJECT));
+    }
+
+    @Test
+    public void canRetrieveLabEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.labEntries(TestFeedFactory.TEST_SUBJECT));
+    }
+
+    @Test
     public void canDetermineLatestQuestionnaire() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
-        QuestionnaireEntry entry = model.latestQuestionnaireForSubject(TestFeedFactory.TEST_SUBJECT);
+        QuestionnaireEntry entry = model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT);
         assertNotNull(entry);
         assertEquals(LocalDate.of(2021, 8, 1), entry.authoredDateTime());
 
-        assertNull(model.latestQuestionnaireForSubject("Does not exist"));
+        assertNull(model.latestQuestionnaireEntry("Does not exist"));
     }
 }

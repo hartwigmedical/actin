@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
@@ -40,7 +41,7 @@ public class FeedModel {
     }
 
     @NotNull
-    public PatientEntry patient(@NotNull String subject) {
+    public PatientEntry patientEntry(@NotNull String subject) {
         for (PatientEntry entry : feed.patientEntries()) {
             if (entry.subject().equals(subject)) {
                 return entry;
@@ -50,8 +51,13 @@ public class FeedModel {
         throw new IllegalStateException("Could not find patient for subject " + subject);
     }
 
+    @NotNull
+    public List<LabEntry> labEntries(@NotNull String subject) {
+        return entriesForSubject(feed.labEntries(), subject);
+    }
+
     @Nullable
-    public QuestionnaireEntry latestQuestionnaireForSubject(@NotNull String subject) {
+    public QuestionnaireEntry latestQuestionnaireEntry(@NotNull String subject) {
         List<QuestionnaireEntry> questionnaires = entriesForSubject(feed.questionnaireEntries(), subject);
         QuestionnaireEntry latest = null;
         for (QuestionnaireEntry questionnaire : questionnaires) {

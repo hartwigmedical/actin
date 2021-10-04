@@ -9,8 +9,10 @@ import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -18,6 +20,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
+import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
@@ -59,7 +62,7 @@ public class ClinicalModelFactory {
             String sampleId = toSampleId(subject);
             LOGGER.info(" Extracting data for sample {}", sampleId);
 
-            QuestionnaireEntry entry = feed.latestQuestionnaireForSubject(subject);
+            QuestionnaireEntry entry = feed.latestQuestionnaireEntry(subject);
             Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
 
             records.add(ImmutableClinicalRecord.builder()
@@ -71,6 +74,7 @@ public class ClinicalModelFactory {
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                    .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(questionnaire, entry))
                     .build());
         }
@@ -82,6 +86,27 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
+    private List<LabValue> extractLabValues(@NotNull String subject) {
+        List<LabValue> values = Lists.newArrayList();
+        for (LabEntry entry : feed.labEntries(subject)) {
+            values.add(ImmutableLabValue.builder()
+                    .date(entry.issued())
+                    .code(entry.codeCodeOriginal())
+                    .name(entry.codeDisplayOriginal())
+                    .value(entry.valueQuantityValue())
+                    .unit(entry.valueQuantityUnit())
+                    .refLimitLow(0D)
+                    .refLimitUp(0D)
+                    .isOutsideRef(false)
+                    .alertLimitLow(0D)
+                    .alertLimitUp(0D)
+                    .isWithinAlert(true)
+                    .build());
+        }
+        return values;
+    }
+
+    @NotNull
     private static String toSampleId(@NotNull String subject) {
         // Assume a single sample per patient ending with "T". No "TII" supported yet.
         return subject.replaceAll("-", "") + "T";
@@ -89,7 +114,7 @@ public class ClinicalModelFactory {
 
     @NotNull
     private PatientDetails extractPatientDetails(@NotNull String subject, @Nullable QuestionnaireEntry entry) {
-        PatientEntry patient = feed.patient(subject);
+        PatientEntry patient = feed.patientEntry(subject);
 
         return ImmutablePatientDetails.builder()
                 .sex(patient.sex())
