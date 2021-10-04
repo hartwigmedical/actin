@@ -92,8 +92,8 @@ CREATE TABLE priorOtherCondition
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(500),
-    category varchar(50),
     doids varchar(50),
+    category varchar(50),
     PRIMARY KEY (id)
 );
 
