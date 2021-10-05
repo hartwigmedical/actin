@@ -142,4 +142,10 @@ public class CurationModelTest {
 
         model.evaluate();
     }
+
+    @Test
+    public void canTranslateLaboratoryValues() {
+        // TODO
+        assertTrue(true);
+    }
 }

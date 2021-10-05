@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class LaboratoryTranslation {
+public abstract class LaboratoryTranslation implements Translation {
 
     @NotNull
     public abstract String code();

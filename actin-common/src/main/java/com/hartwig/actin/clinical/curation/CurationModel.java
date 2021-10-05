@@ -26,6 +26,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -51,7 +52,9 @@ public class CurationModel {
     @NotNull
     private final CurationDatabase database;
     @NotNull
-    private final Multimap<Class<? extends CurationConfig>, String> evaluatedInputs = HashMultimap.create();
+    private final Multimap<Class<? extends CurationConfig>, String> evaluatedConfigs = HashMultimap.create();
+    @NotNull
+    private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
 
     @NotNull
     public static CurationModel fromCurationDirectory(@NotNull String clinicalCurationDirectory) throws IOException {
@@ -210,6 +213,7 @@ public class CurationModel {
         LaboratoryTranslation translation = findLaboratoryTranslation(input);
 
         if (translation != null) {
+            evaluatedTranslations.put(LaboratoryTranslation.class, translation);
             return ImmutableLabValue.builder().from(input).code(translation.translatedCode()).name(translation.translatedName()).build();
         } else {
             return input;
@@ -230,13 +234,24 @@ public class CurationModel {
 
     public void evaluate() {
         int warnCount = 0;
-        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedInputs.asMap().entrySet()) {
+        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedConfigs.asMap().entrySet()) {
             List<? extends CurationConfig> configs = configsForClass(entry.getKey());
             Collection<String> evaluated = entry.getValue();
             for (CurationConfig config : configs) {
                 if (!evaluated.contains(config.input())) {
                     warnCount++;
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input(), entry.getKey().getSimpleName());
+                }
+            }
+        }
+
+        for (Map.Entry<Class<? extends Translation>, Collection<Translation>> entry : evaluatedTranslations.asMap().entrySet()) {
+            List<? extends Translation> translations = translationsForClass(entry.getKey());
+            Collection<Translation> evaluated = entry.getValue();
+            for (Translation translation : translations) {
+                if (!evaluated.contains(translation)) {
+                    warnCount++;
+                    LOGGER.warn(" Translation '{}' not used for class {}", translation, entry.getKey().getSimpleName());
                 }
             }
         }
@@ -265,10 +280,19 @@ public class CurationModel {
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);
     }
 
+    @NotNull
+    private List<? extends Translation> translationsForClass(@NotNull Class<? extends Translation> classToLookup) {
+        if (classToLookup == LaboratoryTranslation.class) {
+            return database.laboratoryTranslations();
+        }
+
+        throw new IllegalStateException("Class not found in curation database: " + classToLookup);
+    }
+
     @Nullable
     private <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
         if (!configs.isEmpty()) {
-            evaluatedInputs.put(configs.get(0).getClass(), input);
+            evaluatedConfigs.put(configs.get(0).getClass(), input);
             for (T config : configs) {
                 if (config.input().equals(input)) {
                     return config;
