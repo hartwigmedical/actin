@@ -77,7 +77,7 @@ public final class TestFeedFactory {
     }
 
     @NotNull
-    private static List<LabEntry> createTestLabEntries() {
+    public static List<LabEntry> createTestLabEntries() {
         List<LabEntry> entries = Lists.newArrayList();
 
         ImmutableLabEntry.Builder baseBuilder = ImmutableLabEntry.builder()
@@ -86,8 +86,7 @@ public final class TestFeedFactory {
                 .valueString(Strings.EMPTY)
                 .codeCode(Strings.EMPTY);
 
-        entries.add(baseBuilder.codeCodeOriginal("LAB1")
-                .codeDisplayOriginal("Lab Value 1")
+        entries.add(baseBuilder.codeCodeOriginal("LAB1").codeDisplayOriginal("Lab Value 1")
                 .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(30D)
                 .valueQuantityUnit("U/l")

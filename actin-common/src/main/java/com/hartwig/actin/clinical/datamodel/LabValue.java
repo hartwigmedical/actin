@@ -27,9 +27,11 @@ public abstract class LabValue {
     @NotNull
     public abstract String unit();
 
-    public abstract double refLimitLow();
+    @Nullable
+    public abstract Double refLimitLow();
 
-    public abstract double refLimitUp();
+    @Nullable
+    public abstract Double refLimitUp();
 
     public abstract boolean isOutsideRef();
 
