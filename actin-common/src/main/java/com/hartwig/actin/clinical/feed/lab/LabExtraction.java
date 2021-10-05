@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed.lab;
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,16 +43,16 @@ public final class LabExtraction {
         Double upper = null;
         if (referenceRangeText.contains("-")) {
             String[] limits = referenceRangeText.split("-");
-            lower = Double.parseDouble(limits[0].trim());
-            upper = Double.parseDouble(limits[1].trim());
+            lower = FeedUtil.parseDouble(limits[0].trim());
+            upper = FeedUtil.parseDouble(limits[1].trim());
         } else if (referenceRangeText.contains(">")) {
             int index = referenceRangeText.indexOf(">");
-            lower = Double.parseDouble(referenceRangeText.substring(index + 1).trim());
+            lower = FeedUtil.parseDouble(referenceRangeText.substring(index + 1).trim());
         } else if (referenceRangeText.contains("<")) {
             int index = referenceRangeText.indexOf("<");
-            upper = Double.parseDouble(referenceRangeText.substring(index + 1).trim());
-        } else {
-            LOGGER.warn("Could not parse lab value referenceRangeTest '{}'", referenceRangeText);
+            upper = FeedUtil.parseDouble(referenceRangeText.substring(index + 1).trim());
+        } else if (!referenceRangeText.isEmpty()) {
+            LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText);
         }
 
         return new Limits(lower, upper);
