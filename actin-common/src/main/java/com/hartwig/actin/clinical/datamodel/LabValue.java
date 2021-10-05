@@ -33,6 +33,7 @@ public abstract class LabValue {
     @Nullable
     public abstract Double refLimitUp();
 
-    public abstract boolean isOutsideRef();
+    @Nullable
+    public abstract Boolean isOutsideRef();
 
 }

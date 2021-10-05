@@ -21,7 +21,10 @@ public final class LabExtraction {
     public static LabValue extract(@NotNull LabEntry entry) {
         Limits limits = extractLimits(entry.referenceRangeText());
         double value = entry.valueQuantityValue();
-        boolean isOutsideRef = (limits.lower() != null && value < limits.lower()) || (limits.upper() != null && value > limits.upper());
+        Boolean isOutsideRef = null;
+        if (limits.lower() != null || limits.upper() != null) {
+            isOutsideRef = (limits.lower() != null && value < limits.lower()) || (limits.upper() != null && value > limits.upper());
+        }
 
         return ImmutableLabValue.builder()
                 .date(entry.issued())

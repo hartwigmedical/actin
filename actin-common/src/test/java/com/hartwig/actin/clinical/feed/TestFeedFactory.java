@@ -111,6 +111,15 @@ public final class TestFeedFactory {
                 .referenceRangeText("> 50")
                 .build());
 
+        entries.add(baseBuilder.codeCodeOriginal("LAB4")
+                .codeDisplayOriginal("Lab Value 4")
+                .issued(LocalDate.of(2018, 5, 29))
+                .valueQuantityValue(20D)
+                .valueQuantityUnit("mL/min")
+                .interpretationDisplayOriginal("ok")
+                .referenceRangeText(Strings.EMPTY)
+                .build());
+
         return entries;
     }
 

@@ -49,6 +49,11 @@ public class LabExtractionTest {
         assertEquals(50, lab3.refLimitLow(), EPSILON);
         assertNull(lab3.refLimitUp());
         assertFalse(lab3.isOutsideRef());
+
+        LabValue lab4 = LabExtraction.extract(findByCodeCodeOriginal(testEntries, "LAB4"));
+        assertNull(lab4.refLimitLow());
+        assertNull(lab3.refLimitUp());
+        assertNull(lab4.isOutsideRef());
     }
 
     @NotNull
