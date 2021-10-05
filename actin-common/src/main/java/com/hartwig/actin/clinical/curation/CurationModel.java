@@ -251,7 +251,7 @@ public class CurationModel {
             for (Translation translation : translations) {
                 if (!evaluated.contains(translation)) {
                     warnCount++;
-                    LOGGER.warn(" Translation '{}' not used for class {}", translation, entry.getKey().getSimpleName());
+                    LOGGER.warn(" Translation '{}' not used", translation);
                 }
             }
         }
