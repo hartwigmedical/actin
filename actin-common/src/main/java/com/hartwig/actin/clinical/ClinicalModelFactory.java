@@ -86,15 +86,6 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private List<LabValue> extractLabValues(@NotNull String subject) {
-        List<LabValue> values = Lists.newArrayList();
-        for (LabEntry entry : feed.labEntries(subject)) {
-            values.add(LabExtraction.extract(entry));
-        }
-        return values;
-    }
-
-    @NotNull
     private static String toSampleId(@NotNull String subject) {
         // Assume a single sample per patient ending with "T". No "TII" supported yet.
         return subject.replaceAll("-", "") + "T";
@@ -198,6 +189,15 @@ public class ClinicalModelFactory {
         } else {
             return Lists.newArrayList();
         }
+    }
+
+    @NotNull
+    private List<LabValue> extractLabValues(@NotNull String subject) {
+        List<LabValue> values = Lists.newArrayList();
+        for (LabEntry entry : feed.labEntries(subject)) {
+            values.add(curation.translateLabValue(LabExtraction.extract(entry)));
+        }
+        return values;
     }
 
     @NotNull

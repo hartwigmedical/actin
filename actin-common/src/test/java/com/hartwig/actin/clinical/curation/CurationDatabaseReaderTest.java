@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
@@ -39,6 +40,8 @@ public class CurationDatabaseReaderTest {
         assertECGConfigs(database.ecgConfigs());
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
+
+        assertLaboratoryTranslations(database.laboratoryTranslations());
     }
 
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
@@ -143,5 +146,15 @@ public class CurationDatabaseReaderTest {
         }
 
         throw new IllegalStateException("Could not find input '" + input + "' in configs");
+    }
+
+    private static void assertLaboratoryTranslations(@NotNull List<LaboratoryTranslation> translations) {
+        assertEquals(1, translations.size());
+
+        LaboratoryTranslation translation = translations.get(0);
+        assertEquals("AC", translation.code());
+        assertEquals("AC2", translation.translatedCode());
+        assertEquals("ACTH", translation.name());
+        assertEquals("Adrenocorticotropic hormone", translation.translatedName());
     }
 }

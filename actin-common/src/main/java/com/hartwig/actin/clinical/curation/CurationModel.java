@@ -25,10 +25,13 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -200,6 +203,29 @@ public class CurationModel {
 
         // Assume ECGs can also be pass-through.
         return config != null ? config.interpretation() : input;
+    }
+
+    @NotNull
+    public LabValue translateLabValue(@NotNull LabValue input) {
+        LaboratoryTranslation translation = findLaboratoryTranslation(input);
+
+        if (translation != null) {
+            return ImmutableLabValue.builder().from(input).code(translation.translatedCode()).name(translation.translatedName()).build();
+        } else {
+            return input;
+        }
+    }
+
+    @Nullable
+    private LaboratoryTranslation findLaboratoryTranslation(@NotNull LabValue input) {
+        for (LaboratoryTranslation entry : database.laboratoryTranslations()) {
+            if (entry.code().equals(input.code()) && entry.name().equals(input.name())) {
+                return entry;
+            }
+        }
+
+        LOGGER.warn("Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), input.name());
+        return null;
     }
 
     public void evaluate() {

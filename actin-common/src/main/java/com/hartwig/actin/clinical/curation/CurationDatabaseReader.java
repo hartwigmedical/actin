@@ -17,6 +17,8 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFile;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFile;
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFile;
 import com.hartwig.actin.util.FileUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +37,8 @@ public final class CurationDatabaseReader {
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
 
+    private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
+
     private CurationDatabaseReader() {
     }
 
@@ -52,6 +56,7 @@ public final class CurationDatabaseReader {
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
+                .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
                 .build();
     }
 
@@ -104,5 +109,12 @@ public final class CurationDatabaseReader {
         List<ToxicityConfig> configs = ToxicityConfigFile.read(toxicityTsv);
         LOGGER.info(" Read {} toxicity configs from {}", configs.size(), toxicityTsv);
         return configs;
+    }
+
+    @NotNull
+    private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String laboratoryTranslationTsv) throws IOException {
+        List<LaboratoryTranslation> translations = LaboratoryTranslationFile.read(laboratoryTranslationTsv);
+        LOGGER.info(" Read {} laboratory translations from {}", translations.size(), laboratoryTranslationTsv);
+        return translations;
     }
 }
