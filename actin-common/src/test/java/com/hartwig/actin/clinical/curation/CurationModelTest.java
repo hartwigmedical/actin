@@ -13,6 +13,8 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -20,6 +22,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
+import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class CurationModelTest {
@@ -145,7 +148,27 @@ public class CurationModelTest {
 
     @Test
     public void canTranslateLaboratoryValues() {
-        // TODO
-        assertTrue(true);
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        LabValue test = ImmutableLabValue.builder()
+                .date(LocalDate.of(2020, 1, 1))
+                .code("CO")
+                .name("naam")
+                .comparator(Strings.EMPTY)
+                .value(0D)
+                .unit(Strings.EMPTY)
+                .isOutsideRef(false)
+                .build();
+
+        LabValue translated = model.translateLabValue(test);
+        assertEquals("CODE", translated.code());
+        assertEquals("Name", translated.name());
+
+        LabValue notExisting = ImmutableLabValue.builder().from(test).code("no").name("does not exist").build();
+        LabValue notExistingTranslated = model.translateLabValue(notExisting);
+        assertEquals("no", notExistingTranslated.code());
+        assertEquals("does not exist", notExistingTranslated.name());
+
+        model.evaluate();
     }
 }

@@ -17,6 +17,8 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
@@ -49,6 +51,7 @@ public final class TestCurationFactory {
                 .ecgConfigs(createTestECGConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
+                .laboratoryTranslations(createTestLaboratoryTranslations())
                 .build();
     }
 
@@ -82,7 +85,8 @@ public final class TestCurationFactory {
     private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
         List<OncologicalHistoryConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableOncologicalHistoryConfig.builder().input("Cis 2020")
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Cis 2020")
                 .ignore(false)
                 .curatedObject(ImmutablePriorTumorTreatment.builder()
                         .name("Cisplatin")
@@ -151,5 +155,19 @@ public final class TestCurationFactory {
         configs.add(ImmutableToxicityConfig.builder().ignore(false).input("neuropathy gr3").name("neuropathy").grade(3).build());
 
         return configs;
+    }
+
+    @NotNull
+    private static List<LaboratoryTranslation> createTestLaboratoryTranslations() {
+        List<LaboratoryTranslation> translations = Lists.newArrayList();
+
+        translations.add(ImmutableLaboratoryTranslation.builder()
+                .code("CO")
+                .translatedCode("CODE")
+                .name("naam")
+                .translatedName("Name")
+                .build());
+
+        return translations;
     }
 }
