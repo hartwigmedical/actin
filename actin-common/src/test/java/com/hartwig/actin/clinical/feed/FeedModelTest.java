@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class FeedModelTest {
 
         Set<String> subjects = model.subjects();
         assertEquals(1, subjects.size());
-        assertEquals(TestFeedFactory.TEST_SUBJECT, subjects.iterator().next());
+        assertTrue(subjects.contains(TestFeedFactory.TEST_SUBJECT));
     }
 
     @Test
@@ -39,7 +40,7 @@ public class FeedModelTest {
     }
 
     @Test
-    public void canFindToxicityQuestionnaireEntries() {
+    public void canRetrieveToxicityQuestionnaireEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
         List<QuestionnaireEntry> toxicities = model.toxicityQuestionnaireEntries(TestFeedFactory.TEST_SUBJECT);
@@ -62,6 +63,12 @@ public class FeedModelTest {
     public void canRetrieveEncounterEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
         assertNotNull(model.encounterEntries(TestFeedFactory.TEST_SUBJECT));
+    }
+
+    @Test
+    public void canRetrieveMedicationEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.medicationEntries(TestFeedFactory.TEST_SUBJECT));
     }
 
     @Test

@@ -15,11 +15,13 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -34,6 +36,7 @@ import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabExtraction;
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
@@ -41,6 +44,7 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,6 +96,7 @@ public class ClinicalModelFactory {
                     .allergies(extractAllergies(subject))
                     .surgeries(extractSurgeries(subject))
                     .bloodPressures(extractBloodPressures(subject))
+                    .medications(extractMedications(subject))
                     .build());
         }
 
@@ -274,5 +279,23 @@ public class ClinicalModelFactory {
                     .build());
         }
         return bloodPressures;
+    }
+
+    @NotNull
+    private List<Medication> extractMedications(@NotNull String subject) {
+        List<Medication> medications = Lists.newArrayList();
+        for (MedicationEntry entry : feed.medicationEntries(subject)) {
+            medications.add(ImmutableMedication.builder()
+                    .name(entry.code5ATCDisplay())
+                    .type(Strings.EMPTY)
+                    .dosage(0D)
+                    .unit(Strings.EMPTY)
+                    .frequencyUnit(Strings.EMPTY)
+                    .ifNeeded(false)
+                    .startDate(entry.periodOfUseValuePeriodStart())
+                    .stopDate(entry.periodOfUseValuePeriodEnd())
+                    .build());
+        }
+        return medications;
     }
 }

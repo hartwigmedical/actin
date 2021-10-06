@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
@@ -81,6 +82,11 @@ public class FeedModel {
     @NotNull
     public List<EncounterEntry> encounterEntries(@NotNull String subject) {
         return entriesForSubject(feed.encounterEntries(), subject);
+    }
+
+    @NotNull
+    public List<MedicationEntry> medicationEntries(@NotNull String subject) {
+        return entriesForSubject(feed.medicationEntries(), subject);
     }
 
     @NotNull
