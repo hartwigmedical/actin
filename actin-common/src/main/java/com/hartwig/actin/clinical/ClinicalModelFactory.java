@@ -9,9 +9,11 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
+import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
@@ -27,6 +29,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
+import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -80,14 +83,15 @@ public class ClinicalModelFactory {
                     .patient(extractPatientDetails(subject, entry))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
-                    .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                    .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
                     .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(subject, questionnaire, entry != null ? entry.authoredDateTime() : null))
                     .allergies(extractAllergies(subject))
                     .surgeries(extractSurgeries(subject))
+                    .bloodPressures(extractBloodPressures(subject))
                     .build());
         }
 
@@ -151,23 +155,14 @@ public class ClinicalModelFactory {
     private ClinicalStatus extractClinicalStatus(@Nullable Questionnaire questionnaire) {
         if (questionnaire == null) {
             return ImmutableClinicalStatus.builder().build();
-
         }
+
         return ImmutableClinicalStatus.builder()
                 .who(questionnaire.whoStatus())
                 .hasActiveInfection(questionnaire.hasSignificantCurrentInfection())
                 .hasSigAberrationLatestEcg(questionnaire.hasSignificantAberrationLatestECG())
                 .ecgAberrationDescription(curation.curateAberrationECG(questionnaire.significantAberrationLatestECG()))
                 .build();
-    }
-
-    @NotNull
-    private List<CancerRelatedComplication> extractCancerRelatedComplications(@Nullable Questionnaire questionnaire) {
-        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
-        if (questionnaire != null) {
-            cancerRelatedComplications.addAll(curation.curateCancerRelatedComplications(questionnaire.cancerRelatedComplications()));
-        }
-        return cancerRelatedComplications;
     }
 
     @NotNull
@@ -204,6 +199,15 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
+    private List<CancerRelatedComplication> extractCancerRelatedComplications(@Nullable Questionnaire questionnaire) {
+        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+        if (questionnaire != null) {
+            cancerRelatedComplications.addAll(curation.curateCancerRelatedComplications(questionnaire.cancerRelatedComplications()));
+        }
+        return cancerRelatedComplications;
+    }
+
+    @NotNull
     private List<LabValue> extractLabValues(@NotNull String subject) {
         List<LabValue> values = Lists.newArrayList();
         for (LabEntry entry : feed.labEntries(subject)) {
@@ -233,7 +237,6 @@ public class ClinicalModelFactory {
                         .build());
             }
         }
-
         return toxicities;
     }
 
@@ -257,5 +260,19 @@ public class ClinicalModelFactory {
             surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).build());
         }
         return surgeries;
+    }
+
+    @NotNull
+    private List<BloodPressure> extractBloodPressures(@NotNull String subject) {
+        List<BloodPressure> bloodPressures = Lists.newArrayList();
+        for (BloodPressureEntry entry : feed.bloodPressureEntries(subject)) {
+            bloodPressures.add(ImmutableBloodPressure.builder()
+                    .date(entry.effectiveDateTime())
+                    .category(entry.componentCodeDisplay())
+                    .value(entry.componentValueQuantityValue())
+                    .unit(entry.componentValueQuantityCode())
+                    .build());
+        }
+        return bloodPressures;
     }
 }

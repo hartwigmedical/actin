@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
+import com.hartwig.actin.clinical.feed.bloodpressure.ImmutableBloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.encounter.ImmutableEncounterEntry;
@@ -167,7 +168,22 @@ public final class TestFeedFactory {
 
     @NotNull
     private static List<BloodPressureEntry> createTestBloodPressureEntries() {
-        return Lists.newArrayList();
+        List<BloodPressureEntry> entries = Lists.newArrayList();
+
+        entries.add(ImmutableBloodPressureEntry.builder()
+                .subject(TEST_SUBJECT)
+                .effectiveDateTime(LocalDate.of(2021, 2, 27))
+                .codeCodeOriginal(Strings.EMPTY)
+                .codeDisplayOriginal(Strings.EMPTY)
+                .issued(LocalDate.of(2021, 2, 26))
+                .valueString(Strings.EMPTY)
+                .componentCodeCode(Strings.EMPTY)
+                .componentCodeDisplay("systolic")
+                .componentValueQuantityCode("mm[Hg]")
+                .componentValueQuantityValue(120D)
+                .build());
+
+        return entries;
     }
 
     @NotNull

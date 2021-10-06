@@ -13,6 +13,7 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
@@ -33,6 +34,8 @@ public class ClinicalModelFactoryTest {
 
     private static final String TEST_SAMPLE = "ACTN01029999T";
 
+    private static final double EPSILON = 1.0E-10;
+
     @Test
     public void canCreateFromFeedAndCurationDirectories() throws IOException {
         assertNotNull(ClinicalModelFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
@@ -41,11 +44,9 @@ public class ClinicalModelFactoryTest {
     @Test
     public void canCreateClinicalModelFromMinimalTestData() {
         ClinicalModel model = createMinimalTestClinicalModel();
-        assertEquals(1, model.records().size());
 
-        ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
-        assertNotNull(record);
-        assertEquals(TEST_SAMPLE, record.sampleId());
+        assertEquals(1, model.records().size());
+        assertNotNull(model.findClinicalRecordForSample(TEST_SAMPLE));
     }
 
     @Test
@@ -56,14 +57,13 @@ public class ClinicalModelFactoryTest {
         ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
 
         assertNotNull(record);
-        assertEquals(TEST_SAMPLE, record.sampleId());
-
         assertPatientDetails(record.patient());
         assertTumorDetails(record.tumor());
         assertClinicalStatus(record.clinicalStatus());
         assertToxicities(record.toxicities());
         assertAllergies(record.allergies());
         assertSurgeries(record.surgeries());
+        assertBloodPressures(record.bloodPressures());
     }
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
@@ -125,6 +125,16 @@ public class ClinicalModelFactoryTest {
 
         Surgery surgery = surgeries.get(0);
         assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
+    }
+
+    private static void assertBloodPressures(@NotNull List<BloodPressure> bloodPressures) {
+        assertEquals(1, bloodPressures.size());
+
+        BloodPressure bloodPressure = bloodPressures.get(0);
+        assertEquals(LocalDate.of(2021, 2, 27), bloodPressure.date());
+        assertEquals("systolic", bloodPressure.category());
+        assertEquals(120, bloodPressure.value(), EPSILON);
+        assertEquals("mm[Hg]", bloodPressure.unit());
     }
 
     @NotNull

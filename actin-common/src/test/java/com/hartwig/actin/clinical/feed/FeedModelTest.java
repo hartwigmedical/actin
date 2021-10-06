@@ -39,15 +39,12 @@ public class FeedModelTest {
     }
 
     @Test
-    public void canRetrieveLabEntries() {
+    public void canFindToxicityQuestionnaireEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
-        assertNotNull(model.labEntries(TestFeedFactory.TEST_SUBJECT));
-    }
 
-    @Test
-    public void canRetrieveEncounterEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-        assertNotNull(model.encounterEntries(TestFeedFactory.TEST_SUBJECT));
+        List<QuestionnaireEntry> toxicities = model.toxicityQuestionnaireEntries(TestFeedFactory.TEST_SUBJECT);
+
+        assertEquals(2, toxicities.size());
     }
 
     @Test
@@ -62,11 +59,26 @@ public class FeedModelTest {
     }
 
     @Test
-    public void canFindToxicityQuestionnaireEntries() {
+    public void canRetrieveEncounterEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.encounterEntries(TestFeedFactory.TEST_SUBJECT));
+    }
 
-        List<QuestionnaireEntry> toxicities = model.toxicityQuestionnaireEntries(TestFeedFactory.TEST_SUBJECT);
+    @Test
+    public void canRetrieveLabEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.labEntries(TestFeedFactory.TEST_SUBJECT));
+    }
 
-        assertEquals(2, toxicities.size());
+    @Test
+    public void canRetrieveBloodPressureEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.bloodPressureEntries(TestFeedFactory.TEST_SUBJECT));
+    }
+
+    @Test
+    public void canRetrieveIntoleranceEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.intoleranceEntries(TestFeedFactory.TEST_SUBJECT));
     }
 }

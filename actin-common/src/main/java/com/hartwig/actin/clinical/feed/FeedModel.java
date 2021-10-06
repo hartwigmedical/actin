@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -54,21 +55,6 @@ public class FeedModel {
     }
 
     @NotNull
-    public List<LabEntry> labEntries(@NotNull String subject) {
-        return entriesForSubject(feed.labEntries(), subject);
-    }
-
-    @NotNull
-    public List<IntoleranceEntry> intoleranceEntries(@NotNull String subject) {
-        return entriesForSubject(feed.intoleranceEntries(), subject);
-    }
-
-    @NotNull
-    public List<EncounterEntry> encounterEntries(@NotNull String subject) {
-        return entriesForSubject(feed.encounterEntries(), subject);
-    }
-
-    @NotNull
     public List<QuestionnaireEntry> toxicityQuestionnaireEntries(@NotNull String subject) {
         List<QuestionnaireEntry> toxicities = Lists.newArrayList();
         for (QuestionnaireEntry entry : entriesForSubject(feed.questionnaireEntries(), subject)) {
@@ -90,6 +76,26 @@ public class FeedModel {
             }
         }
         return latest;
+    }
+
+    @NotNull
+    public List<EncounterEntry> encounterEntries(@NotNull String subject) {
+        return entriesForSubject(feed.encounterEntries(), subject);
+    }
+
+    @NotNull
+    public List<LabEntry> labEntries(@NotNull String subject) {
+        return entriesForSubject(feed.labEntries(), subject);
+    }
+
+    @NotNull
+    public List<BloodPressureEntry> bloodPressureEntries(@NotNull String subject) {
+        return entriesForSubject(feed.bloodPressureEntries(), subject);
+    }
+
+    @NotNull
+    public List<IntoleranceEntry> intoleranceEntries(@NotNull String subject) {
+        return entriesForSubject(feed.intoleranceEntries(), subject);
     }
 
     @NotNull
