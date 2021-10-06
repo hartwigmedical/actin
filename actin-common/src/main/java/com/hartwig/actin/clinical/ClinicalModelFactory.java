@@ -8,8 +8,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
+import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
@@ -23,6 +25,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
+import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabExtraction;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
@@ -80,6 +83,7 @@ public class ClinicalModelFactory {
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                     .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(subject, questionnaire, entry != null ? entry.authoredDateTime() : null))
+                    .allergies(extractAllergies(subject))
                     .build());
         }
 
@@ -224,5 +228,18 @@ public class ClinicalModelFactory {
         }
 
         return toxicities;
+    }
+
+    @NotNull
+    private List<Allergy> extractAllergies(@NotNull String subject) {
+        List<Allergy> allergies = Lists.newArrayList();
+        for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
+            allergies.add(ImmutableAllergy.builder()
+                    .name(entry.codeText())
+                    .category(entry.category())
+                    .criticality(entry.criticality())
+                    .build());
+        }
+        return allergies;
     }
 }
