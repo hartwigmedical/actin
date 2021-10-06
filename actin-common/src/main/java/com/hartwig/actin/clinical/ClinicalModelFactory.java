@@ -237,11 +237,11 @@ public class ClinicalModelFactory {
     private List<Allergy> extractAllergies(@NotNull String subject) {
         List<Allergy> allergies = Lists.newArrayList();
         for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
-            allergies.add(ImmutableAllergy.builder()
+            allergies.add(curation.translateAllergy(ImmutableAllergy.builder()
                     .name(entry.codeText())
                     .category(entry.category())
                     .criticality(entry.criticality())
-                    .build());
+                    .build()));
         }
         return allergies;
     }

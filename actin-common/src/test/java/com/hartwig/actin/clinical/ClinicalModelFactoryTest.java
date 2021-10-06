@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
+import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -52,6 +53,7 @@ public class ClinicalModelFactoryTest {
 
         assertPatientDetails(record.patient());
         assertToxicities(record.toxicities());
+        assertAllergies(record.allergies());
     }
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
@@ -64,20 +66,19 @@ public class ClinicalModelFactoryTest {
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
         assertEquals(1, toxicities.size());
 
-        Toxicity toxicity = findByName(toxicities, "Nausea");
+        Toxicity toxicity = toxicities.get(0);
+        assertEquals("Nausea", toxicity.name());
         assertEquals(ToxicitySource.EHR, toxicity.source());
         assertEquals(2, (int) toxicity.grade());
     }
 
-    @NotNull
-    private static Toxicity findByName(@NotNull List<Toxicity> toxicities, @NotNull String name) {
-        for (Toxicity toxicity : toxicities) {
-            if (toxicity.name().equals(name)) {
-                return toxicity;
-            }
-        }
+    private static void assertAllergies(@NotNull List<Allergy> allergies) {
+        assertEquals(1, allergies.size());
 
-        throw new IllegalStateException("Could not find toxicity with name: " + name);
+        Allergy allergy = allergies.get(0);
+        assertEquals("pills", allergy.name());
+        assertEquals("medication", allergy.category());
+        assertEquals("unknown", allergy.criticality());
     }
 
     @NotNull

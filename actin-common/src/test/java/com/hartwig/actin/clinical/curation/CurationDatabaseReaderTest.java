@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -42,6 +43,7 @@ public class CurationDatabaseReaderTest {
         assertToxicityConfigs(database.toxicityConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
+        assertAllergyTranslations(database.allergyTranslations());
     }
 
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
@@ -156,5 +158,13 @@ public class CurationDatabaseReaderTest {
         assertEquals("AC2", translation.translatedCode());
         assertEquals("ACTH", translation.name());
         assertEquals("Adrenocorticotropic hormone", translation.translatedName());
+    }
+
+    private static void assertAllergyTranslations(@NotNull List<AllergyTranslation> translations) {
+        assertEquals(1, translations.size());
+
+        AllergyTranslation translation = translations.get(0);
+        assertEquals("SIMVASTATINE", translation.name());
+        assertEquals("Simvastatin", translation.translatedName());
     }
 }

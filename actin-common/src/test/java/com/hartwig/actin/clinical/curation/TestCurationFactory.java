@@ -17,6 +17,8 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
+import com.hartwig.actin.clinical.curation.translation.ImmutableAllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
@@ -52,6 +54,7 @@ public final class TestCurationFactory {
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
+                .allergyTranslations(createTestAllergyTranslations())
                 .build();
     }
 
@@ -167,6 +170,15 @@ public final class TestCurationFactory {
                 .name("naam")
                 .translatedName("Name")
                 .build());
+
+        return translations;
+    }
+
+    @NotNull
+    private static List<AllergyTranslation> createTestAllergyTranslations() {
+        List<AllergyTranslation> translations = Lists.newArrayList();
+
+        translations.add(ImmutableAllergyTranslation.builder().name("naam").translatedName("Name").build());
 
         return translations;
     }

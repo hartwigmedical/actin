@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
+import com.hartwig.actin.clinical.feed.intolerance.ImmutableIntoleranceEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.ImmutableLabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -108,7 +109,9 @@ public final class TestFeedFactory {
                 .referenceRangeText("20 - 40")
                 .build());
 
-        entries.add(baseBuilder.codeCodeOriginal("LAB2").codeDisplayOriginal("Lab Value 2").issued(LocalDate.of(2018, 5, 29))
+        entries.add(baseBuilder.codeCodeOriginal("LAB2")
+                .codeDisplayOriginal("Lab Value 2")
+                .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(22D)
                 .valueQuantityUnit("mmol/l")
                 .interpretationDisplayOriginal("too low")
@@ -149,6 +152,19 @@ public final class TestFeedFactory {
 
     @NotNull
     private static List<IntoleranceEntry> createTestIntoleranceEntries() {
-        return Lists.newArrayList();
+        List<IntoleranceEntry> entries = Lists.newArrayList();
+
+        entries.add(ImmutableIntoleranceEntry.builder()
+                .subject(TEST_SUBJECT)
+                .assertedDate(LocalDate.of(2018, 1, 1))
+                .category("medication")
+                .categoryAllergyCategoryCode(Strings.EMPTY)
+                .categoryAllergyCategoryDisplay(Strings.EMPTY)
+                .clinicalStatus(Strings.EMPTY)
+                .codeText("pills")
+                .criticality("unknown")
+                .build());
+
+        return entries;
     }
 }

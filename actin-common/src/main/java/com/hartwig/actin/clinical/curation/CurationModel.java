@@ -25,9 +25,12 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
+import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
@@ -232,6 +235,30 @@ public class CurationModel {
         return null;
     }
 
+    @NotNull
+    public Allergy translateAllergy(@NotNull Allergy input) {
+        AllergyTranslation translation = findAllergyTranslation(input);
+
+        if (translation != null) {
+            evaluatedTranslations.put(AllergyTranslation.class, translation);
+            return ImmutableAllergy.builder().from(input).name(translation.translatedName()).build();
+        } else {
+            return input;
+        }
+    }
+
+    @Nullable
+    private AllergyTranslation findAllergyTranslation(@NotNull Allergy input) {
+        for (AllergyTranslation entry : database.allergyTranslations()) {
+            if (entry.name().equals(input.name())) {
+                return entry;
+            }
+        }
+
+        LOGGER.warn("Could not find allergy translation for allergy with name '{}'", input.name());
+        return null;
+    }
+
     public void evaluate() {
         int warnCount = 0;
         for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedConfigs.asMap().entrySet()) {
@@ -284,6 +311,8 @@ public class CurationModel {
     private List<? extends Translation> translationsForClass(@NotNull Class<? extends Translation> classToLookup) {
         if (classToLookup == LaboratoryTranslation.class) {
             return database.laboratoryTranslations();
+        } else if (classToLookup == AllergyTranslation.class) {
+            return database.allergyTranslations();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookup);

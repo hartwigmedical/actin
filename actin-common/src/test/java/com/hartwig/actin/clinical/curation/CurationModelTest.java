@@ -11,7 +11,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -167,6 +169,22 @@ public class CurationModelTest {
         LabValue notExisting = ImmutableLabValue.builder().from(test).code("no").name("does not exist").build();
         LabValue notExistingTranslated = model.translateLabValue(notExisting);
         assertEquals("no", notExistingTranslated.code());
+        assertEquals("does not exist", notExistingTranslated.name());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canTranslateAllergies() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        Allergy test = ImmutableAllergy.builder().name("naam").category(Strings.EMPTY).criticality(Strings.EMPTY).build();
+
+        Allergy translated = model.translateAllergy(test);
+        assertEquals("Name", translated.name());
+
+        Allergy notExisting = ImmutableAllergy.builder().from(test).name("does not exist").build();
+        Allergy notExistingTranslated = model.translateAllergy(notExisting);
         assertEquals("does not exist", notExistingTranslated.name());
 
         model.evaluate();

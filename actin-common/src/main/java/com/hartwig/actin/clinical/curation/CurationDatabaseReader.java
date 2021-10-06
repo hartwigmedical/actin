@@ -17,6 +17,8 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFile;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFile;
+import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
+import com.hartwig.actin.clinical.curation.translation.AllergyTranslationFile;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFile;
 import com.hartwig.actin.util.FileUtil;
@@ -38,6 +40,7 @@ public final class CurationDatabaseReader {
     private static final String TOXICITY_TSV = "toxicity.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
+    private static final String ALLERGY_TRANSLATION_TSV = "allergy_translation.tsv";
 
     private CurationDatabaseReader() {
     }
@@ -57,6 +60,7 @@ public final class CurationDatabaseReader {
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
+                .allergyTranslations(readAllergyTranslations(basePath + ALLERGY_TRANSLATION_TSV))
                 .build();
     }
 
@@ -115,6 +119,13 @@ public final class CurationDatabaseReader {
     private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String laboratoryTranslationTsv) throws IOException {
         List<LaboratoryTranslation> translations = LaboratoryTranslationFile.read(laboratoryTranslationTsv);
         LOGGER.info(" Read {} laboratory translations from {}", translations.size(), laboratoryTranslationTsv);
+        return translations;
+    }
+
+    @NotNull
+    private static List<AllergyTranslation> readAllergyTranslations(@NotNull String allergyTranslationTsv) throws IOException {
+        List<AllergyTranslation> translations = AllergyTranslationFile.read(allergyTranslationTsv);
+        LOGGER.info(" Read {} allergy translations from {}", translations.size(), allergyTranslationTsv);
         return translations;
     }
 }
