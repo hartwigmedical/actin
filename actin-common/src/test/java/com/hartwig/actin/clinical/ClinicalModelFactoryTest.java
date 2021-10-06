@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.Surgery;
@@ -64,6 +65,7 @@ public class ClinicalModelFactoryTest {
         assertAllergies(record.allergies());
         assertSurgeries(record.surgeries());
         assertBloodPressures(record.bloodPressures());
+        assertMedications(record.medications());
     }
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
@@ -135,6 +137,10 @@ public class ClinicalModelFactoryTest {
         assertEquals("systolic", bloodPressure.category());
         assertEquals(120, bloodPressure.value(), EPSILON);
         assertEquals("mm[Hg]", bloodPressure.unit());
+    }
+
+    private static void assertMedications(@NotNull List<Medication> medications) {
+        assertEquals(1, medications.size());
     }
 
     @NotNull

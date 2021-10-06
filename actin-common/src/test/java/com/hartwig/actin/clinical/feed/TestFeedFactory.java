@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.feed.intolerance.ImmutableIntoleranceEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.ImmutableLabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
+import com.hartwig.actin.clinical.feed.medication.ImmutableMedicationEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.ImmutablePatientEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
@@ -113,7 +114,38 @@ public final class TestFeedFactory {
 
     @NotNull
     private static List<MedicationEntry> createTestMedicationEntries() {
-        return Lists.newArrayList();
+        List<MedicationEntry> entries = Lists.newArrayList();
+
+        entries.add(ImmutableMedicationEntry.builder()
+                .subject(TEST_SUBJECT)
+                .medicationReferenceMedicationValue(Strings.EMPTY)
+                .medicationReferenceMedicationSystem(Strings.EMPTY)
+                .codeText(Strings.EMPTY)
+                .code5ATCDisplay("50 mg per day")
+                .indicationDisplay(Strings.EMPTY)
+                .dosageInstructionDoseQuantityUnit(Strings.EMPTY)
+                .dosageInstructionDoseQuantityValue(0D)
+                .dosageInstructionFrequencyUnit(Strings.EMPTY)
+                .dosageInstructionFrequencyValue(0D)
+                .dosageInstructionMaxDosePerAdministration(0D)
+                .dosageInstructionPatientInstruction(Strings.EMPTY)
+                .dosageInstructionAsNeededDisplay(Strings.EMPTY)
+                .dosageInstructionPeriodBetweenDosagesUnit(Strings.EMPTY)
+                .dosageInstructionPeriodBetweenDosagesValue(0D)
+                .dosageInstructionText(Strings.EMPTY)
+                .status(Strings.EMPTY)
+                .active(Strings.EMPTY)
+                .dosageDoseValue(Strings.EMPTY)
+                .dosageRateQuantityUnit(Strings.EMPTY)
+                .dosageDoseUnitDisplayOriginal(Strings.EMPTY)
+                .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
+                .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
+                .stopTypeDisplay(Strings.EMPTY)
+                .categoryMedicationRequestCategoryDisplay(Strings.EMPTY)
+                .categoryMedicationRequestCategoryCodeOriginal(Strings.EMPTY)
+                .build());
+
+        return entries;
     }
 
     @NotNull
