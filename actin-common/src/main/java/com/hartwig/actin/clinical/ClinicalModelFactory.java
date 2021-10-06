@@ -219,12 +219,15 @@ public class ClinicalModelFactory {
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
-            toxicities.add(ImmutableToxicity.builder()
-                    .name(entry.itemText())
-                    .evaluatedDate(entry.authoredDateTime())
-                    .source(ToxicitySource.EHR)
-                    .grade(CurationUtil.parseOptionalInteger(entry.itemAnswerValueValueString()))
-                    .build());
+            Integer grade = CurationUtil.parseOptionalInteger(entry.itemAnswerValueValueString());
+            if (grade != null) {
+                toxicities.add(ImmutableToxicity.builder()
+                        .name(entry.itemText())
+                        .evaluatedDate(entry.authoredDateTime())
+                        .source(ToxicitySource.EHR)
+                        .grade(grade)
+                        .build());
+            }
         }
 
         return toxicities;

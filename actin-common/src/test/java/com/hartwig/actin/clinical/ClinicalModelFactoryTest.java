@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -63,15 +62,11 @@ public class ClinicalModelFactoryTest {
     }
 
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
-        assertEquals(2, toxicities.size());
+        assertEquals(1, toxicities.size());
 
-        Toxicity toxicity1 = findByName(toxicities, "Nausea");
-        assertEquals(ToxicitySource.EHR, toxicity1.source());
-        assertEquals(2, (int) toxicity1.grade());
-
-        Toxicity toxicity2 = findByName(toxicities, "Vomiting");
-        assertEquals(ToxicitySource.EHR, toxicity2.source());
-        assertNull(toxicity2.grade());
+        Toxicity toxicity = findByName(toxicities, "Nausea");
+        assertEquals(ToxicitySource.EHR, toxicity.source());
+        assertEquals(2, (int) toxicity.grade());
     }
 
     @NotNull
