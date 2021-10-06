@@ -13,6 +13,7 @@ import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfi
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -41,6 +42,7 @@ public class CurationDatabaseReaderTest {
         assertECGConfigs(database.ecgConfigs());
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
+        assertMedicationDosageConfigs(database.medicationDosageConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
         assertAllergyTranslations(database.allergyTranslations());
@@ -137,6 +139,22 @@ public class CurationDatabaseReaderTest {
         assertEquals("Neuropathy GR3", config.input());
         assertEquals("Neuropathy", config.name());
         assertEquals(3, (int) config.grade());
+    }
+
+    private static void assertMedicationDosageConfigs(@NotNull List<MedicationDosageConfig> configs) {
+        assertEquals(2, configs.size());
+
+        MedicationDosageConfig config1 = find(configs, "once per day 50 mg");
+        assertEquals("50", config1.dosage());
+        assertEquals("mg", config1.unit());
+        assertEquals("day", config1.frequencyUnit());
+        assertFalse(config1.ifNeeded());
+
+        MedicationDosageConfig config2 = find(configs, "empty");
+        assertTrue(config2.dosage().isEmpty());
+        assertTrue(config2.unit().isEmpty());
+        assertTrue(config2.frequencyUnit().isEmpty());
+        assertNull(config2.ifNeeded());
     }
 
     @NotNull

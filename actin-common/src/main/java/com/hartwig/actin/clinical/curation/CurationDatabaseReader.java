@@ -9,6 +9,8 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFile;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFile;
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFile;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFile;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -38,6 +40,7 @@ public final class CurationDatabaseReader {
     private static final String ECG_TSV = "ecg.tsv";
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
+    private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
     private static final String ALLERGY_TRANSLATION_TSV = "allergy_translation.tsv";
@@ -59,6 +62,7 @@ public final class CurationDatabaseReader {
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
+                .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
                 .allergyTranslations(readAllergyTranslations(basePath + ALLERGY_TRANSLATION_TSV))
                 .build();
@@ -112,6 +116,13 @@ public final class CurationDatabaseReader {
     private static List<ToxicityConfig> readToxicityConfigs(@NotNull String toxicityTsv) throws IOException {
         List<ToxicityConfig> configs = ToxicityConfigFile.read(toxicityTsv);
         LOGGER.info(" Read {} toxicity configs from {}", configs.size(), toxicityTsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<MedicationDosageConfig> readMedicationDosageConfigs(@NotNull String medicationDosageTsv) throws IOException {
+        List<MedicationDosageConfig> configs = MedicationDosageConfigFile.read(medicationDosageTsv);
+        LOGGER.info(" Read {} medication dosage configs from {}", configs.size(), medicationDosageTsv);
         return configs;
     }
 

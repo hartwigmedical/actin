@@ -34,6 +34,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("-", null);
         OPTION_MAPPING.put("yes/no", null);
 
+        STAGE_MAPPING.put("I", TumorStage.I);
         STAGE_MAPPING.put("II", TumorStage.II);
         STAGE_MAPPING.put("2", TumorStage.II);
         STAGE_MAPPING.put("IIb", TumorStage.IIB);
