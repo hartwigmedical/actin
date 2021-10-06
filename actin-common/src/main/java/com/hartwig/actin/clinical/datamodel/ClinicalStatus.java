@@ -20,6 +20,4 @@ public abstract class ClinicalStatus {
     @Nullable
     public abstract String ecgAberrationDescription();
 
-    @Nullable
-    public abstract String cancerRelatedComplication();
 }

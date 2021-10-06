@@ -13,6 +13,7 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.datamodel.Surgery;
@@ -59,16 +60,10 @@ public class ClinicalModelFactoryTest {
 
         assertPatientDetails(record.patient());
         assertTumorDetails(record.tumor());
+        assertClinicalStatus(record.clinicalStatus());
         assertToxicities(record.toxicities());
         assertAllergies(record.allergies());
         assertSurgeries(record.surgeries());
-    }
-
-    private static void assertSurgeries(@NotNull List<Surgery> surgeries) {
-        assertEquals(1, surgeries.size());
-
-        Surgery surgery = surgeries.get(0);
-        assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
     }
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
@@ -100,6 +95,13 @@ public class ClinicalModelFactoryTest {
         assertEquals("Lymph node", tumor.biopsyLocation());
     }
 
+    private static void assertClinicalStatus(@NotNull ClinicalStatus clinicalStatus) {
+        assertEquals(0, (int) clinicalStatus.who());
+        assertFalse(clinicalStatus.hasActiveInfection());
+        assertFalse(clinicalStatus.hasSigAberrationLatestEcg());
+        assertTrue(clinicalStatus.ecgAberrationDescription().isEmpty());
+    }
+
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
         assertEquals(1, toxicities.size());
 
@@ -116,6 +118,13 @@ public class ClinicalModelFactoryTest {
         assertEquals("pills", allergy.name());
         assertEquals("medication", allergy.category());
         assertEquals("unknown", allergy.criticality());
+    }
+
+    private static void assertSurgeries(@NotNull List<Surgery> surgeries) {
+        assertEquals(1, surgeries.size());
+
+        Surgery surgery = surgeries.get(0);
+        assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
     }
 
     @NotNull

@@ -45,6 +45,12 @@ public class FeedModelTest {
     }
 
     @Test
+    public void canRetrieveEncounterEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+        assertNotNull(model.encounterEntries(TestFeedFactory.TEST_SUBJECT));
+    }
+
+    @Test
     public void canDetermineLatestQuestionnaire() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
