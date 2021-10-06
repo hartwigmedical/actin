@@ -80,10 +80,6 @@ public class ClinicalFeedReaderTest {
         assertEquals("0", entry2.itemAnswerValueValueString());
     }
 
-    private static void assertEncounters(@NotNull List<EncounterEntry> entries) {
-        assertTrue(entries.isEmpty());
-    }
-
     @NotNull
     private static QuestionnaireEntry findByParentIdentifierValue(@NotNull List<QuestionnaireEntry> entries,
             @NotNull String parentIdentifierValue) {
@@ -94,6 +90,25 @@ public class ClinicalFeedReaderTest {
         }
 
         throw new IllegalStateException("No questionnaire entry found with parentIdentifierValue '" + parentIdentifierValue + "'");
+    }
+
+    private static void assertEncounters(@NotNull List<EncounterEntry> entries) {
+        assertEquals(1, entries.size());
+
+        EncounterEntry entry = entries.get(0);
+
+        assertEquals("ACTN-01-02-9999", entry.subject());
+        assertTrue(entry.type1Display().isEmpty());
+        assertEquals("surgery", entry.classDisplay());
+        assertEquals(LocalDate.of(2020, 8, 28), entry.periodStart());
+        assertEquals(LocalDate.of(2020, 8, 28), entry.periodEnd());
+        assertEquals("ID", entry.identifierValue());
+        assertEquals("URL", entry.identifierSystem());
+        assertEquals("code", entry.codeCodingCodeOriginal());
+        assertEquals("diagnostics stomach", entry.codeCodingDisplayOriginal());
+        assertEquals(Strings.EMPTY, entry.presentedFormData());
+        assertEquals(Strings.EMPTY, entry.reason());
+        assertEquals(Strings.EMPTY, entry.accessionValue());
     }
 
     private static void assertMedication(@NotNull List<MedicationEntry> entries) {
