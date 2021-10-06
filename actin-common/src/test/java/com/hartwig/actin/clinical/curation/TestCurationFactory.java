@@ -8,11 +8,13 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -53,18 +55,10 @@ public final class TestCurationFactory {
                 .ecgConfigs(createTestECGConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
+                .medicationDosageConfigs(createTestMedicationDosageConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
                 .allergyTranslations(createTestAllergyTranslations())
                 .build();
-    }
-
-    @NotNull
-    private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
-        List<LesionLocationConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableLesionLocationConfig.builder().input("lever").location("Liver").build());
-
-        return configs;
     }
 
     @NotNull
@@ -85,14 +79,22 @@ public final class TestCurationFactory {
     }
 
     @NotNull
+    private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
+        List<LesionLocationConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableLesionLocationConfig.builder().input("lever").location("Liver").build());
+
+        return configs;
+    }
+
+    @NotNull
     private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
         List<OncologicalHistoryConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableOncologicalHistoryConfig.builder()
                 .input("Cis 2020")
                 .ignore(false)
-                .curatedObject(ImmutablePriorTumorTreatment.builder()
-                        .name("Cisplatin")
+                .curatedObject(ImmutablePriorTumorTreatment.builder().name("Cisplatin")
                         .year(2020)
                         .category("Chemotherapy")
                         .isSystemic(true)
@@ -161,14 +163,25 @@ public final class TestCurationFactory {
     }
 
     @NotNull
+    private static List<MedicationDosageConfig> createTestMedicationDosageConfigs() {
+        List<MedicationDosageConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableMedicationDosageConfig.builder()
+                .input("50 mg per day")
+                .dosage("50")
+                .unit("mg")
+                .frequencyUnit("day")
+                .ifNeeded(false)
+                .build());
+
+        return configs;
+    }
+
+    @NotNull
     private static List<LaboratoryTranslation> createTestLaboratoryTranslations() {
         List<LaboratoryTranslation> translations = Lists.newArrayList();
 
-        translations.add(ImmutableLaboratoryTranslation.builder()
-                .code("CO")
-                .translatedCode("CODE")
-                .name("naam")
-                .translatedName("Name")
+        translations.add(ImmutableLaboratoryTranslation.builder().code("CO").translatedCode("CODE").name("naam").translatedName("Name")
                 .build());
 
         return translations;

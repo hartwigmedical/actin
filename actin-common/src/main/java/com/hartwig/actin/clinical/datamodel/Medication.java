@@ -24,7 +24,8 @@ public abstract class Medication {
     @NotNull
     public abstract String frequencyUnit();
 
-    public abstract boolean ifNeeded();
+    @Nullable
+    public abstract Boolean ifNeeded();
 
     @Nullable
     public abstract LocalDate startDate();

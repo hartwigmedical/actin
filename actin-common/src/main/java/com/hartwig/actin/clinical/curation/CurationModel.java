@@ -16,11 +16,13 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -33,9 +35,11 @@ import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -45,6 +49,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,34 +93,6 @@ public class CurationModel {
                 .primaryTumorExtraDetails(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorExtraDetails() : null)
                 .doids(primaryTumorConfig != null ? primaryTumorConfig.doids() : null)
                 .build();
-    }
-
-    @Nullable
-    public String curateLesionLocation(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-
-        LesionLocationConfig config = find(database.lesionLocationConfigs(), input);
-
-        // Assume lesion locations can also be pass-through.
-        return config != null ? config.location() : CurationUtil.capitalizeFirstLetter(input);
-    }
-
-    @NotNull
-    public List<CancerRelatedComplication> curateCancerRelatedComplications(@Nullable List<String> inputs) {
-        if (inputs == null) {
-            return Lists.newArrayList();
-        }
-
-        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
-        for (String input : inputs) {
-            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
-            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
-                    .name(config != null ? config.name() : input)
-                    .build());
-        }
-        return cancerRelatedComplications;
     }
 
     @NotNull
@@ -177,6 +154,22 @@ public class CurationModel {
     }
 
     @NotNull
+    public List<CancerRelatedComplication> curateCancerRelatedComplications(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
+        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+        for (String input : inputs) {
+            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
+            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
+                    .name(config != null ? config.name() : input)
+                    .build());
+        }
+        return cancerRelatedComplications;
+    }
+
+    @NotNull
     public List<Toxicity> curateQuestionnaireToxicities(@Nullable LocalDate date, @Nullable List<String> inputs) {
         if (inputs == null || date == null) {
             return Lists.newArrayList();
@@ -209,6 +202,38 @@ public class CurationModel {
 
         // Assume ECGs can also be pass-through.
         return config != null ? config.interpretation() : input;
+    }
+
+    @Nullable
+    public String curateLesionLocation(@Nullable String input) {
+        if (input == null) {
+            return null;
+        }
+
+        LesionLocationConfig config = find(database.lesionLocationConfigs(), input);
+
+        // Assume lesion locations can also be pass-through.
+        return config != null ? config.location() : CurationUtil.capitalizeFirstLetter(input);
+    }
+
+    @Nullable
+    public Medication curateMedicationDosage(@NotNull String input) {
+        MedicationDosageConfig config = find(database.medicationDosageConfigs(), input);
+
+        if (config == null) {
+            LOGGER.warn(" Could not find medication dosage config for '{}'", input);
+            return null;
+        } else {
+            // Dosage should potentially become string
+            return ImmutableMedication.builder()
+                    .name(Strings.EMPTY)
+                    .type(Strings.EMPTY)
+                    .dosage(0D)
+                    .unit(config.unit())
+                    .frequencyUnit(config.frequencyUnit())
+                    .ifNeeded(config.ifNeeded())
+                    .build();
+        }
     }
 
     @NotNull
@@ -302,6 +327,8 @@ public class CurationModel {
             return database.ecgConfigs();
         } else if (classToLookUp == ImmutableToxicityConfig.class) {
             return database.toxicityConfigs();
+        } else if (classToLookUp == ImmutableMedicationDosageConfig.class) {
+            return database.medicationDosageConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);

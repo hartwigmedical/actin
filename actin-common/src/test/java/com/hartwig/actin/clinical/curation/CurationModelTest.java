@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -17,6 +18,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -46,32 +48,6 @@ public class CurationModelTest {
         TumorDetails missing = model.curateTumorDetails("Does not", "Exist");
         assertNull(missing.primaryTumorLocation());
 
-        model.evaluate();
-    }
-
-    @Test
-    public void canCurateLesionLocations() {
-        CurationModel model = TestCurationFactory.createProperTestCurationModel();
-
-        assertEquals("Liver", model.curateLesionLocation("lever"));
-        assertEquals("No curation needed", model.curateLesionLocation("No curation needed"));
-        assertNull(model.curateLesionLocation(null));
-
-        model.evaluate();
-    }
-
-    @Test
-    public void canCurateCancerRelatedComplications() {
-        CurationModel model = TestCurationFactory.createProperTestCurationModel();
-
-        List<CancerRelatedComplication> cancerRelatedComplications =
-                model.curateCancerRelatedComplications(Lists.newArrayList("term", "no curation"));
-
-        assertEquals(2, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("curated").build()));
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("no curation").build()));
-
-        assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
         model.evaluate();
     }
 
@@ -118,6 +94,21 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateCancerRelatedComplications() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        List<CancerRelatedComplication> cancerRelatedComplications =
+                model.curateCancerRelatedComplications(Lists.newArrayList("term", "no curation"));
+
+        assertEquals(2, cancerRelatedComplications.size());
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("curated").build()));
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("no curation").build()));
+
+        assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
+        model.evaluate();
+    }
+
+    @Test
     public void canCurateQuestionnaireToxicities() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
@@ -138,6 +129,17 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateLesionLocations() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals("Liver", model.curateLesionLocation("lever"));
+        assertEquals("No curation needed", model.curateLesionLocation("No curation needed"));
+        assertNull(model.curateLesionLocation(null));
+
+        model.evaluate();
+    }
+
+    @Test
     public void canCurateECGAberrations() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
@@ -149,14 +151,25 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateMedicationDosage() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        Medication medication = model.curateMedicationDosage("50 mg per day");
+        assertNotNull(medication);
+        assertEquals("mg", medication.unit());
+        assertEquals("day", medication.frequencyUnit());
+        assertFalse(medication.ifNeeded());
+
+        assertNull(model.curateMedicationDosage("does not exist"));
+
+        model.evaluate();
+    }
+
+    @Test
     public void canTranslateLaboratoryValues() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        LabValue test = ImmutableLabValue.builder()
-                .date(LocalDate.of(2020, 1, 1))
-                .code("CO")
-                .name("naam")
-                .comparator(Strings.EMPTY)
+        LabValue test = ImmutableLabValue.builder().date(LocalDate.of(2020, 1, 1)).code("CO").name("naam").comparator(Strings.EMPTY)
                 .value(0D)
                 .unit(Strings.EMPTY)
                 .isOutsideRef(false)
