@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
@@ -60,6 +61,11 @@ public class FeedModel {
     @NotNull
     public List<IntoleranceEntry> intoleranceEntries(@NotNull String subject) {
         return entriesForSubject(feed.intoleranceEntries(), subject);
+    }
+
+    @NotNull
+    public List<EncounterEntry> encounterEntries(@NotNull String subject) {
+        return entriesForSubject(feed.encounterEntries(), subject);
     }
 
     @NotNull

@@ -1,7 +1,10 @@
 package com.hartwig.actin.clinical;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -12,8 +15,11 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,8 +58,17 @@ public class ClinicalModelFactoryTest {
         assertEquals(TEST_SAMPLE, record.sampleId());
 
         assertPatientDetails(record.patient());
+        assertTumorDetails(record.tumor());
         assertToxicities(record.toxicities());
         assertAllergies(record.allergies());
+        assertSurgeries(record.surgeries());
+    }
+
+    private static void assertSurgeries(@NotNull List<Surgery> surgeries) {
+        assertEquals(1, surgeries.size());
+
+        Surgery surgery = surgeries.get(0);
+        assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
     }
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
@@ -61,6 +76,28 @@ public class ClinicalModelFactoryTest {
         assertEquals(Sex.MALE, patient.sex());
         assertEquals(LocalDate.of(2021, 6, 1), patient.registrationDate());
         assertEquals(LocalDate.of(2021, 8, 1), patient.questionnaireDate());
+    }
+
+    private static void assertTumorDetails(@NotNull TumorDetails tumor) {
+        assertNull(tumor.primaryTumorLocation());
+        assertNull(tumor.primaryTumorSubLocation());
+        assertNull(tumor.primaryTumorType());
+        assertNull(tumor.primaryTumorSubType());
+        assertNull(tumor.primaryTumorExtraDetails());
+        assertNull(tumor.doids());
+        assertEquals(TumorStage.III, tumor.stage());
+        assertTrue(tumor.hasMeasurableLesionRecist());
+        assertNull(tumor.hasBrainLesions());
+        assertNull(tumor.hasActiveBrainLesions());
+        assertNull(tumor.hasSymptomaticBrainLesions());
+        assertNull(tumor.hasCnsLesions());
+        assertNull(tumor.hasActiveCnsLesions());
+        assertNull(tumor.hasSymptomaticCnsLesions());
+        assertFalse(tumor.hasBoneLesions());
+        assertFalse(tumor.hasLiverLesions());
+        assertTrue(tumor.hasOtherLesions());
+        assertTrue(tumor.otherLesions().contains("Pulmonal"));
+        assertEquals("Lymph node", tumor.biopsyLocation());
     }
 
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {

@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -21,10 +22,12 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
+import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabExtraction;
@@ -84,6 +87,7 @@ public class ClinicalModelFactory {
                     .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(subject, questionnaire, entry != null ? entry.authoredDateTime() : null))
                     .allergies(extractAllergies(subject))
+                    .surgeries(extractSurgeries(subject))
                     .build());
         }
 
@@ -244,5 +248,14 @@ public class ClinicalModelFactory {
                     .build()));
         }
         return allergies;
+    }
+
+    @NotNull
+    private List<Surgery> extractSurgeries(@NotNull String subject) {
+        List<Surgery> surgeries = Lists.newArrayList();
+        for (EncounterEntry entry : feed.encounterEntries(subject)) {
+            surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).build());
+        }
+        return surgeries;
     }
 }

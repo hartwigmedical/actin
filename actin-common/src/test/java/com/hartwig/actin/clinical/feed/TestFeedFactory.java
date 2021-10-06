@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Sex;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
+import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
+import com.hartwig.actin.clinical.feed.encounter.ImmutableEncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.ImmutableIntoleranceEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.ImmutableLabEntry;
@@ -43,6 +45,7 @@ public final class TestFeedFactory {
         return ImmutableClinicalFeed.builder()
                 .patientEntries(createTestPatientEntries())
                 .questionnaireEntries(createTestQuestionnaireEntries())
+                .encounterEntries(createTestEncounterEntries())
                 .medicationEntries(createTestMedicationEntries())
                 .labEntries(createTestLabEntries())
                 .bloodPressureEntries(createTestBloodPressureEntries())
@@ -81,6 +84,28 @@ public final class TestFeedFactory {
 
         entries.add(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build());
         entries.add(toxicityBuilder.itemText("Vomiting").itemAnswerValueValueString(Strings.EMPTY).build());
+
+        return entries;
+    }
+
+    @NotNull
+    private static List<EncounterEntry> createTestEncounterEntries() {
+        List<EncounterEntry> entries = Lists.newArrayList();
+
+        entries.add(ImmutableEncounterEntry.builder()
+                .subject(TEST_SUBJECT)
+                .type1Display(Strings.EMPTY)
+                .classDisplay("surgery")
+                .periodStart(LocalDate.of(2015, 10, 10))
+                .periodEnd(LocalDate.of(2015, 10, 10))
+                .identifierValue("ID")
+                .identifierSystem("URL")
+                .codeCodingCodeOriginal("code")
+                .codeCodingDisplayOriginal("diagnostics")
+                .presentedFormData(Strings.EMPTY)
+                .reason(Strings.EMPTY)
+                .accessionValue(Strings.EMPTY)
+                .build());
 
         return entries;
     }
