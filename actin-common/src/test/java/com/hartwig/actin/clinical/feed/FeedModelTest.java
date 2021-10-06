@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.io.Resources;
@@ -52,5 +53,14 @@ public class FeedModelTest {
         assertEquals(LocalDate.of(2021, 8, 1), entry.authoredDateTime());
 
         assertNull(model.latestQuestionnaireEntry("Does not exist"));
+    }
+
+    @Test
+    public void canFindToxicityQuestionnaireEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+
+        List<QuestionnaireEntry> toxicities = model.toxicityQuestionnaireEntries(TestFeedFactory.TEST_SUBJECT);
+
+        assertEquals(2, toxicities.size());
     }
 }

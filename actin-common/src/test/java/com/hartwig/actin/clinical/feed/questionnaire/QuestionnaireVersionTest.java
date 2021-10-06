@@ -19,6 +19,11 @@ public class QuestionnaireVersionTest {
                 QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void crashOnUnresolvedVersion() {
+        QuestionnaireVersion.version(entry("Not an entry"));
+    }
+
     @NotNull
     private static QuestionnaireEntry entry(@NotNull String questionnaire) {
         return ImmutableQuestionnaireEntry.builder()

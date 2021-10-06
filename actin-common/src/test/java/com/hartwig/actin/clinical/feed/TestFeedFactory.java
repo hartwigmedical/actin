@@ -64,11 +64,24 @@ public final class TestFeedFactory {
 
     @NotNull
     private static List<QuestionnaireEntry> createTestQuestionnaireEntries() {
-        ImmutableQuestionnaireEntry.Builder baseBuilder =
+        ImmutableQuestionnaireEntry.Builder questionnaireBuilder =
                 ImmutableQuestionnaireEntry.builder().from(TestQuestionnaireFactory.createTestQuestionnaireEntry());
 
-        return Lists.newArrayList(baseBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 7, 1)).build(),
-                baseBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 8, 1)).build());
+        List<QuestionnaireEntry> entries = Lists.newArrayList();
+        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 7, 1)).build());
+        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 8, 1)).build());
+
+        ImmutableQuestionnaireEntry.Builder toxicityBuilder = ImmutableQuestionnaireEntry.builder()
+                .subject(TEST_SUBJECT)
+                .parentIdentifierValue(Strings.EMPTY)
+                .authoredDateTime(LocalDate.of(2020, 6, 6))
+                .questionnaireQuestionnaireValue(Strings.EMPTY)
+                .description("ONC Kuuroverzicht");
+
+        entries.add(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build());
+        entries.add(toxicityBuilder.itemText("Vomiting").itemAnswerValueValueString(Strings.EMPTY).build());
+
+        return entries;
     }
 
     @NotNull
@@ -86,15 +99,16 @@ public final class TestFeedFactory {
                 .valueString(Strings.EMPTY)
                 .codeCode(Strings.EMPTY);
 
-        entries.add(baseBuilder.codeCodeOriginal("LAB1").codeDisplayOriginal("Lab Value 1")
+        entries.add(baseBuilder.codeCodeOriginal("LAB1")
+                .codeDisplayOriginal("Lab Value 1")
                 .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(30D)
                 .valueQuantityUnit("U/l")
-                .interpretationDisplayOriginal("ok").referenceRangeText("20 - 40").build());
+                .interpretationDisplayOriginal("ok")
+                .referenceRangeText("20 - 40")
+                .build());
 
-        entries.add(baseBuilder.codeCodeOriginal("LAB2")
-                .codeDisplayOriginal("Lab Value 2")
-                .issued(LocalDate.of(2018, 5, 29))
+        entries.add(baseBuilder.codeCodeOriginal("LAB2").codeDisplayOriginal("Lab Value 2").issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(22D)
                 .valueQuantityUnit("mmol/l")
                 .interpretationDisplayOriginal("too low")

@@ -1,15 +1,18 @@
 package com.hartwig.actin.clinical;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
+import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -17,6 +20,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -75,7 +79,7 @@ public class ClinicalModelFactory {
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                     .labValues(extractLabValues(subject))
-                    .toxicities(extractToxicities(questionnaire, entry))
+                    .toxicities(extractToxicities(subject, questionnaire, entry != null ? entry.authoredDateTime() : null))
                     .build());
         }
 
@@ -201,12 +205,24 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private List<Toxicity> extractToxicities(@Nullable Questionnaire questionnaire, @Nullable QuestionnaireEntry entry) {
-        if (questionnaire != null && entry != null) {
+    private List<Toxicity> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire,
+            @Nullable LocalDate questionnaireDate) {
+        List<Toxicity> toxicities = Lists.newArrayList();
+        if (questionnaire != null && questionnaireDate != null) {
             List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-            return curation.curateQuestionnaireToxicities(entry.authoredDateTime(), unresolvedToxicities);
-        } else {
-            return Lists.newArrayList();
+            toxicities.addAll(curation.curateQuestionnaireToxicities(questionnaireDate, unresolvedToxicities));
         }
+
+        List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
+        for (QuestionnaireEntry entry : toxicityQuestionnaires) {
+            toxicities.add(ImmutableToxicity.builder()
+                    .name(entry.itemText())
+                    .evaluatedDate(entry.authoredDateTime())
+                    .source(ToxicitySource.EHR)
+                    .grade(CurationUtil.parseOptionalInteger(entry.itemAnswerValueValueString()))
+                    .build());
+        }
+
+        return toxicities;
     }
 }

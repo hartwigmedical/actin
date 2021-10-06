@@ -57,6 +57,17 @@ public class FeedModel {
     }
 
     @Nullable
+    public List<QuestionnaireEntry> toxicityQuestionnaireEntries(@NotNull String subject) {
+        List<QuestionnaireEntry> toxicities = Lists.newArrayList();
+        for (QuestionnaireEntry entry : entriesForSubject(feed.questionnaireEntries(), subject)) {
+            if (QuestionnaireExtraction.isToxicityEntry(entry)) {
+                toxicities.add(entry);
+            }
+        }
+        return toxicities;
+    }
+
+    @Nullable
     public QuestionnaireEntry latestQuestionnaireEntry(@NotNull String subject) {
         List<QuestionnaireEntry> questionnaires = entriesForSubject(feed.questionnaireEntries(), subject);
         QuestionnaireEntry latest = null;

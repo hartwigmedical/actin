@@ -2,14 +2,18 @@ package com.hartwig.actin.clinical;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Sex;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +52,7 @@ public class ClinicalModelFactoryTest {
         assertEquals(TEST_SAMPLE, record.sampleId());
 
         assertPatientDetails(record.patient());
+        assertToxicities(record.toxicities());
     }
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
@@ -55,6 +60,29 @@ public class ClinicalModelFactoryTest {
         assertEquals(Sex.MALE, patient.sex());
         assertEquals(LocalDate.of(2021, 6, 1), patient.registrationDate());
         assertEquals(LocalDate.of(2021, 8, 1), patient.questionnaireDate());
+    }
+
+    private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
+        assertEquals(2, toxicities.size());
+
+        Toxicity toxicity1 = findByName(toxicities, "Nausea");
+        assertEquals(ToxicitySource.EHR, toxicity1.source());
+        assertEquals(2, (int) toxicity1.grade());
+
+        Toxicity toxicity2 = findByName(toxicities, "Vomiting");
+        assertEquals(ToxicitySource.EHR, toxicity2.source());
+        assertNull(toxicity2.grade());
+    }
+
+    @NotNull
+    private static Toxicity findByName(@NotNull List<Toxicity> toxicities, @NotNull String name) {
+        for (Toxicity toxicity : toxicities) {
+            if (toxicity.name().equals(name)) {
+                return toxicity;
+            }
+        }
+
+        throw new IllegalStateException("Could not find toxicity with name: " + name);
     }
 
     @NotNull

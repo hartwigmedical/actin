@@ -19,12 +19,17 @@ public final class QuestionnaireExtraction {
     private static final String VALUE_LIST_SEPARATOR_1 = ",";
     private static final String VALUE_LIST_SEPARATOR_2 = ";";
 
+    private static final String TOXICITY_DESCRIPTION = "ONC Kuuroverzicht";
     private static final String ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire";
 
     private static final int ACTIVE_LINE_OFFSET = 1;
     private static final int SYMPTOMATIC_LINE_OFFSET = 2;
 
     private QuestionnaireExtraction() {
+    }
+
+    public static boolean isToxicityEntry(@NotNull QuestionnaireEntry entry) {
+        return entry.description().equals(TOXICITY_DESCRIPTION);
     }
 
     public static boolean isActualQuestionnaire(@NotNull QuestionnaireEntry entry) {
