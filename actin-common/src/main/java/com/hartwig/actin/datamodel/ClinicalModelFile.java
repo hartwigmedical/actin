@@ -77,17 +77,14 @@ public final class ClinicalModelFile {
     }
 
     public static void write(@NotNull ClinicalModel model, @NotNull String clinicalModelJson) throws IOException {
-        String json = toJson(model);
-
         BufferedWriter writer = new BufferedWriter(new FileWriter(clinicalModelJson));
-        writer.write(json);
+        writer.write(toJson(model));
         writer.close();
     }
 
     @NotNull
     public static ClinicalModel read(@NotNull String clinicalModelJson) throws IOException {
-        String json = Files.readString(new File(clinicalModelJson).toPath());
-        return fromJson(json);
+        return fromJson(Files.readString(new File(clinicalModelJson).toPath()));
     }
 
     @VisibleForTesting
