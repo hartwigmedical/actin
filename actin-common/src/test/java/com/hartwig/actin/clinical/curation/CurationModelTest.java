@@ -113,7 +113,7 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         LocalDate date = LocalDate.of(2018, 5, 21);
-        List<Toxicity> toxicities = model.curateQuestionnaireToxicities(date, Lists.newArrayList("neuropathy gr3", "cannot curate"));
+        List<Toxicity> toxicities = model.curateQuestionnaireToxicities(Lists.newArrayList("neuropathy gr3", "cannot curate"), date);
 
         assertEquals(1, toxicities.size());
 
@@ -123,8 +123,7 @@ public class CurationModelTest {
         assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source());
         assertEquals(3, (int) toxicity.grade());
 
-        assertTrue(model.curateQuestionnaireToxicities(null, Lists.newArrayList("something")).isEmpty());
-        assertTrue(model.curateQuestionnaireToxicities(date, null).isEmpty());
+        assertTrue(model.curateQuestionnaireToxicities(null, date).isEmpty());
         model.evaluate();
     }
 

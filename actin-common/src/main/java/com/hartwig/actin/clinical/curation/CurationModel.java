@@ -85,14 +85,18 @@ public class CurationModel {
             }
         }
 
-        return ImmutableTumorDetails.builder()
-                .primaryTumorLocation(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorLocation() : null)
-                .primaryTumorSubLocation(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorSubLocation() : null)
-                .primaryTumorType(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorType() : null)
-                .primaryTumorSubType(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorSubType() : null)
-                .primaryTumorExtraDetails(primaryTumorConfig != null ? primaryTumorConfig.primaryTumorExtraDetails() : null)
-                .doids(primaryTumorConfig != null ? primaryTumorConfig.doids() : null)
-                .build();
+        if (primaryTumorConfig == null) {
+            return ImmutableTumorDetails.builder().build();
+        } else {
+            return ImmutableTumorDetails.builder()
+                    .primaryTumorLocation(primaryTumorConfig.primaryTumorLocation())
+                    .primaryTumorSubLocation(primaryTumorConfig.primaryTumorSubLocation())
+                    .primaryTumorType(primaryTumorConfig.primaryTumorType())
+                    .primaryTumorSubType(primaryTumorConfig.primaryTumorSubType())
+                    .primaryTumorExtraDetails(primaryTumorConfig.primaryTumorExtraDetails())
+                    .doids(primaryTumorConfig.doids())
+                    .build();
+        }
     }
 
     @NotNull
@@ -170,8 +174,8 @@ public class CurationModel {
     }
 
     @NotNull
-    public List<Toxicity> curateQuestionnaireToxicities(@Nullable LocalDate date, @Nullable List<String> inputs) {
-        if (inputs == null || date == null) {
+    public List<Toxicity> curateQuestionnaireToxicities(@Nullable List<String> inputs, @NotNull LocalDate date) {
+        if (inputs == null) {
             return Lists.newArrayList();
         }
 
@@ -256,7 +260,7 @@ public class CurationModel {
             }
         }
 
-        LOGGER.warn("Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), input.name());
+        LOGGER.warn(" Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), input.name());
         return null;
     }
 
@@ -280,7 +284,7 @@ public class CurationModel {
             }
         }
 
-        LOGGER.warn("Could not find allergy translation for allergy with name '{}'", input.name());
+        LOGGER.warn(" Could not find allergy translation for allergy with name '{}'", input.name());
         return null;
     }
 

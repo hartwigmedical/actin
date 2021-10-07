@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.TumorStage;
@@ -30,6 +31,8 @@ public class QuestionnaireExtractionTest {
         QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1());
 
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
         assertEquals("serous", questionnaire.tumorType());
         assertEquals("Lymph node", questionnaire.biopsyLocation());
@@ -78,6 +81,8 @@ public class QuestionnaireExtractionTest {
         QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0());
 
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("lung", questionnaire.tumorLocation());
         assertEquals("small-cell carcinoma", questionnaire.tumorType());
         assertEquals("Liver", questionnaire.biopsyLocation());
@@ -130,6 +135,8 @@ public class QuestionnaireExtractionTest {
         QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2());
 
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("cholangio", questionnaire.tumorLocation());
         assertEquals("carcinoma", questionnaire.tumorType());
         assertEquals("liver", questionnaire.biopsyLocation());
@@ -177,6 +184,7 @@ public class QuestionnaireExtractionTest {
 
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
 
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertNull(questionnaire.tumorLocation());
         assertNull(questionnaire.tumorType());
         assertNull(questionnaire.biopsyLocation());

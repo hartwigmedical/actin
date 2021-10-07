@@ -192,6 +192,7 @@ public final class TestCurationFactory {
         List<AllergyTranslation> translations = Lists.newArrayList();
 
         translations.add(ImmutableAllergyTranslation.builder().name("naam").translatedName("Name").build());
+        translations.add(ImmutableAllergyTranslation.builder().name("not used").translatedName("never used").build());
 
         return translations;
     }

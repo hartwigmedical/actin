@@ -56,7 +56,7 @@ public final class QuestionnaireExtraction {
             }
         }
 
-        return ImmutableQuestionnaire.builder()
+        return ImmutableQuestionnaire.builder().date(entry.authoredDateTime())
                 .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
                 .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
                 .biopsyLocation(value(entry, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))

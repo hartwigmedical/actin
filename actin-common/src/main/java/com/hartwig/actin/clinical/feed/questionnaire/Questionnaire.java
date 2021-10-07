@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.TumorStage;
@@ -11,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class Questionnaire {
+
+    @NotNull
+    public abstract LocalDate date();
 
     @Nullable
     public abstract String tumorLocation();

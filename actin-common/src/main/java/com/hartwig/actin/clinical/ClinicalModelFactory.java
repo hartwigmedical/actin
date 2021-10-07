@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -79,12 +78,11 @@ public class ClinicalModelFactory {
             String sampleId = toSampleId(subject);
             LOGGER.info(" Extracting data for sample {}", sampleId);
 
-            QuestionnaireEntry entry = feed.latestQuestionnaireEntry(subject);
-            Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+            Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
 
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
-                    .patient(extractPatientDetails(subject, entry))
+                    .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
@@ -92,7 +90,7 @@ public class ClinicalModelFactory {
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                     .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
                     .labValues(extractLabValues(subject))
-                    .toxicities(extractToxicities(subject, questionnaire, entry != null ? entry.authoredDateTime() : null))
+                    .toxicities(extractToxicities(subject, questionnaire))
                     .allergies(extractAllergies(subject))
                     .surgeries(extractSurgeries(subject))
                     .bloodPressures(extractBloodPressures(subject))
@@ -113,14 +111,14 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private PatientDetails extractPatientDetails(@NotNull String subject, @Nullable QuestionnaireEntry entry) {
+    private PatientDetails extractPatientDetails(@NotNull String subject, @Nullable Questionnaire questionnaire) {
         PatientEntry patient = feed.patientEntry(subject);
 
         return ImmutablePatientDetails.builder()
                 .sex(patient.sex())
                 .birthYear(patient.birthYear())
                 .registrationDate(patient.periodStart())
-                .questionnaireDate(entry != null ? entry.authoredDateTime() : null)
+                .questionnaireDate(questionnaire != null ? questionnaire.date() : null)
                 .build();
     }
 
@@ -174,11 +172,11 @@ public class ClinicalModelFactory {
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         if (questionnaire != null) {
-            List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistory));
+            List<String> treatmentHistories = questionnaire.treatmentHistoryCurrentTumor();
+            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistories));
 
-            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistory();
-            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologyHistory));
+            List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
+            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologicalHistories));
         }
         return priorTumorTreatments;
     }
@@ -186,8 +184,8 @@ public class ClinicalModelFactory {
     @NotNull
     private List<PriorSecondPrimary> extractPriorSecondPrimaries(@Nullable Questionnaire questionnaire) {
         if (questionnaire != null) {
-            List<String> otherOncologyHistory = questionnaire.otherOncologicalHistory();
-            return curation.curatePriorSecondPrimaries(otherOncologyHistory);
+            List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
+            return curation.curatePriorSecondPrimaries(otherOncologicalHistories);
         } else {
             return Lists.newArrayList();
         }
@@ -196,8 +194,8 @@ public class ClinicalModelFactory {
     @NotNull
     private List<PriorOtherCondition> extractPriorOtherConditions(@Nullable Questionnaire questionnaire) {
         if (questionnaire != null) {
-            List<String> nonOncologyHistory = questionnaire.nonOncologicalHistory();
-            return curation.curatePriorOtherConditions(nonOncologyHistory);
+            List<String> nonOncologicalHistories = questionnaire.nonOncologicalHistory();
+            return curation.curatePriorOtherConditions(nonOncologicalHistories);
         } else {
             return Lists.newArrayList();
         }
@@ -205,11 +203,12 @@ public class ClinicalModelFactory {
 
     @NotNull
     private List<CancerRelatedComplication> extractCancerRelatedComplications(@Nullable Questionnaire questionnaire) {
-        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
         if (questionnaire != null) {
-            cancerRelatedComplications.addAll(curation.curateCancerRelatedComplications(questionnaire.cancerRelatedComplications()));
+            List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
+            return curation.curateCancerRelatedComplications(cancerRelatedComplications);
+        } else {
+            return Lists.newArrayList();
         }
-        return cancerRelatedComplications;
     }
 
     @NotNull
@@ -222,12 +221,11 @@ public class ClinicalModelFactory {
     }
 
     @NotNull
-    private List<Toxicity> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire,
-            @Nullable LocalDate questionnaireDate) {
+    private List<Toxicity> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire) {
         List<Toxicity> toxicities = Lists.newArrayList();
-        if (questionnaire != null && questionnaireDate != null) {
+        if (questionnaire != null) {
             List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-            toxicities.addAll(curation.curateQuestionnaireToxicities(questionnaireDate, unresolvedToxicities));
+            toxicities.addAll(curation.curateQuestionnaireToxicities(unresolvedToxicities, questionnaire.date()));
         }
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
