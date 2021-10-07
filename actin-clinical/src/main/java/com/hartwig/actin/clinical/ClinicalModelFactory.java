@@ -75,8 +75,8 @@ public class ClinicalModelFactory {
     @NotNull
     @VisibleForTesting
     ClinicalModel create() {
-        LOGGER.info("Creating clinical model");
         List<ClinicalRecord> records = Lists.newArrayList();
+        LOGGER.info("Creating clinical model");
         for (String subject : feed.subjects()) {
             String sampleId = toSampleId(subject);
             LOGGER.info(" Extracting data for sample {}", sampleId);
