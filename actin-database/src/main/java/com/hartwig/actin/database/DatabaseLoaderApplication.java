@@ -48,6 +48,7 @@ public class DatabaseLoaderApplication {
     public void run() throws IOException, SQLException {
         LOGGER.info("Loading clinical model from '{}'", config.clinicalModelJson());
         ClinicalModel model = ClinicalModelFile.read(config.clinicalModelJson());
+        LOGGER.info(" Loaded {} clinical records", model.records().size());
 
         DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());
         LOGGER.info("Writing {} clinical records to database", model.records().size());
