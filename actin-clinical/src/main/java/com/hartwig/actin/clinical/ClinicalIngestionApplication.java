@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.hartwig.actin.datamodel.ClinicalModel;
 import com.hartwig.actin.datamodel.ClinicalModelFile;
-import com.hartwig.actin.util.ActinVersion;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -18,8 +17,10 @@ public class ClinicalIngestionApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(ClinicalIngestionApplication.class);
 
+    private static final String VERSION = ClinicalIngestionApplication.class.getPackage().getImplementationVersion();
+
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running ACTIN Clinical Ingestion v{}", ActinVersion.version());
+        LOGGER.info("Running ACTIN Clinical Ingestion v{}", VERSION);
 
         Options options = ClinicalIngestionConfig.createOptions();
 

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import com.hartwig.actin.database.dao.DatabaseAccess;
 import com.hartwig.actin.datamodel.ClinicalModel;
 import com.hartwig.actin.datamodel.ClinicalModelFile;
-import com.hartwig.actin.util.ActinVersion;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -20,8 +19,10 @@ public class DatabaseLoaderApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(DatabaseLoaderApplication.class);
 
+    private static final String VERSION = DatabaseLoaderApplication.class.getPackage().getImplementationVersion();
+
     public static void main(@NotNull String... args) throws IOException, SQLException {
-        LOGGER.info("Running ACTIN Database Loader v{}", ActinVersion.version());
+        LOGGER.info("Running ACTIN Database Loader v{}", VERSION);
 
         Options options = DatabaseLoaderConfig.createOptions();
 

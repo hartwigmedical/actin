@@ -54,6 +54,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <mainClass>com.hartwig.actin.system.SystemApplication</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
 
