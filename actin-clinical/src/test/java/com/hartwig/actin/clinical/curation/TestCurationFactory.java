@@ -166,9 +166,7 @@ public final class TestCurationFactory {
     private static List<MedicationDosageConfig> createTestMedicationDosageConfigs() {
         List<MedicationDosageConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableMedicationDosageConfig.builder()
-                .input("50 mg per day")
-                .dosage("50")
+        configs.add(ImmutableMedicationDosageConfig.builder().input("50-60 mg per day").dosageMin(50D).dosageMax(60D)
                 .unit("mg")
                 .frequencyUnit("day")
                 .ifNeeded(false)

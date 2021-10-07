@@ -29,6 +29,8 @@ import org.junit.Test;
 
 public class CurationDatabaseReaderTest {
 
+    private static final double EPSILON = 1.0E-10;
+
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     @Test
@@ -144,14 +146,16 @@ public class CurationDatabaseReaderTest {
     private static void assertMedicationDosageConfigs(@NotNull List<MedicationDosageConfig> configs) {
         assertEquals(2, configs.size());
 
-        MedicationDosageConfig config1 = find(configs, "once per day 50 mg");
-        assertEquals("50", config1.dosage());
+        MedicationDosageConfig config1 = find(configs, "once per day 50-60 mg");
+        assertEquals(50, config1.dosageMin(), EPSILON);
+        assertEquals(60, config1.dosageMax(), EPSILON);
         assertEquals("mg", config1.unit());
         assertEquals("day", config1.frequencyUnit());
         assertFalse(config1.ifNeeded());
 
         MedicationDosageConfig config2 = find(configs, "empty");
-        assertTrue(config2.dosage().isEmpty());
+        assertNull(config2.dosageMin());
+        assertNull(config2.dosageMax());
         assertTrue(config2.unit().isEmpty());
         assertTrue(config2.frequencyUnit().isEmpty());
         assertNull(config2.ifNeeded());

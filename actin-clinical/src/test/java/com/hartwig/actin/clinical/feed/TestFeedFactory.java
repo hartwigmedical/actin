@@ -132,7 +132,7 @@ public final class TestFeedFactory {
                 .dosageInstructionAsNeededDisplay(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesUnit(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesValue(0D)
-                .dosageInstructionText("50 mg per day")
+                .dosageInstructionText("50-60 mg per day")
                 .status(Strings.EMPTY)
                 .active(Strings.EMPTY)
                 .dosageDoseValue(Strings.EMPTY)

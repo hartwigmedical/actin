@@ -16,12 +16,16 @@ public abstract class Medication {
     @NotNull
     public abstract String type();
 
-    public abstract double dosage();
+    @Nullable
+    public abstract Double dosageMin();
 
-    @NotNull
+    @Nullable
+    public abstract Double dosageMax();
+
+    @Nullable
     public abstract String unit();
 
-    @NotNull
+    @Nullable
     public abstract String frequencyUnit();
 
     @Nullable
@@ -32,5 +36,8 @@ public abstract class Medication {
 
     @Nullable
     public abstract LocalDate stopDate();
+
+    @Nullable
+    public abstract Boolean active();
 
 }

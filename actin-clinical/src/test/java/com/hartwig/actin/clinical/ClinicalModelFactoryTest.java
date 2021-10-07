@@ -146,6 +146,8 @@ public class ClinicalModelFactoryTest {
 
         Medication medication = medications.get(0);
         assertEquals("paracetamol", medication.name());
+        assertEquals(50, medication.dosageMin(), EPSILON);
+        assertEquals(60, medication.dosageMax(), EPSILON);
         assertEquals("mg", medication.unit());
         assertEquals("day", medication.frequencyUnit());
         assertFalse(medication.ifNeeded());

@@ -323,21 +323,25 @@ class ClinicalDAO {
                     MEDICATION.SAMPLEID,
                     MEDICATION.NAME,
                     MEDICATION.TYPE,
-                    MEDICATION.DOSAGE,
+                    MEDICATION.DOSAGEMIN,
+                    MEDICATION.DOSAGEMAX,
                     MEDICATION.UNIT,
                     MEDICATION.FREQUENCYUNIT,
                     MEDICATION.IFNEEDED,
                     MEDICATION.STARTDATE,
-                    MEDICATION.STOPDATE)
+                    MEDICATION.STOPDATE,
+                    MEDICATION.ACTIVE)
                     .values(sampleId,
                             medication.name(),
                             medication.type(),
-                            medication.dosage(),
+                            medication.dosageMin(),
+                            medication.dosageMax(),
                             medication.unit(),
                             medication.frequencyUnit(),
                             DataUtil.toByte(medication.ifNeeded()),
                             medication.startDate(),
-                            medication.stopDate())
+                            medication.stopDate(),
+                            DataUtil.toByte(medication.active()))
                     .execute();
         }
     }

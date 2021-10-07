@@ -289,11 +289,9 @@ public class ClinicalModelFactory {
         for (MedicationEntry entry : feed.medicationEntries(subject)) {
             Medication dosageCurated = curation.curateMedicationDosage(entry.dosageInstructionText());
 
-            ImmutableMedication.Builder builder;
+            ImmutableMedication.Builder builder = ImmutableMedication.builder();
             if (dosageCurated != null) {
-                builder = ImmutableMedication.builder().from(dosageCurated);
-            } else {
-                builder = ImmutableMedication.builder().dosage(0D).unit(Strings.EMPTY).frequencyUnit(Strings.EMPTY);
+                builder = builder.from(dosageCurated);
             }
 
             medications.add(builder.name(entry.code5ATCDisplay())

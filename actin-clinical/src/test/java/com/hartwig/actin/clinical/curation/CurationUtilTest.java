@@ -15,6 +15,8 @@ import org.junit.Test;
 
 public class CurationUtilTest {
 
+    private static final double EPSILON = 1.0E-10;
+
     @Test
     public void canCapitalizeFirstLetter() {
         assertEquals("Hi", CurationUtil.capitalizeFirstLetter("hi"));
@@ -28,7 +30,7 @@ public class CurationUtilTest {
     }
 
     @Test
-    public void canConvertOptionalString() {
+    public void canParseOptionalString() {
         assertNull(CurationUtil.optionalString(Strings.EMPTY));
         assertEquals("hi", CurationUtil.optionalString("hi"));
     }
@@ -47,8 +49,10 @@ public class CurationUtilTest {
 
     @Test
     public void canParseBooleans() {
-        assertTrue(CurationUtil.parseBoolean("1"));
-        assertFalse(CurationUtil.parseBoolean("0"));
+        assertNull(CurationUtil.parseOptionalBoolean("unknown"));
+        assertNull(CurationUtil.parseOptionalBoolean(Strings.EMPTY));
+        assertTrue(CurationUtil.parseOptionalBoolean("1"));
+        assertFalse(CurationUtil.parseOptionalBoolean("0"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -66,5 +70,11 @@ public class CurationUtilTest {
     public void canParseIntegers() {
         assertNull(CurationUtil.parseOptionalInteger(Strings.EMPTY));
         assertEquals(4, (int) CurationUtil.parseOptionalInteger("4"));
+    }
+
+    @Test
+    public void canParseDoubles() {
+        assertNull(CurationUtil.parseOptionalDouble(Strings.EMPTY));
+        assertEquals(4.2, CurationUtil.parseOptionalDouble("4.2"), EPSILON);
     }
 }

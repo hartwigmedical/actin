@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 public final class MedicationDosageConfigFile {
 
     private static final String DELIMITER = "\t";
-    private static final String UNKNOWN_IF_NEEDED = "unknown";
 
     private MedicationDosageConfigFile() {
     }
@@ -34,15 +33,13 @@ public final class MedicationDosageConfigFile {
 
     @NotNull
     private static MedicationDosageConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
-        String ifNeededString = parts[fieldIndexMap.get("ifNeeded")];
         return ImmutableMedicationDosageConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
-                .dosage(parts[fieldIndexMap.get("dosage")])
+                .dosageMin(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("dosageMin")]))
+                .dosageMax(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("dosageMax")]))
                 .unit(parts[fieldIndexMap.get("unit")])
                 .frequencyUnit(parts[fieldIndexMap.get("frequencyUnit")])
-                .ifNeeded(!ifNeededString.equals(UNKNOWN_IF_NEEDED) && !ifNeededString.isEmpty()
-                        ? CurationUtil.parseBoolean(ifNeededString)
-                        : null)
+                .ifNeeded(CurationUtil.parseOptionalBoolean(parts[fieldIndexMap.get("ifNeeded")]))
                 .build();
     }
 }

@@ -31,6 +31,8 @@ import org.junit.Test;
 
 public class CurationModelTest {
 
+    private static final double EPSILON = 1.0E-10;
+
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     @Test
@@ -153,8 +155,10 @@ public class CurationModelTest {
     public void canCurateMedicationDosage() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Medication medication = model.curateMedicationDosage("50 mg per day");
+        Medication medication = model.curateMedicationDosage("50-60 mg per day");
         assertNotNull(medication);
+        assertEquals(50, medication.dosageMin(), EPSILON);
+        assertEquals(60, medication.dosageMax(), EPSILON);
         assertEquals("mg", medication.unit());
         assertEquals("day", medication.frequencyUnit());
         assertFalse(medication.ifNeeded());
