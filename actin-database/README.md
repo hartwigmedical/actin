@@ -1,3 +1,3 @@
-## ACTIN-Clinical
+## ACTIN-Database
 
 Coming soon!

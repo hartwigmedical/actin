@@ -10,7 +10,7 @@
 
     <artifactId>actin-database</artifactId>
     <packaging>jar</packaging>
-    <version>${actin.database.version}</version>
+    <version>${actin.version}</version>
     <name>HMF ACTIN - Database</name>
 
     <dependencies>

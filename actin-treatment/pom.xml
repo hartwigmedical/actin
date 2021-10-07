@@ -10,7 +10,7 @@
 
     <artifactId>actin-treatment</artifactId>
     <packaging>jar</packaging>
-    <version>${actin.treatment.version}</version>
+    <version>${actin.version}</version>
     <name>HMF ACTIN - Treatment</name>
 
     <dependencies>

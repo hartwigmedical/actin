@@ -10,18 +10,17 @@
 
     <modules>
         <module>actin-common</module>
-        <module>actin-database</module>
+        <module>actin-clinical</module>
         <module>actin-treatment</module>
+        <module>actin-database</module>
         <module>actin-algo</module>
+        <module>actin-system</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <actin.common.version>local-SNAPSHOT</actin.common.version>
-        <actin.database.version>0.1</actin.database.version>
-        <actin.treatment.version>0.1</actin.treatment.version>
-        <actin.algo.version>0.1</actin.algo.version>
+        <actin.version>0.1</actin.version>
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -67,8 +66,29 @@
             <dependency>
                 <groupId>com.hartwig</groupId>
                 <artifactId>actin-common</artifactId>
-                <version>${actin.common.version}</version>
+                <version>${actin.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>actin-clinical</artifactId>
+                <version>${actin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>actin-treatment</artifactId>
+                <version>${actin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>actin-database</artifactId>
+                <version>${actin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>actin-algo</artifactId>
+                <version>${actin.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.intellij</groupId>
                 <artifactId>annotations</artifactId>

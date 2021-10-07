@@ -8,15 +8,27 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>actin-algo</artifactId>
+    <artifactId>actin-clinical</artifactId>
     <packaging>jar</packaging>
     <version>${actin.version}</version>
-    <name>HMF ACTIN - Algo</name>
+    <name>HMF ACTIN - Clinical</name>
 
     <dependencies>
         <dependency>
             <groupId>com.hartwig</groupId>
             <artifactId>actin-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -37,8 +49,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.algo.AlgoRunner
-                            </mainClass>
+                            <mainClass>com.hartwig.actin.clinical.ClinicalApplication</mainClass>
                         </manifest>
                     </archive>
 

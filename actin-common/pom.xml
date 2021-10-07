@@ -10,7 +10,7 @@
 
     <artifactId>actin-common</artifactId>
     <packaging>jar</packaging>
-    <version>${actin.common.version}</version>
+    <version>${actin.version}</version>
     <name>HMF ACTIN - Common</name>
 
     <dependencies>
