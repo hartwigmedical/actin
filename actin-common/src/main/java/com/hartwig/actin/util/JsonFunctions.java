@@ -1,5 +1,6 @@
 package com.hartwig.actin.util;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -19,32 +20,25 @@ public final class JsonFunctions {
     private JsonFunctions() {
     }
 
-    @Nullable
-    public static JsonObject optionalJsonObject(@NotNull JsonObject object, @NotNull String field) {
-        if (!object.has(field)) {
-            return null;
-        }
-
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
+    @NotNull
+    public static JsonObject object(@NotNull JsonObject object, @NotNull String field) {
         assert object.get(field).isJsonObject();
         return object.getAsJsonObject(field);
     }
 
-    @Nullable
-    public static JsonArray optionalJsonArray(@NotNull JsonObject object, @NotNull String field) {
-        if (!object.has(field)) {
-            return null;
-        }
+    @NotNull
+    public static JsonArray array(@NotNull JsonObject object, @NotNull String field) {
+        assert object.get(field).isJsonArray();
+        return object.getAsJsonArray(field);
+    }
 
+    @Nullable
+    public static List<String> nullableStringList(@NotNull JsonObject object, @NotNull String field) {
         if (object.get(field).isJsonNull()) {
             return null;
         }
 
-        assert object.get(field).isJsonArray();
-        return object.getAsJsonArray(field);
+        return stringList(object, field);
     }
 
     @NotNull
@@ -70,38 +64,34 @@ public final class JsonFunctions {
         return values;
     }
 
-    @NotNull
-    public static List<String> optionalStringList(@NotNull JsonObject object, @NotNull String field) {
-        if (!object.has(field)) {
-            return Lists.newArrayList();
-        }
-
-        return stringList(object, field);
-    }
-
-    @NotNull
-    public static String string(@NotNull JsonObject object, @NotNull String field) {
-        assert object.has(field);
-
-        JsonElement element = object.get(field);
-        if (!element.isJsonPrimitive()) {
-            LOGGER.warn("Converting {} to String for element {}.", field, element);
-        }
-        return element.getAsJsonPrimitive().getAsString();
-    }
-
     @Nullable
-    public static String optionalString(@NotNull JsonObject object, @NotNull String field) {
-        if (!object.has(field)) {
+    public static String nullableString(@NotNull JsonObject object, @NotNull String field) {
+        if (object.get(field).isJsonNull()) {
             return null;
         }
 
         return string(object, field);
     }
 
-    public static int integer(@NotNull JsonObject object, @NotNull String field) {
-        assert object.has(field);
+    @NotNull
+    public static String string(@NotNull JsonObject object, @NotNull String field) {
+        JsonElement element = object.get(field);
+        if (!element.isJsonPrimitive()) {
+            LOGGER.warn("Converting {} to string for element {}.", field, element);
+        }
+        return element.getAsJsonPrimitive().getAsString();
+    }
 
+    @Nullable
+    public static Integer nullableInteger(@NotNull JsonObject object, @NotNull String field) {
+        if (object.get(field).isJsonNull()) {
+            return null;
+        }
+
+        return integer(object, field);
+    }
+
+    public static int integer(@NotNull JsonObject object, @NotNull String field) {
         JsonElement element = object.get(field);
         if (!element.isJsonPrimitive()) {
             LOGGER.warn("Converting {} to Integer for element {}.", field, element);
@@ -110,22 +100,27 @@ public final class JsonFunctions {
     }
 
     @Nullable
-    public static String nullableString(@NotNull JsonObject object, @NotNull String field) {
-        assert object.has(field);
-
+    public static LocalDate nullableDate(@NotNull JsonObject object, @NotNull String field) {
         if (object.get(field).isJsonNull()) {
             return null;
         }
 
-        return string(object, field);
+        return date(object, field);
+    }
+
+    @NotNull
+    public static LocalDate date(@NotNull JsonObject object, @NotNull String field) {
+        JsonObject dateObject = object(object, field);
+
+        return LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"));
     }
 
     @Nullable
-    public static String optionalNullableString(@NotNull JsonObject object, @NotNull String field) {
-        if (!object.has(field)) {
+    public static Boolean nullableBoolean(@NotNull JsonObject object, @NotNull String field) {
+        if (object.get(field).isJsonNull()) {
             return null;
         }
 
-        return nullableString(object, field);
+        return Boolean.valueOf(string(object, field));
     }
 }
