@@ -92,7 +92,7 @@
           "doids": [
             "123"
           ],
-          "speciality": "special",
+          "specialty": "special",
           "onsetDate": {
             "year": 2018,
             "month": 1,
@@ -203,7 +203,8 @@
         {
           "name": "Medication 1",
           "type": "",
-          "dosage": 0,
+          "dosageMin": 10,
+          "dosageMax": 20,
           "unit": "mg",
           "frequencyUnit": "day",
           "ifNeeded": false,
@@ -216,15 +217,17 @@
             "year": 2018,
             "month": 2,
             "day": 1
-          }
+          },
+          "active": false
         },
         {
           "name": "Medication 2",
           "type": "",
-          "dosage": 0,
-          "unit": "mg",
-          "frequencyUnit": "day",
-          "ifNeeded": true,
+          "dosageMin": null,
+          "dosageMax": null,
+          "unit": null,
+          "frequencyUnit": null,
+          "ifNeeded": null,
           "startDate": {
             "year": 2019,
             "month": 5,
@@ -234,7 +237,8 @@
             "year": 2019,
             "month": 6,
             "day": 25
-          }
+          },
+          "active": null
         }
       ]
     }

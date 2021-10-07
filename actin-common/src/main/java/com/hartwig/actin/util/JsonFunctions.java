@@ -43,12 +43,6 @@ public final class JsonFunctions {
 
     @NotNull
     public static List<String> stringList(@NotNull JsonObject object, @NotNull String field) {
-        assert object.has(field);
-
-        if (object.get(field).isJsonNull()) {
-            return Lists.newArrayList();
-        }
-
         List<String> values = Lists.newArrayList();
         if (object.get(field).isJsonPrimitive()) {
             values.add(string(object, field));
@@ -83,6 +77,23 @@ public final class JsonFunctions {
     }
 
     @Nullable
+    public static Double nullableNumber(@NotNull JsonObject object, @NotNull String field) {
+        if (object.get(field).isJsonNull()) {
+            return null;
+        }
+
+        return number(object, field);
+    }
+
+    public static double number(@NotNull JsonObject object, @NotNull String field) {
+        JsonElement element = object.get(field);
+        if (!element.isJsonPrimitive()) {
+            LOGGER.warn("Converting {} to double for element {}.", field, element);
+        }
+        return element.getAsJsonPrimitive().getAsDouble();
+    }
+
+    @Nullable
     public static Integer nullableInteger(@NotNull JsonObject object, @NotNull String field) {
         if (object.get(field).isJsonNull()) {
             return null;
@@ -94,9 +105,26 @@ public final class JsonFunctions {
     public static int integer(@NotNull JsonObject object, @NotNull String field) {
         JsonElement element = object.get(field);
         if (!element.isJsonPrimitive()) {
-            LOGGER.warn("Converting {} to Integer for element {}.", field, element);
+            LOGGER.warn("Converting {} to integer for element {}.", field, element);
         }
         return element.getAsJsonPrimitive().getAsInt();
+    }
+
+    @Nullable
+    public static Boolean nullableBool(@NotNull JsonObject object, @NotNull String field) {
+        if (object.get(field).isJsonNull()) {
+            return null;
+        }
+
+        return bool(object, field);
+    }
+
+    public static boolean bool(@NotNull JsonObject object, @NotNull String field) {
+        JsonElement element = object.get(field);
+        if (!element.isJsonPrimitive()) {
+            LOGGER.warn("Converting {} to boolean for element {}.", field, element);
+        }
+        return element.getAsJsonPrimitive().getAsBoolean();
     }
 
     @Nullable
@@ -113,14 +141,5 @@ public final class JsonFunctions {
         JsonObject dateObject = object(object, field);
 
         return LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"));
-    }
-
-    @Nullable
-    public static Boolean nullableBoolean(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return Boolean.valueOf(string(object, field));
     }
 }
