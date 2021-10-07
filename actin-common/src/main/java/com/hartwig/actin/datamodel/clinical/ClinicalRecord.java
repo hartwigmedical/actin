@@ -1,22 +1,6 @@
-package com.hartwig.actin.clinical;
+package com.hartwig.actin.datamodel.clinical;
 
 import java.util.List;
-
-import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.BloodPressure;
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.PatientDetails;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.Surgery;
-import com.hartwig.actin.clinical.datamodel.Toxicity;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

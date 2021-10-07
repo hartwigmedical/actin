@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.datamodel.clinical;
 
 import org.jetbrains.annotations.NotNull;
 

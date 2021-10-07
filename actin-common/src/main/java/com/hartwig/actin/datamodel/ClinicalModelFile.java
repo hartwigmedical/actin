@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical;
+package com.hartwig.actin.datamodel;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

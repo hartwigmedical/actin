@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.hartwig.actin.clinical.datamodel.Sex;
+import com.hartwig.actin.datamodel.clinical.Sex;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;

@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
+import com.hartwig.actin.datamodel.clinical.LabValue;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

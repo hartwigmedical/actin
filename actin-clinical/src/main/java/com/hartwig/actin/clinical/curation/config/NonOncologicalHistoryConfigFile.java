@@ -8,8 +8,8 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
+import com.hartwig.actin.datamodel.clinical.ImmutablePriorOtherCondition;
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
 import com.hartwig.actin.util.FileUtil;
 
 import org.jetbrains.annotations.NotNull;

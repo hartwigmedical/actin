@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.datamodel.clinical.TumorStage;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;

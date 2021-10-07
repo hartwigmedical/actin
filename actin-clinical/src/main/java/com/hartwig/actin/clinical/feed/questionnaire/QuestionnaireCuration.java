@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.datamodel.clinical.TumorStage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

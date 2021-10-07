@@ -18,22 +18,22 @@ import static com.hartwig.actin.database.tables.Patient.PATIENT;
 
 import java.util.List;
 
-import com.hartwig.actin.clinical.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.BloodPressure;
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.PatientDetails;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.Surgery;
-import com.hartwig.actin.clinical.datamodel.Toxicity;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.datamodel.clinical.Allergy;
+import com.hartwig.actin.datamodel.clinical.BloodPressure;
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion;
+import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus;
+import com.hartwig.actin.datamodel.clinical.Complication;
+import com.hartwig.actin.datamodel.clinical.LabValue;
+import com.hartwig.actin.datamodel.clinical.Medication;
+import com.hartwig.actin.datamodel.clinical.PatientDetails;
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
+import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
+import com.hartwig.actin.datamodel.clinical.Surgery;
+import com.hartwig.actin.datamodel.clinical.Toxicity;
+import com.hartwig.actin.datamodel.clinical.TumorDetails;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;

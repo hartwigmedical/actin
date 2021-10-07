@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.datamodel.clinical;
 
 import java.time.LocalDate;
 
@@ -8,16 +8,11 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class BloodPressure {
+public abstract class BloodTransfusion {
 
     @NotNull
     public abstract LocalDate date();
 
     @NotNull
-    public abstract String category();
-
-    public abstract double value();
-
-    @NotNull
-    public abstract String unit();
+    public abstract String product();
 }

@@ -1,6 +1,8 @@
-package com.hartwig.actin.clinical;
+package com.hartwig.actin.datamodel;
 
 import java.util.List;
+
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +12,7 @@ public class ClinicalModel {
     @NotNull
     private final List<ClinicalRecord> records;
 
-    ClinicalModel(@NotNull final List<ClinicalRecord> records) {
+    public ClinicalModel(@NotNull final List<ClinicalRecord> records) {
         this.records = records;
     }
 

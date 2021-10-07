@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.datamodel.clinical.TumorStage;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

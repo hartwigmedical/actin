@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.datamodel.clinical.TumorStage;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

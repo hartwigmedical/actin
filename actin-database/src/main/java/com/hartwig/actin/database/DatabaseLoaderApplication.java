@@ -3,9 +3,9 @@ package com.hartwig.actin.database;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import com.hartwig.actin.clinical.ClinicalModel;
 import com.hartwig.actin.clinical.ClinicalModelFactory;
 import com.hartwig.actin.database.dao.DatabaseAccess;
+import com.hartwig.actin.datamodel.ClinicalModel;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
