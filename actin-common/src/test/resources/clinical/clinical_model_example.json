@@ -1,0 +1,242 @@
+{
+  "records": [
+    {
+      "sampleId": "ACTN01029999T",
+      "patient": {
+        "sex": "MALE",
+        "birthYear": 1960,
+        "registrationDate": {
+          "year": 2021,
+          "month": 6,
+          "day": 1
+        },
+        "questionnaireDate": {
+          "year": 2021,
+          "month": 8,
+          "day": 1
+        }
+      },
+      "tumor": {
+        "primaryTumorLocation": null,
+        "primaryTumorSubLocation": null,
+        "primaryTumorType": null,
+        "primaryTumorSubType": null,
+        "primaryTumorExtraDetails": null,
+        "doids": null,
+        "stage": "III",
+        "hasMeasurableLesionRecist": true,
+        "hasBrainLesions": null,
+        "hasActiveBrainLesions": null,
+        "hasSymptomaticBrainLesions": null,
+        "hasCnsLesions": null,
+        "hasActiveCnsLesions": null,
+        "hasSymptomaticCnsLesions": null,
+        "hasBoneLesions": false,
+        "hasLiverLesions": false,
+        "hasOtherLesions": true,
+        "otherLesions": [
+          "Pulmonal"
+        ],
+        "biopsyLocation": "Lymph node"
+      },
+      "clinicalStatus": {
+        "who": 0,
+        "hasActiveInfection": false,
+        "hasSigAberrationLatestEcg": false,
+        "ecgAberrationDescription": ""
+      },
+      "priorTumorTreatments": [
+        {
+          "name": "Capecitabine",
+          "year": 2019,
+          "category": "chemotherapy",
+          "isSystemic": true,
+          "chemoType": "antimetabolite",
+          "immunoType": null,
+          "targetedType": null,
+          "hormoneType": null,
+          "stemCellTransType": null
+        }
+      ],
+      "priorSecondPrimaries": [
+        {
+          "tumorLocation": "Skin",
+          "tumorSubLocation": "",
+          "tumorType": "Melanoma",
+          "tumorSubType": "",
+          "doids": [
+            "162"
+          ],
+          "diagnosedYear": 2015,
+          "isSecondPrimaryActive": false
+        }
+      ],
+      "priorOtherConditions": [
+        {
+          "name": "Liver cirrhosis",
+          "doids": [
+            "11335",
+            "5082"
+          ],
+          "category": "Liver disease"
+        }
+      ],
+      "cancerRelatedComplications": [
+        {
+          "name": "Nausea"
+        }
+      ],
+      "otherComplications": [
+        {
+          "name": "complicated",
+          "doids": [
+            "123"
+          ],
+          "speciality": "special",
+          "onsetDate": {
+            "year": 2018,
+            "month": 1,
+            "day": 1
+          },
+          "category": "category",
+          "status": "active"
+        }
+      ],
+      "labValues": [
+        {
+          "date": {
+            "year": 2020,
+            "month": 8,
+            "day": 8
+          },
+          "code": "Code1",
+          "name": "Code 1",
+          "comparator": "",
+          "value": 11,
+          "unit": "",
+          "refLimitLow": null,
+          "refLimitUp": null,
+          "isOutsideRef": null
+        },
+        {
+          "date": {
+            "year": 2020,
+            "month": 8,
+            "day": 8
+          },
+          "code": "Code2",
+          "name": "Code 2",
+          "comparator": "",
+          "value": 8.8,
+          "unit": "mmol/L",
+          "refLimitLow": 4,
+          "refLimitUp": 6.1,
+          "isOutsideRef": true
+        }
+      ],
+      "toxicities": [
+        {
+          "name": "Neuropathy",
+          "evaluatedDate": {
+            "year": 2019,
+            "month": 4,
+            "day": 4
+          },
+          "source": "QUESTIONNAIRE",
+          "grade": 3
+        },
+        {
+          "name": "Hand skin reaction",
+          "evaluatedDate": {
+            "year": 2020,
+            "month": 3,
+            "day": 3
+          },
+          "source": "EHR",
+          "grade": 1
+        }
+      ],
+      "allergies": [
+        {
+          "name": "Drug",
+          "category": "medication",
+          "criticality": "low"
+        },
+        {
+          "name": "Condition",
+          "category": "environment",
+          "criticality": "unable-to-assess"
+        }
+      ],
+      "surgeries": [
+        {
+          "endDate": {
+            "year": 2012,
+            "month": 10,
+            "day": 10
+          }
+        }
+      ],
+      "bloodPressures": [
+        {
+          "date": {
+            "year": 2020,
+            "month": 6,
+            "day": 15
+          },
+          "category": "something",
+          "value": 120,
+          "unit": "per minute"
+        }
+      ],
+      "bloodTransfusions": [
+        {
+          "date": {
+            "year": 2018,
+            "month": 1,
+            "day": 1
+          },
+          "product": "white blood cells"
+        }
+      ],
+      "medications": [
+        {
+          "name": "Medication 1",
+          "type": "",
+          "dosage": 0,
+          "unit": "mg",
+          "frequencyUnit": "day",
+          "ifNeeded": false,
+          "startDate": {
+            "year": 2018,
+            "month": 1,
+            "day": 1
+          },
+          "stopDate": {
+            "year": 2018,
+            "month": 2,
+            "day": 1
+          }
+        },
+        {
+          "name": "Medication 2",
+          "type": "",
+          "dosage": 0,
+          "unit": "mg",
+          "frequencyUnit": "day",
+          "ifNeeded": true,
+          "startDate": {
+            "year": 2019,
+            "month": 5,
+            "day": 25
+          },
+          "stopDate": {
+            "year": 2019,
+            "month": 6,
+            "day": 25
+          }
+        }
+      ]
+    }
+  ]
+}

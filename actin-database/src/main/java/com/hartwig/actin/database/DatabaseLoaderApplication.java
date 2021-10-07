@@ -3,9 +3,9 @@ package com.hartwig.actin.database;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import com.hartwig.actin.clinical.ClinicalModelFactory;
 import com.hartwig.actin.database.dao.DatabaseAccess;
 import com.hartwig.actin.datamodel.ClinicalModel;
+import com.hartwig.actin.datamodel.ClinicalModelFile;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -46,10 +46,8 @@ public class DatabaseLoaderApplication {
     }
 
     public void run() throws IOException, SQLException {
-        String feedDirectory = config.clinicalFeedDirectory();
-        String curationDirectory = config.clinicalCurationDirectory();
-
-        ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
+        LOGGER.info("Loading clinical model from '{}'", config.clinicalModelJson());
+        ClinicalModel model = ClinicalModelFile.read(config.clinicalModelJson());
 
         DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());
         LOGGER.info("Writing {} clinical records to database", model.records().size());

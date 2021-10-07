@@ -14,8 +14,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public interface DatabaseLoaderConfig {
 
-    String CLINICAL_FEED_DIRECTORY = "clinical_feed_directory";
-    String CLINICAL_CURATION_DIRECTORY = "clinical_curation_directory";
+    String CLINICAL_MODEL_JSON = "clinical_model_json";
 
     String DB_USER = "db_user";
     String DB_PASS = "db_pass";
@@ -25,8 +24,7 @@ public interface DatabaseLoaderConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(CLINICAL_FEED_DIRECTORY, true, "Directory containing the clinical feed data");
-        options.addOption(CLINICAL_CURATION_DIRECTORY, true, "Directory containing the clinical curation config data");
+        options.addOption(CLINICAL_MODEL_JSON, true, "JSON file containing the clinical data to load up");
 
         options.addOption(DB_USER, true, "Database username");
         options.addOption(DB_PASS, true, "Database password");
@@ -36,10 +34,7 @@ public interface DatabaseLoaderConfig {
     }
 
     @NotNull
-    String clinicalFeedDirectory();
-
-    @NotNull
-    String clinicalCurationDirectory();
+    String clinicalModelJson();
 
     @NotNull
     String dbUser();
@@ -52,9 +47,7 @@ public interface DatabaseLoaderConfig {
 
     @NotNull
     static DatabaseLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        return ImmutableDatabaseLoaderConfig.builder()
-                .clinicalFeedDirectory(nonOptionalDir(cmd, CLINICAL_FEED_DIRECTORY))
-                .clinicalCurationDirectory(nonOptionalDir(cmd, CLINICAL_CURATION_DIRECTORY))
+        return ImmutableDatabaseLoaderConfig.builder().clinicalModelJson(nonOptionalFile(cmd, CLINICAL_MODEL_JSON))
                 .dbUser(nonOptionalValue(cmd, DB_USER))
                 .dbPass(nonOptionalValue(cmd, DB_PASS))
                 .dbUrl(nonOptionalValue(cmd, DB_URL))
@@ -72,11 +65,11 @@ public interface DatabaseLoaderConfig {
     }
 
     @NotNull
-    static String nonOptionalDir(@NotNull CommandLine cmd, @NotNull String param) throws ParseException {
+    static String nonOptionalFile(@NotNull CommandLine cmd, @NotNull String param) throws ParseException {
         String value = nonOptionalValue(cmd, param);
 
-        if (!pathExists(value) || !pathIsDirectory(value)) {
-            throw new ParseException("Parameter '" + param + "' must be an existing directory: " + value);
+        if (!pathExists(value)) {
+            throw new ParseException("Parameter '" + param + "' must be an existing file: " + value);
         }
 
         return value;
@@ -84,9 +77,5 @@ public interface DatabaseLoaderConfig {
 
     static boolean pathExists(@NotNull String path) {
         return Files.exists(new File(path).toPath());
-    }
-
-    static boolean pathIsDirectory(@NotNull String path) {
-        return Files.isDirectory(new File(path).toPath());
     }
 }
