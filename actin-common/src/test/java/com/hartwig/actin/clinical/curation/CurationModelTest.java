@@ -161,7 +161,6 @@ public class CurationModelTest {
         assertFalse(medication.ifNeeded());
 
         assertNull(model.curateMedicationDosage("does not exist"));
-
         model.evaluate();
     }
 

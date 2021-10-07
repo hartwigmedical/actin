@@ -284,14 +284,19 @@ public class ClinicalModelFactory {
     @NotNull
     private List<Medication> extractMedications(@NotNull String subject) {
         List<Medication> medications = Lists.newArrayList();
+
         for (MedicationEntry entry : feed.medicationEntries(subject)) {
-            medications.add(ImmutableMedication.builder()
-                    .name(entry.code5ATCDisplay())
+            Medication dosageCurated = curation.curateMedicationDosage(entry.dosageInstructionText());
+
+            ImmutableMedication.Builder builder;
+            if (dosageCurated != null) {
+                builder = ImmutableMedication.builder().from(dosageCurated);
+            } else {
+                builder = ImmutableMedication.builder().dosage(0D).unit(Strings.EMPTY).frequencyUnit(Strings.EMPTY);
+            }
+
+            medications.add(builder.name(entry.code5ATCDisplay())
                     .type(Strings.EMPTY)
-                    .dosage(0D)
-                    .unit(Strings.EMPTY)
-                    .frequencyUnit(Strings.EMPTY)
-                    .ifNeeded(false)
                     .startDate(entry.periodOfUseValuePeriodStart())
                     .stopDate(entry.periodOfUseValuePeriodEnd())
                     .build());

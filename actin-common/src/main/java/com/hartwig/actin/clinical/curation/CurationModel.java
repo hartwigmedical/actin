@@ -60,7 +60,7 @@ public class CurationModel {
     @NotNull
     private final CurationDatabase database;
     @NotNull
-    private final Multimap<Class<? extends CurationConfig>, String> evaluatedConfigs = HashMultimap.create();
+    private final Multimap<Class<? extends CurationConfig>, String> evaluatedCurationInputs = HashMultimap.create();
     @NotNull
     private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
 
@@ -286,7 +286,7 @@ public class CurationModel {
 
     public void evaluate() {
         int warnCount = 0;
-        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedConfigs.asMap().entrySet()) {
+        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedCurationInputs.asMap().entrySet()) {
             List<? extends CurationConfig> configs = configsForClass(entry.getKey());
             Collection<String> evaluated = entry.getValue();
             for (CurationConfig config : configs) {
@@ -348,7 +348,7 @@ public class CurationModel {
     @Nullable
     private <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
         if (!configs.isEmpty()) {
-            evaluatedConfigs.put(configs.get(0).getClass(), input);
+            evaluatedCurationInputs.put(configs.get(0).getClass(), input);
             for (T config : configs) {
                 if (config.input().equals(input)) {
                     return config;

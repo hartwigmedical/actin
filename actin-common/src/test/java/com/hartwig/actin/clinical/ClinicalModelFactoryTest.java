@@ -141,6 +141,14 @@ public class ClinicalModelFactoryTest {
 
     private static void assertMedications(@NotNull List<Medication> medications) {
         assertEquals(1, medications.size());
+
+        Medication medication = medications.get(0);
+        assertEquals("paracetamol", medication.name());
+        assertEquals("mg", medication.unit());
+        assertEquals("day", medication.frequencyUnit());
+        assertFalse(medication.ifNeeded());
+        assertEquals(LocalDate.of(2019, 2, 2), medication.startDate());
+        assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate());
     }
 
     @NotNull
