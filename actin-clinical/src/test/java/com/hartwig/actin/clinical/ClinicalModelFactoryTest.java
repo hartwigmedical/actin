@@ -30,8 +30,8 @@ import org.junit.Test;
 
 public class ClinicalModelFactoryTest {
 
-    private static final String FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
-    private static final String CURATION_DIRECTORY = Resources.getResource("clinical/curation").getPath();
+    private static final String FEED_DIRECTORY = Resources.getResource("feed").getPath();
+    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     private static final String TEST_SAMPLE = "ACTN01029999T";
 

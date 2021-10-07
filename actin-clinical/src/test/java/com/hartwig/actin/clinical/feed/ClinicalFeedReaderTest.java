@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class ClinicalFeedReaderTest {
 
-    private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("clinical/feed").getPath();
+    private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
 
     private static final double EPSILON = 1.0E-10;
 

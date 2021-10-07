@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class CurationModelTest {
 
-    private static final String CURATION_DIRECTORY = Resources.getResource("clinical/curation").getPath();
+    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     @Test
     public void canCreateFromCurationDirectory() throws IOException {

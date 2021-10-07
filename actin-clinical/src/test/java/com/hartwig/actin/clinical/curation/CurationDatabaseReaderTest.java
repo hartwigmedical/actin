@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class CurationDatabaseReaderTest {
 
-    private static final String CURATION_DIRECTORY = Resources.getResource("clinical/curation").getPath();
+    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
