@@ -47,11 +47,11 @@ public class ClinicalIngestionApplication {
         String feedDirectory = config.feedDirectory();
         String curationDirectory = config.curationDirectory();
 
-        LOGGER.info("Creating clinical model from feed directory '{}' and curation direction '{}'", feedDirectory, curationDirectory);
+        LOGGER.info("Creating clinical model from feed directory {} and curation direction {}", feedDirectory, curationDirectory);
         ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
 
         String jsonOutputFile = config.jsonOutputFile();
-        LOGGER.info("Writing clinical model with {} records to '{}'", model.records().size(), jsonOutputFile);
+        LOGGER.info("Writing clinical model with {} records to {}", model.records().size(), jsonOutputFile);
         ClinicalModelFile.write(model, jsonOutputFile);
 
         LOGGER.info("Done!");
