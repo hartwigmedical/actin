@@ -2,14 +2,19 @@
 
 (in development)
 
-ACTIN is a system that determines and ranks treatment options for cancer patients based on the following inputs:
+ACTIN is a system that determines and ranks available treatment options for cancer patients based on the following inputs:
  - Comprehensive clinical record of the patient
  - Comprehensive molecular analysis of the tumor
  - Data from all patients previously evaluated and collected by ACTIN
+
+![ACTIN System](actin-system/src/main/resources/actin_system.png)
  
-More details on the following sub-modules are available from the links below:
- - [Database](actin-database): Procedures for writing data used by ACTIN into a mysql database.
- - [Treatment](actin-treatment): An algo to generate a database of all standard-of-care and experimental treatments 
- available to patients at any point in time.
- - [Algo](actin-algo): The algo matching all data from a patient to all available treatment options and generating a report.
+More details on the following modules are available from the links below:
+
+Module  | Description
+---|---
+[ACTIN Clinical](actin-clinical) | Module to ingest and curate an external EHR clinical data stream
+[ACTIN Treatment](actin-treatment) | Module to generate a list of available treatment options (SOC and experimental)
+[ACTIN Algo](actin-algo) | The algo matching all data from a patient to all available treatment options.
+[ACTIN Report](actin-report) | A module that writes the output of algo to a PDF report.
   
