@@ -176,3 +176,6 @@ ifNeeded | Determines whether the medication is mandatory or only "if needed".
 startDate |
 stopDate |
 active | Determines whether the medication is currently being administered.
+
+## Version History and Download Links
+ - Upcoming (first release) 
