@@ -12,3 +12,7 @@ java -cp actin.jar com.hartwig.actin.database.ClinicalLoaderApplication \
     -clinical_model_json /path/to/clinical_model.json \
     -db_user user -db_pass pass -db_url url
 ```
+
+## Version History and Download Links
+ - Upcoming (first release) 
+ 
