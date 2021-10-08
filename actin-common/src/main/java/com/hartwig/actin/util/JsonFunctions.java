@@ -49,9 +49,6 @@ public final class JsonFunctions {
         } else {
             assert object.get(field).isJsonArray();
             for (JsonElement element : object.getAsJsonArray(field)) {
-                if (!element.isJsonPrimitive()) {
-                    LOGGER.warn("Converting array value for {} into string for element {}", field, element);
-                }
                 values.add(element.getAsJsonPrimitive().getAsString());
             }
         }
@@ -69,11 +66,7 @@ public final class JsonFunctions {
 
     @NotNull
     public static String string(@NotNull JsonObject object, @NotNull String field) {
-        JsonElement element = object.get(field);
-        if (!element.isJsonPrimitive()) {
-            LOGGER.warn("Converting {} to string for element {}.", field, element);
-        }
-        return element.getAsJsonPrimitive().getAsString();
+        return object.get(field).getAsJsonPrimitive().getAsString();
     }
 
     @Nullable
@@ -86,11 +79,7 @@ public final class JsonFunctions {
     }
 
     public static double number(@NotNull JsonObject object, @NotNull String field) {
-        JsonElement element = object.get(field);
-        if (!element.isJsonPrimitive()) {
-            LOGGER.warn("Converting {} to double for element {}.", field, element);
-        }
-        return element.getAsJsonPrimitive().getAsDouble();
+        return object.get(field).getAsJsonPrimitive().getAsDouble();
     }
 
     @Nullable
@@ -103,11 +92,7 @@ public final class JsonFunctions {
     }
 
     public static int integer(@NotNull JsonObject object, @NotNull String field) {
-        JsonElement element = object.get(field);
-        if (!element.isJsonPrimitive()) {
-            LOGGER.warn("Converting {} to integer for element {}.", field, element);
-        }
-        return element.getAsJsonPrimitive().getAsInt();
+        return object.get(field).getAsJsonPrimitive().getAsInt();
     }
 
     @Nullable
@@ -120,11 +105,7 @@ public final class JsonFunctions {
     }
 
     public static boolean bool(@NotNull JsonObject object, @NotNull String field) {
-        JsonElement element = object.get(field);
-        if (!element.isJsonPrimitive()) {
-            LOGGER.warn("Converting {} to boolean for element {}.", field, element);
-        }
-        return element.getAsJsonPrimitive().getAsBoolean();
+        return object.get(field).getAsJsonPrimitive().getAsBoolean();
     }
 
     @Nullable
