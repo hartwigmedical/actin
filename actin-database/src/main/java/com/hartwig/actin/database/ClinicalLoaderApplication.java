@@ -31,7 +31,7 @@ public class ClinicalLoaderApplication {
             config = ClinicalLoaderConfig.createConfig(new DefaultParser().parse(options, args));
         } catch (ParseException exception) {
             LOGGER.warn(exception);
-            new HelpFormatter().printHelp("ACTIN DatabaseLoader", options);
+            new HelpFormatter().printHelp("ACTIN Clinical Loader", options);
             System.exit(1);
         }
 

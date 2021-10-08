@@ -1,7 +1,8 @@
 ## ACTIN-Clinical
 
 ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described below.
-This clinical model is written to a single json file (see [ACTIN-Database](../actin-database/README.md) for how to load this model into a mysql database)
+This clinical model is written to a per-sample json file. 
+See [ACTIN-Database](../actin-database/README.md) for how to load this model into a mysql database.
 
 ACTIN-Clinical requires Java 11+ and can be run as follows: 
 
@@ -9,7 +10,7 @@ ACTIN-Clinical requires Java 11+ and can be run as follows:
 java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
    -feed_directory /path/to/feed
    -curation_directory /path/to/curation
-   -json_output_file /path/to/clinical_model_output.json
+   -output_directory /path/to/where/clinical/data/is/written
 ```
 
 ## Clinical Datamodel
