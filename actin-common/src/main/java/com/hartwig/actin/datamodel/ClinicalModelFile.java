@@ -68,54 +68,60 @@ import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.ToxicitySource;
 import com.hartwig.actin.datamodel.clinical.TumorDetails;
 import com.hartwig.actin.datamodel.clinical.TumorStage;
+import com.hartwig.actin.util.FileUtil;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class ClinicalModelFile {
 
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalModelFile.class);
+
     private ClinicalModelFile() {
     }
 
-    public static void write(@NotNull ClinicalModel model, @NotNull String clinicalModelJson) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(clinicalModelJson));
-        writer.write(toJson(model));
-        writer.close();
+    public static void write(@NotNull ClinicalModel model, @NotNull String outputDirectory) throws IOException {
+        String path = FileUtil.appendFileSeparator(outputDirectory);
+        for (ClinicalRecord record : model.records()) {
+            String jsonFile = path + record.sampleId() + ".clinical.json";
+            LOGGER.info(" Writing data or {} to {}", record.sampleId(), jsonFile);
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
+            writer.write(toJson(record));
+            writer.close();
+        }
     }
 
     @NotNull
-    public static ClinicalModel read(@NotNull String clinicalModelJson) throws IOException {
-        return fromJson(Files.readString(new File(clinicalModelJson).toPath()));
+    public static ClinicalModel read(@NotNull String clinicalDirectory) throws IOException {
+        List<ClinicalRecord> records = Lists.newArrayList();
+        for (File file : new File(clinicalDirectory).listFiles()) {
+            records.add(fromJson(Files.readString(file.toPath())));
+        }
+        return new ClinicalModel(records);
     }
 
     @VisibleForTesting
     @NotNull
-    static String toJson(@NotNull ClinicalModel model) {
-        return new GsonBuilder().serializeNulls().create().toJson(model);
+    static String toJson(@NotNull ClinicalRecord record) {
+        return new GsonBuilder().serializeNulls().create().toJson(record);
     }
 
     @VisibleForTesting
     @NotNull
-    static ClinicalModel fromJson(@NotNull String json) {
-        Gson gson = new GsonBuilder().registerTypeAdapter(ClinicalModel.class, new ClinicalModelCreator()).create();
-        return gson.fromJson(json, ClinicalModel.class);
+    static ClinicalRecord fromJson(@NotNull String json) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(ClinicalRecord.class, new ClinicalRecordCreator()).create();
+        return gson.fromJson(json, ClinicalRecord.class);
     }
 
-    private static class ClinicalModelCreator implements JsonDeserializer<ClinicalModel> {
+    private static class ClinicalRecordCreator implements JsonDeserializer<ClinicalRecord> {
 
         @Override
-        public ClinicalModel deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+        public ClinicalRecord deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
                 @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            List<ClinicalRecord> records = Lists.newArrayList();
+            JsonObject record = jsonElement.getAsJsonObject();
 
-            for (JsonElement element : array(jsonElement.getAsJsonObject(), "records")) {
-                records.add(toClinicalRecord(element.getAsJsonObject()));
-            }
-
-            return new ClinicalModel(records);
-        }
-
-        @NotNull
-        private static ClinicalRecord toClinicalRecord(@NotNull JsonObject record) {
             return ImmutableClinicalRecord.builder()
                     .sampleId(string(record, "sampleId"))
                     .patient(toPatientDetails(object(record, "patient")))

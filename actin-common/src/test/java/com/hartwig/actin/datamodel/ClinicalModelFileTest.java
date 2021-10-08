@@ -2,7 +2,6 @@ package com.hartwig.actin.datamodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -13,23 +12,22 @@ import org.junit.Test;
 
 public class ClinicalModelFileTest {
 
-    private static final String EMPTY_CLINICAL_MODEL_JSON = Resources.getResource("clinical/clinical_model_empty.json").getPath();
-    private static final String FULL_CLINICAL_MODEL_JSON = Resources.getResource("clinical/clinical_model_example.json").getPath();
+    private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
 
     @Test
     public void canConvertBackAndForthJson() throws IOException {
         // TODO Define model in-memory
-        ClinicalModel model = ClinicalModelFile.read(FULL_CLINICAL_MODEL_JSON);
+        ClinicalModel model = ClinicalModelFile.read(CLINICAL_DIRECTORY);
 
-        String json = ClinicalModelFile.toJson(model);
-        ClinicalModel convertedModel = ClinicalModelFile.fromJson(json);
+        String json = ClinicalModelFile.toJson(model.records().get(0));
+        ClinicalRecord convertedRecord = ClinicalModelFile.fromJson(json);
 
-        assertEquals(model.records().get(0), convertedModel.records().get(0));
+        assertEquals(model.records().get(0), convertedRecord);
     }
 
     @Test
-    public void canReadFullClinicalModelFile() throws IOException {
-        ClinicalModel model = ClinicalModelFile.read(FULL_CLINICAL_MODEL_JSON);
+    public void canReadClinicalModelFile() throws IOException {
+        ClinicalModel model = ClinicalModelFile.read(CLINICAL_DIRECTORY);
         assertEquals(1, model.records().size());
 
         ClinicalRecord record = model.findClinicalRecordForSample("ACTN01029999T");
@@ -47,10 +45,5 @@ public class ClinicalModelFileTest {
         assertEquals(1, record.bloodPressures().size());
         assertEquals(1, record.bloodTransfusions().size());
         assertEquals(2, record.medications().size());
-    }
-
-    @Test
-    public void canReadEmptyClinicalModelFile() throws IOException {
-        assertTrue(ClinicalModelFile.read(EMPTY_CLINICAL_MODEL_JSON).records().isEmpty());
     }
 }

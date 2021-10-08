@@ -50,9 +50,9 @@ public class ClinicalIngestionApplication {
         LOGGER.info("Creating clinical model from feed directory {} and curation direction {}", feedDirectory, curationDirectory);
         ClinicalModel model = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
 
-        String jsonOutputFile = config.jsonOutputFile();
-        LOGGER.info("Writing clinical model with {} records to {}", model.records().size(), jsonOutputFile);
-        ClinicalModelFile.write(model, jsonOutputFile);
+        String outputDirectory = config.outputDirectory();
+        LOGGER.info("Writing clinical model with {} records to {}", model.records().size(), outputDirectory);
+        ClinicalModelFile.write(model, outputDirectory);
 
         LOGGER.info("Done!");
     }

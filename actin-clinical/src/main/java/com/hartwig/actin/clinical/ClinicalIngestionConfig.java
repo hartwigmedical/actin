@@ -17,7 +17,7 @@ public interface ClinicalIngestionConfig {
     String FEED_DIRECTORY = "feed_directory";
     String CURATION_DIRECTORY = "curation_directory";
 
-    String JSON_OUTPUT_FILE = "json_output_file";
+    String OUTPUT_DIRECTORY = "output_directory";
 
     @NotNull
     static Options createOptions() {
@@ -26,7 +26,7 @@ public interface ClinicalIngestionConfig {
         options.addOption(FEED_DIRECTORY, true, "Directory containing the clinical feed data");
         options.addOption(CURATION_DIRECTORY, true, "Directory containing the clinical curation config data");
 
-        options.addOption(JSON_OUTPUT_FILE, true, "File where clinical data output will be written to");
+        options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to");
 
         return options;
     }
@@ -38,14 +38,14 @@ public interface ClinicalIngestionConfig {
     String curationDirectory();
 
     @NotNull
-    String jsonOutputFile();
+    String outputDirectory();
 
     @NotNull
     static ClinicalIngestionConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableClinicalIngestionConfig.builder()
                 .feedDirectory(nonOptionalDir(cmd, FEED_DIRECTORY))
                 .curationDirectory(nonOptionalDir(cmd, CURATION_DIRECTORY))
-                .jsonOutputFile(nonOptionalValue(cmd, JSON_OUTPUT_FILE))
+                .outputDirectory(nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }
 
@@ -77,5 +77,4 @@ public interface ClinicalIngestionConfig {
     static boolean pathIsDirectory(@NotNull String path) {
         return Files.isDirectory(new File(path).toPath());
     }
-
 }
