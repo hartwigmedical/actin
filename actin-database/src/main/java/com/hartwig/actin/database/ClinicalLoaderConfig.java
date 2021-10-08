@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface DatabaseLoaderConfig {
+public interface ClinicalLoaderConfig {
 
     String CLINICAL_MODEL_JSON = "clinical_model_json";
 
@@ -46,8 +46,9 @@ public interface DatabaseLoaderConfig {
     String dbUrl();
 
     @NotNull
-    static DatabaseLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        return ImmutableDatabaseLoaderConfig.builder().clinicalModelJson(nonOptionalFile(cmd, CLINICAL_MODEL_JSON))
+    static ClinicalLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
+        return ImmutableClinicalLoaderConfig.builder()
+                .clinicalModelJson(nonOptionalFile(cmd, CLINICAL_MODEL_JSON))
                 .dbUser(nonOptionalValue(cmd, DB_USER))
                 .dbPass(nonOptionalValue(cmd, DB_PASS))
                 .dbUrl(nonOptionalValue(cmd, DB_URL))

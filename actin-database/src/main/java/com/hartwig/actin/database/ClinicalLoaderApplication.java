@@ -15,33 +15,33 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseLoaderApplication {
+public class ClinicalLoaderApplication {
 
-    private static final Logger LOGGER = LogManager.getLogger(DatabaseLoaderApplication.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalLoaderApplication.class);
 
-    private static final String VERSION = DatabaseLoaderApplication.class.getPackage().getImplementationVersion();
+    private static final String VERSION = ClinicalLoaderApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException, SQLException {
-        LOGGER.info("Running ACTIN Database Loader v{}", VERSION);
+        LOGGER.info("Running ACTIN Clinical Loader v{}", VERSION);
 
-        Options options = DatabaseLoaderConfig.createOptions();
+        Options options = ClinicalLoaderConfig.createOptions();
 
-        DatabaseLoaderConfig config = null;
+        ClinicalLoaderConfig config = null;
         try {
-            config = DatabaseLoaderConfig.createConfig(new DefaultParser().parse(options, args));
+            config = ClinicalLoaderConfig.createConfig(new DefaultParser().parse(options, args));
         } catch (ParseException exception) {
             LOGGER.warn(exception);
             new HelpFormatter().printHelp("ACTIN DatabaseLoader", options);
             System.exit(1);
         }
 
-        new DatabaseLoaderApplication(config).run();
+        new ClinicalLoaderApplication(config).run();
     }
 
     @NotNull
-    private final DatabaseLoaderConfig config;
+    private final ClinicalLoaderConfig config;
 
-    private DatabaseLoaderApplication(@NotNull final DatabaseLoaderConfig config) {
+    private ClinicalLoaderApplication(@NotNull final ClinicalLoaderConfig config) {
         this.config = config;
     }
 
