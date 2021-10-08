@@ -8,35 +8,27 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>actin-system</artifactId>
+    <artifactId>actin-report</artifactId>
     <packaging>jar</packaging>
     <version>${actin.version}</version>
-    <name>HMF ACTIN - System</name>
+    <name>HMF ACTIN - Report</name>
 
     <dependencies>
         <dependency>
             <groupId>com.hartwig</groupId>
             <artifactId>actin-common</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-clinical</artifactId>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-treatment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-database</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-algo</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-report</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -57,8 +49,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.system.SystemApplication</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <mainClass></mainClass>
                         </manifest>
                     </archive>
 
