@@ -32,7 +32,7 @@ Field | Details
 primaryTumorLocation | eg "Colorectum"
 primaryTumorSubLocation | eg "Colon"
 primaryTumorType | eg "Carcinoma"
-primaryTumorSubType |eg "Neuroendocrine carcinoma
+primaryTumorSubType |eg "Neuroendocrine carcinoma"
 primaryTumorExtraDetails |
 doids | separated by ";"
 stage | Tumor stage (either 'I', 'II', 'III' or 'IV')
