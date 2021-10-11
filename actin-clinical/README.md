@@ -12,7 +12,7 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
    -curation_directory /path/to/curation
    -output_directory /path/to/where/clinical/data/is/written
 ```
-### Disease Ontology ID (DOID)
+### Disease Ontology ID
 For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
 ## Clinical Datamodel
