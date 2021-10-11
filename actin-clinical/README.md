@@ -41,14 +41,14 @@ doids | 1996 | Separated by ";"
 stage | IV | Tumor stage grouping. Roman numeral from I to IV with further subdivision with letters (A, B or C) if available, eg IIIA
 hasMeasurableLesionRecist | 1 | Patient has at least one lesion that can be measured using RECIST criteria?
 hasBrainLesions | 0 | Patient has brain lesions?
-hasActiveBrainLesions | NA | Patient has active brain lesions? (NA if hasBrainLesions = FALSE)
+hasActiveBrainLesions | NA | Patient has active (non-stable) brain lesions? (NA if hasBrainLesions = FALSE)
 hasSymptomaticBrainLesions | NA | Patient has symptomatic brain lesions? (NA if hasBrainLesions = FALSE)
 hasCnsLesions | 0 | Patient has central nervous system (CNS) lesions?
-hasActiveCnsLesions | NA | Patient has active CNS lesions? (NA if hasCnsLesions = FALSE)
+hasActiveCnsLesions | NA | Patient has active (non-stable) CNS lesions? (NA if hasCnsLesions = FALSE)
 hasSymptomaticCnsLesions | NA | Patient has symptomatic CNS lesions? (NA if hasCnsLesions = FALSE)
 hasBoneLesions | 0 | Patient has bone lesions?
 hasLiverLesions | 1 | Patient has liver lesions?
-hasOtherLesions | 1 | Patient has lesions that are not captured in previous fields?
+hasOtherLesions | 1 | Patient has lesions that are not captured in hasBrainLesions, hasCnsLesions, hasBoneLesions and hasLiverLesions?
 otherLesions | Lymph node | Description of other lesions, in case hasOtherLesions = TRUE
 biopsyLocation | Liver | Lesion from which the biopsy for genomic analyses was obtained
  
@@ -178,7 +178,7 @@ frequencyUnit | day | Frequency unit of dosage
 ifNeeded | 0 | Determines whether the medication should be taken according to dosage prescription or only "if needed"
 startDate | 2021-07-01 | Assigned start date of medication
 stopDate | | Assigned stop date of medication (if applicable)
-active | 1 | Medication is prescripted at time of evaluation?
+active | 1 | Medication is prescripted at time of latest EHR evaluation?
 
 ## Version History and Download Links
  - Upcoming (first release) 
