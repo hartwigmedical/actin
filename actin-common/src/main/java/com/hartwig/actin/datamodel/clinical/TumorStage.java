@@ -5,9 +5,12 @@ import org.jetbrains.annotations.NotNull;
 public enum TumorStage {
     I("I"),
     II("II"),
-    IIB("IIb"),
+    IIA("IIA"),
+    IIB("IIB"),
     III("III"),
-    IIIC("IIIc"),
+    IIIA("IIIA"),
+    IIIB("IIIB"),
+    IIIC("IIIC"),
     IV("IV");
 
     @NotNull
