@@ -37,9 +37,12 @@ final class QuestionnaireCuration {
         STAGE_MAPPING.put("I", TumorStage.I);
         STAGE_MAPPING.put("II", TumorStage.II);
         STAGE_MAPPING.put("2", TumorStage.II);
+        STAGE_MAPPING.put("IIa", TumorStage.IIA);
         STAGE_MAPPING.put("IIb", TumorStage.IIB);
         STAGE_MAPPING.put("III", TumorStage.III);
         STAGE_MAPPING.put("3", TumorStage.III);
+        STAGE_MAPPING.put("IIIa", TumorStage.IIIA);
+        STAGE_MAPPING.put("IIIb", TumorStage.IIIB);
         STAGE_MAPPING.put("IIIc", TumorStage.IIIC);
         STAGE_MAPPING.put("IV", TumorStage.IV);
         STAGE_MAPPING.put("4", TumorStage.IV);
