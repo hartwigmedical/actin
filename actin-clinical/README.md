@@ -41,15 +41,15 @@ doids | 1996 | Separated by ";"
 stage | IV | Tumor stage grouping. Roman numeral from I to IV with further subdivision with letters (A, B or C) if available, eg IIIA
 hasMeasurableLesionRecist | 1 | Patient has at least one lesion that can be measured using RECIST criteria?
 hasBrainLesions | 0 | Patient has brain lesions?
-hasActiveBrainLesions | NA | Patient has active (non-stable) brain lesions? (NA if hasBrainLesions = FALSE)
-hasSymptomaticBrainLesions | NA | Patient has symptomatic brain lesions? (NA if hasBrainLesions = FALSE)
+hasActiveBrainLesions | NA | Patient has active (non-stable) brain lesions? (NA if hasBrainLesions = 0)
+hasSymptomaticBrainLesions | NA | Patient has symptomatic brain lesions? (NA if hasBrainLesions = 0)
 hasCnsLesions | 0 | Patient has central nervous system (CNS) lesions?
-hasActiveCnsLesions | NA | Patient has active (non-stable) CNS lesions? (NA if hasCnsLesions = FALSE)
-hasSymptomaticCnsLesions | NA | Patient has symptomatic CNS lesions? (NA if hasCnsLesions = FALSE)
+hasActiveCnsLesions | NA | Patient has active (non-stable) CNS lesions? (NA if hasCnsLesions = 0)
+hasSymptomaticCnsLesions | NA | Patient has symptomatic CNS lesions? (NA if hasCnsLesions = 0)
 hasBoneLesions | 0 | Patient has bone lesions?
 hasLiverLesions | 1 | Patient has liver lesions?
 hasOtherLesions | 1 | Patient has lesions that are not captured in hasBrainLesions, hasCnsLesions, hasBoneLesions and hasLiverLesions?
-otherLesions | Lymph node | Description of other lesions, in case hasOtherLesions = TRUE
+otherLesions | Lymph node | Description of other lesions, in case hasOtherLesions = 1
 biopsyLocation | Liver | Lesion from which the biopsy for genomic analyses was obtained
  
 1 clinical status
@@ -59,7 +59,7 @@ Field | Example Value | Details
 who | 2 | Assigned WHO status of patient (0 to 5)
 hasActiveInfection | 0 | Patient has active infection?
 hasSigAberrationLatestEcg | 0 | Patient had significant aberration on latest ECG?
-ecgAberrationDescription | | Description of ECG aberration, in case hasSigAberrationLatestEcg = TRUE
+ecgAberrationDescription | | Description of ECG aberration, in case hasSigAberrationLatestEcg = 1
 
 N prior tumor treatments
 
