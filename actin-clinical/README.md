@@ -12,6 +12,8 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
    -curation_directory /path/to/curation
    -output_directory /path/to/where/clinical/data/is/written
 ```
+### Disease Ontology ID (DOID)
+For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
 ## Clinical Datamodel
 
@@ -19,90 +21,90 @@ Every sample, uniquely defined by their sample ID, has a clinical record with th
 
 1 patient details
 
-Field | Details
----|---
-sex | Either MALE or FEMALE
-birthYear | 
-registrationDate | Date on which the patient was registered for evaluation in ACTIN
-questionnaireDate | Date on which the data without timestamp has been collected (eg tumor location, WHO status)
+Field | Example Value | Details
+---|---|---
+sex | MALE | 
+birthYear | 1945 |
+registrationDate | 2021-07-11 | Date on which the patient was registered for evaluation in ACTIN
+questionnaireDate | 2021-07-20 | Date on which the data without EHR timestamp has been collected (eg lesion locations, WHO status)
 
 1 tumor details
 
-Field | Details
----|---
-primaryTumorLocation | eg "Colorectum"
-primaryTumorSubLocation | eg "Colon"
-primaryTumorType | eg "Carcinoma"
-primaryTumorSubType |eg "Neuroendocrine carcinoma"
-primaryTumorExtraDetails |
-doids | separated by ";"
-stage | Tumor stage (either 'I', 'II', 'III' or 'IV')
-hasMeasurableLesionRecist | patient has at least one lesion on which RECIST measurements can be done
-hasBrainLesions |
-hasActiveBrainLesions |
-hasSymptomaticBrainLesions |
-hasCnsLesions | cns = central nervous system
-hasActiveCnsLesions |
-hasSymptomaticCnsLesions |
-hasBoneLesions |
-hasLiverLesions |
-hasOtherLesions | 
-otherLesions | separated by ";"
-biopsyLocation | location of the biopsy for which genomic analyses have been performed
+Field | Example Value | Details
+---|---|---
+primaryTumorLocation | Colorectum | Tumor location
+primaryTumorSubLocation | Rectum | Tumor sub location
+primaryTumorType | Carcinoma | Tumor type
+primaryTumorSubType | Adenocarcinoma | Tumor sub type
+primaryTumorExtraDetails | | Additional tumor information that cannot be captured in previous fields 
+doids | 1996 | Separated by ";"
+stage | IV | Tumor stage grouping. Roman numeral from I to IV with further subdivision with letters (A, B or C) if available, eg IIIA
+hasMeasurableLesionRecist | 1 | Patient has at least one lesion that can be measured using RECIST criteria?
+hasBrainLesions | 0 | Patient has brain lesions?
+hasActiveBrainLesions | NA | Patient has active brain lesions? (NA if hasBrainLesions = FALSE)
+hasSymptomaticBrainLesions | NA | Patient has symptomatic brain lesions? (NA if hasBrainLesions = FALSE)
+hasCnsLesions | 0 | Patient has central nervous system (CNS) lesions?
+hasActiveCnsLesions | NA | Patient has active CNS lesions? (NA if hasCnsLesions = FALSE)
+hasSymptomaticCnsLesions | NA | Patient has symptomatic CNS lesions? (NA if hasCnsLesions = FALSE)
+hasBoneLesions | 0 | Patient has bone lesions?
+hasLiverLesions | 1 | Patient has liver lesions?
+hasOtherLesions | 1 | Patient has lesions that are not captured in previous fields?
+otherLesions | Lymph node | Description of other lesions, in case hasOtherLesions = TRUE
+biopsyLocation | Liver | Lesion from which the biopsy for genomic analyses was obtained
  
 1 clinical status
 
-Field | Details
----|---
-who | WHO status of patient (0 to 5)
-hasActiveInfection |
-hasSigAberrationLatestEcg |
-ecgAberrationDescription |
+Field | Example Value | Details
+---|---|---
+who | 2 | Assigned WHO status of patient (0 to 5)
+hasActiveInfection | 0 | Patient has active infection?
+hasSigAberrationLatestEcg | 0 | Patient had significant aberration on latest ECG?
+ecgAberrationDescription | | Description of ECG aberration, in case hasSigAberrationLatestEcg = TRUE
 
 N prior tumor treatments
 
-Field | Details
----|---
-name | eg "Capecitabine"
-year |
-category | eg "chemotherapy"
-isSystemic |
-chemoType | only filled in when applicable
-immunoType | only filled in when applicable
-targetedType | only filled in when applicable
-hormoneType | only filled in when applicable
-stemCellTransType | only filled in when applicable
+Field | Example Value | Details
+---|---|---
+name | Paclitaxel | Treatment name
+year | 2021 | Year in which treatment was given
+category | Chemotherapy | Type of treatment
+isSystemic | 1 | Treatment is systemic?
+chemoType | Antimicrotibule agent | Type of chemotherapy (if applicable)
+immunoType | | Type of immunotherapy (if applicable)
+targetedType | | Type of targeted therapy (if applicable)
+hormoneType | | Type of hormonal therapy (if applicable)
+stemCellTransType | | Type of stem cell transplantation therapy (if applicable)
 
 N prior second primaries   
 
-Field | Details
----|---
-tumorLocation | eg "Colorectum"
-tumorSubLocation | eg "Colon"
-tumorType | eg "Carcinoma"
-tumorSubType | eg "Neuroendocrine carcinoma"
-doids | separated by ";"
-diagnosedYear |
-isSecondPrimaryActive |
+Field | Example Value | Details
+---|---|---
+tumorLocation | Lung | Tumor location
+tumorSubLocation | | Tumor sub location
+tumorType | Carcinoma | Tumor type
+tumorSubType | Non-small cell carcinoma | Tumor sub type
+doids | 3908 | Separated by ";"
+diagnosedYear | 2003 | Year in which diagnosis of other tumor was made
+isSecondPrimaryActive | 0 | Is other tumor considered active?
 
 N prior other conditions
 
-Field | Details
----|---
-name | eg "Endometriosis"
-doids | separated by ";"
-category | eg "Female reproductive system disease"
+Field | Example Value | Details
+---|---|---
+name | Endometriosis | Other condition considered relevant for treatment decision making
+doids | 289 | Separated by ";"
+category | Female reproductive system disease | Assigned category of considered condition, based on DOIDs
 
 N cancer related complications
 
-Field | Details
----|---
-name | eg "Ascites"
+Field | Example Value | Details
+---|---|---
+name | Ascites | Cancer related complication considered relevant for treatment decision making
 
 N other complications (!! in-development)
 
-Field | Details
----|---
+Field | Example Value | Details
+---|---|---
 name |
 doids |
 specialty |
@@ -112,71 +114,71 @@ status |
 
 N lab values
 
-Field | Details
----|---
-date | 
-code | eg "TBIL"
-name | eg "Total bilirubin"
-comparator | eg ">"
-value |
-unit | eg "umol/l"
-refLimitLow |
-refLimitUp |
-isOutsideRef |
+Field | Example Value | Details
+---|---|---
+date | 2021-07-01 | Date on which lab value was measured
+code | TBIL | Code of lab value
+name | Total bilirubin | Name/description of lab value
+comparator | | ">" or "<", if applicable
+value | 18 |
+unit | umol/l | Lab value unit
+refLimitLow | | Considered normal range lower limit
+refLimitUp | 19 | Considered normal range upper limit
+isOutsideRef | 0 | Measured value is outside normal range?
 
 N toxicities
 
-Field | Details
----|---
-name | eg "Rash"
-evaluatedDate |
-source | either EHR or Questionnaire, depending on where the data originated from
-grade |
+Field | Example Value | Details
+---|---|---
+name | Rash | Name of measured toxicity
+evaluatedDate | 2021-07-01 | Date on which toxicity was measured
+source | Questionnaire | EHR or Questionnaire, depending on where the toxicity data originated from
+grade | 3 | Determined grade of toxicity
 
 N allergies
 
-Field | Details
----|---
-name | eg "Hay fever"
-category | eg "environment"
-criticality | eg "low"
+Field | Example Value | Details
+---|---|---
+name | Hay fever | Allergy
+category | Environment | Category of allergy
+criticality | Low | Assigned criticality of allergy
 
 N surgeries
 
-Field | Details
----|---
-endDate |
+Field | Example Value | Details
+---|---|---
+endDate | 2021-07-01 | Date on which surgery ended
 
 N blood pressures
 
-Field | Details
----|---
-date |
-category | eg "Systolic blood pressure 
-value |
-unit | eg "mm\[Hg\]"
+Field | Example Value | Details
+---|---|---
+date | 2021-07-01 | Date on which blood pressure value was measured
+category | Systolic blood pressure | Mean, systolic or diastolic blood pressure
+value | 155 | 
+unit | mm[Hg] | Unit in which blood pressure was measured
 
 N blood transfusions (!! In development)
 
-Field | Details
----|---
-date |
-product |
+Field | Example Value | Details
+---|---|---
+date | 2021-07-01 | Date on which blood transfusion was given
+product | Thrombocyte concentrate | Blood product of transfusion
 
 N medications
 
-Field | Details
----|---
-name | eg "Paracetamol"
-type |
-dosageMin | eg "2000"
-dosageMax | eg "3000"
-unit | eg "mg"
-frequencyUnit | eg "day"
-ifNeeded | Determines whether the medication is mandatory or only "if needed".
-startDate |
-stopDate |
-active | Determines whether the medication is currently being administered.
+Field | Example Value | Details
+---|---|---
+name | Simvastatin | Medication name
+type | Statins | Type of medication
+dosageMin | 20 | Assigned minimal dosis
+dosageMax | 40 | Assigned maximal dosis (dosageMin and dosageMax can be equal)
+unit | mg | Dosage unit
+frequencyUnit | day | Frequency unit of dosage
+ifNeeded | 0 | Determines whether the medication should be taken according to dosage prescription or only "if needed"
+startDate | 2021-07-01 | Assigned start date of medication
+stopDate | | Assigned stop date of medication (if applicable)
+active | 1 | Medication is prescripted at time of evaluation?
 
 ## Version History and Download Links
  - Upcoming (first release) 
