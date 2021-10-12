@@ -80,11 +80,6 @@ public class FeedModel {
     }
 
     @NotNull
-    public List<EncounterEntry> encounterEntries(@NotNull String subject) {
-        return entriesForSubject(feed.encounterEntries(), subject);
-    }
-
-    @NotNull
     public List<EncounterEntry> uniqueEncounterEntries(@NotNull String subject) {
         List<EncounterEntry> entries = Lists.newArrayList();
         for (EncounterEntry entry : entriesForSubject(feed.encounterEntries(), subject)) {
