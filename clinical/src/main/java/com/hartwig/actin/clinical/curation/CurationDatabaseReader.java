@@ -11,6 +11,8 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFile;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFile;
+import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationTypeConfigFile;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFile;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -41,6 +43,7 @@ public final class CurationDatabaseReader {
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
+    private static final String MEDICATION_TYPE_TSV = "medication_type.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
     private static final String ALLERGY_TRANSLATION_TSV = "allergy_translation.tsv";
@@ -63,6 +66,7 @@ public final class CurationDatabaseReader {
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
+                .medicationTypeConfigs(readMedicationTypeConfigs(basePath + MEDICATION_TYPE_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
                 .allergyTranslations(readAllergyTranslations(basePath + ALLERGY_TRANSLATION_TSV))
                 .build();
@@ -123,6 +127,13 @@ public final class CurationDatabaseReader {
     private static List<MedicationDosageConfig> readMedicationDosageConfigs(@NotNull String medicationDosageTsv) throws IOException {
         List<MedicationDosageConfig> configs = MedicationDosageConfigFile.read(medicationDosageTsv);
         LOGGER.info(" Read {} medication dosage configs from {}", configs.size(), medicationDosageTsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<MedicationTypeConfig> readMedicationTypeConfigs(@NotNull String medicationTypeTsv) throws IOException {
+        List<MedicationTypeConfig> configs = MedicationTypeConfigFile.read(medicationTypeTsv);
+        LOGGER.info(" Read {} medication type configs from {}", configs.size(), medicationTypeTsv);
         return configs;
     }
 

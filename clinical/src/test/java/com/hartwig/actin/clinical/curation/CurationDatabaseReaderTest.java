@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -45,6 +46,7 @@ public class CurationDatabaseReaderTest {
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
+        assertMedicationTypeConfigs(database.medicationTypeConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
         assertAllergyTranslations(database.allergyTranslations());
@@ -159,6 +161,14 @@ public class CurationDatabaseReaderTest {
         assertTrue(config2.unit().isEmpty());
         assertTrue(config2.frequencyUnit().isEmpty());
         assertNull(config2.ifNeeded());
+    }
+
+    private static void assertMedicationTypeConfigs(@NotNull List<MedicationTypeConfig> configs) {
+        assertEquals(1, configs.size());
+
+        MedicationTypeConfig config = configs.get(0);
+        assertEquals("Paracetamol", config.input());
+        assertEquals("Acetanilide derivatives", config.type());
     }
 
     @NotNull

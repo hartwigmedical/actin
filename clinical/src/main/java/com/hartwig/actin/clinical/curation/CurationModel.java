@@ -17,12 +17,14 @@ import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplica
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -228,7 +230,6 @@ public class CurationModel {
             LOGGER.warn(" Could not find medication dosage config for '{}'", input);
             return null;
         } else {
-            // Dosage should potentially become string
             return ImmutableMedication.builder()
                     .name(Strings.EMPTY)
                     .type(Strings.EMPTY)
@@ -238,6 +239,18 @@ public class CurationModel {
                     .frequencyUnit(config.frequencyUnit())
                     .ifNeeded(config.ifNeeded())
                     .build();
+        }
+    }
+
+    @NotNull
+    public Medication annotateWithMedicationType(@NotNull Medication medication) {
+        MedicationTypeConfig config = find(database.medicationTypeConfigs(), medication.name());
+
+        if (config == null) {
+            LOGGER.warn(" Could not find medication type config for '{}'", medication.name());
+            return medication;
+        } else {
+            return ImmutableMedication.builder().from(medication).type(config.type()).build();
         }
     }
 
@@ -334,6 +347,8 @@ public class CurationModel {
             return database.toxicityConfigs();
         } else if (classToLookUp == ImmutableMedicationDosageConfig.class) {
             return database.medicationDosageConfigs();
+        } else if (classToLookUp == ImmutableMedicationTypeConfig.class) {
+            return database.medicationTypeConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);

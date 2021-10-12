@@ -9,12 +9,14 @@ import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplica
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -56,6 +58,7 @@ public final class TestCurationFactory {
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
+                .medicationTypeConfigs(createTestMedicationTypeConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
                 .allergyTranslations(createTestAllergyTranslations())
                 .build();
@@ -166,7 +169,10 @@ public final class TestCurationFactory {
     private static List<MedicationDosageConfig> createTestMedicationDosageConfigs() {
         List<MedicationDosageConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableMedicationDosageConfig.builder().input("50-60 mg per day").dosageMin(50D).dosageMax(60D)
+        configs.add(ImmutableMedicationDosageConfig.builder()
+                .input("50-60 mg per day")
+                .dosageMin(50D)
+                .dosageMax(60D)
                 .unit("mg")
                 .frequencyUnit("day")
                 .ifNeeded(false)
@@ -176,10 +182,23 @@ public final class TestCurationFactory {
     }
 
     @NotNull
+    private static List<MedicationTypeConfig> createTestMedicationTypeConfigs() {
+        List<MedicationTypeConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableMedicationTypeConfig.builder().input("medication").type("type").build());
+
+        return configs;
+    }
+
+    @NotNull
     private static List<LaboratoryTranslation> createTestLaboratoryTranslations() {
         List<LaboratoryTranslation> translations = Lists.newArrayList();
 
-        translations.add(ImmutableLaboratoryTranslation.builder().code("CO").translatedCode("CODE").name("naam").translatedName("Name")
+        translations.add(ImmutableLaboratoryTranslation.builder()
+                .code("CO")
+                .translatedCode("CODE")
+                .name("naam")
+                .translatedName("Name")
                 .build());
 
         return translations;

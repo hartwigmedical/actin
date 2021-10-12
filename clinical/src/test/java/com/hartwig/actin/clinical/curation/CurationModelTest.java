@@ -17,6 +17,7 @@ import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ImmutableAllergy;
 import com.hartwig.actin.datamodel.clinical.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ImmutableLabValue;
+import com.hartwig.actin.datamodel.clinical.ImmutableMedication;
 import com.hartwig.actin.datamodel.clinical.LabValue;
 import com.hartwig.actin.datamodel.clinical.Medication;
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
@@ -168,10 +169,29 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canAnnotateWithMedicationType() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        Medication proper = ImmutableMedication.builder().name("medication").type(Strings.EMPTY).build();
+        Medication annotatedProper = model.annotateWithMedicationType(proper);
+        assertEquals("type", annotatedProper.type());
+
+        Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).type(Strings.EMPTY).build();
+        Medication annotatedEmpty = model.annotateWithMedicationType(empty);
+        assertEquals(empty, annotatedEmpty);
+
+        model.evaluate();
+    }
+
+    @Test
     public void canTranslateLaboratoryValues() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        LabValue test = ImmutableLabValue.builder().date(LocalDate.of(2020, 1, 1)).code("CO").name("naam").comparator(Strings.EMPTY)
+        LabValue test = ImmutableLabValue.builder()
+                .date(LocalDate.of(2020, 1, 1))
+                .code("CO")
+                .name("naam")
+                .comparator(Strings.EMPTY)
                 .value(0D)
                 .unit(Strings.EMPTY)
                 .isOutsideRef(false)
