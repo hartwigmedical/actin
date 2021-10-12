@@ -141,7 +141,7 @@ public final class TestQuestionnaireFactory {
                 + "Please make sure that these fields never contain non-anonimized data!\n"
                 + "\n"
                 + "Patient history\n"
-                + "Oncological: Cholangiocarcinoom (retroperitoneaal)\n"
+                + "Oncological: Cholangiocarcinoom (lever, lymph retroperitoneaal)\n"
                 + "Other: Diabetes Mellitus type 2\n"
                 + "\n"
                 + "Information\n"

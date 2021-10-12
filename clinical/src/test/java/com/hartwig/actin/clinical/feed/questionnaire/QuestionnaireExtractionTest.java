@@ -184,8 +184,8 @@ public class QuestionnaireExtractionTest {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertNull(questionnaire.tumorLocation());
-        assertNull(questionnaire.tumorType());
+        assertEquals("Cholangiocarcinoom (lever, lymph retroperitoneaal)", questionnaire.tumorLocation());
+        assertEquals("Unknown", questionnaire.tumorType());
         assertNull(questionnaire.biopsyLocation());
         assertNull(questionnaire.treatmentHistoryCurrentTumor());
         assertNull(questionnaire.otherOncologicalHistory());
@@ -204,7 +204,11 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertTrue(questionnaire.hasBoneLesions());
         assertTrue(questionnaire.hasLiverLesions());
-        assertNull(questionnaire.otherLesions());
+
+        List<String> otherLesions = questionnaire.otherLesions();
+        assertEquals(2, otherLesions.size());
+        assertTrue(otherLesions.contains("lever"));
+        assertTrue(otherLesions.contains("lymph retroperitoneaal"));
 
         assertEquals(1, (int) questionnaire.whoStatus());
 

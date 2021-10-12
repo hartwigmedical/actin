@@ -80,7 +80,7 @@ public final class QuestionnaireExtraction {
         return ImmutableQuestionnaire.builder()
                 .date(entry.authoredDateTime())
                 .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
-                .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
+                .tumorType(tumorType(entry, mapping))
                 .biopsyLocation(value(entry, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))
                 .stage(toStage(value(entry, mapping.get(QuestionnaireKey.STAGE))))
                 .treatmentHistoryCurrentTumor(toList(value(entry, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
@@ -95,7 +95,7 @@ public final class QuestionnaireExtraction {
                 .hasSymptomaticCnsLesions(hasSymptomaticCnsLesions)
                 .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
-                .otherLesions(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_LESIONS))))
+                .otherLesions(otherLesions(entry, mapping))
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
                 .unresolvedToxicities(toList(value(entry, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
                 .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
@@ -103,6 +103,35 @@ public final class QuestionnaireExtraction {
                 .significantAberrationLatestECG(significantAberrationLatestECG)
                 .cancerRelatedComplications(toList(value(entry, mapping.get(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS))))
                 .build();
+    }
+
+    @Nullable
+    private static String tumorType(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping) {
+        QuestionnaireVersion version = QuestionnaireVersion.version(entry);
+        if (version == QuestionnaireVersion.V0_1) {
+            // In v0.1 we have no field yet for tumor type.
+            return "Unknown";
+        } else {
+            return value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE));
+        }
+    }
+
+    @Nullable
+    private static List<String> otherLesions(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping) {
+        QuestionnaireVersion version = QuestionnaireVersion.version(entry);
+        if (version == QuestionnaireVersion.V0_1) {
+            //In v0.1, the format for primary tumor location is "$location ($otherLesions)"
+            String input = value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION));
+            if (input.contains("(") && input.contains(")")) {
+                int start = input.indexOf("(");
+                int end = input.indexOf(")");
+                return toList(input.substring(start + 1, end));
+            } else {
+                return null;
+            }
+        } else {
+            return toList(value(entry, mapping.get(QuestionnaireKey.OTHER_LESIONS)));
+        }
     }
 
     @Nullable
