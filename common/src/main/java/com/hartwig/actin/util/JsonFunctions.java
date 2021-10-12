@@ -8,14 +8,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class JsonFunctions {
-
-    private static final Logger LOGGER = LogManager.getLogger(JsonFunctions.class);
 
     private JsonFunctions() {
     }

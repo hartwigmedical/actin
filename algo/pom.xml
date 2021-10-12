@@ -37,8 +37,8 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.algo.AlgoRunner
-                            </mainClass>
+                            <mainClass>com.hartwig.actin.algo.AlgoRunner</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
 

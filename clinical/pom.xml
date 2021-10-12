@@ -50,6 +50,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <mainClass>com.hartwig.actin.clinical.ClinicalIngestionApplication</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
 
