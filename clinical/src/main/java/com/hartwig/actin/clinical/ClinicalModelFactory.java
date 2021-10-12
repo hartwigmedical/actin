@@ -256,9 +256,9 @@ public class ClinicalModelFactory {
         List<Allergy> allergies = Lists.newArrayList();
         for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
             allergies.add(curation.translateAllergy(ImmutableAllergy.builder()
-                    .name(entry.codeText())
-                    .category(entry.category())
-                    .criticality(entry.criticality())
+                    .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
+                    .category(CurationUtil.capitalizeFirstLetterOnly(entry.category()))
+                    .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
                     .build()));
         }
         return allergies;

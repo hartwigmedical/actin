@@ -215,14 +215,14 @@ public class CurationModelTest {
     public void canTranslateAllergies() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Allergy test = ImmutableAllergy.builder().name("naam").category(Strings.EMPTY).criticality(Strings.EMPTY).build();
+        Allergy test = ImmutableAllergy.builder().name("Naam").category(Strings.EMPTY).criticality(Strings.EMPTY).build();
 
         Allergy translated = model.translateAllergy(test);
         assertEquals("Name", translated.name());
 
-        Allergy notExisting = ImmutableAllergy.builder().from(test).name("does not exist").build();
+        Allergy notExisting = ImmutableAllergy.builder().from(test).name("Does not exist").build();
         Allergy notExistingTranslated = model.translateAllergy(notExisting);
-        assertEquals("does not exist", notExistingTranslated.name());
+        assertEquals("Does not exist", notExistingTranslated.name());
 
         model.evaluate();
     }

@@ -119,9 +119,9 @@ public class ClinicalModelFactoryTest {
         assertEquals(1, allergies.size());
 
         Allergy allergy = allergies.get(0);
-        assertEquals("pills", allergy.name());
-        assertEquals("medication", allergy.category());
-        assertEquals("unknown", allergy.criticality());
+        assertEquals("Pills", allergy.name());
+        assertEquals("Medication", allergy.category());
+        assertEquals("Unknown", allergy.criticality());
     }
 
     private static void assertSurgeries(@NotNull List<Surgery> surgeries) {

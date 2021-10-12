@@ -46,7 +46,7 @@ public final class OncologicalHistoryConfigFile {
 
     @NotNull
     private static Object curateObject(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
-        if (parts[fieldIndexMap.get("category")].equals(SECOND_PRIMARY_STRING)) {
+        if (parts[fieldIndexMap.get("category")].equalsIgnoreCase(SECOND_PRIMARY_STRING)) {
             return ImmutablePriorSecondPrimary.builder()
                     .tumorLocation(parts[fieldIndexMap.get("tumorLocation")])
                     .tumorSubLocation(parts[fieldIndexMap.get("tumorSubLocation")])

@@ -297,14 +297,13 @@ public class CurationModel {
 
     @Nullable
     private AllergyTranslation findAllergyTranslation(@NotNull Allergy input) {
-        String reformattedName = CurationUtil.capitalizeFirstLetterOnly(input.name());
         for (AllergyTranslation entry : database.allergyTranslations()) {
-            if (entry.name().equals(reformattedName)) {
+            if (entry.name().equals(input.name())) {
                 return entry;
             }
         }
 
-        LOGGER.warn(" Could not find allergy translation for allergy with name '{}'", reformattedName);
+        LOGGER.warn(" Could not find allergy translation for allergy with name '{}'", input.name());
         return null;
     }
 
