@@ -18,6 +18,8 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
+import com.hartwig.actin.clinical.sort.LabValueComparator;
+import com.hartwig.actin.clinical.sort.MedicationComparator;
 import com.hartwig.actin.datamodel.ClinicalModel;
 import com.hartwig.actin.datamodel.clinical.Allergy;
 import com.hartwig.actin.datamodel.clinical.BloodPressure;
@@ -220,6 +222,9 @@ public class ClinicalModelFactory {
         for (LabEntry entry : feed.labEntries(subject)) {
             values.add(curation.translateLabValue(LabExtraction.extract(entry)));
         }
+
+        values.sort(new LabValueComparator());
+
         return values;
     }
 
@@ -306,6 +311,9 @@ public class ClinicalModelFactory {
                 medications.add(curation.annotateWithMedicationType(medication));
             }
         }
+
+        medications.sort(new MedicationComparator());
+
         return medications;
     }
 }
