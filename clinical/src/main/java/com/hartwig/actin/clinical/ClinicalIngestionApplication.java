@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical;
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.datamodel.ClinicalModelFile;
+import com.hartwig.actin.datamodel.ClinicalRecordFile;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 
 import org.apache.commons.cli.DefaultParser;
@@ -49,11 +49,11 @@ public class ClinicalIngestionApplication {
         String curationDirectory = config.curationDirectory();
 
         LOGGER.info("Creating clinical model from feed directory {} and curation direction {}", feedDirectory, curationDirectory);
-        List<ClinicalRecord> records = ClinicalModelFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
+        List<ClinicalRecord> records = ClinicalRecordFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
 
         String outputDirectory = config.outputDirectory();
         LOGGER.info("Writing {} clinical records to {}", records.size(), outputDirectory);
-        ClinicalModelFile.write(records, outputDirectory);
+        ClinicalRecordFile.write(records, outputDirectory);
 
         LOGGER.info("Done!");
     }

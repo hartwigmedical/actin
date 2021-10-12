@@ -74,11 +74,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class ClinicalModelFile {
+public final class ClinicalRecordFile {
 
-    private static final Logger LOGGER = LogManager.getLogger(ClinicalModelFile.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalRecordFile.class);
 
-    private ClinicalModelFile() {
+    private ClinicalRecordFile() {
     }
 
     public static void write(@NotNull List<ClinicalRecord> records, @NotNull String outputDirectory) throws IOException {

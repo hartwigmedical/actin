@@ -10,25 +10,25 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 
 import org.junit.Test;
 
-public class ClinicalModelFileTest {
+public class ClinicalRecordFileTest {
 
     private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
 
     @Test
     public void canConvertBackAndForthJson() throws IOException {
         // TODO Define model in-memory
-        List<ClinicalRecord> records = ClinicalModelFile.read(CLINICAL_DIRECTORY);
+        List<ClinicalRecord> records = ClinicalRecordFile.read(CLINICAL_DIRECTORY);
 
         ClinicalRecord original = records.get(0);
-        String json = ClinicalModelFile.toJson(original);
-        ClinicalRecord convertedRecord = ClinicalModelFile.fromJson(json);
+        String json = ClinicalRecordFile.toJson(original);
+        ClinicalRecord convertedRecord = ClinicalRecordFile.fromJson(json);
 
         assertEquals(original, convertedRecord);
     }
 
     @Test
-    public void canReadClinicalModelFile() throws IOException {
-        List<ClinicalRecord> records = ClinicalModelFile.read(CLINICAL_DIRECTORY);
+    public void canReadClinicalRecordDirectory() throws IOException {
+        List<ClinicalRecord> records = ClinicalRecordFile.read(CLINICAL_DIRECTORY);
         assertEquals(1, records.size());
 
         ClinicalRecord record = records.get(0);

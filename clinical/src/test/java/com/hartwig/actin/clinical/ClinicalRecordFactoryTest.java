@@ -29,7 +29,7 @@ import com.hartwig.actin.datamodel.clinical.TumorStage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class ClinicalModelFactoryTest {
+public class ClinicalRecordFactoryTest {
 
     private static final String FEED_DIRECTORY = Resources.getResource("feed").getPath();
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
@@ -40,11 +40,11 @@ public class ClinicalModelFactoryTest {
 
     @Test
     public void canCreateFromFeedAndCurationDirectories() throws IOException {
-        assertNotNull(ClinicalModelFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
+        assertNotNull(ClinicalRecordFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
     }
 
     @Test
-    public void canCreateClinicalModelFromMinimalTestData() {
+    public void canCreateClinicalRecordsFromMinimalTestData() {
         List<ClinicalRecord> records = createMinimalTestClinicalRecords();
 
         assertEquals(1, records.size());
@@ -52,7 +52,7 @@ public class ClinicalModelFactoryTest {
     }
 
     @Test
-    public void canCreateClinicalModelFromProperTestData() {
+    public void canCreateClinicalRecordsFromProperTestData() {
         List<ClinicalRecord> records = createProperTestClinicalRecords();
 
         assertEquals(1, records.size());
@@ -158,13 +158,13 @@ public class ClinicalModelFactoryTest {
 
     @NotNull
     private static List<ClinicalRecord> createMinimalTestClinicalRecords() {
-        return new ClinicalModelFactory(TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationModel()).create();
+        return new ClinicalRecordFactory(TestFeedFactory.createMinimalTestFeedModel(), TestCurationFactory.createMinimalTestCurationModel())
+                .create();
     }
 
     @NotNull
     private static List<ClinicalRecord> createProperTestClinicalRecords() {
-        return new ClinicalModelFactory(TestFeedFactory.createProperTestFeedModel(),
+        return new ClinicalRecordFactory(TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel()).create();
     }
 }
