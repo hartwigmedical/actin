@@ -21,7 +21,7 @@ public class CurationUtilTest {
     public void canCapitalizeFirstLetter() {
         assertEquals("Hi", CurationUtil.capitalizeFirstLetter("hi"));
         assertEquals("Hi", CurationUtil.capitalizeFirstLetter("Hi"));
-        assertEquals("HI", CurationUtil.capitalizeFirstLetter("hI"));
+        assertEquals("Hi", CurationUtil.capitalizeFirstLetter("hI"));
         assertEquals("H", CurationUtil.capitalizeFirstLetter("h"));
         assertEquals("H", CurationUtil.capitalizeFirstLetter("H"));
 

@@ -294,8 +294,8 @@ public class ClinicalModelFactory {
                 builder = builder.from(dosageCurated);
             }
 
-            String name = entry.code5ATCDisplay();
-            if (!name.isEmpty() && !name.equals("NULL")) {
+            String name = CurationUtil.capitalizeFirstLetter(entry.code5ATCDisplay());
+            if (!name.isEmpty() && !name.equalsIgnoreCase("null")) {
                 Medication medication = builder.name(name)
                         .type(Strings.EMPTY)
                         .startDate(entry.periodOfUseValuePeriodStart())
