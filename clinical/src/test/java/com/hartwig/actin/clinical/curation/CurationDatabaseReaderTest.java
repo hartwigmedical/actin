@@ -198,7 +198,7 @@ public class CurationDatabaseReaderTest {
         assertEquals(1, translations.size());
 
         AllergyTranslation translation = translations.get(0);
-        assertEquals("SIMVASTATINE", translation.name());
+        assertEquals("Simvastatine", translation.name());
         assertEquals("Simvastatin", translation.translatedName());
     }
 

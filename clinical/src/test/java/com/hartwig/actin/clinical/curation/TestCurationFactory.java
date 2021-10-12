@@ -211,8 +211,8 @@ public final class TestCurationFactory {
     private static List<AllergyTranslation> createTestAllergyTranslations() {
         List<AllergyTranslation> translations = Lists.newArrayList();
 
-        translations.add(ImmutableAllergyTranslation.builder().name("naam").translatedName("Name").build());
-        translations.add(ImmutableAllergyTranslation.builder().name("not used").translatedName("never used").build());
+        translations.add(ImmutableAllergyTranslation.builder().name("Naam").translatedName("Name").build());
+        translations.add(ImmutableAllergyTranslation.builder().name("Not used").translatedName("never used").build());
 
         return translations;
     }
@@ -221,8 +221,8 @@ public final class TestCurationFactory {
     private static List<BloodTransfusionTranslation> createTestBloodTransfusionTranslations() {
         List<BloodTransfusionTranslation> translations = Lists.newArrayList();
 
-        translations.add(ImmutableBloodTransfusionTranslation.builder().product("product").translatedProduct("Product").build());
-        translations.add(ImmutableBloodTransfusionTranslation.builder().product("not used").translatedProduct("never used").build());
+        translations.add(ImmutableBloodTransfusionTranslation.builder().product("Product").translatedProduct("Translated product").build());
+        translations.add(ImmutableBloodTransfusionTranslation.builder().product("Not used").translatedProduct("never used").build());
 
         return translations;
     }

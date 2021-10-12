@@ -231,10 +231,10 @@ public class CurationModelTest {
     public void canTranslateBloodTransfusions() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        BloodTransfusion test = ImmutableBloodTransfusion.builder().date(LocalDate.of(2019, 9, 9)).product("product").build();
+        BloodTransfusion test = ImmutableBloodTransfusion.builder().date(LocalDate.of(2019, 9, 9)).product("Product").build();
 
         BloodTransfusion translated = model.translateBloodTransfusion(test);
-        assertEquals("Product", translated.product());
+        assertEquals("Translated product", translated.product());
 
         BloodTransfusion notExisting = ImmutableBloodTransfusion.builder().from(test).product("does not exist").build();
         BloodTransfusion notExistingTranslated = model.translateBloodTransfusion(notExisting);
