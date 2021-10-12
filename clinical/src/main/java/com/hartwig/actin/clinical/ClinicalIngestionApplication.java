@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical;
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.datamodel.ClinicalRecordFile;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.serialization.ClinicalRecordFile;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;

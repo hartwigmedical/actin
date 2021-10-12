@@ -1,4 +1,4 @@
-package com.hartwig.actin.datamodel;
+package com.hartwig.actin.serialization;
 
 import static org.junit.Assert.assertEquals;
 

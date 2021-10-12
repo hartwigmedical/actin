@@ -1,4 +1,4 @@
-package com.hartwig.actin.datamodel;
+package com.hartwig.actin.serialization;
 
 import static com.hartwig.actin.util.JsonFunctions.array;
 import static com.hartwig.actin.util.JsonFunctions.bool;
