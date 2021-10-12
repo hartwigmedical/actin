@@ -32,6 +32,6 @@ public class QuestionnaireReaderTest {
 
         lines = QuestionnaireReader.read(entry3);
         assertEquals(6, lines.length);
-        assertEquals("value4: 6, 7", lines[5]);
+        assertEquals("value4: 6,7", lines[5]);
     }
 }

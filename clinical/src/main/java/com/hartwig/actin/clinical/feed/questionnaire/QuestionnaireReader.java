@@ -46,11 +46,11 @@ final class QuestionnaireReader {
     private static String[] merge(@NotNull String[] lines) {
         List<String> merged = Lists.newArrayList();
 
-        StringJoiner curLine = new StringJoiner(", ");
+        StringJoiner curLine = newValueStringJoiner();
         for (int i = 0; i < lines.length; i++) {
             if (!(i == 0 || hasValue(lines[i - 1]) && !hasValue(lines[i]) && (i == lines.length - 1 || hasValue(lines[i + 1])))) {
                 merged.add(curLine.toString());
-                curLine = new StringJoiner(", ");
+                curLine = newValueStringJoiner();
             }
             curLine.add(lines[i]);
         }
@@ -65,6 +65,11 @@ final class QuestionnaireReader {
 
     private static boolean hasValue(@NotNull String line) {
         return line.contains(QuestionnaireExtraction.KEY_VALUE_SEPARATOR);
+    }
+
+    @NotNull
+    private static StringJoiner newValueStringJoiner() {
+        return new StringJoiner(QuestionnaireExtraction.VALUE_LIST_SEPARATOR_1);
     }
 
     @NotNull

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public final class QuestionnaireExtraction {
 
     static final String KEY_VALUE_SEPARATOR = ":";
-    private static final String VALUE_LIST_SEPARATOR_1 = ",";
+    static final String VALUE_LIST_SEPARATOR_1 = ",";
     private static final String VALUE_LIST_SEPARATOR_2 = ";";
 
     private static final String TOXICITY_DESCRIPTION = "ONC Kuuroverzicht";
