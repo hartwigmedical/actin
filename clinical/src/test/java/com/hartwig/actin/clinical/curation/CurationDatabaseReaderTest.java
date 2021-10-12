@@ -20,6 +20,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
+import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
 import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
@@ -50,6 +51,7 @@ public class CurationDatabaseReaderTest {
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
         assertAllergyTranslations(database.allergyTranslations());
+        assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
     }
 
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
@@ -198,5 +200,13 @@ public class CurationDatabaseReaderTest {
         AllergyTranslation translation = translations.get(0);
         assertEquals("SIMVASTATINE", translation.name());
         assertEquals("Simvastatin", translation.translatedName());
+    }
+
+    private static void assertBloodTransfusionTranslations(@NotNull List<BloodTransfusionTranslation> translations) {
+        assertEquals(1, translations.size());
+
+        BloodTransfusionTranslation translation = translations.get(0);
+        assertEquals("Thrombocytenconcentraat", translation.product());
+        assertEquals("Thrombocyte concentrate", translation.translatedProduct());
     }
 }

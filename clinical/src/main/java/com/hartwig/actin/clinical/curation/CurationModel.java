@@ -30,11 +30,14 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
+import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.datamodel.clinical.Allergy;
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion;
 import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ImmutableAllergy;
+import com.hartwig.actin.datamodel.clinical.ImmutableBloodTransfusion;
 import com.hartwig.actin.datamodel.clinical.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ImmutableLabValue;
 import com.hartwig.actin.datamodel.clinical.ImmutableMedication;
@@ -302,6 +305,30 @@ public class CurationModel {
         return null;
     }
 
+    @NotNull
+    public BloodTransfusion translateBloodTransfusion(@NotNull BloodTransfusion input) {
+        BloodTransfusionTranslation translation = findBloodTransfusionTranslation(input);
+
+        if (translation != null) {
+            evaluatedTranslations.put(BloodTransfusionTranslation.class, translation);
+            return ImmutableBloodTransfusion.builder().from(input).product(translation.translatedProduct()).build();
+        } else {
+            return input;
+        }
+    }
+
+    @Nullable
+    private BloodTransfusionTranslation findBloodTransfusionTranslation(@NotNull BloodTransfusion input) {
+        for (BloodTransfusionTranslation entry : database.bloodTransfusionTranslations()) {
+            if (entry.product().equals(input.product())) {
+                return entry;
+            }
+        }
+
+        LOGGER.warn(" Could not find blood transfusion translation for blood transfusion with product '{}'", input.product());
+        return null;
+    }
+
     public void evaluate() {
         int warnCount = 0;
         for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedCurationInputs.asMap().entrySet()) {
@@ -360,6 +387,8 @@ public class CurationModel {
             return database.laboratoryTranslations();
         } else if (classToLookup == AllergyTranslation.class) {
             return database.allergyTranslations();
+        } else if (classToLookup == BloodTransfusionTranslation.class) {
+            return database.bloodTransfusionTranslations();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookup);

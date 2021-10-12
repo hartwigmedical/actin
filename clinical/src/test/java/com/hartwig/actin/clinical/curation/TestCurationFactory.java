@@ -22,7 +22,9 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
+import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableAllergyTranslation;
+import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.datamodel.clinical.ImmutablePriorOtherCondition;
@@ -61,6 +63,7 @@ public final class TestCurationFactory {
                 .medicationTypeConfigs(createTestMedicationTypeConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
                 .allergyTranslations(createTestAllergyTranslations())
+                .bloodTransfusionTranslations(createTestBloodTransfusionTranslations())
                 .build();
     }
 
@@ -210,6 +213,16 @@ public final class TestCurationFactory {
 
         translations.add(ImmutableAllergyTranslation.builder().name("naam").translatedName("Name").build());
         translations.add(ImmutableAllergyTranslation.builder().name("not used").translatedName("never used").build());
+
+        return translations;
+    }
+
+    @NotNull
+    private static List<BloodTransfusionTranslation> createTestBloodTransfusionTranslations() {
+        List<BloodTransfusionTranslation> translations = Lists.newArrayList();
+
+        translations.add(ImmutableBloodTransfusionTranslation.builder().product("product").translatedProduct("Product").build());
+        translations.add(ImmutableBloodTransfusionTranslation.builder().product("not used").translatedProduct("never used").build());
 
         return translations;
     }

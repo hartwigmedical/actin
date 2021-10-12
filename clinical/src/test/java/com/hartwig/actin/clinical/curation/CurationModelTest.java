@@ -13,8 +13,10 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.hartwig.actin.datamodel.clinical.Allergy;
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion;
 import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ImmutableAllergy;
+import com.hartwig.actin.datamodel.clinical.ImmutableBloodTransfusion;
 import com.hartwig.actin.datamodel.clinical.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ImmutableLabValue;
 import com.hartwig.actin.datamodel.clinical.ImmutableMedication;
@@ -221,6 +223,22 @@ public class CurationModelTest {
         Allergy notExisting = ImmutableAllergy.builder().from(test).name("does not exist").build();
         Allergy notExistingTranslated = model.translateAllergy(notExisting);
         assertEquals("does not exist", notExistingTranslated.name());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canTranslateBloodTransfusions() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        BloodTransfusion test = ImmutableBloodTransfusion.builder().date(LocalDate.of(2019, 9, 9)).product("product").build();
+
+        BloodTransfusion translated = model.translateBloodTransfusion(test);
+        assertEquals("Product", translated.product());
+
+        BloodTransfusion notExisting = ImmutableBloodTransfusion.builder().from(test).product("does not exist").build();
+        BloodTransfusion notExistingTranslated = model.translateBloodTransfusion(notExisting);
+        assertEquals("does not exist", notExistingTranslated.product());
 
         model.evaluate();
     }
