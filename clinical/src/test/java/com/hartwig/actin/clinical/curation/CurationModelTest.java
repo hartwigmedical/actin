@@ -172,9 +172,9 @@ public class CurationModelTest {
     public void canAnnotateWithMedicationType() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Medication proper = ImmutableMedication.builder().name("medication").type(Strings.EMPTY).build();
+        Medication proper = ImmutableMedication.builder().name("Paracetamol").type(Strings.EMPTY).build();
         Medication annotatedProper = model.annotateWithMedicationType(proper);
-        assertEquals("type", annotatedProper.type());
+        assertEquals("Acetanilide derivatives", annotatedProper.type());
 
         Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).type(Strings.EMPTY).build();
         Medication annotatedEmpty = model.annotateWithMedicationType(empty);

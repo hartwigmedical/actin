@@ -185,7 +185,7 @@ public final class TestCurationFactory {
     private static List<MedicationTypeConfig> createTestMedicationTypeConfigs() {
         List<MedicationTypeConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableMedicationTypeConfig.builder().input("medication").type("type").build());
+        configs.add(ImmutableMedicationTypeConfig.builder().input("Paracetamol").type("Acetanilide derivatives").build());
 
         return configs;
     }

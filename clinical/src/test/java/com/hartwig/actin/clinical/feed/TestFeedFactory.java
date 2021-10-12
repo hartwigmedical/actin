@@ -140,7 +140,7 @@ public final class TestFeedFactory {
                 .categoryMedicationRequestCategoryDisplay(Strings.EMPTY)
                 .categoryMedicationRequestCategoryCodeOriginal(Strings.EMPTY);
 
-        entries.add(builder.code5ATCDisplay("paracetamol")
+        entries.add(builder.code5ATCDisplay("Paracetamol")
                 .dosageInstructionText("50-60 mg per day")
                 .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
                 .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))

@@ -296,11 +296,13 @@ public class ClinicalModelFactory {
 
             String name = entry.code5ATCDisplay();
             if (!name.isEmpty() && !name.equals("NULL")) {
-                medications.add(builder.name(entry.code5ATCDisplay())
+                Medication medication = builder.name(name)
                         .type(Strings.EMPTY)
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
-                        .build());
+                        .build();
+
+                medications.add(curation.annotateWithMedicationType(medication));
             }
         }
         return medications;
