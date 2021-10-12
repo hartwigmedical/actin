@@ -300,6 +300,7 @@ public class ClinicalModelFactory {
                         .type(Strings.EMPTY)
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
+                        .active(entry.active())
                         .build();
 
                 medications.add(curation.annotateWithMedicationType(medication));

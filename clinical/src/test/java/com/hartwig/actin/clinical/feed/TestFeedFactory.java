@@ -132,7 +132,6 @@ public final class TestFeedFactory {
                 .dosageInstructionPeriodBetweenDosagesUnit(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesValue(0D)
                 .status(Strings.EMPTY)
-                .active(Strings.EMPTY)
                 .dosageDoseValue(Strings.EMPTY)
                 .dosageRateQuantityUnit(Strings.EMPTY)
                 .dosageDoseUnitDisplayOriginal(Strings.EMPTY)
@@ -144,12 +143,14 @@ public final class TestFeedFactory {
                 .dosageInstructionText("50-60 mg per day")
                 .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
                 .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
+                .active(true)
                 .build());
 
         entries.add(builder.code5ATCDisplay("NULL")
                 .dosageInstructionText("Irrelevant")
                 .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
                 .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
+                .active(false)
                 .build());
 
         return entries;

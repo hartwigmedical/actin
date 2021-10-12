@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -133,7 +134,7 @@ public class ClinicalFeedReaderTest {
         assertEquals(0, entry.dosageInstructionPeriodBetweenDosagesValue(), EPSILON);
         assertEquals("200 milligram inlooptijd: 30 minuten, via 0,2 um filter", entry.dosageInstructionText());
         assertTrue(entry.status().isEmpty());
-        assertTrue(entry.active().isEmpty());
+        assertFalse(entry.active());
         assertTrue(entry.dosageDoseValue().isEmpty());
         assertTrue(entry.dosageRateQuantityUnit().isEmpty());
         assertTrue(entry.dosageDoseUnitDisplayOriginal().isEmpty());

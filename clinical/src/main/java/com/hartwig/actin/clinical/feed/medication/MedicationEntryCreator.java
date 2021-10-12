@@ -3,10 +3,12 @@ package com.hartwig.actin.clinical.feed.medication;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry> {
 
@@ -38,7 +40,7 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
                         "dosageInstruction_period_between_dosages_value")]))
                 .dosageInstructionText(parts[fieldIndexMap.get("dosageInstruction_text")])
                 .status(parts[fieldIndexMap.get("status")])
-                .active(parts[fieldIndexMap.get("active")])
+                .active(isActive(parts[fieldIndexMap.get("active")]))
                 .dosageDoseValue(parts[fieldIndexMap.get("dosage_dose_value")])
                 .dosageRateQuantityUnit(parts[fieldIndexMap.get("dosage_rateQuantity_unit")])
                 .dosageDoseUnitDisplayOriginal(parts[fieldIndexMap.get("dosage_dose_unit_display_original")])
@@ -50,6 +52,12 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
                 .categoryMedicationRequestCategoryDisplay(parts[fieldIndexMap.get("category_medicationRequestCategory_display")])
                 .categoryMedicationRequestCategoryCodeOriginal(parts[fieldIndexMap.get("category_medicationRequestCategory_code_original")])
                 .build();
+    }
+
+    @Nullable
+    @VisibleForTesting
+    static Boolean isActive(@NotNull String activeField) {
+        return !activeField.equalsIgnoreCase("null") ? activeField.equals("active") : null;
     }
 
     @NotNull

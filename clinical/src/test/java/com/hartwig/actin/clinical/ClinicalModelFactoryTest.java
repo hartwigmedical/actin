@@ -154,6 +154,7 @@ public class ClinicalModelFactoryTest {
         assertFalse(medication.ifNeeded());
         assertEquals(LocalDate.of(2019, 2, 2), medication.startDate());
         assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate());
+        assertTrue(medication.active());
     }
 
     @NotNull

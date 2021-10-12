@@ -63,8 +63,8 @@ public abstract class MedicationEntry implements FeedEntry {
     @NotNull
     public abstract String status();
 
-    @NotNull
-    public abstract String active();
+    @Nullable
+    public abstract Boolean active();
 
     @NotNull
     public abstract String dosageDoseValue();
