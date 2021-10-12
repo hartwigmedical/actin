@@ -175,6 +175,11 @@ public class CurationModel {
                     .name(config != null ? config.name() : input)
                     .build());
         }
+
+        // Add an entry if there is nothing known about cancer related complications.
+        if (cancerRelatedComplications.isEmpty()) {
+            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("Unknown").build());
+        }
         return cancerRelatedComplications;
     }
 
