@@ -2,20 +2,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hartwig</groupId>
+    <groupId>com.hartwig.actin</groupId>
     <artifactId>actin</artifactId>
     <packaging>pom</packaging>
     <version>local-SNAPSHOT</version>
     <name>HMF ACTIN</name>
 
     <modules>
-        <module>actin-common</module>
-        <module>actin-clinical</module>
-        <module>actin-treatment</module>
-        <module>actin-database</module>
-        <module>actin-algo</module>
-        <module>actin-report</module>
-        <module>actin-system</module>
+        <module>common</module>
+        <module>database</module>
+        <module>clinical</module>
+        <module>treatment</module>
+        <module>algo</module>
+        <module>report</module>
+        <module>system</module>
     </modules>
 
     <properties>
@@ -66,33 +66,33 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>actin-common</artifactId>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>common</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>actin-clinical</artifactId>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>clinical</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>actin-treatment</artifactId>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>treatment</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>actin-database</artifactId>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>database</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>actin-algo</artifactId>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>algo</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>actin-report</artifactId>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>report</artifactId>
                 <version>${actin.version}</version>
             </dependency>
 

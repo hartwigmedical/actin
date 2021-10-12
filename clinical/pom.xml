@@ -4,19 +4,19 @@
 
     <parent>
         <artifactId>actin</artifactId>
-        <groupId>com.hartwig</groupId>
+        <groupId>com.hartwig.actin</groupId>
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>actin-report</artifactId>
+    <artifactId>clinical</artifactId>
     <packaging>jar</packaging>
     <version>${actin.version}</version>
-    <name>HMF ACTIN - Report</name>
+    <name>HMF ACTIN - Clinical</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-common</artifactId>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>common</artifactId>
         </dependency>
 
         <dependency>
@@ -49,7 +49,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass></mainClass>
+                            <mainClass>com.hartwig.actin.clinical.ClinicalIngestionApplication</mainClass>
                         </manifest>
                     </archive>
 

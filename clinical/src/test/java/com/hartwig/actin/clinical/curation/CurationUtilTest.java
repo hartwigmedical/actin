@@ -30,7 +30,7 @@ public class CurationUtilTest {
     }
 
     @Test
-    public void canParseOptionalString() {
+    public void canParseStrings() {
         assertNull(CurationUtil.optionalString(Strings.EMPTY));
         assertEquals("hi", CurationUtil.optionalString("hi"));
     }

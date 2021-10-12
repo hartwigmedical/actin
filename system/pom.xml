@@ -4,19 +4,39 @@
 
     <parent>
         <artifactId>actin</artifactId>
-        <groupId>com.hartwig</groupId>
+        <groupId>com.hartwig.actin</groupId>
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>actin-algo</artifactId>
+    <artifactId>system</artifactId>
     <packaging>jar</packaging>
     <version>${actin.version}</version>
-    <name>HMF ACTIN - Algo</name>
+    <name>HMF ACTIN - System</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-common</artifactId>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>clinical</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>treatment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>database</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>algo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>report</artifactId>
         </dependency>
     </dependencies>
 
@@ -37,8 +57,8 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.algo.AlgoRunner
-                            </mainClass>
+                            <mainClass>com.hartwig.actin.system.SystemApplication</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
 

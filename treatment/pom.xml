@@ -4,31 +4,19 @@
 
     <parent>
         <artifactId>actin</artifactId>
-        <groupId>com.hartwig</groupId>
+        <groupId>com.hartwig.actin</groupId>
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>actin-clinical</artifactId>
+    <artifactId>treatment</artifactId>
     <packaging>jar</packaging>
     <version>${actin.version}</version>
-    <name>HMF ACTIN - Clinical</name>
+    <name>HMF ACTIN - Treatment</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>actin-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.immutables</groupId>
-            <artifactId>value</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>common</artifactId>
         </dependency>
     </dependencies>
 
@@ -49,7 +37,8 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.clinical.ClinicalIngestionApplication</mainClass>
+                            <mainClass>com.hartwig.actin.treatment.TreatmentLoader
+                            </mainClass>
                         </manifest>
                     </archive>
 

@@ -2,7 +2,7 @@
 
 ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described below.
 This clinical model is written to a per-sample json file. 
-See [ACTIN-Database](../actin-database/README.md) for how to load this model into a mysql database.
+See [Database](../database/README.md) for how to load this model into a mysql database.
 
 ACTIN-Clinical requires Java 11+ and can be run as follows: 
 
@@ -171,14 +171,14 @@ Field | Example Value | Details
 ---|---|---
 name | Simvastatin | Medication name
 type | Statins | Type of medication
-dosageMin | 20 | Assigned minimal dosis
-dosageMax | 40 | Assigned maximal dosis (dosageMin and dosageMax can be equal)
+dosageMin | 20 | Assigned minimal dosage
+dosageMax | 40 | Assigned maximal dosage (dosageMin and dosageMax can be equal)
 unit | mg | Dosage unit
 frequencyUnit | day | Frequency unit of dosage
 ifNeeded | 0 | Determines whether the medication should be taken according to dosage prescription or only "if needed"
 startDate | 2021-07-01 | Assigned start date of medication
 stopDate | | Assigned stop date of medication (if applicable)
-active | 1 | Medication is prescripted at time of latest EHR evaluation?
+active | 1 | Medication is prescribed at time of latest EHR evaluation?
 
 ## Version History and Download Links
  - Upcoming (first release) 
