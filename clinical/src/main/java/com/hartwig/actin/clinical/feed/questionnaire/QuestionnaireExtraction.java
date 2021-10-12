@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,8 +50,6 @@ public final class QuestionnaireExtraction {
             hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
             if (hasSignificantAberrationLatestECG == null) {
                 significantAberrationLatestECG = null;
-            } else if (!hasSignificantAberrationLatestECG) {
-                significantAberrationLatestECG = Strings.EMPTY;
             }
         }
 

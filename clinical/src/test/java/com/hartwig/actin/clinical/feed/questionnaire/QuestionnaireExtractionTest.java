@@ -123,7 +123,7 @@ public class QuestionnaireExtractionTest {
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertFalse(questionnaire.hasSignificantAberrationLatestECG());
-        assertTrue(questionnaire.significantAberrationLatestECG().isEmpty());
+        assertEquals("NA", questionnaire.significantAberrationLatestECG());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -215,7 +215,7 @@ public class QuestionnaireExtractionTest {
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
         assertFalse(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals(Strings.EMPTY, questionnaire.significantAberrationLatestECG());
+        assertEquals("No", questionnaire.significantAberrationLatestECG());
 
         assertTrue(questionnaire.cancerRelatedComplications().isEmpty());
     }
