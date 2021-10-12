@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.datamodel.TestDataFactory;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 
 import org.junit.Test;
@@ -15,15 +16,16 @@ public class ClinicalRecordFileTest {
     private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
 
     @Test
-    public void canConvertBackAndForthJson() throws IOException {
-        // TODO Define model in-memory
-        List<ClinicalRecord> records = ClinicalRecordFile.read(CLINICAL_DIRECTORY);
+    public void canConvertBackAndForthJson() {
+        ClinicalRecord minimal = TestDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord convertedMinimal = ClinicalRecordFile.fromJson(ClinicalRecordFile.toJson(minimal));
 
-        ClinicalRecord original = records.get(0);
-        String json = ClinicalRecordFile.toJson(original);
-        ClinicalRecord convertedRecord = ClinicalRecordFile.fromJson(json);
+        assertEquals(minimal, convertedMinimal);
 
-        assertEquals(original, convertedRecord);
+        ClinicalRecord proper = TestDataFactory.createProperTestClinicalRecord();
+        ClinicalRecord convertedProper = ClinicalRecordFile.fromJson(ClinicalRecordFile.toJson(proper));
+
+        assertEquals(proper, convertedProper);
     }
 
     @Test
