@@ -27,11 +27,11 @@ public class QuestionnaireReaderTest {
 
         QuestionnaireEntry entry3 = ImmutableQuestionnaireEntry.builder()
                 .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
-                .itemAnswerValueValueString("value1: x \nand y \nvalue2: z \n\nheader \nvalue3: 5 \nvalue4: 6 \nand 7")
+                .itemAnswerValueValueString("value1: x\nand y\nvalue2: z\n\nheader\nvalue3: 5\nvalue4: 6\n7")
                 .build();
 
         lines = QuestionnaireReader.read(entry3);
         assertEquals(6, lines.length);
-        assertEquals("value4: 6 and 7", lines[5]);
+        assertEquals("value4: 6, 7", lines[5]);
     }
 }

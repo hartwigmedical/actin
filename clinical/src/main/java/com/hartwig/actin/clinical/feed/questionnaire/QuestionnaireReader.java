@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -45,15 +46,15 @@ final class QuestionnaireReader {
     private static String[] merge(@NotNull String[] lines) {
         List<String> merged = Lists.newArrayList();
 
-        StringBuilder curLine = new StringBuilder(" ");
+        StringJoiner curLine = new StringJoiner(", ");
         for (int i = 0; i < lines.length; i++) {
             if (!(i == 0 || hasValue(lines[i - 1]) && !hasValue(lines[i]) && (i == lines.length - 1 || hasValue(lines[i + 1])))) {
-                merged.add(curLine.toString().trim());
-                curLine = new StringBuilder(" ");
+                merged.add(curLine.toString());
+                curLine = new StringJoiner(", ");
             }
-            curLine.append(lines[i]);
+            curLine.add(lines[i]);
         }
-        merged.add(curLine.toString().trim());
+        merged.add(curLine.toString());
 
         String[] mergedLines = new String[merged.size()];
         for (int j = 0; j < merged.size(); j++) {
