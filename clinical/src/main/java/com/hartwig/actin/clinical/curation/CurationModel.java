@@ -230,7 +230,8 @@ public class CurationModel {
         MedicationDosageConfig config = find(database.medicationDosageConfigs(), input);
 
         if (config == null) {
-            LOGGER.warn(" Could not find medication dosage config for '{}'", input);
+            // TODO Enable once curation rules have been cleaned up.
+            //            LOGGER.warn(" Could not find medication dosage config for '{}'", input);
             return null;
         } else {
             return ImmutableMedication.builder()
