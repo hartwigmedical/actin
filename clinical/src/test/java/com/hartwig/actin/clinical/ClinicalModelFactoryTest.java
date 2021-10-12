@@ -102,8 +102,8 @@ public class ClinicalModelFactoryTest {
     private static void assertClinicalStatus(@NotNull ClinicalStatus clinicalStatus) {
         assertEquals(0, (int) clinicalStatus.who());
         assertFalse(clinicalStatus.hasActiveInfection());
-        assertFalse(clinicalStatus.hasSigAberrationLatestEcg());
-        assertTrue(clinicalStatus.ecgAberrationDescription().isEmpty());
+        assertTrue(clinicalStatus.hasSigAberrationLatestEcg());
+        assertEquals("Sinus", clinicalStatus.ecgAberrationDescription());
     }
 
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {

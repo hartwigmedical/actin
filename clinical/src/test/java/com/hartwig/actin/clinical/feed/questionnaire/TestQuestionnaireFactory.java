@@ -54,7 +54,7 @@ public final class TestQuestionnaireFactory {
                 + "WHO status: 0\n"
                 + "Unresolved toxicities grade => 2:\n"
                 + "Significant current infection: No\n"
-                + "Significant aberration on latest ECG:\n"
+                + "Significant aberration on latest ECG: Sinus\n"
                 + "Cancer-related complications (e.g. pleural effusion): nausea";
         // @formatter:on
     }

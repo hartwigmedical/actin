@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.hartwig.actin.datamodel.clinical.TumorStage;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -68,8 +67,8 @@ public class QuestionnaireExtractionTest {
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertFalse(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals(Strings.EMPTY, questionnaire.significantAberrationLatestECG());
+        assertTrue(questionnaire.hasSignificantAberrationLatestECG());
+        assertEquals("Sinus", questionnaire.significantAberrationLatestECG());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -170,8 +169,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertFalse(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals(Strings.EMPTY, questionnaire.significantAberrationLatestECG());
+        assertNull(questionnaire.hasSignificantAberrationLatestECG());
+        assertNull(questionnaire.significantAberrationLatestECG());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());

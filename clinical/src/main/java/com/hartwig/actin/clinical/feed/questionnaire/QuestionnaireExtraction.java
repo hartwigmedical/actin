@@ -45,12 +45,15 @@ public final class QuestionnaireExtraction {
 
         String significantAberrationLatestECG = value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG));
 
-        Boolean hasSignificantAberrationLatestECG = significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty();
+        Boolean hasSignificantAberrationLatestECG = null;
         if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
             hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
-            if (hasSignificantAberrationLatestECG == null) {
-                significantAberrationLatestECG = null;
-            }
+        } else if (significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty()) {
+            hasSignificantAberrationLatestECG = true;
+        }
+
+        if (hasSignificantAberrationLatestECG == null) {
+            significantAberrationLatestECG = null;
         }
 
         Boolean hasBrainLesions = toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS)));
@@ -59,8 +62,8 @@ public final class QuestionnaireExtraction {
         if (hasBrainLesions != null) {
             hasActiveBrainLesions =
                     hasBrainLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)) : false;
-            hasSymptomaticBrainLesions = hasBrainLesions
-                    ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET))
+            hasSymptomaticBrainLesions =
+                    hasBrainLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET))
                     : false;
         }
 
