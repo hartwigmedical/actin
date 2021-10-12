@@ -11,8 +11,8 @@ public class MedicationEntryCreatorTest {
 
     @Test
     public void canInterpretActiveField() {
-        assertNull(MedicationEntryCreator.isActive("NULL"));
+        assertFalse(MedicationEntryCreator.isActive("NULL"));
         assertTrue(MedicationEntryCreator.isActive("active"));
-        assertFalse(MedicationEntryCreator.isActive(Strings.EMPTY));
+        assertNull(MedicationEntryCreator.isActive(Strings.EMPTY));
     }
 }
