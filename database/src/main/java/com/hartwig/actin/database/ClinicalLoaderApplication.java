@@ -2,10 +2,11 @@ package com.hartwig.actin.database;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.hartwig.actin.database.dao.DatabaseAccess;
-import com.hartwig.actin.datamodel.ClinicalModel;
 import com.hartwig.actin.datamodel.ClinicalModelFile;
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -47,12 +48,12 @@ public class ClinicalLoaderApplication {
 
     public void run() throws IOException, SQLException {
         LOGGER.info("Loading clinical model from {}", config.clinicalDirectory());
-        ClinicalModel model = ClinicalModelFile.read(config.clinicalDirectory());
-        LOGGER.info(" Loaded {} clinical records", model.records().size());
+        List<ClinicalRecord> records = ClinicalModelFile.read(config.clinicalDirectory());
+        LOGGER.info(" Loaded {} clinical records", records.size());
 
         DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());
-        LOGGER.info("Writing {} clinical records to database", model.records().size());
-        access.writeClinicalRecords(model.records());
+        LOGGER.info("Writing {} clinical records to database", records.size());
+        access.writeClinicalRecords(records);
 
         LOGGER.info("Done!");
     }

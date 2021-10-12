@@ -20,7 +20,6 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 import com.hartwig.actin.clinical.sort.LabValueComparator;
 import com.hartwig.actin.clinical.sort.MedicationComparator;
-import com.hartwig.actin.datamodel.ClinicalModel;
 import com.hartwig.actin.datamodel.clinical.Allergy;
 import com.hartwig.actin.datamodel.clinical.BloodPressure;
 import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
@@ -62,7 +61,7 @@ public class ClinicalModelFactory {
     private final CurationModel curation;
 
     @NotNull
-    public static ClinicalModel fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
+    public static List<ClinicalRecord> fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
             @NotNull String clinicalCurationDirectory) throws IOException {
         return new ClinicalModelFactory(FeedModel.fromFeedDirectory(clinicalFeedDirectory),
                 CurationModel.fromCurationDirectory(clinicalCurationDirectory)).create();
@@ -76,7 +75,7 @@ public class ClinicalModelFactory {
 
     @NotNull
     @VisibleForTesting
-    ClinicalModel create() {
+    List<ClinicalRecord> create() {
         List<ClinicalRecord> records = Lists.newArrayList();
         LOGGER.info("Creating clinical model");
         for (String subject : feed.subjects()) {
@@ -85,8 +84,7 @@ public class ClinicalModelFactory {
 
             Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
 
-            records.add(ImmutableClinicalRecord.builder()
-                    .sampleId(sampleId)
+            records.add(ImmutableClinicalRecord.builder().sampleId(sampleId)
                     .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
@@ -106,7 +104,7 @@ public class ClinicalModelFactory {
         LOGGER.info("Evaluating curation database");
         curation.evaluate();
 
-        return new ClinicalModel(records);
+        return records;
     }
 
     @NotNull

@@ -1,9 +1,9 @@
 package com.hartwig.actin.datamodel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
@@ -17,22 +17,23 @@ public class ClinicalModelFileTest {
     @Test
     public void canConvertBackAndForthJson() throws IOException {
         // TODO Define model in-memory
-        ClinicalModel model = ClinicalModelFile.read(CLINICAL_DIRECTORY);
+        List<ClinicalRecord> records = ClinicalModelFile.read(CLINICAL_DIRECTORY);
 
-        String json = ClinicalModelFile.toJson(model.records().get(0));
+        ClinicalRecord original = records.get(0);
+        String json = ClinicalModelFile.toJson(original);
         ClinicalRecord convertedRecord = ClinicalModelFile.fromJson(json);
 
-        assertEquals(model.records().get(0), convertedRecord);
+        assertEquals(original, convertedRecord);
     }
 
     @Test
     public void canReadClinicalModelFile() throws IOException {
-        ClinicalModel model = ClinicalModelFile.read(CLINICAL_DIRECTORY);
-        assertEquals(1, model.records().size());
+        List<ClinicalRecord> records = ClinicalModelFile.read(CLINICAL_DIRECTORY);
+        assertEquals(1, records.size());
 
-        ClinicalRecord record = model.findClinicalRecordForSample("ACTN01029999T");
-        assertNotNull(record);
+        ClinicalRecord record = records.get(0);
 
+        assertEquals("ACTN01029999T", record.sampleId());
         assertEquals(1, record.priorTumorTreatments().size());
         assertEquals(1, record.priorSecondPrimaries().size());
         assertEquals(1, record.priorOtherConditions().size());

@@ -81,11 +81,11 @@ public final class ClinicalModelFile {
     private ClinicalModelFile() {
     }
 
-    public static void write(@NotNull ClinicalModel model, @NotNull String outputDirectory) throws IOException {
+    public static void write(@NotNull List<ClinicalRecord> records, @NotNull String outputDirectory) throws IOException {
         String path = FileUtil.appendFileSeparator(outputDirectory);
-        for (ClinicalRecord record : model.records()) {
+        for (ClinicalRecord record : records) {
             String jsonFile = path + record.sampleId() + ".clinical.json";
-            LOGGER.info(" Writing data or {} to {}", record.sampleId(), jsonFile);
+            LOGGER.info(" Writing data for {} to {}", record.sampleId(), jsonFile);
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
             writer.write(toJson(record));
@@ -94,12 +94,12 @@ public final class ClinicalModelFile {
     }
 
     @NotNull
-    public static ClinicalModel read(@NotNull String clinicalDirectory) throws IOException {
+    public static List<ClinicalRecord> read(@NotNull String clinicalDirectory) throws IOException {
         List<ClinicalRecord> records = Lists.newArrayList();
         for (File file : new File(clinicalDirectory).listFiles()) {
             records.add(fromJson(Files.readString(file.toPath())));
         }
-        return new ClinicalModel(records);
+        return records;
     }
 
     @VisibleForTesting

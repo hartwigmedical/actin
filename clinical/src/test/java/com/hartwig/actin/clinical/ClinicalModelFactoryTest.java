@@ -13,7 +13,6 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
-import com.hartwig.actin.datamodel.ClinicalModel;
 import com.hartwig.actin.datamodel.clinical.Allergy;
 import com.hartwig.actin.datamodel.clinical.BloodPressure;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
@@ -46,20 +45,20 @@ public class ClinicalModelFactoryTest {
 
     @Test
     public void canCreateClinicalModelFromMinimalTestData() {
-        ClinicalModel model = createMinimalTestClinicalModel();
+        List<ClinicalRecord> records = createMinimalTestClinicalRecords();
 
-        assertEquals(1, model.records().size());
-        assertNotNull(model.findClinicalRecordForSample(TEST_SAMPLE));
+        assertEquals(1, records.size());
+        assertEquals(TEST_SAMPLE, records.get(0).sampleId());
     }
 
     @Test
     public void canCreateClinicalModelFromProperTestData() {
-        ClinicalModel model = createProperTestClinicalModel();
+        List<ClinicalRecord> records = createProperTestClinicalRecords();
 
-        assertEquals(1, model.records().size());
-        ClinicalRecord record = model.findClinicalRecordForSample(TEST_SAMPLE);
+        assertEquals(1, records.size());
+        ClinicalRecord record = records.get(0);
 
-        assertNotNull(record);
+        assertEquals(TEST_SAMPLE, record.sampleId());
         assertPatientDetails(record.patient());
         assertTumorDetails(record.tumor());
         assertClinicalStatus(record.clinicalStatus());
@@ -158,13 +157,13 @@ public class ClinicalModelFactoryTest {
     }
 
     @NotNull
-    private static ClinicalModel createMinimalTestClinicalModel() {
+    private static List<ClinicalRecord> createMinimalTestClinicalRecords() {
         return new ClinicalModelFactory(TestFeedFactory.createMinimalTestFeedModel(),
                 TestCurationFactory.createMinimalTestCurationModel()).create();
     }
 
     @NotNull
-    private static ClinicalModel createProperTestClinicalModel() {
+    private static List<ClinicalRecord> createProperTestClinicalRecords() {
         return new ClinicalModelFactory(TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel()).create();
     }
