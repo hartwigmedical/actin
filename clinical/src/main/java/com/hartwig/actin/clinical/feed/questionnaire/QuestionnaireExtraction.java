@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class QuestionnaireExtraction {
 
-    private static final String KEY_VALUE_SEPARATOR = ":";
+    static final String KEY_VALUE_SEPARATOR = ":";
     private static final String VALUE_LIST_SEPARATOR_1 = ",";
     private static final String VALUE_LIST_SEPARATOR_2 = ";";
 

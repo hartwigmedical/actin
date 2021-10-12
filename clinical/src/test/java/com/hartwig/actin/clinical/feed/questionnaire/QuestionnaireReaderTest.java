@@ -24,5 +24,14 @@ public class QuestionnaireReaderTest {
         String[] lines = QuestionnaireReader.read(entry2);
         assertEquals(2, lines.length);
         assertEquals(Strings.EMPTY, lines[0]);
+
+        QuestionnaireEntry entry3 = ImmutableQuestionnaireEntry.builder()
+                .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
+                .itemAnswerValueValueString("value1: x \nand y \nvalue2: z \n\nheader \nvalue3: 5 \nvalue4: 6 \nand 7")
+                .build();
+
+        lines = QuestionnaireReader.read(entry3);
+        assertEquals(6, lines.length);
+        assertEquals("value4: 6 and 7", lines[5]);
     }
 }
