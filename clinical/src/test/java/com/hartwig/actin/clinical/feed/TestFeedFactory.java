@@ -116,12 +116,11 @@ public final class TestFeedFactory {
     private static List<MedicationEntry> createTestMedicationEntries() {
         List<MedicationEntry> entries = Lists.newArrayList();
 
-        entries.add(ImmutableMedicationEntry.builder()
+        ImmutableMedicationEntry.Builder builder = ImmutableMedicationEntry.builder()
                 .subject(TEST_SUBJECT)
                 .medicationReferenceMedicationValue(Strings.EMPTY)
                 .medicationReferenceMedicationSystem(Strings.EMPTY)
                 .codeText(Strings.EMPTY)
-                .code5ATCDisplay("paracetamol")
                 .indicationDisplay(Strings.EMPTY)
                 .dosageInstructionDoseQuantityUnit(Strings.EMPTY)
                 .dosageInstructionDoseQuantityValue(0D)
@@ -132,17 +131,25 @@ public final class TestFeedFactory {
                 .dosageInstructionAsNeededDisplay(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesUnit(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesValue(0D)
-                .dosageInstructionText("50-60 mg per day")
                 .status(Strings.EMPTY)
                 .active(Strings.EMPTY)
                 .dosageDoseValue(Strings.EMPTY)
                 .dosageRateQuantityUnit(Strings.EMPTY)
                 .dosageDoseUnitDisplayOriginal(Strings.EMPTY)
-                .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
-                .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
                 .stopTypeDisplay(Strings.EMPTY)
                 .categoryMedicationRequestCategoryDisplay(Strings.EMPTY)
-                .categoryMedicationRequestCategoryCodeOriginal(Strings.EMPTY)
+                .categoryMedicationRequestCategoryCodeOriginal(Strings.EMPTY);
+
+        entries.add(builder.code5ATCDisplay("paracetamol")
+                .dosageInstructionText("50-60 mg per day")
+                .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
+                .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
+                .build());
+
+        entries.add(builder.code5ATCDisplay("NULL")
+                .dosageInstructionText("Irrelevant")
+                .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
+                .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
                 .build());
 
         return entries;

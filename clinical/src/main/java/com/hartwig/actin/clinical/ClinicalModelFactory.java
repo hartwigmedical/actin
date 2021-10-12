@@ -294,11 +294,14 @@ public class ClinicalModelFactory {
                 builder = builder.from(dosageCurated);
             }
 
-            medications.add(builder.name(entry.code5ATCDisplay())
-                    .type(Strings.EMPTY)
-                    .startDate(entry.periodOfUseValuePeriodStart())
-                    .stopDate(entry.periodOfUseValuePeriodEnd())
-                    .build());
+            String name = entry.code5ATCDisplay();
+            if (!name.isEmpty() && !name.equals("NULL")) {
+                medications.add(builder.name(entry.code5ATCDisplay())
+                        .type(Strings.EMPTY)
+                        .startDate(entry.periodOfUseValuePeriodStart())
+                        .stopDate(entry.periodOfUseValuePeriodEnd())
+                        .build());
+            }
         }
         return medications;
     }
