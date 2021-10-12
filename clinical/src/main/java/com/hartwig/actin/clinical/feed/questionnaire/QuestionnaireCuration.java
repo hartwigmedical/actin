@@ -81,10 +81,6 @@ final class QuestionnaireCuration {
     }
 
     public static boolean isConfiguredOption(@Nullable String option) {
-        if (option == null) {
-            return false;
-        }
-
         return OPTION_MAPPING.containsKey(option);
     }
 
