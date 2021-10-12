@@ -111,6 +111,7 @@ public class CurationModelTest {
 
         assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
 
+        // Add "Unknown" in case field is not filled in
         assertEquals(1, model.curateCancerRelatedComplications(Lists.newArrayList()).size());
 
         model.evaluate();
