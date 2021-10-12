@@ -18,15 +18,15 @@ public class CurationUtilTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canCapitalizeFirstLetter() {
-        assertEquals("Hi", CurationUtil.capitalizeFirstLetter("hi"));
-        assertEquals("Hi", CurationUtil.capitalizeFirstLetter("Hi"));
-        assertEquals("Hi", CurationUtil.capitalizeFirstLetter("hI"));
-        assertEquals("H", CurationUtil.capitalizeFirstLetter("h"));
-        assertEquals("H", CurationUtil.capitalizeFirstLetter("H"));
+    public void canCapitalizeFirstLetterOnly() {
+        assertEquals("Hi", CurationUtil.capitalizeFirstLetterOnly("hi"));
+        assertEquals("Hi", CurationUtil.capitalizeFirstLetterOnly("Hi"));
+        assertEquals("Hi", CurationUtil.capitalizeFirstLetterOnly("hI"));
+        assertEquals("H", CurationUtil.capitalizeFirstLetterOnly("h"));
+        assertEquals("H", CurationUtil.capitalizeFirstLetterOnly("H"));
 
-        assertEquals(Strings.EMPTY, CurationUtil.capitalizeFirstLetter(Strings.EMPTY));
-        assertNull(CurationUtil.capitalizeFirstLetter(null));
+        assertEquals(Strings.EMPTY, CurationUtil.capitalizeFirstLetterOnly(Strings.EMPTY));
+        assertNull(CurationUtil.capitalizeFirstLetterOnly(null));
     }
 
     @Test

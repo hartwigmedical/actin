@@ -20,7 +20,7 @@ public final class CurationUtil {
     }
 
     @Nullable
-    public static String capitalizeFirstLetter(@Nullable String string) {
+    public static String capitalizeFirstLetterOnly(@Nullable String string) {
         if (string == null) {
             return null;
         }

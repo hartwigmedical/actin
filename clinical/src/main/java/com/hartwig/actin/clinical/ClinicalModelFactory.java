@@ -294,7 +294,7 @@ public class ClinicalModelFactory {
                 builder = builder.from(dosageCurated);
             }
 
-            String name = CurationUtil.capitalizeFirstLetter(entry.code5ATCDisplay());
+            String name = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay());
             if (!name.isEmpty() && !name.equalsIgnoreCase("null")) {
                 Medication medication = builder.name(name)
                         .type(Strings.EMPTY)

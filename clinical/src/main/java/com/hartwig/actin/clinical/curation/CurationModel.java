@@ -219,7 +219,7 @@ public class CurationModel {
         LesionLocationConfig config = find(database.lesionLocationConfigs(), input);
 
         // Assume lesion locations can also be pass-through.
-        return config != null ? config.location() : CurationUtil.capitalizeFirstLetter(input);
+        return config != null ? config.location() : CurationUtil.capitalizeFirstLetterOnly(input);
     }
 
     @Nullable
