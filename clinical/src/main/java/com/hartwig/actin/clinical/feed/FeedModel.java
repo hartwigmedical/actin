@@ -85,6 +85,26 @@ public class FeedModel {
     }
 
     @NotNull
+    public List<EncounterEntry> uniqueEncounterEntries(@NotNull String subject) {
+        List<EncounterEntry> entries = Lists.newArrayList();
+        for (EncounterEntry entry : entriesForSubject(feed.encounterEntries(), subject)) {
+            if (isNewEncounter(entries, entry)) {
+                entries.add(entry);
+            }
+        }
+        return entries;
+    }
+
+    private static boolean isNewEncounter(@NotNull List<EncounterEntry> entries, @NotNull EncounterEntry entryToEvaluate) {
+        for (EncounterEntry entry : entries) {
+            if (entry.periodStart().equals(entryToEvaluate.periodStart()) && entry.periodEnd().equals(entry.periodEnd())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @NotNull
     public List<MedicationEntry> medicationEntries(@NotNull String subject) {
         return entriesForSubject(feed.medicationEntries(), subject);
     }

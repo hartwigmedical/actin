@@ -63,10 +63,10 @@ public class FeedModelTest {
     }
 
     @Test
-    public void canRetrieveEncounterEntries() {
+    public void canRetrieveUniqueEncounterEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
-        assertNotNull(model.encounterEntries(TestFeedFactory.TEST_SUBJECT));
+        assertEquals(1, model.uniqueEncounterEntries(TestFeedFactory.TEST_SUBJECT).size());
     }
 
     @Test

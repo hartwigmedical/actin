@@ -94,20 +94,20 @@ public final class TestFeedFactory {
     private static List<EncounterEntry> createTestEncounterEntries() {
         List<EncounterEntry> entries = Lists.newArrayList();
 
-        entries.add(ImmutableEncounterEntry.builder()
+        ImmutableEncounterEntry.Builder builder = ImmutableEncounterEntry.builder()
                 .subject(TEST_SUBJECT)
                 .type1Display(Strings.EMPTY)
                 .classDisplay("surgery")
-                .periodStart(LocalDate.of(2015, 10, 10))
-                .periodEnd(LocalDate.of(2015, 10, 10))
                 .identifierValue("ID")
                 .identifierSystem("URL")
                 .codeCodingCodeOriginal("code")
                 .codeCodingDisplayOriginal("diagnostics")
                 .presentedFormData(Strings.EMPTY)
                 .reason(Strings.EMPTY)
-                .accessionValue(Strings.EMPTY)
-                .build());
+                .accessionValue(Strings.EMPTY);
+
+        entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());
+        entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());
 
         return entries;
     }

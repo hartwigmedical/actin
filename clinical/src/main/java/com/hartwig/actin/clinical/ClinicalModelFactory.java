@@ -267,7 +267,7 @@ public class ClinicalModelFactory {
     @NotNull
     private List<Surgery> extractSurgeries(@NotNull String subject) {
         List<Surgery> surgeries = Lists.newArrayList();
-        for (EncounterEntry entry : feed.encounterEntries(subject)) {
+        for (EncounterEntry entry : feed.uniqueEncounterEntries(subject)) {
             surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).build());
         }
         return surgeries;
