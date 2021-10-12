@@ -105,8 +105,8 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertFalse(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
+        assertFalse(questionnaire.hasActiveCnsLesions());
+        assertFalse(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 

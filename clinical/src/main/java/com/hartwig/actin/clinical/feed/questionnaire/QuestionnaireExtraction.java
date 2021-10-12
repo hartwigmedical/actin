@@ -56,7 +56,29 @@ public final class QuestionnaireExtraction {
             }
         }
 
-        return ImmutableQuestionnaire.builder().date(entry.authoredDateTime())
+        Boolean hasBrainLesions = toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS)));
+        Boolean hasActiveBrainLesions = null;
+        Boolean hasSymptomaticBrainLesions = null;
+        if (hasBrainLesions != null) {
+            hasActiveBrainLesions =
+                    hasBrainLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)) : false;
+            hasSymptomaticBrainLesions = hasBrainLesions
+                    ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET))
+                    : false;
+        }
+
+        Boolean hasCnsLesions = toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS)));
+        Boolean hasActiveCnsLesions = null;
+        Boolean hasSymptomaticCnsLesions = null;
+        if (hasCnsLesions != null) {
+            hasActiveCnsLesions =
+                    hasCnsLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)) : false;
+            hasSymptomaticCnsLesions =
+                    hasCnsLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)) : false;
+        }
+
+        return ImmutableQuestionnaire.builder()
+                .date(entry.authoredDateTime())
                 .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
                 .tumorType(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
                 .biopsyLocation(value(entry, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))
@@ -65,14 +87,12 @@ public final class QuestionnaireExtraction {
                 .otherOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
                 .nonOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY))))
                 .hasMeasurableLesionRecist(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST))))
-                .hasBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS))))
-                .hasActiveBrainLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)))
-                .hasSymptomaticBrainLesions(toOption(value(entry,
-                        mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS),
-                        SYMPTOMATIC_LINE_OFFSET)))
-                .hasCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS))))
-                .hasActiveCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)))
-                .hasSymptomaticCnsLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)))
+                .hasBrainLesions(hasBrainLesions)
+                .hasActiveBrainLesions(hasActiveBrainLesions)
+                .hasSymptomaticBrainLesions(hasSymptomaticBrainLesions)
+                .hasCnsLesions(hasCnsLesions)
+                .hasActiveCnsLesions(hasActiveCnsLesions)
+                .hasSymptomaticCnsLesions(hasSymptomaticCnsLesions)
                 .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
                 .otherLesions(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_LESIONS))))
