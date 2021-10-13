@@ -8,7 +8,7 @@ public class ReportApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(ReportApplication.class);
 
-    private static final String VERSION = ReportApplication.class.getPackage().getImplementationVersion();
+    public static final String VERSION = ReportApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) {
         LOGGER.info("Running ACTIN Report v{}", VERSION);
