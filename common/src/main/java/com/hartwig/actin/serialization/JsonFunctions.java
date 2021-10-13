@@ -1,4 +1,4 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.serialization;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class JsonFunctions {
+final class JsonFunctions {
 
     private JsonFunctions() {
     }

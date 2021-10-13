@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.serialization.ClinicalRecordFile;
+import com.hartwig.actin.serialization.ClinicalRecordJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -53,7 +53,7 @@ public class ClinicalIngestionApplication {
 
         String outputDirectory = config.outputDirectory();
         LOGGER.info("Writing {} clinical records to {}", records.size(), outputDirectory);
-        ClinicalRecordFile.write(records, outputDirectory);
+        ClinicalRecordJson.write(records, outputDirectory);
 
         LOGGER.info("Done!");
     }

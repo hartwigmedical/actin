@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.util.FileUtil;
+import com.hartwig.actin.clinical.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public final class AllergyTranslationFile {
         List<String> lines = Files.readAllLines(new File(allergyTranslationTsv).toPath());
 
         List<AllergyTranslation> translations = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = FileUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             translations.add(fromParts(fieldIndexMap, line.split(DELIMITER, -1)));
         }

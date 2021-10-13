@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.hartwig.actin.util.FileUtil;
+import com.hartwig.actin.clinical.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ class FeedFileReader<T extends FeedEntry> {
     public List<T> read(@NotNull String feedTsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(feedTsv).toPath());
 
-        Map<String, Integer> fieldIndexMap = FileUtil.createFieldIndexMap(splitFeedLine(lines.get(0)));
+        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(splitFeedLine(lines.get(0)));
         List<T> entries = Lists.newArrayList();
         if (lines.size() > 1) {
             StringBuilder curLine = new StringBuilder(lines.get(1));

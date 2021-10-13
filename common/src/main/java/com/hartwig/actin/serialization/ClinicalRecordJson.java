@@ -1,19 +1,19 @@
 package com.hartwig.actin.serialization;
 
-import static com.hartwig.actin.util.JsonFunctions.array;
-import static com.hartwig.actin.util.JsonFunctions.bool;
-import static com.hartwig.actin.util.JsonFunctions.date;
-import static com.hartwig.actin.util.JsonFunctions.integer;
-import static com.hartwig.actin.util.JsonFunctions.nullableBool;
-import static com.hartwig.actin.util.JsonFunctions.nullableDate;
-import static com.hartwig.actin.util.JsonFunctions.nullableInteger;
-import static com.hartwig.actin.util.JsonFunctions.nullableNumber;
-import static com.hartwig.actin.util.JsonFunctions.nullableString;
-import static com.hartwig.actin.util.JsonFunctions.nullableStringList;
-import static com.hartwig.actin.util.JsonFunctions.number;
-import static com.hartwig.actin.util.JsonFunctions.object;
-import static com.hartwig.actin.util.JsonFunctions.string;
-import static com.hartwig.actin.util.JsonFunctions.stringList;
+import static com.hartwig.actin.serialization.JsonFunctions.array;
+import static com.hartwig.actin.serialization.JsonFunctions.bool;
+import static com.hartwig.actin.serialization.JsonFunctions.date;
+import static com.hartwig.actin.serialization.JsonFunctions.integer;
+import static com.hartwig.actin.serialization.JsonFunctions.nullableBool;
+import static com.hartwig.actin.serialization.JsonFunctions.nullableDate;
+import static com.hartwig.actin.serialization.JsonFunctions.nullableInteger;
+import static com.hartwig.actin.serialization.JsonFunctions.nullableNumber;
+import static com.hartwig.actin.serialization.JsonFunctions.nullableString;
+import static com.hartwig.actin.serialization.JsonFunctions.nullableStringList;
+import static com.hartwig.actin.serialization.JsonFunctions.number;
+import static com.hartwig.actin.serialization.JsonFunctions.object;
+import static com.hartwig.actin.serialization.JsonFunctions.string;
+import static com.hartwig.actin.serialization.JsonFunctions.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -74,11 +74,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class ClinicalRecordFile {
+public final class ClinicalRecordJson {
 
-    private static final Logger LOGGER = LogManager.getLogger(ClinicalRecordFile.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalRecordJson.class);
 
-    private ClinicalRecordFile() {
+    private ClinicalRecordJson() {
     }
 
     public static void write(@NotNull List<ClinicalRecord> records, @NotNull String outputDirectory) throws IOException {

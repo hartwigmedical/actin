@@ -1,4 +1,4 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.serialization;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

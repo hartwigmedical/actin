@@ -8,9 +8,9 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
+import com.hartwig.actin.clinical.util.TsvUtil;
 import com.hartwig.actin.datamodel.clinical.ImmutablePriorOtherCondition;
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
-import com.hartwig.actin.util.FileUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public final class NonOncologicalHistoryConfigFile {
         List<String> lines = Files.readAllLines(new File(nonOncologicalHistoryTsv).toPath());
 
         List<NonOncologicalHistoryConfig> nonOncologicalHistories = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = FileUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             String[] parts = line.split(DELIMITER, -1);
             boolean ignore = parts[fieldIndexMap.get("name")].equals(IGNORE_STRING);

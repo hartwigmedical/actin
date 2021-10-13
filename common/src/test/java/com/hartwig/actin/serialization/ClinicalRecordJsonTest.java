@@ -11,26 +11,26 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 
 import org.junit.Test;
 
-public class ClinicalRecordFileTest {
+public class ClinicalRecordJsonTest {
 
     private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
 
     @Test
     public void canConvertBackAndForthJson() {
         ClinicalRecord minimal = TestDataFactory.createMinimalTestClinicalRecord();
-        ClinicalRecord convertedMinimal = ClinicalRecordFile.fromJson(ClinicalRecordFile.toJson(minimal));
+        ClinicalRecord convertedMinimal = ClinicalRecordJson.fromJson(ClinicalRecordJson.toJson(minimal));
 
         assertEquals(minimal, convertedMinimal);
 
         ClinicalRecord proper = TestDataFactory.createProperTestClinicalRecord();
-        ClinicalRecord convertedProper = ClinicalRecordFile.fromJson(ClinicalRecordFile.toJson(proper));
+        ClinicalRecord convertedProper = ClinicalRecordJson.fromJson(ClinicalRecordJson.toJson(proper));
 
         assertEquals(proper, convertedProper);
     }
 
     @Test
     public void canReadClinicalRecordDirectory() throws IOException {
-        List<ClinicalRecord> records = ClinicalRecordFile.read(CLINICAL_DIRECTORY);
+        List<ClinicalRecord> records = ClinicalRecordJson.read(CLINICAL_DIRECTORY);
         assertEquals(1, records.size());
 
         ClinicalRecord record = records.get(0);
