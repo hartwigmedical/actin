@@ -1,10 +1,12 @@
 package com.hartwig.actin.report.pdf;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
+import com.hartwig.actin.report.ReportConfig;
+import com.hartwig.actin.report.pdf.chapters.FrontPageChapter;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
+import com.hartwig.actin.util.FileUtil;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -23,24 +25,24 @@ public class ReportWriter {
 
     private final boolean writeToDisk;
     @NotNull
-    private final String outputDir;
+    private final ReportConfig reportConfig;
 
-    public ReportWriter(final boolean writeToDisk, @NotNull final String outputDir) {
+    public ReportWriter(final boolean writeToDisk, @NotNull final ReportConfig reportConfig) {
         this.writeToDisk = writeToDisk;
-        this.outputDir = outputDir;
+        this.reportConfig = reportConfig;
     }
 
     public void write() throws IOException {
-        ReportChapter[] chapters = new ReportChapter[] {};
+        ReportChapter[] chapters = new ReportChapter[] { new FrontPageChapter() };
 
-        writePdfChapters("sample", chapters);
+        writePdfChapters(reportConfig.sample(), chapters);
     }
 
-    private void writePdfChapters(@NotNull String sampleId, @NotNull ReportChapter[] chapters) throws IOException {
-        Document doc = initializeReport(sampleId);
+    private void writePdfChapters(@NotNull String sample, @NotNull ReportChapter[] chapters) throws IOException {
+        Document doc = initializeReport(sample);
         PdfDocument pdfDocument = doc.getPdfDocument();
 
-        PageEventHandler pageEventHandler = PageEventHandler.create(sampleId);
+        PageEventHandler pageEventHandler = PageEventHandler.create(sample);
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler);
 
         for (int i = 0; i < chapters.length; i++) {
@@ -62,10 +64,10 @@ public class ReportWriter {
     }
 
     @NotNull
-    private Document initializeReport(@NotNull String sampleId) throws IOException {
+    private Document initializeReport(@NotNull String sample) throws IOException {
         PdfWriter writer;
         if (writeToDisk) {
-            String outputFilePath = outputDir + File.separator + sampleId + ".actin.pdf";
+            String outputFilePath = FileUtil.appendFileSeparator(reportConfig.outputDirectory()) + sample + ".actin.pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
             writer = new PdfWriter(outputFilePath);
         } else {
