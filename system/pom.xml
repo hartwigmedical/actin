@@ -60,6 +60,9 @@
                             <mainClass>com.hartwig.actin.system.SystemApplication</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
 
                     <descriptorRefs>
