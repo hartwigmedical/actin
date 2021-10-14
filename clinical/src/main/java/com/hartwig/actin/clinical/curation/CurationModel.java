@@ -219,7 +219,27 @@ public class CurationModel {
     }
 
     @Nullable
-    public String curateLesionLocation(@Nullable String input) {
+    public List<String> curateOtherLesions(@Nullable List<String> otherLesions) {
+        if (otherLesions == null) {
+            return null;
+        }
+
+        List<String> curatedOtherLesions = Lists.newArrayList();
+        for (String lesion : otherLesions) {
+            String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
+            LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
+            if (config == null) {
+                curatedOtherLesions.add(reformatted);
+            } else if (!config.ignoreWhenOtherLesion()) {
+                curatedOtherLesions.add(config.location());
+            }
+        }
+
+        return !curatedOtherLesions.isEmpty() ? curatedOtherLesions : null;
+    }
+
+    @Nullable
+    public String curateBiopsyLocation(@Nullable String input) {
         if (input == null) {
             return null;
         }
@@ -227,11 +247,7 @@ public class CurationModel {
         String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
 
         LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
-        if (config == null) {
-            return reformatted;
-        } else {
-            return !config.ignore() ? config.location() : null;
-        }
+        return config != null ? config.location() : reformatted;
     }
 
     @Nullable

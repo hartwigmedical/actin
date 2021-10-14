@@ -33,11 +33,10 @@ public final class LesionLocationConfigFile {
 
     @NotNull
     private static LesionLocationConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
-        String location = parts[fieldIndexMap.get("location")];
         return ImmutableLesionLocationConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
-                .ignore(CurationUtil.ignore(location))
-                .location(location)
+                .location(parts[fieldIndexMap.get("location")])
+                .ignoreWhenOtherLesion(CurationUtil.parseBoolean(parts[fieldIndexMap.get("ignoreWhenOtherLesion")]))
                 .build();
     }
 }

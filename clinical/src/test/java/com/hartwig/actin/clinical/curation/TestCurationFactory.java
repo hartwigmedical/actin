@@ -88,8 +88,13 @@ public final class TestCurationFactory {
     private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
         List<LesionLocationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableLesionLocationConfig.builder().input("Lever").ignore(false).location("Liver").build());
-        configs.add(ImmutableLesionLocationConfig.builder().input("Not a lesion").ignore(true).location(Strings.EMPTY).build());
+        configs.add(ImmutableLesionLocationConfig.builder().input("Lever").ignoreWhenOtherLesion(false).location("Liver").build());
+
+        configs.add(ImmutableLesionLocationConfig.builder()
+                .input("Not a lesion")
+                .ignoreWhenOtherLesion(true)
+                .location(Strings.EMPTY)
+                .build());
 
         return configs;
     }
@@ -101,7 +106,8 @@ public final class TestCurationFactory {
         configs.add(ImmutableOncologicalHistoryConfig.builder()
                 .input("Cis 2020")
                 .ignore(false)
-                .curatedObject(ImmutablePriorTumorTreatment.builder().name("Cisplatin")
+                .curatedObject(ImmutablePriorTumorTreatment.builder()
+                        .name("Cisplatin")
                         .year(2020)
                         .category("Chemotherapy")
                         .isSystemic(true)

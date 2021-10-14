@@ -137,13 +137,28 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canCurateLesionLocations() {
+    public void canCurateOtherLesions() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        assertEquals("Liver", model.curateLesionLocation("lever"));
-        assertNull(model.curateLesionLocation("Not a lesion"));
-        assertEquals("No curation needed", model.curateLesionLocation("No curation needed"));
-        assertNull(model.curateLesionLocation(null));
+        assertNull(model.curateBiopsyLocation(null));
+
+        List<String> noOtherLesions = Lists.newArrayList("not a lesion");
+        assertNull(model.curateOtherLesions(noOtherLesions));
+
+        List<String> otherLesions = Lists.newArrayList("lever", "not a lesion", "no curation needed");
+        assertEquals(2, model.curateOtherLesions(otherLesions).size());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateBiopsyLocation() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals("Liver", model.curateBiopsyLocation("lever"));
+        assertTrue(model.curateBiopsyLocation("Not a lesion").isEmpty());
+        assertEquals("No curation needed", model.curateBiopsyLocation("No curation needed"));
+        assertNull(model.curateBiopsyLocation(null));
 
         model.evaluate();
     }

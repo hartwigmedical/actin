@@ -12,9 +12,12 @@ public abstract class LesionLocationConfig implements CurationConfig {
     @Override
     public abstract String input();
 
-    @Override
-    public abstract boolean ignore();
+    public boolean ignore() {
+        return false;
+    }
 
     @NotNull
     public abstract String location();
+
+    public abstract boolean ignoreWhenOtherLesion();
 }

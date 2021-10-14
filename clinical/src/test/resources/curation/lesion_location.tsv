@@ -1,2 +1,2 @@
-input	location
-Lever	Liver
+input	location	ignoreWhenOtherLesion
+Lever	Liver	1
