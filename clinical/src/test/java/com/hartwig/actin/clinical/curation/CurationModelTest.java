@@ -141,6 +141,7 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         assertEquals("Liver", model.curateLesionLocation("lever"));
+        assertNull(model.curateLesionLocation("Not a lesion"));
         assertEquals("No curation needed", model.curateLesionLocation("No curation needed"));
         assertNull(model.curateLesionLocation(null));
 

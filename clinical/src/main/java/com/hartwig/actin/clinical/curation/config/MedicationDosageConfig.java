@@ -12,6 +12,11 @@ public abstract class MedicationDosageConfig implements CurationConfig {
     @Override
     public abstract String input();
 
+    @Override
+    public boolean ignore() {
+        return false;
+    }
+
     @Nullable
     public abstract Double dosageMin();
 

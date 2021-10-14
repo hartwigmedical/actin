@@ -6,4 +6,6 @@ public interface CurationConfig {
 
     @NotNull
     String input();
+
+    boolean ignore();
 }

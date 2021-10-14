@@ -14,9 +14,14 @@ public final class CurationUtil {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static final String UNKNOWN = "unknown";
+    private static final String IGNORE = "<ignore>";
     private static final String DOID_SEPARATOR = ";";
 
     private CurationUtil() {
+    }
+
+    public static boolean ignore(@NotNull String input) {
+        return input.equals(IGNORE);
     }
 
     @Nullable

@@ -12,6 +12,7 @@ public abstract class OncologicalHistoryConfig implements CurationConfig {
     @Override
     public abstract String input();
 
+    @Override
     public abstract boolean ignore();
 
     @Nullable

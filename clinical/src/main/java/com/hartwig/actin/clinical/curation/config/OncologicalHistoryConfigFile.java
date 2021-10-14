@@ -18,7 +18,6 @@ public final class OncologicalHistoryConfigFile {
 
     private static final String DELIMITER = "\t";
 
-    private static final String IGNORE_STRING = "<ignore>";
     private static final String SECOND_PRIMARY_STRING = "second primary";
 
     private OncologicalHistoryConfigFile() {
@@ -32,7 +31,7 @@ public final class OncologicalHistoryConfigFile {
         Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             String[] parts = line.split(DELIMITER, -1);
-            boolean ignore = parts[fieldIndexMap.get("name")].equals(IGNORE_STRING);
+            boolean ignore = CurationUtil.ignore(parts[fieldIndexMap.get("name")]);
 
             oncologicalHistories.add(ImmutableOncologicalHistoryConfig.builder()
                     .input(parts[fieldIndexMap.get("input")])

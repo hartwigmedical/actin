@@ -18,8 +18,6 @@ public final class NonOncologicalHistoryConfigFile {
 
     private static final String DELIMITER = "\t";
 
-    private static final String IGNORE_STRING = "<ignore>";
-
     private NonOncologicalHistoryConfigFile() {
     }
 
@@ -31,7 +29,7 @@ public final class NonOncologicalHistoryConfigFile {
         Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             String[] parts = line.split(DELIMITER, -1);
-            boolean ignore = parts[fieldIndexMap.get("name")].equals(IGNORE_STRING);
+            boolean ignore = CurationUtil.ignore(parts[fieldIndexMap.get("name")]);
 
             nonOncologicalHistories.add(ImmutableNonOncologicalHistoryConfig.builder()
                     .input(parts[fieldIndexMap.get("input")])

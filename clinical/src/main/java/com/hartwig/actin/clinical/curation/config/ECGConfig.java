@@ -12,6 +12,11 @@ public abstract class ECGConfig implements CurationConfig {
     @Override
     public abstract String input();
 
+    @Override
+    public boolean ignore() {
+        return false;
+    }
+
     @NotNull
     public abstract String interpretation();
 }

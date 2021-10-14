@@ -84,7 +84,8 @@ public class ClinicalRecordFactory {
 
             Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
 
-            records.add(ImmutableClinicalRecord.builder().sampleId(sampleId)
+            records.add(ImmutableClinicalRecord.builder()
+                    .sampleId(sampleId)
                     .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
@@ -131,13 +132,7 @@ public class ClinicalRecordFactory {
             return ImmutableTumorDetails.builder().build();
         }
 
-        List<String> curatedOtherLesions = null;
-        if (questionnaire.otherLesions() != null) {
-            curatedOtherLesions = Lists.newArrayList();
-            for (String lesion : questionnaire.otherLesions()) {
-                curatedOtherLesions.add(curation.curateLesionLocation(lesion));
-            }
-        }
+        List<String> curatedOtherLesions = curateOtherLesions(questionnaire.otherLesions());
 
         return ImmutableTumorDetails.builder()
                 .from(curation.curateTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
@@ -155,6 +150,23 @@ public class ClinicalRecordFactory {
                 .hasOtherLesions(curatedOtherLesions != null ? !curatedOtherLesions.isEmpty() : null)
                 .otherLesions(curatedOtherLesions)
                 .build();
+    }
+
+    @Nullable
+    private List<String> curateOtherLesions(@Nullable List<String> otherLesions) {
+        if (otherLesions == null) {
+            return null;
+        }
+
+        List<String> curatedOtherLesions = Lists.newArrayList();
+        for (String lesion : otherLesions) {
+            String curatedLesion = curation.curateLesionLocation(lesion);
+            if (curatedLesion != null) {
+                curatedOtherLesions.add(curatedLesion);
+            }
+        }
+
+        return !curatedOtherLesions.isEmpty() ? curatedOtherLesions : null;
     }
 
     @NotNull

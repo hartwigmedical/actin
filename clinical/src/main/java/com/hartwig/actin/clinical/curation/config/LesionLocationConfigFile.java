@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +33,11 @@ public final class LesionLocationConfigFile {
 
     @NotNull
     private static LesionLocationConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+        String location = parts[fieldIndexMap.get("location")];
         return ImmutableLesionLocationConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
-                .location(parts[fieldIndexMap.get("location")])
+                .ignore(CurationUtil.ignore(location))
+                .location(location)
                 .build();
     }
 }

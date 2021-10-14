@@ -12,6 +12,11 @@ public abstract class MedicationTypeConfig implements CurationConfig {
     @Override
     public abstract String input();
 
+    @Override
+    public boolean ignore() {
+        return false;
+    }
+
     @NotNull
     public abstract String type();
 }
