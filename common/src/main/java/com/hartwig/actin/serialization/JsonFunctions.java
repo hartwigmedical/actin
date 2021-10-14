@@ -30,11 +30,7 @@ final class JsonFunctions {
 
     @Nullable
     public static List<String> nullableStringList(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return stringList(object, field);
+        return !isNull(object, field) ? stringList(object, field) : null;
     }
 
     @NotNull
@@ -53,11 +49,7 @@ final class JsonFunctions {
 
     @Nullable
     public static String nullableString(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return string(object, field);
+        return !isNull(object, field) ? string(object, field) : null;
     }
 
     @NotNull
@@ -67,11 +59,7 @@ final class JsonFunctions {
 
     @Nullable
     public static Double nullableNumber(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return number(object, field);
+        return !isNull(object, field) ? number(object, field) : null;
     }
 
     public static double number(@NotNull JsonObject object, @NotNull String field) {
@@ -80,11 +68,7 @@ final class JsonFunctions {
 
     @Nullable
     public static Integer nullableInteger(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return integer(object, field);
+        return !isNull(object, field) ? integer(object, field) : null;
     }
 
     public static int integer(@NotNull JsonObject object, @NotNull String field) {
@@ -93,11 +77,7 @@ final class JsonFunctions {
 
     @Nullable
     public static Boolean nullableBool(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return bool(object, field);
+        return !isNull(object, field) ? bool(object, field) : null;
     }
 
     public static boolean bool(@NotNull JsonObject object, @NotNull String field) {
@@ -106,11 +86,7 @@ final class JsonFunctions {
 
     @Nullable
     public static LocalDate nullableDate(@NotNull JsonObject object, @NotNull String field) {
-        if (object.get(field).isJsonNull()) {
-            return null;
-        }
-
-        return date(object, field);
+        return !isNull(object, field) ? date(object, field) : null;
     }
 
     @NotNull
@@ -118,5 +94,9 @@ final class JsonFunctions {
         JsonObject dateObject = object(object, field);
 
         return LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"));
+    }
+
+    private static boolean isNull(@NotNull JsonObject object, @NotNull String field) {
+        return object.get(field).isJsonNull();
     }
 }
