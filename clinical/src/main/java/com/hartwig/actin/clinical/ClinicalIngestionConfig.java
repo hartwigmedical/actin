@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical;
 
-import java.io.File;
-import java.nio.file.Files;
+import com.hartwig.actin.util.Config;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -43,38 +42,9 @@ public interface ClinicalIngestionConfig {
     @NotNull
     static ClinicalIngestionConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableClinicalIngestionConfig.builder()
-                .feedDirectory(nonOptionalDir(cmd, FEED_DIRECTORY))
-                .curationDirectory(nonOptionalDir(cmd, CURATION_DIRECTORY))
-                .outputDirectory(nonOptionalDir(cmd, OUTPUT_DIRECTORY))
+                .feedDirectory(Config.nonOptionalDir(cmd, FEED_DIRECTORY))
+                .curationDirectory(Config.nonOptionalDir(cmd, CURATION_DIRECTORY))
+                .outputDirectory(Config.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
-    }
-
-    @NotNull
-    static String nonOptionalDir(@NotNull CommandLine cmd, @NotNull String param) throws ParseException {
-        String value = nonOptionalValue(cmd, param);
-
-        if (!pathExists(value) || !pathIsDirectory(value)) {
-            throw new ParseException("Parameter '" + param + "' must be an existing directory: " + value);
-        }
-
-        return value;
-    }
-
-    @NotNull
-    static String nonOptionalValue(@NotNull CommandLine cmd, @NotNull String param) throws ParseException {
-        String value = cmd.getOptionValue(param);
-        if (value == null) {
-            throw new ParseException("Parameter must be provided: " + param);
-        }
-
-        return value;
-    }
-
-    static boolean pathExists(@NotNull String path) {
-        return Files.exists(new File(path).toPath());
-    }
-
-    static boolean pathIsDirectory(@NotNull String path) {
-        return Files.isDirectory(new File(path).toPath());
     }
 }
