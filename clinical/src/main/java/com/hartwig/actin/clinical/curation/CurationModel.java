@@ -264,7 +264,8 @@ public class CurationModel {
                     .type(Strings.EMPTY)
                     .dosageMin(config.dosageMin())
                     .dosageMax(config.dosageMax())
-                    .unit(config.unit())
+                    .dosageUnit(config.dosageUnit())
+                    .frequency(config.frequency())
                     .frequencyUnit(config.frequencyUnit())
                     .ifNeeded(config.ifNeeded())
                     .build();

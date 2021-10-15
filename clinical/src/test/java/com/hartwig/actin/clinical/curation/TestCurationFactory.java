@@ -183,7 +183,8 @@ public final class TestCurationFactory {
                 .input("50-60 mg per day")
                 .dosageMin(50D)
                 .dosageMax(60D)
-                .unit("mg")
+                .dosageUnit("mg")
+                .frequency(1D)
                 .frequencyUnit("day")
                 .ifNeeded(false)
                 .build());

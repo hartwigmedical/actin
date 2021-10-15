@@ -153,14 +153,16 @@ public class CurationDatabaseReaderTest {
         MedicationDosageConfig config1 = find(configs, "once per day 50-60 mg");
         assertEquals(50, config1.dosageMin(), EPSILON);
         assertEquals(60, config1.dosageMax(), EPSILON);
-        assertEquals("mg", config1.unit());
+        assertEquals("mg", config1.dosageUnit());
+        assertEquals(1, config1.frequency(), EPSILON);
         assertEquals("day", config1.frequencyUnit());
         assertFalse(config1.ifNeeded());
 
         MedicationDosageConfig config2 = find(configs, "empty");
         assertNull(config2.dosageMin());
         assertNull(config2.dosageMax());
-        assertTrue(config2.unit().isEmpty());
+        assertTrue(config2.dosageUnit().isEmpty());
+        assertNull(config2.frequency());
         assertTrue(config2.frequencyUnit().isEmpty());
         assertNull(config2.ifNeeded());
     }

@@ -182,7 +182,8 @@ public class CurationModelTest {
         assertNotNull(medication);
         assertEquals(50, medication.dosageMin(), EPSILON);
         assertEquals(60, medication.dosageMax(), EPSILON);
-        assertEquals("mg", medication.unit());
+        assertEquals("mg", medication.dosageUnit());
+        assertEquals(1, medication.frequency(), EPSILON);
         assertEquals("day", medication.frequencyUnit());
         assertFalse(medication.ifNeeded());
 

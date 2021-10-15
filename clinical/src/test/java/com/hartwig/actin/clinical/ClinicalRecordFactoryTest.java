@@ -148,7 +148,7 @@ public class ClinicalRecordFactoryTest {
         assertEquals("Acetanilide derivatives", medication.type());
         assertEquals(50, medication.dosageMin(), EPSILON);
         assertEquals(60, medication.dosageMax(), EPSILON);
-        assertEquals("mg", medication.unit());
+        assertEquals("mg", medication.dosageUnit());
         assertEquals("day", medication.frequencyUnit());
         assertFalse(medication.ifNeeded());
         assertEquals(LocalDate.of(2019, 2, 2), medication.startDate());

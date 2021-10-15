@@ -24,7 +24,10 @@ public abstract class MedicationDosageConfig implements CurationConfig {
     public abstract Double dosageMax();
 
     @NotNull
-    public abstract String unit();
+    public abstract String dosageUnit();
+
+    @Nullable
+    public abstract Double frequency();
 
     @NotNull
     public abstract String frequencyUnit();

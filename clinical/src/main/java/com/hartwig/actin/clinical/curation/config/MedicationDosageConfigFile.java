@@ -37,7 +37,8 @@ public final class MedicationDosageConfigFile {
                 .input(parts[fieldIndexMap.get("input")])
                 .dosageMin(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("dosageMin")]))
                 .dosageMax(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("dosageMax")]))
-                .unit(parts[fieldIndexMap.get("unit")])
+                .dosageUnit(parts[fieldIndexMap.get("dosageUnit")])
+                .frequency(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("frequency")]))
                 .frequencyUnit(parts[fieldIndexMap.get("frequencyUnit")])
                 .ifNeeded(CurationUtil.parseOptionalBoolean(parts[fieldIndexMap.get("ifNeeded")]))
                 .build();

@@ -203,7 +203,8 @@
       "type": "",
       "dosageMin": 10,
       "dosageMax": 20,
-      "unit": "mg",
+      "dosageUnit": "mg",
+      "frequency": 1,
       "frequencyUnit": "day",
       "ifNeeded": false,
       "startDate": {
@@ -223,7 +224,8 @@
       "type": "",
       "dosageMin": null,
       "dosageMax": null,
-      "unit": null,
+      "dosageUnit": null,
+      "frequency": null,
       "frequencyUnit": null,
       "ifNeeded": null,
       "startDate": {

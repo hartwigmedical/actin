@@ -23,7 +23,10 @@ public abstract class Medication {
     public abstract Double dosageMax();
 
     @Nullable
-    public abstract String unit();
+    public abstract String dosageUnit();
+
+    @Nullable
+    public abstract Double frequency();
 
     @Nullable
     public abstract String frequencyUnit();
