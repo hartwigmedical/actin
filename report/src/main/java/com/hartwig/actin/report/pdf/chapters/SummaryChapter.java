@@ -96,7 +96,7 @@ public class SummaryChapter implements ReportChapter {
 
         overviewTable.addCell(Cells.createCell(clinicalHistoryTable));
         overviewTable.addCell(Cells.createEmptyCell());
-        overviewTable.addCell(Cells.createTitleCell("Patient current details (" + questionnaireDate + ")"));
+        overviewTable.addCell(Cells.createTitleCell("Patient current details (" + questionnaireDateString + ")"));
 
         Table currentDetailsTable = new Table(UnitValue.createPointArray(widths));
         currentDetailsTable.addCell(Cells.createKeyCell("WHO status"));
