@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class ReportWriterTest {
 
-    private static final boolean RUN_PDF_WRITING_TEST = false;
+    private static final boolean RUN_PDF_WRITING_TEST = true;
     private static final String OUTPUT_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
 
     @Test

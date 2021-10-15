@@ -212,6 +212,20 @@ public final class TestClinicalDataFactory {
                 .grade(1)
                 .build());
 
+        toxicities.add(ImmutableToxicity.builder()
+                .name("Nausea")
+                .evaluatedDate(LocalDate.of(2021, 8, 20))
+                .source(ToxicitySource.EHR)
+                .grade(2)
+                .build());
+
+        toxicities.add(ImmutableToxicity.builder()
+                .name("Diarrhea")
+                .evaluatedDate(LocalDate.of(2021, 8, 20))
+                .source(ToxicitySource.QUESTIONNAIRE)
+                .grade(null)
+                .build());
+
         return toxicities;
     }
 

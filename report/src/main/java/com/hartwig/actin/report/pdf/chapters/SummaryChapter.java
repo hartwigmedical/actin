@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import java.time.LocalDate;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.datamodel.ActinRecord;
@@ -8,6 +9,8 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
 import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
+import com.hartwig.actin.datamodel.clinical.Toxicity;
+import com.hartwig.actin.datamodel.clinical.ToxicitySource;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -19,6 +22,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class SummaryChapter implements ReportChapter {
@@ -77,8 +81,9 @@ public class SummaryChapter implements ReportChapter {
     private void addClinicalOverviewTable(@NotNull Document document) {
         Table overviewTable = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth() - 5);
 
-        String questionnaireDate = Formats.date(record.clinical().patient().questionnaireDate());
-        overviewTable.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDate + ")"));
+        LocalDate questionnaireDate =record.clinical().patient().questionnaireDate();
+        String questionnaireDateString = questionnaireDate != null ? Formats.date(questionnaireDate) : "Unknown";
+        overviewTable.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDateString + ")"));
 
         float[] widths = new float[] { 170, overviewTable.getWidth().getValue() - 180 };
         Table clinicalHistoryTable = new Table(UnitValue.createPointArray(widths));
@@ -97,16 +102,30 @@ public class SummaryChapter implements ReportChapter {
         currentDetailsTable.addCell(Cells.createKeyCell("WHO status"));
         currentDetailsTable.addCell(Cells.createValueCell(String.valueOf(record.clinical().clinicalStatus().who())));
         currentDetailsTable.addCell(Cells.createKeyCell("Unresolved toxicities grade => 2"));
-        currentDetailsTable.addCell(Cells.createValueCell("TODO"));
+        currentDetailsTable.addCell(Cells.createValueCell(unresolvedToxicities(record.clinical())));
         currentDetailsTable.addCell(Cells.createKeyCell("Significant infection"));
         currentDetailsTable.addCell(Cells.createValueCell(String.valueOf(record.clinical().clinicalStatus().hasActiveInfection())));
         currentDetailsTable.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
-        currentDetailsTable.addCell(Cells.createValueCell(record.clinical().clinicalStatus().ecgAberrationDescription()));
+        String ecg = record.clinical().clinicalStatus().ecgAberrationDescription();
+        String ecgString = ecg != null ? ecg : Strings.EMPTY;
+        currentDetailsTable.addCell(Cells.createValueCell(ecgString));
         currentDetailsTable.addCell(Cells.createKeyCell("Cancer-related complications"));
         currentDetailsTable.addCell(Cells.createValueCell(cancerRelatedComplications(record.clinical())));
         overviewTable.addCell(Cells.createCell(currentDetailsTable));
 
         document.add(overviewTable);
+    }
+
+    private static String unresolvedToxicities(final ClinicalRecord record) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Toxicity toxicity : record.toxicities()) {
+            Integer grade = toxicity.grade();
+            if ((grade != null && grade >= 2) || toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
+                String gradeString = grade != null ? " (" + grade + ")" : Strings.EMPTY;
+                joiner.add(toxicity.name() + gradeString);
+            }
+        }
+        return valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
@@ -130,7 +149,7 @@ public class SummaryChapter implements ReportChapter {
         }
 
         for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
-            joiner.add("Second primary: " + priorSecondPrimary.tumorLocation());
+            joiner.add("Previous primary tumor: " + priorSecondPrimary.tumorLocation());
         }
 
         return valueOrDefault(joiner.toString(), "None");
