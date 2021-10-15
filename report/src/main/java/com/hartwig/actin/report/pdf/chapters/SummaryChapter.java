@@ -104,7 +104,9 @@ public class SummaryChapter implements ReportChapter {
         currentDetailsTable.addCell(Cells.createKeyCell("Unresolved toxicities grade => 2"));
         currentDetailsTable.addCell(Cells.createValueCell(unresolvedToxicities(record.clinical())));
         currentDetailsTable.addCell(Cells.createKeyCell("Significant infection"));
-        currentDetailsTable.addCell(Cells.createValueCell(String.valueOf(record.clinical().clinicalStatus().hasActiveInfection())));
+        Boolean hasActiveInfection = record.clinical().clinicalStatus().hasActiveInfection();
+        String hasActiveInfectionString = hasActiveInfection != null ? String.valueOf(hasActiveInfection) : "Unknown";
+        currentDetailsTable.addCell(Cells.createValueCell(hasActiveInfectionString));
         currentDetailsTable.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
         String ecg = record.clinical().clinicalStatus().ecgAberrationDescription();
         String ecgString = ecg != null ? ecg : Strings.EMPTY;
