@@ -1,5 +1,8 @@
 package com.hartwig.actin.report.pdf.components;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import com.hartwig.actin.report.pdf.ReportResources;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -12,6 +15,8 @@ import com.itextpdf.layout.element.Paragraph;
 import org.jetbrains.annotations.NotNull;
 
 public class SidePanel {
+
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
     private static final float ROW_SPACING = 35;
     private static final float VALUE_TEXT_Y_OFFSET = 18;
@@ -31,13 +36,14 @@ public class SidePanel {
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
         Rectangle pageSize = page.getPageSize();
         canvas.rectangle(pageSize.getWidth(), pageSize.getHeight(), -RECTANGLE_WIDTH, -RECTANGLE_HEIGHT);
-        canvas.setFillColor(ReportResources.PALETTE_ORANGE);
+        canvas.setFillColor(ReportResources.PALETTE_BLUE);
         canvas.fill();
 
         int sideTextIndex = 0;
         Canvas cv = new Canvas(canvas, page.getPageSize());
 
         cv.add(createSidePanelDiv(pageSize, ++sideTextIndex, "Sample", sampleId));
+        cv.add(createSidePanelDiv(pageSize, ++sideTextIndex, "Report Date", DATE_FORMAT.format(LocalDate.now())));
 
         canvas.release();
     }

@@ -2,8 +2,8 @@ package com.hartwig.actin.report;
 
 import java.io.IOException;
 
-import com.hartwig.actin.datamodel.ActinAnalysis;
-import com.hartwig.actin.datamodel.ImmutableActinAnalysis;
+import com.hartwig.actin.datamodel.ActinRecord;
+import com.hartwig.actin.datamodel.ImmutableActinRecord;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.report.pdf.ReportWriter;
 import com.hartwig.actin.report.pdf.ReportWriterFactory;
@@ -51,11 +51,11 @@ public class ReportApplication {
         LOGGER.info("Loading clinical record from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
 
-        ActinAnalysis analysis = ImmutableActinAnalysis.builder().clinical(clinical).build();
+        ActinRecord record = ImmutableActinRecord.builder().clinical(clinical).build();
 
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory());
 
-        writer.write(analysis);
+        writer.write(record);
 
         LOGGER.info("Done!");
     }

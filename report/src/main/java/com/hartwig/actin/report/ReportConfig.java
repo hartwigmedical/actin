@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public interface ReportConfig {
 
-    String SAMPLE = "sample";
-
     String CLINICAL_JSON = "clinical_json";
 
     String OUTPUT_DIRECTORY = "output_directory";
@@ -23,17 +21,12 @@ public interface ReportConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(SAMPLE, true, "Sample for which an ACTIN report will be generated");
-
         options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the sample");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to");
 
         return options;
     }
-
-    @NotNull
-    String sample();
 
     @NotNull
     String clinicalJson();
@@ -44,7 +37,6 @@ public interface ReportConfig {
     @NotNull
     static ReportConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableReportConfig.builder()
-                .sample(Config.nonOptionalValue(cmd, SAMPLE))
                 .clinicalJson(Config.nonOptionalFile(cmd, CLINICAL_JSON))
                 .outputDirectory(Config.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();

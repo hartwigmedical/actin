@@ -29,19 +29,11 @@ public final class ReportResources {
     public static final float PAGE_MARGIN_BOTTOM = 40;
 
     public static final DeviceRgb PALETTE_WHITE = new DeviceRgb(255, 255, 255);
+    public static final DeviceRgb PALETTE_MID_GREY = new DeviceRgb(101, 106, 108);
+    public static final DeviceRgb PALETTE_DARK_GREY = new DeviceRgb(39, 47, 50);
     public static final DeviceRgb PALETTE_BLACK = new DeviceRgb(0, 0, 0);
 
-    public static final DeviceRgb PALETTE_DARK_GREY = new DeviceRgb(39, 47, 50);
-    public static final DeviceRgb PALETTE_MID_GREY = new DeviceRgb(101, 106, 108);
-    public static final DeviceRgb PALETTE_BLUE = new DeviceRgb(38, 90, 166);
-
-    public static final DeviceRgb PALETTE_ORANGE = new DeviceRgb(242, 139, 31);
-    public static final DeviceRgb PALETTE_ORANGE_1 = new DeviceRgb(255, 165, 0);
-    public static final DeviceRgb PALETTE_ORANGE_2 = new DeviceRgb(235, 155, 0);
-    public static final DeviceRgb PALETTE_ORANGE_3 = new DeviceRgb(215, 145, 0);
-    public static final DeviceRgb PALETTE_ORANGE_4 = new DeviceRgb(195, 135, 0);
-    public static final DeviceRgb PALETTE_ORANGE_5 = new DeviceRgb(175, 125, 0);
-    public static final DeviceRgb PALETTE_ORANGE_6 = new DeviceRgb(155, 115, 0);
+    public static final DeviceRgb PALETTE_BLUE = new DeviceRgb(74, 134, 232);
 
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
@@ -65,11 +57,11 @@ public final class ReportResources {
     }
 
     public static Style chapterTitleStyle() {
-        return new Style().setFont(fontBold()).setFontSize(10).setFontColor(ReportResources.PALETTE_ORANGE);
+        return new Style().setFont(fontBold()).setFontSize(10).setFontColor(ReportResources.PALETTE_BLACK);
     }
 
     public static Style tableTitleStyle() {
-        return new Style().setFont(fontBold()).setFontSize(8).setFontColor(ReportResources.PALETTE_ORANGE);
+        return new Style().setFont(fontBold()).setFontSize(8).setFontColor(ReportResources.PALETTE_BLUE);
     }
 
     public static Style tableHeaderStyle() {
@@ -80,12 +72,20 @@ public final class ReportResources {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(ReportResources.PALETTE_DARK_GREY);
     }
 
+    public static Style labelStyle() {
+        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(ReportResources.PALETTE_BLACK);
+    }
+
+    public static Style valueStyle() {
+        return new Style().setFont(fontRegular()).setFontSize(8).setFontColor(ReportResources.PALETTE_BLUE);
+    }
+
     public static Style subTextStyle() {
         return new Style().setFont(fontRegular()).setFontSize(6).setFontColor(ReportResources.PALETTE_BLACK);
     }
 
     public static Style pageNumberStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(ReportResources.PALETTE_ORANGE);
+        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(ReportResources.PALETTE_BLUE);
     }
 
     public static Style sidePanelLabelStyle() {
@@ -94,10 +94,6 @@ public final class ReportResources {
 
     public static Style sidePanelValueStyle() {
         return new Style().setFont(fontBold()).setFontSize(10).setFontColor(ReportResources.PALETTE_WHITE);
-    }
-
-    public static Style urlStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(ReportResources.PALETTE_BLUE);
     }
 
     @NotNull

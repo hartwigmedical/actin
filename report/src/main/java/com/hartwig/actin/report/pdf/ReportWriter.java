@@ -3,9 +3,9 @@ package com.hartwig.actin.report.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.hartwig.actin.datamodel.ActinAnalysis;
-import com.hartwig.actin.report.pdf.chapters.FrontPageChapter;
+import com.hartwig.actin.datamodel.ActinRecord;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
+import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
 import com.hartwig.actin.util.FileUtil;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
@@ -32,10 +32,10 @@ public class ReportWriter {
         this.outputDirectory = outputDirectory;
     }
 
-    public void write(@NotNull ActinAnalysis analysis) throws IOException {
-        ReportChapter[] chapters = new ReportChapter[] { new FrontPageChapter() };
+    public void write(@NotNull ActinRecord record) throws IOException {
+        ReportChapter[] chapters = new ReportChapter[] { new SummaryChapter(record) };
 
-        writePdfChapters(analysis.sampleId(), chapters);
+        writePdfChapters(record.sampleId(), chapters);
     }
 
     private void writePdfChapters(@NotNull String sampleId, @NotNull ReportChapter[] chapters) throws IOException {

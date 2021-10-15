@@ -12,7 +12,7 @@ public final class TestDataFactory {
     }
 
     @NotNull
-    public static ActinAnalysis createTestActinAnalysis() {
-        return ImmutableActinAnalysis.builder().clinical(TestClinicalDataFactory.createProperTestClinicalRecord()).build();
+    public static ActinRecord createTestActinRecord() {
+        return ImmutableActinRecord.builder().clinical(TestClinicalDataFactory.createProperTestClinicalRecord()).build();
     }
 }
