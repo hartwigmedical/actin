@@ -24,7 +24,7 @@ public class Footer {
 
         int pageNumber = page.getDocument().getPageNumber(page);
         PdfFormXObject pageNumberTemplate = new PdfFormXObject(new Rectangle(0, 0, 200, 20));
-        canvas.addXObject(pageNumberTemplate, 58, 20);
+        canvas.addXObjectAt(pageNumberTemplate, 58, 20);
         pageNumberTemplates.add(new PageNumberTemplate(pageNumber, pageNumberTemplate));
 
         canvas.release();

@@ -35,7 +35,7 @@ public class SidePanel {
         canvas.fill();
 
         int sideTextIndex = 0;
-        Canvas cv = new Canvas(canvas, page.getDocument(), page.getPageSize());
+        Canvas cv = new Canvas(canvas, page.getPageSize());
 
         cv.add(createSidePanelDiv(pageSize, ++sideTextIndex, "Sample", sampleId));
 
