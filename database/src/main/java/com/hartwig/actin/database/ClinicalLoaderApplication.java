@@ -48,7 +48,7 @@ public class ClinicalLoaderApplication {
 
     public void run() throws IOException, SQLException {
         LOGGER.info("Loading clinical model from {}", config.clinicalDirectory());
-        List<ClinicalRecord> records = ClinicalRecordJson.read(config.clinicalDirectory());
+        List<ClinicalRecord> records = ClinicalRecordJson.readFromDir(config.clinicalDirectory());
         LOGGER.info(" Loaded {} clinical records", records.size());
 
         DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());

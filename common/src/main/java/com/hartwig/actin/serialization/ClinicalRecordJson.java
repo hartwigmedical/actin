@@ -94,12 +94,17 @@ public final class ClinicalRecordJson {
     }
 
     @NotNull
-    public static List<ClinicalRecord> read(@NotNull String clinicalDirectory) throws IOException {
+    public static List<ClinicalRecord> readFromDir(@NotNull String clinicalDirectory) throws IOException {
         List<ClinicalRecord> records = Lists.newArrayList();
         for (File file : new File(clinicalDirectory).listFiles()) {
             records.add(fromJson(Files.readString(file.toPath())));
         }
         return records;
+    }
+
+    @NotNull
+    public static ClinicalRecord read(@NotNull String clinicalJson) throws IOException {
+        return fromJson(Files.readString(new File(clinicalJson).toPath()));
     }
 
     @VisibleForTesting

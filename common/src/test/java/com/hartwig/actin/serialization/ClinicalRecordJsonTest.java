@@ -2,27 +2,30 @@ package com.hartwig.actin.serialization;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
-import com.hartwig.actin.datamodel.TestDataFactory;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.datamodel.clinical.TestClinicalDataFactory;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class ClinicalRecordJsonTest {
 
     private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
+    private static final String CLINICAL_JSON = CLINICAL_DIRECTORY + File.separator + "sample.clinical.json";
 
     @Test
     public void canConvertBackAndForthJson() {
-        ClinicalRecord minimal = TestDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord minimal = TestClinicalDataFactory.createMinimalTestClinicalRecord();
         ClinicalRecord convertedMinimal = ClinicalRecordJson.fromJson(ClinicalRecordJson.toJson(minimal));
 
         assertEquals(minimal, convertedMinimal);
 
-        ClinicalRecord proper = TestDataFactory.createProperTestClinicalRecord();
+        ClinicalRecord proper = TestClinicalDataFactory.createProperTestClinicalRecord();
         ClinicalRecord convertedProper = ClinicalRecordJson.fromJson(ClinicalRecordJson.toJson(proper));
 
         assertEquals(proper, convertedProper);
@@ -30,11 +33,18 @@ public class ClinicalRecordJsonTest {
 
     @Test
     public void canReadClinicalRecordDirectory() throws IOException {
-        List<ClinicalRecord> records = ClinicalRecordJson.read(CLINICAL_DIRECTORY);
+        List<ClinicalRecord> records = ClinicalRecordJson.readFromDir(CLINICAL_DIRECTORY);
         assertEquals(1, records.size());
 
-        ClinicalRecord record = records.get(0);
+        assertClinicalRecord(records.get(0));
+    }
 
+    @Test
+    public void canReadClinicalRecordJson() throws IOException {
+        assertClinicalRecord(ClinicalRecordJson.read(CLINICAL_JSON));
+    }
+
+    private static void assertClinicalRecord(@NotNull ClinicalRecord record) {
         assertEquals("ACTN01029999T", record.sampleId());
         assertEquals(1, record.priorTumorTreatments().size());
         assertEquals(1, record.priorSecondPrimaries().size());

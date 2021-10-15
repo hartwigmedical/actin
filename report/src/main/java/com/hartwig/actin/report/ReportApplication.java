@@ -2,7 +2,12 @@ package com.hartwig.actin.report;
 
 import java.io.IOException;
 
+import com.hartwig.actin.datamodel.ActinAnalysis;
+import com.hartwig.actin.datamodel.ImmutableActinAnalysis;
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.report.pdf.ReportWriter;
+import com.hartwig.actin.report.pdf.ReportWriterFactory;
+import com.hartwig.actin.serialization.ClinicalRecordJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -43,7 +48,15 @@ public class ReportApplication {
     }
 
     public void run() throws IOException {
-        ReportWriter writer = new ReportWriter(true, config);
-        writer.write();
+        LOGGER.info("Loading clinical record from {}", config.clinicalJson());
+        ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
+
+        ActinAnalysis analysis = ImmutableActinAnalysis.builder().clinical(clinical).build();
+
+        ReportWriter writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory());
+
+        writer.write(analysis);
+
+        LOGGER.info("Done!");
     }
 }
