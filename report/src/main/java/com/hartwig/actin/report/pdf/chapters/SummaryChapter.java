@@ -1,7 +1,13 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import java.util.StringJoiner;
+
 import com.hartwig.actin.datamodel.ActinRecord;
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
+import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
 import com.hartwig.actin.report.pdf.util.Cells;
+import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
@@ -70,16 +76,41 @@ public class SummaryChapter implements ReportChapter {
     private void addClinicalOverviewTable(@NotNull Document document) {
         Table topTable = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth() - 5);
 
-        topTable.addCell(Cells.createTitleCell("Patient clinical history"));
+        String questionnaireDate = Formats.date(record.clinical().patient().questionnaireDate());
+        topTable.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDate + ")"));
         Table table = new Table(UnitValue.createPercentArray(new float[] { 1, 1 })).setBorder(Border.NO_BORDER);
         table.addCell(Cells.createKeyCell("Relevant treatment history"));
-        table.addCell(Cells.createValueCell("Cisplatin"));
+        table.addCell(Cells.createValueCell(relevantPreTreatmentHistory(record.clinical())));
         table.addCell(Cells.createKeyCell("Other oncological history"));
-        table.addCell(Cells.createValueCell("Cisplatin"));
+        table.addCell(Cells.createValueCell(otherOncologicalHistory(record.clinical())));
         table.addCell(Cells.createKeyCell("Relevant non-oncological history"));
-        table.addCell(Cells.createValueCell("Cisplatin"));
+        table.addCell(Cells.createValueCell(relevantNonOncologicalHistory(record.clinical())));
 
         topTable.addCell(Cells.createCell(table));
         document.add(topTable);
+    }
+
+    @NotNull
+    private static String relevantPreTreatmentHistory(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
+            joiner.add(priorTumorTreatment.name());
+        }
+        return joiner.toString();
+    }
+
+    @NotNull
+    private String otherOncologicalHistory(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = new StringJoiner(", ");
+        return joiner.toString();
+    }
+
+    @NotNull
+    private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
+            joiner.add(priorOtherCondition.name());
+        }
+        return joiner.toString();
     }
 }
