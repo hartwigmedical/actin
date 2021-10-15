@@ -6,6 +6,8 @@ import java.io.IOException;
 import com.hartwig.actin.datamodel.ActinRecord;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
+import com.hartwig.actin.report.pdf.util.Margins;
+import com.hartwig.actin.report.pdf.util.Metadata;
 import com.hartwig.actin.util.FileUtil;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
@@ -77,14 +79,11 @@ public class ReportWriter {
 
         PdfDocument pdf = new PdfDocument(writer);
         pdf.setDefaultPageSize(PageSize.A4);
-        pdf.getDocumentInfo().setTitle(ReportResources.METADATA_TITLE);
-        pdf.getDocumentInfo().setAuthor(ReportResources.METADATA_AUTHOR);
+        pdf.getDocumentInfo().setTitle(Metadata.TITLE);
+        pdf.getDocumentInfo().setAuthor(Metadata.AUTHOR);
 
         Document document = new Document(pdf);
-        document.setMargins(ReportResources.PAGE_MARGIN_TOP,
-                ReportResources.PAGE_MARGIN_RIGHT,
-                ReportResources.PAGE_MARGIN_BOTTOM,
-                ReportResources.PAGE_MARGIN_LEFT);
+        document.setMargins(Margins.PAGE_MARGIN_TOP, Margins.PAGE_MARGIN_RIGHT, Margins.PAGE_MARGIN_BOTTOM, Margins.PAGE_MARGIN_LEFT);
 
         return document;
     }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.components;
 
-import com.hartwig.actin.report.pdf.ReportResources;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Canvas;
@@ -18,9 +18,8 @@ public class Header {
         PdfCanvas pdfCanvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
         Canvas cv = new Canvas(pdfCanvas, page.getPageSize());
 
-        cv.add(new Paragraph().add(new Text("ACTIN Report").setFont(ReportResources.fontBold())
-                .setFontSize(11)
-                .setFontColor(ReportResources.PALETTE_BLACK)).setFixedPosition(200, page.getPageSize().getHeight() - 40, 300));
+        cv.add(new Paragraph().add(new Text("ACTIN Report").addStyle(Styles.reportTitleStyle())
+                .setFixedPosition(200, page.getPageSize().getHeight() - 40, 300)));
 
         pdfCanvas.release();
     }

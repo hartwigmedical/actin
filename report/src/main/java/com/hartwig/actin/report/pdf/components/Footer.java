@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.components;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.report.pdf.ReportResources;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -52,7 +52,7 @@ public class Footer {
             String displayString = pageNumber + "/" + totalPageCount;
 
             Canvas canvas = new Canvas(template, document);
-            Paragraph pageNumberParagraph = new Paragraph().add(displayString).addStyle(ReportResources.pageNumberStyle());
+            Paragraph pageNumberParagraph = new Paragraph().add(displayString).addStyle(Styles.pageNumberStyle());
             canvas.showTextAligned(pageNumberParagraph, 0, 0, TextAlignment.LEFT);
         }
     }
