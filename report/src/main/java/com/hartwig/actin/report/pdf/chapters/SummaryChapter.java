@@ -3,15 +3,16 @@ package com.hartwig.actin.report.pdf.chapters;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.datamodel.ActinRecord;
+import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
 import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -74,35 +75,65 @@ public class SummaryChapter implements ReportChapter {
     }
 
     private void addClinicalOverviewTable(@NotNull Document document) {
-        Table topTable = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth() - 5);
+        Table overviewTable = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth() - 5);
 
         String questionnaireDate = Formats.date(record.clinical().patient().questionnaireDate());
-        topTable.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDate + ")"));
-        Table table = new Table(UnitValue.createPercentArray(new float[] { 1, 1 })).setBorder(Border.NO_BORDER);
-        table.addCell(Cells.createKeyCell("Relevant treatment history"));
-        table.addCell(Cells.createValueCell(relevantPreTreatmentHistory(record.clinical())));
-        table.addCell(Cells.createKeyCell("Other oncological history"));
-        table.addCell(Cells.createValueCell(otherOncologicalHistory(record.clinical())));
-        table.addCell(Cells.createKeyCell("Relevant non-oncological history"));
-        table.addCell(Cells.createValueCell(relevantNonOncologicalHistory(record.clinical())));
+        overviewTable.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDate + ")"));
 
-        topTable.addCell(Cells.createCell(table));
-        document.add(topTable);
+        float[] widths = new float[] { 170, overviewTable.getWidth().getValue() - 180 };
+        Table clinicalHistoryTable = new Table(UnitValue.createPointArray(widths));
+        clinicalHistoryTable.addCell(Cells.createKeyCell("Relevant treatment history"));
+        clinicalHistoryTable.addCell(Cells.createValueCell(relevantPreTreatmentHistory(record.clinical())));
+        clinicalHistoryTable.addCell(Cells.createKeyCell("Other oncological history"));
+        clinicalHistoryTable.addCell(Cells.createValueCell(otherOncologicalHistory(record.clinical())));
+        clinicalHistoryTable.addCell(Cells.createKeyCell("Relevant non-oncological history"));
+        clinicalHistoryTable.addCell(Cells.createValueCell(relevantNonOncologicalHistory(record.clinical())));
+
+        overviewTable.addCell(Cells.createCell(clinicalHistoryTable));
+        overviewTable.addCell(Cells.createEmptyCell());
+        overviewTable.addCell(Cells.createTitleCell("Patient current details (" + questionnaireDate + ")"));
+
+        Table currentDetailsTable = new Table(UnitValue.createPointArray(widths));
+        currentDetailsTable.addCell(Cells.createKeyCell("WHO status"));
+        currentDetailsTable.addCell(Cells.createValueCell(String.valueOf(record.clinical().clinicalStatus().who())));
+        currentDetailsTable.addCell(Cells.createKeyCell("Unresolved toxicities grade => 2"));
+        currentDetailsTable.addCell(Cells.createValueCell("TODO"));
+        currentDetailsTable.addCell(Cells.createKeyCell("Significant infection"));
+        currentDetailsTable.addCell(Cells.createValueCell(String.valueOf(record.clinical().clinicalStatus().hasActiveInfection())));
+        currentDetailsTable.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
+        currentDetailsTable.addCell(Cells.createValueCell(record.clinical().clinicalStatus().ecgAberrationDescription()));
+        currentDetailsTable.addCell(Cells.createKeyCell("Cancer-related complications"));
+        currentDetailsTable.addCell(Cells.createValueCell(cancerRelatedComplications(record.clinical())));
+        overviewTable.addCell(Cells.createCell(currentDetailsTable));
+
+        document.add(overviewTable);
     }
 
     @NotNull
     private static String relevantPreTreatmentHistory(@NotNull ClinicalRecord record) {
         StringJoiner joiner = new StringJoiner(", ");
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
-            joiner.add(priorTumorTreatment.name());
+            if (priorTumorTreatment.isSystemic()) {
+                joiner.add(priorTumorTreatment.name());
+            }
         }
-        return joiner.toString();
+        return valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
     private String otherOncologicalHistory(@NotNull ClinicalRecord record) {
         StringJoiner joiner = new StringJoiner(", ");
-        return joiner.toString();
+        for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
+            if (!priorTumorTreatment.isSystemic()) {
+                joiner.add(priorTumorTreatment.name());
+            }
+        }
+
+        for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
+            joiner.add("Second primary: " + priorSecondPrimary.tumorLocation());
+        }
+
+        return valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
@@ -111,6 +142,20 @@ public class SummaryChapter implements ReportChapter {
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
             joiner.add(priorOtherCondition.name());
         }
-        return joiner.toString();
+        return valueOrDefault(joiner.toString(), "None");
+    }
+
+    @NotNull
+    private static String cancerRelatedComplications(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (CancerRelatedComplication complication : record.cancerRelatedComplications()) {
+            joiner.add(complication.name());
+        }
+        return valueOrDefault(joiner.toString(), "No");
+    }
+
+    @NotNull
+    private static String valueOrDefault(@NotNull String value, @NotNull String defaultString) {
+        return !value.isEmpty() ? value : defaultString;
     }
 }

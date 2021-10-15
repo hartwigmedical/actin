@@ -5,6 +5,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class Cells {
@@ -19,6 +20,11 @@ public final class Cells {
         cell.setBorder(Border.NO_BORDER);
         cell.add(element);
         return cell;
+    }
+
+    @NotNull
+    public static Cell createEmptyCell() {
+        return createCell(new Paragraph(Strings.EMPTY));
     }
 
     @NotNull
