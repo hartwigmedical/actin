@@ -18,8 +18,8 @@ public class Header {
         PdfCanvas pdfCanvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
         Canvas cv = new Canvas(pdfCanvas, page.getPageSize());
 
-        cv.add(new Paragraph().add(new Text("ACTIN Report").addStyle(Styles.reportTitleStyle())
-                .setFixedPosition(200, page.getPageSize().getHeight() - 40, 300)));
+        cv.add(new Paragraph().add(new Text("ACTIN Report").addStyle(Styles.reportTitleStyle()))
+                .setFixedPosition(200, page.getPageSize().getHeight() - 40, 300));
 
         pdfCanvas.release();
     }
