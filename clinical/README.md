@@ -173,8 +173,9 @@ name | Simvastatin | Medication name
 type | Statins | Type of medication
 dosageMin | 20 | Assigned minimal dosage
 dosageMax | 40 | Assigned maximal dosage (dosageMin and dosageMax can be equal)
-unit | mg | Dosage unit
-frequencyUnit | day | Frequency unit of dosage
+dosageUnit | mg | Dosage unit
+frequency | 1 | Assigned frequency of dosage
+frequencyUnit | day | Frequency unit
 ifNeeded | 0 | Determines whether the medication should be taken according to dosage prescription or only "if needed"
 startDate | 2021-07-01 | Assigned start date of medication
 stopDate | | Assigned stop date of medication (if applicable)
