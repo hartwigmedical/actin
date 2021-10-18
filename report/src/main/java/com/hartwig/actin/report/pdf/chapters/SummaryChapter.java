@@ -49,7 +49,6 @@ public class SummaryChapter implements ReportChapter {
     @Override
     public void render(@NotNull Document document) {
         addPatientDetails(document);
-        addClinicalDates(document);
 
         document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
 
@@ -66,16 +65,6 @@ public class SummaryChapter implements ReportChapter {
         patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.valueStyle()));
 
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
-    }
-
-    private void addClinicalDates(@NotNull Document document) {
-        Paragraph clinicalDatesLine = new Paragraph();
-        clinicalDatesLine.add(new Text("Clinical data: ").addStyle(Styles.labelStyle()));
-        clinicalDatesLine.add(new Text("???").addStyle(Styles.valueStyle()));
-        clinicalDatesLine.add(new Text(" until ").addStyle(Styles.labelStyle()));
-        clinicalDatesLine.add(new Text("???").addStyle(Styles.valueStyle()));
-
-        document.add(clinicalDatesLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 
     private void addClinicalOverviewTable(@NotNull Document document) {
