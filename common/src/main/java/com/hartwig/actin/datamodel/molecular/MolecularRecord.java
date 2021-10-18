@@ -13,6 +13,10 @@ public abstract class MolecularRecord {
     @NotNull
     public abstract String sampleId();
 
+    public abstract boolean hasReliableQuality();
+
+    public abstract boolean hasReliablePurity();
+
     @NotNull
     public abstract List<GenomicTreatmentEvidence> genomicTreatmentEvidences();
 }
