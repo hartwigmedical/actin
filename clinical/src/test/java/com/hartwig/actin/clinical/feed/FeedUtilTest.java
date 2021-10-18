@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import com.hartwig.actin.datamodel.clinical.Gender;
 
@@ -34,6 +35,11 @@ public class FeedUtilTest {
         assertEquals(correct, FeedUtil.parseOptionalDate("2020-10-23 13:10:55.0000000"));
         assertEquals(correct, FeedUtil.parseOptionalDate("2020-10-23 13:10:55"));
         assertEquals(correct, FeedUtil.parseOptionalDate("2020-10-23"));
+    }
+
+    @Test(expected = DateTimeParseException.class)
+    public void crashOnInvalidDate() {
+        FeedUtil.parseDate("2020-23-10");
     }
 
     @Test
