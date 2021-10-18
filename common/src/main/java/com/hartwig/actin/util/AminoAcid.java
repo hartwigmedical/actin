@@ -40,11 +40,11 @@ public final class AminoAcid {
     }
 
     @NotNull
-    public static String forceSingleLetterProteinAnnotation(@NotNull String proteinAnnotation) {
-        String convertedProteinAnnotation = proteinAnnotation;
+    public static String forceSingleLetterAminoAcids(@NotNull String genomicEvent) {
+        String convertedGenomicEvent = genomicEvent;
         for (Map.Entry<String, String> mapping : TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER.entrySet()) {
-            convertedProteinAnnotation = convertedProteinAnnotation.replaceAll(mapping.getKey(), mapping.getValue());
+            convertedGenomicEvent = convertedGenomicEvent.replaceAll(mapping.getKey(), mapping.getValue());
         }
-        return convertedProteinAnnotation;
+        return convertedGenomicEvent;
     }
 }

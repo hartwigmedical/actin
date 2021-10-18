@@ -7,8 +7,8 @@ import org.junit.Test;
 public class AminoAcidTest {
 
     @Test
-    public void canConvertTriLetterToSingleLetter() {
-        assertEquals("BRAF p.V600E", AminoAcid.forceSingleLetterProteinAnnotation("BRAF p.Val600Glu"));
-        assertEquals("BRAF p.V600E", AminoAcid.forceSingleLetterProteinAnnotation("BRAF p.V600E"));
+    public void canConvertAminoAcidsToSingleLetter() {
+        assertEquals("BRAF p.V600E", AminoAcid.forceSingleLetterAminoAcids("BRAF p.Val600Glu"));
+        assertEquals("BRAF p.V600E", AminoAcid.forceSingleLetterAminoAcids("BRAF p.V600E"));
     }
 }

@@ -80,7 +80,7 @@ public final class MolecularRecordJson {
         @NotNull
         private static String convert(@NotNull String genomicEvent) {
             if (genomicEvent.contains("p.")) {
-                return AminoAcid.forceSingleLetterProteinAnnotation(genomicEvent);
+                return AminoAcid.forceSingleLetterAminoAcids(genomicEvent);
             } else {
                 return genomicEvent;
             }
