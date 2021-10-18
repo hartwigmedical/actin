@@ -159,7 +159,7 @@ CREATE TABLE bloodPressure
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     date DATE,
-    category varchar(50),
+    category varchar(150),
     value double precision,
     unit varchar(50),
     PRIMARY KEY (id)
