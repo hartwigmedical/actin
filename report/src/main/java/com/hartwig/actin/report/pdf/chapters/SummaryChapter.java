@@ -68,55 +68,37 @@ public class SummaryChapter implements ReportChapter {
     }
 
     private void addClinicalOverviewTable(@NotNull Document document) {
-        Table overviewTable = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth() - 5);
+        Table table = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth());
+        float[] subTableWidths = new float[] { 170, table.getWidth().getValue() - 180 };
 
-        LocalDate questionnaireDate =record.clinical().patient().questionnaireDate();
-        String questionnaireDateString = questionnaireDate != null ? Formats.date(questionnaireDate) : "Unknown";
-        overviewTable.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDateString + ")"));
+        String questionnaireDate = questionnaireDate(record.clinical());
+        table.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDate + ")"));
+        table.addCell(Cells.createCell(createClinicalHistoryTable(record.clinical(), subTableWidths)));
 
-        float[] widths = new float[] { 170, overviewTable.getWidth().getValue() - 180 };
-        Table clinicalHistoryTable = new Table(UnitValue.createPointArray(widths));
-        clinicalHistoryTable.addCell(Cells.createKeyCell("Relevant treatment history"));
-        clinicalHistoryTable.addCell(Cells.createValueCell(relevantPreTreatmentHistory(record.clinical())));
-        clinicalHistoryTable.addCell(Cells.createKeyCell("Other oncological history"));
-        clinicalHistoryTable.addCell(Cells.createValueCell(otherOncologicalHistory(record.clinical())));
-        clinicalHistoryTable.addCell(Cells.createKeyCell("Relevant non-oncological history"));
-        clinicalHistoryTable.addCell(Cells.createValueCell(relevantNonOncologicalHistory(record.clinical())));
+        table.addCell(Cells.createEmptyCell());
 
-        overviewTable.addCell(Cells.createCell(clinicalHistoryTable));
-        overviewTable.addCell(Cells.createEmptyCell());
-        overviewTable.addCell(Cells.createTitleCell("Patient current details (" + questionnaireDateString + ")"));
+        table.addCell(Cells.createTitleCell("Patient current details (" + questionnaireDate + ")"));
+        table.addCell(Cells.createCell(createCurrentDetailsTable(record.clinical(), subTableWidths)));
 
-        Table currentDetailsTable = new Table(UnitValue.createPointArray(widths));
-        currentDetailsTable.addCell(Cells.createKeyCell("WHO status"));
-        currentDetailsTable.addCell(Cells.createValueCell(String.valueOf(record.clinical().clinicalStatus().who())));
-        currentDetailsTable.addCell(Cells.createKeyCell("Unresolved toxicities grade => 2"));
-        currentDetailsTable.addCell(Cells.createValueCell(unresolvedToxicities(record.clinical())));
-        currentDetailsTable.addCell(Cells.createKeyCell("Significant infection"));
-        Boolean hasActiveInfection = record.clinical().clinicalStatus().hasActiveInfection();
-        String hasActiveInfectionString = hasActiveInfection != null ? String.valueOf(hasActiveInfection) : "Unknown";
-        currentDetailsTable.addCell(Cells.createValueCell(hasActiveInfectionString));
-        currentDetailsTable.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
-        String ecg = record.clinical().clinicalStatus().ecgAberrationDescription();
-        String ecgString = ecg != null ? ecg : Strings.EMPTY;
-        currentDetailsTable.addCell(Cells.createValueCell(ecgString));
-        currentDetailsTable.addCell(Cells.createKeyCell("Cancer-related complications"));
-        currentDetailsTable.addCell(Cells.createValueCell(cancerRelatedComplications(record.clinical())));
-        overviewTable.addCell(Cells.createCell(currentDetailsTable));
-
-        document.add(overviewTable);
+        document.add(table);
     }
 
-    private static String unresolvedToxicities(final ClinicalRecord record) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (Toxicity toxicity : record.toxicities()) {
-            Integer grade = toxicity.grade();
-            if ((grade != null && grade >= 2) || toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
-                String gradeString = grade != null ? " (" + grade + ")" : Strings.EMPTY;
-                joiner.add(toxicity.name() + gradeString);
-            }
-        }
-        return valueOrDefault(joiner.toString(), "None");
+    @NotNull
+    private static String questionnaireDate(@NotNull ClinicalRecord record) {
+        LocalDate questionnaireDate = record.patient().questionnaireDate();
+        return questionnaireDate != null ? Formats.date(questionnaireDate) : "Unknown";
+    }
+
+    @NotNull
+    private static Table createClinicalHistoryTable(@NotNull ClinicalRecord record, @NotNull float[] widths) {
+        Table table = new Table(UnitValue.createPointArray(widths));
+        table.addCell(Cells.createKeyCell("Relevant treatment history"));
+        table.addCell(Cells.createValueCell(relevantPreTreatmentHistory(record)));
+        table.addCell(Cells.createKeyCell("Other oncological history"));
+        table.addCell(Cells.createValueCell(otherOncologicalHistory(record)));
+        table.addCell(Cells.createKeyCell("Relevant non-oncological history"));
+        table.addCell(Cells.createValueCell(relevantNonOncologicalHistory(record)));
+        return table;
     }
 
     @NotNull
@@ -131,7 +113,7 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
-    private String otherOncologicalHistory(@NotNull ClinicalRecord record) {
+    private static String otherOncologicalHistory(@NotNull ClinicalRecord record) {
         StringJoiner joiner = new StringJoiner(", ");
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (!priorTumorTreatment.isSystemic()) {
@@ -151,6 +133,44 @@ public class SummaryChapter implements ReportChapter {
         StringJoiner joiner = new StringJoiner(", ");
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
             joiner.add(priorOtherCondition.name());
+        }
+        return valueOrDefault(joiner.toString(), "None");
+    }
+
+    @NotNull
+    private static Table createCurrentDetailsTable(@NotNull ClinicalRecord record, @NotNull float[] subTableWidths) {
+        Table table = new Table(UnitValue.createPointArray(subTableWidths));
+        table.addCell(Cells.createKeyCell("WHO status"));
+        table.addCell(Cells.createValueCell(String.valueOf(record.clinicalStatus().who())));
+
+        table.addCell(Cells.createKeyCell("Unresolved toxicities grade => 2"));
+        table.addCell(Cells.createValueCell(unresolvedToxicities(record)));
+
+        table.addCell(Cells.createKeyCell("Significant infection"));
+        Boolean hasActiveInfection = record.clinicalStatus().hasActiveInfection();
+        String hasActiveInfectionString = hasActiveInfection != null ? String.valueOf(hasActiveInfection) : "Unknown";
+        table.addCell(Cells.createValueCell(hasActiveInfectionString));
+
+        table.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
+        String ecg = record.clinicalStatus().ecgAberrationDescription();
+        String ecgString = ecg != null ? ecg : Strings.EMPTY;
+        table.addCell(Cells.createValueCell(ecgString));
+
+        table.addCell(Cells.createKeyCell("Cancer-related complications"));
+        table.addCell(Cells.createValueCell(cancerRelatedComplications(record)));
+
+        return table;
+    }
+
+    @NotNull
+    private static String unresolvedToxicities(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Toxicity toxicity : record.toxicities()) {
+            Integer grade = toxicity.grade();
+            if ((grade != null && grade >= 2) || toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
+                String gradeString = grade != null ? " (" + grade + ")" : Strings.EMPTY;
+                joiner.add(toxicity.name() + gradeString);
+            }
         }
         return valueOrDefault(joiner.toString(), "None");
     }
