@@ -68,7 +68,7 @@ import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.ToxicitySource;
 import com.hartwig.actin.datamodel.clinical.TumorDetails;
 import com.hartwig.actin.datamodel.clinical.TumorStage;
-import com.hartwig.actin.util.FileUtil;
+import com.hartwig.actin.util.Paths;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -80,7 +80,7 @@ public final class ClinicalRecordJson {
     }
 
     public static void write(@NotNull List<ClinicalRecord> records, @NotNull String outputDirectory) throws IOException {
-        String path = FileUtil.appendFileSeparator(outputDirectory);
+        String path = Paths.forceTrailingFileSeparator(outputDirectory);
         for (ClinicalRecord record : records) {
             String jsonFile = path + record.sampleId() + CLINICAL_JSON_EXTENSION;
 

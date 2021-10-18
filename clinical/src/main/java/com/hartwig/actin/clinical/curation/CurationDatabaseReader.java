@@ -27,7 +27,7 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFile;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFile;
-import com.hartwig.actin.util.FileUtil;
+import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,7 +58,7 @@ public final class CurationDatabaseReader {
     public static CurationDatabase read(@NotNull String clinicalCurationDirectory) throws IOException {
         LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory);
 
-        String basePath = FileUtil.appendFileSeparator(clinicalCurationDirectory);
+        String basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory);
 
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))

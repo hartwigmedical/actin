@@ -7,13 +7,13 @@ import java.io.File;
 
 import org.junit.Test;
 
-public class FileUtilTest {
+public class PathsTest {
 
     @Test
     public void canAppendFileSeparator() {
-        assertTrue(FileUtil.appendFileSeparator("hi").endsWith(File.separator));
+        assertTrue(Paths.forceTrailingFileSeparator("hi").endsWith(File.separator));
 
         String dir = "this" + File.separator + "dir" + File.separator;
-        assertEquals(dir, FileUtil.appendFileSeparator(dir));
+        assertEquals(dir, Paths.forceTrailingFileSeparator(dir));
     }
 }

@@ -26,6 +26,7 @@ import com.hartwig.actin.datamodel.molecular.GenomicTreatmentEvidence;
 import com.hartwig.actin.datamodel.molecular.ImmutableGenomicTreatmentEvidence;
 import com.hartwig.actin.datamodel.molecular.ImmutableMolecularRecord;
 import com.hartwig.actin.datamodel.molecular.MolecularRecord;
+import com.hartwig.actin.util.AminoAcid;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +66,7 @@ public final class MolecularRecordJson {
                 boolean reported = bool(evidence, "reported");
                 if (reported) {
                     evidences.add(ImmutableGenomicTreatmentEvidence.builder()
-                            .genomicEvent(string(evidence, "genomicEvent"))
+                            .genomicEvent(convert(string(evidence, "genomicEvent")))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))
                             .level(EvidenceLevel.valueOf(string(evidence, "level")))
@@ -74,6 +75,15 @@ public final class MolecularRecordJson {
                 }
             }
             return evidences;
+        }
+
+        @NotNull
+        private static String convert(@NotNull String genomicEvent) {
+            if (genomicEvent.contains("p.")) {
+                return AminoAcid.forceSingleLetterProteinAnnotation(genomicEvent);
+            } else {
+                return genomicEvent;
+            }
         }
     }
 }

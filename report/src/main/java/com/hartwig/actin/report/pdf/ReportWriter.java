@@ -8,7 +8,7 @@ import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
 import com.hartwig.actin.report.pdf.util.Margins;
 import com.hartwig.actin.report.pdf.util.Metadata;
-import com.hartwig.actin.util.FileUtil;
+import com.hartwig.actin.util.Paths;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -69,7 +69,7 @@ public class ReportWriter {
     private Document initializeReport(@NotNull String sampleId) throws IOException {
         PdfWriter writer;
         if (writeToDisk) {
-            String outputFilePath = FileUtil.appendFileSeparator(outputDirectory) + sampleId + ".actin.pdf";
+            String outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + sampleId + ".actin.pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
             writer = new PdfWriter(outputFilePath);
         } else {

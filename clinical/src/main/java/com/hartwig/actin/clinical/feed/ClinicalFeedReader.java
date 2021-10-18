@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
-import com.hartwig.actin.util.FileUtil;
+import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +37,7 @@ public final class ClinicalFeedReader {
     public static ClinicalFeed read(@NotNull String clinicalFeedDirectory) throws IOException {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory);
 
-        String basePath = FileUtil.appendFileSeparator(clinicalFeedDirectory);
+        String basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory);
         ClinicalFeed feed = ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
                 .questionnaireEntries(readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV))
