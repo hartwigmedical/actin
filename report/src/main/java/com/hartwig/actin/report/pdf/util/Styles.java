@@ -53,7 +53,7 @@ public final class Styles {
 
     @NotNull
     public static Style valueStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(8).setFontColor(Styles.PALETTE_BLUE);
+        return new Style().setFont(fontBold()).setFontSize(8).setFontColor(Styles.PALETTE_BLUE);
     }
 
     @NotNull
