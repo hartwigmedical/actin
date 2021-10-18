@@ -1,7 +1,7 @@
 {
   "sampleId": "ACTN01029999T",
   "patient": {
-    "sex": "MALE",
+    "gender": "MALE",
     "birthYear": 1960,
     "registrationDate": {
       "year": 2021,

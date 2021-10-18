@@ -119,7 +119,7 @@ public class ClinicalRecordFactory {
         PatientEntry patient = feed.patientEntry(subject);
 
         return ImmutablePatientDetails.builder()
-                .sex(patient.sex())
+                .gender(patient.gender())
                 .birthYear(patient.birthYear())
                 .registrationDate(patient.periodStart())
                 .questionnaireDate(questionnaire != null ? questionnaire.date() : null)
@@ -289,7 +289,7 @@ public class ClinicalRecordFactory {
 
             ImmutableMedication.Builder builder = ImmutableMedication.builder();
             if (dosageCurated != null) {
-                builder = builder.from(dosageCurated);
+                builder.from(dosageCurated);
             }
 
             String name = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay());

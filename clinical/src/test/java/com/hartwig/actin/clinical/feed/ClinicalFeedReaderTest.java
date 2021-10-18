@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
-import com.hartwig.actin.datamodel.clinical.Sex;
+import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class ClinicalFeedReaderTest {
         assertEquals("CODE", entry.id());
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals(1953, entry.birthYear());
-        assertEquals(Sex.MALE, entry.sex());
+        assertEquals(Gender.MALE, entry.gender());
         assertEquals(LocalDate.of(2020, 7, 13), entry.periodStart());
         assertNull(entry.periodEnd());
     }

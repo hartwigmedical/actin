@@ -46,7 +46,7 @@ public final class TestClinicalDataFactory {
     @NotNull
     private static PatientDetails createTestPatientDetails() {
         return ImmutablePatientDetails.builder()
-                .sex(Sex.MALE)
+                .gender(Gender.MALE)
                 .birthYear(1955)
                 .registrationDate(LocalDate.of(2021, 9, 1))
                 .questionnaireDate(LocalDate.of(2021, 9, 3))

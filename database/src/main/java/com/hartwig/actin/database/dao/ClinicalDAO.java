@@ -34,6 +34,7 @@ import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
 import com.hartwig.actin.datamodel.clinical.Surgery;
 import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.TumorDetails;
+import com.hartwig.actin.datamodel.clinical.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -88,12 +89,18 @@ class ClinicalDAO {
     }
 
     private void writePatientDetails(@NotNull String sampleId, @NotNull PatientDetails patient) {
-        context.insertInto(PATIENT, PATIENT.SAMPLEID, PATIENT.BIRTHYEAR, PATIENT.SEX, PATIENT.REGISTRATIONDATE, PATIENT.QUESTIONNAIREDATE)
-                .values(sampleId, patient.birthYear(), patient.sex().display(), patient.registrationDate(), patient.questionnaireDate())
+        context.insertInto(PATIENT,
+                PATIENT.SAMPLEID,
+                PATIENT.BIRTHYEAR,
+                PATIENT.GENDER,
+                PATIENT.REGISTRATIONDATE,
+                PATIENT.QUESTIONNAIREDATE)
+                .values(sampleId, patient.birthYear(), patient.gender().display(), patient.registrationDate(), patient.questionnaireDate())
                 .execute();
     }
 
     private void writeTumorDetails(@NotNull String sampleId, @NotNull TumorDetails tumor) {
+        TumorStage stage = tumor.stage();
         context.insertInto(TUMOR,
                 TUMOR.SAMPLEID,
                 TUMOR.PRIMARYTUMORLOCATION,
@@ -122,7 +129,7 @@ class ClinicalDAO {
                         tumor.primaryTumorSubType(),
                         tumor.primaryTumorExtraDetails(),
                         DataUtil.concat(tumor.doids()),
-                        tumor.stage() != null ? tumor.stage().display() : null,
+                        stage != null ? stage.display() : null,
                         DataUtil.toByte(tumor.hasMeasurableLesionRecist()),
                         DataUtil.toByte(tumor.hasBrainLesions()),
                         DataUtil.toByte(tumor.hasActiveBrainLesions()),

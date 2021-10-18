@@ -20,7 +20,7 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.ImmutableQuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory;
-import com.hartwig.actin.datamodel.clinical.Sex;
+import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public final class TestFeedFactory {
                 .id("ID")
                 .subject(TEST_SUBJECT)
                 .birthYear(1960)
-                .sex(Sex.MALE)
+                .gender(Gender.MALE)
                 .periodStart(LocalDate.of(2021, 6, 1))
                 .periodEnd(LocalDate.of(2021, 10, 1))
                 .build());

@@ -17,9 +17,9 @@ import com.hartwig.actin.datamodel.clinical.Allergy;
 import com.hartwig.actin.datamodel.clinical.BloodPressure;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus;
+import com.hartwig.actin.datamodel.clinical.Gender;
 import com.hartwig.actin.datamodel.clinical.Medication;
 import com.hartwig.actin.datamodel.clinical.PatientDetails;
-import com.hartwig.actin.datamodel.clinical.Sex;
 import com.hartwig.actin.datamodel.clinical.Surgery;
 import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.ToxicitySource;
@@ -71,7 +71,7 @@ public class ClinicalRecordFactoryTest {
 
     private static void assertPatientDetails(@NotNull PatientDetails patient) {
         assertEquals(1960, patient.birthYear());
-        assertEquals(Sex.MALE, patient.sex());
+        assertEquals(Gender.MALE, patient.gender());
         assertEquals(LocalDate.of(2021, 6, 1), patient.registrationDate());
         assertEquals(LocalDate.of(2021, 8, 1), patient.questionnaireDate());
     }

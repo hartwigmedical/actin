@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.patient;
 import java.time.LocalDate;
 
 import com.hartwig.actin.clinical.feed.FeedEntry;
-import com.hartwig.actin.datamodel.clinical.Sex;
+import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public abstract class PatientEntry implements FeedEntry {
     public abstract int birthYear();
 
     @NotNull
-    public abstract Sex sex();
+    public abstract Gender gender();
 
     @NotNull
     public abstract LocalDate periodStart();

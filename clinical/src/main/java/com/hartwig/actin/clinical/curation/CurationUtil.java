@@ -24,12 +24,8 @@ public final class CurationUtil {
         return input.equals(IGNORE);
     }
 
-    @Nullable
-    public static String capitalizeFirstLetterOnly(@Nullable String string) {
-        if (string == null) {
-            return null;
-        }
-
+    @NotNull
+    public static String capitalizeFirstLetterOnly(@NotNull String string) {
         if (string.isEmpty()) {
             return string;
         }

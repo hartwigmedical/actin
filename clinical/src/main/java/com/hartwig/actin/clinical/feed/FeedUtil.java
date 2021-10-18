@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.hartwig.actin.datamodel.clinical.Sex;
+import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,14 +14,14 @@ public final class FeedUtil {
     }
 
     @NotNull
-    public static Sex parseSex(@NotNull String sex) {
-        if (sex.equalsIgnoreCase("male")) {
-            return Sex.MALE;
-        } else if (sex.equalsIgnoreCase("female")) {
-            return Sex.FEMALE;
+    public static Gender parseGender(@NotNull String gender) {
+        if (gender.equalsIgnoreCase("male")) {
+            return Gender.MALE;
+        } else if (gender.equalsIgnoreCase("female")) {
+            return Gender.FEMALE;
         }
 
-        throw new IllegalArgumentException("Could not resolve sex: " + sex);
+        throw new IllegalArgumentException("Could not resolve gender: " + gender);
     }
 
     @Nullable

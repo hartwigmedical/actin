@@ -40,6 +40,7 @@ import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus;
 import com.hartwig.actin.datamodel.clinical.Complication;
+import com.hartwig.actin.datamodel.clinical.Gender;
 import com.hartwig.actin.datamodel.clinical.ImmutableAllergy;
 import com.hartwig.actin.datamodel.clinical.ImmutableBloodPressure;
 import com.hartwig.actin.datamodel.clinical.ImmutableBloodTransfusion;
@@ -62,7 +63,6 @@ import com.hartwig.actin.datamodel.clinical.PatientDetails;
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
 import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
-import com.hartwig.actin.datamodel.clinical.Sex;
 import com.hartwig.actin.datamodel.clinical.Surgery;
 import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.ToxicitySource;
@@ -153,7 +153,7 @@ public final class ClinicalRecordJson {
         @NotNull
         private static PatientDetails toPatientDetails(@NotNull JsonObject patient) {
             return ImmutablePatientDetails.builder()
-                    .sex(Sex.valueOf(string(patient, "sex")))
+                    .gender(Gender.valueOf(string(patient, "gender")))
                     .birthYear(integer(patient, "birthYear"))
                     .registrationDate(date(patient, "registrationDate"))
                     .questionnaireDate(nullableDate(patient, "questionnaireDate"))

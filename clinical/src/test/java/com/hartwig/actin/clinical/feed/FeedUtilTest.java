@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.hartwig.actin.datamodel.clinical.Sex;
+import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
@@ -16,14 +16,14 @@ public class FeedUtilTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canParseSex() {
-        assertEquals(Sex.MALE, FeedUtil.parseSex("Male"));
-        assertEquals(Sex.FEMALE, FeedUtil.parseSex("Female"));
+    public void canParseGender() {
+        assertEquals(Gender.MALE, FeedUtil.parseGender("Male"));
+        assertEquals(Gender.FEMALE, FeedUtil.parseGender("Female"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionOnInvalidSex() {
-        FeedUtil.parseSex("no sex");
+    public void throwsExceptionOnInvalidGender() {
+        FeedUtil.parseGender("no gender");
     }
 
     @Test

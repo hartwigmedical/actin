@@ -26,7 +26,6 @@ public class CurationUtilTest {
         assertEquals("H", CurationUtil.capitalizeFirstLetterOnly("H"));
 
         assertEquals(Strings.EMPTY, CurationUtil.capitalizeFirstLetterOnly(Strings.EMPTY));
-        assertNull(CurationUtil.capitalizeFirstLetterOnly(null));
     }
 
     @Test
