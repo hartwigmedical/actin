@@ -70,13 +70,11 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails;
 import com.hartwig.actin.datamodel.clinical.TumorStage;
 import com.hartwig.actin.util.FileUtil;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class ClinicalRecordJson {
 
-    private static final Logger LOGGER = LogManager.getLogger(ClinicalRecordJson.class);
+    private static final String CLINICAL_JSON_EXTENSION = ".clinical.json";
 
     private ClinicalRecordJson() {
     }
@@ -84,8 +82,7 @@ public final class ClinicalRecordJson {
     public static void write(@NotNull List<ClinicalRecord> records, @NotNull String outputDirectory) throws IOException {
         String path = FileUtil.appendFileSeparator(outputDirectory);
         for (ClinicalRecord record : records) {
-            String jsonFile = path + record.sampleId() + ".clinical.json";
-            LOGGER.info(" Writing data for {} to {}", record.sampleId(), jsonFile);
+            String jsonFile = path + record.sampleId() + CLINICAL_JSON_EXTENSION;
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
             writer.write(toJson(record));
@@ -96,9 +93,15 @@ public final class ClinicalRecordJson {
     @NotNull
     public static List<ClinicalRecord> readFromDir(@NotNull String clinicalDirectory) throws IOException {
         List<ClinicalRecord> records = Lists.newArrayList();
-        for (File file : new File(clinicalDirectory).listFiles()) {
+        File[] files = new File(clinicalDirectory).listFiles();
+        if (files == null) {
+            throw new IllegalArgumentException("Could not retrieve clinical json files from " + clinicalDirectory);
+        }
+
+        for (File file : files) {
             records.add(fromJson(Files.readString(file.toPath())));
         }
+
         return records;
     }
 

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public interface ReportConfig {
 
     String CLINICAL_JSON = "clinical_json";
+    String MOLECULAR_JSON = "molecular_json";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -22,6 +23,7 @@ public interface ReportConfig {
         Options options = new Options();
 
         options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the sample");
+        options.addOption(MOLECULAR_JSON, true, "File containing the molecular record of the sample");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to");
 
@@ -32,12 +34,16 @@ public interface ReportConfig {
     String clinicalJson();
 
     @NotNull
+    String molecularJson();
+
+    @NotNull
     String outputDirectory();
 
     @NotNull
     static ReportConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableReportConfig.builder()
                 .clinicalJson(Config.nonOptionalFile(cmd, CLINICAL_JSON))
+                .molecularJson(Config.nonOptionalFile(cmd, MOLECULAR_JSON))
                 .outputDirectory(Config.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

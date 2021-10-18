@@ -39,6 +39,11 @@ public class ClinicalRecordJsonTest {
         assertClinicalRecord(records.get(0));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void cannotReadFilesFromNonDir() throws IOException {
+        ClinicalRecordJson.readFromDir(CLINICAL_JSON);
+    }
+
     @Test
     public void canReadClinicalRecordJson() throws IOException {
         assertClinicalRecord(ClinicalRecordJson.read(CLINICAL_JSON));
