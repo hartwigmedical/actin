@@ -56,22 +56,22 @@ public final class TestClinicalDataFactory {
     @NotNull
     private static TumorDetails createTestTumorDetails() {
         return ImmutableTumorDetails.builder()
-                .primaryTumorLocation("Bile duct")
+                .primaryTumorLocation("Skin")
                 .primaryTumorSubLocation(Strings.EMPTY)
-                .primaryTumorType("Cholangiocarcinoma")
+                .primaryTumorType("Melanoma")
                 .primaryTumorSubType(Strings.EMPTY)
                 .primaryTumorExtraDetails(Strings.EMPTY)
-                .addDoids("4947")
+                .addDoids("8923")
                 .stage(TumorStage.IV)
                 .hasMeasurableLesionRecist(true)
                 .hasBrainLesions(false)
-                .hasActiveBrainLesions(false)
-                .hasSymptomaticBrainLesions(false)
-                .hasCnsLesions(null)
+                .hasActiveBrainLesions(null)
+                .hasSymptomaticBrainLesions(null)
+                .hasCnsLesions(true)
                 .hasActiveCnsLesions(null)
-                .hasSymptomaticCnsLesions(null)
-                .hasBoneLesions(true)
-                .hasLiverLesions(false)
+                .hasSymptomaticCnsLesions(true)
+                .hasBoneLesions(false)
+                .hasLiverLesions(true)
                 .hasOtherLesions(true)
                 .addOtherLesions("Pulmonal")
                 .addOtherLesions("Abdomen")
@@ -116,13 +116,13 @@ public final class TestClinicalDataFactory {
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
 
         priorSecondPrimaries.add(ImmutablePriorSecondPrimary.builder()
-                .tumorLocation("Bone/soft tissue")
+                .tumorLocation("Bone/Soft tissue")
                 .tumorSubLocation(Strings.EMPTY)
                 .tumorType("Schwannoma")
                 .tumorSubType(Strings.EMPTY)
                 .addDoids("3192")
                 .diagnosedYear(2013)
-                .isSecondPrimaryActive(false)
+                .isSecondPrimaryActive(true)
                 .build());
 
         return priorSecondPrimaries;
@@ -187,6 +187,54 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
+                .date(LocalDate.of(2021, 8, 20))
+                .code("Hb")
+                .name("Hemoglobin")
+                .comparator(Strings.EMPTY)
+                .value(1)
+                .unit("mmol/L")
+                .refLimitLow(6.5D)
+                .refLimitUp(9.5D)
+                .isOutsideRef(true)
+                .build());
+
+        labValues.add(ImmutableLabValue.builder()
+                .date(LocalDate.of(2021, 8, 19))
+                .code("THROMBO")
+                .name("Thrombocytes")
+                .comparator(Strings.EMPTY)
+                .value(155)
+                .unit("10*9/L")
+                .refLimitLow(155D)
+                .refLimitUp(350D)
+                .isOutsideRef(false)
+                .build());
+
+        labValues.add(ImmutableLabValue.builder()
+                .date(LocalDate.of(2021, 8, 21))
+                .code("THROMBO")
+                .name("Thrombocytes")
+                .comparator(Strings.EMPTY)
+                .value(151)
+                .unit("10*9/L")
+                .refLimitLow(155D)
+                .refLimitUp(350D)
+                .isOutsideRef(true)
+                .build());
+
+        labValues.add(ImmutableLabValue.builder()
+                .date(LocalDate.of(2021, 8, 24))
+                .code("THROMBO")
+                .name("Thrombocytes")
+                .comparator(Strings.EMPTY)
+                .value(150)
+                .unit("10*9/L")
+                .refLimitLow(155D)
+                .refLimitUp(350D)
+                .isOutsideRef(true)
+                .build());
+
+        labValues.add(ImmutableLabValue.builder()
                 .date(LocalDate.of(2021, 8, 24))
                 .code("LEUKO")
                 .name("Leukocytes")
@@ -195,6 +243,17 @@ public final class TestClinicalDataFactory {
                 .unit("10^9/L")
                 .refLimitLow(3D)
                 .refLimitUp(10D)
+                .isOutsideRef(false)
+                .build());
+
+        labValues.add(ImmutableLabValue.builder()
+                .date(LocalDate.of(2021, 8, 24))
+                .code("CKD-EPIeGFR")
+                .name("CKD-EPI eGFR")
+                .comparator(">")
+                .value(100)
+                .unit("mL/min")
+                .refLimitLow(100D)
                 .isOutsideRef(false)
                 .build());
 
