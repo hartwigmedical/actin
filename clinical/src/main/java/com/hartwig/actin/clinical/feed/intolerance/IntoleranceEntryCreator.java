@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.feed.intolerance;
 
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedLine;
-import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,9 +13,7 @@ public class IntoleranceEntryCreator implements FeedEntryCreator<IntoleranceEntr
     @NotNull
     @Override
     public IntoleranceEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableIntoleranceEntry.builder()
-                .subject(line.string("subject"))
-                .assertedDate(FeedUtil.parseDate(line.string("assertedDate")))
+        return ImmutableIntoleranceEntry.builder().subject(line.string("subject")).assertedDate(line.date("assertedDate"))
                 .category(line.string("category"))
                 .categoryAllergyCategoryCode(line.string("category_allergyCategory_code"))
                 .categoryAllergyCategoryDisplay(line.string("category_allergyCategory_display"))

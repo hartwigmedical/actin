@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.feed;
 import java.time.LocalDate;
 import java.util.Map;
 
+import com.hartwig.actin.datamodel.clinical.Gender;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,29 +22,35 @@ public class FeedLine {
 
     @NotNull
     public String string(@NotNull String column) {
+        assert fieldIndexMap.containsKey(column);
         return parts[fieldIndexMap.get(column)];
     }
 
     @NotNull
-    public LocalDate date(@NotNull String column) {
-        return FeedUtil.parseDate(parts[fieldIndexMap.get(column)]);
+    public Gender gender(@NotNull String column) {
+        return FeedParseFunctions.parseGender(string(column));
     }
 
     @NotNull
+    public LocalDate date(@NotNull String column) {
+        return FeedParseFunctions.parseDate(string(column));
+    }
+
+    @Nullable
     public LocalDate optionalDate(@NotNull String column) {
-        return FeedUtil.parseOptionalDate(parts[fieldIndexMap.get(column)]);
+        return FeedParseFunctions.parseOptionalDate(string(column));
     }
 
     public double number(@NotNull String column) {
-        return FeedUtil.parseDouble(parts[fieldIndexMap.get(column)]);
+        return FeedParseFunctions.parseDouble(string(column));
     }
 
     @Nullable
     public Double optionalNumber(@NotNull String column) {
-        return FeedUtil.parseOptionalDouble(parts[fieldIndexMap.get(column)]);
+        return FeedParseFunctions.parseOptionalDouble(string(column));
     }
 
     public int integer(@NotNull String column) {
-        return Integer.parseInt(parts[fieldIndexMap.get(column)]);
+        return Integer.parseInt(string(column));
     }
 }

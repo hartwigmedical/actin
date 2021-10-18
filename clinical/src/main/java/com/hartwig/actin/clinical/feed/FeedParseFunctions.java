@@ -11,11 +11,11 @@ import com.hartwig.actin.datamodel.clinical.Gender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class FeedUtil {
+public final class FeedParseFunctions {
 
     private static final Set<DateTimeFormatter> DATE_FORMATS = Sets.newHashSet();
 
-    private FeedUtil() {
+    private FeedParseFunctions() {
     }
 
     static {
