@@ -255,8 +255,7 @@ public class CurationModel {
         MedicationDosageConfig config = find(database.medicationDosageConfigs(), input);
 
         if (config == null) {
-            // TODO Enable once medications are more definitive
-            // LOGGER.warn(" Could not find medication dosage config for '{}'", input);
+            LOGGER.warn(" Could not find medication dosage config for '{}'", input);
             return null;
         } else {
             return ImmutableMedication.builder()
@@ -277,8 +276,7 @@ public class CurationModel {
         MedicationTypeConfig config = find(database.medicationTypeConfigs(), medication.name());
 
         if (config == null) {
-            // TODO Enable once medications are more definitive
-            // LOGGER.warn(" Could not find medication type config for '{}'", medication.name());
+            LOGGER.warn(" Could not find medication type config for '{}'", medication.name());
             return medication;
         } else {
             return ImmutableMedication.builder().from(medication).type(config.type()).build();
