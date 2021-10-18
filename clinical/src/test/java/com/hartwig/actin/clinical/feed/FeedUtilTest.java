@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import com.hartwig.actin.datamodel.clinical.Gender;
 
@@ -28,10 +27,13 @@ public class FeedUtilTest {
 
     @Test
     public void canParseDates() {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        assertNull(FeedUtil.parseOptionalDate(Strings.EMPTY));
 
-        assertNull(FeedUtil.parseOptionalDate(Strings.EMPTY, format));
-        assertEquals(LocalDate.of(2020, 10, 23), FeedUtil.parseOptionalDate("23-10-2020", format));
+        LocalDate correct = LocalDate.of(2020, 10, 23);
+        assertEquals(correct, FeedUtil.parseOptionalDate("23-10-2020 13:10"));
+        assertEquals(correct, FeedUtil.parseOptionalDate("2020-10-23 13:10:55.0000000"));
+        assertEquals(correct, FeedUtil.parseOptionalDate("2020-10-23 13:10:55"));
+        assertEquals(correct, FeedUtil.parseOptionalDate("2020-10-23"));
     }
 
     @Test

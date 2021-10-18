@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.complication;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
@@ -9,8 +8,6 @@ import com.hartwig.actin.clinical.feed.FeedUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ComplicationEntryCreator implements FeedEntryCreator<ComplicationEntry> {
-
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("d-M-yyyy HH:mm");
 
     public ComplicationEntryCreator() {
     }
@@ -29,8 +26,8 @@ public class ComplicationEntryCreator implements FeedEntryCreator<ComplicationEn
                 .codeDisplayOriginal(parts[fieldIndexMap.get("code_display_original")])
                 .codeCode(parts[fieldIndexMap.get("code_code")])
                 .codeDisplay(parts[fieldIndexMap.get("code_display")])
-                .onsetPeriodStart(FeedUtil.parseDate(parts[fieldIndexMap.get("onsetPeriod_start")], FORMAT))
-                .onsetPeriodEnd(FeedUtil.parseOptionalDate(parts[fieldIndexMap.get("onsetPeriod_end")], FORMAT))
+                .onsetPeriodStart(FeedUtil.parseDate(parts[fieldIndexMap.get("onsetPeriod_start")]))
+                .onsetPeriodEnd(FeedUtil.parseOptionalDate(parts[fieldIndexMap.get("onsetPeriod_end")]))
                 .severityCode(parts[fieldIndexMap.get("severity_code")])
                 .severityDisplay(parts[fieldIndexMap.get("severity_display")])
                 .severityDisplayNl(parts[fieldIndexMap.get("severity_display_nl")])

@@ -2,7 +2,10 @@ package com.hartwig.actin.clinical.feed;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +13,15 @@ import org.jetbrains.annotations.Nullable;
 
 public final class FeedUtil {
 
+    private static final Set<DateTimeFormatter> DATE_FORMATS = Sets.newHashSet();
+
     private FeedUtil() {
+    }
+
+    static {
+        DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        DATE_FORMATS.add(DateTimeFormatter.ofPattern("d-M-yyyy HH:mm"));
     }
 
     @NotNull
@@ -25,13 +36,32 @@ public final class FeedUtil {
     }
 
     @Nullable
-    public static LocalDate parseOptionalDate(@NotNull String date, @NotNull DateTimeFormatter format) {
-        return !date.isEmpty() ? parseDate(date, format) : null;
+    public static LocalDate parseOptionalDate(@NotNull String date) {
+        return !date.isEmpty() ? parseDate(date) : null;
     }
 
     @NotNull
-    public static LocalDate parseDate(@NotNull String date, @NotNull DateTimeFormatter format) {
-        return LocalDate.parse(date, format);
+    public static LocalDate parseDate(@NotNull String date) {
+        // One of the date formats ends with trailing milliseconds along with another 4 digits.
+        String transformedDate = date.endsWith(".0000000") ? date.substring(0, date.length() - 8) : date;
+
+        for (DateTimeFormatter format : DATE_FORMATS) {
+            if (canBeInterpretedWithFormat(transformedDate, format)) {
+                return LocalDate.parse(transformedDate, format);
+            }
+        }
+
+        // If nothing works, just try with raw date on first format and probably trigger an exception.
+        return LocalDate.parse(date, DATE_FORMATS.iterator().next());
+    }
+
+    private static boolean canBeInterpretedWithFormat(@NotNull String date, @NotNull DateTimeFormatter format) {
+        try {
+            LocalDate.parse(date, format);
+            return true;
+        } catch (DateTimeParseException exception) {
+            return false;
+        }
     }
 
     @Nullable

@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.medication;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -11,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry> {
-
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     public MedicationEntryCreator() {
     }
@@ -44,10 +41,8 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
                 .dosageDoseValue(parts[fieldIndexMap.get("dosage_dose_value")])
                 .dosageRateQuantityUnit(parts[fieldIndexMap.get("dosage_rateQuantity_unit")])
                 .dosageDoseUnitDisplayOriginal(parts[fieldIndexMap.get("dosage_dose_unit_display_original")])
-                .periodOfUseValuePeriodStart(FeedUtil.parseDate(transform(parts[fieldIndexMap.get("periodOfUse_valuePeriod_start")]),
-                        FORMAT))
-                .periodOfUseValuePeriodEnd(FeedUtil.parseOptionalDate(transform(parts[fieldIndexMap.get("periodOfUse_valuePeriod_end")]),
-                        FORMAT))
+                .periodOfUseValuePeriodStart(FeedUtil.parseDate(parts[fieldIndexMap.get("periodOfUse_valuePeriod_start")]))
+                .periodOfUseValuePeriodEnd(FeedUtil.parseOptionalDate(parts[fieldIndexMap.get("periodOfUse_valuePeriod_end")]))
                 .stopTypeDisplay(parts[fieldIndexMap.get("stopType_display")])
                 .categoryMedicationRequestCategoryDisplay(parts[fieldIndexMap.get("category_medicationRequestCategory_display")])
                 .categoryMedicationRequestCategoryCodeOriginal(parts[fieldIndexMap.get("category_medicationRequestCategory_code_original")])
@@ -66,11 +61,4 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
 
         return null;
     }
-
-    @NotNull
-    private static String transform(@NotNull String date) {
-        // This date contains microseconds so need to remove before parsing.
-        return date.substring(0, date.length() - 4);
-    }
-
 }
