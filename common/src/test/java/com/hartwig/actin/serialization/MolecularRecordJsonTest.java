@@ -23,5 +23,7 @@ public class MolecularRecordJsonTest {
         assertTrue(record.hasReliableQuality());
         assertTrue(record.hasReliablePurity());
         assertEquals(25, record.genomicTreatmentEvidences().size());
+
+        assertEquals(2, record.actionableGenomicEvents().size());
     }
 }

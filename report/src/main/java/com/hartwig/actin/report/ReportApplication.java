@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.hartwig.actin.datamodel.ActinRecord;
 import com.hartwig.actin.datamodel.ImmutableActinRecord;
+import com.hartwig.actin.datamodel.Printer;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.molecular.MolecularRecord;
 import com.hartwig.actin.report.pdf.ReportWriter;
@@ -52,9 +53,11 @@ public class ReportApplication {
     public void run() throws IOException {
         LOGGER.info("Loading clinical record from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
+        Printer.printClinicalRecord(clinical);
 
         LOGGER.info("Loading molecular record from {}", config.molecularJson());
         MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
+        Printer.printMolecularRecord(molecular);
 
         ActinRecord record = ImmutableActinRecord.builder().clinical(clinical).molecular(molecular).build();
 

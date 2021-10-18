@@ -1,10 +1,8 @@
 package com.hartwig.actin.report.pdf.chapters;
 
 import java.time.LocalDate;
-import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.datamodel.ActinRecord;
 import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
@@ -13,7 +11,6 @@ import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
 import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
 import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.ToxicitySource;
-import com.hartwig.actin.datamodel.molecular.GenomicTreatmentEvidence;
 import com.hartwig.actin.datamodel.molecular.MolecularRecord;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -202,14 +199,9 @@ public class SummaryChapter implements ReportChapter {
         table.addCell(Cells.createValueCell(record.hasReliablePurity() ? "Yes" : "No"));
 
         table.addCell(Cells.createKeyCell("Actionable molecular events"));
-        Set<String> uniqueEvents = Sets.newHashSet();
-        for (GenomicTreatmentEvidence evidence : record.genomicTreatmentEvidences()) {
-            uniqueEvents.add(evidence.genomicEvent());
-        }
-
         StringJoiner joiner = new StringJoiner(", ");
-        for (String event : uniqueEvents) {
-            joiner.add(event);
+        for (String string : record.actionableGenomicEvents()) {
+            joiner.add(string);
         }
         table.addCell(Cells.createValueCell(valueOrDefault(joiner.toString(), "None")));
         return table;
