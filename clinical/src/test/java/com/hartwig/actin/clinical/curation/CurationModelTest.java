@@ -142,6 +142,8 @@ public class CurationModelTest {
 
         assertNull(model.curateBiopsyLocation(null));
 
+        assertNull(model.curateOtherLesions(null));
+
         List<String> noOtherLesions = Lists.newArrayList("not a lesion");
         assertNull(model.curateOtherLesions(noOtherLesions));
 

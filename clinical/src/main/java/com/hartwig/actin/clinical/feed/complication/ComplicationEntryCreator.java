@@ -1,9 +1,7 @@
 package com.hartwig.actin.clinical.feed.complication;
 
-import java.util.Map;
-
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
-import com.hartwig.actin.clinical.feed.FeedUtil;
+import com.hartwig.actin.clinical.feed.FeedLine;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,26 +12,31 @@ public class ComplicationEntryCreator implements FeedEntryCreator<ComplicationEn
 
     @NotNull
     @Override
-    public ComplicationEntry fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+    public ComplicationEntry fromLine(@NotNull final FeedLine line) {
         return ImmutableComplicationEntry.builder()
-                .subject(parts[fieldIndexMap.get("subject")])
-                .identifierSystem(parts[fieldIndexMap.get("identifier_system")])
-                .categoryCodeOriginal(parts[fieldIndexMap.get("category_code_original")])
-                .categoryDisplay(parts[fieldIndexMap.get("category_display")])
-                .categoryDisplayOriginal(parts[fieldIndexMap.get("category_display_original")])
-                .clinicalStatus(parts[fieldIndexMap.get("clinicalStatus")])
-                .codeCodeOriginal(parts[fieldIndexMap.get("code_code_original")])
-                .codeDisplayOriginal(parts[fieldIndexMap.get("code_display_original")])
-                .codeCode(parts[fieldIndexMap.get("code_code")])
-                .codeDisplay(parts[fieldIndexMap.get("code_display")])
-                .onsetPeriodStart(FeedUtil.parseDate(parts[fieldIndexMap.get("onsetPeriod_start")]))
-                .onsetPeriodEnd(FeedUtil.parseOptionalDate(parts[fieldIndexMap.get("onsetPeriod_end")]))
-                .severityCode(parts[fieldIndexMap.get("severity_code")])
-                .severityDisplay(parts[fieldIndexMap.get("severity_display")])
-                .severityDisplayNl(parts[fieldIndexMap.get("severity_display_nl")])
-                .specialtyCodeOriginal(parts[fieldIndexMap.get("specialty_code_original")])
-                .specialtyDisplayOriginal(parts[fieldIndexMap.get("specialty_display_original")])
-                .verificationStatusCode(parts[fieldIndexMap.get("verificationStatus_code")])
+                .subject(line.string("subject"))
+                .identifierSystem(line.string("identifier_system"))
+                .categoryCodeOriginal(line.string("category_code_original"))
+                .categoryDisplay(line.string("category_display"))
+                .categoryDisplayOriginal(line.string("category_display_original"))
+                .clinicalStatus(line.string("clinicalStatus"))
+                .codeCodeOriginal(line.string("code_code_original"))
+                .codeDisplayOriginal(line.string("code_display_original"))
+                .codeCode(line.string("code_code"))
+                .codeDisplay(line.string("code_display"))
+                .onsetPeriodStart(line.date("onsetPeriod_start"))
+                .onsetPeriodEnd(line.optionalDate("onsetPeriod_end"))
+                .severityCode(line.string("severity_code"))
+                .severityDisplay(line.string("severity_display"))
+                .severityDisplayNl(line.string("severity_display_nl"))
+                .specialtyCodeOriginal(line.string("specialty_code_original"))
+                .specialtyDisplayOriginal(line.string("specialty_display_original"))
+                .verificationStatusCode(line.string("verificationStatus_code"))
                 .build();
+    }
+
+    @Override
+    public boolean isValid(@NotNull final FeedLine line) {
+        return true;
     }
 }

@@ -1,9 +1,7 @@
 package com.hartwig.actin.clinical.feed.encounter;
 
-import java.util.Map;
-
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
-import com.hartwig.actin.clinical.feed.FeedUtil;
+import com.hartwig.actin.clinical.feed.FeedLine;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,20 +12,25 @@ public class EncounterEntryCreator implements FeedEntryCreator<EncounterEntry> {
 
     @NotNull
     @Override
-    public EncounterEntry fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+    public EncounterEntry fromLine(@NotNull final FeedLine line) {
         return ImmutableEncounterEntry.builder()
-                .subject(parts[fieldIndexMap.get("subject")])
-                .type1Display(parts[fieldIndexMap.get("type1_display")])
-                .classDisplay(parts[fieldIndexMap.get("class_display")])
-                .periodStart(FeedUtil.parseDate(parts[fieldIndexMap.get("period_start")]))
-                .periodEnd(FeedUtil.parseDate(parts[fieldIndexMap.get("period_end")]))
-                .identifierValue(parts[fieldIndexMap.get("identifier_value")])
-                .identifierSystem(parts[fieldIndexMap.get("identifier_system")])
-                .codeCodingCodeOriginal(parts[fieldIndexMap.get("code_coding_code_original")])
-                .codeCodingDisplayOriginal(parts[fieldIndexMap.get("code_coding_display_original")])
-                .presentedFormData(parts[fieldIndexMap.get("presentedForm_data")])
-                .reason(parts[fieldIndexMap.get("reason")])
-                .accessionValue(parts[fieldIndexMap.get("accession_value")])
+                .subject(line.string("subject"))
+                .type1Display(line.string("type1_display"))
+                .classDisplay(line.string("class_display"))
+                .periodStart(line.date("period_start"))
+                .periodEnd(line.date("period_end"))
+                .identifierValue(line.string("identifier_value"))
+                .identifierSystem(line.string("identifier_system"))
+                .codeCodingCodeOriginal(line.string("code_coding_code_original"))
+                .codeCodingDisplayOriginal(line.string("code_coding_display_original"))
+                .presentedFormData(line.string("presentedForm_data"))
+                .reason(line.string("reason"))
+                .accessionValue(line.string("accession_value"))
                 .build();
+    }
+
+    @Override
+    public boolean isValid(@NotNull final FeedLine line) {
+        return true;
     }
 }

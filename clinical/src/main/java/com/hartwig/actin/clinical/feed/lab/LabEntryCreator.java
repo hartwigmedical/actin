@@ -1,8 +1,7 @@
 package com.hartwig.actin.clinical.feed.lab;
 
-import java.util.Map;
-
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
+import com.hartwig.actin.clinical.feed.FeedLine;
 import com.hartwig.actin.clinical.feed.FeedUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,19 +13,24 @@ public class LabEntryCreator implements FeedEntryCreator<LabEntry> {
 
     @NotNull
     @Override
-    public LabEntry fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+    public LabEntry fromLine(@NotNull final FeedLine line) {
         return ImmutableLabEntry.builder()
-                .subject(parts[fieldIndexMap.get("subject")])
-                .codeCodeOriginal(parts[fieldIndexMap.get("code_code_original")])
-                .codeDisplayOriginal(parts[fieldIndexMap.get("code_display_original")])
-                .issued(FeedUtil.parseDate(parts[fieldIndexMap.get("issued")]))
-                .valueQuantityComparator(parts[fieldIndexMap.get("valueQuantity_comparator")])
-                .valueQuantityValue(FeedUtil.parseDouble(parts[fieldIndexMap.get("valueQuantity_value")]))
-                .valueQuantityUnit(parts[fieldIndexMap.get("valueQuantity_unit")])
-                .interpretationDisplayOriginal(parts[fieldIndexMap.get("Interpretation_display_original")])
-                .valueString(parts[fieldIndexMap.get("valueString")])
-                .codeCode(parts[fieldIndexMap.get("code_code")])
-                .referenceRangeText(parts[fieldIndexMap.get("referenceRange_text")])
+                .subject(line.string("subject"))
+                .codeCodeOriginal(line.string("code_code_original"))
+                .codeDisplayOriginal(line.string("code_display_original"))
+                .issued(FeedUtil.parseDate(line.string("issued")))
+                .valueQuantityComparator(line.string("valueQuantity_comparator"))
+                .valueQuantityValue(line.number("valueQuantity_value"))
+                .valueQuantityUnit(line.string("valueQuantity_unit"))
+                .interpretationDisplayOriginal(line.string("Interpretation_display_original"))
+                .valueString(line.string("valueString"))
+                .codeCode(line.string("code_code"))
+                .referenceRangeText(line.string("referenceRange_text"))
                 .build();
+    }
+
+    @Override
+    public boolean isValid(@NotNull final FeedLine line) {
+        return true;
     }
 }

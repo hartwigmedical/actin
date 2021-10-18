@@ -80,7 +80,10 @@ class FeedFileReader<T extends FeedEntry> {
     private void addToEntries(@NotNull List<T> entries, @NotNull Map<String, Integer> fieldIndexMap, @NotNull String line) {
         String[] parts = splitFeedLine(line);
         if (!allEmpty(parts)) {
-            entries.add(feedEntryCreator.fromParts(fieldIndexMap, parts));
+            FeedLine feedLine = new FeedLine(fieldIndexMap, parts);
+            if (feedEntryCreator.isValid(feedLine)) {
+                entries.add(feedEntryCreator.fromLine(feedLine));
+            }
         }
     }
 
