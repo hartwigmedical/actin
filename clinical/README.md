@@ -23,7 +23,7 @@ Every sample, uniquely defined by their sample ID, has a clinical record with th
 
 Field | Example Value | Details
 ---|---|---
-sex | MALE | 
+gender | MALE | 
 birthYear | 1945 |
 registrationDate | 2021-07-11 | Date on which the patient was registered for evaluation in ACTIN
 questionnaireDate | 2021-07-20 | Date on which the data without EHR timestamp has been collected (eg lesion locations, WHO status)
