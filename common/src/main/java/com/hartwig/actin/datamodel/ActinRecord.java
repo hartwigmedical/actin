@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel;
 
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.datamodel.molecular.MolecularRecord;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +14,13 @@ public abstract class ActinRecord {
     @NotNull
     @Value.Derived
     public String sampleId() {
+        assert clinical().sampleId().equals(molecular().sampleId());
         return clinical().sampleId();
     }
 
     @NotNull
     public abstract ClinicalRecord clinical();
+
+    @NotNull
+    public abstract MolecularRecord molecular();
 }

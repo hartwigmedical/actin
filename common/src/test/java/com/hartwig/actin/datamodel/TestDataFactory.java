@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel;
 
 import com.hartwig.actin.datamodel.clinical.TestClinicalDataFactory;
+import com.hartwig.actin.datamodel.molecular.TestMolecularDataFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +14,9 @@ public final class TestDataFactory {
 
     @NotNull
     public static ActinRecord createTestActinRecord() {
-        return ImmutableActinRecord.builder().clinical(TestClinicalDataFactory.createProperTestClinicalRecord()).build();
+        return ImmutableActinRecord.builder()
+                .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
+                .molecular(TestMolecularDataFactory.createProperTestMolecularRecord())
+                .build();
     }
 }
