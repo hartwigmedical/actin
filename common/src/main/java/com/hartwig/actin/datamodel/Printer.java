@@ -5,11 +5,13 @@ import java.util.StringJoiner;
 
 import com.google.common.base.Strings;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.datamodel.clinical.TumorDetails;
 import com.hartwig.actin.datamodel.molecular.MolecularRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class Printer {
 
@@ -28,9 +30,31 @@ public final class Printer {
         printer.print("Sample: " + record.sampleId());
         printer.print("Birth year: " + record.patient().birthYear());
         printer.print("Gender: " + record.patient().gender());
-        printer.print("Primary tumor location: " + record.tumor().primaryTumorLocation());
-        printer.print("Primary tumor type: " + record.tumor().primaryTumorType());
+        printer.print("Primary tumor location: " + tumorLocation(record.tumor()));
+        printer.print("Primary tumor type: " + tumorType(record.tumor()));
         printer.print("WHO status: " + record.clinicalStatus().who());
+    }
+
+    @Nullable
+    private static String tumorLocation(@NotNull TumorDetails tumor) {
+        String location = tumor.primaryTumorLocation();
+        if (location == null) {
+            return null;
+        }
+
+        String subLocation = tumor.primaryTumorSubLocation();
+        return subLocation != null ? location + " (" + subLocation + ")" : location;
+    }
+
+    @Nullable
+    private static String tumorType(@NotNull TumorDetails tumor) {
+        String type = tumor.primaryTumorType();
+        if (type == null) {
+            return null;
+        }
+
+        String subType = tumor.primaryTumorType();
+        return subType != null ? type + " (" + subType + ")" : type;
     }
 
     public static void printMolecularRecord(@NotNull MolecularRecord record) {
