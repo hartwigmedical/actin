@@ -9,7 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Formats {
 
-    public static final String UNKNOWN = "Unknown";
+    public static final String VALUE_UNKNOWN = "Unknown";
+    public static final String DATE_UNKNOWN = "Date unknown";
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
@@ -17,14 +18,14 @@ public final class Formats {
     }
 
     @NotNull
-    public static String date(@NotNull LocalDate date) {
-        return DATE_FORMAT.format(date);
+    public static String date(@Nullable LocalDate date) {
+        return date != null ? DATE_FORMAT.format(date) : DATE_UNKNOWN;
     }
 
     @NotNull
     public static String yesNoUnknown(@Nullable Boolean bool) {
         if (bool == null) {
-            return UNKNOWN;
+            return VALUE_UNKNOWN;
         }
 
         return bool ? "Yes" : "No";

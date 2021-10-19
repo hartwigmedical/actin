@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.Toxicity;
 import com.hartwig.actin.datamodel.clinical.ToxicitySource;
 import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Clinical;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
@@ -32,7 +31,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Patient current details (" + Clinical.questionnaireDate(record) + ")";
+        return "Patient clinical history (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull
@@ -64,7 +63,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
     @NotNull
     private static String whoStatus(@Nullable Integer who) {
-        return who != null ? String.valueOf(who) : Formats.UNKNOWN;
+        return who != null ? String.valueOf(who) : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull

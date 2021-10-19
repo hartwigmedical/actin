@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.PriorOtherCondition;
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary;
 import com.hartwig.actin.datamodel.clinical.PriorTumorTreatment;
 import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Clinical;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
@@ -30,7 +29,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Patient clinical history (" + Clinical.questionnaireDate(record) + ")";
+        return "Patient clinical history (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull

@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.TumorDetails;
 import com.hartwig.actin.datamodel.clinical.TumorStage;
 import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Clinical;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -33,7 +32,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Tumor details (" + Clinical.questionnaireDate(record) + ")";
+        return "Patient clinical history (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull
@@ -71,7 +70,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     @NotNull
     private static String stage(@NotNull TumorDetails tumor) {
         TumorStage stage = tumor.stage();
-        return stage != null ? stage.display() : Formats.UNKNOWN;
+        return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
@@ -85,7 +84,7 @@ public class TumorDetailsGenerator implements TableGenerator {
                     : tumorLocation;
         }
 
-        return Formats.UNKNOWN;
+        return Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
@@ -97,13 +96,13 @@ public class TumorDetailsGenerator implements TableGenerator {
             return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorType + " (" + tumorSubType + ")" : tumorType;
         }
 
-        return Formats.UNKNOWN;
+        return Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
     private static String biopsyLocation(@NotNull TumorDetails tumor) {
         String biopsyLocation = tumor.biopsyLocation();
-        return biopsyLocation != null ? biopsyLocation : Formats.UNKNOWN;
+        return biopsyLocation != null ? biopsyLocation : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
@@ -123,7 +122,7 @@ public class TumorDetailsGenerator implements TableGenerator {
 
     @NotNull
     private static Text renderStyledText(@NotNull String value) {
-        Style style = !value.equals(Formats.UNKNOWN) ? Styles.tableValueStyle() : Styles.labelStyle();
+        Style style = !value.equals(Formats.VALUE_UNKNOWN) ? Styles.tableValueStyle() : Styles.labelStyle();
         return new Text(value).addStyle(style);
     }
 
@@ -131,7 +130,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     private static String lesionsOther(@NotNull TumorDetails tumor) {
         Boolean hasOtherLesions = tumor.hasOtherLesions();
         if (hasOtherLesions == null) {
-            return Formats.UNKNOWN;
+            return Formats.VALUE_UNKNOWN;
         }
 
         if (hasOtherLesions) {
