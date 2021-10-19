@@ -68,11 +68,13 @@ public class SummaryChapter implements ReportChapter {
     private void addSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        float[] widths = new float[] { 170, contentWidth() - 180 };
-        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryTableGenerator(record.clinical(), widths),
-                new PatientCurrentDetailsTableGenerator(record.clinical(), widths),
-                new LaboratoryTableGenerator(record.clinical(), widths),
-                new MolecularResultsTableGenerator(record.molecular(), widths));
+        float keyWidth = 170;
+        float valueWidth = contentWidth() - keyWidth - 10;
+        List<TableGenerator> generators =
+                Lists.newArrayList(new PatientClinicalHistoryTableGenerator(record.clinical(), keyWidth, valueWidth),
+                        new PatientCurrentDetailsTableGenerator(record.clinical(), keyWidth, valueWidth),
+                        new LaboratoryTableGenerator(record.clinical(), keyWidth, valueWidth),
+                        new MolecularResultsTableGenerator(record.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {
             addSubTableToMain(table, generators.get(i));

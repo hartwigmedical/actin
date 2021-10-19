@@ -14,12 +14,13 @@ public class MolecularResultsTableGenerator implements TableGenerator {
 
     @NotNull
     private final MolecularRecord record;
-    @NotNull
-    private final float[] widths;
+    private final float keyWidth;
+    private final float valueWidth;
 
-    public MolecularResultsTableGenerator(@NotNull final MolecularRecord record, @NotNull final float[] widths) {
+    public MolecularResultsTableGenerator(@NotNull final MolecularRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
-        this.widths = widths;
+        this.keyWidth = keyWidth;
+        this.valueWidth = valueWidth;
     }
 
     @NotNull
@@ -31,7 +32,7 @@ public class MolecularResultsTableGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(widths);
+        Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
 
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));

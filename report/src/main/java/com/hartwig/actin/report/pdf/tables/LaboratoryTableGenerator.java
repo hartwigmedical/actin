@@ -10,12 +10,13 @@ public class LaboratoryTableGenerator implements TableGenerator {
 
     @NotNull
     private final ClinicalRecord record;
-    @NotNull
-    private final float[] widths;
+    private final float keyWidth;
+    private final float valueWidth;
 
-    public LaboratoryTableGenerator(@NotNull final ClinicalRecord record, @NotNull final float[] widths) {
+    public LaboratoryTableGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
-        this.widths = widths;
+        this.keyWidth = keyWidth;
+        this.valueWidth = valueWidth;
     }
 
     @NotNull
@@ -27,7 +28,7 @@ public class LaboratoryTableGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(widths);
+        Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
 
         return table;
     }
