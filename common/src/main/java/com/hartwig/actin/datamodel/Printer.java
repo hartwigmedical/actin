@@ -68,7 +68,7 @@ public final class Printer {
             return null;
         }
 
-        String subType = tumor.primaryTumorType();
+        String subType = tumor.primaryTumorSubType();
         return subType != null ? type + " (" + subType + ")" : type;
     }
 
