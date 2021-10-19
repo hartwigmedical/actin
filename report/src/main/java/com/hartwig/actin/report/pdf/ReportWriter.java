@@ -6,8 +6,7 @@ import java.io.IOException;
 import com.hartwig.actin.datamodel.ActinRecord;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
-import com.hartwig.actin.report.pdf.util.Margins;
-import com.hartwig.actin.report.pdf.util.Metadata;
+import com.hartwig.actin.report.pdf.util.Constants;
 import com.hartwig.actin.util.Paths;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
@@ -59,7 +58,7 @@ public class ReportWriter {
             chapter.render(doc);
         }
 
-        pageEventHandler.writeTotalPageCount(doc.getPdfDocument());
+        pageEventHandler.writePageCounts(doc.getPdfDocument());
 
         doc.close();
         pdfDocument.close();
@@ -79,11 +78,14 @@ public class ReportWriter {
 
         PdfDocument pdf = new PdfDocument(writer);
         pdf.setDefaultPageSize(PageSize.A4);
-        pdf.getDocumentInfo().setTitle(Metadata.TITLE);
-        pdf.getDocumentInfo().setAuthor(Metadata.AUTHOR);
+        pdf.getDocumentInfo().setTitle(Constants.METADATA_TITLE);
+        pdf.getDocumentInfo().setAuthor(Constants.METADATA_AUTHOR);
 
         Document document = new Document(pdf);
-        document.setMargins(Margins.PAGE_MARGIN_TOP, Margins.PAGE_MARGIN_RIGHT, Margins.PAGE_MARGIN_BOTTOM, Margins.PAGE_MARGIN_LEFT);
+        document.setMargins(Constants.PAGE_MARGIN_TOP,
+                Constants.PAGE_MARGIN_RIGHT,
+                Constants.PAGE_MARGIN_BOTTOM,
+                Constants.PAGE_MARGIN_LEFT);
 
         return document;
     }

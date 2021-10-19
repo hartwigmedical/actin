@@ -43,15 +43,15 @@ public class PageEventHandler implements IEventHandler {
         if (documentEvent.getType().equals(PdfDocumentEvent.START_PAGE)) {
             PdfPage page = documentEvent.getPage();
 
-            header.renderHeader(page);
+            header.render(page);
             if (firstPageOfChapter) {
                 firstPageOfChapter = false;
 
                 createChapterBookmark(documentEvent.getDocument(), chapterTitle);
             }
 
-            sidePanel.renderSidePanel(page);
-            footer.renderFooter(page);
+            sidePanel.render(page);
+            footer.render(page);
         }
     }
 
@@ -63,8 +63,8 @@ public class PageEventHandler implements IEventHandler {
         firstPageOfChapter = true;
     }
 
-    void writeTotalPageCount(@NotNull PdfDocument document) {
-        footer.writeTotalPageCount(document);
+    void writePageCounts(@NotNull PdfDocument document) {
+        footer.writePageCounts(document);
     }
 
     private void createChapterBookmark(@NotNull PdfDocument pdf, @NotNull String title) {

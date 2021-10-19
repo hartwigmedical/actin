@@ -30,7 +30,7 @@ public class SidePanel {
         this.sampleId = sampleId;
     }
 
-    public void renderSidePanel(@NotNull PdfPage page) {
+    public void render(@NotNull PdfPage page) {
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
         Rectangle pageSize = page.getPageSize();
         canvas.rectangle(pageSize.getWidth(), pageSize.getHeight(), -RECTANGLE_WIDTH, -RECTANGLE_HEIGHT);
@@ -40,14 +40,14 @@ public class SidePanel {
         int sideTextIndex = 0;
         Canvas cv = new Canvas(canvas, page.getPageSize());
 
-        cv.add(createSidePanelDiv(pageSize, ++sideTextIndex, "Sample", sampleId));
-        cv.add(createSidePanelDiv(pageSize, ++sideTextIndex, "Report Date", Formats.date(LocalDate.now())));
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Sample", sampleId));
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", Formats.date(LocalDate.now())));
 
         canvas.release();
     }
 
     @NotNull
-    private static Div createSidePanelDiv(@NotNull Rectangle pageSize, int index, @NotNull String label, @NotNull String value) {
+    private static Div createDiv(@NotNull Rectangle pageSize, int index, @NotNull String label, @NotNull String value) {
         Div div = new Div();
         div.setKeepTogether(true);
 
@@ -56,7 +56,7 @@ public class SidePanel {
 
         div.add(new Paragraph(label.toUpperCase()).addStyle(Styles.sidePanelLabelStyle()).setFixedPosition(xPos, yPos, MAX_WIDTH));
 
-        float valueFontSize = maxPointSizeForWidth(Styles.fontBold(), 11, 6, value, MAX_WIDTH);
+        float valueFontSize = maxPointSizeForWidth(Styles.fontBold(), 10, 6, value, MAX_WIDTH);
         yPos -= VALUE_TEXT_Y_OFFSET;
         div.add(new Paragraph(value).addStyle(Styles.sidePanelValueStyle().setFontSize(valueFontSize))
                 .setHeight(15)

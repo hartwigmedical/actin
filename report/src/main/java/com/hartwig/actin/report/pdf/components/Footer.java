@@ -19,7 +19,10 @@ public class Footer {
 
     private final List<PageNumberTemplate> pageNumberTemplates = Lists.newArrayList();
 
-    public void renderFooter(@NotNull PdfPage page) {
+    public Footer() {
+    }
+
+    public void render(@NotNull PdfPage page) {
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
 
         int pageNumber = page.getDocument().getPageNumber(page);
@@ -30,10 +33,10 @@ public class Footer {
         canvas.release();
     }
 
-    public void writeTotalPageCount(@NotNull PdfDocument document) {
+    public void writePageCounts(@NotNull PdfDocument document) {
         int totalPageCount = document.getNumberOfPages();
         for (PageNumberTemplate tpl : pageNumberTemplates) {
-            tpl.renderPageNumber(totalPageCount, document);
+            tpl.renderPageNumber(document, totalPageCount);
         }
     }
 
@@ -48,7 +51,7 @@ public class Footer {
             this.template = template;
         }
 
-        void renderPageNumber(int totalPageCount, @NotNull PdfDocument document) {
+        void renderPageNumber(@NotNull PdfDocument document, int totalPageCount) {
             String displayString = pageNumber + "/" + totalPageCount;
 
             Canvas canvas = new Canvas(template, document);

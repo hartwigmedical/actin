@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters;
 
-import com.hartwig.actin.report.pdf.util.Margins;
+import com.hartwig.actin.report.pdf.util.Constants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 
@@ -15,7 +15,7 @@ public interface ReportChapter {
     PageSize pageSize();
 
     default float contentWidth() {
-        return pageSize().getWidth() - (5 + Margins.PAGE_MARGIN_LEFT + Margins.PAGE_MARGIN_RIGHT);
+        return pageSize().getWidth() - (5 + Constants.PAGE_MARGIN_LEFT + Constants.PAGE_MARGIN_RIGHT);
     }
 
     void render(@NotNull Document document);

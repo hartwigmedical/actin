@@ -50,10 +50,8 @@ public class SummaryChapter implements ReportChapter {
     @Override
     public void render(@NotNull Document document) {
         addPatientDetails(document);
-
-        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
-
-        addClinicalOverviewTable(document);
+        addChapterTitle(document);
+        addSummaryTable(document);
     }
 
     private void addPatientDetails(@NotNull Document document) {
@@ -68,18 +66,22 @@ public class SummaryChapter implements ReportChapter {
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 
-    private void addClinicalOverviewTable(@NotNull Document document) {
+    private void addChapterTitle(@NotNull Document document) {
+        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
+    }
+
+    private void addSummaryTable(@NotNull Document document) {
         Table table = new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(contentWidth());
         float[] subTableWidths = new float[] { 170, table.getWidth().getValue() - 180 };
 
         String questionnaireDate = questionnaireDate(record.clinical());
         table.addCell(Cells.createTitleCell("Patient clinical history (" + questionnaireDate + ")"));
-        table.addCell(Cells.createCell(createClinicalHistoryTable(record.clinical(), subTableWidths)));
-
+        table.addCell(Cells.createCell(createPatientClinicalHistoryTable(record.clinical(), subTableWidths)));
         table.addCell(Cells.createEmptyCell());
 
         table.addCell(Cells.createTitleCell("Patient current details (" + questionnaireDate + ")"));
-        table.addCell(Cells.createCell(createCurrentDetailsTable(record.clinical(), subTableWidths)));
+        table.addCell(Cells.createCell(createPatientCurrentDetailsTable(record.clinical(), subTableWidths)));
+        table.addCell(Cells.createEmptyCell());
 
         table.addCell(Cells.createTitleCell("Molecular results"));
         table.addCell(Cells.createCell(createMolecularResultsTable(record.molecular(), subTableWidths)));
@@ -94,10 +96,10 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
-    private static Table createClinicalHistoryTable(@NotNull ClinicalRecord record, @NotNull float[] widths) {
+    private static Table createPatientClinicalHistoryTable(@NotNull ClinicalRecord record, @NotNull float[] widths) {
         Table table = new Table(UnitValue.createPointArray(widths));
-        table.addCell(Cells.createKeyCell("Relevant treatment history"));
-        table.addCell(Cells.createValueCell(relevantPreTreatmentHistory(record)));
+        table.addCell(Cells.createKeyCell("Relevant systemic treatment history"));
+        table.addCell(Cells.createValueCell(relevantSystemicPreTreatmentHistory(record)));
         table.addCell(Cells.createKeyCell("Other oncological history"));
         table.addCell(Cells.createValueCell(otherOncologicalHistory(record)));
         table.addCell(Cells.createKeyCell("Relevant non-oncological history"));
@@ -106,8 +108,8 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
-    private static String relevantPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = new StringJoiner(", ");
+    private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = Formats.stringJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (priorTumorTreatment.isSystemic()) {
                 joiner.add(priorTumorTreatment.name());
@@ -118,23 +120,34 @@ public class SummaryChapter implements ReportChapter {
 
     @NotNull
     private static String otherOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = new StringJoiner(", ");
+        StringJoiner otherOncologyHistories = Formats.stringJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (!priorTumorTreatment.isSystemic()) {
-                joiner.add(priorTumorTreatment.name());
+                otherOncologyHistories.add(priorTumorTreatment.name());
             }
         }
 
+        StringJoiner secondPrimaries = Formats.stringJoiner();
         for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
-            joiner.add("Previous primary tumor: " + priorSecondPrimary.tumorLocation());
+            String secondPrimaryString = priorSecondPrimary.tumorLocation();
+            if (priorSecondPrimary.diagnosedYear() != null) {
+                secondPrimaryString = secondPrimaryString + " (" + priorSecondPrimary.diagnosedYear() + ")";
+            }
+            secondPrimaries.add(secondPrimaryString);
         }
 
-        return valueOrDefault(joiner.toString(), "None");
+        if (record.priorSecondPrimaries().size() > 1) {
+            otherOncologyHistories.add("Previous primary tumors: " + secondPrimaries);
+        } else if (!record.priorSecondPrimaries().isEmpty()) {
+            otherOncologyHistories.add("Previous primary tumor: " + secondPrimaries);
+        }
+
+        return valueOrDefault(otherOncologyHistories.toString(), "None");
     }
 
     @NotNull
     private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = new StringJoiner(", ");
+        StringJoiner joiner = Formats.stringJoiner();
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
             joiner.add(priorOtherCondition.name());
         }
@@ -142,7 +155,7 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
-    private static Table createCurrentDetailsTable(@NotNull ClinicalRecord record, @NotNull float[] subTableWidths) {
+    private static Table createPatientCurrentDetailsTable(@NotNull ClinicalRecord record, @NotNull float[] subTableWidths) {
         Table table = new Table(UnitValue.createPointArray(subTableWidths));
         table.addCell(Cells.createKeyCell("WHO status"));
         table.addCell(Cells.createValueCell(String.valueOf(record.clinicalStatus().who())));
@@ -151,14 +164,14 @@ public class SummaryChapter implements ReportChapter {
         table.addCell(Cells.createValueCell(unresolvedToxicities(record)));
 
         table.addCell(Cells.createKeyCell("Significant infection"));
-        Boolean hasActiveInfection = record.clinicalStatus().hasActiveInfection();
-        String hasActiveInfectionString = hasActiveInfection != null ? String.valueOf(hasActiveInfection) : "Unknown";
-        table.addCell(Cells.createValueCell(hasActiveInfectionString));
+        table.addCell(Cells.createValueCell(Formats.yesNoUnknown(record.clinicalStatus().hasActiveInfection())));
 
-        table.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
-        String ecg = record.clinicalStatus().ecgAberrationDescription();
-        String ecgString = ecg != null ? ecg : Strings.EMPTY;
-        table.addCell(Cells.createValueCell(ecgString));
+        Boolean hasAberration = record.clinicalStatus().hasSigAberrationLatestEcg();
+        if (hasAberration != null && hasAberration) {
+            table.addCell(Cells.createKeyCell("Significant aberration on latest ECG"));
+            String ecg = record.clinicalStatus().ecgAberrationDescription();
+            table.addCell(Cells.createValueCell(ecg != null ? ecg : Strings.EMPTY));
+        }
 
         table.addCell(Cells.createKeyCell("Cancer-related complications"));
         table.addCell(Cells.createValueCell(cancerRelatedComplications(record)));
@@ -168,7 +181,7 @@ public class SummaryChapter implements ReportChapter {
 
     @NotNull
     private static String unresolvedToxicities(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = new StringJoiner(", ");
+        StringJoiner joiner = Formats.stringJoiner();
         for (Toxicity toxicity : record.toxicities()) {
             Integer grade = toxicity.grade();
             if ((grade != null && grade >= 2) || toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
@@ -181,7 +194,7 @@ public class SummaryChapter implements ReportChapter {
 
     @NotNull
     private static String cancerRelatedComplications(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = new StringJoiner(", ");
+        StringJoiner joiner = Formats.stringJoiner();
         for (CancerRelatedComplication complication : record.cancerRelatedComplications()) {
             joiner.add(complication.name());
         }
@@ -193,13 +206,13 @@ public class SummaryChapter implements ReportChapter {
         Table table = new Table(UnitValue.createPointArray(widths));
 
         table.addCell(Cells.createKeyCell("Molecular results have reliable quality"));
-        table.addCell(Cells.createValueCell(record.hasReliableQuality() ? "Yes" : "No"));
+        table.addCell(Cells.createValueCell(Formats.yesNoUnknown(record.hasReliableQuality())));
 
         table.addCell(Cells.createKeyCell("Tumor sample has reliable and sufficient purity"));
-        table.addCell(Cells.createValueCell(record.hasReliablePurity() ? "Yes" : "No"));
+        table.addCell(Cells.createValueCell(Formats.yesNoUnknown(record.hasReliablePurity())));
 
         table.addCell(Cells.createKeyCell("Actionable molecular events"));
-        StringJoiner joiner = new StringJoiner(", ");
+        StringJoiner joiner = Formats.stringJoiner();
         for (String string : record.actionableGenomicEvents()) {
             joiner.add(string);
         }

@@ -14,7 +14,7 @@ public class Header {
     public Header() {
     }
 
-    public void renderHeader(@NotNull PdfPage page) {
+    public void render(@NotNull PdfPage page) {
         PdfCanvas pdfCanvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
         Canvas cv = new Canvas(pdfCanvas, page.getPageSize());
 
