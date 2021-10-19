@@ -113,14 +113,14 @@ public final class TestClinicalDataFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Surgery")
-                .year(YEARS_SINCE_TREATMENT_LINE_1)
+                .year(TODAY.getYear()-YEARS_SINCE_TREATMENT_LINE_1)
                 .category("Surgery")
                 .isSystemic(false)
                 .build());
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Vemurafenib")
-                .year(YEARS_SINCE_TREATMENT_LINE_2)
+                .year(TODAY.getYear()-YEARS_SINCE_TREATMENT_LINE_2)
                 .category("Targeted therapy")
                 .isSystemic(true)
                 .targetedType("BRAF inhibitor")
@@ -128,7 +128,7 @@ public final class TestClinicalDataFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Ipilimumab")
-                .year(YEARS_SINCE_TREATMENT_LINE_3)
+                .year(TODAY.getYear()-YEARS_SINCE_TREATMENT_LINE_3)
                 .category("Immunotherapy")
                 .isSystemic(true)
                 .immunoType("Anti-CTLA-4")
@@ -147,7 +147,7 @@ public final class TestClinicalDataFactory {
                 .tumorType("Schwannoma")
                 .tumorSubType(Strings.EMPTY)
                 .addDoids("3192")
-                .diagnosedYear(YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
+                .diagnosedYear(TODAY.getYear()-YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
                 .isSecondPrimaryActive(true)
                 .build());
 
