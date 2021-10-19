@@ -47,9 +47,9 @@ public final class TestClinicalDataFactory {
     private static PatientDetails createTestPatientDetails() {
         return ImmutablePatientDetails.builder()
                 .gender(Gender.MALE)
-                .birthYear(1955)
-                .registrationDate(LocalDate.of(2021, 9, 1))
-                .questionnaireDate(LocalDate.of(2021, 9, 3))
+                .birthYear(1950)
+                .registrationDate(LocalDate.of(2000, 9, 1))
+                .questionnaireDate(LocalDate.of(2000, 9, 3))
                 .build();
     }
 
@@ -85,7 +85,7 @@ public final class TestClinicalDataFactory {
                 .who(1)
                 .hasActiveInfection(false)
                 .hasSigAberrationLatestEcg(true)
-                .ecgAberrationDescription("Sinus problem")
+                .ecgAberrationDescription("Atrial arrhythmia")
                 .build();
     }
 
@@ -95,17 +95,17 @@ public final class TestClinicalDataFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Surgery")
-                .year(2018)
+                .year(1998)
                 .category("Surgery")
                 .isSystemic(false)
                 .build());
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name("Capecitabine")
-                .year(2019)
-                .category("Chemotherapy")
+                .name("Ipilimumab")
+                .year(1999)
+                .category("Immunotherapy")
                 .isSystemic(true)
-                .chemoType("Antimetabolite")
+                .chemoType("Anti-CTLA-4")
                 .build());
 
         return priorTumorTreatments;
@@ -121,7 +121,7 @@ public final class TestClinicalDataFactory {
                 .tumorType("Schwannoma")
                 .tumorSubType(Strings.EMPTY)
                 .addDoids("3192")
-                .diagnosedYear(2013)
+                .diagnosedYear(1998)
                 .isSecondPrimaryActive(true)
                 .build());
 
@@ -163,7 +163,7 @@ public final class TestClinicalDataFactory {
         otherComplications.add(ImmutableComplication.builder()
                 .name(Strings.EMPTY)
                 .specialty(Strings.EMPTY)
-                .onsetDate(LocalDate.of(2020, 1, 1))
+                .onsetDate(LocalDate.of(2000, 1, 1))
                 .category(Strings.EMPTY)
                 .status(Strings.EMPTY)
                 .build());
@@ -176,7 +176,7 @@ public final class TestClinicalDataFactory {
         List<LabValue> labValues = Lists.newArrayList();
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 24))
+                .date(LocalDate.of(2000, 8, 24))
                 .code("ASAT")
                 .name("Aspartate aminotransferase")
                 .comparator(Strings.EMPTY)
@@ -187,11 +187,11 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 20))
+                .date(LocalDate.of(2000, 8, 20))
                 .code("Hb")
                 .name("Hemoglobin")
                 .comparator(Strings.EMPTY)
-                .value(1)
+                .value(5.5)
                 .unit("mmol/L")
                 .refLimitLow(6.5D)
                 .refLimitUp(9.5D)
@@ -199,7 +199,7 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 19))
+                .date(LocalDate.of(2000, 8, 19))
                 .code("THROMBO")
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
@@ -211,7 +211,7 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 21))
+                .date(LocalDate.of(2000, 8, 21))
                 .code("THROMBO")
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
@@ -223,7 +223,7 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 24))
+                .date(LocalDate.of(2000, 8, 24))
                 .code("THROMBO")
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
@@ -235,7 +235,7 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 24))
+                .date(LocalDate.of(2000, 8, 24))
                 .code("LEUKO")
                 .name("Leukocytes")
                 .comparator(Strings.EMPTY)
@@ -247,7 +247,7 @@ public final class TestClinicalDataFactory {
                 .build());
 
         labValues.add(ImmutableLabValue.builder()
-                .date(LocalDate.of(2021, 8, 24))
+                .date(LocalDate.of(2000, 8, 24))
                 .code("CKD-EPIeGFR")
                 .name("CKD-EPI eGFR")
                 .comparator(">")
@@ -265,22 +265,22 @@ public final class TestClinicalDataFactory {
         List<Toxicity> toxicities = Lists.newArrayList();
 
         toxicities.add(ImmutableToxicity.builder()
-                .name("Vomiting")
-                .evaluatedDate(LocalDate.of(2021, 8, 20))
+                .name("Nausea")
+                .evaluatedDate(LocalDate.of(2000, 8, 20))
                 .source(ToxicitySource.EHR)
                 .grade(1)
                 .build());
 
         toxicities.add(ImmutableToxicity.builder()
-                .name("Nausea")
-                .evaluatedDate(LocalDate.of(2021, 8, 20))
+                .name("Fatigue")
+                .evaluatedDate(LocalDate.of(2000, 8, 20))
                 .source(ToxicitySource.EHR)
                 .grade(2)
                 .build());
 
         toxicities.add(ImmutableToxicity.builder()
-                .name("Diarrhea")
-                .evaluatedDate(LocalDate.of(2021, 8, 20))
+                .name("Dizziness")
+                .evaluatedDate(LocalDate.of(2000, 8, 20))
                 .source(ToxicitySource.QUESTIONNAIRE)
                 .grade(null)
                 .build());
@@ -293,6 +293,7 @@ public final class TestClinicalDataFactory {
         List<Allergy> allergies = Lists.newArrayList();
 
         allergies.add(ImmutableAllergy.builder().name("Wasps").category("Environment").criticality("Unable-to-assess").build());
+        allergies.add(ImmutableAllergy.builder().name("Pembrolizumab").category("Medication").criticality("High").build());
 
         return allergies;
     }
@@ -301,7 +302,7 @@ public final class TestClinicalDataFactory {
     private static List<Surgery> createTestSurgeries() {
         List<Surgery> surgeries = Lists.newArrayList();
 
-        surgeries.add(ImmutableSurgery.builder().endDate(LocalDate.of(2021, 4, 1)).build());
+        surgeries.add(ImmutableSurgery.builder().endDate(LocalDate.of(2000, 7, 1)).build());
 
         return surgeries;
     }
@@ -311,7 +312,7 @@ public final class TestClinicalDataFactory {
         List<BloodPressure> bloodPressures = Lists.newArrayList();
 
         bloodPressures.add(ImmutableBloodPressure.builder()
-                .date(LocalDate.of(2021, 9, 1))
+                .date(LocalDate.of(2000, 7, 5))
                 .category("Mean blood pressure")
                 .value(99)
                 .unit("mm[Hg]")
@@ -325,7 +326,7 @@ public final class TestClinicalDataFactory {
         List<BloodTransfusion> bloodTransfusions = Lists.newArrayList();
 
         bloodTransfusions.add(ImmutableBloodTransfusion.builder()
-                .date(LocalDate.of(2014, 1, 1))
+                .date(LocalDate.of(2000, 7, 4))
                 .product("Thrombocyte concentrate")
                 .build());
 
@@ -337,17 +338,17 @@ public final class TestClinicalDataFactory {
         List<Medication> medications = Lists.newArrayList();
 
         medications.add(ImmutableMedication.builder()
-                .name("Fexofenadine")
-                .type("Antihistamines, systemic")
-                .dosageMin(360D)
-                .dosageMax(360D)
+                .name("Ibuprofen")
+                .type("NSAIDs")
+                .dosageMin(750D)
+                .dosageMax(750D)
                 .dosageUnit("mg")
                 .frequency(1D)
                 .frequencyUnit("day")
                 .ifNeeded(false)
-                .startDate(LocalDate.of(2020, 12, 1))
-                .stopDate(LocalDate.of(2021, 5, 1))
-                .active(false)
+                .startDate(LocalDate.of(2000, 7, 1))
+                .stopDate(LocalDate.of(2000, 10, 1))
+                .active(true)
                 .build());
 
         return medications;
