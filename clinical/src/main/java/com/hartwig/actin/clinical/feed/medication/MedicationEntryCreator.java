@@ -53,8 +53,7 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
     @Nullable
     @VisibleForTesting
     static Boolean isActive(@NotNull String activeField) {
-        // This field seems like a left-join where either the value is "active" or "null" in which case we can assume false.
-        if (activeField.equalsIgnoreCase("null")) {
+        if (activeField.equalsIgnoreCase("stopped")) {
             return false;
         } else if (activeField.equals("active")) {
             return true;
