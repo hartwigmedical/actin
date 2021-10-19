@@ -58,7 +58,7 @@ public final class Printer {
         }
 
         String subLocation = tumor.primaryTumorSubLocation();
-        return subLocation != null ? location + " (" + subLocation + ")" : location;
+        return subLocation != null && !subLocation.isEmpty() ? location + " (" + subLocation + ")" : location;
     }
 
     @Nullable
@@ -69,7 +69,7 @@ public final class Printer {
         }
 
         String subType = tumor.primaryTumorSubType();
-        return subType != null ? type + " (" + subType + ")" : type;
+        return subType != null && !subType.isEmpty() ? type + " (" + subType + ")" : type;
     }
 
     @NotNull

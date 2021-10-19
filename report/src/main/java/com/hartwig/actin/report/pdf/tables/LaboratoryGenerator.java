@@ -43,60 +43,59 @@ public class LaboratoryGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, valueWidth });
 
         table.addCell(Cells.createKey("Liver function"));
-        addLabEntryByName(table, "Total bilirubin");
+        addMostRecentLabEntryByName(table, "Total bilirubin");
         table.addCell(Cells.createEmpty());
-        addLabEntryByCode(table, "ASAT");
+        addMostRecentLabEntryByCode(table, "ASAT");
         table.addCell(Cells.createEmpty());
-        addLabEntryByCode(table, "ALAT");
+        addMostRecentLabEntryByCode(table, "ALAT");
         table.addCell(Cells.createEmpty());
-        addLabEntryByCode(table, "ALP");
+        addMostRecentLabEntryByCode(table, "ALP");
         table.addCell(Cells.createEmpty());
-        addLabEntryByName(table, "Albumin");
+        addMostRecentLabEntryByName(table, "Albumin");
 
         table.addCell(Cells.createKey("Kidney function"));
-        addLabEntryByName(table, "Creatinine");
+        addMostRecentLabEntryByName(table, "Creatinine");
         table.addCell(Cells.createEmpty());
-        addLabEntryByName(table, "CKD-EPI eGFR");
+        addMostRecentLabEntryByName(table, "CKD-EPI eGFR");
 
         table.addCell(Cells.createKey("Hemoglobin"));
-        addLabEntryByName(table, "Hemoglobin", false);
+        addMostRecentLabEntryByName(table, "Hemoglobin", false);
 
         table.addCell(Cells.createKey("Thrombocytes"));
-        addLabEntryByName(table, "Thrombocytes", false);
+        addMostRecentLabEntryByName(table, "Thrombocytes", false);
 
         table.addCell(Cells.createKey("PT"));
-        addLabEntryByCode(table, "PT", false);
+        addMostRecentLabEntryByCode(table, "PT", false);
 
         table.addCell(Cells.createKey("INR"));
-        addLabEntryByCode(table, "INR", false);
+        addMostRecentLabEntryByCode(table, "INR", false);
 
         return table;
     }
 
-    private void addLabEntryByName(@NotNull Table table, @NotNull String name) {
-        addLabEntryByName(table, name, true);
+    private void addMostRecentLabEntryByName(@NotNull Table table, @NotNull String name) {
+        addMostRecentLabEntryByName(table, name, true);
     }
 
-    private void addLabEntryByName(@NotNull Table table, @NotNull String name, boolean displayHeader) {
+    private void addMostRecentLabEntryByName(@NotNull Table table, @NotNull String name, boolean displayHeader) {
         List<LabValue> filtered = filterByName(record.labValues(), name);
         addLabEntry(table, displayHeader ? name : Strings.EMPTY, mostRecent(filtered));
     }
 
-    private void addLabEntryByCode(@NotNull Table table, @NotNull String code) {
-        addLabEntryByCode(table, code, true);
+    private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code) {
+        addMostRecentLabEntryByCode(table, code, true);
     }
 
-    private void addLabEntryByCode(@NotNull Table table, @NotNull String code, boolean displayHeader) {
+    private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code, boolean displayHeader) {
         List<LabValue> filtered = filterByCode(record.labValues(), code);
         addLabEntry(table, displayHeader ? code : Strings.EMPTY, mostRecent(filtered));
     }
 
     private void addLabEntry(@NotNull Table table, @NotNull String header, @Nullable LabValue lab) {
-        if (lab == null) {
-            table.addCell(Cells.createKey(header));
-            table.addCell(Cells.createValue(Strings.EMPTY));
-        } else {
-            String key = header;
+        String key = header;
+        String value = Strings.EMPTY;
+
+        if (lab != null) {
             Double refLimitLow = lab.refLimitLow();
             Double refLimitUp = lab.refLimitUp();
             if (refLimitLow != null || refLimitUp != null) {
@@ -115,15 +114,15 @@ public class LaboratoryGenerator implements TableGenerator {
                 }
             }
 
-            String value = lab.value() + " " + lab.unit();
+            value = lab.value() + " " + lab.unit();
             LocalDate mostRecentDate = mostRecentDate(record.labValues());
             if (mostRecentDate.isAfter(lab.date())) {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
-
-            table.addCell(Cells.createKey(key));
-            table.addCell(Cells.createValue(value));
         }
+
+        table.addCell(Cells.createKey(key));
+        table.addCell(Cells.createValue(value));
     }
 
     @Nullable
