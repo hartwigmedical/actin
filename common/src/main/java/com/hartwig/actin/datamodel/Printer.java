@@ -75,7 +75,8 @@ public final class Printer {
         for (String string : strings) {
             joiner.add(string);
         }
-        return joiner.toString();
+        String result = joiner.toString();
+        return !result.isEmpty() ? result : "None";
     }
 
     private static class IndentedPrinter {
