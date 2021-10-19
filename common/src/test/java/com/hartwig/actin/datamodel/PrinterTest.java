@@ -13,7 +13,7 @@ public class PrinterTest {
     public void canPrintProperDatamodel() {
         ClinicalRecord clinical = TestClinicalDataFactory.createProperTestClinicalRecord();
         Printer.printClinicalRecord(clinical);
-        Printer.printClinicalRecord(clinical, 2);
+        Printer.printClinicalRecord(clinical, 0);
 
         MolecularRecord molecular = TestMolecularDataFactory.createProperTestMolecularRecord();
         Printer.printMolecularRecord(molecular);
@@ -24,7 +24,7 @@ public class PrinterTest {
     public void canPrintMinimalDatamodel() {
         ClinicalRecord clinical = TestClinicalDataFactory.createMinimalTestClinicalRecord();
         Printer.printClinicalRecord(clinical);
-        Printer.printClinicalRecord(clinical, 2);
+        Printer.printClinicalRecord(clinical, 0);
 
         MolecularRecord molecular = TestMolecularDataFactory.createMinimalTestMolecularRecord();
         Printer.printMolecularRecord(molecular);

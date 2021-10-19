@@ -3,6 +3,7 @@ package com.hartwig.actin.datamodel;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
 import com.hartwig.actin.datamodel.clinical.TumorDetails;
@@ -25,7 +26,12 @@ public final class Printer {
         printClinicalRecord(record, DEFAULT_INDENTATION);
     }
 
-    public static void printClinicalRecord(@NotNull ClinicalRecord record, int indentation) {
+    public static void printMolecularRecord(@NotNull MolecularRecord record) {
+        printMolecularRecord(record, DEFAULT_INDENTATION);
+    }
+
+    @VisibleForTesting
+    static void printClinicalRecord(@NotNull ClinicalRecord record, int indentation) {
         IndentedPrinter printer = new IndentedPrinter(indentation);
         printer.print("Sample: " + record.sampleId());
         printer.print("Birth year: " + record.patient().birthYear());
@@ -33,6 +39,15 @@ public final class Printer {
         printer.print("Primary tumor location: " + tumorLocation(record.tumor()));
         printer.print("Primary tumor type: " + tumorType(record.tumor()));
         printer.print("WHO status: " + record.clinicalStatus().who());
+    }
+
+    @VisibleForTesting
+    static void printMolecularRecord(@NotNull MolecularRecord record, int indentation) {
+        IndentedPrinter printer = new IndentedPrinter(indentation);
+        printer.print("Sample: " + record.sampleId());
+        printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
+        printer.print("Has reliable purity: " + (record.hasReliablePurity() ? "Yes" : "No"));
+        printer.print("Actionable events: " + concat(record.actionableGenomicEvents()));
     }
 
     @Nullable
@@ -55,18 +70,6 @@ public final class Printer {
 
         String subType = tumor.primaryTumorType();
         return subType != null ? type + " (" + subType + ")" : type;
-    }
-
-    public static void printMolecularRecord(@NotNull MolecularRecord record) {
-        printMolecularRecord(record, DEFAULT_INDENTATION);
-    }
-
-    public static void printMolecularRecord(@NotNull MolecularRecord record, int indentation) {
-        IndentedPrinter printer = new IndentedPrinter(indentation);
-        printer.print("Sample: " + record.sampleId());
-        printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
-        printer.print("Has reliable purity: " + (record.hasReliablePurity() ? "Yes" : "No"));
-        printer.print("Actionable events: " + concat(record.actionableGenomicEvents()));
     }
 
     @NotNull
