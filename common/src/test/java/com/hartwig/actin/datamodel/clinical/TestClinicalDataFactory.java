@@ -101,11 +101,19 @@ public final class TestClinicalDataFactory {
                 .build());
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
+                .name("Vemurafenib")
+                .year(1999)
+                .category("Targeted therapy")
+                .isSystemic(true)
+                .targetedType("BRAF inhibitor")
+                .build());
+
+        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Ipilimumab")
                 .year(1999)
                 .category("Immunotherapy")
                 .isSystemic(true)
-                .chemoType("Anti-CTLA-4")
+                .immunoType("Anti-CTLA-4")
                 .build());
 
         return priorTumorTreatments;
