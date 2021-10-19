@@ -101,9 +101,9 @@ public class LaboratoryGenerator implements TableGenerator {
             if (refLimitLow != null || refLimitUp != null) {
                 String limit;
                 if (refLimitLow == null) {
-                    limit = " < " + refLimitUp;
+                    limit = "< " + refLimitUp;
                 } else if (refLimitUp == null) {
-                    limit = " > " + refLimitLow;
+                    limit = "> " + refLimitLow;
                 } else {
                     limit = refLimitLow + " - " + refLimitUp;
                 }
