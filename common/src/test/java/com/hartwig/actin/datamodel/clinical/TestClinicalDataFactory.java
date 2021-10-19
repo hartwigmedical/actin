@@ -13,6 +13,22 @@ public final class TestClinicalDataFactory {
 
     private static final LocalDate TODAY = LocalDate.now();
 
+    private static final int DAYS_SINCE_QUESTIONNAIRE = 10;
+    private static final int DAYS_SINCE_REGISTRATION = 15;
+    private static final int DAYS_SINCE_LAB_MEASUREMENT_1 = 30;
+    private static final int DAYS_SINCE_LAB_MEASUREMENT_2 = 20;
+    private static final int DAYS_SINCE_LAB_MEASUREMENT_3 = 10;
+    private static final int DAYS_SINCE_TOXICITIES = 30;
+    private static final int DAYS_SINCE_SURGERY = 30;
+    private static final int DAYS_SINCE_BLOOD_PRESSURE = 15;
+    private static final int DAYS_SINCE_BLOOD_TRANSFUSION = 15;
+    private static final int DAYS_SINCE_MEDICATION_START = 30;
+    private static final int DAYS_UNTIL_MEDICATION_END = 15;
+    private static final int YEARS_SINCE_TREATMENT_LINE_1 = 2;
+    private static final int YEARS_SINCE_TREATMENT_LINE_2 = 1;
+    private static final int YEARS_SINCE_TREATMENT_LINE_3 = 0;
+    private static final int YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS = 3;
+
     private TestClinicalDataFactory() {
     }
 
@@ -50,8 +66,8 @@ public final class TestClinicalDataFactory {
         return ImmutablePatientDetails.builder()
                 .gender(Gender.MALE)
                 .birthYear(1950)
-                .registrationDate(TODAY.minusDays(12))
-                .questionnaireDate(TODAY.minusDays(4))
+                .registrationDate(TODAY.minusDays(DAYS_SINCE_REGISTRATION))
+                .questionnaireDate(TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE))
                 .build();
     }
 
@@ -97,14 +113,14 @@ public final class TestClinicalDataFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Surgery")
-                .year(1998)
+                .year(YEARS_SINCE_TREATMENT_LINE_1)
                 .category("Surgery")
                 .isSystemic(false)
                 .build());
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Vemurafenib")
-                .year(1999)
+                .year(YEARS_SINCE_TREATMENT_LINE_2)
                 .category("Targeted therapy")
                 .isSystemic(true)
                 .targetedType("BRAF inhibitor")
@@ -112,7 +128,7 @@ public final class TestClinicalDataFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Ipilimumab")
-                .year(1999)
+                .year(YEARS_SINCE_TREATMENT_LINE_3)
                 .category("Immunotherapy")
                 .isSystemic(true)
                 .immunoType("Anti-CTLA-4")
@@ -131,7 +147,7 @@ public final class TestClinicalDataFactory {
                 .tumorType("Schwannoma")
                 .tumorSubType(Strings.EMPTY)
                 .addDoids("3192")
-                .diagnosedYear(1998)
+                .diagnosedYear(YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
                 .isSecondPrimaryActive(true)
                 .build());
 
@@ -182,7 +198,7 @@ public final class TestClinicalDataFactory {
     private static List<LabValue> createTestLabValues() {
         List<LabValue> labValues = Lists.newArrayList();
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(15))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
                 .code("ASAT")
                 .name("Aspartate aminotransferase")
                 .comparator(Strings.EMPTY)
@@ -192,7 +208,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(true)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(14))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
                 .code("Hb")
                 .name("Hemoglobin")
                 .comparator(Strings.EMPTY)
@@ -203,7 +219,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(true)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(13))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
                 .code("THROMBO")
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
@@ -214,7 +230,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(false)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(14))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
                 .code("THROMBO")
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
@@ -225,7 +241,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(true)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(15))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
                 .code("THROMBO")
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
@@ -236,7 +252,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(true)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(13))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
                 .code("LEUKO")
                 .name("Leukocytes")
                 .comparator(Strings.EMPTY)
@@ -247,7 +263,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(false)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(13))
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
                 .code("CKD-EPIeGFR")
                 .name("CKD-EPI eGFR")
                 .comparator(">")
@@ -264,17 +280,17 @@ public final class TestClinicalDataFactory {
     private static List<Toxicity> createTestToxicities() {
         List<Toxicity> toxicities = Lists.newArrayList();
 
-        toxicities.add(ImmutableToxicity.builder().name("Nausea").evaluatedDate(TODAY.minusDays(20))
+        toxicities.add(ImmutableToxicity.builder().name("Nausea").evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                 .source(ToxicitySource.EHR)
                 .grade(1)
                 .build());
 
-        toxicities.add(ImmutableToxicity.builder().name("Fatigue").evaluatedDate(TODAY.minusDays(20))
+        toxicities.add(ImmutableToxicity.builder().name("Fatigue").evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                 .source(ToxicitySource.EHR)
                 .grade(2)
                 .build());
 
-        toxicities.add(ImmutableToxicity.builder().name("Dizziness").evaluatedDate(TODAY.minusDays(20))
+        toxicities.add(ImmutableToxicity.builder().name("Dizziness").evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                 .source(ToxicitySource.QUESTIONNAIRE)
                 .grade(null)
                 .build());
@@ -296,7 +312,7 @@ public final class TestClinicalDataFactory {
     private static List<Surgery> createTestSurgeries() {
         List<Surgery> surgeries = Lists.newArrayList();
 
-        surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(12)).build());
+        surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(DAYS_SINCE_SURGERY)).build());
 
         return surgeries;
     }
@@ -305,7 +321,7 @@ public final class TestClinicalDataFactory {
     private static List<BloodPressure> createTestBloodPressures() {
         List<BloodPressure> bloodPressures = Lists.newArrayList();
 
-        bloodPressures.add(ImmutableBloodPressure.builder().date(TODAY.minusDays(10))
+        bloodPressures.add(ImmutableBloodPressure.builder().date(TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
                 .category("Mean blood pressure")
                 .value(99)
                 .unit("mm[Hg]")
@@ -318,7 +334,7 @@ public final class TestClinicalDataFactory {
     private static List<BloodTransfusion> createTestBloodTransfusions() {
         List<BloodTransfusion> bloodTransfusions = Lists.newArrayList();
 
-        bloodTransfusions.add(ImmutableBloodTransfusion.builder().date(TODAY.minusDays(45))
+        bloodTransfusions.add(ImmutableBloodTransfusion.builder().date(TODAY.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION))
                 .product("Thrombocyte concentrate")
                 .build());
 
@@ -338,8 +354,8 @@ public final class TestClinicalDataFactory {
                 .frequency(1D)
                 .frequencyUnit("day")
                 .ifNeeded(false)
-                .startDate(TODAY.minusDays(90))
-                .stopDate(TODAY.minusDays(30))
+                .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
+                .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
                 .active(true)
                 .build());
 
