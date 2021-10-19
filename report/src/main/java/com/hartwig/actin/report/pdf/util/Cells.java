@@ -14,7 +14,7 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createCell(@NotNull IBlockElement element) {
+    public static Cell create(@NotNull IBlockElement element) {
         Cell cell = new Cell();
         cell.setKeepTogether(true);
         cell.setBorder(Border.NO_BORDER);
@@ -23,27 +23,27 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createEmptyCell() {
-        return createCell(new Paragraph(Strings.EMPTY));
+    public static Cell createEmpty() {
+        return create(new Paragraph(Strings.EMPTY));
     }
 
     @NotNull
-    public static Cell createTitleCell(@NotNull String text) {
-        Cell cell = createCell(new Paragraph(text));
+    public static Cell createTitle(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableTitleStyle());
         return cell;
     }
 
     @NotNull
-    public static Cell createKeyCell(@NotNull String text) {
-        Cell cell = createCell(new Paragraph(text));
+    public static Cell createKey(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableKeyStyle());
         return cell;
     }
 
     @NotNull
-    public static Cell createValueCell(@NotNull String text) {
-        Cell cell = createCell(new Paragraph(text));
+    public static Cell createValue(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableValueStyle());
         return cell;
     }

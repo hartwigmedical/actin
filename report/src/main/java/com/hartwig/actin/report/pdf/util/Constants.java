@@ -12,4 +12,6 @@ public final class Constants {
     public static final float PAGE_MARGIN_RIGHT = 30;
     public static final float PAGE_MARGIN_BOTTOM = 40;
 
+    private Constants() {
+    }
 }

@@ -32,4 +32,9 @@ public final class Formats {
     public static StringJoiner stringJoiner() {
         return new StringJoiner(", ");
     }
+
+    @NotNull
+    public static String valueOrDefault(@NotNull String value, @NotNull String defaultValue) {
+        return !value.isEmpty() ? value : defaultValue;
+    }
 }
