@@ -37,7 +37,7 @@ public class LaboratoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        float key1Width = keyWidth / 2;
+        float key1Width = keyWidth / 3;
         float key2Width = keyWidth - key1Width;
 
         Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, valueWidth });
