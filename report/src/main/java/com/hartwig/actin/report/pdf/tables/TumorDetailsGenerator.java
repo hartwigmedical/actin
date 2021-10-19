@@ -32,7 +32,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Patient clinical history (" + Formats.date(record.patient().questionnaireDate()) + ")";
+        return "Tumor details (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull
