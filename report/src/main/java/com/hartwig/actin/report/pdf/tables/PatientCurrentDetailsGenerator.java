@@ -14,6 +14,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PatientCurrentDetailsGenerator implements TableGenerator {
 
@@ -40,7 +41,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
 
         table.addCell(Cells.createKey("WHO status"));
-        table.addCell(Cells.createValue(String.valueOf(record.clinicalStatus().who())));
+        table.addCell(Cells.createValue(whoStatus(record.clinicalStatus().who())));
 
         table.addCell(Cells.createKey("Unresolved toxicities grade => 2"));
         table.addCell(Cells.createValue(unresolvedToxicities(record)));
@@ -62,6 +63,11 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
+    private static String whoStatus(@Nullable Integer who) {
+        return who != null ? String.valueOf(who) : Formats.UNKNOWN;
+    }
+
+    @NotNull
     private static String unresolvedToxicities(@NotNull ClinicalRecord record) {
         StringJoiner joiner = Formats.commaJoiner();
         for (Toxicity toxicity : record.toxicities()) {
@@ -80,6 +86,6 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         for (CancerRelatedComplication complication : record.cancerRelatedComplications()) {
             joiner.add(complication.name());
         }
-        return Formats.valueOrDefault(joiner.toString(), "No");
+        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 }
