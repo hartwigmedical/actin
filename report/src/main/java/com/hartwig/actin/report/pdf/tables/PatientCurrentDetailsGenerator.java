@@ -31,7 +31,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Patient clinical history (" + Formats.date(record.patient().questionnaireDate()) + ")";
+        return "Patient current details (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull
