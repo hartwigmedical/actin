@@ -88,7 +88,7 @@ public final class TestClinicalDataFactory {
                 .hasCnsLesions(true)
                 .hasActiveCnsLesions(null)
                 .hasSymptomaticCnsLesions(true)
-                .hasBoneLesions(false)
+                .hasBoneLesions(null)
                 .hasLiverLesions(true)
                 .hasOtherLesions(true)
                 .addOtherLesions("Pulmonal")
