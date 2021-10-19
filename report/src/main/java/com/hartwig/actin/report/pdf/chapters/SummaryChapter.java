@@ -76,7 +76,7 @@ public class SummaryChapter implements ReportChapter {
     private void addSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        float keyWidth = 170;
+        float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(record.clinical(), keyWidth, valueWidth),
                 new PatientCurrentDetailsGenerator(record.clinical(), keyWidth, valueWidth),
