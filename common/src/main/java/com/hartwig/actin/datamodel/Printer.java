@@ -28,7 +28,8 @@ public final class Printer {
         printer.print("Sample: " + record.sampleId());
         printer.print("Birth year: " + record.patient().birthYear());
         printer.print("Gender: " + record.patient().gender());
-        printer.print("Primary tumor: " + record.tumor().primaryTumorLocation() + " (" + record.tumor().primaryTumorType() + ")");
+        printer.print("Primary tumor location: " + record.tumor().primaryTumorLocation());
+        printer.print("Primary tumor type: " + record.tumor().primaryTumorType());
         printer.print("WHO status: " + record.clinicalStatus().who());
     }
 

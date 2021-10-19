@@ -52,7 +52,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.stringJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (priorTumorTreatment.isSystemic()) {
                 joiner.add(priorTumorTreatment.name());
@@ -63,14 +63,14 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String otherOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner otherOncologyHistories = Formats.stringJoiner();
+        StringJoiner otherOncologyHistories = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (!priorTumorTreatment.isSystemic()) {
                 otherOncologyHistories.add(priorTumorTreatment.name());
             }
         }
 
-        StringJoiner secondPrimaries = Formats.stringJoiner();
+        StringJoiner secondPrimaries = Formats.commaJoiner();
         for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
             String secondPrimaryString = priorSecondPrimary.tumorLocation();
             if (priorSecondPrimary.diagnosedYear() != null) {
@@ -90,7 +90,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.stringJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
             joiner.add(priorOtherCondition.name());
         }

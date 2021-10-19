@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Formats {
 
+    public static final String UNKNOWN = "Unknown";
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
     private Formats() {
@@ -22,14 +24,14 @@ public final class Formats {
     @NotNull
     public static String yesNoUnknown(@Nullable Boolean bool) {
         if (bool == null) {
-            return "Unknown";
+            return UNKNOWN;
         }
 
         return bool ? "Yes" : "No";
     }
 
     @NotNull
-    public static StringJoiner stringJoiner() {
+    public static StringJoiner commaJoiner() {
         return new StringJoiner(", ");
     }
 

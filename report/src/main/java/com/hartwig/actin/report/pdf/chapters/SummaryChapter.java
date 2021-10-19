@@ -78,7 +78,7 @@ public class SummaryChapter implements ReportChapter {
                 new MolecularResultsGenerator(record.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {
-            TableGenerator generator = generators.get(0);
+            TableGenerator generator = generators.get(i);
             table.addCell(Cells.createTitle(generator.title()));
             table.addCell(Cells.create(generator.contents()));
             if (i < generators.size() - 1) {

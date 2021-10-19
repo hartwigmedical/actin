@@ -63,7 +63,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
     @NotNull
     private static String unresolvedToxicities(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.stringJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (Toxicity toxicity : record.toxicities()) {
             Integer grade = toxicity.grade();
             if ((grade != null && grade >= 2) || toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
@@ -76,7 +76,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
     @NotNull
     private static String cancerRelatedComplications(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.stringJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (CancerRelatedComplication complication : record.cancerRelatedComplications()) {
             joiner.add(complication.name());
         }

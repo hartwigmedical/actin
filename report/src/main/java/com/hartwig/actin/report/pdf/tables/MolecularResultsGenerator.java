@@ -48,7 +48,7 @@ public class MolecularResultsGenerator implements TableGenerator {
 
     @NotNull
     private static String actionableMolecularEvents(@NotNull MolecularRecord record) {
-        StringJoiner joiner = Formats.stringJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (String string : record.actionableGenomicEvents()) {
             joiner.add(string);
         }

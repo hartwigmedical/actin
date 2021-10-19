@@ -43,7 +43,12 @@ public final class Cells {
 
     @NotNull
     public static Cell createValue(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
+        return createValue(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createValue(@NotNull Paragraph paragraph) {
+        Cell cell = create(paragraph);
         cell.addStyle(Styles.tableValueStyle());
         return cell;
     }
