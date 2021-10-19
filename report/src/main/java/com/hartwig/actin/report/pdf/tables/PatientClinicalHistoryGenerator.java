@@ -51,13 +51,19 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.commaJoiner();
+        StringJoiner systemicOncologicalHistories = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (priorTumorTreatment.isSystemic()) {
-                joiner.add(priorTumorTreatment.name());
+                String SystemicTreatmentString;
+                if (priorTumorTreatment.year() != null) {
+                    SystemicTreatmentString = priorTumorTreatment.name() + " (" + priorTumorTreatment.year() + ")";
+                } else {
+                    SystemicTreatmentString = priorTumorTreatment.name();
+                }
+                systemicOncologicalHistories.add(SystemicTreatmentString);
             }
         }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+        return Formats.valueOrDefault(systemicOncologicalHistories.toString(), "None");
     }
 
     @NotNull
@@ -65,7 +71,13 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         StringJoiner otherOncologyHistories = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (!priorTumorTreatment.isSystemic()) {
-                otherOncologyHistories.add(priorTumorTreatment.name());
+                String NonSystemicTreatmentString;
+                if (priorTumorTreatment.year() != null) {
+                    NonSystemicTreatmentString = priorTumorTreatment.name() + " (" + priorTumorTreatment.year() + ")";
+                } else {
+                    NonSystemicTreatmentString = priorTumorTreatment.name();
+                }
+                otherOncologyHistories.add(NonSystemicTreatmentString);
             }
         }
 
@@ -89,10 +101,10 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.commaJoiner();
+        StringJoiner nonOncologicalHistory = Formats.commaJoiner();
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
-            joiner.add(priorOtherCondition.name());
+            nonOncologicalHistory.add(priorOtherCondition.name());
         }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+        return Formats.valueOrDefault(nonOncologicalHistory.toString(), "None");
     }
 }
