@@ -14,7 +14,7 @@ More details on the following modules are available from the links below:
 Module  | Description
 ---|---
 [Clinical](clinical) | Ingestion and curation of an external electronic health record (EHR) clinical data stream.
-[Database](database) | Capture of all ACTIN data in a database
+[Database](database) | Capture of all ACTIN data in a database.
 [Treatment](treatment) | Generation of available treatment options (standard-of-care and experimental).
 [Algo](algo) | Matching all data from a patient to available treatment options.
 [Report](report) | Writes the output of ACTIN Algo to a PDF report.
