@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.datamodel.ActinRecord;
-import com.hartwig.actin.report.pdf.tables.LaboratoryTableGenerator;
-import com.hartwig.actin.report.pdf.tables.MolecularResultsTableGenerator;
-import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryTableGenerator;
-import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsTableGenerator;
+import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
+import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
+import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
+import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
+import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -70,24 +71,21 @@ public class SummaryChapter implements ReportChapter {
 
         float keyWidth = 170;
         float valueWidth = contentWidth() - keyWidth - 10;
-        List<TableGenerator> generators =
-                Lists.newArrayList(new PatientClinicalHistoryTableGenerator(record.clinical(), keyWidth, valueWidth),
-                        new PatientCurrentDetailsTableGenerator(record.clinical(), keyWidth, valueWidth),
-                        new LaboratoryTableGenerator(record.clinical(), keyWidth, valueWidth),
-                        new MolecularResultsTableGenerator(record.molecular(), keyWidth, valueWidth));
+        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(record.clinical(), keyWidth, valueWidth),
+                new PatientCurrentDetailsGenerator(record.clinical(), keyWidth, valueWidth),
+                new LaboratoryGenerator(record.clinical(), keyWidth, valueWidth),
+                new TumorDetailsGenerator(record.clinical(), keyWidth, valueWidth),
+                new MolecularResultsGenerator(record.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {
-            addSubTableToMain(table, generators.get(i));
+            TableGenerator generator = generators.get(0);
+            table.addCell(Cells.createTitle(generator.title()));
+            table.addCell(Cells.create(generator.contents()));
             if (i < generators.size() - 1) {
                 table.addCell(Cells.createEmpty());
             }
         }
 
         document.add(table);
-    }
-
-    private static void addSubTableToMain(@NotNull Table mainTable, @NotNull TableGenerator subTableGenerator) {
-        mainTable.addCell(Cells.createTitle(subTableGenerator.title()));
-        mainTable.addCell(Cells.create(subTableGenerator.contents()));
     }
 }

@@ -14,14 +14,14 @@ import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PatientClinicalHistoryTableGenerator implements TableGenerator {
+public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private final ClinicalRecord record;
     private final float keyWidth;
     private final float valueWidth;
 
-    public PatientClinicalHistoryTableGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
+    public PatientClinicalHistoryGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;

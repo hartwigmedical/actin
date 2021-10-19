@@ -7,14 +7,14 @@ import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
 
-public class LaboratoryTableGenerator implements TableGenerator {
+public class LaboratoryGenerator implements TableGenerator {
 
     @NotNull
     private final ClinicalRecord record;
     private final float keyWidth;
     private final float valueWidth;
 
-    public LaboratoryTableGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
+    public LaboratoryGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;

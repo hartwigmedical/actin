@@ -10,14 +10,14 @@ import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MolecularResultsTableGenerator implements TableGenerator {
+public class MolecularResultsGenerator implements TableGenerator {
 
     @NotNull
     private final MolecularRecord record;
     private final float keyWidth;
     private final float valueWidth;
 
-    public MolecularResultsTableGenerator(@NotNull final MolecularRecord record, final float keyWidth, final float valueWidth) {
+    public MolecularResultsGenerator(@NotNull final MolecularRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
