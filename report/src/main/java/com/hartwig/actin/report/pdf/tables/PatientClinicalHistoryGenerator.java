@@ -51,7 +51,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        StringJoiner systemicOncologicalHistories = Formats.commaJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (priorTumorTreatment.isSystemic()) {
                 String SystemicTreatmentString;
@@ -60,24 +60,24 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 } else {
                     SystemicTreatmentString = priorTumorTreatment.name();
                 }
-                systemicOncologicalHistories.add(SystemicTreatmentString);
+                joiner.add(SystemicTreatmentString);
             }
         }
-        return Formats.valueOrDefault(systemicOncologicalHistories.toString(), "None");
+        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
     private static String otherOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner otherOncologyHistories = Formats.commaJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (!priorTumorTreatment.isSystemic()) {
-                String NonSystemicTreatmentString;
+                String nonSystemicTreatmentString;
                 if (priorTumorTreatment.year() != null) {
-                    NonSystemicTreatmentString = priorTumorTreatment.name() + " (" + priorTumorTreatment.year() + ")";
+                    nonSystemicTreatmentString = priorTumorTreatment.name() + " (" + priorTumorTreatment.year() + ")";
                 } else {
-                    NonSystemicTreatmentString = priorTumorTreatment.name();
+                    nonSystemicTreatmentString = priorTumorTreatment.name();
                 }
-                otherOncologyHistories.add(NonSystemicTreatmentString);
+                joiner.add(nonSystemicTreatmentString);
             }
         }
 
@@ -91,20 +91,20 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         }
 
         if (record.priorSecondPrimaries().size() > 1) {
-            otherOncologyHistories.add("Previous primary tumors: " + secondPrimaries);
+            joiner.add("Previous primary tumors: " + secondPrimaries);
         } else if (!record.priorSecondPrimaries().isEmpty()) {
-            otherOncologyHistories.add("Previous primary tumor: " + secondPrimaries);
+            joiner.add("Previous primary tumor: " + secondPrimaries);
         }
 
-        return Formats.valueOrDefault(otherOncologyHistories.toString(), "None");
+        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
     private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner nonOncologicalHistory = Formats.commaJoiner();
+        StringJoiner joiner = Formats.commaJoiner();
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
-            nonOncologicalHistory.add(priorOtherCondition.name());
+            joiner.add(priorOtherCondition.name());
         }
-        return Formats.valueOrDefault(nonOncologicalHistory.toString(), "None");
+        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 }
