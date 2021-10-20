@@ -1,5 +1,7 @@
 package com.hartwig.actin.common;
 
+import com.hartwig.actin.ActinRecord;
+import com.hartwig.actin.ImmutableActinRecord;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
@@ -14,7 +16,7 @@ public final class TestDataFactory {
 
     @NotNull
     public static ActinRecord createTestActinRecord() {
-        return ImmutableActinRecord.builder()
+        return ImmutableActinRecord.builder().sampleId(TEST_SAMPLE)
                 .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
                 .molecular(TestMolecularDataFactory.createProperTestMolecularRecord())
                 .build();

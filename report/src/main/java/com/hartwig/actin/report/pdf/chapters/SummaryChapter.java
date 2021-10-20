@@ -2,9 +2,9 @@ package com.hartwig.actin.report.pdf.chapters;
 
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.hartwig.actin.common.ActinRecord;
+import com.hartwig.actin.ActinRecord;
+import com.hartwig.actin.common.PatientIdExtractor;
 import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
@@ -54,19 +54,13 @@ public class SummaryChapter implements ReportChapter {
     private void addPatientDetails(@NotNull Document document) {
         Paragraph patientDetailsLine = new Paragraph();
         patientDetailsLine.add(new Text("Patient ID: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(toPatientId(record.sampleId())).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text(PatientIdExtractor.toPatientId(record.sampleId())).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Gender: ").addStyle(Styles.labelStyle()));
         patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
         patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
 
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
-    }
-
-    @NotNull
-    @VisibleForTesting
-    static String toPatientId(@NotNull String sampleId) {
-        return sampleId.substring(0, 4) + "-" + sampleId.substring(4, 6) + "-" + sampleId.substring(6, 8) + "-" + sampleId.substring(8, 12);
     }
 
     private void addChapterTitle(@NotNull Document document) {

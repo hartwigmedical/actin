@@ -3,8 +3,8 @@ package com.hartwig.actin.report.pdf;
 import java.io.File;
 import java.io.IOException;
 
+import com.hartwig.actin.ActinRecord;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
-import com.hartwig.actin.common.ActinRecord;
 import com.hartwig.actin.common.TestDataFactory;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
 

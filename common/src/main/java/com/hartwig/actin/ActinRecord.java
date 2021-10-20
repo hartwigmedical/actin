@@ -1,4 +1,4 @@
-package com.hartwig.actin.common;
+package com.hartwig.actin;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -12,11 +12,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ActinRecord {
 
     @NotNull
-    @Value.Derived
-    public String sampleId() {
-        assert clinical().sampleId().equals(molecular().sampleId());
-        return clinical().sampleId();
-    }
+    public abstract String sampleId();
 
     @NotNull
     public abstract ClinicalRecord clinical();
