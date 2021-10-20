@@ -185,9 +185,9 @@ public class LaboratoryGenerator implements TableGenerator {
                 trend = "no trend identified";
             }
 
-            return "out of range for " + outOfRangeCount + " cons. measurements, " + trend;
+            return "(out of range for " + outOfRangeCount + " cons. measurements, " + trend + ")";
         } else {
-            return "no trend known";
+            return "(no trend information available)";
         }
     }
 }
