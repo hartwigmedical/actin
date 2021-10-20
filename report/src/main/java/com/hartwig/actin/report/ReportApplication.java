@@ -4,11 +4,12 @@ import java.io.IOException;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
-import com.hartwig.actin.datamodel.ActinRecord;
-import com.hartwig.actin.datamodel.ImmutableActinRecord;
-import com.hartwig.actin.datamodel.Printer;
+import com.hartwig.actin.clinical.util.ClinicalPrinter;
+import com.hartwig.actin.common.ActinRecord;
+import com.hartwig.actin.common.ImmutableActinRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
+import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.actin.report.pdf.ReportWriter;
 import com.hartwig.actin.report.pdf.ReportWriterFactory;
 
@@ -53,11 +54,11 @@ public class ReportApplication {
     public void run() throws IOException {
         LOGGER.info("Loading clinical record from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
-        Printer.printClinicalRecord(clinical);
+        ClinicalPrinter.printRecord(clinical);
 
         LOGGER.info("Loading molecular record from {}", config.molecularJson());
         MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
-        Printer.printMolecularRecord(molecular);
+        MolecularPrinter.printRecord(molecular);
 
         ActinRecord record = ImmutableActinRecord.builder().clinical(clinical).molecular(molecular).build();
 

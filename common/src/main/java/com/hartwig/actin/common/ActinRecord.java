@@ -1,4 +1,4 @@
-package com.hartwig.actin.datamodel;
+package com.hartwig.actin.common;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import com.google.common.io.Resources;
-import com.hartwig.actin.datamodel.TestDataFactory;
+import com.hartwig.actin.common.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.junit.Test;

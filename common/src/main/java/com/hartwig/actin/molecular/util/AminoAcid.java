@@ -1,4 +1,4 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.molecular.util;
 
 import java.util.Map;
 

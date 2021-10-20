@@ -11,9 +11,9 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class JsonFunctions {
+public final class Json {
 
-    private JsonFunctions() {
+    private Json() {
     }
 
     @NotNull

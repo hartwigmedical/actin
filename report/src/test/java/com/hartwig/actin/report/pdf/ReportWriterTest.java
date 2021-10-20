@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf;
 
 import java.io.IOException;
 
-import com.hartwig.actin.datamodel.ActinRecord;
-import com.hartwig.actin.datamodel.TestDataFactory;
+import com.hartwig.actin.common.ActinRecord;
+import com.hartwig.actin.common.TestDataFactory;
 
 import org.junit.Test;
 

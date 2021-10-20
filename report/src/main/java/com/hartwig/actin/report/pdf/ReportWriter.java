@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.hartwig.actin.datamodel.ActinRecord;
+import com.hartwig.actin.common.ActinRecord;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
 import com.hartwig.actin.report.pdf.util.Constants;

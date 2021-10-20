@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 
 import org.junit.Test;
 
-public class JsonFunctionsTest {
+public class JsonTest {
 
     private static final double EPSILON = 1.0E-10;
 
@@ -21,7 +21,7 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.add("object", new JsonObject());
-        assertNotNull(JsonFunctions.object(object, "object"));
+        assertNotNull(Json.object(object, "object"));
     }
 
     @Test
@@ -29,19 +29,19 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.add("array1", new JsonArray());
-        assertNotNull(JsonFunctions.array(object, "array1"));
+        assertNotNull(Json.array(object, "array1"));
 
         object.addProperty("nullable", (String) null);
-        assertNull(JsonFunctions.nullableStringList(object, "nullable"));
+        assertNull(Json.nullableStringList(object, "nullable"));
 
         JsonArray array = new JsonArray();
         array.add("value1");
         array.add("value2");
         object.add("array2", array);
-        assertEquals(2, JsonFunctions.nullableStringList(object, "array2").size());
+        assertEquals(2, Json.nullableStringList(object, "array2").size());
 
         object.addProperty("string", "string");
-        assertEquals(1, JsonFunctions.nullableStringList(object, "string").size());
+        assertEquals(1, Json.nullableStringList(object, "string").size());
     }
 
     @Test
@@ -49,10 +49,10 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.addProperty("nullable", (String) null);
-        assertNull(JsonFunctions.nullableString(object, "nullable"));
+        assertNull(Json.nullableString(object, "nullable"));
 
         object.addProperty("string", "value");
-        assertEquals("value", JsonFunctions.nullableString(object, "string"));
+        assertEquals("value", Json.nullableString(object, "string"));
     }
 
     @Test
@@ -60,10 +60,10 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.addProperty("nullable", (String) null);
-        assertNull(JsonFunctions.nullableNumber(object, "nullable"));
+        assertNull(Json.nullableNumber(object, "nullable"));
 
         object.addProperty("number", 12.4);
-        assertEquals(12.4, JsonFunctions.nullableNumber(object, "number"), EPSILON);
+        assertEquals(12.4, Json.nullableNumber(object, "number"), EPSILON);
     }
 
     @Test
@@ -71,10 +71,10 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.addProperty("nullable", (String) null);
-        assertNull(JsonFunctions.nullableInteger(object, "nullable"));
+        assertNull(Json.nullableInteger(object, "nullable"));
 
         object.addProperty("integer", 8);
-        assertEquals(8, (int) JsonFunctions.nullableInteger(object, "integer"));
+        assertEquals(8, (int) Json.nullableInteger(object, "integer"));
     }
 
     @Test
@@ -82,10 +82,10 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.addProperty("nullable", (String) null);
-        assertNull(JsonFunctions.nullableBool(object, "nullable"));
+        assertNull(Json.nullableBool(object, "nullable"));
 
         object.addProperty("bool", true);
-        assertTrue(JsonFunctions.nullableBool(object, "bool"));
+        assertTrue(Json.nullableBool(object, "bool"));
     }
 
     @Test
@@ -93,13 +93,13 @@ public class JsonFunctionsTest {
         JsonObject object = new JsonObject();
 
         object.addProperty("nullable", (String) null);
-        assertNull(JsonFunctions.nullableDate(object, "nullable"));
+        assertNull(Json.nullableDate(object, "nullable"));
 
         JsonObject dateObject = new JsonObject();
         dateObject.addProperty("year", 2018);
         dateObject.addProperty("month", 4);
         dateObject.addProperty("day", 6);
         object.add("date", dateObject);
-        assertEquals(LocalDate.of(2018, 4, 6), JsonFunctions.nullableDate(object, "date"));
+        assertEquals(LocalDate.of(2018, 4, 6), Json.nullableDate(object, "date"));
     }
 }

@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.serialization;
 
-import static com.hartwig.actin.util.JsonFunctions.array;
-import static com.hartwig.actin.util.JsonFunctions.bool;
-import static com.hartwig.actin.util.JsonFunctions.object;
-import static com.hartwig.actin.util.JsonFunctions.string;
+import static com.hartwig.actin.util.Json.array;
+import static com.hartwig.actin.util.Json.bool;
+import static com.hartwig.actin.util.Json.object;
+import static com.hartwig.actin.util.Json.string;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import com.hartwig.actin.molecular.datamodel.GenomicTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableGenomicTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.util.AminoAcid;
+import com.hartwig.actin.molecular.util.AminoAcid;
 
 import org.jetbrains.annotations.NotNull;
 

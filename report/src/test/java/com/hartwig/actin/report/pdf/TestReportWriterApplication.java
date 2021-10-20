@@ -3,9 +3,10 @@ package com.hartwig.actin.report.pdf;
 import java.io.File;
 import java.io.IOException;
 
-import com.hartwig.actin.datamodel.ActinRecord;
-import com.hartwig.actin.datamodel.Printer;
-import com.hartwig.actin.datamodel.TestDataFactory;
+import com.hartwig.actin.clinical.util.ClinicalPrinter;
+import com.hartwig.actin.common.ActinRecord;
+import com.hartwig.actin.common.TestDataFactory;
+import com.hartwig.actin.molecular.util.MolecularPrinter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,10 +21,10 @@ public class TestReportWriterApplication {
         ActinRecord record = TestDataFactory.createTestActinRecord();
 
         LOGGER.info("Printing clinical record");
-        Printer.printClinicalRecord(record.clinical());
+        ClinicalPrinter.printRecord(record.clinical());
 
         LOGGER.info("Printing molecular record");
-        Printer.printMolecularRecord(record.molecular());
+        MolecularPrinter.printRecord(record.molecular());
 
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(OUTPUT_DIRECTORY);
 

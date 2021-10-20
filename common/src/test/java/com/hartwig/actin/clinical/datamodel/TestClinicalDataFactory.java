@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.datamodel.TestDataFactory;
+import com.hartwig.actin.common.TestDataFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

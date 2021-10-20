@@ -1,19 +1,19 @@
 package com.hartwig.actin.clinical.serialization;
 
-import static com.hartwig.actin.util.JsonFunctions.array;
-import static com.hartwig.actin.util.JsonFunctions.bool;
-import static com.hartwig.actin.util.JsonFunctions.date;
-import static com.hartwig.actin.util.JsonFunctions.integer;
-import static com.hartwig.actin.util.JsonFunctions.nullableBool;
-import static com.hartwig.actin.util.JsonFunctions.nullableDate;
-import static com.hartwig.actin.util.JsonFunctions.nullableInteger;
-import static com.hartwig.actin.util.JsonFunctions.nullableNumber;
-import static com.hartwig.actin.util.JsonFunctions.nullableString;
-import static com.hartwig.actin.util.JsonFunctions.nullableStringList;
-import static com.hartwig.actin.util.JsonFunctions.number;
-import static com.hartwig.actin.util.JsonFunctions.object;
-import static com.hartwig.actin.util.JsonFunctions.string;
-import static com.hartwig.actin.util.JsonFunctions.stringList;
+import static com.hartwig.actin.util.Json.array;
+import static com.hartwig.actin.util.Json.bool;
+import static com.hartwig.actin.util.Json.date;
+import static com.hartwig.actin.util.Json.integer;
+import static com.hartwig.actin.util.Json.nullableBool;
+import static com.hartwig.actin.util.Json.nullableDate;
+import static com.hartwig.actin.util.Json.nullableInteger;
+import static com.hartwig.actin.util.Json.nullableNumber;
+import static com.hartwig.actin.util.Json.nullableString;
+import static com.hartwig.actin.util.Json.nullableStringList;
+import static com.hartwig.actin.util.Json.number;
+import static com.hartwig.actin.util.Json.object;
+import static com.hartwig.actin.util.Json.string;
+import static com.hartwig.actin.util.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;

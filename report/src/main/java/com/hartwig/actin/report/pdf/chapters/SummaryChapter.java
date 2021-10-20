@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.hartwig.actin.datamodel.ActinRecord;
+import com.hartwig.actin.common.ActinRecord;
 import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
