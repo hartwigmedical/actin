@@ -1,11 +1,9 @@
 package com.hartwig.actin.report.pdf.tables;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.interpretation.LabInterpretation;
+import com.hartwig.actin.clinical.interpretation.LabInterpretationFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -18,28 +16,36 @@ import org.jetbrains.annotations.Nullable;
 public class LaboratoryGenerator implements TableGenerator {
 
     @NotNull
-    private final ClinicalRecord record;
-    private final float keyWidth;
+    private final LabInterpretation labInterpretation;
+    private final float key1Width;
+    private final float key2Width;
     private final float valueWidth;
 
-    public LaboratoryGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
-        this.record = record;
-        this.keyWidth = keyWidth;
+    @NotNull
+    public static LaboratoryGenerator fromRecord(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
+        float key1Width = keyWidth / 3;
+        float key2Width = keyWidth - key1Width;
+
+        return new LaboratoryGenerator(LabInterpretationFactory.fromLabValues(record.labValues()), key1Width, key2Width, valueWidth);
+    }
+
+    private LaboratoryGenerator(@NotNull final LabInterpretation labInterpretation, final float key1Width, final float key2Width,
+            final float valueWidth) {
+        this.labInterpretation = labInterpretation;
+        this.key1Width = key1Width;
+        this.key2Width = key2Width;
         this.valueWidth = valueWidth;
     }
 
     @NotNull
     @Override
     public String title() {
-        return "Laboratory (" + Formats.date(mostRecentDate(record.labValues())) + ")";
+        return "Laboratory (" + Formats.date(labInterpretation.mostRecentRelevantDate()) + ")";
     }
 
     @NotNull
     @Override
     public Table contents() {
-        float key1Width = keyWidth / 3;
-        float key2Width = keyWidth - key1Width;
-
         Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, valueWidth });
 
         table.addCell(Cells.createKey("Liver function"));
@@ -78,8 +84,7 @@ public class LaboratoryGenerator implements TableGenerator {
     }
 
     private void addMostRecentLabEntryByName(@NotNull Table table, @NotNull String name, boolean displayHeader) {
-        List<LabValue> filtered = filterByName(record.labValues(), name);
-        addLabEntry(table, displayHeader ? name : Strings.EMPTY, mostRecent(filtered));
+        addLabEntry(table, displayHeader ? name : Strings.EMPTY, labInterpretation.mostRecentByName(name));
     }
 
     private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code) {
@@ -87,8 +92,7 @@ public class LaboratoryGenerator implements TableGenerator {
     }
 
     private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code, boolean displayHeader) {
-        List<LabValue> filtered = filterByCode(record.labValues(), code);
-        addLabEntry(table, displayHeader ? code : Strings.EMPTY, mostRecent(filtered));
+        addLabEntry(table, displayHeader ? code : Strings.EMPTY, labInterpretation.mostRecentByCode(code));
     }
 
     private void addLabEntry(@NotNull Table table, @NotNull String header, @Nullable LabValue lab) {
@@ -115,53 +119,12 @@ public class LaboratoryGenerator implements TableGenerator {
             }
 
             value = lab.value() + " " + lab.unit();
-            LocalDate mostRecentDate = mostRecentDate(record.labValues());
-            if (mostRecentDate.isAfter(lab.date())) {
+            if (labInterpretation.mostRecentRelevantDate().isAfter(lab.date())) {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
         }
 
         table.addCell(Cells.createKey(key));
         table.addCell(Cells.createValue(value));
-    }
-
-    @Nullable
-    private static LocalDate mostRecentDate(@NotNull List<LabValue> labValues) {
-        LabValue mostRecent = mostRecent(labValues);
-        return mostRecent != null ? mostRecent.date() : null;
-    }
-
-    @Nullable
-    private static LabValue mostRecent(@NotNull List<LabValue> labValues) {
-        LabValue mostRecent = null;
-        for (LabValue labValue : labValues) {
-            if (mostRecent == null || labValue.date().isAfter(mostRecent.date())) {
-                mostRecent = labValue;
-            }
-        }
-
-        return mostRecent;
-    }
-
-    @Nullable
-    private static List<LabValue> filterByName(@NotNull List<LabValue> labValues, @NotNull String name) {
-        List<LabValue> filtered = Lists.newArrayList();
-        for (LabValue labValue : labValues) {
-            if (labValue.name().equals(name)) {
-                filtered.add(labValue);
-            }
-        }
-        return filtered;
-    }
-
-    @Nullable
-    private static List<LabValue> filterByCode(@NotNull List<LabValue> labValues, @NotNull String code) {
-        List<LabValue> filtered = Lists.newArrayList();
-        for (LabValue labValue : labValues) {
-            if (labValue.code().equals(code)) {
-                filtered.add(labValue);
-            }
-        }
-        return filtered;
     }
 }

@@ -80,7 +80,7 @@ public class SummaryChapter implements ReportChapter {
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(record.clinical(), keyWidth, valueWidth),
                 new PatientCurrentDetailsGenerator(record.clinical(), keyWidth, valueWidth),
-                new LaboratoryGenerator(record.clinical(), keyWidth, valueWidth),
+                LaboratoryGenerator.fromRecord(record.clinical(), keyWidth, valueWidth),
                 new TumorDetailsGenerator(record.clinical(), keyWidth, valueWidth),
                 new MolecularResultsGenerator(record.molecular(), keyWidth, valueWidth));
 
