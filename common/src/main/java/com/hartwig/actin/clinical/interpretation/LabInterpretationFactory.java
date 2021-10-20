@@ -16,7 +16,7 @@ public final class LabInterpretationFactory {
     static final Set<String> RELEVANT_LAB_NAMES =
             Sets.newHashSet("Albumin", "CKD-EPI eGFR", "Creatinine", "Hemoglobin", "Thrombocytes", "Total bilirubin");
 
-    static final Set<String> RELEVANT_LAB_CODES = Sets.newHashSet("ASAT", "ALAT", "ALP", "INR", "PT");
+    static final Set<String> RELEVANT_LAB_CODES = Sets.newHashSet("ALAT", "ALP", "ASAT");
 
     private LabInterpretationFactory() {
     }

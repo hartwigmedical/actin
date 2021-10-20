@@ -24,21 +24,28 @@ public class LaboratoryGenerator implements TableGenerator {
     private final LabInterpretation labInterpretation;
     private final float key1Width;
     private final float key2Width;
+    private final float key3Width;
     private final float valueWidth;
 
     @NotNull
     public static LaboratoryGenerator fromRecord(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
         float key1Width = keyWidth / 3;
-        float key2Width = keyWidth - key1Width;
+        float key2Width = keyWidth / 3;
+        float key3Width = keyWidth - key1Width - key2Width;
 
-        return new LaboratoryGenerator(LabInterpretationFactory.fromLabValues(record.labValues()), key1Width, key2Width, valueWidth);
+        return new LaboratoryGenerator(LabInterpretationFactory.fromLabValues(record.labValues()),
+                key1Width,
+                key2Width,
+                key3Width,
+                valueWidth);
     }
 
-    private LaboratoryGenerator(@NotNull final LabInterpretation labInterpretation, final float key1Width, final float key2Width,
-            final float valueWidth) {
+    public LaboratoryGenerator(@NotNull final LabInterpretation labInterpretation, final float key1Width, final float key2Width,
+            final float key3Width, final float valueWidth) {
         this.labInterpretation = labInterpretation;
         this.key1Width = key1Width;
         this.key2Width = key2Width;
+        this.key3Width = key3Width;
         this.valueWidth = valueWidth;
     }
 
@@ -51,7 +58,7 @@ public class LaboratoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, valueWidth });
+        Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, key3Width, valueWidth });
 
         table.addCell(Cells.createKey("Liver function"));
         addMostRecentLabEntryByName(table, "Total bilirubin");
@@ -69,72 +76,52 @@ public class LaboratoryGenerator implements TableGenerator {
         table.addCell(Cells.createEmpty());
         addMostRecentLabEntryByName(table, "CKD-EPI eGFR");
 
-        table.addCell(Cells.createKey("Hemoglobin"));
-        addMostRecentLabEntryByName(table, "Hemoglobin", false);
-
-        table.addCell(Cells.createKey("Thrombocytes"));
-        addMostRecentLabEntryByName(table, "Thrombocytes", false);
-
-        table.addCell(Cells.createKey("PT"));
-        addMostRecentLabEntryByCode(table, "PT", false);
-
-        table.addCell(Cells.createKey("INR"));
-        addMostRecentLabEntryByCode(table, "INR", false);
+        table.addCell(Cells.createKey("Other"));
+        addMostRecentLabEntryByName(table, "Hemoglobin");
+        table.addCell(Cells.createEmpty());
+        addMostRecentLabEntryByName(table, "Thrombocytes");
 
         return table;
     }
 
     private void addMostRecentLabEntryByName(@NotNull Table table, @NotNull String name) {
-        addMostRecentLabEntryByName(table, name, true);
-    }
-
-    private void addMostRecentLabEntryByName(@NotNull Table table, @NotNull String name, boolean displayHeader) {
-        addLabEntry(table, displayHeader ? name : Strings.EMPTY, labInterpretation.mostRecentByName(name));
+        addLabEntry(table, name, labInterpretation.mostRecentByName(name));
     }
 
     private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code) {
-        addMostRecentLabEntryByCode(table, code, true);
+        addLabEntry(table, code, labInterpretation.mostRecentByCode(code));
     }
 
-    private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code, boolean displayHeader) {
-        addLabEntry(table, displayHeader ? code : Strings.EMPTY, labInterpretation.mostRecentByCode(code));
-    }
-
-    private void addLabEntry(@NotNull Table table, @NotNull String header, @Nullable LabValue lab) {
-        String key = header;
+    private void addLabEntry(@NotNull Table table, @NotNull String key, @Nullable LabValue lab) {
         String value = Strings.EMPTY;
 
         Style style = Styles.tableValueHighlightStyle();
         if (lab != null) {
-            if (key.isEmpty()) {
-                key = limitAddition(lab);
-            } else {
-                key = key + " " + limitAddition(lab);
-            }
-
             value = Formats.number(lab.value()) + " " + lab.unit();
             if (!lab.comparator().isEmpty()) {
                 value = lab.comparator() + " " + value;
             }
-            if (labInterpretation.mostRecentRelevantDate().isAfter(lab.date())) {
+            if (!labInterpretation.mostRecentRelevantDate().equals(lab.date())) {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
 
             if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
                 style = Styles.tableValueWarnStyle();
-                String outOfRangeAddition = outOfRangeAddition(labInterpretation.allValuesSortedDescending(lab));
-                if (!outOfRangeAddition.isEmpty()) {
-                    value = value + " " + outOfRangeAddition;
-                }
+                value = value + " " + buildOutOfRangeAddition(labInterpretation.allValuesSortedDescending(lab));
             }
         }
 
         table.addCell(Cells.createKey(key));
+        table.addCell(Cells.createKey(buildLimitString(lab)));
         table.addCell(Cells.create(new Paragraph(value).addStyle(style)));
     }
 
     @NotNull
-    private static String limitAddition(@NotNull LabValue lab) {
+    private static String buildLimitString(@Nullable LabValue lab) {
+        if (lab == null) {
+            return Strings.EMPTY;
+        }
+
         Double refLimitLow = lab.refLimitLow();
         Double refLimitUp = lab.refLimitUp();
 
@@ -155,7 +142,7 @@ public class LaboratoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String outOfRangeAddition(@NotNull List<LabValue> values) {
+    private static String buildOutOfRangeAddition(@NotNull List<LabValue> values) {
         assert values.get(0).isOutsideRef();
 
         int outOfRangeCount = 1;
@@ -188,16 +175,16 @@ public class LaboratoryGenerator implements TableGenerator {
 
             String trend;
             if (trendIsUp) {
-                trend = "up";
+                trend = "trend is up";
             } else if (trendIsDown) {
-                trend = "down";
+                trend = "trend down";
             } else {
-                trend = "unknown";
+                trend = "no trend identified";
             }
 
-            return "out of range for " + outOfRangeCount + " cons. measurements, trend is " + trend;
+            return "out of range for " + outOfRangeCount + " cons. measurements, " + trend;
         } else {
-            return Strings.EMPTY;
+            return "no trend known";
         }
     }
 }
