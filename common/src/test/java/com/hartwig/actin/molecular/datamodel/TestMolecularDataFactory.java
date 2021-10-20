@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.datamodel;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.common.TestDataFactory;
+import com.hartwig.actin.TestDataFactory;
 
 import org.jetbrains.annotations.NotNull;
 

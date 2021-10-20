@@ -1,4 +1,4 @@
-package com.hartwig.actin.common;
+package com.hartwig.actin.util;
 
 import static org.junit.Assert.assertEquals;
 

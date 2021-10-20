@@ -1,7 +1,5 @@
-package com.hartwig.actin.common;
+package com.hartwig.actin;
 
-import com.hartwig.actin.ActinRecord;
-import com.hartwig.actin.ImmutableActinRecord;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 

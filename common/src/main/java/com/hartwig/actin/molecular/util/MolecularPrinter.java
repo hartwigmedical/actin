@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.util;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.hartwig.actin.common.DatamodelPrinter;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
 

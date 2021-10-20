@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.util;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.common.DatamodelPrinter;
+import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

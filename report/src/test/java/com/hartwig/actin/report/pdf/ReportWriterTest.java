@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf;
 import java.io.IOException;
 
 import com.hartwig.actin.ActinRecord;
-import com.hartwig.actin.common.TestDataFactory;
+import com.hartwig.actin.TestDataFactory;
 
 import org.junit.Test;
 

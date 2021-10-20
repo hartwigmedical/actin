@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import com.hartwig.actin.ActinRecord;
+import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
-import com.hartwig.actin.common.TestDataFactory;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
 
 import org.apache.logging.log4j.LogManager;

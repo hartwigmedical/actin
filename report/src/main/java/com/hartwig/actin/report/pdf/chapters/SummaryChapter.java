@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.ActinRecord;
-import com.hartwig.actin.common.PatientIdExtractor;
 import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
@@ -14,6 +13,7 @@ import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
+import com.hartwig.actin.util.PatientIdExtractor;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
