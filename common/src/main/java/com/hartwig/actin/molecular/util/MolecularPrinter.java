@@ -24,7 +24,6 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
-        printer.print("Has reliable purity: " + (record.hasReliablePurity() ? "Yes" : "No"));
         printer.print("Actionable events: " + concat(record.actionableGenomicEvents()));
     }
 

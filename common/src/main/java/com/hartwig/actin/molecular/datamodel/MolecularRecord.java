@@ -18,8 +18,6 @@ public abstract class MolecularRecord {
 
     public abstract boolean hasReliableQuality();
 
-    public abstract boolean hasReliablePurity();
-
     @NotNull
     public abstract List<GenomicTreatmentEvidence> genomicTreatmentEvidences();
 

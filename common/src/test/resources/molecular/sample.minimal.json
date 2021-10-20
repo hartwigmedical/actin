@@ -1,8 +1,7 @@
 {
   "sampleId": "ACTN01029999T",
   "purple": {
-    "hasReliableQuality": true,
-    "hasReliablePurity": true
+    "hasReliableQuality": true
   },
   "protect": [
   ]

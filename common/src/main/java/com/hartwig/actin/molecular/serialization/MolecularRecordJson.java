@@ -53,7 +53,6 @@ public final class MolecularRecordJson {
             return ImmutableMolecularRecord.builder()
                     .sampleId(string(record, "sampleId"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
-                    .hasReliablePurity(bool(purple, "hasReliablePurity"))
                     .genomicTreatmentEvidences(toGenomicTreatmentEvidences(array(record, "protect")))
                     .build();
         }

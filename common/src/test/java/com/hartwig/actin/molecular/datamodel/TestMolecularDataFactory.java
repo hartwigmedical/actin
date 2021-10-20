@@ -17,7 +17,6 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .hasReliableQuality(true)
-                .hasReliablePurity(true)
                 .build();
     }
 
