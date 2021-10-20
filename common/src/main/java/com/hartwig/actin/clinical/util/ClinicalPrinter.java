@@ -50,5 +50,4 @@ public class ClinicalPrinter {
         String subType = tumor.primaryTumorSubType();
         return subType != null && !subType.isEmpty() ? subType : type;
     }
-
 }

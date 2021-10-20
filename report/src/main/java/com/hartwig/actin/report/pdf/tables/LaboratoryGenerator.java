@@ -102,13 +102,14 @@ public class LaboratoryGenerator implements TableGenerator {
             if (!lab.comparator().isEmpty()) {
                 value = lab.comparator() + " " + value;
             }
+
             if (!labInterpretation.mostRecentRelevantDate().equals(lab.date())) {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
 
             if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
                 style = Styles.tableValueWarnStyle();
-                value = value + " " + buildOutOfRangeAddition(labInterpretation.allValuesForType(lab));
+                value = value + ", " + buildOutOfRangeAddition(labInterpretation.allValuesForType(lab));
             }
         }
 

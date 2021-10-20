@@ -11,6 +11,7 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class PatientClinicalHistoryGenerator implements TableGenerator {
@@ -41,7 +42,19 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         table.addCell(Cells.createValue(relevantSystemicPreTreatmentHistory(record)));
 
         table.addCell(Cells.createKey("Other oncological history"));
-        table.addCell(Cells.createValue(otherOncologicalHistory(record)));
+        String nonSystemicHistory = relevantNonSystemicPreTreatmentHistory(record);
+        String secondPrimaryHistory = secondPrimaryHistory(record);
+        if (!nonSystemicHistory.isEmpty() && !secondPrimaryHistory.isEmpty()) {
+            table.addCell(Cells.createValue(nonSystemicHistory));
+            table.addCell(Cells.createEmpty());
+            table.addCell(Cells.createValue(secondPrimaryHistory));
+        } else if (!nonSystemicHistory.isEmpty()) {
+            table.addCell(Cells.createValue(nonSystemicHistory));
+        } else if (!secondPrimaryHistory.isEmpty()) {
+            table.addCell(Cells.createValue(secondPrimaryHistory));
+        } else {
+            table.addCell(Cells.createValue("None"));
+        }
 
         table.addCell(Cells.createKey("Relevant non-oncological history"));
         table.addCell(Cells.createValue(relevantNonOncologicalHistory(record)));
@@ -54,49 +67,59 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         StringJoiner joiner = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (priorTumorTreatment.isSystemic()) {
-                String SystemicTreatmentString;
-                if (priorTumorTreatment.year() != null) {
-                    SystemicTreatmentString = priorTumorTreatment.name() + " (" + priorTumorTreatment.year() + ")";
-                } else {
-                    SystemicTreatmentString = priorTumorTreatment.name();
-                }
-                joiner.add(SystemicTreatmentString);
+                joiner.add(toTreatmentString(priorTumorTreatment));
             }
         }
         return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
-    private static String otherOncologicalHistory(@NotNull ClinicalRecord record) {
+    private static String relevantNonSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
         StringJoiner joiner = Formats.commaJoiner();
         for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
             if (!priorTumorTreatment.isSystemic()) {
-                String nonSystemicTreatmentString;
-                if (priorTumorTreatment.year() != null) {
-                    nonSystemicTreatmentString = priorTumorTreatment.name() + " (" + priorTumorTreatment.year() + ")";
-                } else {
-                    nonSystemicTreatmentString = priorTumorTreatment.name();
-                }
-                joiner.add(nonSystemicTreatmentString);
+                joiner.add(toTreatmentString(priorTumorTreatment));
             }
         }
 
-        StringJoiner secondPrimaries = Formats.commaJoiner();
+        return joiner.toString();
+    }
+
+    @NotNull
+    private static String toTreatmentString(@NotNull PriorTumorTreatment priorTumorTreatment) {
+        String year = Strings.EMPTY;
+        if (priorTumorTreatment.year() != null) {
+            year = " (" + priorTumorTreatment.year() + ")";
+        }
+        return priorTumorTreatment.name() + year;
+    }
+
+    @NotNull
+    private static String secondPrimaryHistory(@NotNull ClinicalRecord record) {
+        StringJoiner joiner = Formats.commaJoiner();
         for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
-            String secondPrimaryString = priorSecondPrimary.tumorLocation() + " " + priorSecondPrimary.tumorType();
-            if (priorSecondPrimary.diagnosedYear() != null) {
-                secondPrimaryString = secondPrimaryString + " (" + priorSecondPrimary.diagnosedYear() + ")";
+            String tumorDetails = priorSecondPrimary.tumorLocation();
+            if (!priorSecondPrimary.tumorType().isEmpty()) {
+                tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
             }
-            secondPrimaries.add(secondPrimaryString);
+
+            String year = Strings.EMPTY;
+            if (priorSecondPrimary.diagnosedYear() != null) {
+                year = priorSecondPrimary.diagnosedYear() + ", ";
+            }
+
+            String active = priorSecondPrimary.isSecondPrimaryActive() ? "considered active" : "considered non-active";
+
+            joiner.add(tumorDetails + " (" + year + active + ")");
         }
 
         if (record.priorSecondPrimaries().size() > 1) {
-            joiner.add("Previous primary tumors: " + secondPrimaries);
+            return "Previous primary tumors: " + joiner;
         } else if (!record.priorSecondPrimaries().isEmpty()) {
-            joiner.add("Previous primary tumor: " + secondPrimaries);
+            return "Previous primary tumor: " + joiner;
+        } else {
+            return Strings.EMPTY;
         }
-
-        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
