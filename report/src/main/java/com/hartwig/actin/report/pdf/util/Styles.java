@@ -17,7 +17,7 @@ public final class Styles {
     public static final DeviceRgb PALETTE_WHITE = new DeviceRgb(255, 255, 255);
     public static final DeviceRgb PALETTE_BLACK = new DeviceRgb(0, 0, 0);
     public static final DeviceRgb PALETTE_BLUE = new DeviceRgb(74, 134, 232);
-    public static final DeviceRgb PALETTE_ORANGE = new DeviceRgb(242, 139, 31);
+    public static final DeviceRgb PALETTE_RED = new DeviceRgb(231, 85, 85);
 
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
@@ -54,7 +54,7 @@ public final class Styles {
 
     @NotNull
     public static Style tableValueWarnStyle() {
-        return new Style().setFont(fontBold()).setFontSize(8).setFontColor(Styles.PALETTE_ORANGE);
+        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_RED);
     }
 
     @NotNull
