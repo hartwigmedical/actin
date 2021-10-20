@@ -1,7 +1,7 @@
 package com.hartwig.actin.datamodel;
 
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.datamodel.molecular.MolecularRecord;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

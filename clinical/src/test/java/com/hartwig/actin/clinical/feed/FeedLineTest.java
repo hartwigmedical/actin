@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.datamodel.clinical.Gender;
+import com.hartwig.actin.clinical.datamodel.Gender;
 
 import org.junit.Test;
 

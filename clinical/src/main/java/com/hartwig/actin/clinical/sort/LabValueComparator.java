@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.sort;
 
 import java.util.Comparator;
 
-import com.hartwig.actin.datamodel.clinical.LabValue;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.jetbrains.annotations.NotNull;
 

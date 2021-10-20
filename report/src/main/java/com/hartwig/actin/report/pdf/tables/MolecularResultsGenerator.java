@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables;
 
 import java.util.StringJoiner;
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;

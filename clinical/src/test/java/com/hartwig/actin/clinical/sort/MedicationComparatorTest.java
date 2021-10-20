@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.datamodel.clinical.ImmutableMedication;
-import com.hartwig.actin.datamodel.clinical.Medication;
+import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;

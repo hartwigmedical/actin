@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.datamodel.clinical.ImmutableLabValue;
-import com.hartwig.actin.datamodel.clinical.LabValue;
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;

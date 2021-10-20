@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.datamodel.clinical.LabValue;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;

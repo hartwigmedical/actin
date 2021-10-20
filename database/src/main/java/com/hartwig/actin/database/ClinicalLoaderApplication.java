@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.database.dao.DatabaseAccess;
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.serialization.ClinicalRecordJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;

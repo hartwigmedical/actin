@@ -2,8 +2,8 @@ package com.hartwig.actin.clinical.feed.patient;
 
 import java.time.LocalDate;
 
+import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.FeedEntry;
-import com.hartwig.actin.datamodel.clinical.Gender;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

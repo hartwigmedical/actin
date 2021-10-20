@@ -2,9 +2,9 @@ package com.hartwig.actin.report.pdf.tables;
 
 import java.util.StringJoiner;
 
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.datamodel.clinical.TumorDetails;
-import com.hartwig.actin.datamodel.clinical.TumorStage;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;

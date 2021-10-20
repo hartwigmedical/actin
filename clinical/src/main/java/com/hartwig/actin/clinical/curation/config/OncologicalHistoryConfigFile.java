@@ -8,9 +8,9 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.util.TsvUtil;
-import com.hartwig.actin.datamodel.clinical.ImmutablePriorSecondPrimary;
-import com.hartwig.actin.datamodel.clinical.ImmutablePriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -27,9 +27,9 @@ import com.hartwig.actin.clinical.curation.translation.ImmutableAllergyTranslati
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
-import com.hartwig.actin.datamodel.clinical.ImmutablePriorOtherCondition;
-import com.hartwig.actin.datamodel.clinical.ImmutablePriorSecondPrimary;
-import com.hartwig.actin.datamodel.clinical.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

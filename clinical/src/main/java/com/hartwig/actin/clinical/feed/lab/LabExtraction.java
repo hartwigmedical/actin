@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.lab;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.feed.FeedParseFunctions;
-import com.hartwig.actin.datamodel.clinical.ImmutableLabValue;
-import com.hartwig.actin.datamodel.clinical.LabValue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

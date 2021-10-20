@@ -5,9 +5,9 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.datamodel.clinical.TumorDetails;
-import com.hartwig.actin.datamodel.molecular.MolecularRecord;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

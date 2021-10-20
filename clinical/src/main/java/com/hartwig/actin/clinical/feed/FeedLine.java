@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed;
 import java.time.LocalDate;
 import java.util.Map;
 
-import com.hartwig.actin.datamodel.clinical.Gender;
+import com.hartwig.actin.clinical.datamodel.Gender;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -2,10 +2,10 @@ package com.hartwig.actin.report.pdf.tables;
 
 import java.util.StringJoiner;
 
-import com.hartwig.actin.datamodel.clinical.CancerRelatedComplication;
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.datamodel.clinical.Toxicity;
-import com.hartwig.actin.datamodel.clinical.ToxicitySource;
+import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;

@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.datamodel.clinical.Gender;
+import com.hartwig.actin.clinical.datamodel.Gender;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

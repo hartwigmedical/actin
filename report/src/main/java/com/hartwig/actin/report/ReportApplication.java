@@ -2,15 +2,15 @@ package com.hartwig.actin.report;
 
 import java.io.IOException;
 
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.datamodel.ActinRecord;
 import com.hartwig.actin.datamodel.ImmutableActinRecord;
 import com.hartwig.actin.datamodel.Printer;
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord;
-import com.hartwig.actin.datamodel.molecular.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.report.pdf.ReportWriter;
 import com.hartwig.actin.report.pdf.ReportWriterFactory;
-import com.hartwig.actin.serialization.ClinicalRecordJson;
-import com.hartwig.actin.serialization.MolecularRecordJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;

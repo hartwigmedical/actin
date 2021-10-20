@@ -1,7 +1,7 @@
 package com.hartwig.actin.datamodel;
 
-import com.hartwig.actin.datamodel.clinical.TestClinicalDataFactory;
-import com.hartwig.actin.datamodel.molecular.TestMolecularDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
 import org.jetbrains.annotations.NotNull;
 
