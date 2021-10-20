@@ -130,7 +130,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     private static String activeSymptomaticLesionString(@Nullable Boolean hasLesions, @Nullable Boolean active,
             @Nullable Boolean symptomatic) {
         String lesionAddon = Strings.EMPTY;
-        if (hasLesions) {
+        if (hasLesions != null && hasLesions) {
             String activeString = Strings.EMPTY;
             if (active != null) {
                 activeString = active ? "active" : "not active";
