@@ -115,8 +115,7 @@ public class TumorDetailsGenerator implements TableGenerator {
                 tumor.hasSymptomaticCnsLesions())));
         lesions.add(new Text(" / ").addStyle(Styles.labelStyle()));
         lesions.add(renderStyledText(activeSymptomaticLesionString(tumor.hasBrainLesions(),
-                tumor.hasActiveBrainLesions(),
-                tumor.hasSymptomaticBrainLesions())));
+                tumor.hasActiveBrainLesions(), tumor.hasSymptomaticBrainLesions())));
 
         lesions.add(new Text(" / ").addStyle(Styles.labelStyle()));
         lesions.add(renderStyledText(Formats.yesNoUnknown(tumor.hasBoneLesions())));
@@ -124,6 +123,11 @@ public class TumorDetailsGenerator implements TableGenerator {
         lesions.add(renderStyledText(Formats.yesNoUnknown(tumor.hasLiverLesions())));
 
         return lesions;
+    }
+
+    @NotNull
+    private static Text renderStyledText(@NotNull String value) {
+        return new Text(value).addStyle(Formats.styleForTableValue(value));
     }
 
     @NotNull
@@ -152,11 +156,6 @@ public class TumorDetailsGenerator implements TableGenerator {
             }
         }
         return Formats.yesNoUnknown(hasLesions) + lesionAddon;
-    }
-
-    @NotNull
-    private static Text renderStyledText(@NotNull String value) {
-        return new Text(value).addStyle(Formats.styleForTableValue(value));
     }
 
     @NotNull
