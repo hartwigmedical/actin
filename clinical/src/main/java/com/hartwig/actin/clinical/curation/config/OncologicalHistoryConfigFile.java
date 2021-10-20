@@ -31,7 +31,7 @@ public final class OncologicalHistoryConfigFile {
         Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             String[] parts = line.split(DELIMITER, -1);
-            boolean ignore = CurationUtil.ignore(parts[fieldIndexMap.get("name")]);
+            boolean ignore = CurationUtil.isIgnoreString(parts[fieldIndexMap.get("name")]);
 
             oncologicalHistories.add(ImmutableOncologicalHistoryConfig.builder()
                     .input(parts[fieldIndexMap.get("input")])

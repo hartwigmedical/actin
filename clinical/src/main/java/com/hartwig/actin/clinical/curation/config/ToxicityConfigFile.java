@@ -34,7 +34,10 @@ public final class ToxicityConfigFile {
     @NotNull
     private static ToxicityConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
         String name = parts[fieldIndexMap.get("name")];
-        return ImmutableToxicityConfig.builder().input(parts[fieldIndexMap.get("input")]).ignore(CurationUtil.ignore(name)).name(name)
+        return ImmutableToxicityConfig.builder()
+                .input(parts[fieldIndexMap.get("input")])
+                .ignore(CurationUtil.isIgnoreString(name))
+                .name(name)
                 .grade(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("grade")]))
                 .build();
     }

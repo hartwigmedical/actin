@@ -20,7 +20,7 @@ public final class CurationUtil {
     private CurationUtil() {
     }
 
-    public static boolean ignore(@NotNull String input) {
+    public static boolean isIgnoreString(@NotNull String input) {
         return input.equals(IGNORE);
     }
 
