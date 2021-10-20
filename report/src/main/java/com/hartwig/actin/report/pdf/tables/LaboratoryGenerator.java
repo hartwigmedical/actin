@@ -109,7 +109,7 @@ public class LaboratoryGenerator implements TableGenerator {
 
             if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
                 style = Styles.tableValueWarnStyle();
-                value = value + ", " + buildOutOfRangeAddition(labInterpretation.allValuesForType(lab));
+                value = value + " (" + buildOutOfRangeAddition(labInterpretation.allValuesForType(lab)) + ")";
             }
         }
 
@@ -183,12 +183,12 @@ public class LaboratoryGenerator implements TableGenerator {
             } else if (trendIsDown) {
                 trend = "trend down";
             } else {
-                trend = "no trend identified";
+                trend = "no trend detected";
             }
 
-            return "(out of range for " + outOfRangeCount + " cons. measurements, " + trend + ")";
+            return "out of range for " + outOfRangeCount + " cons. measurements, " + trend;
         } else {
-            return "(no trend information available)";
+            return "no trend information available";
         }
     }
 }
