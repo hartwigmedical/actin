@@ -14,7 +14,9 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TumorDetailsGenerator implements TableGenerator {
 
@@ -109,15 +111,48 @@ public class TumorDetailsGenerator implements TableGenerator {
     private static Paragraph lesionsParagraph(@NotNull TumorDetails tumor) {
         Paragraph lesions = new Paragraph();
 
-        lesions.add(renderStyledText(Formats.yesNoUnknown(tumor.hasCnsLesions())));
+        lesions.add(renderStyledText(activeSymptomaticLesionString(tumor.hasCnsLesions(),
+                tumor.hasActiveCnsLesions(),
+                tumor.hasSymptomaticCnsLesions())));
         lesions.add(new Text(" / ").addStyle(Styles.labelStyle()));
-        lesions.add(renderStyledText(Formats.yesNoUnknown(tumor.hasBrainLesions())));
+        lesions.add(renderStyledText(activeSymptomaticLesionString(tumor.hasBrainLesions(),
+                tumor.hasActiveBrainLesions(),
+                tumor.hasSymptomaticBrainLesions())));
+
         lesions.add(new Text(" / ").addStyle(Styles.labelStyle()));
         lesions.add(renderStyledText(Formats.yesNoUnknown(tumor.hasBoneLesions())));
         lesions.add(new Text(" / ").addStyle(Styles.labelStyle()));
         lesions.add(renderStyledText(Formats.yesNoUnknown(tumor.hasLiverLesions())));
 
         return lesions;
+    }
+
+    @NotNull
+    private static String activeSymptomaticLesionString(@Nullable Boolean hasLesions, @Nullable Boolean active,
+            @Nullable Boolean symptomatic) {
+        String lesionAddon = Strings.EMPTY;
+        if (hasLesions) {
+            String activeString = Strings.EMPTY;
+            if (active != null) {
+                activeString = active ? "active" : "not active";
+            }
+
+            String symptomaticString = Strings.EMPTY;
+            if (symptomatic != null) {
+                symptomaticString = symptomatic ? "symptomatic" : "not symptomatic";
+            }
+
+            if (!activeString.isEmpty() || !symptomaticString.isEmpty()) {
+                if (activeString.isEmpty()) {
+                    lesionAddon = " (" + symptomaticString + ")";
+                } else if (symptomaticString.isEmpty()) {
+                    lesionAddon = " (" + activeString + ")";
+                } else {
+                    lesionAddon = " (" + activeString + ", " + symptomaticString + ")";
+                }
+            }
+        }
+        return Formats.yesNoUnknown(hasLesions) + lesionAddon;
     }
 
     @NotNull
