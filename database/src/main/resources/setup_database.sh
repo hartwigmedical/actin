@@ -15,11 +15,12 @@ SELECT UNIX_TIMESTAMP(MAX(create_time)) db_creation FROM INFORMATION_SCHEMA.TABL
 HERE
 )
 
-echo "[INFO]: Script Epoch: ${script_epoch}"
-echo "[INFO]: DB Epoch: ${db_epoch}"
+echo "[INFO] SQL database generation script epoch: ${script_epoch}"
+echo "[INFO] Database epoch: ${db_epoch}"
 
-if [[ "$db_epoch" = "NULL" || ${script_epoch} -gt ${db_epoch} ]];
-then
+if [[ "${db_epoch}" = "NULL" || ${script_epoch} -gt ${db_epoch} ]]; then
     echo "[INFO] Rebuilding ACTIN test database based on ${db_generate_script}"
     mysql --defaults-file=~/actin.login < "${db_generate_script}"
+else
+    echo "[INFO] Skipping ACTIN test database regeneration since database is in sync with script"
 fi
