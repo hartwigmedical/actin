@@ -1,7 +1,10 @@
 package com.hartwig.actin.report.pdf.util;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 import com.itextpdf.layout.Style;
@@ -15,8 +18,14 @@ public final class Formats {
     public static final String DATE_UNKNOWN = "Date unknown";
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     private Formats() {
+    }
+
+    @NotNull
+    public static String number(double number) {
+        return NUMBER_FORMAT.format(number);
     }
 
     @NotNull

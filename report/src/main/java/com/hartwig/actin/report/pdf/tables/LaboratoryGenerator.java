@@ -112,7 +112,10 @@ public class LaboratoryGenerator implements TableGenerator {
                 key = key + " " + limitAddition(lab);
             }
 
-            value = lab.value() + " " + lab.unit();
+            value = Formats.number(lab.value()) + " " + lab.unit();
+            if (!lab.comparator().isEmpty()) {
+                value = lab.comparator() + " " + value;
+            }
             if (labInterpretation.mostRecentRelevantDate().isAfter(lab.date())) {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
@@ -141,11 +144,11 @@ public class LaboratoryGenerator implements TableGenerator {
 
         String limit;
         if (refLimitLow == null) {
-            limit = "< " + refLimitUp;
+            limit = "< " + Formats.number(refLimitUp);
         } else if (refLimitUp == null) {
-            limit = "> " + refLimitLow;
+            limit = "> " + Formats.number(refLimitLow);
         } else {
-            limit = refLimitLow + " - " + refLimitUp;
+            limit = Formats.number(refLimitLow) + " - " + Formats.number(refLimitUp);
         }
 
         return "(" + limit + " " + lab.unit() + ")";
