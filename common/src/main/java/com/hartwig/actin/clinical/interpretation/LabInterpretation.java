@@ -2,9 +2,12 @@ package com.hartwig.actin.clinical.interpretation;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.sort.LabValueComparator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +44,21 @@ public class LabInterpretation {
         }
 
         return mostRecentDate;
+    }
+
+    @Nullable
+    public List<LabValue> allValuesSortedDescending(@NotNull LabValue reference) {
+        List<LabValue> values = null;
+        if (labValuesByName.values().contains(reference)) {
+            values = Lists.newArrayList(labValuesByName.get(reference.name()));
+        } else if (labValuesByCode.values().contains(reference)) {
+            values = Lists.newArrayList(labValuesByCode.get(reference.code()));
+        }
+
+        if (values != null) {
+            values.sort(new LabValueComparator());
+        }
+        return values;
     }
 
     @Nullable

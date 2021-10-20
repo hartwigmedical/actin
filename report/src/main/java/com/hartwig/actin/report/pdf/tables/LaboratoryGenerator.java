@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.tables;
 
+import java.util.List;
+
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -8,7 +10,8 @@ import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
@@ -101,6 +104,7 @@ public class LaboratoryGenerator implements TableGenerator {
         String key = header;
         String value = Strings.EMPTY;
 
+        Style style = Styles.tableValueHighlightStyle();
         if (lab != null) {
             if (key.isEmpty()) {
                 key = limitAddition(lab);
@@ -112,14 +116,18 @@ public class LaboratoryGenerator implements TableGenerator {
             if (labInterpretation.mostRecentRelevantDate().isAfter(lab.date())) {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
+
+            if (lab.isOutsideRef()) {
+                style = Styles.tableValueWarnStyle();
+                String outOfRangeAddition = outOfRangeAddition(labInterpretation.allValuesSortedDescending(lab));
+                if (!outOfRangeAddition.isEmpty()) {
+                    value = value + " " + outOfRangeAddition;
+                }
+            }
         }
 
         table.addCell(Cells.createKey(key));
-        Cell valueCell = Cells.createValue(value);
-        if (lab != null && lab.isOutsideRef()) {
-            valueCell.addStyle(Styles.tableWarnStyle());
-        }
-        table.addCell(valueCell);
+        table.addCell(Cells.create(new Paragraph(value).addStyle(style)));
     }
 
     @NotNull
@@ -141,5 +149,52 @@ public class LaboratoryGenerator implements TableGenerator {
         }
 
         return "(" + limit + " " + lab.unit() + ")";
+    }
+
+    @NotNull
+    private static String outOfRangeAddition(@NotNull List<LabValue> values) {
+        assert values.get(0).isOutsideRef();
+
+        int outOfRangeCount = 1;
+        double moreRecentValue = values.get(0).value();
+        boolean trendIsUp = true;
+        boolean trendIsDown = true;
+
+        boolean inOutOfRefChain = true;
+        int index = 1;
+        while (inOutOfRefChain && index < values.size()) {
+            LabValue lab = values.get(index);
+
+            if (lab.isOutsideRef()) {
+                outOfRangeCount++;
+                if (moreRecentValue > lab.value()) {
+                    trendIsDown = false;
+                } else {
+                    trendIsUp = false;
+                }
+                moreRecentValue = lab.value();
+            } else {
+                inOutOfRefChain = false;
+            }
+
+            index++;
+        }
+
+        if (outOfRangeCount > 1) {
+            assert !(trendIsUp && trendIsDown);
+
+            String trend;
+            if (trendIsUp) {
+                trend = "up";
+            } else if (trendIsDown) {
+                trend = "down";
+            } else {
+                trend = "unknown";
+            }
+
+            return "out of range for " + outOfRangeCount + " cons. measurements, trend is " + trend;
+        } else {
+            return Strings.EMPTY;
+        }
     }
 }

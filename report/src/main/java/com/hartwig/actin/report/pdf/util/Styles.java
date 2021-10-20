@@ -53,7 +53,7 @@ public final class Styles {
     }
 
     @NotNull
-    public static Style tableWarnStyle() {
+    public static Style tableValueWarnStyle() {
         return new Style().setFont(fontBold()).setFontSize(8).setFontColor(Styles.PALETTE_ORANGE);
     }
 

@@ -36,11 +36,18 @@ public class LabInterpretationTest {
         LabInterpretation interpretation = createTestLabInterpretation(name, code);
 
         assertEquals(TEST_DATE, interpretation.mostRecentRelevantDate());
-        assertNotNull(interpretation.mostRecentByName(name));
-        assertNotNull(interpretation.mostRecentByCode(code));
+
+        LabValue valueByName = (interpretation.mostRecentByName(name));
+        assertNotNull(valueByName);
+        assertEquals(2, interpretation.allValuesSortedDescending(valueByName).size());
+
+        LabValue valueByCode = interpretation.mostRecentByCode(code);
+        assertNotNull(valueByCode);
+        assertEquals(2, interpretation.allValuesSortedDescending(valueByCode).size());
 
         assertNull(interpretation.mostRecentByName("not a name"));
         assertNull(interpretation.mostRecentByName("not a code"));
+        assertNull(interpretation.allValuesSortedDescending(builder().build()));
     }
 
     @NotNull
