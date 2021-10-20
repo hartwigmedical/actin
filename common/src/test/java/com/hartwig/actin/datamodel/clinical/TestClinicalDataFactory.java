@@ -86,13 +86,13 @@ public final class TestClinicalDataFactory {
                 .hasActiveBrainLesions(null)
                 .hasSymptomaticBrainLesions(null)
                 .hasCnsLesions(true)
-                .hasActiveCnsLesions(null)
-                .hasSymptomaticCnsLesions(true)
+                .hasActiveCnsLesions(true)
+                .hasSymptomaticCnsLesions(false)
                 .hasBoneLesions(null)
                 .hasLiverLesions(true)
                 .hasOtherLesions(true)
                 .addOtherLesions("Pulmonal")
-                .addOtherLesions("Abdomen")
+                .addOtherLesions("Abdominal")
                 .biopsyLocation("Liver")
                 .build();
     }
@@ -177,7 +177,7 @@ public final class TestClinicalDataFactory {
     private static List<CancerRelatedComplication> createTestCancerRelatedComplications() {
         List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
 
-        cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("None").build());
+        cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("Ascites").build());
 
         return cancerRelatedComplications;
     }
@@ -204,7 +204,7 @@ public final class TestClinicalDataFactory {
                 .comparator(Strings.EMPTY)
                 .value(36)
                 .unit("U/l")
-                .refLimitUp(35D)
+                .refLimitUp(33D)
                 .isOutsideRef(true)
                 .build());
 
@@ -349,7 +349,7 @@ public final class TestClinicalDataFactory {
                 .name("Ibuprofen")
                 .type("NSAIDs")
                 .dosageMin(750D)
-                .dosageMax(750D)
+                .dosageMax(1000D)
                 .dosageUnit("mg")
                 .frequency(1D)
                 .frequencyUnit("day")
