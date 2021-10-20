@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MedicationComparator implements Comparator<Medication> {
+public class MedicationByNameComparator implements Comparator<Medication> {
 
     @Override
     public int compare(@NotNull Medication medication1, @NotNull Medication medication2) {

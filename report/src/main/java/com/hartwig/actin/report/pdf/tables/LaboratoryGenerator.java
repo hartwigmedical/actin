@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpretationFactory;
+import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -107,7 +108,7 @@ public class LaboratoryGenerator implements TableGenerator {
 
             if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
                 style = Styles.tableValueWarnStyle();
-                value = value + " " + buildOutOfRangeAddition(labInterpretation.allValuesSortedDescending(lab));
+                value = value + " " + buildOutOfRangeAddition(labInterpretation.allValuesForType(lab));
             }
         }
 
@@ -143,6 +144,8 @@ public class LaboratoryGenerator implements TableGenerator {
 
     @NotNull
     private static String buildOutOfRangeAddition(@NotNull List<LabValue> values) {
+        values.sort(new LabValueDescendingDateComparator());
+
         assert values.get(0).isOutsideRef();
 
         int outOfRangeCount = 1;

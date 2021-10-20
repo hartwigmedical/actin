@@ -12,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.LabValue;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
-public class LabValueComparatorTest {
+public class LabValueDescendingDateComparatorTest {
 
     @Test
     public void canSortLabValues() {
@@ -24,7 +24,7 @@ public class LabValueComparatorTest {
         LabValue value3 = builder.date(LocalDate.of(2018, 1, 1)).code("X").build();
         List<LabValue> values = Lists.newArrayList(value1, value2, value3);
 
-        values.sort(new LabValueComparator());
+        values.sort(new LabValueDescendingDateComparator());
 
         assertEquals(value2, values.get(0));
         assertEquals(value3, values.get(1));

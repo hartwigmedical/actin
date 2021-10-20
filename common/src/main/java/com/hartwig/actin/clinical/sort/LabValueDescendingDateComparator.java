@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.jetbrains.annotations.NotNull;
 
-public class LabValueComparator implements Comparator<LabValue> {
+public class LabValueDescendingDateComparator implements Comparator<LabValue> {
 
     @Override
     public int compare(@NotNull LabValue lab1, @NotNull LabValue lab2) {

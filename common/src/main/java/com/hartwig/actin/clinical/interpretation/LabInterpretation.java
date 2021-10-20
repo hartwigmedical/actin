@@ -7,7 +7,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.sort.LabValueComparator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +46,7 @@ public class LabInterpretation {
     }
 
     @Nullable
-    public List<LabValue> allValuesSortedDescending(@NotNull LabValue reference) {
+    public List<LabValue> allValuesForType(@NotNull LabValue reference) {
         List<LabValue> values = null;
         if (labValuesByName.values().contains(reference)) {
             values = Lists.newArrayList(labValuesByName.get(reference.name()));
@@ -55,9 +54,6 @@ public class LabInterpretation {
             values = Lists.newArrayList(labValuesByCode.get(reference.code()));
         }
 
-        if (values != null) {
-            values.sort(new LabValueComparator());
-        }
         return values;
     }
 

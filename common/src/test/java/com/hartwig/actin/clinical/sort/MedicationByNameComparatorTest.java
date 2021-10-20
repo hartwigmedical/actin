@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
-public class MedicationComparatorTest {
+public class MedicationByNameComparatorTest {
 
     @Test
     public void canSortMedications() {
@@ -22,7 +22,7 @@ public class MedicationComparatorTest {
         Medication medication3 = builder.name("Y").build();
         List<Medication> values = Lists.newArrayList(medication1, medication2, medication3);
 
-        values.sort(new MedicationComparator());
+        values.sort(new MedicationByNameComparator());
 
         assertEquals(medication1, values.get(0));
         assertEquals(medication3, values.get(1));

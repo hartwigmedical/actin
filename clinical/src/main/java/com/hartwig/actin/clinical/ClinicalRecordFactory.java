@@ -42,8 +42,8 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
-import com.hartwig.actin.clinical.sort.LabValueComparator;
-import com.hartwig.actin.clinical.sort.MedicationComparator;
+import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
+import com.hartwig.actin.clinical.sort.MedicationByNameComparator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -216,7 +216,7 @@ public class ClinicalRecordFactory {
             values.add(curation.translateLabValue(LabExtraction.extract(entry)));
         }
 
-        values.sort(new LabValueComparator());
+        values.sort(new LabValueDescendingDateComparator());
 
         return values;
     }
@@ -305,7 +305,7 @@ public class ClinicalRecordFactory {
             }
         }
 
-        medications.sort(new MedicationComparator());
+        medications.sort(new MedicationByNameComparator());
 
         return medications;
     }
