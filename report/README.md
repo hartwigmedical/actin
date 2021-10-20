@@ -10,7 +10,7 @@ This application requires Java 11+ and can be run as follows:
 ```
 java -cp actin.jar com.hartwig.actin.report.ReportApplication \
    -clinical_json /path/to/clinical.json \
-   -molecular_json /path/to/orange.json \
+   -molecular_json /path/to/molecular.json \
    -output_directory /path/where/pdf/is/written \
 ```
 
