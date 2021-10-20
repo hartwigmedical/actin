@@ -94,7 +94,7 @@ public class TumorDetailsGenerator implements TableGenerator {
 
         if (tumorType != null) {
             String tumorSubType = tumor.primaryTumorSubType();
-            return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorType + " (" + tumorSubType + ")" : tumorType;
+            return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorSubType : tumorType;
         }
 
         return Formats.VALUE_UNKNOWN;

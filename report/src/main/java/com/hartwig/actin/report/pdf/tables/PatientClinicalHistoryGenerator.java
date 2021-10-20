@@ -83,7 +83,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
         StringJoiner secondPrimaries = Formats.commaJoiner();
         for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
-            String secondPrimaryString = priorSecondPrimary.tumorLocation() + " " + priorSecondPrimary.tumorType() ;
+            String secondPrimaryString = priorSecondPrimary.tumorLocation() + " " + priorSecondPrimary.tumorType();
             if (priorSecondPrimary.diagnosedYear() != null) {
                 secondPrimaryString = secondPrimaryString + " (" + priorSecondPrimary.diagnosedYear() + ")";
             }
