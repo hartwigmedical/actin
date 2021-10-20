@@ -117,7 +117,7 @@ public class LaboratoryGenerator implements TableGenerator {
                 value = value + " (" + Formats.date(lab.date()) + ")";
             }
 
-            if (lab.isOutsideRef()) {
+            if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
                 style = Styles.tableValueWarnStyle();
                 String outOfRangeAddition = outOfRangeAddition(labInterpretation.allValuesSortedDescending(lab));
                 if (!outOfRangeAddition.isEmpty()) {
