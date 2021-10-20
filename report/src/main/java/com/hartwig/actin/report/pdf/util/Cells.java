@@ -44,7 +44,7 @@ public final class Cells {
     @NotNull
     public static Cell createValue(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
-        cell.addStyle(!text.equals(Formats.VALUE_UNKNOWN) ? Styles.tableValueStyle() : Styles.labelStyle());
+        cell.addStyle(Formats.styleForTableValue(text));
         return cell;
     }
 }

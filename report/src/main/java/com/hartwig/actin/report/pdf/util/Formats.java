@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.StringJoiner;
 
+import com.itextpdf.layout.Style;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,5 +41,10 @@ public final class Formats {
     @NotNull
     public static String valueOrDefault(@NotNull String value, @NotNull String defaultValue) {
         return !value.isEmpty() ? value : defaultValue;
+    }
+
+    @NotNull
+    public static Style styleForTableValue(@NotNull String value) {
+        return !value.equals(Formats.VALUE_UNKNOWN) ? Styles.tableValueHighlightStyle() : Styles.tableValueUnknownStyle();
     }
 }

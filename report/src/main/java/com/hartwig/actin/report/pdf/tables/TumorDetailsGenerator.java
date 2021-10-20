@@ -9,7 +9,6 @@ import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -157,8 +156,7 @@ public class TumorDetailsGenerator implements TableGenerator {
 
     @NotNull
     private static Text renderStyledText(@NotNull String value) {
-        Style style = !value.equals(Formats.VALUE_UNKNOWN) ? Styles.tableValueStyle() : Styles.labelStyle();
-        return new Text(value).addStyle(style);
+        return new Text(value).addStyle(Formats.styleForTableValue(value));
     }
 
     @NotNull

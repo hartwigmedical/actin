@@ -6,7 +6,9 @@ import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpretationFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
@@ -100,22 +102,10 @@ public class LaboratoryGenerator implements TableGenerator {
         String value = Strings.EMPTY;
 
         if (lab != null) {
-            Double refLimitLow = lab.refLimitLow();
-            Double refLimitUp = lab.refLimitUp();
-            if (refLimitLow != null || refLimitUp != null) {
-                String limit;
-                if (refLimitLow == null) {
-                    limit = "< " + refLimitUp;
-                } else if (refLimitUp == null) {
-                    limit = "> " + refLimitLow;
-                } else {
-                    limit = refLimitLow + " - " + refLimitUp;
-                }
-                if (key.isEmpty()) {
-                    key = "(" + limit + " " + lab.unit() + ")";
-                } else {
-                    key = key + " (" + limit + " " + lab.unit() + ")";
-                }
+            if (key.isEmpty()) {
+                key = limitAddition(lab);
+            } else {
+                key = key + " " + limitAddition(lab);
             }
 
             value = lab.value() + " " + lab.unit();
@@ -125,6 +115,31 @@ public class LaboratoryGenerator implements TableGenerator {
         }
 
         table.addCell(Cells.createKey(key));
-        table.addCell(Cells.createValue(value));
+        Cell valueCell = Cells.createValue(value);
+        if (lab != null && lab.isOutsideRef()) {
+            valueCell.addStyle(Styles.tableWarnStyle());
+        }
+        table.addCell(valueCell);
+    }
+
+    @NotNull
+    private static String limitAddition(@NotNull LabValue lab) {
+        Double refLimitLow = lab.refLimitLow();
+        Double refLimitUp = lab.refLimitUp();
+
+        if (refLimitLow == null && refLimitUp == null) {
+            return Strings.EMPTY;
+        }
+
+        String limit;
+        if (refLimitLow == null) {
+            limit = "< " + refLimitUp;
+        } else if (refLimitUp == null) {
+            limit = "> " + refLimitLow;
+        } else {
+            limit = refLimitLow + " - " + refLimitUp;
+        }
+
+        return "(" + limit + " " + lab.unit() + ")";
     }
 }

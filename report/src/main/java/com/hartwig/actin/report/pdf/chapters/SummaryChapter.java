@@ -54,11 +54,11 @@ public class SummaryChapter implements ReportChapter {
     private void addPatientDetails(@NotNull Document document) {
         Paragraph patientDetailsLine = new Paragraph();
         patientDetailsLine.add(new Text("Patient ID: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(toPatientId(record.sampleId())).addStyle(Styles.valueStyle()));
+        patientDetailsLine.add(new Text(toPatientId(record.sampleId())).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Gender: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.valueStyle()));
+        patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.valueStyle()));
+        patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
 
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
