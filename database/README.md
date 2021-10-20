@@ -13,6 +13,6 @@ java -cp actin.jar com.hartwig.actin.database.ClinicalLoaderApplication \
     -db_user user -db_pass pass -db_url url
 ```
 
-## Version History and Download Links
+### Version History and Download Links
  - Upcoming (first release) 
  

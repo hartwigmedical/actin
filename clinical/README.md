@@ -181,5 +181,5 @@ startDate | 2021-07-01 | Assigned start date of medication
 stopDate | 2021-10-01 | Assigned stop date of medication (if applicable)
 active | 1 | Medication is prescribed at time of latest EHR evaluation?
 
-## Version History and Download Links
+### Version History and Download Links
  - Upcoming (first release) 
