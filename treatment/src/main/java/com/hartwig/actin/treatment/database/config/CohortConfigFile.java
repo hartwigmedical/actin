@@ -35,7 +35,7 @@ public final class CohortConfigFile {
         return ImmutableCohortConfig.builder()
                 .trialId(parts[fieldIndexMap.get("trialId")])
                 .cohortId(parts[fieldIndexMap.get("cohortId")])
-                .open(true)
+                .open(ResourceFile.bool(parts[fieldIndexMap.get("open")]))
                 .description(parts[fieldIndexMap.get("description")])
                 .build();
     }

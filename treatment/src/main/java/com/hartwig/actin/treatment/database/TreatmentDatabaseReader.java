@@ -40,7 +40,7 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    private static List<TrialConfig> readTrialConfigs(@NotNull String trialTsv) {
+    private static List<TrialConfig> readTrialConfigs(@NotNull String trialTsv) throws IOException {
         List<TrialConfig> configs = TrialConfigFile.read(trialTsv);
         LOGGER.info(" Read {} trial configs from {}", configs.size(), trialTsv);
         return configs;
@@ -54,7 +54,7 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    private static List<InclusionCriteriaConfig> readInclusionCriteriaConfigs(@NotNull String inclusionCriteriaTsv) {
+    private static List<InclusionCriteriaConfig> readInclusionCriteriaConfigs(@NotNull String inclusionCriteriaTsv) throws IOException {
         List<InclusionCriteriaConfig> configs = InclusionCriteriaConfigFile.read(inclusionCriteriaTsv);
         LOGGER.info(" Read {} inclusion criteria configs from {}", configs.size(), inclusionCriteriaTsv);
         return configs;
