@@ -148,7 +148,8 @@ public final class TestClinicalDataFactory {
                 .tumorSubType(Strings.EMPTY)
                 .addDoids("3192")
                 .diagnosedYear(TODAY.getYear() - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
-                .isSecondPrimaryActive(true)
+                .treatmentHistory("Surgery")
+                .isActive(true)
                 .build());
 
         return priorSecondPrimaries;

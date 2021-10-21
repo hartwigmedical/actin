@@ -66,7 +66,8 @@
         "162"
       ],
       "diagnosedYear": 2015,
-      "isSecondPrimaryActive": false
+      "treatmentHistory": "Surgery",
+      "isActive": false
     }
   ],
   "priorOtherConditions": [

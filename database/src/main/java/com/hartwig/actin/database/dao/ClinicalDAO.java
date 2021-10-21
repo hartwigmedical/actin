@@ -196,7 +196,8 @@ class ClinicalDAO {
                     PRIORSECONDPRIMARY.TUMORSUBTYPE,
                     PRIORSECONDPRIMARY.DOIDS,
                     PRIORSECONDPRIMARY.DIAGNOSEDYEAR,
-                    PRIORSECONDPRIMARY.ISSECONDPRIMARYACTIVE)
+                    PRIORSECONDPRIMARY.TREATMENTHISTORY,
+                    PRIORSECONDPRIMARY.ISACTIVE)
                     .values(sampleId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
@@ -204,7 +205,8 @@ class ClinicalDAO {
                             priorSecondPrimary.tumorSubType(),
                             DataUtil.concat(priorSecondPrimary.doids()),
                             priorSecondPrimary.diagnosedYear(),
-                            DataUtil.toByte(priorSecondPrimary.isSecondPrimaryActive()))
+                            priorSecondPrimary.treatmentHistory(),
+                            DataUtil.toByte(priorSecondPrimary.isActive()))
                     .execute();
         }
     }

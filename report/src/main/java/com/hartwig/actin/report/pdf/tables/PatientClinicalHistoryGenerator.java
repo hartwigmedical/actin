@@ -108,7 +108,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 year = priorSecondPrimary.diagnosedYear() + ", ";
             }
 
-            String active = priorSecondPrimary.isSecondPrimaryActive() ? "considered active" : "considered non-active";
+            String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
 
             joiner.add(tumorDetails + " (" + year + active + ")");
         }

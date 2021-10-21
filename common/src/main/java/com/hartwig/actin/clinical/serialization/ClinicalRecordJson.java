@@ -229,7 +229,8 @@ public final class ClinicalRecordJson {
                         .tumorSubType(string(object, "tumorSubType"))
                         .doids(stringList(object, "doids"))
                         .diagnosedYear(nullableInteger(object, "diagnosedYear"))
-                        .isSecondPrimaryActive(bool(object, "isSecondPrimaryActive"))
+                        .treatmentHistory(string(object, "treatmentHistory"))
+                        .isActive(bool(object, "isActive"))
                         .build());
             }
             return priorSecondPrimaryList;

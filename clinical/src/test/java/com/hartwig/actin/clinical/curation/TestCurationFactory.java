@@ -124,7 +124,8 @@ public final class TestCurationFactory {
                         .tumorType("Carcinoma")
                         .tumorSubType(Strings.EMPTY)
                         .diagnosedYear(2018)
-                        .isSecondPrimaryActive(false)
+                        .treatmentHistory("Surgery")
+                        .isActive(false)
                         .build())
                 .build());
 

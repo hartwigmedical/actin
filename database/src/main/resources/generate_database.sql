@@ -74,8 +74,8 @@ CREATE TABLE priorSecondPrimary
     tumorSubType varchar(50),
     doids varchar(50),
     diagnosedYear int,
-    secondPrimaryTreatmentHistory varchar(150),
-    isSecondPrimaryActive BOOLEAN,
+    treatmentHistory varchar(150),
+    isActive BOOLEAN,
     PRIMARY KEY (id)
 );
 

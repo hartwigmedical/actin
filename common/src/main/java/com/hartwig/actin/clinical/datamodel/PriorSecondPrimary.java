@@ -28,6 +28,9 @@ public abstract class PriorSecondPrimary {
     @Nullable
     public abstract Integer diagnosedYear();
 
-    public abstract boolean isSecondPrimaryActive();
+    @NotNull
+    public abstract String treatmentHistory();
+
+    public abstract boolean isActive();
 
 }
