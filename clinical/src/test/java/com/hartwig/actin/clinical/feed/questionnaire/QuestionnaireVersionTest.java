@@ -9,18 +9,16 @@ public class QuestionnaireVersionTest {
 
     @Test
     public void canResolveAllVersions() {
-        assertEquals(QuestionnaireVersion.V1_3,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())));
-        assertEquals(QuestionnaireVersion.V1_2,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
-        assertEquals(QuestionnaireVersion.V1_1,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
-        assertEquals(QuestionnaireVersion.V1_0,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())));
-        assertEquals(QuestionnaireVersion.V0_2,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())));
-        assertEquals(QuestionnaireVersion.V0_1,
-                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
+        assertVersion(QuestionnaireVersion.V1_3, TestQuestionnaireFactory.createTestQuestionnaireValueV1_3());
+        assertVersion(QuestionnaireVersion.V1_2, TestQuestionnaireFactory.createTestQuestionnaireValueV1_2());
+        assertVersion(QuestionnaireVersion.V1_1, TestQuestionnaireFactory.createTestQuestionnaireValueV1_1());
+        assertVersion(QuestionnaireVersion.V1_0, TestQuestionnaireFactory.createTestQuestionnaireValueV1_0());
+        assertVersion(QuestionnaireVersion.V0_2, TestQuestionnaireFactory.createTestQuestionnaireValueV0_2());
+        assertVersion(QuestionnaireVersion.V0_1, TestQuestionnaireFactory.createTestQuestionnaireValueV0_1());
+    }
+
+    private static void assertVersion(@NotNull QuestionnaireVersion expected, @NotNull String questionnaire) {
+        assertEquals(expected, QuestionnaireVersion.version(entry(questionnaire)));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -30,8 +28,7 @@ public class QuestionnaireVersionTest {
 
     @NotNull
     private static QuestionnaireEntry entry(@NotNull String questionnaire) {
-        return ImmutableQuestionnaireEntry.builder()
-                .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
+        return ImmutableQuestionnaireEntry.builder().from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
                 .itemAnswerValueValueString(questionnaire)
                 .build();
     }

@@ -10,17 +10,17 @@ public class QuestionnaireReaderTest {
 
     @Test
     public void canReadQuestionnaire() {
-        QuestionnaireEntry entry1 = createWithQuestionnaire("this \n is \n a \n questionnaire");
+        QuestionnaireEntry entry1 = entry("this \n is \n a \n questionnaire");
 
         assertEquals(4, QuestionnaireReader.read(entry1).length);
 
-        QuestionnaireEntry entry2 = createWithQuestionnaire(QuestionnaireReader.TERMS_TO_CLEAN.iterator().next() + "\n test");
+        QuestionnaireEntry entry2 = entry(QuestionnaireReader.TERMS_TO_CLEAN.iterator().next() + "\n test");
 
         String[] lines = QuestionnaireReader.read(entry2);
         assertEquals(2, lines.length);
         assertEquals(Strings.EMPTY, lines[0]);
 
-        QuestionnaireEntry entry3 = createWithQuestionnaire("value1: x\nand y\nvalue2: z\n\nheader\nvalue3: 5\nvalue4: 6\n7");
+        QuestionnaireEntry entry3 = entry("value1: x\nand y\nvalue2: z\n\nheader\nvalue3: 5\nvalue4: 6\n7");
 
         lines = QuestionnaireReader.read(entry3);
         assertEquals(6, lines.length);
@@ -28,7 +28,7 @@ public class QuestionnaireReaderTest {
     }
 
     @NotNull
-    private static QuestionnaireEntry createWithQuestionnaire(@NotNull String questionnaire) {
+    private static QuestionnaireEntry entry(@NotNull String questionnaire) {
         return ImmutableQuestionnaireEntry.builder()
                 .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
                 .itemAnswerValueValueString(questionnaire)
