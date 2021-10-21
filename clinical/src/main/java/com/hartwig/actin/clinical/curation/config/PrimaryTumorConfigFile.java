@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.util.TsvUtil;
+import com.hartwig.actin.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +40,7 @@ public final class PrimaryTumorConfigFile {
                 .primaryTumorType(parts[fieldIndexMap.get("primaryTumorType")])
                 .primaryTumorSubType(parts[fieldIndexMap.get("primaryTumorSubType")])
                 .primaryTumorExtraDetails(parts[fieldIndexMap.get("primaryTumorExtraDetails")])
-                .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
+                .doids(CurationUtil.toDOIDs(parts[fieldIndexMap.get("doids")]))
                 .build();
     }
 }

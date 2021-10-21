@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.util.TsvUtil;
+import com.hartwig.actin.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,12 +34,12 @@ public final class MedicationDosageConfigFile {
     private static MedicationDosageConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
         return ImmutableMedicationDosageConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
-                .dosageMin(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("dosageMin")]))
-                .dosageMax(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("dosageMax")]))
+                .dosageMin(TsvUtil.optionalNumber(parts[fieldIndexMap.get("dosageMin")]))
+                .dosageMax(TsvUtil.optionalNumber(parts[fieldIndexMap.get("dosageMax")]))
                 .dosageUnit(parts[fieldIndexMap.get("dosageUnit")])
-                .frequency(CurationUtil.parseOptionalDouble(parts[fieldIndexMap.get("frequency")]))
+                .frequency(TsvUtil.optionalNumber(parts[fieldIndexMap.get("frequency")]))
                 .frequencyUnit(parts[fieldIndexMap.get("frequencyUnit")])
-                .ifNeeded(CurationUtil.parseOptionalBoolean(parts[fieldIndexMap.get("ifNeeded")]))
+                .ifNeeded(TsvUtil.optionalBool(parts[fieldIndexMap.get("ifNeeded")]))
                 .build();
     }
 }

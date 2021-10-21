@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.util.TsvUtil;
+import com.hartwig.actin.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +38,7 @@ public final class ToxicityConfigFile {
                 .input(parts[fieldIndexMap.get("input")])
                 .ignore(CurationUtil.isIgnoreString(name))
                 .name(name)
-                .grade(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("grade")]))
+                .grade(TsvUtil.optionalInteger(parts[fieldIndexMap.get("grade")]))
                 .build();
     }
 }

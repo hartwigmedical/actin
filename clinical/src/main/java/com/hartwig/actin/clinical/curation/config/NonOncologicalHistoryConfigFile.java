@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.util.TsvUtil;
+import com.hartwig.actin.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public final class NonOncologicalHistoryConfigFile {
     private static PriorOtherCondition curate(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
         return ImmutablePriorOtherCondition.builder()
                 .name(parts[fieldIndexMap.get("name")])
-                .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
+                .doids(CurationUtil.toDOIDs(parts[fieldIndexMap.get("doids")]))
                 .category(parts[fieldIndexMap.get("category")])
                 .build();
     }

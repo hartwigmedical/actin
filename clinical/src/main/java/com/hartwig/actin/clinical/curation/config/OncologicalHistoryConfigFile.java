@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.util.TsvUtil;
+import com.hartwig.actin.util.TsvUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,22 +51,22 @@ public final class OncologicalHistoryConfigFile {
                     .tumorSubLocation(parts[fieldIndexMap.get("tumorSubLocation")])
                     .tumorType(parts[fieldIndexMap.get("tumorType")])
                     .tumorSubType(parts[fieldIndexMap.get("tumorSubType")])
-                    .doids(CurationUtil.parseDOID(parts[fieldIndexMap.get("doids")]))
-                    .diagnosedYear(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("year")]))
+                    .doids(CurationUtil.toDOIDs(parts[fieldIndexMap.get("doids")]))
+                    .diagnosedYear(TsvUtil.optionalInteger(parts[fieldIndexMap.get("year")]))
                     .treatmentHistory(parts[fieldIndexMap.get("treatmentHistoryPreviousPrimary")])
-                    .isActive(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSecondPrimaryActive")]))
+                    .isActive(TsvUtil.bool(parts[fieldIndexMap.get("isSecondPrimaryActive")]))
                     .build();
         } else {
             return ImmutablePriorTumorTreatment.builder()
                     .name(parts[fieldIndexMap.get("name")])
-                    .year(CurationUtil.parseOptionalInteger(parts[fieldIndexMap.get("year")]))
+                    .year(TsvUtil.optionalInteger(parts[fieldIndexMap.get("year")]))
                     .category(parts[fieldIndexMap.get("category")])
-                    .isSystemic(CurationUtil.parseBoolean(parts[fieldIndexMap.get("isSystemic")]))
-                    .chemoType(CurationUtil.optionalString(parts[fieldIndexMap.get("chemoType")]))
-                    .immunoType(CurationUtil.optionalString(parts[fieldIndexMap.get("immunoType")]))
-                    .targetedType(CurationUtil.optionalString(parts[fieldIndexMap.get("targetedType")]))
-                    .hormoneType(CurationUtil.optionalString(parts[fieldIndexMap.get("hormoneType")]))
-                    .stemCellTransType(CurationUtil.optionalString(parts[fieldIndexMap.get("stemCellTransplantType")]))
+                    .isSystemic(TsvUtil.bool(parts[fieldIndexMap.get("isSystemic")]))
+                    .chemoType(TsvUtil.optionalString(parts[fieldIndexMap.get("chemoType")]))
+                    .immunoType(TsvUtil.optionalString(parts[fieldIndexMap.get("immunoType")]))
+                    .targetedType(TsvUtil.optionalString(parts[fieldIndexMap.get("targetedType")]))
+                    .hormoneType(TsvUtil.optionalString(parts[fieldIndexMap.get("hormoneType")]))
+                    .stemCellTransType(TsvUtil.optionalString(parts[fieldIndexMap.get("stemCellTransplantType")]))
                     .build();
         }
     }

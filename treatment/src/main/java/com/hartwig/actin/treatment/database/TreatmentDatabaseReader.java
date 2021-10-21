@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment.database;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.treatment.database.config.CohortConfig;
@@ -26,7 +27,7 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    public static TreatmentDatabase read(@NotNull String treatmentDirectory) {
+    public static TreatmentDatabase read(@NotNull String treatmentDirectory) throws IOException {
         LOGGER.info("Reading treatment config from {}", treatmentDirectory);
 
         String basePath = Paths.forceTrailingFileSeparator(treatmentDirectory);
@@ -46,7 +47,7 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    private static List<CohortConfig> readCohortConfigs(@NotNull String cohortTsv) {
+    private static List<CohortConfig> readCohortConfigs(@NotNull String cohortTsv) throws IOException {
         List<CohortConfig> configs = CohortConfigFile.read(cohortTsv);
         LOGGER.info(" Read {} cohort configs from {}", configs.size(), cohortTsv);
         return configs;
