@@ -1,6 +1,6 @@
 package com.hartwig.actin.report;
 
-import com.hartwig.actin.util.Config;
+import com.hartwig.actin.util.ApplicationConfig;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -42,9 +42,9 @@ public interface ReportConfig {
     @NotNull
     static ReportConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableReportConfig.builder()
-                .clinicalJson(Config.nonOptionalFile(cmd, CLINICAL_JSON))
-                .molecularJson(Config.nonOptionalFile(cmd, MOLECULAR_JSON))
-                .outputDirectory(Config.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
+                .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
+                .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
+                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }
 }

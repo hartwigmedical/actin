@@ -1,6 +1,6 @@
 package com.hartwig.actin.database;
 
-import com.hartwig.actin.util.Config;
+import com.hartwig.actin.util.ApplicationConfig;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -47,10 +47,10 @@ public interface ClinicalLoaderConfig {
     @NotNull
     static ClinicalLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableClinicalLoaderConfig.builder()
-                .clinicalDirectory(Config.nonOptionalDir(cmd, CLINICAL_DIRECTORY))
-                .dbUser(Config.nonOptionalValue(cmd, DB_USER))
-                .dbPass(Config.nonOptionalValue(cmd, DB_PASS))
-                .dbUrl(Config.nonOptionalValue(cmd, DB_URL))
+                .clinicalDirectory(ApplicationConfig.nonOptionalDir(cmd, CLINICAL_DIRECTORY))
+                .dbUser(ApplicationConfig.nonOptionalValue(cmd, DB_USER))
+                .dbPass(ApplicationConfig.nonOptionalValue(cmd, DB_PASS))
+                .dbUrl(ApplicationConfig.nonOptionalValue(cmd, DB_URL))
                 .build();
     }
 }

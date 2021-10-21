@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.util.TsvUtil;
+import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public final class ToxicityConfigFile {
         List<String> lines = Files.readAllLines(new File(toxicityTsv).toPath());
 
         List<ToxicityConfig> configs = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             configs.add(fromParts(fieldIndexMap, line.split(DELIMITER, -1)));
         }
@@ -38,7 +38,7 @@ public final class ToxicityConfigFile {
                 .input(parts[fieldIndexMap.get("input")])
                 .ignore(CurationUtil.isIgnoreString(name))
                 .name(name)
-                .grade(TsvUtil.optionalInteger(parts[fieldIndexMap.get("grade")]))
+                .grade(ResourceFile.optionalInteger(parts[fieldIndexMap.get("grade")]))
                 .build();
     }
 }

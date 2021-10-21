@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.util.TsvUtil;
+import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public final class MedicationDosageConfigFile {
         List<String> lines = Files.readAllLines(new File(medicationDosageTsv).toPath());
 
         List<MedicationDosageConfig> configs = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             configs.add(fromParts(fieldIndexMap, line.split(DELIMITER, -1)));
         }
@@ -34,12 +34,12 @@ public final class MedicationDosageConfigFile {
     private static MedicationDosageConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
         return ImmutableMedicationDosageConfig.builder()
                 .input(parts[fieldIndexMap.get("input")])
-                .dosageMin(TsvUtil.optionalNumber(parts[fieldIndexMap.get("dosageMin")]))
-                .dosageMax(TsvUtil.optionalNumber(parts[fieldIndexMap.get("dosageMax")]))
+                .dosageMin(ResourceFile.optionalNumber(parts[fieldIndexMap.get("dosageMin")]))
+                .dosageMax(ResourceFile.optionalNumber(parts[fieldIndexMap.get("dosageMax")]))
                 .dosageUnit(parts[fieldIndexMap.get("dosageUnit")])
-                .frequency(TsvUtil.optionalNumber(parts[fieldIndexMap.get("frequency")]))
+                .frequency(ResourceFile.optionalNumber(parts[fieldIndexMap.get("frequency")]))
                 .frequencyUnit(parts[fieldIndexMap.get("frequencyUnit")])
-                .ifNeeded(TsvUtil.optionalBool(parts[fieldIndexMap.get("ifNeeded")]))
+                .ifNeeded(ResourceFile.optionalBool(parts[fieldIndexMap.get("ifNeeded")]))
                 .build();
     }
 }

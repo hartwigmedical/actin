@@ -9,13 +9,13 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TsvUtil {
+public final class ResourceFile {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static final String UNKNOWN = "unknown";
 
-    private TsvUtil() {
+    private ResourceFile() {
     }
 
     @NotNull

@@ -44,7 +44,7 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator;
-import com.hartwig.actin.util.TsvUtil;
+import com.hartwig.actin.util.ResourceFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -232,7 +232,7 @@ public class ClinicalRecordFactory {
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
-            Integer grade = TsvUtil.optionalInteger(entry.itemAnswerValueValueString());
+            Integer grade = ResourceFile.optionalInteger(entry.itemAnswerValueValueString());
             if (grade != null) {
                 toxicities.add(ImmutableToxicity.builder()
                         .name(entry.itemText())

@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.util.TsvUtil;
+import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public final class OncologicalHistoryConfigFile {
         List<String> lines = Files.readAllLines(new File(oncologicalHistoryTsv).toPath());
 
         List<OncologicalHistoryConfig> oncologicalHistories = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             String[] parts = line.split(DELIMITER, -1);
             boolean ignore = CurationUtil.isIgnoreString(parts[fieldIndexMap.get("name")]);
@@ -52,21 +52,21 @@ public final class OncologicalHistoryConfigFile {
                     .tumorType(parts[fieldIndexMap.get("tumorType")])
                     .tumorSubType(parts[fieldIndexMap.get("tumorSubType")])
                     .doids(CurationUtil.toDOIDs(parts[fieldIndexMap.get("doids")]))
-                    .diagnosedYear(TsvUtil.optionalInteger(parts[fieldIndexMap.get("year")]))
+                    .diagnosedYear(ResourceFile.optionalInteger(parts[fieldIndexMap.get("year")]))
                     .treatmentHistory(parts[fieldIndexMap.get("treatmentHistoryPreviousPrimary")])
-                    .isActive(TsvUtil.bool(parts[fieldIndexMap.get("isSecondPrimaryActive")]))
+                    .isActive(ResourceFile.bool(parts[fieldIndexMap.get("isSecondPrimaryActive")]))
                     .build();
         } else {
             return ImmutablePriorTumorTreatment.builder()
                     .name(parts[fieldIndexMap.get("name")])
-                    .year(TsvUtil.optionalInteger(parts[fieldIndexMap.get("year")]))
+                    .year(ResourceFile.optionalInteger(parts[fieldIndexMap.get("year")]))
                     .category(parts[fieldIndexMap.get("category")])
-                    .isSystemic(TsvUtil.bool(parts[fieldIndexMap.get("isSystemic")]))
-                    .chemoType(TsvUtil.optionalString(parts[fieldIndexMap.get("chemoType")]))
-                    .immunoType(TsvUtil.optionalString(parts[fieldIndexMap.get("immunoType")]))
-                    .targetedType(TsvUtil.optionalString(parts[fieldIndexMap.get("targetedType")]))
-                    .hormoneType(TsvUtil.optionalString(parts[fieldIndexMap.get("hormoneType")]))
-                    .stemCellTransType(TsvUtil.optionalString(parts[fieldIndexMap.get("stemCellTransplantType")]))
+                    .isSystemic(ResourceFile.bool(parts[fieldIndexMap.get("isSystemic")]))
+                    .chemoType(ResourceFile.optionalString(parts[fieldIndexMap.get("chemoType")]))
+                    .immunoType(ResourceFile.optionalString(parts[fieldIndexMap.get("immunoType")]))
+                    .targetedType(ResourceFile.optionalString(parts[fieldIndexMap.get("targetedType")]))
+                    .hormoneType(ResourceFile.optionalString(parts[fieldIndexMap.get("hormoneType")]))
+                    .stemCellTransType(ResourceFile.optionalString(parts[fieldIndexMap.get("stemCellTransplantType")]))
                     .build();
         }
     }

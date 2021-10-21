@@ -11,14 +11,14 @@ import java.util.Map;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
-public class TsvUtilTest {
+public class ResourceFileTest {
 
     private static final double EPSILON = 1.0E-10;
 
     @Test
     public void canCreateFieldIndexMap() {
         String[] header = new String[] { "header0", "header1", "header2" };
-        Map<String, Integer> fieldIndexMap = TsvUtil.createFieldIndexMap(header);
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(header);
 
         assertEquals(0, (int) fieldIndexMap.get("header0"));
         assertEquals(1, (int) fieldIndexMap.get("header1"));
@@ -27,38 +27,38 @@ public class TsvUtilTest {
 
     @Test
     public void canParseStrings() {
-        assertNull(TsvUtil.optionalString(Strings.EMPTY));
-        assertEquals("hi", TsvUtil.optionalString("hi"));
+        assertNull(ResourceFile.optionalString(Strings.EMPTY));
+        assertEquals("hi", ResourceFile.optionalString("hi"));
     }
 
     @Test
     public void canParseBooleans() {
-        assertNull(TsvUtil.optionalBool("unknown"));
-        assertNull(TsvUtil.optionalBool(Strings.EMPTY));
-        assertTrue(TsvUtil.optionalBool("1"));
-        assertFalse(TsvUtil.optionalBool("0"));
+        assertNull(ResourceFile.optionalBool("unknown"));
+        assertNull(ResourceFile.optionalBool(Strings.EMPTY));
+        assertTrue(ResourceFile.optionalBool("1"));
+        assertFalse(ResourceFile.optionalBool("0"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void crashOnInvalidBoolean() {
-        TsvUtil.bool("True");
+        ResourceFile.bool("True");
     }
 
     @Test
     public void canParseDates() {
-        assertNull(TsvUtil.optionalDate(Strings.EMPTY));
-        assertEquals(LocalDate.of(2019, 4, 20), TsvUtil.optionalDate("2019-04-20"));
+        assertNull(ResourceFile.optionalDate(Strings.EMPTY));
+        assertEquals(LocalDate.of(2019, 4, 20), ResourceFile.optionalDate("2019-04-20"));
     }
 
     @Test
     public void canParseIntegers() {
-        assertNull(TsvUtil.optionalInteger(Strings.EMPTY));
-        assertEquals(4, (int) TsvUtil.optionalInteger("4"));
+        assertNull(ResourceFile.optionalInteger(Strings.EMPTY));
+        assertEquals(4, (int) ResourceFile.optionalInteger("4"));
     }
 
     @Test
     public void canParseDoubles() {
-        assertNull(TsvUtil.optionalNumber(Strings.EMPTY));
-        assertEquals(4.2, TsvUtil.optionalNumber("4.2"), EPSILON);
+        assertNull(ResourceFile.optionalNumber(Strings.EMPTY));
+        assertEquals(4.2, ResourceFile.optionalNumber("4.2"), EPSILON);
     }
 }

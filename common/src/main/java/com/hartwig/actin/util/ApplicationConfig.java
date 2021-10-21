@@ -7,9 +7,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.annotations.NotNull;
 
-public final class Config {
+public final class ApplicationConfig {
 
-    private Config() {
+    private ApplicationConfig() {
     }
 
     @NotNull

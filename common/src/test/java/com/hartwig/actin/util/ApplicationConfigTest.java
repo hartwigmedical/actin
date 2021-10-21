@@ -11,7 +11,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
-public class ConfigTest {
+public class ApplicationConfigTest {
 
     private static final String CONFIG_DIRECTORY = Resources.getResource("config").getPath();
     private static final String CONFIG_FILE = Resources.getResource("config/file.empty").getPath();
@@ -23,7 +23,7 @@ public class ConfigTest {
 
         CommandLine cmd = new DefaultParser().parse(options, new String[] { "-directory", CONFIG_DIRECTORY });
 
-        assertEquals(CONFIG_DIRECTORY, Config.nonOptionalDir(cmd, "directory"));
+        assertEquals(CONFIG_DIRECTORY, ApplicationConfig.nonOptionalDir(cmd, "directory"));
     }
 
     @Test(expected = ParseException.class)
@@ -33,7 +33,7 @@ public class ConfigTest {
 
         CommandLine cmd = new DefaultParser().parse(options, new String[] { "-directory", "does not exist" });
 
-        Config.nonOptionalDir(cmd, "directory");
+        ApplicationConfig.nonOptionalDir(cmd, "directory");
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ConfigTest {
 
         CommandLine cmd = new DefaultParser().parse(options, new String[] { "-file", CONFIG_FILE });
 
-        assertEquals(CONFIG_FILE, Config.nonOptionalFile(cmd, "file"));
+        assertEquals(CONFIG_FILE, ApplicationConfig.nonOptionalFile(cmd, "file"));
     }
 
     @Test(expected = ParseException.class)
@@ -53,7 +53,7 @@ public class ConfigTest {
 
         CommandLine cmd = new DefaultParser().parse(options, new String[] { "-file", "does not exist" });
 
-        Config.nonOptionalFile(cmd, "file");
+        ApplicationConfig.nonOptionalFile(cmd, "file");
     }
 
     @Test
@@ -63,13 +63,13 @@ public class ConfigTest {
 
         CommandLine cmd = new DefaultParser().parse(options, new String[] { "-value", "value" });
 
-        assertEquals("value", Config.nonOptionalValue(cmd, "value"));
+        assertEquals("value", ApplicationConfig.nonOptionalValue(cmd, "value"));
     }
 
     @Test(expected = ParseException.class)
     public void crashOnNonExistingValue() throws ParseException {
         CommandLine cmd = new DefaultParser().parse(new Options(), new String[] {});
 
-        Config.nonOptionalValue(cmd, "does not exist");
+        ApplicationConfig.nonOptionalValue(cmd, "does not exist");
     }
 }

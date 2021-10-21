@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical;
 
-import com.hartwig.actin.util.Config;
+import com.hartwig.actin.util.ApplicationConfig;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -42,9 +42,9 @@ public interface ClinicalIngestionConfig {
     @NotNull
     static ClinicalIngestionConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         return ImmutableClinicalIngestionConfig.builder()
-                .feedDirectory(Config.nonOptionalDir(cmd, FEED_DIRECTORY))
-                .curationDirectory(Config.nonOptionalDir(cmd, CURATION_DIRECTORY))
-                .outputDirectory(Config.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
+                .feedDirectory(ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY))
+                .curationDirectory(ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY))
+                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }
 }
