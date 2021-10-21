@@ -43,6 +43,6 @@ public class QuestionnaireCurationTest {
         assertNull(QuestionnaireCuration.toWHO(null));
         assertNull(QuestionnaireCuration.toWHO(Strings.EMPTY));
         assertNull(QuestionnaireCuration.toWHO("-1"));
-        assertNull(QuestionnaireCuration.toWHO("5"));
+        assertNull(QuestionnaireCuration.toWHO("12"));
     }
 }

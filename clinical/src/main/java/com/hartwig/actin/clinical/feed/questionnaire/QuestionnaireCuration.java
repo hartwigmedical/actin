@@ -93,10 +93,10 @@ final class QuestionnaireCuration {
         }
 
         int value = Integer.parseInt(integer);
-        if (value >= 0 && value <= 4) {
+        if (value >= 0 && value <= 5) {
             return value;
         } else {
-            LOGGER.warn("Unrecognized WHO status: '{}'", value);
+            LOGGER.warn("WHO status not between 0 and 5: '{}'", value);
             return null;
         }
     }
