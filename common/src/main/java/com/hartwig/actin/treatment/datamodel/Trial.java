@@ -2,7 +2,7 @@ package com.hartwig.actin.treatment.datamodel;
 
 import java.util.List;
 
-import com.hartwig.actin.algo.TrialInclusionFunction;
+import com.hartwig.actin.algo.eligibility.EligibilityFunction;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ public abstract class Trial {
     public abstract String studyId();
 
     @NotNull
-    public abstract List<TrialInclusionFunction> inclusionCriteria();
+    public abstract List<EligibilityFunction> inclusionCriteria();
 
     @NotNull
     public abstract List<Cohort> cohorts();
