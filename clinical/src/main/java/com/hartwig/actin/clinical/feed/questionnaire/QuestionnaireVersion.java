@@ -24,6 +24,8 @@ enum QuestionnaireVersion {
                 return V1_2;
             } else if (line.contains("- Active:")) {
                 return V1_1;
+            } else if (line.contains("-Active:")) {
+                return V1_1;
             }
         }
 
