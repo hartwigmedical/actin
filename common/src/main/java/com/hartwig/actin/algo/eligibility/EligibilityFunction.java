@@ -1,14 +1,12 @@
 package com.hartwig.actin.algo.eligibility;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.EligibilityCriterion;
+import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
 
 import org.jetbrains.annotations.NotNull;
 
 public interface EligibilityFunction {
 
     @NotNull
-    EligibilityCriterion criterion();
-
-    boolean pass(@NotNull PatientRecord record);
+    EligibilityEvaluation evaluate(@NotNull PatientRecord record);
 }

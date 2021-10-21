@@ -13,7 +13,7 @@ public final class TrialDatabase {
     }
 
     @NotNull
-    public static List<Trial> read(@NotNull String trialTsv) {
+    public static List<Trial> readFromDir(@NotNull String trialDirectory) {
         return Lists.newArrayList();
     }
 }
