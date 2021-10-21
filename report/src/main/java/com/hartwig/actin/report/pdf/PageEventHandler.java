@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf;
 import com.hartwig.actin.report.pdf.components.Footer;
 import com.hartwig.actin.report.pdf.components.Header;
 import com.hartwig.actin.report.pdf.components.SidePanel;
+import com.hartwig.actin.util.PatientIdExtractor;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
@@ -28,7 +29,7 @@ public class PageEventHandler implements IEventHandler {
 
     @NotNull
     static PageEventHandler create(@NotNull String sampleId) {
-        return new PageEventHandler(new Header(), new Footer(), new SidePanel(sampleId));
+        return new PageEventHandler(new Header(), new Footer(), new SidePanel(PatientIdExtractor.toPatientId(sampleId)));
     }
 
     private PageEventHandler(@NotNull final Header header, @NotNull final Footer footer, @NotNull final SidePanel sidePanel) {

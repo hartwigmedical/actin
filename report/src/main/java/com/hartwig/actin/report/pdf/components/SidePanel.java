@@ -24,10 +24,10 @@ public class SidePanel {
     private static final float RECTANGLE_HEIGHT = 84;
 
     @NotNull
-    private final String sampleId;
+    private final String patientId;
 
-    public SidePanel(@NotNull final String sampleId) {
-        this.sampleId = sampleId;
+    public SidePanel(@NotNull final String patientId) {
+        this.patientId = patientId;
     }
 
     public void render(@NotNull PdfPage page) {
@@ -40,7 +40,7 @@ public class SidePanel {
         int sideTextIndex = 0;
         Canvas cv = new Canvas(canvas, page.getPageSize());
 
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Sample", sampleId));
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", patientId));
         cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", Formats.date(LocalDate.now())));
 
         canvas.release();
