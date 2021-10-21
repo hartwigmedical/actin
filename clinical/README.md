@@ -85,7 +85,8 @@ tumorType | Schwannoma | Tumor type
 tumorSubType | | Tumor sub type
 doids | 3192 | Separated by ";"
 diagnosedYear | 2018 | Year in which diagnosis of other tumor was made
-isSecondPrimaryActive | 0 | Is other tumor considered active?
+treatmentHistory | Resection | Treatment history of the other primary tumor
+isActive | 1 | Is the other primary tumor considered active?
 
 N prior other conditions
 
