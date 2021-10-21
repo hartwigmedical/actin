@@ -11,6 +11,7 @@ public class QuestionnaireMappingTest {
     @Test
     public void allMappingsAreComplete() {
         for (QuestionnaireKey key : QuestionnaireKey.values()) {
+            assertTrue(QuestionnaireMapping.KEYS_V1_3.containsKey(key));
             assertTrue(QuestionnaireMapping.KEYS_V1_2.containsKey(key));
             assertTrue(QuestionnaireMapping.KEYS_V1_1.containsKey(key));
             assertTrue(QuestionnaireMapping.KEYS_V1_0.containsKey(key));
@@ -21,6 +22,8 @@ public class QuestionnaireMappingTest {
 
     @Test
     public void canRetrieveMappingForQuestionnaire() {
+        assertEquals(QuestionnaireMapping.KEYS_V1_3,
+                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
         assertEquals(QuestionnaireMapping.KEYS_V1_2,
                 QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
         assertEquals(QuestionnaireMapping.KEYS_V1_1,

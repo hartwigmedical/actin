@@ -7,7 +7,8 @@ enum QuestionnaireVersion {
     V0_2,
     V1_0,
     V1_1,
-    V1_2;
+    V1_2,
+    V1_3;
 
     @NotNull
     public static QuestionnaireVersion version(@NotNull QuestionnaireEntry entry) {
@@ -20,12 +21,12 @@ enum QuestionnaireVersion {
                 return V0_2;
             } else if (line.contains("\\li0\\ri0")) {
                 return V1_0;
-            } else if (line.contains("CNS lesions:")) {
-                return V1_2;
             } else if (line.contains("- Active:")) {
                 return V1_1;
             } else if (line.contains("-Active:")) {
-                return V1_1;
+                return V1_2;
+            } else if (line.contains("CNS lesions:")) {
+                return V1_3;
             }
         }
 

@@ -18,27 +18,27 @@ public final class TestQuestionnaireFactory {
                 .questionnaireQuestionnaireValue("A")
                 .description("Description")
                 .itemText("ItemText")
-                .itemAnswerValueValueString(createTestQuestionnaireValueV1_1())
+                .itemAnswerValueValueString(createTestQuestionnaireValueV1_3())
                 .build();
     }
 
     @NotNull
-    static String createTestQuestionnaireValueV1_2() {
+    static String createTestQuestionnaireValueV1_3() {
         // @formatter:off
         return "ACTIN Questionnaire V1.0"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonymized data!\n"
                 + "\n"
                 + "Relevant patient history\n"
-                + "Treatment history current tumor: cisplatin\n"
-                + "Other oncological history (e.g. radiotherapy, second primary): breast cancer\n"
+                + "Treatment history current tumor: cisplatin; nivolumab\n"
+                + "Other oncological history (e.g. radiotherapy, second primary): surgery\n"
                 + "Non-oncological history: diabetes\n"
                 + "\n"
                 + "Tumor details\n"
-                + "Primary tumor location: bladder\n"
-                + "Primary tumor type: sarcoma\n"
+                + "Primary tumor location: ovary\n"
+                + "Primary tumor type: serous\n"
                 + "Biopsy location: Lymph node\n"
-                + "Stage: 4\n"
+                + "Stage: 3\n"
                 + "CNS lesions:\n"
                 + "-Active:\n"
                 + "-Symptomatic:\n"
@@ -51,10 +51,47 @@ public final class TestQuestionnaireFactory {
                 + "Measurable disease (RECIST): YES\n"
                 + "\n"
                 + "Clinical details\n"
-                + "WHO status: 1\n"
+                + "WHO status: 0\n"
                 + "Unresolved toxicities grade => 2:\n"
                 + "Significant current infection: No\n"
-                + "Significant aberration on latest ECG: Atrial\n"
+                + "Significant aberration on latest ECG: Sinus\n"
+                + "Cancer-related complications (e.g. pleural effusion): nausea";
+        // @formatter:on
+    }
+
+    @NotNull
+    static String createTestQuestionnaireValueV1_2() {
+        // @formatter:off
+        return "ACTIN Questionnaire V1.0"
+                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+                + "Please make sure that these fields never contain non-anonymized data!\n"
+                + "\n"
+                + "Relevant patient history\n"
+                + "Treatment history current tumor: cisplatin; nivolumab\n"
+                + "Other oncological history (e.g. radiotherapy, second primary): surgery\n"
+                + "Non-oncological history: diabetes\n"
+                + "\n"
+                + "Tumor details\n"
+                + "Primary tumor location: ovary\n"
+                + "Primary tumor type: serous\n"
+                + "Biopsy location: Lymph node\n"
+                + "Stage: 3\n"
+                + "CNS lesions yes/no/unknown:\n"
+                + "-Active:\n"
+                + "-Symptomatic:\n"
+                + "Brain lesions yes/no/unknown:\n"
+                + "-Active:\n"
+                + "-Symptomatic:\n"
+                + "Bone lesions yes/no/unknown: NO\n"
+                + "Liver lesions yes/no/unknown: NO\n"
+                + "Other lesions (e.g. lymph node, pulmonal): pulmonal\n"
+                + "Measurable disease (RECIST) yes/no: YES\n"
+                + "\n"
+                + "Clinical details\n"
+                + "WHO status: 0\n"
+                + "Unresolved toxicities grade => 2:\n"
+                + "Significant current infection: No\n"
+                + "Significant aberration on latest ECG: Sinus\n"
                 + "Cancer-related complications (e.g. pleural effusion): nausea";
         // @formatter:on
     }
