@@ -9,6 +9,8 @@ public class QuestionnaireVersionTest {
 
     @Test
     public void canResolveAllVersions() {
+        assertEquals(QuestionnaireVersion.V1_2,
+                QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
         assertEquals(QuestionnaireVersion.V1_1,
                 QuestionnaireVersion.version(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
         assertEquals(QuestionnaireVersion.V1_0,

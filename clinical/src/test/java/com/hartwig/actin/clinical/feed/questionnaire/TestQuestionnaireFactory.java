@@ -23,6 +23,43 @@ public final class TestQuestionnaireFactory {
     }
 
     @NotNull
+    static String createTestQuestionnaireValueV1_2() {
+        // @formatter:off
+        return "ACTIN Questionnaire V1.0"
+                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+                + "Please make sure that these fields never contain non-anonymized data!\n"
+                + "\n"
+                + "Relevant patient history\n"
+                + "Treatment history current tumor: cisplatin\n"
+                + "Other oncological history (e.g. radiotherapy, second primary): breast cancer\n"
+                + "Non-oncological history: diabetes\n"
+                + "\n"
+                + "Tumor details\n"
+                + "Primary tumor location: bladder\n"
+                + "Primary tumor type: sarcoma\n"
+                + "Biopsy location: Lymph node\n"
+                + "Stage: 4\n"
+                + "CNS lesions:\n"
+                + "-Active:\n"
+                + "-Symptomatic:\n"
+                + "Brain lesions:\n"
+                + "-Active:\n"
+                + "-Symptomatic:\n"
+                + "Bone lesions: NO\n"
+                + "Liver lesions: NO\n"
+                + "Other lesions (e.g. lymph node, pulmonal): pulmonal\n"
+                + "Measurable disease (RECIST): YES\n"
+                + "\n"
+                + "Clinical details\n"
+                + "WHO status: 1\n"
+                + "Unresolved toxicities grade => 2:\n"
+                + "Significant current infection: No\n"
+                + "Significant aberration on latest ECG: Atrial\n"
+                + "Cancer-related complications (e.g. pleural effusion): nausea";
+        // @formatter:on
+    }
+
+    @NotNull
     static String createTestQuestionnaireValueV1_1() {
         // @formatter:off
         return "ACTIN Questionnaire V1.0"
