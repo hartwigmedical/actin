@@ -20,6 +20,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("no", false);
         OPTION_MAPPING.put("No", false);
         OPTION_MAPPING.put("NO", false);
+        OPTION_MAPPING.put("none", false);
         OPTION_MAPPING.put("n.v.t.", null);
         OPTION_MAPPING.put("n.v.t", null);
         OPTION_MAPPING.put("nvt", null);
@@ -33,6 +34,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("UNKNOWN", null);
         OPTION_MAPPING.put("-", null);
         OPTION_MAPPING.put("yes/no", null);
+        OPTION_MAPPING.put("yes/no/unknown", null);
 
         STAGE_MAPPING.put("I", TumorStage.I);
         STAGE_MAPPING.put("II", TumorStage.II);
