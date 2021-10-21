@@ -13,8 +13,9 @@ public final class TestDataFactory {
     }
 
     @NotNull
-    public static ActinRecord createTestActinRecord() {
-        return ImmutableActinRecord.builder().sampleId(TEST_SAMPLE)
+    public static PatientRecord createTestPatientRecord() {
+        return ImmutablePatientRecord.builder()
+                .sampleId(TEST_SAMPLE)
                 .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
                 .molecular(TestMolecularDataFactory.createProperTestMolecularRecord())
                 .build();

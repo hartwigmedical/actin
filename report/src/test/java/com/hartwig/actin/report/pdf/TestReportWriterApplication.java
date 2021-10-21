@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf;
 import java.io.File;
 import java.io.IOException;
 
-import com.hartwig.actin.ActinRecord;
+import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
@@ -18,7 +18,7 @@ public class TestReportWriterApplication {
     private static final String OUTPUT_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
 
     public static void main(String[] args) throws IOException {
-        ActinRecord record = TestDataFactory.createTestActinRecord();
+        PatientRecord record = TestDataFactory.createTestPatientRecord();
 
         LOGGER.info("Printing clinical record");
         ClinicalPrinter.printRecord(record.clinical());

@@ -7,21 +7,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class ActinRecordFactory {
+public final class PatientRecordFactory {
 
-    private static final Logger LOGGER = LogManager.getLogger(ActinRecordFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(PatientRecordFactory.class);
 
-    private ActinRecordFactory() {
+    private PatientRecordFactory() {
     }
 
     @NotNull
-    public static ActinRecord fromInputs(@NotNull ClinicalRecord clinical, @NotNull MolecularRecord molecular) {
+    public static PatientRecord fromInputs(@NotNull ClinicalRecord clinical, @NotNull MolecularRecord molecular) {
         if (!clinical.sampleId().equals(molecular.sampleId())) {
             LOGGER.warn("Clinical sampleId '{}' not the same as molecular sampleId '{}'! Using clinical sampleId",
                     clinical.sampleId(),
                     molecular.sampleId());
         }
 
-        return ImmutableActinRecord.builder().sampleId(clinical.sampleId()).clinical(clinical).molecular(molecular).build();
+        return ImmutablePatientRecord.builder().sampleId(clinical.sampleId()).clinical(clinical).molecular(molecular).build();
     }
 }

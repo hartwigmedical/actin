@@ -2,8 +2,8 @@ package com.hartwig.actin.report;
 
 import java.io.IOException;
 
-import com.hartwig.actin.ActinRecord;
-import com.hartwig.actin.ActinRecordFactory;
+import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
@@ -60,7 +60,7 @@ public class ReportApplication {
         MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
         MolecularPrinter.printRecord(molecular);
 
-        ActinRecord record = ActinRecordFactory.fromInputs(clinical, molecular);
+        PatientRecord record = PatientRecordFactory.fromInputs(clinical, molecular);
 
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory());
 

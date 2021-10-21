@@ -7,11 +7,11 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
 import org.junit.Test;
 
-public class ActinRecordFactoryTest {
+public class PatientRecordFactoryTest {
 
     @Test
-    public void canCreateActinRecord() {
-        assertNotNull(ActinRecordFactory.fromInputs(TestClinicalDataFactory.createMinimalTestClinicalRecord(),
+    public void canCreatePatientRecord() {
+        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalDataFactory.createMinimalTestClinicalRecord(),
                 TestMolecularDataFactory.createMinimalTestMolecularRecord()));
     }
 }

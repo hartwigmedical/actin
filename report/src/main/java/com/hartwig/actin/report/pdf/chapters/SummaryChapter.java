@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.chapters;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.ActinRecord;
+import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
@@ -13,7 +13,6 @@ import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
-import com.hartwig.actin.util.PatientIdExtractor;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
@@ -26,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
 public class SummaryChapter implements ReportChapter {
 
     @NotNull
-    private final ActinRecord record;
+    private final PatientRecord record;
 
-    public SummaryChapter(@NotNull final ActinRecord record) {
+    public SummaryChapter(@NotNull final PatientRecord record) {
         this.record = record;
     }
 

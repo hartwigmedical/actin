@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.hartwig.actin.ActinRecord;
+import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.report.pdf.chapters.ConclusionChapter;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
@@ -35,7 +35,7 @@ public class ReportWriter {
         this.outputDirectory = outputDirectory;
     }
 
-    public void write(@NotNull ActinRecord record) throws IOException {
+    public void write(@NotNull PatientRecord record) throws IOException {
         ReportChapter[] chapters = new ReportChapter[] { new SummaryChapter(record), new ConclusionChapter(), new TreatmentChapter() };
 
         writePdfChapters(record.sampleId(), chapters);
