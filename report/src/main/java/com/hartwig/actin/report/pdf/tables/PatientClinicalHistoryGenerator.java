@@ -92,7 +92,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
             year = " (" + priorTumorTreatment.year() + ")";
         }
 
-        String treatmentName = priorTumorTreatment.name().isEmpty() ? priorTumorTreatment.category() : priorTumorTreatment.name() ;
+        String treatmentName = priorTumorTreatment.name() == "" ? priorTumorTreatment.category() : priorTumorTreatment.name() ;
 
         return treatmentName + year;
     }

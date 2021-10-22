@@ -112,7 +112,7 @@ public final class TestClinicalDataFactory {
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name("Surgery")
+                .name("Resection")
                 .year(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_1)
                 .category("Surgery")
                 .isSystemic(false)
