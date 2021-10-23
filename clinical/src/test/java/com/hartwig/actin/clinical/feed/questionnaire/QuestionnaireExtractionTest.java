@@ -212,9 +212,10 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasLiverLesions());
 
         List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(2, otherLesions.size());
+        assertEquals(3, otherLesions.size());
         assertTrue(otherLesions.contains("peritoneal"));
         assertTrue(otherLesions.contains("lymph nodes"));
+        assertTrue(otherLesions.contains("lung"));
 
         assertEquals(1, (int) questionnaire.whoStatus());
 

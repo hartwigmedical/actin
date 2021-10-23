@@ -62,8 +62,8 @@ public final class QuestionnaireExtraction {
         if (hasBrainLesions != null) {
             hasActiveBrainLesions =
                     hasBrainLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)) : false;
-            hasSymptomaticBrainLesions =
-                    hasBrainLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET))
+            hasSymptomaticBrainLesions = hasBrainLesions
+                    ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET))
                     : false;
         }
 
@@ -140,12 +140,14 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        String[] split;
-        if (value.contains(VALUE_LIST_SEPARATOR_1)) {
-            split = value.split(VALUE_LIST_SEPARATOR_1);
+        String reformatted;
+        if (value.contains(VALUE_LIST_SEPARATOR_2)) {
+            reformatted = value.replaceAll(VALUE_LIST_SEPARATOR_2, VALUE_LIST_SEPARATOR_1);
         } else {
-            split = value.split(VALUE_LIST_SEPARATOR_2);
+            reformatted = value;
         }
+
+        String[] split = reformatted.split(VALUE_LIST_SEPARATOR_1);
 
         return cleanAndTrim(split);
     }
