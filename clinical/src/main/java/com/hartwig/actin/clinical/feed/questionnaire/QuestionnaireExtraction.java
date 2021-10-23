@@ -140,13 +140,7 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        String reformatted;
-        if (value.contains(VALUE_LIST_SEPARATOR_2)) {
-            reformatted = value.replaceAll(VALUE_LIST_SEPARATOR_2, VALUE_LIST_SEPARATOR_1);
-        } else {
-            reformatted = value;
-        }
-
+        String reformatted = value.replaceAll(VALUE_LIST_SEPARATOR_2, VALUE_LIST_SEPARATOR_1);
         String[] split = reformatted.split(VALUE_LIST_SEPARATOR_1);
 
         return cleanAndTrim(split);
