@@ -44,21 +44,47 @@ public final class LabExtraction {
     static Limits extractLimits(@NotNull String referenceRangeText) {
         Double lower = null;
         Double upper = null;
-        if (referenceRangeText.contains("-")) {
-            String[] limits = referenceRangeText.split("-");
-            lower = FeedParseFunctions.parseDouble(limits[0].trim());
-            upper = FeedParseFunctions.parseDouble(limits[1].trim());
-        } else if (referenceRangeText.contains(">")) {
+
+        if (referenceRangeText.contains(">")) {
             int index = referenceRangeText.indexOf(">");
             lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim());
         } else if (referenceRangeText.contains("<")) {
             int index = referenceRangeText.indexOf("<");
             upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim());
+        } else if (referenceRangeText.contains("-")) {
+            int separatingHyphenIndex = findSeparatingHyphenIndex(referenceRangeText);
+            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(0, separatingHyphenIndex));
+            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(separatingHyphenIndex + 1));
         } else if (!referenceRangeText.isEmpty()) {
             LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText);
         }
 
         return new Limits(lower, upper);
+    }
+
+    @VisibleForTesting
+    static int findSeparatingHyphenIndex(@NotNull String referenceRangeText) {
+        assert referenceRangeText.contains("-");
+
+        boolean isReadingDigit = false;
+        for (int i = 0; i < referenceRangeText.length(); i++) {
+            if (isReadingDigit && referenceRangeText.substring(i, i + 1).equals("-")) {
+                return i;
+            } else if (isDigit(referenceRangeText.charAt(i))) {
+                isReadingDigit = true;
+            }
+        }
+
+        throw new IllegalArgumentException("Could not separating hyphen index from " + referenceRangeText);
+    }
+
+    private static boolean isDigit(char character) {
+        try {
+            Integer.valueOf(character);
+            return true;
+        } catch (NumberFormatException exception) {
+            return false;
+        }
     }
 
     static class Limits {

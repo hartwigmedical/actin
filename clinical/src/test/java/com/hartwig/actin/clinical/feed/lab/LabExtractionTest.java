@@ -69,13 +69,25 @@ public class LabExtractionTest {
 
     @Test
     public void canExtractLimits() {
-        LabExtraction.Limits both = LabExtraction.extractLimits("12 - 14");
-        assertEquals(12, both.lower(), EPSILON);
-        assertEquals(14, both.upper(), EPSILON);
+        LabExtraction.Limits bothPositive = LabExtraction.extractLimits("12 - 14");
+        assertEquals(12, bothPositive.lower(), EPSILON);
+        assertEquals(14, bothPositive.upper(), EPSILON);
 
-        LabExtraction.Limits lowerOnly = LabExtraction.extractLimits("> 50");
-        assertEquals(50, lowerOnly.lower(), EPSILON);
-        assertNull(lowerOnly.upper());
+        LabExtraction.Limits bothOneNegative = LabExtraction.extractLimits("-3 - 3");
+        assertEquals(-3, bothOneNegative.lower(), EPSILON);
+        assertEquals(3, bothOneNegative.upper(), EPSILON);
+
+        LabExtraction.Limits bothTwoNegative = LabExtraction.extractLimits("-6 - -3");
+        assertEquals(-6, bothTwoNegative.lower(), EPSILON);
+        assertEquals(-3, bothTwoNegative.upper(), EPSILON);
+
+        LabExtraction.Limits lowerOnlyPositive = LabExtraction.extractLimits("> 50");
+        assertEquals(50, lowerOnlyPositive.lower(), EPSILON);
+        assertNull(lowerOnlyPositive.upper());
+
+        LabExtraction.Limits lowerOnlyNegative = LabExtraction.extractLimits("> -6");
+        assertEquals(-6, lowerOnlyNegative.lower(), EPSILON);
+        assertNull(lowerOnlyNegative.upper());
 
         LabExtraction.Limits upperOnly = LabExtraction.extractLimits("<90");
         assertNull(upperOnly.lower());
@@ -84,5 +96,18 @@ public class LabExtractionTest {
         LabExtraction.Limits failed = LabExtraction.extractLimits("not a limit");
         assertNull(failed.lower());
         assertNull(failed.upper());
+    }
+
+    @Test
+    public void canFindSeparatingHyphen() {
+        assertEquals(2, LabExtraction.findSeparatingHyphenIndex("3 - 5"));
+        assertEquals(4, LabExtraction.findSeparatingHyphenIndex("3,1 - 5,1"));
+        assertEquals(2, LabExtraction.findSeparatingHyphenIndex("-3-5"));
+        assertEquals(2, LabExtraction.findSeparatingHyphenIndex("-3--5"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void crashFindSeparatingHyphenOnOnInvalidReferenceRangeText() {
+        assertEquals(1, LabExtraction.findSeparatingHyphenIndex("-Nope"));
     }
 }
