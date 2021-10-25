@@ -2,7 +2,7 @@ package com.hartwig.actin.treatment.database;
 
 import java.util.List;
 
-import com.hartwig.actin.treatment.database.config.CohortConfig;
+import com.hartwig.actin.treatment.database.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.database.config.TrialDefinitionConfig;
 
@@ -18,7 +18,7 @@ public abstract class TreatmentDatabase {
     public abstract List<TrialDefinitionConfig> trialDefinitionConfigs();
 
     @NotNull
-    public abstract List<CohortConfig> cohortConfigs();
+    public abstract List<CohortDefinitionConfig> cohortDefinitionConfigs();
 
     @NotNull
     public abstract List<InclusionCriteriaConfig> inclusionCriteriaConfigs();

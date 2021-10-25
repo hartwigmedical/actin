@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class CohortConfig implements TrialConfig {
+public abstract class CohortDefinitionConfig implements TrialConfig {
 
     @NotNull
     @Override

@@ -6,12 +6,12 @@ import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CohortConfigFactory implements TrialConfigFactory<CohortConfig> {
+public class CohortDefinitionConfigFactory implements TrialConfigFactory<CohortDefinitionConfig> {
 
     @NotNull
     @Override
-    public CohortConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableCohortConfig.builder()
+    public CohortDefinitionConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
+        return ImmutableCohortDefinitionConfig.builder()
                 .trialId(parts[fields.get("trialId")])
                 .cohortId(parts[fields.get("cohortId")])
                 .open(ResourceFile.bool(parts[fields.get("open")]))

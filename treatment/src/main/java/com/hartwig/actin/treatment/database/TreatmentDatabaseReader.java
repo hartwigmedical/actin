@@ -3,8 +3,8 @@ package com.hartwig.actin.treatment.database;
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.treatment.database.config.CohortConfig;
-import com.hartwig.actin.treatment.database.config.CohortConfigFactory;
+import com.hartwig.actin.treatment.database.config.CohortDefinitionConfig;
+import com.hartwig.actin.treatment.database.config.CohortDefinitionConfigFactory;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfigFactory;
 import com.hartwig.actin.treatment.database.config.TrialConfigFile;
@@ -21,7 +21,7 @@ public final class TreatmentDatabaseReader {
     private static final Logger LOGGER = LogManager.getLogger(TreatmentDatabaseReader.class);
 
     private static final String TRIAL_DEFINITION_TSV = "trial_definition.tsv";
-    private static final String COHORT_TSV = "cohort.tsv";
+    private static final String COHORT_DEFINITION_TSV = "cohort_definition.tsv";
     private static final String INCLUSION_CRITERIA_TSV = "inclusion_criteria.tsv";
 
     private TreatmentDatabaseReader() {
@@ -33,8 +33,9 @@ public final class TreatmentDatabaseReader {
 
         String basePath = Paths.forceTrailingFileSeparator(treatmentDirectory);
 
-        return ImmutableTreatmentDatabase.builder().trialDefinitionConfigs(readTrialDefinitionConfigs(basePath + TRIAL_DEFINITION_TSV))
-                .cohortConfigs(readCohortConfigs(basePath + COHORT_TSV))
+        return ImmutableTreatmentDatabase.builder()
+                .trialDefinitionConfigs(readTrialDefinitionConfigs(basePath + TRIAL_DEFINITION_TSV))
+                .cohortDefinitionConfigs(readCohortDefinitionConfigs(basePath + COHORT_DEFINITION_TSV))
                 .inclusionCriteriaConfigs(readInclusionCriteriaConfigs(basePath + INCLUSION_CRITERIA_TSV))
                 .build();
     }
@@ -47,9 +48,9 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    private static List<CohortConfig> readCohortConfigs(@NotNull String tsv) throws IOException {
-        List<CohortConfig> configs = TrialConfigFile.read(tsv, new CohortConfigFactory());
-        LOGGER.info(" Read {} cohort configs from {}", configs.size(), tsv);
+    private static List<CohortDefinitionConfig> readCohortDefinitionConfigs(@NotNull String tsv) throws IOException {
+        List<CohortDefinitionConfig> configs = TrialConfigFile.read(tsv, new CohortDefinitionConfigFactory());
+        LOGGER.info(" Read {} cohort definition configs from {}", configs.size(), tsv);
         return configs;
     }
 
