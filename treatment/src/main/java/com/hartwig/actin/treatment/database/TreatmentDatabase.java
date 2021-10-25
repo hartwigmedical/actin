@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TreatmentDatabase {
 
     @NotNull
-    public abstract List<TrialDefinitionConfig> trialConfigs();
+    public abstract List<TrialDefinitionConfig> trialDefinitionConfigs();
 
     @NotNull
     public abstract List<CohortConfig> cohortConfigs();

@@ -24,12 +24,12 @@ public class TreatmentDatabaseReaderTest {
     public void canReadFromTestDirectory() throws IOException {
         TreatmentDatabase database = TreatmentDatabaseReader.read(TREATMENT_DIRECTORY);
 
-        assertTrialConfigs(database.trialConfigs());
+        assertTrialDefinitionConfigs(database.trialDefinitionConfigs());
         assertCohortConfigs(database.cohortConfigs());
         assertInclusionCriteriaConfigs(database.inclusionCriteriaConfigs());
     }
 
-    private static void assertTrialConfigs(@NotNull List<TrialDefinitionConfig> configs) {
+    private static void assertTrialDefinitionConfigs(@NotNull List<TrialDefinitionConfig> configs) {
         assertEquals(1, configs.size());
 
         TrialDefinitionConfig config = configs.get(0);
