@@ -7,7 +7,7 @@ ACTIN-Treatment requires Java 11+ and can be run as follows:
 
 ```
 java -cp actin.jar com.hartwig.actin.treatment.TreatmentCreatorApplication \
-   -treatment_config_directory /path/to/treatment_config
+   -trial_config_directory /path/to/trial_config
    -output_directory /path/to/where/treatment_database/is/written
 ```
 

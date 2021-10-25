@@ -49,10 +49,9 @@ public class TreatmentCreatorApplication {
     public void run() throws IOException {
         LOGGER.info("Creating trial database");
         List<Trial> trials = TrialFactory.fromTrialConfigDirectory(config.trialConfigDirectory());
-        LOGGER.info(" Created {} trials", trials);
 
         String outputDirectory = config.outputDirectory();
-        LOGGER.info("Writing treatments to {}", outputDirectory);
+        LOGGER.info("Writing {} trials to {}", trials.size(), outputDirectory);
         TrialJson.write(trials, outputDirectory);
 
         LOGGER.info("Done!");

@@ -10,6 +10,12 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class Trial {
 
+    @Value.Derived
+    @NotNull
+    public String trialIdWithoutSpace() {
+        return trialId().replaceAll(" ", "_");
+    }
+
     @NotNull
     public abstract String trialId();
 
