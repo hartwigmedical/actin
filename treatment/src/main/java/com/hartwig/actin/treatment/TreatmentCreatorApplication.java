@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.TrialFactory;
 
 import org.apache.commons.cli.DefaultParser;
@@ -51,7 +52,8 @@ public class TreatmentCreatorApplication {
         LOGGER.info(" Created {} trials", trials);
 
         String outputDirectory = config.outputDirectory();
-        LOGGER.info("TODO: Write treatments to {}", outputDirectory);
+        LOGGER.info("Writing treatments to {}", outputDirectory);
+        TrialJson.write(trials, outputDirectory);
 
         LOGGER.info("Done!");
     }
