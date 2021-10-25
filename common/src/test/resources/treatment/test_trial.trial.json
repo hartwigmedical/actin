@@ -1,0 +1,31 @@
+{
+  "trialId": "test trial",
+  "acronym": "TEST-TRIAL",
+  "title": "This is a trial to test ACTIN",
+  "generalEligibilityFunctions": [
+    {
+      "rule": "IS_ADULT",
+      "parameters": []
+    }
+  ],
+  "cohorts": [
+    {
+      "cohortId": "A",
+      "open": true,
+      "description": "Cohort A",
+      "eligibilityFunctions": []
+    },
+    {
+      "cohortId": "B",
+      "open": true,
+      "description": "Cohort B",
+      "eligibilityFunctions": []
+    },
+    {
+      "cohortId": "C",
+      "open": false,
+      "description": "Cohort C",
+      "eligibilityFunctions": []
+    }
+  ]
+}

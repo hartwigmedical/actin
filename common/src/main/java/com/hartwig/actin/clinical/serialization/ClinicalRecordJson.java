@@ -79,8 +79,8 @@ public final class ClinicalRecordJson {
     private ClinicalRecordJson() {
     }
 
-    public static void write(@NotNull List<ClinicalRecord> records, @NotNull String outputDirectory) throws IOException {
-        String path = Paths.forceTrailingFileSeparator(outputDirectory);
+    public static void write(@NotNull List<ClinicalRecord> records, @NotNull String directory) throws IOException {
+        String path = Paths.forceTrailingFileSeparator(directory);
         for (ClinicalRecord record : records) {
             String jsonFile = path + record.sampleId() + CLINICAL_JSON_EXTENSION;
 
@@ -91,11 +91,11 @@ public final class ClinicalRecordJson {
     }
 
     @NotNull
-    public static List<ClinicalRecord> readFromDir(@NotNull String clinicalDirectory) throws IOException {
+    public static List<ClinicalRecord> readFromDir(@NotNull String directory) throws IOException {
         List<ClinicalRecord> records = Lists.newArrayList();
-        File[] files = new File(clinicalDirectory).listFiles();
+        File[] files = new File(directory).listFiles();
         if (files == null) {
-            throw new IllegalArgumentException("Could not retrieve clinical json files from " + clinicalDirectory);
+            throw new IllegalArgumentException("Could not retrieve clinical json files from " + directory);
         }
 
         for (File file : files) {
