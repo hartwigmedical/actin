@@ -4,23 +4,24 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
-import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFile;
+import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFactory;
+import com.hartwig.actin.clinical.curation.config.CurationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
-import com.hartwig.actin.clinical.curation.config.ECGConfigFile;
+import com.hartwig.actin.clinical.curation.config.ECGConfigFactory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFile;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
-import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFile;
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
-import com.hartwig.actin.clinical.curation.config.MedicationTypeConfigFile;
+import com.hartwig.actin.clinical.curation.config.MedicationTypeConfigFactory;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFile;
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFile;
+import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
-import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFile;
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
-import com.hartwig.actin.clinical.curation.config.ToxicityConfigFile;
+import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslationFile;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -77,89 +78,86 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<PrimaryTumorConfig> readPrimaryTumorConfigs(@NotNull String primaryTumorTsv) throws IOException {
-        List<PrimaryTumorConfig> configs = PrimaryTumorConfigFile.read(primaryTumorTsv);
-        LOGGER.info(" Read {} primary tumor configs from {}", configs.size(), primaryTumorTsv);
+    private static List<PrimaryTumorConfig> readPrimaryTumorConfigs(@NotNull String tsv) throws IOException {
+        List<PrimaryTumorConfig> configs = CurationConfigFile.read(tsv, new PrimaryTumorConfigFactory());
+        LOGGER.info(" Read {} primary tumor configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<LesionLocationConfig> readLesionLocationConfigs(@NotNull String lesionLocationTsv) throws IOException {
-        List<LesionLocationConfig> configs = LesionLocationConfigFile.read(lesionLocationTsv);
-        LOGGER.info(" Read {} lesion location configs from {}", configs.size(), lesionLocationTsv);
+    private static List<LesionLocationConfig> readLesionLocationConfigs(@NotNull String tsv) throws IOException {
+        List<LesionLocationConfig> configs = CurationConfigFile.read(tsv, new LesionLocationConfigFactory());
+        LOGGER.info(" Read {} lesion location configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<OncologicalHistoryConfig> readOncologicalHistoryConfigs(@NotNull String oncologicalHistoryTsv) throws IOException {
-        List<OncologicalHistoryConfig> configs = OncologicalHistoryConfigFile.read(oncologicalHistoryTsv);
-        LOGGER.info(" Read {} oncological history configs from {}", configs.size(), oncologicalHistoryTsv);
+    private static List<OncologicalHistoryConfig> readOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
+        List<OncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new OncologicalHistoryConfigFactory());
+        LOGGER.info(" Read {} oncological history configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<NonOncologicalHistoryConfig> readNonOncologicalHistoryConfigs(@NotNull String nonOncologicalHistoryTsv)
-            throws IOException {
-        List<NonOncologicalHistoryConfig> configs = NonOncologicalHistoryConfigFile.read(nonOncologicalHistoryTsv);
-        LOGGER.info(" Read {} non-oncological history configs from {}", configs.size(), nonOncologicalHistoryTsv);
+    private static List<NonOncologicalHistoryConfig> readNonOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
+        List<NonOncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new NonOncologicalHistoryConfigFactory());
+        LOGGER.info(" Read {} non-oncological history configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<ECGConfig> readECGConfigs(final String ecgTsv) throws IOException {
-        List<ECGConfig> configs = ECGConfigFile.read(ecgTsv);
-        LOGGER.info(" Read {} ECG configs from {}", configs.size(), ecgTsv);
+    private static List<ECGConfig> readECGConfigs(@NotNull String tsv) throws IOException {
+        List<ECGConfig> configs = CurationConfigFile.read(tsv, new ECGConfigFactory());
+        LOGGER.info(" Read {} ECG configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<CancerRelatedComplicationConfig> readCancerRelatedComplicationConfigs(@NotNull String cancerRelationComplicationTsv)
-            throws IOException {
-        List<CancerRelatedComplicationConfig> configs = CancerRelatedComplicationConfigFile.read(cancerRelationComplicationTsv);
-        LOGGER.info(" Read {} cancer related complication configs from {}", configs.size(), cancerRelationComplicationTsv);
+    private static List<CancerRelatedComplicationConfig> readCancerRelatedComplicationConfigs(@NotNull String tsv) throws IOException {
+        List<CancerRelatedComplicationConfig> configs = CurationConfigFile.read(tsv, new CancerRelatedComplicationConfigFactory());
+        LOGGER.info(" Read {} cancer related complication configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<ToxicityConfig> readToxicityConfigs(@NotNull String toxicityTsv) throws IOException {
-        List<ToxicityConfig> configs = ToxicityConfigFile.read(toxicityTsv);
-        LOGGER.info(" Read {} toxicity configs from {}", configs.size(), toxicityTsv);
+    private static List<ToxicityConfig> readToxicityConfigs(@NotNull String tsv) throws IOException {
+        List<ToxicityConfig> configs = CurationConfigFile.read(tsv, new ToxicityConfigFactory());
+        LOGGER.info(" Read {} toxicity configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<MedicationDosageConfig> readMedicationDosageConfigs(@NotNull String medicationDosageTsv) throws IOException {
-        List<MedicationDosageConfig> configs = MedicationDosageConfigFile.read(medicationDosageTsv);
-        LOGGER.info(" Read {} medication dosage configs from {}", configs.size(), medicationDosageTsv);
+    private static List<MedicationDosageConfig> readMedicationDosageConfigs(@NotNull String tsv) throws IOException {
+        List<MedicationDosageConfig> configs = CurationConfigFile.read(tsv, new MedicationDosageConfigFactory());
+        LOGGER.info(" Read {} medication dosage configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<MedicationTypeConfig> readMedicationTypeConfigs(@NotNull String medicationTypeTsv) throws IOException {
-        List<MedicationTypeConfig> configs = MedicationTypeConfigFile.read(medicationTypeTsv);
-        LOGGER.info(" Read {} medication type configs from {}", configs.size(), medicationTypeTsv);
+    private static List<MedicationTypeConfig> readMedicationTypeConfigs(@NotNull String tsv) throws IOException {
+        List<MedicationTypeConfig> configs = CurationConfigFile.read(tsv, new MedicationTypeConfigFactory());
+        LOGGER.info(" Read {} medication type configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String laboratoryTranslationTsv) throws IOException {
-        List<LaboratoryTranslation> translations = LaboratoryTranslationFile.read(laboratoryTranslationTsv);
-        LOGGER.info(" Read {} laboratory translations from {}", translations.size(), laboratoryTranslationTsv);
+    private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String tsv) throws IOException {
+        List<LaboratoryTranslation> translations = LaboratoryTranslationFile.read(tsv);
+        LOGGER.info(" Read {} laboratory translations from {}", translations.size(), tsv);
         return translations;
     }
 
     @NotNull
-    private static List<AllergyTranslation> readAllergyTranslations(@NotNull String allergyTranslationTsv) throws IOException {
-        List<AllergyTranslation> translations = AllergyTranslationFile.read(allergyTranslationTsv);
-        LOGGER.info(" Read {} allergy translations from {}", translations.size(), allergyTranslationTsv);
+    private static List<AllergyTranslation> readAllergyTranslations(@NotNull String tsv) throws IOException {
+        List<AllergyTranslation> translations = AllergyTranslationFile.read(tsv);
+        LOGGER.info(" Read {} allergy translations from {}", translations.size(), tsv);
         return translations;
     }
 
     @NotNull
-    private static List<BloodTransfusionTranslation> readBloodTransfusionTranslations(@NotNull String bloodTransfusionTranslationTsv)
-            throws IOException {
-        List<BloodTransfusionTranslation> translations = BloodTransfusionTranslationFile.read(bloodTransfusionTranslationTsv);
-        LOGGER.info(" Read {} blood transfusion translations from {}", translations.size(), bloodTransfusionTranslationTsv);
+    private static List<BloodTransfusionTranslation> readBloodTransfusionTranslations(@NotNull String tsv) throws IOException {
+        List<BloodTransfusionTranslation> translations = BloodTransfusionTranslationFile.read(tsv);
+        LOGGER.info(" Read {} blood transfusion translations from {}", translations.size(), tsv);
         return translations;
     }
 }

@@ -23,7 +23,7 @@ public final class LaboratoryTranslationFile {
         List<String> lines = Files.readAllLines(new File(laboratoryTranslationTsv).toPath());
 
         List<LaboratoryTranslation> translations = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFields(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             translations.add(fromParts(fieldIndexMap, line.split(DELIMITER, -1)));
         }

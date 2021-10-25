@@ -19,7 +19,7 @@ public final class ResourceFile {
     }
 
     @NotNull
-    public static Map<String, Integer> createFieldIndexMap(@NotNull String[] header) {
+    public static Map<String, Integer> createFields(@NotNull String[] header) {
         Map<String, Integer> fieldIndexMap = Maps.newHashMap();
 
         for (int i = 0; i < header.length; ++i) {

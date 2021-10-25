@@ -11,19 +11,19 @@ import org.jetbrains.annotations.Nullable;
 public class FeedLine {
 
     @NotNull
-    private final Map<String, Integer> fieldIndexMap;
+    private final Map<String, Integer> fields;
     @NotNull
     private final String[] parts;
 
-    FeedLine(@NotNull final Map<String, Integer> fieldIndexMap, @NotNull final String[] parts) {
-        this.fieldIndexMap = fieldIndexMap;
+    FeedLine(@NotNull final Map<String, Integer> fields, @NotNull final String[] parts) {
+        this.fields = fields;
         this.parts = parts;
     }
 
     @NotNull
     public String string(@NotNull String column) {
-        assert fieldIndexMap.containsKey(column);
-        return parts[fieldIndexMap.get(column)];
+        assert fields.containsKey(column);
+        return parts[fields.get(column)];
     }
 
     @NotNull

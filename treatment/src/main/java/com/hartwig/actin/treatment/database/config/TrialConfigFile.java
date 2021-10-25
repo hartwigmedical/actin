@@ -23,7 +23,7 @@ public final class TrialConfigFile {
         List<String> lines = Files.readAllLines(new File(trialTsv).toPath());
 
         List<TrialConfig> configs = Lists.newArrayList();
-        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFields(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             configs.add(fromParts(fieldIndexMap, line.split(DELIMITER, -1)));
         }

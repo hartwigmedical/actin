@@ -16,15 +16,15 @@ public class FeedLineTest {
 
     @Test
     public void canQueryFeedLine() {
-        Map<String, Integer> fieldIndexMap = Maps.newHashMap();
-        fieldIndexMap.put("string", 0);
-        fieldIndexMap.put("gender", 1);
-        fieldIndexMap.put("date", 2);
-        fieldIndexMap.put("number", 3);
-        fieldIndexMap.put("integer", 4);
+        Map<String, Integer> fields = Maps.newHashMap();
+        fields.put("string", 0);
+        fields.put("gender", 1);
+        fields.put("date", 2);
+        fields.put("number", 3);
+        fields.put("integer", 4);
 
         String[] parts = new String[] { "string", "Male", "2019-01-01", "1", "2" };
-        FeedLine line = new FeedLine(fieldIndexMap, parts);
+        FeedLine line = new FeedLine(fields, parts);
 
         assertEquals("string", line.string("string"));
         assertEquals(Gender.MALE, line.gender("gender"));

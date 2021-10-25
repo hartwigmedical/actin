@@ -26,7 +26,7 @@ class FeedFileReader<T extends FeedEntry> {
     public List<T> read(@NotNull String feedTsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(feedTsv).toPath());
 
-        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(splitFeedLine(lines.get(0)));
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFields(splitFeedLine(lines.get(0)));
         List<T> entries = Lists.newArrayList();
         if (lines.size() > 1) {
             StringBuilder curLine = new StringBuilder(lines.get(1));

@@ -18,7 +18,7 @@ public class ResourceFileTest {
     @Test
     public void canCreateFieldIndexMap() {
         String[] header = new String[] { "header0", "header1", "header2" };
-        Map<String, Integer> fieldIndexMap = ResourceFile.createFieldIndexMap(header);
+        Map<String, Integer> fieldIndexMap = ResourceFile.createFields(header);
 
         assertEquals(0, (int) fieldIndexMap.get("header0"));
         assertEquals(1, (int) fieldIndexMap.get("header1"));
