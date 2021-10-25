@@ -18,10 +18,11 @@ public class ClinicalIngestionApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(ClinicalIngestionApplication.class);
 
+    private static final String APPLICATION = "ACTIN Clinical Ingestion";
     private static final String VERSION = ClinicalIngestionApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running ACTIN Clinical Ingestion v{}", VERSION);
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
         Options options = ClinicalIngestionConfig.createOptions();
 
@@ -30,7 +31,7 @@ public class ClinicalIngestionApplication {
             config = ClinicalIngestionConfig.createConfig(new DefaultParser().parse(options, args));
         } catch (ParseException exception) {
             LOGGER.warn(exception);
-            new HelpFormatter().printHelp("ACTIN Clinical Ingestion", options);
+            new HelpFormatter().printHelp(APPLICATION, options);
             System.exit(1);
         }
 
@@ -49,7 +50,7 @@ public class ClinicalIngestionApplication {
         String curationDirectory = config.curationDirectory();
 
         LOGGER.info("Creating clinical model from feed directory {} and curation direction {}", feedDirectory, curationDirectory);
-        List<ClinicalRecord> records = ClinicalRecordFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
+        List<ClinicalRecord> records = ClinicalRecordsFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
 
         String outputDirectory = config.outputDirectory();
         LOGGER.info("Writing {} clinical records to {}", records.size(), outputDirectory);

@@ -28,10 +28,10 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    public static TreatmentDatabase read(@NotNull String treatmentDirectory) throws IOException {
-        LOGGER.info("Reading treatment config from {}", treatmentDirectory);
+    public static TreatmentDatabase read(@NotNull String treatmentConfigDirectory) throws IOException {
+        LOGGER.info("Reading treatment config from {}", treatmentConfigDirectory);
 
-        String basePath = Paths.forceTrailingFileSeparator(treatmentDirectory);
+        String basePath = Paths.forceTrailingFileSeparator(treatmentConfigDirectory);
 
         return ImmutableTreatmentDatabase.builder()
                 .trialDefinitionConfigs(readTrialDefinitionConfigs(basePath + TRIAL_DEFINITION_TSV))

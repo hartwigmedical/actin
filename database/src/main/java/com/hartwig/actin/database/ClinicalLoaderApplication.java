@@ -20,10 +20,11 @@ public class ClinicalLoaderApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(ClinicalLoaderApplication.class);
 
+    private static final String APPLICATION = "ACTIN Clinical Loader";
     private static final String VERSION = ClinicalLoaderApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException, SQLException {
-        LOGGER.info("Running ACTIN Clinical Loader v{}", VERSION);
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
         Options options = ClinicalLoaderConfig.createOptions();
 
@@ -32,7 +33,7 @@ public class ClinicalLoaderApplication {
             config = ClinicalLoaderConfig.createConfig(new DefaultParser().parse(options, args));
         } catch (ParseException exception) {
             LOGGER.warn(exception);
-            new HelpFormatter().printHelp("ACTIN Clinical Loader", options);
+            new HelpFormatter().printHelp(APPLICATION, options);
             System.exit(1);
         }
 

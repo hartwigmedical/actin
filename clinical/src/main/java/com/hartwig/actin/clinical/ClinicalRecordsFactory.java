@@ -52,9 +52,9 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ClinicalRecordFactory {
+public class ClinicalRecordsFactory {
 
-    private static final Logger LOGGER = LogManager.getLogger(ClinicalRecordFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClinicalRecordsFactory.class);
 
     @NotNull
     private final FeedModel feed;
@@ -64,12 +64,12 @@ public class ClinicalRecordFactory {
     @NotNull
     public static List<ClinicalRecord> fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
             @NotNull String clinicalCurationDirectory) throws IOException {
-        return new ClinicalRecordFactory(FeedModel.fromFeedDirectory(clinicalFeedDirectory),
+        return new ClinicalRecordsFactory(FeedModel.fromFeedDirectory(clinicalFeedDirectory),
                 CurationModel.fromCurationDirectory(clinicalCurationDirectory)).create();
     }
 
     @VisibleForTesting
-    ClinicalRecordFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
+    ClinicalRecordsFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
         this.feed = feed;
         this.curation = curation;
     }

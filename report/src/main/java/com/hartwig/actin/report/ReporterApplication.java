@@ -21,33 +21,34 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class ReportApplication {
+public class ReporterApplication {
 
-    private static final Logger LOGGER = LogManager.getLogger(ReportApplication.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReporterApplication.class);
 
-    public static final String VERSION = ReportApplication.class.getPackage().getImplementationVersion();
+    private static final String APPLICATION = "ACTIN Reporter";
+    public static final String VERSION = ReporterApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running ACTIN Report v{}", VERSION);
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
-        Options options = ReportConfig.createOptions();
+        Options options = ReporterConfig.createOptions();
 
-        ReportConfig config = null;
+        ReporterConfig config = null;
         try {
-            config = ReportConfig.createConfig(new DefaultParser().parse(options, args));
+            config = ReporterConfig.createConfig(new DefaultParser().parse(options, args));
         } catch (ParseException exception) {
             LOGGER.warn(exception);
-            new HelpFormatter().printHelp("ACTIN Report", options);
+            new HelpFormatter().printHelp(APPLICATION, options);
             System.exit(1);
         }
 
-        new ReportApplication(config).run();
+        new ReporterApplication(config).run();
     }
 
     @NotNull
-    private final ReportConfig config;
+    private final ReporterConfig config;
 
-    private ReportApplication(@NotNull final ReportConfig config) {
+    private ReporterApplication(@NotNull final ReporterConfig config) {
         this.config = config;
     }
 

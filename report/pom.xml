@@ -71,7 +71,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.report.ReportApplication</mainClass>
+                            <mainClass>com.hartwig.actin.report.ReporterApplication</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>

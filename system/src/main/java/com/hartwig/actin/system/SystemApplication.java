@@ -3,8 +3,8 @@ package com.hartwig.actin.system;
 import com.hartwig.actin.algo.AlgoRunner;
 import com.hartwig.actin.clinical.ClinicalIngestionApplication;
 import com.hartwig.actin.database.ClinicalLoaderApplication;
-import com.hartwig.actin.report.ReportApplication;
-import com.hartwig.actin.treatment.TreatmentLoader;
+import com.hartwig.actin.report.ReporterApplication;
+import com.hartwig.actin.treatment.TreatmentCreatorApplication;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,9 +19,9 @@ public class SystemApplication {
     public static void main(@NotNull String... args) {
         LOGGER.info("The following applications are available through ACTIN v{}", VERSION);
         LOGGER.info(" {}", ClinicalIngestionApplication.class);
-        LOGGER.info(" {}", TreatmentLoader.class);
+        LOGGER.info(" {}", TreatmentCreatorApplication.class);
         LOGGER.info(" {}", AlgoRunner.class);
         LOGGER.info(" {}", ClinicalLoaderApplication.class);
-        LOGGER.info(" {}", ReportApplication.class);
+        LOGGER.info(" {}", ReporterApplication.class);
     }
 }

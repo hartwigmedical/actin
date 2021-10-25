@@ -8,7 +8,7 @@ An example PDF can be found [here](src/main/resources/example.actin.pdf)
 This application requires Java 11+ and can be run as follows: 
 
 ```
-java -cp actin.jar com.hartwig.actin.report.ReportApplication \
+java -cp actin.jar com.hartwig.actin.report.ReporterApplication \
    -clinical_json /path/to/clinical.json \
    -molecular_json /path/to/molecular.json \
    -output_directory /path/where/pdf/is/written \

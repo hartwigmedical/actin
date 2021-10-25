@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface ReportConfig {
+public interface ReporterConfig {
 
     String CLINICAL_JSON = "clinical_json";
     String MOLECULAR_JSON = "molecular_json";
@@ -40,8 +40,8 @@ public interface ReportConfig {
     String outputDirectory();
 
     @NotNull
-    static ReportConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        return ImmutableReportConfig.builder()
+    static ReporterConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
+        return ImmutableReporterConfig.builder()
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))

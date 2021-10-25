@@ -29,7 +29,7 @@ import com.hartwig.actin.clinical.feed.TestFeedFactory;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class ClinicalRecordFactoryTest {
+public class ClinicalRecordsFactoryTest {
 
     private static final String FEED_DIRECTORY = Resources.getResource("feed").getPath();
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
@@ -40,7 +40,7 @@ public class ClinicalRecordFactoryTest {
 
     @Test
     public void canCreateFromFeedAndCurationDirectories() throws IOException {
-        assertNotNull(ClinicalRecordFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
+        assertNotNull(ClinicalRecordsFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
     }
 
     @Test
@@ -158,13 +158,13 @@ public class ClinicalRecordFactoryTest {
 
     @NotNull
     private static List<ClinicalRecord> createMinimalTestClinicalRecords() {
-        return new ClinicalRecordFactory(TestFeedFactory.createMinimalTestFeedModel(), TestCurationFactory.createMinimalTestCurationModel())
-                .create();
+        return new ClinicalRecordsFactory(TestFeedFactory.createMinimalTestFeedModel(),
+                TestCurationFactory.createMinimalTestCurationModel()).create();
     }
 
     @NotNull
     private static List<ClinicalRecord> createProperTestClinicalRecords() {
-        return new ClinicalRecordFactory(TestFeedFactory.createProperTestFeedModel(),
+        return new ClinicalRecordsFactory(TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel()).create();
     }
 }
