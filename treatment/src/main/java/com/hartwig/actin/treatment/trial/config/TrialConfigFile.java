@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.database.config;
+package com.hartwig.actin.treatment.trial.config;
 
 import java.io.File;
 import java.io.IOException;

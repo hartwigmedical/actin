@@ -1,12 +1,12 @@
-package com.hartwig.actin.treatment.database;
+package com.hartwig.actin.treatment.trial;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.treatment.database.config.ImmutableCohortDefinitionConfig;
-import com.hartwig.actin.treatment.database.config.ImmutableInclusionCriteriaConfig;
-import com.hartwig.actin.treatment.database.config.ImmutableTrialDefinitionConfig;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.trial.config.ImmutableCohortDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.ImmutableTrialDefinitionConfig;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

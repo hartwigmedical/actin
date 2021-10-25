@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.database;
+package com.hartwig.actin.treatment.trial;
 
 import static org.junit.Assert.assertEquals;
 

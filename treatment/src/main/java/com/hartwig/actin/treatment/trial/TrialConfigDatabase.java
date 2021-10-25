@@ -1,10 +1,10 @@
-package com.hartwig.actin.treatment.database;
+package com.hartwig.actin.treatment.trial;
 
 import java.util.List;
 
-import com.hartwig.actin.treatment.database.config.CohortDefinitionConfig;
-import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
-import com.hartwig.actin.treatment.database.config.TrialDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

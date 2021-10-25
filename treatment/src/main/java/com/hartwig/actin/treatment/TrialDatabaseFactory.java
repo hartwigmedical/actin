@@ -3,8 +3,8 @@ package com.hartwig.actin.treatment;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.treatment.database.TrialConfigDatabase;
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.trial.TrialConfigDatabase;
 
 import org.jetbrains.annotations.NotNull;
 

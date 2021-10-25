@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public interface TreatmentCreatorConfig {
 
-    String TREATMENT_CONFIG_DIRECTORY = "treatment_config_directory";
+    String TRIAL_CONFIG_DIRECTORY = "trial_config_directory";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -21,7 +21,7 @@ public interface TreatmentCreatorConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(TREATMENT_CONFIG_DIRECTORY, true, "Directory containing the treatment config files");
+        options.addOption(TRIAL_CONFIG_DIRECTORY, true, "Directory containing the trial config files");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where treatment data will be written to");
 
@@ -29,15 +29,14 @@ public interface TreatmentCreatorConfig {
     }
 
     @NotNull
-    String treatmentConfigDirectory();
+    String trialConfigDirectory();
 
     @NotNull
     String outputDirectory();
 
     @NotNull
     static TreatmentCreatorConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
-        return ImmutableTreatmentCreatorConfig.builder()
-                .treatmentConfigDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_CONFIG_DIRECTORY))
+        return ImmutableTreatmentCreatorConfig.builder().trialConfigDirectory(ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_DIRECTORY))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

@@ -1,9 +1,9 @@
-package com.hartwig.actin.treatment.database.config;
+package com.hartwig.actin.treatment.trial.config;
 
 import java.util.Map;
 
-import com.hartwig.actin.treatment.database.TrialConfigDatabaseUtil;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.trial.TrialConfigDatabaseUtil;
 
 import org.jetbrains.annotations.NotNull;
 

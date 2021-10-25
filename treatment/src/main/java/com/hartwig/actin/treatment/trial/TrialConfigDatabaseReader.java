@@ -1,15 +1,15 @@
-package com.hartwig.actin.treatment.database;
+package com.hartwig.actin.treatment.trial;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.treatment.database.config.CohortDefinitionConfig;
-import com.hartwig.actin.treatment.database.config.CohortDefinitionConfigFactory;
-import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
-import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfigFactory;
-import com.hartwig.actin.treatment.database.config.TrialConfigFile;
-import com.hartwig.actin.treatment.database.config.TrialDefinitionConfig;
-import com.hartwig.actin.treatment.database.config.TrialDefinitionConfigFactory;
+import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfigFactory;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfigFactory;
+import com.hartwig.actin.treatment.trial.config.TrialConfigFile;
+import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfigFactory;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
