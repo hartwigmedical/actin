@@ -10,7 +10,7 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.treatment.database.config.CohortConfig;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
-import com.hartwig.actin.treatment.database.config.TrialConfig;
+import com.hartwig.actin.treatment.database.config.TrialDefinitionConfig;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +29,10 @@ public class TreatmentDatabaseReaderTest {
         assertInclusionCriteriaConfigs(database.inclusionCriteriaConfigs());
     }
 
-    private static void assertTrialConfigs(@NotNull List<TrialConfig> configs) {
+    private static void assertTrialConfigs(@NotNull List<TrialDefinitionConfig> configs) {
         assertEquals(1, configs.size());
 
-        TrialConfig config = configs.get(0);
+        TrialDefinitionConfig config = configs.get(0);
         assertEquals("ACTN 2021", config.trialId());
         assertEquals("ACTIN", config.acronym());
         assertEquals("ACTIN is a study to evaluate a new treatment decision system.", config.title());

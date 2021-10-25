@@ -26,22 +26,22 @@ class FeedFileReader<T extends FeedEntry> {
     public List<T> read(@NotNull String feedTsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(feedTsv).toPath());
 
-        Map<String, Integer> fieldIndexMap = ResourceFile.createFields(splitFeedLine(lines.get(0)));
+        Map<String, Integer> fields = ResourceFile.createFields(splitFeedLine(lines.get(0)));
         List<T> entries = Lists.newArrayList();
         if (lines.size() > 1) {
             StringBuilder curLine = new StringBuilder(lines.get(1));
             for (String line : lines.subList(2, lines.size())) {
                 // Entries appear on multiple lines in case they contain hard line breaks so need to split and append to the end.
-                if (splitFeedLine(line).length != fieldIndexMap.size()) {
+                if (splitFeedLine(line).length != fields.size()) {
                     // Need to remove all DELIMITER since we split further down the track.
                     curLine.append("\n").append(line.replaceAll(DELIMITER, ""));
                 } else {
-                    addToEntries(entries, fieldIndexMap, curLine.toString());
+                    addToEntries(entries, fields, curLine.toString());
                     curLine = new StringBuilder(line);
                 }
             }
             // Need to add the final accumulated entry
-            addToEntries(entries, fieldIndexMap, curLine.toString());
+            addToEntries(entries, fields, curLine.toString());
         }
 
         return entries;
@@ -77,10 +77,10 @@ class FeedFileReader<T extends FeedEntry> {
         return cleaned.replaceAll("\"\"", "\"");
     }
 
-    private void addToEntries(@NotNull List<T> entries, @NotNull Map<String, Integer> fieldIndexMap, @NotNull String line) {
+    private void addToEntries(@NotNull List<T> entries, @NotNull Map<String, Integer> fields, @NotNull String line) {
         String[] parts = splitFeedLine(line);
         if (!allEmpty(parts)) {
-            FeedLine feedLine = new FeedLine(fieldIndexMap, parts);
+            FeedLine feedLine = new FeedLine(fields, parts);
             if (feedEntryCreator.isValid(feedLine)) {
                 entries.add(feedEntryCreator.fromLine(feedLine));
             }

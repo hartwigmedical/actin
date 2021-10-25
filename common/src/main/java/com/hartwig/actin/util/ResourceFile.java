@@ -20,13 +20,13 @@ public final class ResourceFile {
 
     @NotNull
     public static Map<String, Integer> createFields(@NotNull String[] header) {
-        Map<String, Integer> fieldIndexMap = Maps.newHashMap();
+        Map<String, Integer> fields = Maps.newHashMap();
 
         for (int i = 0; i < header.length; ++i) {
-            fieldIndexMap.put(header[i], i);
+            fields.put(header[i], i);
         }
 
-        return fieldIndexMap;
+        return fields;
     }
 
     @Nullable

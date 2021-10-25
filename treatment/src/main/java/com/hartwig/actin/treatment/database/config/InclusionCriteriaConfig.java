@@ -10,9 +10,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class InclusionCriteriaConfig {
+public abstract class InclusionCriteriaConfig implements TrialConfig {
 
     @NotNull
+    @Override
     public abstract String trialId();
 
     @NotNull

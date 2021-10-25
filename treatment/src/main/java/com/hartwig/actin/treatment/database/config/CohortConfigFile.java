@@ -31,12 +31,12 @@ public final class CohortConfigFile {
     }
 
     @NotNull
-    private static CohortConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+    private static CohortConfig fromParts(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         return ImmutableCohortConfig.builder()
-                .trialId(parts[fieldIndexMap.get("trialId")])
-                .cohortId(parts[fieldIndexMap.get("cohortId")])
-                .open(ResourceFile.bool(parts[fieldIndexMap.get("open")]))
-                .description(parts[fieldIndexMap.get("description")])
+                .trialId(parts[fields.get("trialId")])
+                .cohortId(parts[fields.get("cohortId")])
+                .open(ResourceFile.bool(parts[fields.get("open")]))
+                .description(parts[fields.get("description")])
                 .build();
     }
 }

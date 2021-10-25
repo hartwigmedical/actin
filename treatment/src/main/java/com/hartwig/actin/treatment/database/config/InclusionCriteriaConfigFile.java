@@ -33,12 +33,12 @@ public final class InclusionCriteriaConfigFile {
     }
 
     @NotNull
-    private static InclusionCriteriaConfig fromParts(@NotNull Map<String, Integer> fieldIndexMap, @NotNull String[] parts) {
+    private static InclusionCriteriaConfig fromParts(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         return ImmutableInclusionCriteriaConfig.builder()
-                .trialId(parts[fieldIndexMap.get("trialId")])
-                .appliesToCohorts(TreatmentDatabaseUtil.toCohorts(parts[fieldIndexMap.get("appliesToCohorts")]))
-                .eligibilityRule(EligibilityRule.valueOf(parts[fieldIndexMap.get("eligibilityRule")]))
-                .eligibilityParameters(TreatmentDatabaseUtil.toParameters(parts[fieldIndexMap.get("eligibilityParameters")]))
+                .trialId(parts[fields.get("trialId")])
+                .appliesToCohorts(TreatmentDatabaseUtil.toCohorts(parts[fields.get("appliesToCohorts")]))
+                .eligibilityRule(EligibilityRule.valueOf(parts[fields.get("eligibilityRule")]))
+                .eligibilityParameters(TreatmentDatabaseUtil.toParameters(parts[fields.get("eligibilityParameters")]))
                 .build();
     }
 }

@@ -7,8 +7,8 @@ import com.hartwig.actin.treatment.database.config.CohortConfig;
 import com.hartwig.actin.treatment.database.config.CohortConfigFile;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfigFile;
-import com.hartwig.actin.treatment.database.config.TrialConfig;
-import com.hartwig.actin.treatment.database.config.TrialConfigFile;
+import com.hartwig.actin.treatment.database.config.TrialDefinitionConfig;
+import com.hartwig.actin.treatment.database.config.TrialDefinitionConfigFactory;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +40,8 @@ public final class TreatmentDatabaseReader {
     }
 
     @NotNull
-    private static List<TrialConfig> readTrialConfigs(@NotNull String trialTsv) throws IOException {
-        List<TrialConfig> configs = TrialConfigFile.read(trialTsv);
+    private static List<TrialDefinitionConfig> readTrialConfigs(@NotNull String trialTsv) throws IOException {
+        List<TrialDefinitionConfig> configs = TrialDefinitionConfigFactory.read(trialTsv);
         LOGGER.info(" Read {} trial configs from {}", configs.size(), trialTsv);
         return configs;
     }

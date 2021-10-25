@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.hartwig.actin.treatment.database.config.CohortConfig;
 import com.hartwig.actin.treatment.database.config.InclusionCriteriaConfig;
-import com.hartwig.actin.treatment.database.config.TrialConfig;
+import com.hartwig.actin.treatment.database.config.TrialDefinitionConfig;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TreatmentDatabase {
 
     @NotNull
-    public abstract List<TrialConfig> trialConfigs();
+    public abstract List<TrialDefinitionConfig> trialConfigs();
 
     @NotNull
     public abstract List<CohortConfig> cohortConfigs();

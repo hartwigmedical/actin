@@ -16,13 +16,13 @@ public class ResourceFileTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canCreateFieldIndexMap() {
+    public void canCreateFields() {
         String[] header = new String[] { "header0", "header1", "header2" };
-        Map<String, Integer> fieldIndexMap = ResourceFile.createFields(header);
+        Map<String, Integer> fields = ResourceFile.createFields(header);
 
-        assertEquals(0, (int) fieldIndexMap.get("header0"));
-        assertEquals(1, (int) fieldIndexMap.get("header1"));
-        assertEquals(2, (int) fieldIndexMap.get("header2"));
+        assertEquals(0, (int) fields.get("header0"));
+        assertEquals(1, (int) fields.get("header1"));
+        assertEquals(2, (int) fields.get("header2"));
     }
 
     @Test
