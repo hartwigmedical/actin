@@ -19,7 +19,9 @@ public final class TreatmentDatabaseUtil {
     @NotNull
     public static Set<String> toCohorts(@NotNull String appliesToCohortString) {
         Set<String> cohorts = Sets.newHashSet();
-        if (!appliesToCohortString.equals(ALL_COHORTS)) {
+        if (appliesToCohortString.isEmpty()) {
+            throw new IllegalArgumentException("Missing argument appliesToCohortString");
+        } else if (!appliesToCohortString.equals(ALL_COHORTS)) {
             cohorts.addAll(Sets.newHashSet(appliesToCohortString.split(COHORT_SEPARATOR)));
         }
         return cohorts;

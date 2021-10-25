@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.hartwig.actin.treatment.database.TreatmentDatabase;
 import com.hartwig.actin.treatment.database.TreatmentDatabaseReader;
+import com.hartwig.actin.treatment.database.TreatmentDatabaseValidator;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -47,8 +48,10 @@ public class TreatmentCreatorApplication {
     public void run() throws IOException {
         TreatmentDatabase database = TreatmentDatabaseReader.read(config.treatmentConfigDirectory());
 
-        String outputDirectory = config.outputDirectory();
-        LOGGER.info("TODO: Write treatments to {}", outputDirectory);
+        if (TreatmentDatabaseValidator.isValid(database)) {
+            String outputDirectory = config.outputDirectory();
+            LOGGER.info("TODO: Write treatments to {}", outputDirectory);
+        }
 
         LOGGER.info("Done!");
     }
