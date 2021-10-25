@@ -1,10 +1,9 @@
 package com.hartwig.actin.treatment;
 
 import java.io.IOException;
+import java.util.List;
 
-import com.hartwig.actin.treatment.trial.TrialConfigDatabase;
-import com.hartwig.actin.treatment.trial.TrialConfigDatabaseReader;
-import com.hartwig.actin.treatment.trial.TrialConfigDatabaseValidator;
+import com.hartwig.actin.treatment.datamodel.Trial;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -46,12 +45,12 @@ public class TreatmentCreatorApplication {
     }
 
     public void run() throws IOException {
-        TrialConfigDatabase database = TrialConfigDatabaseReader.read(config.trialConfigDirectory());
+        LOGGER.info("Creating trial database");
+        List<Trial> trials = TrialFactory.fromTrialConfigDirectory(config.trialConfigDirectory());
+        LOGGER.info(" Created {} trials", trials);
 
-        if (TrialConfigDatabaseValidator.isValid(database)) {
-            String outputDirectory = config.outputDirectory();
-            LOGGER.info("TODO: Write treatments to {}", outputDirectory);
-        }
+        String outputDirectory = config.outputDirectory();
+        LOGGER.info("TODO: Write treatments to {}", outputDirectory);
 
         LOGGER.info("Done!");
     }

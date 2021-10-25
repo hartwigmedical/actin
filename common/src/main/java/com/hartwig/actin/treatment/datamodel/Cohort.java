@@ -19,5 +19,5 @@ public abstract class Cohort {
     public abstract String description();
 
     @NotNull
-    public abstract List<EligibilityFunction> inclusionCriteria();
+    public abstract List<EligibilityFunction> eligibilityFunctions();
 }
