@@ -23,11 +23,12 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslationFile;
+import com.hartwig.actin.clinical.curation.translation.AllergyTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFile;
+import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFile;
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory;
+import com.hartwig.actin.clinical.curation.translation.TranslationFile;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
@@ -142,21 +143,21 @@ public final class CurationDatabaseReader {
 
     @NotNull
     private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String tsv) throws IOException {
-        List<LaboratoryTranslation> translations = LaboratoryTranslationFile.read(tsv);
+        List<LaboratoryTranslation> translations = TranslationFile.read(tsv, new LaboratoryTranslationFactory());
         LOGGER.info(" Read {} laboratory translations from {}", translations.size(), tsv);
         return translations;
     }
 
     @NotNull
     private static List<AllergyTranslation> readAllergyTranslations(@NotNull String tsv) throws IOException {
-        List<AllergyTranslation> translations = AllergyTranslationFile.read(tsv);
+        List<AllergyTranslation> translations = TranslationFile.read(tsv, new AllergyTranslationFactory());
         LOGGER.info(" Read {} allergy translations from {}", translations.size(), tsv);
         return translations;
     }
 
     @NotNull
     private static List<BloodTransfusionTranslation> readBloodTransfusionTranslations(@NotNull String tsv) throws IOException {
-        List<BloodTransfusionTranslation> translations = BloodTransfusionTranslationFile.read(tsv);
+        List<BloodTransfusionTranslation> translations = TranslationFile.read(tsv, new BloodTransfusionTranslationFactory());
         LOGGER.info(" Read {} blood transfusion translations from {}", translations.size(), tsv);
         return translations;
     }

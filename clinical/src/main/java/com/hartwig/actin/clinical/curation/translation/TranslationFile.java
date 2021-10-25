@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.translation;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,23 +11,22 @@ import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class CurationConfigFile {
+public final class TranslationFile {
 
     private static final String DELIMITER = "\t";
 
-    private CurationConfigFile() {
+    private TranslationFile() {
     }
 
     @NotNull
-    public static <T extends CurationConfig> List<T> read(@NotNull String tsv, @NotNull CurationConfigFactory<T> factory)
-            throws IOException {
+    public static <T extends Translation> List<T> read(@NotNull String tsv, @NotNull TranslationFactory<T> factory) throws IOException {
         List<String> lines = Files.readAllLines(new File(tsv).toPath());
 
-        List<T> configs = Lists.newArrayList();
+        List<T> translations = Lists.newArrayList();
         Map<String, Integer> fields = ResourceFile.createFields(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
-            configs.add(factory.create(fields, line.split(DELIMITER, -1)));
+            translations.add(factory.create(fields, line.split(DELIMITER, -1)));
         }
-        return configs;
+        return translations;
     }
 }
