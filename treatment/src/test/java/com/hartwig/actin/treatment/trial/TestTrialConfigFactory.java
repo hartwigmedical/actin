@@ -13,11 +13,21 @@ import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestTrialConfigDatabase {
+public final class TestTrialConfigFactory {
 
-    private static final String TEST_TRIAL_ID = "TestTrial";
+    static final String TEST_TRIAL_ID = "TEST";
 
-    private TestTrialConfigDatabase() {
+    private TestTrialConfigFactory() {
+    }
+
+    @NotNull
+    public static TrialConfigModel createMinimalTestTrialConfigModel() {
+        return new TrialConfigModel(createMinimalTestTrialConfigDatabase());
+    }
+
+    @NotNull
+    public static TrialConfigModel createProperTestTrialConfigModel() {
+        return new TrialConfigModel(createProperTestTrialConfigDatabase());
     }
 
     @NotNull
@@ -28,7 +38,6 @@ public final class TestTrialConfigDatabase {
     @NotNull
     public static TrialConfigDatabase createProperTestTrialConfigDatabase() {
         return ImmutableTrialConfigDatabase.builder()
-                .from(createMinimalTestTrialConfigDatabase())
                 .trialDefinitionConfigs(createTestTrialDefinitionConfigs())
                 .cohortDefinitionConfigs(createTestCohortDefinitionConfigs())
                 .inclusionCriteriaConfigs(createTestInclusionCriteriaConfigs())
@@ -57,9 +66,6 @@ public final class TestTrialConfigDatabase {
         configs.add(builder.cohortId("A").description("Cohort A").build());
         configs.add(builder.cohortId("B").description("Cohort B").build());
         configs.add(builder.cohortId("C").description("Cohort C").build());
-        configs.add(builder.cohortId("D").description("Cohort D").build());
-        configs.add(builder.cohortId("E").description("Cohort E").build());
-        configs.add(builder.cohortId("F").description("Cohort F").build());
 
         return configs;
     }
@@ -71,6 +77,7 @@ public final class TestTrialConfigDatabase {
         ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
 
         configs.add(builder.eligibilityRule(EligibilityRule.IS_ADULT).build());
+        configs.add(builder.eligibilityRule(EligibilityRule.IS_ADULT).addAppliesToCohorts("A").build());
 
         return configs;
     }

@@ -16,8 +16,8 @@ public class TrialConfigDatabaseValidatorTest {
 
     @Test
     public void testTrialConfigDatabasesAreValid() {
-        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigDatabase.createMinimalTestTrialConfigDatabase()));
-        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigDatabase.createProperTestTrialConfigDatabase()));
+        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase()));
+        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
     }
 
     @Test

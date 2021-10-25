@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.trial.TrialFactory;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;

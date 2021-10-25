@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment;
+package com.hartwig.actin.treatment.trial;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,7 +11,6 @@ import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.Trial;
-import com.hartwig.actin.treatment.trial.TrialConfigModel;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
