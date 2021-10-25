@@ -60,7 +60,7 @@ public class TreatmentDatabaseReaderTest {
             }
         }
 
-        throw new IllegalStateException("Could not find cohort config for ID: " + cohortId);
+        throw new IllegalStateException("Could not find cohort definition config for ID: " + cohortId);
     }
 
     private static void assertInclusionCriteriaConfigs(@NotNull List<InclusionCriteriaConfig> configs) {
