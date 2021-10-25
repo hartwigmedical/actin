@@ -1,8 +1,10 @@
 package com.hartwig.actin.treatment.serialization;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -27,12 +29,16 @@ public final class TrialJson {
     public static void write(@NotNull List<Trial> trials, @NotNull String outputDirectory) throws IOException {
         String path = Paths.forceTrailingFileSeparator(outputDirectory);
         for (Trial trial : trials) {
-            String jsonFile = path + trial.trialIdWithoutSpace() + TRIAL_JSON_EXTENSION;
+            String jsonFile = path + trial.trialId().replaceAll(" ", "_") + TRIAL_JSON_EXTENSION;
 
-            LOGGER.info(" Writing '{}' to {}", trial.trialId(), jsonFile);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
-            writer.write(toJson(trial));
-            writer.close();
+            if (!Files.exists(new File(jsonFile).toPath())) {
+                LOGGER.info(" Writing '{}' to {}", trial.trialId(), jsonFile);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
+                writer.write(toJson(trial));
+                writer.close();
+            } else {
+                LOGGER.warn("Cannot write trial {} as JSON file already exists: {}", trial.trialId(), jsonFile);
+            }
         }
     }
 
