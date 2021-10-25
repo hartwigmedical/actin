@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface EligibilityFunction {
+public interface EligibilityEvaluator {
 
     @NotNull
     EligibilityEvaluation evaluate(@NotNull PatientRecord record);

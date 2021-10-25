@@ -16,24 +16,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class TreatmentDatabaseReader {
+public final class TrialConfigDatabaseReader {
 
-    private static final Logger LOGGER = LogManager.getLogger(TreatmentDatabaseReader.class);
+    private static final Logger LOGGER = LogManager.getLogger(TrialConfigDatabaseReader.class);
 
     private static final String TRIAL_DEFINITION_TSV = "trial_definition.tsv";
     private static final String COHORT_DEFINITION_TSV = "cohort_definition.tsv";
     private static final String INCLUSION_CRITERIA_TSV = "inclusion_criteria.tsv";
 
-    private TreatmentDatabaseReader() {
+    private TrialConfigDatabaseReader() {
     }
 
     @NotNull
-    public static TreatmentDatabase read(@NotNull String treatmentConfigDirectory) throws IOException {
-        LOGGER.info("Reading treatment config from {}", treatmentConfigDirectory);
+    public static TrialConfigDatabase read(@NotNull String trialConfigDirectory) throws IOException {
+        LOGGER.info("Reading trial config from {}", trialConfigDirectory);
 
-        String basePath = Paths.forceTrailingFileSeparator(treatmentConfigDirectory);
+        String basePath = Paths.forceTrailingFileSeparator(trialConfigDirectory);
 
-        return ImmutableTreatmentDatabase.builder()
+        return ImmutableTrialConfigDatabase.builder()
                 .trialDefinitionConfigs(readTrialDefinitionConfigs(basePath + TRIAL_DEFINITION_TSV))
                 .cohortDefinitionConfigs(readCohortDefinitionConfigs(basePath + COHORT_DEFINITION_TSV))
                 .inclusionCriteriaConfigs(readInclusionCriteriaConfigs(basePath + INCLUSION_CRITERIA_TSV))

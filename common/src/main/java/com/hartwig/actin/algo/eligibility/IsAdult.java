@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsAdult implements EligibilityFunction {
+public class IsAdult implements EligibilityEvaluator {
 
     private final int referenceYear;
 

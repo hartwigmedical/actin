@@ -15,14 +15,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class TreatmentDatabaseValidator {
+public final class TrialConfigDatabaseValidator {
 
-    private static final Logger LOGGER = LogManager.getLogger(TreatmentDatabaseValidator.class);
+    private static final Logger LOGGER = LogManager.getLogger(TrialConfigDatabaseValidator.class);
 
-    private TreatmentDatabaseValidator() {
+    private TrialConfigDatabaseValidator() {
     }
 
-    public static boolean isValid(@NotNull TreatmentDatabase database) {
+    public static boolean isValid(@NotNull TrialConfigDatabase database) {
         Set<String> trialIds = extractTrialIds(database.trialDefinitionConfigs());
 
         boolean validCohorts = validateCohorts(trialIds, database.cohortDefinitionConfigs());

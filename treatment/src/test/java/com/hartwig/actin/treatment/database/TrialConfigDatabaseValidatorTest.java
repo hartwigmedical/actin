@@ -12,25 +12,25 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class TreatmentDatabaseValidatorTest {
+public class TrialConfigDatabaseValidatorTest {
 
     @Test
-    public void testTreatmentDatabasesAreValid() {
-        assertTrue(TreatmentDatabaseValidator.isValid(TestTreatmentDatabase.createMinimalTestTreatmentDatabase()));
-        assertTrue(TreatmentDatabaseValidator.isValid(TestTreatmentDatabase.createProperTestTreatmentDatabase()));
+    public void testTrialConfigDatabasesAreValid() {
+        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigDatabase.createMinimalTestTrialConfigDatabase()));
+        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigDatabase.createProperTestTrialConfigDatabase()));
     }
 
     @Test
-    public void canDetectIllDefinedTreatmentDatabase() {
-        assertFalse(TreatmentDatabaseValidator.isValid(createInvalidTreatmentDatabase()));
+    public void canDetectIllDefinedTrialConfigDatabase() {
+        assertFalse(TrialConfigDatabaseValidator.isValid(createInvalidTrialConfigDatabase()));
     }
 
     @NotNull
-    private static TreatmentDatabase createInvalidTreatmentDatabase() {
+    private static TrialConfigDatabase createInvalidTrialConfigDatabase() {
         String trial1 = "trial 1";
         String trial2 = "trial 2";
 
-        return ImmutableTreatmentDatabase.builder()
+        return ImmutableTrialConfigDatabase.builder()
                 .addTrialDefinitionConfigs(ImmutableTrialDefinitionConfig.builder()
                         .trialId(trial1)
                         .acronym(Strings.EMPTY)

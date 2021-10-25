@@ -16,13 +16,13 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class TreatmentDatabaseReaderTest {
+public class TrialConfigDatabaseReaderTest {
 
-    private static final String TREATMENT_DIRECTORY = Resources.getResource("treatment").getPath();
+    private static final String TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").getPath();
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        TreatmentDatabase database = TreatmentDatabaseReader.read(TREATMENT_DIRECTORY);
+        TrialConfigDatabase database = TrialConfigDatabaseReader.read(TRIAL_CONFIG_DIRECTORY);
 
         assertTrialDefinitionConfigs(database.trialDefinitionConfigs());
         assertCohortConfigs(database.cohortDefinitionConfigs());

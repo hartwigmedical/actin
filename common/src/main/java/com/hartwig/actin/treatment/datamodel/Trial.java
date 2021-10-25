@@ -2,8 +2,6 @@ package com.hartwig.actin.treatment.datamodel;
 
 import java.util.List;
 
-import com.hartwig.actin.algo.eligibility.EligibilityFunction;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

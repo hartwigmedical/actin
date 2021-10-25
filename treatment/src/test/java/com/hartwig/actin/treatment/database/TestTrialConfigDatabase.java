@@ -13,22 +13,22 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestTreatmentDatabase {
+public final class TestTrialConfigDatabase {
 
     private static final String TEST_TRIAL_ID = "TestTrial";
 
-    private TestTreatmentDatabase() {
+    private TestTrialConfigDatabase() {
     }
 
     @NotNull
-    public static TreatmentDatabase createMinimalTestTreatmentDatabase() {
-        return ImmutableTreatmentDatabase.builder().build();
+    public static TrialConfigDatabase createMinimalTestTrialConfigDatabase() {
+        return ImmutableTrialConfigDatabase.builder().build();
     }
 
     @NotNull
-    public static TreatmentDatabase createProperTestTreatmentDatabase() {
-        return ImmutableTreatmentDatabase.builder()
-                .from(createMinimalTestTreatmentDatabase())
+    public static TrialConfigDatabase createProperTestTrialConfigDatabase() {
+        return ImmutableTrialConfigDatabase.builder()
+                .from(createMinimalTestTrialConfigDatabase())
                 .trialDefinitionConfigs(createTestTrialDefinitionConfigs())
                 .cohortDefinitionConfigs(createTestCohortDefinitionConfigs())
                 .inclusionCriteriaConfigs(createTestInclusionCriteriaConfigs())
