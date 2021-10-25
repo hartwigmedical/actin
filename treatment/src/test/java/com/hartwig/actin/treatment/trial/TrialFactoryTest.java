@@ -1,10 +1,13 @@
 package com.hartwig.actin.treatment.trial;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.google.common.io.Resources;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -14,6 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class TrialFactoryTest {
+
+    private static final String TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").getPath();
+
+    @Test
+    public void canCreateFromTrialConfigDirectory() throws IOException {
+        assertNotNull(TrialFactory.fromTrialConfigDirectory(TRIAL_CONFIG_DIRECTORY));
+    }
 
     @Test
     public void canCreateFromProperTestModel() {
