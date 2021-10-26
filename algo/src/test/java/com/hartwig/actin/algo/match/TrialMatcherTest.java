@@ -56,5 +56,4 @@ public class TrialMatcherTest {
 
         throw new IllegalStateException("Cannot find evaluation for rule " + ruleToFind);
     }
-
 }
