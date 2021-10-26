@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TrialEligibility {
 
     @NotNull
-    public abstract String trailId();
+    public abstract String trialId();
 
     @NotNull
     public abstract Map<EligibilityFunction, EligibilityEvaluation> evaluations();
