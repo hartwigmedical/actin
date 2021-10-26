@@ -27,7 +27,7 @@ public final class PatientRecordFactory {
         }
 
         if (!clinical.tumor().doids().equals(molecular.configuredPrimaryTumorDoids())) {
-            LOGGER.warn("Primary tumor DOIDs not equal between clinical ({}) and molecular ({})!",
+            LOGGER.warn("Clinical primary tumor DOIDs '{}' not the same as molecular primary tumor DOIDs '{}'!",
                     concat(clinical.tumor().doids()),
                     concat(molecular.configuredPrimaryTumorDoids()));
         }

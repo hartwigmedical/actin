@@ -159,7 +159,8 @@ public class LaboratoryGenerator implements TableGenerator {
         while (inOutOfRefChain && index < values.size()) {
             LabValue lab = values.get(index);
 
-            if (lab.isOutsideRef()) {
+            Boolean isOutsideRef = lab.isOutsideRef();
+            if (isOutsideRef != null && isOutsideRef) {
                 outOfRangeCount++;
                 if (moreRecentValue > lab.value()) {
                     trendIsDown = false;
