@@ -1,18 +1,18 @@
 ## ACTIN-Clinical
 
 ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described below.
-This clinical model is written to a per-sample json file. 
-See [Database](../database/README.md) for how to load this model into a mysql database.
+This clinical model is written to a per-sample json file. The clinical data can be loaded into a mysql database via [ACTIN-Database](../database/README.md).
 
-ACTIN-Clinical requires Java 11+ and can be run as follows: 
+This application requires Java 11+ and can be run as follows: 
 
 ```
 java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
    -feed_directory /path/to/feed
    -curation_directory /path/to/curation
-   -output_directory /path/to/where/clinical/data/is/written
+   -output_directory /path/to/where/clinical_json_files/are/written
 ```
 ### Disease Ontology ID
+
 For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
 ## Clinical Datamodel
