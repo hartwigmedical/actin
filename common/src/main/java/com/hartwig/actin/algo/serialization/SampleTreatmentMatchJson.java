@@ -8,9 +8,13 @@ import com.google.gson.GsonBuilder;
 import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
 import com.hartwig.actin.util.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class SampleTreatmentMatchJson {
+
+    private static final Logger LOGGER = LogManager.getLogger(SampleTreatmentMatchJson.class);
 
     private static final String TREATMENT_MATCH_EXTENSION = ".treatment_match.json";
 
@@ -21,6 +25,7 @@ public final class SampleTreatmentMatchJson {
         String path = Paths.forceTrailingFileSeparator(directory);
         String jsonFile = path + match.sampleId() + TREATMENT_MATCH_EXTENSION;
 
+        LOGGER.info("Writing sample treatment match to {}", jsonFile);
         BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
         writer.write(toJson(match));
         writer.close();
