@@ -20,7 +20,7 @@ public class TrialConfigModel {
     public static TrialConfigModel fromTrialConfigDirectory(@NotNull String trialConfigDirectory) throws IOException {
         TrialConfigDatabase database = TrialConfigDatabaseReader.read(trialConfigDirectory);
         if (!TrialConfigDatabaseValidator.isValid(database)) {
-            throw new IllegalStateException("Trial config database is not considered valid. Cannot continue creating treatments");
+            throw new IllegalStateException("Trial config database is not considered valid. Cannot create config model.");
         }
         return new TrialConfigModel(database);
     }
