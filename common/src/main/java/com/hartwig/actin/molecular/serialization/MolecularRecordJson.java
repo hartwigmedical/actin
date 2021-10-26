@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -53,14 +55,25 @@ public final class MolecularRecordJson {
             return ImmutableMolecularRecord.builder()
                     .sampleId(string(record, "sampleId"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
+                    .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
                     .genomicTreatmentEvidences(toGenomicTreatmentEvidences(array(record, "protect")))
                     .build();
         }
 
         @NotNull
-        private static List<GenomicTreatmentEvidence> toGenomicTreatmentEvidences(@NotNull JsonArray protect) {
+        private static Set<String> extractDoids(@NotNull JsonArray configuredPrimaryTumorArray) {
+            Set<String> doids = Sets.newHashSet();
+            for (JsonElement element : configuredPrimaryTumorArray) {
+                JsonObject doidNode = element.getAsJsonObject();
+                doids.add(string(doidNode, "doid"));
+            }
+            return doids;
+        }
+
+        @NotNull
+        private static List<GenomicTreatmentEvidence> toGenomicTreatmentEvidences(@NotNull JsonArray protectArray) {
             List<GenomicTreatmentEvidence> evidences = Lists.newArrayList();
-            for (JsonElement element : protect) {
+            for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
                 boolean reported = bool(evidence, "reported");
                 if (reported) {

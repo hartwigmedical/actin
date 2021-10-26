@@ -19,6 +19,9 @@ public abstract class MolecularRecord {
     public abstract boolean hasReliableQuality();
 
     @NotNull
+    public abstract Set<String> configuredPrimaryTumorDoids();
+
+    @NotNull
     public abstract List<GenomicTreatmentEvidence> genomicTreatmentEvidences();
 
     @NotNull

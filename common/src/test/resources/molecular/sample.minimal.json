@@ -1,8 +1,8 @@
 {
   "sampleId": "ACTN01029999T",
+  "configuredPrimaryTumor": [],
   "purple": {
     "hasReliableQuality": true
   },
-  "protect": [
-  ]
+  "protect": []
 }
