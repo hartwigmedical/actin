@@ -1,6 +1,6 @@
 package com.hartwig.actin.system;
 
-import com.hartwig.actin.algo.AlgoRunner;
+import com.hartwig.actin.algo.TreatmentMatcherApplication;
 import com.hartwig.actin.clinical.ClinicalIngestionApplication;
 import com.hartwig.actin.database.ClinicalLoaderApplication;
 import com.hartwig.actin.report.ReporterApplication;
@@ -20,7 +20,7 @@ public class SystemApplication {
         LOGGER.info("The following applications are available through ACTIN v{}", VERSION);
         LOGGER.info(" {}", ClinicalIngestionApplication.class);
         LOGGER.info(" {}", TreatmentCreatorApplication.class);
-        LOGGER.info(" {}", AlgoRunner.class);
+        LOGGER.info(" {}", TreatmentMatcherApplication.class);
         LOGGER.info(" {}", ClinicalLoaderApplication.class);
         LOGGER.info(" {}", ReporterApplication.class);
     }
