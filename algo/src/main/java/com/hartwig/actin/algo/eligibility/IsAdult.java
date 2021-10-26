@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsAdult implements EligibilityEvaluator {
+public class IsAdult {
 
     private final int referenceYear;
 
@@ -14,7 +14,6 @@ public class IsAdult implements EligibilityEvaluator {
     }
 
     @NotNull
-    @Override
     public EligibilityEvaluation evaluate(@NotNull final PatientRecord record) {
         int age = referenceYear - record.clinical().patient().birthYear();
         if (age > 18) {
