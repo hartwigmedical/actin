@@ -3,7 +3,7 @@
 ACTIN-Treatment creates a database of potential treatments that [ACTIN-Algo](../algo/README.md) matches against.  
 The application takes in a set of configuration files and writes a database in JSON format to a specified output directory. 
 
-ACTIN-Treatment requires Java 11+ and can be run as follows: 
+This application requires Java 11+ and can be run as follows: 
 
 ```
 java -cp actin.jar com.hartwig.actin.treatment.TreatmentCreatorApplication \
