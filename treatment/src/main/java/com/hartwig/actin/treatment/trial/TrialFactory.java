@@ -7,6 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
@@ -72,8 +73,7 @@ public class TrialFactory {
     private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<InclusionCriteriaConfig> inclusionConfigs) {
         List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
         for (InclusionCriteriaConfig inclusionConfig : inclusionConfigs) {
-            eligibilityFunctions.add(ImmutableEligibilityFunction.builder()
-                    .rule(inclusionConfig.eligibilityRule())
+            eligibilityFunctions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD)
                     .parameters(inclusionConfig.eligibilityParameters())
                     .build());
         }

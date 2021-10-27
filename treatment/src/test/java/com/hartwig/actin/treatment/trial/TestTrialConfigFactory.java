@@ -76,8 +76,8 @@ public final class TestTrialConfigFactory {
 
         ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
 
-        configs.add(builder.eligibilityRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build());
-        configs.add(builder.eligibilityRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).addAppliesToCohorts("A").build());
+        configs.add(builder.eligibilityRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString()).build());
+        configs.add(builder.eligibilityRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString()).addAppliesToCohorts("A").build());
 
         return configs;
     }

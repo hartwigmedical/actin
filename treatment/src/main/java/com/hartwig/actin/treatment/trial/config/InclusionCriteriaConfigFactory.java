@@ -2,7 +2,6 @@ package com.hartwig.actin.treatment.trial.config;
 
 import java.util.Map;
 
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.trial.TrialConfigDatabaseUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +14,7 @@ public class InclusionCriteriaConfigFactory implements TrialConfigFactory<Inclus
         return ImmutableInclusionCriteriaConfig.builder()
                 .trialId(parts[fields.get("trialId")])
                 .appliesToCohorts(TrialConfigDatabaseUtil.toCohorts(parts[fields.get("appliesToCohorts")]))
-                .eligibilityRule(EligibilityRule.valueOf(parts[fields.get("eligibilityRule")]))
+                .eligibilityRule(parts[fields.get("eligibilityRule")])
                 .eligibilityParameters(TrialConfigDatabaseUtil.toParameters(parts[fields.get("eligibilityParameters")]))
                 .build();
     }
