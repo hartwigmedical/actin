@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment.trial.config;
 
+import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -21,5 +22,5 @@ public abstract class InclusionCriteriaConfig implements TrialConfig {
     public abstract String inclusionCriterion();
 
     @NotNull
-    public abstract Set<String> parameters();
+    public abstract List<String> parameters();
 }

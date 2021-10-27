@@ -1,6 +1,6 @@
 package com.hartwig.actin.treatment.datamodel;
 
-import java.util.Set;
+import java.util.List;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,5 +14,5 @@ public abstract class EligibilityFunction {
     public abstract EligibilityRule rule();
 
     @NotNull
-    public abstract Set<Object> parameters();
+    public abstract List<Object> parameters();
 }
