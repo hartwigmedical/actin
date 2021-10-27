@@ -14,5 +14,5 @@ public abstract class EligibilityFunction {
     public abstract EligibilityRule rule();
 
     @NotNull
-    public abstract Set<String> parameters();
+    public abstract Set<Object> parameters();
 }

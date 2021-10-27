@@ -1,6 +1,12 @@
 package com.hartwig.actin.treatment.datamodel;
 
 public enum EligibilityRule {
+    // Special purpose meta-eligibility rules
+    AND,
+    OR,
+    NOT,
+    WARN_IF,
+
     // Rules based on base clinical information and general health of patient
     IS_AT_LEAST_18_YEARS_OLD,
     IS_BREASTFEEDING,

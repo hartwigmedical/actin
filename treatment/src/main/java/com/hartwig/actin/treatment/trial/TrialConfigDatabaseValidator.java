@@ -40,13 +40,17 @@ public final class TrialConfigDatabaseValidator {
         Set<String> trialIds = cohortIdsPerTrial.keySet();
         for (InclusionCriteriaConfig criterion : inclusionCriteria) {
             if (!trialIds.contains(criterion.trialId())) {
-                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}", criterion.eligibilityRule(), criterion.trialId());
+                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}",
+                        criterion.inclusionCriterion(),
+                        criterion.trialId());
                 valid = false;
             } else {
                 Collection<String> cohortIdsForTrial = cohortIdsPerTrial.get(criterion.trialId());
                 for (String cohortId : criterion.appliesToCohorts()) {
                     if (!cohortIdsForTrial.contains(cohortId)) {
-                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}", criterion.eligibilityRule(), cohortId);
+                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}",
+                                criterion.inclusionCriterion(),
+                                cohortId);
                         valid = false;
                     }
                 }

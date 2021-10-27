@@ -18,8 +18,8 @@ public abstract class InclusionCriteriaConfig implements TrialConfig {
     public abstract Set<String> appliesToCohorts();
 
     @NotNull
-    public abstract String eligibilityRule();
+    public abstract String inclusionCriterion();
 
     @NotNull
-    public abstract Set<String> eligibilityParameters();
+    public abstract Set<String> parameters();
 }

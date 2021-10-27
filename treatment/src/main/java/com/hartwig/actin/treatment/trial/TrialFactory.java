@@ -73,10 +73,14 @@ public class TrialFactory {
     private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<InclusionCriteriaConfig> inclusionConfigs) {
         List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
         for (InclusionCriteriaConfig inclusionConfig : inclusionConfigs) {
-            eligibilityFunctions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD)
-                    .parameters(inclusionConfig.eligibilityParameters())
-                    .build());
+            eligibilityFunctions.add(toEligibilityFunction(inclusionConfig));
         }
         return eligibilityFunctions;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static EligibilityFunction toEligibilityFunction(@NotNull InclusionCriteriaConfig config) {
+        return ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build();
     }
 }
