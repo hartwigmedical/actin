@@ -34,7 +34,7 @@ public final class TestTreatmentFactory {
     private static List<EligibilityFunction> createGeneralEligibilityFunctions() {
         List<EligibilityFunction> functions = Lists.newArrayList();
 
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_ADULT).build());
+        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build());
 
         return functions;
     }

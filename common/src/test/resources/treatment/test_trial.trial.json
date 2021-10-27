@@ -4,7 +4,7 @@
   "title": "This is a trial to test ACTIN",
   "generalEligibilityFunctions": [
     {
-      "rule": "IS_ADULT",
+      "rule": "IS_AT_LEAST_18_YEARS_OLD",
       "parameters": []
     }
   ],

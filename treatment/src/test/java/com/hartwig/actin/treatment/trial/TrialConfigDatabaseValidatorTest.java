@@ -62,12 +62,12 @@ public class TrialConfigDatabaseValidatorTest {
                 .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder()
                         .trialId(trial1)
                         .addAppliesToCohorts("B")
-                        .eligibilityRule(EligibilityRule.IS_ADULT)
+                        .eligibilityRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD)
                         .build())
                 .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder()
                         .trialId(trial2)
                         .addAppliesToCohorts("A")
-                        .eligibilityRule(EligibilityRule.IS_ADULT)
+                        .eligibilityRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD)
                         .build())
                 .build();
     }

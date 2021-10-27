@@ -55,7 +55,7 @@ public class TrialJsonTest {
         assertEquals(1, trial.generalEligibilityFunctions().size());
 
         EligibilityFunction generalFunction = trial.generalEligibilityFunctions().get(0);
-        assertEquals(EligibilityRule.IS_ADULT, generalFunction.rule());
+        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, generalFunction.rule());
         assertTrue(generalFunction.parameters().isEmpty());
 
         assertEquals(3, trial.cohorts().size());

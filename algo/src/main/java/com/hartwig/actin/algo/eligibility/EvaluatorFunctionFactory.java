@@ -14,7 +14,7 @@ public final class EvaluatorFunctionFactory {
     @NotNull
     public static EvaluatorFunction create(@NotNull EligibilityFunction eligibilityFunction) {
         switch (eligibilityFunction.rule()) {
-            case IS_ADULT:
+            case IS_AT_LEAST_18_YEARS_OLD:
                 return createIsAdult();
             default:
                 throw new IllegalArgumentException("Cannot create evaluator function for rule " + eligibilityFunction.rule());

@@ -69,7 +69,7 @@ public class TrialConfigDatabaseReaderTest {
         InclusionCriteriaConfig config = configs.get(0);
         assertEquals("ACTN 2021", config.trialId());
         assertTrue(config.appliesToCohorts().isEmpty());
-        assertEquals(EligibilityRule.IS_ADULT, config.eligibilityRule());
+        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, config.eligibilityRule());
         assertTrue(config.eligibilityParameters().isEmpty());
     }
 }
