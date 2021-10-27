@@ -117,6 +117,10 @@ public class TrialFactory {
 
     @NotNull
     private static List<String> extractCompositeInputs(@NotNull String criterion) {
+        if (!criterion.contains("(") || !criterion.contains(")")) {
+            throw new IllegalStateException("Not a valid criterion: " + criterion);
+        }
+
         String params = criterion.substring(criterion.indexOf("(") + 1, criterion.lastIndexOf(")"));
 
         int relevantCommaPosition = -1;

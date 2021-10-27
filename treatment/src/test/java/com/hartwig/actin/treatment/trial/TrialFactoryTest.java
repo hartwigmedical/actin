@@ -131,6 +131,11 @@ public class TrialFactoryTest {
         TrialFactory.generateEligibilityFunction("IS_PREGNANT(HAS_INR_ULN_AT_MOST_X)", Lists.newArrayList("1"));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void crashOnWronglyFormattedCompositeFunction() {
+        TrialFactory.generateEligibilityFunction("NOT(IS_PREGNANT", Lists.newArrayList());
+    }
+
     @NotNull
     private static EligibilityFunction findFunction(@NotNull List<Object> functions, @NotNull EligibilityRule rule) {
         for (Object function : functions) {
