@@ -6,7 +6,6 @@ import java.util.List;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
-import com.hartwig.actin.algo.match.TrialMatcher;
 import com.hartwig.actin.algo.serialization.SampleTreatmentMatchJson;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;

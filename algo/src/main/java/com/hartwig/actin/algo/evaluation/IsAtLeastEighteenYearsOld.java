@@ -1,15 +1,15 @@
-package com.hartwig.actin.algo.eligibility;
+package com.hartwig.actin.algo.evaluation;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsAdult implements EvaluatorFunction {
+public class IsAtLeastEighteenYearsOld implements EvaluationFunction {
 
     private final int referenceYear;
 
-    public IsAdult(final int referenceYear) {
+    public IsAtLeastEighteenYearsOld(final int referenceYear) {
         this.referenceYear = referenceYear;
     }
 
@@ -23,7 +23,7 @@ public class IsAdult implements EvaluatorFunction {
             return EligibilityEvaluation.FAIL;
         }
 
-        // Since we only know the birth year we cannot determine if someone with age 18 is actually adult.
-        return EligibilityEvaluation.UNCERTAIN;
+        // Since we only know the birth year we cannot determine if someone with 18 yrs difference is actually 18 years old.
+        return EligibilityEvaluation.COULD_NOT_BE_DETERMINED;
     }
 }

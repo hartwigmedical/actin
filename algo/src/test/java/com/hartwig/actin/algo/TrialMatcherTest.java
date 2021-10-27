@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.match;
+package com.hartwig.actin.algo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

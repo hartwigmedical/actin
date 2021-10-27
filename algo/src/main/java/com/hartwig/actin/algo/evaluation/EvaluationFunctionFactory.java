@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.eligibility;
+package com.hartwig.actin.algo.evaluation;
 
 import java.time.LocalDate;
 
@@ -6,13 +6,13 @@ import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class EvaluatorFunctionFactory {
+public final class EvaluationFunctionFactory {
 
-    private EvaluatorFunctionFactory() {
+    private EvaluationFunctionFactory() {
     }
 
     @NotNull
-    public static EvaluatorFunction create(@NotNull EligibilityFunction eligibilityFunction) {
+    public static EvaluationFunction create(@NotNull EligibilityFunction eligibilityFunction) {
         switch (eligibilityFunction.rule()) {
             case IS_AT_LEAST_18_YEARS_OLD:
                 return createIsAdult();
@@ -22,7 +22,7 @@ public final class EvaluatorFunctionFactory {
     }
 
     @NotNull
-    private static EvaluatorFunction createIsAdult() {
-        return new IsAdult(LocalDate.now().getYear());
+    private static EvaluationFunction createIsAdult() {
+        return new IsAtLeastEighteenYearsOld(LocalDate.now().getYear());
     }
 }

@@ -2,6 +2,6 @@ package com.hartwig.actin.algo.datamodel;
 
 public enum EligibilityEvaluation {
     PASS,
-    UNCERTAIN,
-    FAIL
+    FAIL,
+    COULD_NOT_BE_DETERMINED
 }
