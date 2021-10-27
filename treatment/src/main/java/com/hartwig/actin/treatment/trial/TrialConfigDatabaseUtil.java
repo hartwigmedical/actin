@@ -1,7 +1,9 @@
 package com.hartwig.actin.treatment.trial;
 
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +30,10 @@ public final class TrialConfigDatabaseUtil {
     }
 
     @NotNull
-    public static Set<String> toParameters(@NotNull String parameterString) {
-        Set<String> parameters = Sets.newHashSet();
+    public static List<String> toParameters(@NotNull String parameterString) {
+        List<String> parameters = Lists.newArrayList();
         if (!parameterString.isEmpty()) {
-            parameters.addAll(Sets.newHashSet(parameterString.split(PARAMETER_SEPARATOR)));
+            parameters.addAll(Lists.newArrayList(parameterString.split(PARAMETER_SEPARATOR)));
         }
         return parameters;
     }

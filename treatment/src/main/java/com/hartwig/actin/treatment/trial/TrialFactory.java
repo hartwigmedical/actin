@@ -78,7 +78,9 @@ public class TrialFactory {
     private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<InclusionCriteriaConfig> inclusionConfigs) {
         List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
         for (InclusionCriteriaConfig inclusionConfig : inclusionConfigs) {
-            eligibilityFunctions.add(generateEligibilityFunction(inclusionConfig.inclusionCriterion(), inclusionConfig.parameters()));
+            // We need to copy the inclusion parameters so that we can change the list inside the function
+            eligibilityFunctions.add(generateEligibilityFunction(inclusionConfig.inclusionCriterion(),
+                    Lists.newArrayList(inclusionConfig.parameters())));
         }
         return eligibilityFunctions;
     }
