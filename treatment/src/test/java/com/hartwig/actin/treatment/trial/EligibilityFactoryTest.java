@@ -18,6 +18,9 @@ public class EligibilityFactoryTest {
     public void canDetermineWhetherRuleIsValid() {
         assertTrue(EligibilityFactory.isValidInclusionCriterion("HAS_INR_ULN_AT_MOST_X[1]"));
         assertTrue(EligibilityFactory.isValidInclusionCriterion("NOT(HAS_INR_ULN_AT_MOST_X[1])"));
+        String complex = "OR(AND(OR(HAS_INR_ULN_AT_MOST_X[1], HAS_PT_ULN_AT_MOST_X[2]), HAS_APTT_ULN_AT_MOST_X[3]), "
+                + "HAS_STABLE_ANTICOAGULANT_DOSING)";
+        assertTrue(EligibilityFactory.isValidInclusionCriterion(complex));
 
         // Generally wrong:
         assertFalse(EligibilityFactory.isValidInclusionCriterion("This is not a valid criterion"));

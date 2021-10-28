@@ -85,19 +85,19 @@ public final class EligibilityFactory {
 
     @Nullable
     private static Integer findSeparatingCommaPosition(@NotNull String params) {
-        boolean insideCompositeSection = false;
-        boolean insideParameterSection = false;
+        int nestedCompositeLevel = 0;
+        int nestedParameterSection = 0;
         for (int i = 0; i < params.length(); i++) {
             char character = params.charAt(i);
             if (character == COMPOSITE_START) {
-                insideCompositeSection = true;
+                nestedCompositeLevel++;
             } else if (character == COMPOSITE_END) {
-                insideCompositeSection = false;
+                nestedCompositeLevel--;
             } else if (character == PARAM_START) {
-                insideParameterSection = true;
+                nestedParameterSection++;
             } else if (character == PARAM_END) {
-                insideParameterSection = false;
-            } else if (character == ',' && !insideParameterSection && !insideCompositeSection) {
+                nestedParameterSection--;
+            } else if (character == ',' && nestedCompositeLevel == 0 && nestedParameterSection == 0) {
                 return i;
             }
         }
