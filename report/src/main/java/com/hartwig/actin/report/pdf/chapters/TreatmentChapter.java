@@ -12,7 +12,7 @@ public class TreatmentChapter implements ReportChapter {
     @NotNull
     @Override
     public String name() {
-        return "Treatments";
+        return "Treatment Options";
     }
 
     @NotNull

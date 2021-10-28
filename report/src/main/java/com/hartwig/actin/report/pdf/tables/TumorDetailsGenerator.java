@@ -44,12 +44,6 @@ public class TumorDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Stage"));
         table.addCell(Cells.createValue(stage(record.tumor())));
 
-        table.addCell(Cells.createKey("Primary tumor location"));
-        table.addCell(Cells.createValue(tumorLocation(record.tumor())));
-
-        table.addCell(Cells.createKey("Primary tumor type"));
-        table.addCell(Cells.createValue(tumorType(record.tumor())));
-
         table.addCell(Cells.createKey("Biopsy location"));
         table.addCell(Cells.createValue(biopsyLocation(record.tumor())));
 
@@ -72,32 +66,6 @@ public class TumorDetailsGenerator implements TableGenerator {
     private static String stage(@NotNull TumorDetails tumor) {
         TumorStage stage = tumor.stage();
         return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
-    }
-
-    @NotNull
-    private static String tumorLocation(@NotNull TumorDetails tumor) {
-        String tumorLocation = tumor.primaryTumorLocation();
-
-        if (tumorLocation != null) {
-            String tumorSubLocation = tumor.primaryTumorSubLocation();
-            return (tumorSubLocation != null && !tumorSubLocation.isEmpty())
-                    ? tumorLocation + " (" + tumorSubLocation + ")"
-                    : tumorLocation;
-        }
-
-        return Formats.VALUE_UNKNOWN;
-    }
-
-    @NotNull
-    private static String tumorType(@NotNull TumorDetails tumor) {
-        String tumorType = tumor.primaryTumorType();
-
-        if (tumorType != null) {
-            String tumorSubType = tumor.primaryTumorSubType();
-            return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorSubType : tumorType;
-        }
-
-        return Formats.VALUE_UNKNOWN;
     }
 
     @NotNull

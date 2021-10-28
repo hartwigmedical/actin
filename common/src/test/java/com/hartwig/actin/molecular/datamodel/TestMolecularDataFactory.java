@@ -40,8 +40,7 @@ public final class TestMolecularDataFactory {
     private static List<GenomicTreatmentEvidence> createTestGenomicTreatmentEvidences() {
         List<GenomicTreatmentEvidence> genomicTreatmentEvidences = Lists.newArrayList();
 
-        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
-                .genomicEvent("BRAF p.V600E")
+        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder().genomicEvent("BRAF V600E")
                 .treatment("Vemurafenib")
                 .onLabel(true)
                 .level(EvidenceLevel.A)

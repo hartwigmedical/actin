@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,9 +32,20 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.util.AminoAcid;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class MolecularRecordJson {
+
+    private static final Map<String, String> EVENT_REPLACEMENTS = Maps.newHashMap();
+
+    static {
+        EVENT_REPLACEMENTS.put("p.", Strings.EMPTY);
+        EVENT_REPLACEMENTS.put("c.", Strings.EMPTY);
+        EVENT_REPLACEMENTS.put("full gain", "amp");
+        EVENT_REPLACEMENTS.put("partial gain", "amp");
+        EVENT_REPLACEMENTS.put("homozygous disruption", "disruption");
+    }
 
     private MolecularRecordJson() {
     }
@@ -91,11 +104,15 @@ public final class MolecularRecordJson {
 
         @NotNull
         private static String convert(@NotNull String genomicEvent) {
+            String event = genomicEvent;
             if (genomicEvent.contains("p.")) {
-                return AminoAcid.forceSingleLetterAminoAcids(genomicEvent);
-            } else {
-                return genomicEvent;
+                event = AminoAcid.forceSingleLetterAminoAcids(genomicEvent);
             }
+
+            for (Map.Entry<String, String> replacement : EVENT_REPLACEMENTS.entrySet()) {
+                event = event.replaceAll(replacement.getKey(), replacement.getValue());
+            }
+            return event;
         }
     }
 }

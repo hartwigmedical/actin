@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
@@ -11,6 +12,7 @@ import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
+import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.kernel.geom.PageSize;
@@ -58,8 +60,41 @@ public class SummaryChapter implements ReportChapter {
         patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
         patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text(" | Tumor: ").addStyle(Styles.labelStyle()));
+        patientDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
 
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+    }
+
+    @NotNull
+    private static String tumor(@NotNull TumorDetails tumor) {
+        return tumorLocation(tumor) + " - " + tumorType(tumor);
+    }
+
+    @NotNull
+    private static String tumorLocation(@NotNull TumorDetails tumor) {
+        String tumorLocation = tumor.primaryTumorLocation();
+
+        if (tumorLocation != null) {
+            String tumorSubLocation = tumor.primaryTumorSubLocation();
+            return (tumorSubLocation != null && !tumorSubLocation.isEmpty())
+                    ? tumorLocation + " (" + tumorSubLocation + ")"
+                    : tumorLocation;
+        }
+
+        return Formats.VALUE_UNKNOWN;
+    }
+
+    @NotNull
+    private static String tumorType(@NotNull TumorDetails tumor) {
+        String tumorType = tumor.primaryTumorType();
+
+        if (tumorType != null) {
+            String tumorSubType = tumor.primaryTumorSubType();
+            return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorSubType : tumorType;
+        }
+
+        return Formats.VALUE_UNKNOWN;
     }
 
     private void addChapterTitle(@NotNull Document document) {
@@ -73,8 +108,8 @@ public class SummaryChapter implements ReportChapter {
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(record.clinical(), keyWidth, valueWidth),
                 new PatientCurrentDetailsGenerator(record.clinical(), keyWidth, valueWidth),
-                LaboratoryGenerator.fromRecord(record.clinical(), keyWidth, valueWidth),
                 new TumorDetailsGenerator(record.clinical(), keyWidth, valueWidth),
+                LaboratoryGenerator.fromRecord(record.clinical(), keyWidth, valueWidth),
                 new MolecularResultsGenerator(record.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {
