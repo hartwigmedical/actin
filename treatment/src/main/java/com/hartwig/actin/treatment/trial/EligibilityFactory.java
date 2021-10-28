@@ -64,7 +64,7 @@ public final class EligibilityFactory {
 
     @NotNull
     private static EligibilityRule extractParameterizedRule(@NotNull String criterion) {
-        return EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf("[")).trim());
+        return EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(PARAM_START)).trim());
     }
 
     @NotNull
@@ -108,7 +108,7 @@ public final class EligibilityFactory {
     @NotNull
     private static List<String> extractParameterizedInputs(@NotNull String criterion) {
         List<String> parameters = Lists.newArrayList();
-        String parameterString = criterion.substring(criterion.indexOf("[") + 1, criterion.lastIndexOf("]"));
+        String parameterString = criterion.substring(criterion.indexOf(PARAM_START) + 1, criterion.lastIndexOf(PARAM_END));
         for (String parameter : parameterString.split(",")) {
             parameters.add(parameter.trim());
         }
