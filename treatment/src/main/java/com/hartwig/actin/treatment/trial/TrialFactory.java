@@ -78,29 +78,26 @@ public class TrialFactory {
     private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<InclusionCriteriaConfig> inclusionConfigs) {
         List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
         for (InclusionCriteriaConfig inclusionConfig : inclusionConfigs) {
-            // We need to copy the inclusion parameters so that we can change the list inside the function
-            eligibilityFunctions.add(generateEligibilityFunction(inclusionConfig.inclusionCriterion(),
-                    Lists.newArrayList(inclusionConfig.parameters())));
+            eligibilityFunctions.add(generateEligibilityFunction(inclusionConfig.inclusionCriterion()));
         }
         return eligibilityFunctions;
     }
 
     @NotNull
     @VisibleForTesting
-    static EligibilityFunction generateEligibilityFunction(@NotNull String criterion, @NotNull List<String> inputParameters) {
+    static EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
         EligibilityRule rule;
         List<Object> parameters = Lists.newArrayList();
         if (criterion.contains("(")) {
             rule = extractCompositeRule(criterion.trim());
             for (String compositeInput : extractCompositeInputs(criterion)) {
-                parameters.add(generateEligibilityFunction(compositeInput, inputParameters));
+                parameters.add(generateEligibilityFunction(compositeInput));
             }
+        } else if (criterion.contains("[")) {
+            rule = extractParameterizedRule(criterion);
+            parameters.addAll(extractParameterizedInputs(criterion));
         } else {
             rule = EligibilityRule.valueOf(criterion.trim());
-            if (ruleTakesParam(rule)) {
-                parameters = Lists.newArrayList(inputParameters.get(0));
-                inputParameters.remove(0);
-            }
         }
 
         return ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
@@ -113,6 +110,11 @@ public class TrialFactory {
             throw new IllegalStateException("Not a valid composite rule: " + rule);
         }
         return rule;
+    }
+
+    @NotNull
+    private static EligibilityRule extractParameterizedRule(@NotNull String criterion) {
+        return EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf("[")).trim());
     }
 
     @NotNull
@@ -149,7 +151,16 @@ public class TrialFactory {
         return result;
     }
 
-    private static boolean ruleTakesParam(@NotNull EligibilityRule rule) {
-        return Sets.newHashSet(rule.toString().split("_")).contains("X");
+    @NotNull
+    private static List<String> extractParameterizedInputs(@NotNull String criterion) {
+        if (!criterion.contains("[") || !criterion.contains("]")) {
+            throw new IllegalStateException("Not a valid parameterized criterion: " + criterion);
+        }
+
+        List<String> params = Lists.newArrayList();
+
+        params.add(criterion.substring(criterion.indexOf("[") + 1, criterion.indexOf("]")));
+
+        return params;
     }
 }

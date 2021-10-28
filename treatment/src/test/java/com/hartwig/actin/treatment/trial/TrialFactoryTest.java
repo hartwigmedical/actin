@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -75,12 +74,12 @@ public class TrialFactoryTest {
 
     @Test
     public void canGenerateSimpleEligibilityFunction() {
-        EligibilityFunction function = TrialFactory.generateEligibilityFunction("HAS_INR_ULN_AT_MOST_X", Lists.newArrayList("1"));
+        EligibilityFunction function = TrialFactory.generateEligibilityFunction("HAS_INR_ULN_AT_MOST_X[1]");
         assertEquals(EligibilityRule.HAS_INR_ULN_AT_MOST_X, function.rule());
         assertEquals(1, function.parameters().size());
         assertTrue(function.parameters().contains("1"));
 
-        EligibilityFunction notFunction = TrialFactory.generateEligibilityFunction("NOT(HAS_INR_ULN_AT_MOST_X)", Lists.newArrayList("1"));
+        EligibilityFunction notFunction = TrialFactory.generateEligibilityFunction("NOT(HAS_INR_ULN_AT_MOST_X[1])");
         assertEquals(EligibilityRule.NOT, notFunction.rule());
         assertEquals(1, notFunction.parameters().size());
 
@@ -90,11 +89,9 @@ public class TrialFactoryTest {
 
     @Test
     public void canGenerateComplexCompositeEligibilityFunction() {
-        String criterion = "OR(IS_PREGNANT, AND(OR(HAS_INR_ULN_AT_MOST_X, HAS_PT_ULN_AT_MOST_X), HAS_APTT_ULN_AT_MOST_X))";
+        String criterion = "OR(IS_PREGNANT, AND(OR(HAS_INR_ULN_AT_MOST_X[1.5], HAS_PT_ULN_AT_MOST_X[2]), HAS_APTT_ULN_AT_MOST_X[3]))";
 
-        List<String> parameters = Lists.newArrayList("1.5", "2", "3");
-
-        EligibilityFunction orRoot = TrialFactory.generateEligibilityFunction(criterion, parameters);
+        EligibilityFunction orRoot = TrialFactory.generateEligibilityFunction(criterion);
 
         assertEquals(EligibilityRule.OR, orRoot.rule());
         assertEquals(2, orRoot.parameters().size());
@@ -121,19 +118,19 @@ public class TrialFactoryTest {
         assertTrue(secondOrInput2.parameters().contains("2"));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void crashOnIncorrectParamCount() {
-        TrialFactory.generateEligibilityFunction("HAS_INR_ULN_AT_MOST_X", Lists.newArrayList());
+    @Test(expected = IllegalStateException.class)
+    public void crashOnInvalidCompositeFunction() {
+        TrialFactory.generateEligibilityFunction("IS_PREGNANT(HAS_INR_ULN_AT_MOST_X[1])");
     }
 
     @Test(expected = IllegalStateException.class)
-    public void crashOnInvalidCompositeFunction() {
-        TrialFactory.generateEligibilityFunction("IS_PREGNANT(HAS_INR_ULN_AT_MOST_X)", Lists.newArrayList("1"));
+    public void crashOnInvalidParameterizedFunction() {
+        TrialFactory.generateEligibilityFunction("NOT(HAS_INR_ULN_AT_MOST_X[1)");
     }
 
     @Test(expected = IllegalStateException.class)
     public void crashOnWronglyFormattedCompositeFunction() {
-        TrialFactory.generateEligibilityFunction("NOT(IS_PREGNANT", Lists.newArrayList());
+        TrialFactory.generateEligibilityFunction("NOT(IS_PREGNANT");
     }
 
     @NotNull

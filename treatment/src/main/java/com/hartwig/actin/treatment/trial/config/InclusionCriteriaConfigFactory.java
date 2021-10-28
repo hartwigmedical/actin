@@ -15,7 +15,6 @@ public class InclusionCriteriaConfigFactory implements TrialConfigFactory<Inclus
                 .trialId(parts[fields.get("trialId")])
                 .appliesToCohorts(TrialConfigDatabaseUtil.toCohorts(parts[fields.get("appliesToCohorts")]))
                 .inclusionCriterion(parts[fields.get("inclusionCriterion")])
-                .parameters(TrialConfigDatabaseUtil.toParameters(parts[fields.get("parameters")]))
                 .build();
     }
 }
