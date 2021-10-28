@@ -10,8 +10,14 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class EligibilityFactory {
+
+    private static final char COMPOSITE_START = '(';
+    private static final char COMPOSITE_END = ')';
+    private static final char PARAM_START = '[';
+    private static final char PARAM_END = ']';
 
     private static final Set<EligibilityRule> VALID_COMPOSITE_RULES =
             Sets.newHashSet(EligibilityRule.AND, EligibilityRule.OR, EligibilityRule.NOT, EligibilityRule.WARN_IF);
@@ -32,12 +38,12 @@ public final class EligibilityFactory {
     public static EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
         EligibilityRule rule;
         List<Object> parameters = Lists.newArrayList();
-        if (criterion.contains("(")) {
+        if (isCompositeCriterion(criterion)) {
             rule = extractCompositeRule(criterion.trim());
             for (String compositeInput : extractCompositeInputs(criterion)) {
                 parameters.add(generateEligibilityFunction(compositeInput));
             }
-        } else if (criterion.contains("[")) {
+        } else if (isParameterizedCriterion(criterion)) {
             rule = extractParameterizedRule(criterion);
             parameters.addAll(extractParameterizedInputs(criterion));
         } else {
@@ -49,7 +55,7 @@ public final class EligibilityFactory {
 
     @NotNull
     private static EligibilityRule extractCompositeRule(@NotNull String criterion) {
-        EligibilityRule rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf("(")));
+        EligibilityRule rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(COMPOSITE_START)));
         if (!VALID_COMPOSITE_RULES.contains(rule)) {
             throw new IllegalStateException("Not a valid composite rule: " + rule);
         }
@@ -63,34 +69,11 @@ public final class EligibilityFactory {
 
     @NotNull
     private static List<String> extractCompositeInputs(@NotNull String criterion) {
-        if (!criterion.contains("(") || !criterion.contains(")")) {
-            throw new IllegalStateException("Not a valid criterion: " + criterion);
-        }
+        String params = criterion.substring(criterion.indexOf(COMPOSITE_START) + 1, criterion.lastIndexOf(COMPOSITE_END));
 
-        String params = criterion.substring(criterion.indexOf("(") + 1, criterion.lastIndexOf(")"));
-
-        int relevantCommaPosition = -1;
-
-        int parenthesisCount = 0;
-        int commaCount = 0;
-        boolean insideParameterSection = false;
-        for (int i = 0; i < params.length(); i++) {
-            if (params.charAt(i) == '(') {
-                parenthesisCount++;
-            } else if (params.charAt(i) == '[') {
-                insideParameterSection = true;
-            } else if (params.charAt(i) == ']') {
-                insideParameterSection = false;
-            } else if (params.charAt(i) == ',' && !insideParameterSection) {
-                commaCount++;
-                if (commaCount > parenthesisCount && relevantCommaPosition < 0) {
-                    relevantCommaPosition = i;
-                }
-            }
-        }
-
+        Integer relevantCommaPosition = findSeparatingCommaPosition(params);
         List<String> result = Lists.newArrayList();
-        if (relevantCommaPosition > 0) {
+        if (relevantCommaPosition != null) {
             result.add(params.substring(0, relevantCommaPosition).trim());
             result.add(params.substring(relevantCommaPosition + 1).trim());
         } else {
@@ -100,17 +83,44 @@ public final class EligibilityFactory {
         return result;
     }
 
+    @Nullable
+    private static Integer findSeparatingCommaPosition(@NotNull String params) {
+        boolean insideCompositeSection = false;
+        boolean insideParameterSection = false;
+        for (int i = 0; i < params.length(); i++) {
+            char character = params.charAt(i);
+            if (character == COMPOSITE_START) {
+                insideCompositeSection = true;
+            } else if (character == COMPOSITE_END) {
+                insideCompositeSection = false;
+            } else if (character == PARAM_START) {
+                insideParameterSection = true;
+            } else if (character == PARAM_END) {
+                insideParameterSection = false;
+            } else if (character == ',' && !insideParameterSection && !insideCompositeSection) {
+                return i;
+            }
+        }
+
+        return null;
+    }
+
     @NotNull
     private static List<String> extractParameterizedInputs(@NotNull String criterion) {
-        if (!criterion.contains("[") || !criterion.contains("]")) {
-            throw new IllegalStateException("Not a valid parameterized criterion: " + criterion);
+        List<String> parameters = Lists.newArrayList();
+        String parameterString = criterion.substring(criterion.indexOf("[") + 1, criterion.lastIndexOf("]"));
+        for (String parameter : parameterString.split(",")) {
+            parameters.add(parameter.trim());
         }
 
-        List<String> params = Lists.newArrayList();
-        for (String param : criterion.substring(criterion.indexOf("[") + 1, criterion.indexOf("]")).split(",")) {
-            params.add(param.trim());
-        }
+        return parameters;
+    }
 
-        return params;
+    private static boolean isCompositeCriterion(@NotNull String criterion) {
+        return criterion.contains(String.valueOf(COMPOSITE_START)) && criterion.endsWith(String.valueOf(COMPOSITE_END));
+    }
+
+    private static boolean isParameterizedCriterion(@NotNull String criterion) {
+        return criterion.contains(String.valueOf(PARAM_START)) && criterion.endsWith(String.valueOf(PARAM_END));
     }
 }

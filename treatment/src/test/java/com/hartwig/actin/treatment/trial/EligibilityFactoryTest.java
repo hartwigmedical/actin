@@ -22,6 +22,9 @@ public class EligibilityFactoryTest {
         // Generally wrong:
         assertFalse(EligibilityFactory.isValidInclusionCriterion("This is not a valid criterion"));
 
+        // Should not have trailing stuff.
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("NOT(HAS_INR_ULN_AT_MOST_X[1]) this should not be here"));
+
         // IS_PREGNANT is not a composite function
         assertFalse(EligibilityFactory.isValidInclusionCriterion("IS_PREGNANT(HAS_INR_ULN_AT_MOST_X[1])"));
 
@@ -77,21 +80,6 @@ public class EligibilityFactoryTest {
         EligibilityFunction secondOrInput2 = find(andInput1.parameters(), EligibilityRule.HAS_PT_ULN_AT_MOST_X);
         assertEquals(1, secondOrInput2.parameters().size());
         assertTrue(secondOrInput2.parameters().contains("2"));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void crashOnInvalidCompositeFunction() {
-        EligibilityFactory.generateEligibilityFunction("IS_PREGNANT(HAS_INR_ULN_AT_MOST_X[1])");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void crashOnInvalidParameterizedFunction() {
-        EligibilityFactory.generateEligibilityFunction("NOT(HAS_INR_ULN_AT_MOST_X[1)");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void crashOnWronglyFormattedCompositeFunction() {
-        EligibilityFactory.generateEligibilityFunction("NOT(IS_PREGNANT");
     }
 
     @NotNull
