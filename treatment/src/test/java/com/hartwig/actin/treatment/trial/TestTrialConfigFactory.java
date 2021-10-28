@@ -61,11 +61,11 @@ public final class TestTrialConfigFactory {
     private static List<CohortDefinitionConfig> createTestCohortDefinitionConfigs() {
         List<CohortDefinitionConfig> configs = Lists.newArrayList();
 
-        ImmutableCohortDefinitionConfig.Builder builder = ImmutableCohortDefinitionConfig.builder().trialId(TEST_TRIAL_ID).open(true);
+        ImmutableCohortDefinitionConfig.Builder builder = ImmutableCohortDefinitionConfig.builder().trialId(TEST_TRIAL_ID);
 
-        configs.add(builder.cohortId("A").description("Cohort A").build());
-        configs.add(builder.cohortId("B").description("Cohort B").build());
-        configs.add(builder.cohortId("C").description("Cohort C").build());
+        configs.add(builder.cohortId("A").open(true).description("Cohort A").build());
+        configs.add(builder.cohortId("B").open(true).description("Cohort B").build());
+        configs.add(builder.cohortId("C").open(false).description("Cohort C").build());
 
         return configs;
     }
@@ -77,7 +77,12 @@ public final class TestTrialConfigFactory {
         ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
 
         configs.add(builder.inclusionCriterion(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString()).build());
-        configs.add(builder.inclusionCriterion(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString()).addAppliesToCohorts("A").build());
+        configs.add(builder.inclusionCriterion(EligibilityRule.HAS_INR_ULN_AT_MOST_X + "[1]").addAppliesToCohorts("A").build());
+
+        configs.add(builder.inclusionCriterion(
+                "NOT(OR(" + EligibilityRule.HAS_ACTIVE_INFECTION + ", " + EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS + "))")
+                .addAppliesToCohorts("A")
+                .build());
 
         return configs;
     }

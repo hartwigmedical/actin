@@ -36,7 +36,7 @@ public class TrialConfigModelTest {
         assertEquals(1, model.trials().size());
         assertEquals(3, model.cohortsForTrial(TestTrialConfigFactory.TEST_TRIAL_ID).size());
         assertEquals(1, model.generalInclusionCriteriaForTrial(TestTrialConfigFactory.TEST_TRIAL_ID).size());
-        assertEquals(1, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID, "A").size());
+        assertEquals(2, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID, "A").size());
         assertEquals(0, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID, "B").size());
     }
 }
