@@ -15,7 +15,7 @@ import org.junit.Test;
 public class TrialConfigDatabaseValidatorTest {
 
     @Test
-    public void testTrialConfigDatabasesAreValid() {
+    public void confirmTrialConfigDatabasesAreValid() {
         assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase()));
         assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
     }
@@ -68,6 +68,11 @@ public class TrialConfigDatabaseValidatorTest {
                         .trialId(trial2)
                         .addAppliesToCohorts("A")
                         .inclusionCriterion(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
+                        .build())
+                .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder()
+                        .trialId(trial1)
+                        .addAppliesToCohorts("A")
+                        .inclusionCriterion("not a valid inclusion criterion")
                         .build())
                 .build();
     }

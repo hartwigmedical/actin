@@ -19,6 +19,15 @@ public final class EligibilityFactory {
     private EligibilityFactory() {
     }
 
+    public static boolean isValidInclusionCriterion(@NotNull String criterion) {
+        try {
+            generateEligibilityFunction(criterion);
+            return true;
+        } catch (Exception exc) {
+            return false;
+        }
+    }
+
     @NotNull
     public static EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
         EligibilityRule rule;

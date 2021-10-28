@@ -55,6 +55,11 @@ public final class TrialConfigDatabaseValidator {
                     }
                 }
             }
+
+            if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionCriterion())) {
+                LOGGER.warn("Not a valid inclusion criterion for trial '{}': {}", criterion.trialId(), criterion.inclusionCriterion());
+                valid = false;
+            }
         }
         return valid;
     }

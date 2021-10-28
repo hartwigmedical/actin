@@ -11,7 +11,6 @@ import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
-import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,10 +67,10 @@ public class TrialFactory {
     }
 
     @NotNull
-    private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<InclusionCriteriaConfig> inclusionConfigs) {
+    private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<String> inclusionCriteria) {
         List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
-        for (InclusionCriteriaConfig inclusionConfig : inclusionConfigs) {
-            eligibilityFunctions.add(EligibilityFactory.generateEligibilityFunction(inclusionConfig.inclusionCriterion()));
+        for (String inclusionCriterion : inclusionCriteria) {
+            eligibilityFunctions.add(EligibilityFactory.generateEligibilityFunction(inclusionCriterion));
         }
         return eligibilityFunctions;
     }

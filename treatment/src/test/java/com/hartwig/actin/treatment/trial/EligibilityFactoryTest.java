@@ -1,6 +1,7 @@
 package com.hartwig.actin.treatment.trial;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -12,6 +13,24 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class EligibilityFactoryTest {
+
+    @Test
+    public void canDetermineWhetherRuleIsValid() {
+        assertTrue(EligibilityFactory.isValidInclusionCriterion("HAS_INR_ULN_AT_MOST_X[1]"));
+        assertTrue(EligibilityFactory.isValidInclusionCriterion("NOT(HAS_INR_ULN_AT_MOST_X[1])"));
+
+        // Generally wrong:
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("This is not a valid criterion"));
+
+        // IS_PREGNANT is not a composite function
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("IS_PREGNANT(HAS_INR_ULN_AT_MOST_X[1])"));
+
+        // Missing bracket "]"
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("NOT(HAS_INR_ULN_AT_MOST_X[1)"));
+
+        // Missing parenthesis ")"
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("NOT(IS_PREGNANT"));
+    }
 
     @Test
     public void canGenerateSimpleEligibilityFunction() {
