@@ -64,10 +64,15 @@ public final class EligibilityFactory {
 
         int parenthesisCount = 0;
         int commaCount = 0;
+        boolean insideParameterSection = false;
         for (int i = 0; i < params.length(); i++) {
             if (params.charAt(i) == '(') {
                 parenthesisCount++;
-            } else if (params.charAt(i) == ',') {
+            } else if (params.charAt(i) == '[') {
+                insideParameterSection = true;
+            } else if (params.charAt(i) == ']') {
+                insideParameterSection = false;
+            } else if (params.charAt(i) == ',' && !insideParameterSection) {
                 commaCount++;
                 if (commaCount > parenthesisCount && relevantCommaPosition < 0) {
                     relevantCommaPosition = i;
@@ -93,8 +98,9 @@ public final class EligibilityFactory {
         }
 
         List<String> params = Lists.newArrayList();
-
-        params.add(criterion.substring(criterion.indexOf("[") + 1, criterion.indexOf("]")));
+        for (String param : criterion.substring(criterion.indexOf("[") + 1, criterion.indexOf("]")).split(",")) {
+            params.add(param.trim());
+        }
 
         return params;
     }
