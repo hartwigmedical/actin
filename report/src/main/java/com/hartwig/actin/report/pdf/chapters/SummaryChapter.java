@@ -22,7 +22,9 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SummaryChapter implements ReportChapter {
 
@@ -60,22 +62,27 @@ public class SummaryChapter implements ReportChapter {
         patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
         patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
+        document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
 
         Paragraph tumorDetailsLine = new Paragraph();
         tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
-
-        document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
-
     }
 
     @NotNull
     private static String tumor(@NotNull TumorDetails tumor) {
-        return tumorLocation(tumor) + " - " + tumorType(tumor);
+        String location = tumorLocation(tumor);
+        String type = tumorType(tumor);
+
+        if (location == null || type == null) {
+            return Formats.VALUE_UNKNOWN;
+        } else {
+            return location + (!type.isEmpty() ? " - " + type : Strings.EMPTY);
+        }
     }
 
-    @NotNull
+    @Nullable
     private static String tumorLocation(@NotNull TumorDetails tumor) {
         String tumorLocation = tumor.primaryTumorLocation();
 
@@ -86,10 +93,10 @@ public class SummaryChapter implements ReportChapter {
                     : tumorLocation;
         }
 
-        return Formats.VALUE_UNKNOWN;
+        return null;
     }
 
-    @NotNull
+    @Nullable
     private static String tumorType(@NotNull TumorDetails tumor) {
         String tumorType = tumor.primaryTumorType();
 
@@ -98,7 +105,7 @@ public class SummaryChapter implements ReportChapter {
             return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorSubType : tumorType;
         }
 
-        return Formats.VALUE_UNKNOWN;
+        return null;
     }
 
     private void addChapterTitle(@NotNull Document document) {
