@@ -60,10 +60,14 @@ public class SummaryChapter implements ReportChapter {
         patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
         patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
-        patientDetailsLine.add(new Text(" | Tumor: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
+
+        Paragraph tumorDetailsLine = new Paragraph();
+        tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
+        tumorDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
 
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+        document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+
     }
 
     @NotNull
