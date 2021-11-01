@@ -44,9 +44,12 @@ public final class MolecularRecordJson {
         EVENT_REPLACEMENTS.put("partial gain", "amp");
         EVENT_REPLACEMENTS.put("full loss", "del");
         EVENT_REPLACEMENTS.put("partial loss", "del");
+        EVENT_REPLACEMENTS.put("homozygous disruption", "disruption");
+        EVENT_REPLACEMENTS.put("Microsatellite unstable", "MSI");
+        EVENT_REPLACEMENTS.put("High tumor mutation load", "High TML");
+        EVENT_REPLACEMENTS.put(" - ", "-");
         EVENT_REPLACEMENTS.put("p.", Strings.EMPTY);
         EVENT_REPLACEMENTS.put("c.", Strings.EMPTY);
-        EVENT_REPLACEMENTS.put("homozygous disruption", "disruption");
     }
 
     private MolecularRecordJson() {
