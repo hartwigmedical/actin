@@ -39,6 +39,7 @@ public final class MolecularRecordJson {
     @NotNull
     public static MolecularRecord read(@NotNull String molecularJson) throws IOException {
         Gson gson = new GsonBuilder().registerTypeAdapter(MolecularRecord.class, new MolecularRecordCreator()).create();
+
         String json = Files.readString(new File(molecularJson).toPath());
         return gson.fromJson(json, MolecularRecord.class);
     }
