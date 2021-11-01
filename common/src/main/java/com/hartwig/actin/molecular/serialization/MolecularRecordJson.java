@@ -24,10 +24,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.datamodel.GenomicTreatmentEvidence;
-import com.hartwig.actin.molecular.datamodel.ImmutableGenomicTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public final class MolecularRecordJson {
                     .sampleId(string(record, "sampleId"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
                     .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
-                    .genomicTreatmentEvidences(toGenomicTreatmentEvidences(array(record, "protect")))
+                    .evidences(toEvidences(array(record, "protect")))
                     .build();
         }
 
@@ -71,13 +71,13 @@ public final class MolecularRecordJson {
         }
 
         @NotNull
-        private static List<GenomicTreatmentEvidence> toGenomicTreatmentEvidences(@NotNull JsonArray protectArray) {
-            List<GenomicTreatmentEvidence> evidences = Lists.newArrayList();
+        private static List<MolecularTreatmentEvidence> toEvidences(@NotNull JsonArray protectArray) {
+            List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
                 boolean reported = bool(evidence, "reported");
                 if (reported) {
-                    evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                    evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                             .genomicEvent(string(evidence, "genomicEvent"))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))

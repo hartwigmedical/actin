@@ -27,7 +27,7 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
                 .configuredPrimaryTumorDoids(createTestConfiguredPrimaryTumorDoids())
-                .genomicTreatmentEvidences(createTestGenomicTreatmentEvidences())
+                .evidences(createTestEvidences())
                 .build();
     }
 
@@ -37,10 +37,10 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<GenomicTreatmentEvidence> createTestGenomicTreatmentEvidences() {
-        List<GenomicTreatmentEvidence> genomicTreatmentEvidences = Lists.newArrayList();
+    private static List<MolecularTreatmentEvidence> createTestEvidences() {
+        List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
 
-        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                 .genomicEvent("BRAF p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
@@ -48,7 +48,7 @@ public final class TestMolecularDataFactory {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                 .genomicEvent("BRAF p.Val600Glu")
                 .treatment("Dabrafenib")
                 .onLabel(true)
@@ -56,7 +56,7 @@ public final class TestMolecularDataFactory {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                 .genomicEvent("BRAF p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
@@ -64,7 +64,7 @@ public final class TestMolecularDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                 .genomicEvent("PTEN partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
@@ -72,6 +72,6 @@ public final class TestMolecularDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        return genomicTreatmentEvidences;
+        return evidences;
     }
 }

@@ -20,5 +20,5 @@ public abstract class MolecularRecord {
     public abstract Set<String> configuredPrimaryTumorDoids();
 
     @NotNull
-    public abstract List<GenomicTreatmentEvidence> genomicTreatmentEvidences();
+    public abstract List<MolecularTreatmentEvidence> evidences();
 }
