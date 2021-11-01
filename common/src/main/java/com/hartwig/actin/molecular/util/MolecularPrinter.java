@@ -25,7 +25,8 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
-        printer.print("Actionable events: " + concat(GenomicEventInterpreter.responsiveEvents(record)));
+        printer.print("Responsive mutations: " + concat(GenomicEventInterpreter.responsiveEvents(record)));
+        printer.print("Resistance mutations: " + concat(GenomicEventInterpreter.resistanceEvents(record)));
     }
 
     @NotNull

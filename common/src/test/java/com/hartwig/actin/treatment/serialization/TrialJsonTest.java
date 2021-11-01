@@ -35,7 +35,7 @@ public class TrialJsonTest {
     }
 
     @Test
-    public void canReadClinicalRecordDirectory() throws IOException {
+    public void canReadTreatmentDirectory() throws IOException {
         List<Trial> trials = TrialJson.readFromDir(TREATMENT_DIRECTORY);
         assertEquals(1, trials.size());
 
@@ -54,30 +54,53 @@ public class TrialJsonTest {
 
         assertEquals(1, trial.generalEligibilityFunctions().size());
 
-        EligibilityFunction generalFunction = trial.generalEligibilityFunctions().get(0);
-        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, generalFunction.rule());
+        EligibilityFunction generalFunction = findFunction(trial.generalEligibilityFunctions(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD);
         assertTrue(generalFunction.parameters().isEmpty());
 
         assertEquals(3, trial.cohorts().size());
 
-        Cohort cohortA = find(trial.cohorts(), "A");
+        Cohort cohortA = findCohort(trial.cohorts(), "A");
         assertTrue(cohortA.open());
         assertEquals("Cohort A", cohortA.description());
-        assertTrue(cohortA.eligibilityFunctions().isEmpty());
+        assertEquals(1, cohortA.eligibilityFunctions().size());
 
-        Cohort cohortB = find(trial.cohorts(), "B");
+        EligibilityFunction functionA = findFunction(cohortA.eligibilityFunctions(), EligibilityRule.NOT);
+        assertEquals(1, functionA.parameters().size());
+
+        EligibilityFunction subFunctionA = findFunction(functionA.parameters(), EligibilityRule.HAS_ACTIVE_CNS_METASTASES);
+        assertTrue(subFunctionA.parameters().isEmpty());
+
+        Cohort cohortB = findCohort(trial.cohorts(), "B");
         assertTrue(cohortB.open());
         assertEquals("Cohort B", cohortB.description());
         assertTrue(cohortB.eligibilityFunctions().isEmpty());
 
-        Cohort cohortC = find(trial.cohorts(), "C");
+        Cohort cohortC = findCohort(trial.cohorts(), "C");
         assertFalse(cohortC.open());
         assertEquals("Cohort C", cohortC.description());
-        assertTrue(cohortC.eligibilityFunctions().isEmpty());
+        assertEquals(3, cohortC.eligibilityFunctions().size());
+
+        EligibilityFunction functionC1 = findFunction(cohortC.eligibilityFunctions(), EligibilityRule.HAS_BIOPSY_AMENABLE_LESION);
+        assertTrue(functionC1.parameters().isEmpty());
+
+        EligibilityFunction functionC2 = findFunction(cohortC.eligibilityFunctions(), EligibilityRule.OR);
+        assertEquals(2, functionC2.parameters().size());
+
+        EligibilityFunction subFunction1 = findFunction(functionC2.parameters(), EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X);
+        assertEquals(1, subFunction1.parameters().size());
+        assertTrue(subFunction1.parameters().contains("0123"));
+
+        EligibilityFunction subFunction2 = findFunction(functionC2.parameters(), EligibilityRule.IS_PREGNANT);
+        assertTrue(subFunction2.parameters().isEmpty());
+
+        EligibilityFunction functionC3 =
+                findFunction(cohortC.eligibilityFunctions(), EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES);
+        assertEquals(1, functionC3.parameters().size());
+        assertTrue(functionC3.parameters().contains("2"));
     }
 
     @NotNull
-    private static Cohort find(@NotNull List<Cohort> cohorts, @NotNull String cohortId) {
+    private static Cohort findCohort(@NotNull List<Cohort> cohorts, @NotNull String cohortId) {
         for (Cohort cohort : cohorts) {
             if (cohort.cohortId().equals(cohortId)) {
                 return cohort;
@@ -85,5 +108,17 @@ public class TrialJsonTest {
         }
 
         throw new IllegalStateException("Could not find cohort with id: " + cohortId);
+    }
+
+    @NotNull
+    private static <X> EligibilityFunction findFunction(@NotNull List<X> functions, @NotNull EligibilityRule rule) {
+        for (X function : functions) {
+            EligibilityFunction func = (EligibilityFunction) function;
+            if (func.rule() == rule) {
+                return func;
+            }
+        }
+
+        throw new IllegalStateException("Could not find function with rule: " + rule);
     }
 }

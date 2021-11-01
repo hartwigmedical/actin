@@ -13,7 +13,17 @@
       "cohortId": "A",
       "open": true,
       "description": "Cohort A",
-      "eligibilityFunctions": []
+      "eligibilityFunctions": [
+        {
+          "rule": "NOT",
+          "parameters": [
+            {
+              "rule": "HAS_ACTIVE_CNS_METASTASES",
+              "parameters": []
+            }
+          ]
+        }
+      ]
     },
     {
       "cohortId": "B",
@@ -25,7 +35,34 @@
       "cohortId": "C",
       "open": false,
       "description": "Cohort C",
-      "eligibilityFunctions": []
+      "eligibilityFunctions": [
+        {
+          "rule": "HAS_BIOPSY_AMENABLE_LESION",
+          "parameters": []
+        },
+        {
+          "rule": "OR",
+          "parameters": [
+            {
+              "rule": "PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X",
+              "parameters": [
+                "0123"
+              ]
+            },
+            {
+              "rule": "IS_PREGNANT",
+              "parameters": [
+              ]
+            }
+          ]
+        },
+        {
+          "rule": "HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES",
+          "parameters": [
+            "2"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -3,7 +3,6 @@ package com.hartwig.actin.treatment.serialization;
 import static com.hartwig.actin.util.Json.array;
 import static com.hartwig.actin.util.Json.bool;
 import static com.hartwig.actin.util.Json.string;
-import static com.hartwig.actin.util.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -109,13 +108,30 @@ public final class TrialJson {
         private static List<EligibilityFunction> toEligibilityFunctions(@NotNull JsonArray eligibilityFunctionArray) {
             List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
             for (JsonElement element : eligibilityFunctionArray) {
-                JsonObject eligibilityFunction = element.getAsJsonObject();
-                eligibilityFunctions.add(ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.valueOf(string(eligibilityFunction, "rule")))
-                        .parameters(stringList(eligibilityFunction, "parameters"))
-                        .build());
+                eligibilityFunctions.add(toEligibilityFunction(element.getAsJsonObject()));
             }
             return eligibilityFunctions;
+        }
+
+        @NotNull
+        private static List<Object> toParameters(@NotNull JsonArray parameterArray) {
+            List<Object> parameters = Lists.newArrayList();
+            for (JsonElement element : parameterArray) {
+                if (element.isJsonObject()) {
+                    parameters.add(toEligibilityFunction(element.getAsJsonObject()));
+                } else if (element.isJsonPrimitive()) {
+                    parameters.add(element.getAsJsonPrimitive().getAsString());
+                }
+            }
+            return parameters;
+        }
+
+        @NotNull
+        private static EligibilityFunction toEligibilityFunction(@NotNull JsonObject eligibilityFunction) {
+            return ImmutableEligibilityFunction.builder()
+                    .rule(EligibilityRule.valueOf(string(eligibilityFunction, "rule")))
+                    .parameters(toParameters(array(eligibilityFunction, "parameters")))
+                    .build();
         }
 
         @NotNull
