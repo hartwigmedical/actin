@@ -1,18 +1,16 @@
 package com.hartwig.actin.molecular.datamodel;
 
 public enum EvidenceDirection {
-    RESPONSIVE(true),
-    PREDICTED_RESPONSIVE(true),
-    RESISTANT(false),
-    PREDICTED_RESISTANT(false);
-
-    private final boolean isResponsive;
-
-    EvidenceDirection(final boolean isResponsive) {
-        this.isResponsive = isResponsive;
-    }
+    RESPONSIVE,
+    PREDICTED_RESPONSIVE,
+    RESISTANT,
+    PREDICTED_RESISTANT;
 
     public boolean isResponsive() {
-        return isResponsive;
+        return this == RESPONSIVE || this == PREDICTED_RESPONSIVE;
+    }
+
+    public boolean isResistant() {
+        return this == RESISTANT || this == PREDICTED_RESISTANT;
     }
 }

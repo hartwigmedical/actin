@@ -4,7 +4,8 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.interpretation.GenomicEventInterpreter;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpretation;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -39,23 +40,14 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
+        MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
         table.addCell(Cells.createKey("Actionable mutations"));
-        table.addCell(Cells.createValue(responsiveMolecularEvents(record)));
+        table.addCell(Cells.createValue(concat(interpretation.applicableResponsiveEvents())));
 
         table.addCell(Cells.createKey("Resistance mutations"));
-        table.addCell(Cells.createValue(resistanceMolecularEvents(record)));
+        table.addCell(Cells.createValue(concat(interpretation.applicableResistanceEvents())));
 
         return table;
-    }
-
-    @NotNull
-    private static String responsiveMolecularEvents(@NotNull MolecularRecord record) {
-        return concat(GenomicEventInterpreter.responsiveEvents(record));
-    }
-
-    @NotNull
-    private static String resistanceMolecularEvents(@NotNull MolecularRecord record) {
-        return concat(GenomicEventInterpreter.resistanceEvents(record));
     }
 
     @NotNull

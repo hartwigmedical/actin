@@ -18,24 +18,21 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class GenomicEventInterpreterTest {
+public class MolecularInterpreterTest {
 
     @Test
-    public void canDetermineResponsiveEvents() {
+    public void canInterpretMolecularRecord() {
         MolecularRecord record = recordWithEvidence(createTestEvidences());
-        Set<String> responsiveEvidence = GenomicEventInterpreter.responsiveEvents(record);
 
+        MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
+
+        Set<String> responsiveEvidence = interpretation.applicableResponsiveEvents();
         assertEquals(1, responsiveEvidence.size());
         assertTrue(responsiveEvidence.contains("Event 1"));
-    }
 
-    @Test
-    public void canDetermineResistanceEvents() {
-        MolecularRecord record = recordWithEvidence(createTestEvidences());
-        Set<String> responsiveEvidence = GenomicEventInterpreter.resistanceEvents(record);
-
-        assertEquals(1, responsiveEvidence.size());
-        assertTrue(responsiveEvidence.contains("Event 3 (Treatment 3.0, Treatment 3.1)"));
+        Set<String> resistanceEvents = interpretation.applicableResistanceEvents();
+        assertEquals(1, resistanceEvents.size());
+        assertTrue(resistanceEvents.contains("Event 4 (Treatment 1)"));
     }
 
     @NotNull
@@ -60,31 +57,40 @@ public class GenomicEventInterpreterTest {
                 .genomicEvent("Event 2")
                 .build());
 
-        // Should be included, all good.
-        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
-                .treatment("Treatment 3.0")
-                .direction(EvidenceDirection.RESISTANT)
-                .level(EvidenceLevel.B)
-                .onLabel(false)
-                .genomicEvent("Event 3")
-                .build());
-
-        // Should be included, all good.
-        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
-                .treatment("Treatment 3.1")
-                .direction(EvidenceDirection.RESISTANT)
-                .level(EvidenceLevel.B)
-                .onLabel(false)
-                .genomicEvent("Event 3")
-                .build());
-
         // Should be filtered out as it starts with CDKN2A.
         evidences.add(ImmutableGenomicTreatmentEvidence.builder()
                 .treatment("Treatment 4")
-                .direction(EvidenceDirection.RESISTANT)
+                .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
                 .genomicEvent("CDKN2A loss")
+                .build());
+
+        // Should be filtered since there is no responsive evidence for treatment 3
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 3")
+                .direction(EvidenceDirection.RESISTANT)
+                .level(EvidenceLevel.B)
+                .onLabel(false)
+                .genomicEvent("Event 3")
+                .build());
+
+        // Should be included, all good.
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 1")
+                .direction(EvidenceDirection.RESISTANT)
+                .level(EvidenceLevel.A)
+                .onLabel(false)
+                .genomicEvent("Event 4")
+                .build());
+
+        // Should be filtered since evidence level is not high enough
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 1")
+                .direction(EvidenceDirection.RESISTANT)
+                .level(EvidenceLevel.B)
+                .onLabel(false)
+                .genomicEvent("Event 5")
                 .build());
 
         return evidences;
