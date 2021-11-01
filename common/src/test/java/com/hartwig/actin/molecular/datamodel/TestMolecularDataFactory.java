@@ -40,11 +40,36 @@ public final class TestMolecularDataFactory {
     private static List<GenomicTreatmentEvidence> createTestGenomicTreatmentEvidences() {
         List<GenomicTreatmentEvidence> genomicTreatmentEvidences = Lists.newArrayList();
 
-        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder().genomicEvent("BRAF V600E")
+        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .genomicEvent("BRAF p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
+                .build());
+
+        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .genomicEvent("BRAF p.Val600Glu")
+                .treatment("Dabrafenib")
+                .onLabel(true)
+                .level(EvidenceLevel.A)
+                .direction(EvidenceDirection.RESPONSIVE)
+                .build());
+
+        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .genomicEvent("BRAF p.Val600Glu")
+                .treatment("Cetuximab")
+                .onLabel(false)
+                .level(EvidenceLevel.B)
+                .direction(EvidenceDirection.RESISTANT)
+                .build());
+
+        genomicTreatmentEvidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .genomicEvent("PTEN partial loss")
+                .treatment("Everolimus")
+                .onLabel(false)
+                .level(EvidenceLevel.B)
+                .direction(EvidenceDirection.RESISTANT)
                 .build());
 
         return genomicTreatmentEvidences;
