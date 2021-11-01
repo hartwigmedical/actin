@@ -35,22 +35,57 @@ public class GenomicEventInterpreterTest {
         Set<String> responsiveEvidence = GenomicEventInterpreter.resistanceEvents(record);
 
         assertEquals(1, responsiveEvidence.size());
-        assertTrue(responsiveEvidence.contains("Event 3"));
+        assertTrue(responsiveEvidence.contains("Event 3 (Treatment 3.0, Treatment 3.1)"));
     }
 
     @NotNull
     private static List<GenomicTreatmentEvidence> createTestEvidences() {
         List<GenomicTreatmentEvidence> evidences = Lists.newArrayList();
 
-        ImmutableGenomicTreatmentEvidence.Builder responsiveBuilder =
-                ImmutableGenomicTreatmentEvidence.builder().treatment(Strings.EMPTY).direction(EvidenceDirection.RESPONSIVE);
-        evidences.add(responsiveBuilder.level(EvidenceLevel.A).onLabel(true).genomicEvent("Event 1").build());
-        evidences.add(responsiveBuilder.level(EvidenceLevel.C).onLabel(false).genomicEvent("Event 2").build());
+        // Should be included, all good.
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 1")
+                .direction(EvidenceDirection.RESPONSIVE)
+                .level(EvidenceLevel.A)
+                .onLabel(true)
+                .genomicEvent("Event 1")
+                .build());
 
-        ImmutableGenomicTreatmentEvidence.Builder resistanceBuilder =
-                ImmutableGenomicTreatmentEvidence.builder().treatment(Strings.EMPTY).direction(EvidenceDirection.RESISTANT);
-        evidences.add(resistanceBuilder.level(EvidenceLevel.B).onLabel(false).genomicEvent("Event 3").build());
-        evidences.add(resistanceBuilder.level(EvidenceLevel.A).onLabel(true).genomicEvent("CDKN2A loss").build());
+        // Should be filtered out since it is C-level off-label evidence.
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 2")
+                .direction(EvidenceDirection.RESPONSIVE)
+                .level(EvidenceLevel.C)
+                .onLabel(false)
+                .genomicEvent("Event 2")
+                .build());
+
+        // Should be included, all good.
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 3.0")
+                .direction(EvidenceDirection.RESISTANT)
+                .level(EvidenceLevel.B)
+                .onLabel(false)
+                .genomicEvent("Event 3")
+                .build());
+
+        // Should be included, all good.
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 3.1")
+                .direction(EvidenceDirection.RESISTANT)
+                .level(EvidenceLevel.B)
+                .onLabel(false)
+                .genomicEvent("Event 3")
+                .build());
+
+        // Should be filtered out as it starts with CDKN2A.
+        evidences.add(ImmutableGenomicTreatmentEvidence.builder()
+                .treatment("Treatment 4")
+                .direction(EvidenceDirection.RESISTANT)
+                .level(EvidenceLevel.A)
+                .onLabel(true)
+                .genomicEvent("CDKN2A loss")
+                .build());
 
         return evidences;
     }
