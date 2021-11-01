@@ -56,7 +56,7 @@ public final class MolecularInterpreter {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
             boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
-                    hasOnLabelResponsiveEvidenceWithMaxLevel(record.genomicTreatmentEvidences(), evidence.treatment(), evidence.level());
+                    hasOnLabelResponsiveEvidenceWithMinLevel(record.genomicTreatmentEvidences(), evidence.treatment(), evidence.level());
 
             if (isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
                 treatmentsPerEvent.put(GenomicEventFormatter.format(evidence.genomicEvent()), evidence.treatment());
@@ -74,11 +74,11 @@ public final class MolecularInterpreter {
         return events;
     }
 
-    private static boolean hasOnLabelResponsiveEvidenceWithMaxLevel(@NotNull List<GenomicTreatmentEvidence> evidences,
-            @NotNull String treatment, @NotNull EvidenceLevel maxLevel) {
+    private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<GenomicTreatmentEvidence> evidences,
+            @NotNull String treatment, @NotNull EvidenceLevel minLevel) {
         for (GenomicTreatmentEvidence evidence : evidences) {
             if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
-                    && maxLevel.isBetterOrEqual(evidence.level())) {
+                    && minLevel.isBetterOrEqual(evidence.level())) {
                 return true;
             }
         }
