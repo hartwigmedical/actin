@@ -40,10 +40,12 @@ public final class MolecularRecordJson {
     private static final Map<String, String> EVENT_REPLACEMENTS = Maps.newHashMap();
 
     static {
-        EVENT_REPLACEMENTS.put("p.", Strings.EMPTY);
-        EVENT_REPLACEMENTS.put("c.", Strings.EMPTY);
         EVENT_REPLACEMENTS.put("full gain", "amp");
         EVENT_REPLACEMENTS.put("partial gain", "amp");
+        EVENT_REPLACEMENTS.put("full loss", "del");
+        EVENT_REPLACEMENTS.put("partial loss", "del");
+        EVENT_REPLACEMENTS.put("p.", Strings.EMPTY);
+        EVENT_REPLACEMENTS.put("c.", Strings.EMPTY);
         EVENT_REPLACEMENTS.put("homozygous disruption", "disruption");
     }
 
