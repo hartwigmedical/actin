@@ -22,7 +22,8 @@ public final class EvaluationFunctionFactory {
             case IS_AT_LEAST_18_YEARS_OLD:
                 return createIsAdult();
             default: {
-                LOGGER.warn("No evaluation function implemented for '{}'. Will always fail", eligibilityFunction.rule());
+                LOGGER.warn("No evaluation function implemented for '{}'. Evaluation for this rule will always fail",
+                        eligibilityFunction.rule());
                 return createAlwaysFail();
             }
         }
