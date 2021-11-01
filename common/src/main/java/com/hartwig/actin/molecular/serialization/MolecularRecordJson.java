@@ -28,7 +28,6 @@ import com.hartwig.actin.molecular.datamodel.GenomicTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableGenomicTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.util.GenomicEventFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +77,7 @@ public final class MolecularRecordJson {
                 boolean reported = bool(evidence, "reported");
                 if (reported) {
                     evidences.add(ImmutableGenomicTreatmentEvidence.builder()
-                            .genomicEvent(GenomicEventFormatter.format(string(evidence, "genomicEvent")))
+                            .genomicEvent(string(evidence, "genomicEvent"))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))
                             .level(EvidenceLevel.valueOf(string(evidence, "level")))

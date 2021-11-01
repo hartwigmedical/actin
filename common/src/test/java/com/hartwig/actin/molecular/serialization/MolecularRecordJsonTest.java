@@ -23,8 +23,6 @@ public class MolecularRecordJsonTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertTrue(record.hasReliableQuality());
         assertEquals(25, record.genomicTreatmentEvidences().size());
-
-        assertEquals(2, record.actionableGenomicEvents().size());
     }
 
     @Test
@@ -34,6 +32,5 @@ public class MolecularRecordJsonTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertTrue(record.hasReliableQuality());
         assertTrue(record.genomicTreatmentEvidences().isEmpty());
-        assertTrue(record.actionableGenomicEvents().isEmpty());
     }
 }

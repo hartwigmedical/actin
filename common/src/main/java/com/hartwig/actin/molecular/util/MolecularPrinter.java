@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.interpretation.GenomicEventInterpreter;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
-        printer.print("Actionable events: " + concat(record.actionableGenomicEvents()));
+        printer.print("Actionable events: " + concat(GenomicEventInterpreter.responsiveEvents(record)));
     }
 
     @NotNull
