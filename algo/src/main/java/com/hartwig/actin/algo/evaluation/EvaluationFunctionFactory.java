@@ -22,7 +22,9 @@ public final class EvaluationFunctionFactory {
     @NotNull
     public static EvaluationFunction create(@NotNull EligibilityFunction function) {
         if (!EligibilityParameterResolver.hasValidParameters(function)) {
-            LOGGER.warn("Could not create function with rule '{}' based on inputs {}", function.rule(), function.parameters());
+            LOGGER.warn("Function with rule '{}' has invalid inputs {}. Evaluation for this rule will always fail",
+                    function.rule(),
+                    function.parameters());
             return createAlwaysFail();
         }
 
