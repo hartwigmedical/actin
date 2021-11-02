@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +51,11 @@ public final class EligibilityFactory {
             rule = EligibilityRule.valueOf(criterion.trim());
         }
 
-        return ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
+        EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
+        if (!EligibilityParameterResolver.hasValidParameters(function)) {
+            throw new IllegalStateException("Function " + function.rule() + " has invalid parameters: " + function.parameters());
+        }
+        return function;
     }
 
     @NotNull

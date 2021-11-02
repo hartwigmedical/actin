@@ -30,7 +30,7 @@ public final class EvaluationFunctionFactory {
 
         switch (function.rule()) {
             case AND:
-                return createAnd(function.parameters());
+                return createAnd(function);
             case IS_AT_LEAST_18_YEARS_OLD:
                 return createIsAtLeast18YearsOld();
             default: {
@@ -41,8 +41,8 @@ public final class EvaluationFunctionFactory {
     }
 
     @NotNull
-    private static EvaluationFunction createAnd(@NotNull List<Object> parameters) {
-        List<EligibilityFunction> functions = EligibilityParameterResolver.createCompositeParameters(parameters, 2);
+    private static EvaluationFunction createAnd(@NotNull EligibilityFunction function) {
+        List<EligibilityFunction> functions = EligibilityParameterResolver.createCompositeParameters(function, 2);
         return new And(create(functions.get(0)), create(functions.get(1)));
     }
 

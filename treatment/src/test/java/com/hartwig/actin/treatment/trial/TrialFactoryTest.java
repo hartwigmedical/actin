@@ -12,6 +12,7 @@ import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -27,7 +28,8 @@ public class TrialFactoryTest {
 
     @Test
     public void canCreateFromProperTestModel() {
-        List<Trial> trials = new TrialFactory(TestTrialConfigFactory.createProperTestTrialConfigModel()).create();
+        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
+        List<Trial> trials = factory.create();
 
         assertEquals(1, trials.size());
 

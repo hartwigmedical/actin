@@ -25,6 +25,10 @@ public class EligibilityFactoryTest {
         // Generally wrong:
         assertFalse(EligibilityFactory.isValidInclusionCriterion("This is not a valid criterion"));
 
+        // Wrong number of parameters:
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("AND(IS_PREGNANT)"));
+        assertFalse(EligibilityFactory.isValidInclusionCriterion("HAS_INR_ULN_AT_MOST_X[1.5, 2.5]"));
+
         // Should not have trailing stuff.
         assertFalse(EligibilityFactory.isValidInclusionCriterion("NOT(HAS_INR_ULN_AT_MOST_X[1]) this should not be here"));
 
@@ -55,7 +59,7 @@ public class EligibilityFactoryTest {
 
     @Test
     public void canGenerateComplexCompositeEligibilityFunction() {
-        String criterion = "OR(IS_PREGNANT, AND(OR(HAS_INR_ULN_AT_MOST_X[1.5, 2.5], HAS_PT_ULN_AT_MOST_X[2]), HAS_APTT_ULN_AT_MOST_X[3]))";
+        String criterion = "OR(IS_PREGNANT, AND(OR(HAS_INR_ULN_AT_MOST_X[1.5], HAS_PT_ULN_AT_MOST_X[2]), HAS_APTT_ULN_AT_MOST_X[3]))";
 
         EligibilityFunction orRoot = EligibilityFactory.generateEligibilityFunction(criterion);
 
@@ -76,9 +80,8 @@ public class EligibilityFactoryTest {
         assertTrue(andInput2.parameters().contains("3"));
 
         EligibilityFunction secondOrInput1 = find(andInput1.parameters(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
-        assertEquals(2, secondOrInput1.parameters().size());
+        assertEquals(1, secondOrInput1.parameters().size());
         assertTrue(secondOrInput1.parameters().contains("1.5"));
-        assertTrue(secondOrInput1.parameters().contains("2.5"));
 
         EligibilityFunction secondOrInput2 = find(andInput1.parameters(), EligibilityRule.HAS_PT_ULN_AT_MOST_X);
         assertEquals(1, secondOrInput2.parameters().size());

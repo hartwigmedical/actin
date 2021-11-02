@@ -1,33 +1,19 @@
-package com.hartwig.actin.treatment.trial;
+package com.hartwig.actin.treatment.trial.config;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
-import com.hartwig.actin.treatment.trial.config.ImmutableCohortDefinitionConfig;
-import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaConfig;
-import com.hartwig.actin.treatment.trial.config.ImmutableTrialDefinitionConfig;
-import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
-import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
+import com.hartwig.actin.treatment.trial.ImmutableTrialConfigDatabase;
+import com.hartwig.actin.treatment.trial.TrialConfigDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
 public final class TestTrialConfigFactory {
 
-    static final String TEST_TRIAL_ID = "TEST";
+    public static final String TEST_TRIAL_ID = "TEST";
 
     private TestTrialConfigFactory() {
-    }
-
-    @NotNull
-    public static TrialConfigModel createMinimalTestTrialConfigModel() {
-        return new TrialConfigModel(createMinimalTestTrialConfigDatabase());
-    }
-
-    @NotNull
-    public static TrialConfigModel createProperTestTrialConfigModel() {
-        return new TrialConfigModel(createProperTestTrialConfigDatabase());
     }
 
     @NotNull

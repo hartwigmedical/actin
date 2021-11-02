@@ -7,6 +7,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.trial.config.ImmutableCohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.ImmutableTrialDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
