@@ -1,10 +1,8 @@
 package com.hartwig.actin.treatment.trial;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
@@ -19,9 +17,6 @@ public final class EligibilityFactory {
     private static final char COMPOSITE_END = ')';
     private static final char PARAM_START = '[';
     private static final char PARAM_END = ']';
-
-    private static final Set<EligibilityRule> VALID_COMPOSITE_RULES =
-            Sets.newHashSet(EligibilityRule.AND, EligibilityRule.OR, EligibilityRule.NOT, EligibilityRule.WARN_IF);
 
     private EligibilityFactory() {
     }
@@ -61,7 +56,7 @@ public final class EligibilityFactory {
     @NotNull
     private static EligibilityRule extractCompositeRule(@NotNull String criterion) {
         EligibilityRule rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(COMPOSITE_START)));
-        if (!VALID_COMPOSITE_RULES.contains(rule)) {
+        if (!EligibilityParameterResolver.COMPOSITE_RULES.contains(rule)) {
             throw new IllegalStateException("Not a valid composite rule: " + rule);
         }
         return rule;

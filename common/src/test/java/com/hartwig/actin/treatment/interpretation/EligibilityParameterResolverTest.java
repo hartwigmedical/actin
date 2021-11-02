@@ -48,7 +48,7 @@ public class EligibilityParameterResolverTest {
     }
 
     @Test
-    public void canResolveForEveryRule() {
+    public void canDetermineParameterValidityForEveryRule() {
         for (EligibilityRule rule : EligibilityRule.values()) {
             assertNotNull(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
         }
@@ -59,20 +59,27 @@ public class EligibilityParameterResolverTest {
         List<Object> inputs = Lists.newArrayList();
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND, inputs)));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_IF, inputs)));
 
+        // Add first param
         inputs.add(createValidTestFunction());
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND, inputs)));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.OR, inputs)));
         assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT, inputs)));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_IF, inputs)));
 
+        // Add 2nd param
         inputs.add(createValidTestFunction());
-        EligibilityFunction valid = create(EligibilityRule.AND, inputs);
+        EligibilityFunction valid = create(EligibilityRule.OR, inputs);
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertNotNull(EligibilityParameterResolver.createCompositeParameters(valid, 2));
+        assertNotNull(EligibilityParameterResolver.createCompositeParameters(valid));
 
+        // Add 3rd param
         inputs.add(createValidTestFunction());
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND, inputs)));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT, inputs)));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_IF, inputs)));
 
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND,
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT,
                 Lists.newArrayList("not a function", "not a function either"))));
     }
 

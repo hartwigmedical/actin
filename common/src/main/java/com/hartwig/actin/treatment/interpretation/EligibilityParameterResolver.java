@@ -17,7 +17,8 @@ public final class EligibilityParameterResolver {
 
     private static final Logger LOGGER = LogManager.getLogger(EligibilityParameterResolver.class);
 
-    static final Set<EligibilityRule> COMPOSITE_RULES = Sets.newHashSet();
+    public static final Set<EligibilityRule> COMPOSITE_RULES = Sets.newHashSet();
+
     static final Set<EligibilityRule> RULES_WITH_SINGLE_DOUBLE_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_SINGLE_INTEGER_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_SINGLE_STRING_PARAMETER = Sets.newHashSet();
@@ -88,21 +89,8 @@ public final class EligibilityParameterResolver {
     public static Boolean hasValidParameters(@NotNull EligibilityFunction function) {
         try {
             if (COMPOSITE_RULES.contains(function.rule())) {
-                switch (function.rule()) {
-                    case AND:
-                    case OR: {
-                        createCompositeParameters(function, 2);
-                        return true;
-                    }
-                    case NOT:
-                    case WARN_IF: {
-                        createCompositeParameters(function, 1);
-                        return true;
-                    }
-                    default: {
-                        throw new IllegalStateException("Could not resolve composite function of type " + function.rule());
-                    }
-                }
+                createCompositeParameters(function);
+                return true;
             } else if (RULES_WITH_SINGLE_DOUBLE_PARAMETER.contains(function.rule())) {
                 createSingleDoubleParameter(function);
                 return true;
@@ -143,8 +131,15 @@ public final class EligibilityParameterResolver {
     }
 
     @NotNull
-    public static List<EligibilityFunction> createCompositeParameters(@NotNull EligibilityFunction function, int expectedCount) {
-        assertExpectedParamCount(function, expectedCount);
+    public static List<EligibilityFunction> createCompositeParameters(@NotNull EligibilityFunction function) {
+        if (function.rule() == EligibilityRule.WARN_IF) {
+            assertExpectedParamCount(function, 1);
+        } else if (function.rule() == EligibilityRule.NOT && function.parameters().isEmpty()) {
+            throw new IllegalArgumentException("No parameters passed into NOT function");
+        } else if ((function.rule() == EligibilityRule.OR || function.rule() == EligibilityRule.AND) && function.parameters().size() < 2) {
+            throw new IllegalArgumentException(
+                    "Not enough parameters passed into " + function.rule() + " function: " + function.parameters().size());
+        }
 
         List<EligibilityFunction> functions = Lists.newArrayList();
         for (Object input : function.parameters()) {
