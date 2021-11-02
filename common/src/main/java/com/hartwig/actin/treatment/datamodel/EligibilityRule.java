@@ -5,7 +5,7 @@ public enum EligibilityRule {
     AND,
     OR,
     NOT,
-    WARN_IF,
+    WARN_ON_FAIL,
 
     // Rules based on base clinical information and general health of patient
     IS_AT_LEAST_18_YEARS_OLD,

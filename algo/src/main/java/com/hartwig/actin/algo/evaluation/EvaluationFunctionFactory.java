@@ -26,7 +26,7 @@ public final class EvaluationFunctionFactory {
         FUNCTION_CREATOR_MAP.put(EligibilityRule.AND, andCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.OR, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.NOT, cannotBeDeterminedCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_IF, cannotBeDeterminedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_ON_FAIL, cannotBeDeterminedCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_BREASTFEEDING, cannotBeDeterminedCreator());
