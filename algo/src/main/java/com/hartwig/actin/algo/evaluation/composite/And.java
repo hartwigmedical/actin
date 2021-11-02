@@ -26,10 +26,10 @@ public class And implements EvaluationFunction {
             evaluations.add(function.evaluate(record));
         }
 
-        if (evaluations.contains(Evaluation.UNDETERMINED)) {
-            return Evaluation.UNDETERMINED;
-        } else if (evaluations.contains(Evaluation.FAIL)) {
+        if (evaluations.contains(Evaluation.FAIL)) {
             return Evaluation.FAIL;
+        } else if (evaluations.contains(Evaluation.UNDETERMINED)) {
+            return Evaluation.UNDETERMINED;
         } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {
             return Evaluation.PASS_BUT_WARN;
         } else if (evaluations.contains(Evaluation.PASS)) {
