@@ -67,6 +67,8 @@ public class SummaryChapter implements ReportChapter {
         Paragraph tumorDetailsLine = new Paragraph();
         tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
+        tumorDetailsLine.add(new Text(record.clinical().tumor().stage().display()).addStyle(Styles.highlightStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 

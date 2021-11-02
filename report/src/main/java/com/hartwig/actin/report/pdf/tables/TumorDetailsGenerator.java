@@ -41,20 +41,14 @@ public class TumorDetailsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
 
-        table.addCell(Cells.createKey("Stage"));
-        table.addCell(Cells.createValue(stage(record.tumor())));
-
-        table.addCell(Cells.createKey("Biopsy location"));
-        table.addCell(Cells.createValue(biopsyLocation(record.tumor())));
-
-        table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createEmpty());
-
         table.addCell(Cells.createKey("Lesions in CNS / Brain / Bone  / Liver"));
         table.addCell(Cells.create(lesionsParagraph(record.tumor())));
 
         table.addCell(Cells.createKey("Other lesions"));
         table.addCell(Cells.createValue(lesionsOther(record.tumor())));
+
+        table.addCell(Cells.createKey("Biopsy location"));
+        table.addCell(Cells.createValue(biopsyLocation(record.tumor())));
 
         table.addCell(Cells.createKey("Measurable disease (RECIST)"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor().hasMeasurableLesionRecist())));
