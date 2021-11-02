@@ -21,19 +21,21 @@ public class And implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<Evaluation> results = Lists.newArrayList();
+        List<Evaluation> evaluations = Lists.newArrayList();
         for (EvaluationFunction function : functions) {
-            results.add(function.evaluate(record));
+            evaluations.add(function.evaluate(record));
         }
 
-        if (results.contains(Evaluation.COULD_NOT_BE_DETERMINED)) {
+        if (evaluations.contains(Evaluation.COULD_NOT_BE_DETERMINED)) {
             return Evaluation.COULD_NOT_BE_DETERMINED;
-        } else if (results.contains(Evaluation.FAIL)) {
+        } else if (evaluations.contains(Evaluation.FAIL)) {
             return Evaluation.FAIL;
-        } else if (results.contains(Evaluation.PASS_BUT_WARN)) {
+        } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {
             return Evaluation.PASS_BUT_WARN;
-        } else {
+        } else if (evaluations.contains(Evaluation.PASS)) {
             return Evaluation.PASS;
         }
+
+        throw new IllegalStateException("AND could not combine evaluations: " + evaluations);
     }
 }

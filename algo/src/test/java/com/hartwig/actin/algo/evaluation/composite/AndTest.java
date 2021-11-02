@@ -47,6 +47,11 @@ public class AndTest {
                 evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void crashOnNoFunctionsToEvaluate() {
+        new And(Lists.newArrayList()).evaluate(TEST_PATIENT);
+    }
+
     @NotNull
     private static Evaluation evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
         return new And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);

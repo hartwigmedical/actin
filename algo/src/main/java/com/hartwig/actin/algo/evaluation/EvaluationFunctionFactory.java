@@ -8,6 +8,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.composite.And;
+import com.hartwig.actin.algo.evaluation.composite.Not;
+import com.hartwig.actin.algo.evaluation.composite.Or;
+import com.hartwig.actin.algo.evaluation.composite.WarnOnFail;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
@@ -24,9 +27,9 @@ public final class EvaluationFunctionFactory {
 
     static {
         FUNCTION_CREATOR_MAP.put(EligibilityRule.AND, andCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.OR, cannotBeDeterminedCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.NOT, cannotBeDeterminedCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_ON_FAIL, cannotBeDeterminedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.OR, orCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.NOT, notCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_ON_FAIL, warnOnFailCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_BREASTFEEDING, cannotBeDeterminedCreator());
@@ -97,28 +100,41 @@ public final class EvaluationFunctionFactory {
             return cannotBeDeterminedCreator().create(function);
         }
 
-        FunctionCreator creator = FUNCTION_CREATOR_MAP.get(function.rule());
-        if (creator == null) {
-            LOGGER.warn("No creator function defined for '{}'. Evaluation for this rule will always fail", function.rule());
-            return cannotBeDeterminedCreator().create(function);
-        }
-
-        return creator.create(function);
+        return FUNCTION_CREATOR_MAP.get(function.rule()).create(function);
     }
 
     @NotNull
     private static FunctionCreator andCreator() {
-        return new FunctionCreator() {
-            @NotNull
-            @Override
-            public EvaluationFunction create(@NotNull final EligibilityFunction function) {
-                List<EvaluationFunction> functions = Lists.newArrayList();
-                for (EligibilityFunction input : EligibilityParameterResolver.createCompositeParameters(function)) {
-                    functions.add(create(input));
-                }
-                return new And(functions);
-            }
-        };
+        return function -> new And(createMultipleCompositeParameters(function));
+    }
+
+    @NotNull
+    private static FunctionCreator orCreator() {
+        return function -> new Or(createMultipleCompositeParameters(function));
+    }
+
+    @NotNull
+    private static FunctionCreator notCreator() {
+        return function -> new Not(createSingleCompositeParameter(function));
+    }
+
+    @NotNull
+    private static FunctionCreator warnOnFailCreator() {
+        return function -> new WarnOnFail(createSingleCompositeParameter(function));
+    }
+
+    @NotNull
+    private static EvaluationFunction createSingleCompositeParameter(@NotNull EligibilityFunction function) {
+        return create(EligibilityParameterResolver.createSingleCompositeParameter(function));
+    }
+
+    @NotNull
+    private static List<EvaluationFunction> createMultipleCompositeParameters(@NotNull EligibilityFunction function) {
+        List<EvaluationFunction> parameters = Lists.newArrayList();
+        for (EligibilityFunction input : EligibilityParameterResolver.createAtLeastTwoCompositeParameters(function)) {
+            parameters.add(create(input));
+        }
+        return parameters;
     }
 
     @NotNull

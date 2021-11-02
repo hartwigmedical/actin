@@ -89,7 +89,11 @@ public final class EligibilityParameterResolver {
     public static Boolean hasValidParameters(@NotNull EligibilityFunction function) {
         try {
             if (COMPOSITE_RULES.contains(function.rule())) {
-                createCompositeParameters(function);
+                if (function.rule() == EligibilityRule.AND || function.rule() == EligibilityRule.OR) {
+                    createAtLeastTwoCompositeParameters(function);
+                } else {
+                    createSingleCompositeParameter(function);
+                }
                 return true;
             } else if (RULES_WITH_SINGLE_DOUBLE_PARAMETER.contains(function.rule())) {
                 createSingleDoubleParameter(function);
@@ -131,12 +135,15 @@ public final class EligibilityParameterResolver {
     }
 
     @NotNull
-    public static List<EligibilityFunction> createCompositeParameters(@NotNull EligibilityFunction function) {
-        if (function.rule() == EligibilityRule.WARN_ON_FAIL) {
-            assertExpectedParamCount(function, 1);
-        } else if (function.rule() == EligibilityRule.NOT && function.parameters().isEmpty()) {
-            throw new IllegalArgumentException("No parameters passed into NOT function");
-        } else if ((function.rule() == EligibilityRule.OR || function.rule() == EligibilityRule.AND) && function.parameters().size() < 2) {
+    public static EligibilityFunction createSingleCompositeParameter(@NotNull EligibilityFunction function) {
+        assertExpectedParamCount(function, 1);
+
+        return (EligibilityFunction) function.parameters().get(0);
+    }
+
+    @NotNull
+    public static List<EligibilityFunction> createAtLeastTwoCompositeParameters(@NotNull EligibilityFunction function) {
+        if (function.parameters().size() < 2) {
             throw new IllegalArgumentException(
                     "Not enough parameters passed into " + function.rule() + " function: " + function.parameters().size());
         }

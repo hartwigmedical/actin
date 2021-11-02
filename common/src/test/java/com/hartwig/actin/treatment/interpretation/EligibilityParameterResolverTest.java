@@ -65,21 +65,25 @@ public class EligibilityParameterResolverTest {
         inputs.add(createValidTestFunction());
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND, inputs)));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.OR, inputs)));
-        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT, inputs)));
+
+        EligibilityFunction valid1 = create(EligibilityRule.NOT, inputs);
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid1));
+        assertNotNull(EligibilityParameterResolver.createSingleCompositeParameter(valid1));
         assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_FAIL, inputs)));
 
         // Add 2nd param
         inputs.add(createValidTestFunction());
-        EligibilityFunction valid = create(EligibilityRule.OR, inputs);
-        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertNotNull(EligibilityParameterResolver.createCompositeParameters(valid));
+        EligibilityFunction valid2 = create(EligibilityRule.OR, inputs);
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid2));
+        assertNotNull(EligibilityParameterResolver.createAtLeastTwoCompositeParameters(valid2));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT, inputs)));
 
         // Add 3rd param
         inputs.add(createValidTestFunction());
-        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT, inputs)));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.OR, inputs)));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_FAIL, inputs)));
 
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.NOT,
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND,
                 Lists.newArrayList("not a function", "not a function either"))));
     }
 
