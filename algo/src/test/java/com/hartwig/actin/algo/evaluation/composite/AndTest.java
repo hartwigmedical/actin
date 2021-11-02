@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.composite;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -48,6 +49,6 @@ public class AndTest {
 
     @NotNull
     private static Evaluation evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
-        return new And(function1, function2).evaluate(TEST_PATIENT);
+        return new And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);
     }
 }

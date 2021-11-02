@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -42,8 +43,11 @@ public final class EvaluationFunctionFactory {
 
     @NotNull
     private static EvaluationFunction createAnd(@NotNull EligibilityFunction function) {
-        List<EligibilityFunction> functions = EligibilityParameterResolver.createCompositeParameters(function);
-        return new And(create(functions.get(0)), create(functions.get(1)));
+        List<EvaluationFunction> functions = Lists.newArrayList();
+        for (EligibilityFunction input : EligibilityParameterResolver.createCompositeParameters(function)) {
+            functions.add(create(input));
+        }
+        return new And(functions);
     }
 
     @NotNull

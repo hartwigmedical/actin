@@ -12,19 +12,19 @@ import org.jetbrains.annotations.NotNull;
 public class And implements EvaluationFunction {
 
     @NotNull
-    private final EvaluationFunction function1;
-    @NotNull
-    private final EvaluationFunction function2;
+    private final List<EvaluationFunction> functions;
 
-    public And(@NotNull final EvaluationFunction function1, @NotNull final EvaluationFunction function2) {
-        this.function1 = function1;
-        this.function2 = function2;
+    public And(@NotNull final List<EvaluationFunction> functions) {
+        this.functions = functions;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<Evaluation> results = Lists.newArrayList(function1.evaluate(record), function2.evaluate(record));
+        List<Evaluation> results = Lists.newArrayList();
+        for (EvaluationFunction function : functions) {
+            results.add(function.evaluate(record));
+        }
 
         if (results.contains(Evaluation.COULD_NOT_BE_DETERMINED)) {
             return Evaluation.COULD_NOT_BE_DETERMINED;
