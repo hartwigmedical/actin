@@ -1,9 +1,12 @@
 package com.hartwig.actin.algo.evaluation;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,16 +20,28 @@ public final class EvaluationFunctionFactory {
     }
 
     @NotNull
-    public static EvaluationFunction create(@NotNull EligibilityFunction eligibilityFunction) {
-        switch (eligibilityFunction.rule()) {
+    public static EvaluationFunction create(@NotNull EligibilityFunction function) {
+        if (!EligibilityParameterResolver.hasValidParameters(function)) {
+            LOGGER.warn("Could not create function with rule '{}' based on inputs {}", function.rule(), function.parameters());
+            return createAlwaysFail();
+        }
+
+        switch (function.rule()) {
+            case AND:
+                return createAnd(function.parameters());
             case IS_AT_LEAST_18_YEARS_OLD:
                 return createIsAdult();
             default: {
-                LOGGER.warn("No evaluation function implemented for '{}'. Evaluation for this rule will always fail",
-                        eligibilityFunction.rule());
+                LOGGER.warn("No evaluation function implemented for '{}'. Evaluation for this rule will always fail", function.rule());
                 return createAlwaysFail();
             }
         }
+    }
+
+    @NotNull
+    private static EvaluationFunction createAnd(@NotNull List<Object> parameters) {
+        List<EligibilityFunction> functions = EligibilityParameterResolver.createCompositeParameters(parameters, 2);
+        return new And(create(functions.get(0)), create(functions.get(1)));
     }
 
     @NotNull
@@ -36,6 +51,6 @@ public final class EvaluationFunctionFactory {
 
     @NotNull
     private static EvaluationFunction createAlwaysFail() {
-        return record -> EligibilityEvaluation.FAIL;
+        return record -> Evaluation.FAIL;
     }
 }

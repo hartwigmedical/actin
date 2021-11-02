@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 
 import org.jetbrains.annotations.NotNull;
 
 public interface EvaluationFunction {
 
     @NotNull
-    EligibilityEvaluation evaluate(@NotNull PatientRecord record);
+    Evaluation evaluate(@NotNull PatientRecord record);
 }

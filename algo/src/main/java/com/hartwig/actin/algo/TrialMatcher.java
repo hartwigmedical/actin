@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
-import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
 import com.hartwig.actin.algo.datamodel.ImmutableSampleTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
@@ -49,9 +49,9 @@ public final class TrialMatcher {
     }
 
     @NotNull
-    private static Map<EligibilityFunction, EligibilityEvaluation> evaluateEligibility(@NotNull PatientRecord patient,
+    private static Map<EligibilityFunction, Evaluation> evaluateEligibility(@NotNull PatientRecord patient,
             @NotNull List<EligibilityFunction> eligibilityFunctions) {
-        Map<EligibilityFunction, EligibilityEvaluation> eligibility = Maps.newHashMap();
+        Map<EligibilityFunction, Evaluation> eligibility = Maps.newHashMap();
         for (EligibilityFunction function : eligibilityFunctions) {
             EvaluationFunction evaluator = EvaluationFunctionFactory.create(function);
             eligibility.put(function, evaluator.evaluate(patient));

@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
-import com.hartwig.actin.algo.datamodel.EligibilityEvaluation;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -37,7 +37,7 @@ public class TrialMatcherTest {
 
     private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {
         assertEquals(1, trialEligibility.evaluations().size());
-        assertEquals(EligibilityEvaluation.PASS, find(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD));
+        assertEquals(Evaluation.PASS, find(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD));
 
         assertEquals(3, trialEligibility.cohorts().size());
         for (CohortEligibility cohort : trialEligibility.cohorts()) {
@@ -46,9 +46,8 @@ public class TrialMatcherTest {
     }
 
     @NotNull
-    private static EligibilityEvaluation find(@NotNull Map<EligibilityFunction, EligibilityEvaluation> evaluations,
-            @NotNull EligibilityRule ruleToFind) {
-        for (Map.Entry<EligibilityFunction, EligibilityEvaluation> evaluation : evaluations.entrySet()) {
+    private static Evaluation find(@NotNull Map<EligibilityFunction, Evaluation> evaluations, @NotNull EligibilityRule ruleToFind) {
+        for (Map.Entry<EligibilityFunction, Evaluation> evaluation : evaluations.entrySet()) {
             if (evaluation.getKey().rule() == ruleToFind) {
                 return evaluation.getValue();
             }
