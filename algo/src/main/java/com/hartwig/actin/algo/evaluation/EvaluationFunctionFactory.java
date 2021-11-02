@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
 import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.algo.evaluation.composite.WarnOnFail;
+import com.hartwig.actin.algo.evaluation.general.IsAtLeastEighteenYearsOld;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
@@ -36,7 +37,6 @@ public final class EvaluationFunctionFactory {
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_PREGNANT, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, cannotBeDeterminedCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, cannotBeDeterminedCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, cannotBeDeterminedCreator());
@@ -75,9 +75,10 @@ public final class EvaluationFunctionFactory {
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_GILBERT_DISEASE, cannotBeDeterminedCreator());
 
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, cannotBeDeterminedCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_GRADE_OF_AT_LEAST_X, cannotBeDeterminedCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_GRADE_OF_AT_LEAST_X_IN_NEUROPATHY, cannotBeDeterminedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, cannotBeDeterminedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, cannotBeDeterminedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, cannotBeDeterminedCreator());
 

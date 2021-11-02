@@ -7,13 +7,12 @@ public enum EligibilityRule {
     NOT,
     WARN_ON_FAIL,
 
-    // Rules based on base clinical information and general health of patient
+    // Rules based on general information and health of patient
     IS_AT_LEAST_18_YEARS_OLD,
     IS_BREASTFEEDING,
     IS_PREGNANT,
     HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS,
     HAS_WHO_STATUS_OF_AT_MOST_X,
-    HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION,
     HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS,
 
     // Rules based on pathology information
@@ -58,9 +57,10 @@ public enum EligibilityRule {
     HAS_GILBERT_DISEASE,
 
     // Rules related to current medication
+    HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION,
     HAS_STABLE_ANTICOAGULANT_DOSING,
-    HAS_TOXICITY_GRADE_OF_AT_LEAST_X,
-    HAS_TOXICITY_GRADE_OF_AT_LEAST_X_IN_NEUROPATHY,
+    HAS_TOXICITY_OF_AT_LEAST_GRADE_X,
+    HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY,
     CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION,
     CURRENTLY_GETS_CORTICOSTEROID_MEDICATION,
 
