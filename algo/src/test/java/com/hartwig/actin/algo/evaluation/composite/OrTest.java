@@ -21,26 +21,26 @@ public class OrTest {
         assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.fail()));
-        assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+        assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.undetermined()));
 
         assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.PASS_BUT_WARN,
                 evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.PASS_BUT_WARN, evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.fail()));
         assertEquals(Evaluation.PASS_BUT_WARN,
-                evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+                evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.undetermined()));
 
         assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.PASS_BUT_WARN, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.fail()));
-        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.undetermined()));
 
-        assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.pass()));
+        assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.undetermined(), TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.PASS_BUT_WARN,
-                evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.fail()));
-        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
-                evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+                evaluate(TestEvaluationFunctionFactory.undetermined(), TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.undetermined(), TestEvaluationFunctionFactory.fail()));
+        assertEquals(Evaluation.UNDETERMINED,
+                evaluate(TestEvaluationFunctionFactory.undetermined(), TestEvaluationFunctionFactory.undetermined()));
     }
 
     @Test(expected = IllegalStateException.class)

@@ -24,8 +24,8 @@ public class Not implements EvaluationFunction {
             return Evaluation.FAIL;
         } else if (evaluation == Evaluation.FAIL) {
             return Evaluation.PASS;
-        } else if (evaluation == Evaluation.COULD_NOT_BE_DETERMINED) {
-            return Evaluation.COULD_NOT_BE_DETERMINED;
+        } else if (evaluation == Evaluation.UNDETERMINED) {
+            return Evaluation.UNDETERMINED;
         }
 
         throw new IllegalStateException("NOT function cannot negate evaluation: " + evaluation);

@@ -26,8 +26,8 @@ public class And implements EvaluationFunction {
             evaluations.add(function.evaluate(record));
         }
 
-        if (evaluations.contains(Evaluation.COULD_NOT_BE_DETERMINED)) {
-            return Evaluation.COULD_NOT_BE_DETERMINED;
+        if (evaluations.contains(Evaluation.UNDETERMINED)) {
+            return Evaluation.UNDETERMINED;
         } else if (evaluations.contains(Evaluation.FAIL)) {
             return Evaluation.FAIL;
         } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {

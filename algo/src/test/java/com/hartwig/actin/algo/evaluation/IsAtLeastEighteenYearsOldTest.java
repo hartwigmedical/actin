@@ -22,7 +22,7 @@ public class IsAtLeastEighteenYearsOldTest {
 
         assertEquals(Evaluation.PASS, function.evaluate(patientWithBirthYear(1960)));
         assertEquals(Evaluation.FAIL, function.evaluate(patientWithBirthYear(2014)));
-        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED, function.evaluate(patientWithBirthYear(2002)));
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(patientWithBirthYear(2002)));
     }
 
     @NotNull

@@ -32,8 +32,8 @@ public class Or implements EvaluationFunction {
             return Evaluation.PASS_BUT_WARN;
         } else if (evaluations.contains(Evaluation.FAIL)) {
             return Evaluation.FAIL;
-        } else if (evaluations.contains(Evaluation.COULD_NOT_BE_DETERMINED)) {
-            return Evaluation.COULD_NOT_BE_DETERMINED;
+        } else if (evaluations.contains(Evaluation.UNDETERMINED)) {
+            return Evaluation.UNDETERMINED;
         }
 
         throw new IllegalStateException("AND could not combine evaluations: " + evaluations);

@@ -18,6 +18,6 @@ public class NotTest {
         assertEquals(Evaluation.FAIL, new Not(TestEvaluationFunctionFactory.pass()).evaluate(patient));
         assertEquals(Evaluation.FAIL, new Not(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));
         assertEquals(Evaluation.PASS, new Not(TestEvaluationFunctionFactory.fail()).evaluate(patient));
-        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED, new Not(TestEvaluationFunctionFactory.couldNotBeDetermined()).evaluate(patient));
+        assertEquals(Evaluation.UNDETERMINED, new Not(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
     }
 }

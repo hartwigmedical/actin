@@ -18,7 +18,6 @@ public class WarnOnFailTest {
         assertEquals(Evaluation.PASS, new WarnOnFail(TestEvaluationFunctionFactory.pass()).evaluate(patient));
         assertEquals(Evaluation.PASS_BUT_WARN, new WarnOnFail(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));
         assertEquals(Evaluation.PASS_BUT_WARN, new WarnOnFail(TestEvaluationFunctionFactory.fail()).evaluate(patient));
-        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
-                new WarnOnFail(TestEvaluationFunctionFactory.couldNotBeDetermined()).evaluate(patient));
+        assertEquals(Evaluation.UNDETERMINED, new WarnOnFail(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
     }
 }

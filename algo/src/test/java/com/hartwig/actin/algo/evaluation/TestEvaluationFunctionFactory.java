@@ -25,8 +25,8 @@ public final class TestEvaluationFunctionFactory {
     }
 
     @NotNull
-    public static EvaluationFunction couldNotBeDetermined() {
-        return fixedEvaluation(Evaluation.COULD_NOT_BE_DETERMINED);
+    public static EvaluationFunction undetermined() {
+        return fixedEvaluation(Evaluation.UNDETERMINED);
     }
 
     @NotNull

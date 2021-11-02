@@ -144,12 +144,12 @@ public final class EvaluationFunctionFactory {
 
     @NotNull
     private static FunctionCreator cannotBeDeterminedCreator() {
-        return function -> canNeverBeDetermined();
+        return function -> isAlwaysUndetermined();
     }
 
     @NotNull
-    private static EvaluationFunction canNeverBeDetermined() {
-        return evaluation -> Evaluation.COULD_NOT_BE_DETERMINED;
+    private static EvaluationFunction isAlwaysUndetermined() {
+        return evaluation -> Evaluation.UNDETERMINED;
     }
 
     private interface FunctionCreator {
