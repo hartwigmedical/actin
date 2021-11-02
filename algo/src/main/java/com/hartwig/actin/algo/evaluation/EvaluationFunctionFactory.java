@@ -30,7 +30,7 @@ public final class EvaluationFunctionFactory {
             case AND:
                 return createAnd(function.parameters());
             case IS_AT_LEAST_18_YEARS_OLD:
-                return createIsAdult();
+                return createIsAtLeast18YearsOld();
             default: {
                 LOGGER.warn("No evaluation function implemented for '{}'. Evaluation for this rule will always fail", function.rule());
                 return createAlwaysFail();
@@ -45,7 +45,7 @@ public final class EvaluationFunctionFactory {
     }
 
     @NotNull
-    private static EvaluationFunction createIsAdult() {
+    private static EvaluationFunction createIsAtLeast18YearsOld() {
         return new IsAtLeastEighteenYearsOld(LocalDate.now().getYear());
     }
 
