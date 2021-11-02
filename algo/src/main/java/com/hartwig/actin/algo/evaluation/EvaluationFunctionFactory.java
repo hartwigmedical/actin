@@ -42,7 +42,7 @@ public final class EvaluationFunctionFactory {
 
     @NotNull
     private static EvaluationFunction createAnd(@NotNull EligibilityFunction function) {
-        List<EligibilityFunction> functions = EligibilityParameterResolver.createCompositeParameters(function, 2);
+        List<EligibilityFunction> functions = EligibilityParameterResolver.createCompositeParameters(function);
         return new And(create(functions.get(0)), create(functions.get(1)));
     }
 
