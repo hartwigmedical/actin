@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pretreatment;
+package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
+public class HasHadLimitedAntiPDL1OrPD1Immunotherapies implements EvaluationFunction {
 
     @NotNull
     @Override

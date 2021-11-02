@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pretreatment;
+package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;

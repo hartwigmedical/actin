@@ -26,7 +26,7 @@ public enum EligibilityRule {
     HAS_MEASURABLE_DISEASE_RECIST,
     HAS_BIOPSY_AMENABLE_LESION,
 
-    // Rules based on (cancer) pre-treatment information
+    // Rules based on (cancer) treatment information
     HAS_EXHAUSTED_SOC_TREATMENTS,
     HAS_DECLINED_SOC_TREATMENTS,
     HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES,
