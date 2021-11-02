@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
@@ -68,7 +69,7 @@ public class SummaryChapter implements ReportChapter {
         tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
         tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(record.clinical().tumor().stage().display()).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text(stage(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 
@@ -108,6 +109,12 @@ public class SummaryChapter implements ReportChapter {
         }
 
         return null;
+    }
+
+    @NotNull
+    private static String stage(@NotNull TumorDetails tumor) {
+        TumorStage stage = tumor.stage();
+        return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
     }
 
     private void addChapterTitle(@NotNull Document document) {

@@ -4,7 +4,6 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -54,12 +53,6 @@ public class TumorDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor().hasMeasurableLesionRecist())));
 
         return table;
-    }
-
-    @NotNull
-    private static String stage(@NotNull TumorDetails tumor) {
-        TumorStage stage = tumor.stage();
-        return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
