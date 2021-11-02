@@ -1,7 +1,7 @@
 package com.hartwig.actin.treatment.datamodel;
 
 public enum EligibilityRule {
-    // Special purpose meta-eligibility rules
+    // Composite rules combining other rules.
     AND,
     OR,
     NOT,
