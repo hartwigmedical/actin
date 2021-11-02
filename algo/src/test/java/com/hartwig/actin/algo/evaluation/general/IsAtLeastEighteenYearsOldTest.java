@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation.general;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.evaluation.general.IsAtLeastEighteenYearsOld;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
