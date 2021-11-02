@@ -49,14 +49,10 @@ public final class TrialJson {
         for (Trial trial : trials) {
             String jsonFile = path + trial.trialId().replaceAll(" ", "_") + TRIAL_JSON_EXTENSION;
 
-            if (!Files.exists(new File(jsonFile).toPath())) {
-                LOGGER.info(" Writing '{}' to {}", trial.trialId(), jsonFile);
-                BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
-                writer.write(toJson(trial));
-                writer.close();
-            } else {
-                LOGGER.warn("Cannot write trial {} as JSON file already exists: {}", trial.trialId(), jsonFile);
-            }
+            LOGGER.info(" Writing '{}' to {}", trial.trialId(), jsonFile);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
+            writer.write(toJson(trial));
+            writer.close();
         }
     }
 
