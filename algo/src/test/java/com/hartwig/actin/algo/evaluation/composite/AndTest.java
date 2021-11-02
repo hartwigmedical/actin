@@ -18,16 +18,30 @@ public class AndTest {
     @Test
     public void canCombineEvaluations() {
         assertEquals(Evaluation.PASS, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.pass()));
+        assertEquals(Evaluation.PASS_BUT_WARN, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.fail()));
+        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
+                evaluate(TestEvaluationFunctionFactory.pass(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+
+        assertEquals(Evaluation.PASS_BUT_WARN, evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.pass()));
+        assertEquals(Evaluation.PASS_BUT_WARN,
+                evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.fail()));
+        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
+                evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+
+        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.pass()));
+        assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.FAIL, evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.fail()));
+        assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
+                evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
 
         assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
                 evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
-                evaluate(TestEvaluationFunctionFactory.passButWarn(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+                evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
-                evaluate(TestEvaluationFunctionFactory.fail(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
+                evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.fail()));
         assertEquals(Evaluation.COULD_NOT_BE_DETERMINED,
                 evaluate(TestEvaluationFunctionFactory.couldNotBeDetermined(), TestEvaluationFunctionFactory.couldNotBeDetermined()));
     }
