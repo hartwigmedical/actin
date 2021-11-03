@@ -32,6 +32,12 @@ public abstract class IntoleranceEntry implements FeedEntry {
     public abstract String clinicalStatus();
 
     @NotNull
+    public abstract String verificationStatus();
+
+    @NotNull
+    public abstract String clinicalStatusAllergyStatusDisplayNl();
+
+    @NotNull
     public abstract String codeText();
 
     @NotNull

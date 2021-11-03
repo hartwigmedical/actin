@@ -236,6 +236,8 @@ public class ClinicalFeedReaderTest {
         assertEquals("419511003", entry.categoryAllergyCategoryCode());
         assertEquals("Propensity to adverse reactions to drug", entry.categoryAllergyCategoryDisplay());
         assertEquals("active", entry.clinicalStatus());
+        assertEquals("confirmed", entry.verificationStatus());
+        assertEquals("Actief", entry.clinicalStatusAllergyStatusDisplayNl());
         assertEquals("SIMVASTATINE", entry.codeText());
         assertEquals("low", entry.criticality());
     }

@@ -242,6 +242,8 @@ public final class TestFeedFactory {
                 .categoryAllergyCategoryCode(Strings.EMPTY)
                 .categoryAllergyCategoryDisplay(Strings.EMPTY)
                 .clinicalStatus(Strings.EMPTY)
+                .verificationStatus(Strings.EMPTY)
+                .clinicalStatusAllergyStatusDisplayNl(Strings.EMPTY)
                 .codeText("pills")
                 .criticality("unknown")
                 .build());

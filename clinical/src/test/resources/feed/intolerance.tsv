@@ -1,2 +1,2 @@
-﻿"subject"	"assertedDate"	"category"	"category_allergyCategory_code"	"category_allergyCategory_display"	"clinicalStatus"	"code_text"	"criticality"
-"ACTN-01-02-9999"	"21-4-2014 00:00"	"medication"	"419511003"	"Propensity to adverse reactions to drug"	"active"	"SIMVASTATINE"	"low"
+﻿"subject"	"assertedDate"	"category"	"category_allergyCategory_code"	"category_allergyCategory_display"	"clinicalStatus"	"verificationStatus"	"clinicalStatus_allergyStatus_display_nl"	"code_text"	"criticality"
+"ACTN-01-02-9999"	"21-4-2014 00:00"	"medication"	"419511003"	"Propensity to adverse reactions to drug"	"active"	"confirmed"	Actief	"SIMVASTATINE"	"low"
