@@ -15,7 +15,7 @@ public interface TreatmentMatcherConfig {
 
     String CLINICAL_JSON = "clinical_json";
     String MOLECULAR_JSON = "molecular_json";
-    String TREATMENT_DIRECTORY = "treatment_directory";
+    String TREATMENT_DATABASE_DIRECTORY = "treatment_database_directory";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -25,7 +25,7 @@ public interface TreatmentMatcherConfig {
 
         options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the sample");
         options.addOption(MOLECULAR_JSON, true, "File containing the molecular record of the sample");
-        options.addOption(TREATMENT_DIRECTORY, true, "Directory containing all available treatments");
+        options.addOption(TREATMENT_DATABASE_DIRECTORY, true, "Directory containing all available treatments");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to");
 
@@ -39,7 +39,7 @@ public interface TreatmentMatcherConfig {
     String molecularJson();
 
     @NotNull
-    String treatmentDirectory();
+    String treatmentDatabaseDirectory();
 
     @NotNull
     String outputDirectory();
@@ -49,7 +49,7 @@ public interface TreatmentMatcherConfig {
         return ImmutableTreatmentMatcherConfig.builder()
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
-                .treatmentDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY))
+                .treatmentDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DATABASE_DIRECTORY))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

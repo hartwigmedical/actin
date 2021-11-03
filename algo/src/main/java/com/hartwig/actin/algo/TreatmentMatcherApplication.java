@@ -66,8 +66,8 @@ public class TreatmentMatcherApplication {
 
         PatientRecord patient = PatientRecordFactory.fromInputs(clinical, molecular);
 
-        LOGGER.info("Loading trials from {}", config.treatmentDirectory());
-        List<Trial> trials = TrialJson.readFromDir(config.treatmentDirectory());
+        LOGGER.info("Loading trials from {}", config.treatmentDatabaseDirectory());
+        List<Trial> trials = TrialJson.readFromDir(config.treatmentDatabaseDirectory());
         LOGGER.info(" Loaded {} trials", trials.size());
 
         LOGGER.info(("Matching patient to available trials"));
