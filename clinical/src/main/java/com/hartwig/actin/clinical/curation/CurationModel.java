@@ -230,12 +230,12 @@ public class CurationModel {
             LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
             if (config == null) {
                 curatedOtherLesions.add(reformatted);
-            } else if (!config.ignoreWhenOtherLesion()) {
+            } else if (!config.ignoreWhenOtherLesion() && !config.location().isEmpty()) {
                 curatedOtherLesions.add(config.location());
             }
         }
 
-        return !curatedOtherLesions.isEmpty() ? curatedOtherLesions : null;
+        return curatedOtherLesions;
     }
 
     @Nullable

@@ -96,6 +96,8 @@ public final class TestCurationFactory {
                 .location(Strings.EMPTY)
                 .build());
 
+        configs.add(ImmutableLesionLocationConfig.builder().input("No").ignoreWhenOtherLesion(false).location(Strings.EMPTY).build());
+
         return configs;
     }
 
