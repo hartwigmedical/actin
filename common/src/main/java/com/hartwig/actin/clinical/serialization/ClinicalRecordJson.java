@@ -320,6 +320,8 @@ public final class ClinicalRecordJson {
                 allergyList.add(ImmutableAllergy.builder()
                         .name(string(object, "name"))
                         .category(string(object, "category"))
+                        .clinicalStatus(string(object, "clinicalStatus"))
+                        .verificationStatus(string(object, "verificationStatus"))
                         .criticality(string(object, "criticality"))
                         .build());
             }

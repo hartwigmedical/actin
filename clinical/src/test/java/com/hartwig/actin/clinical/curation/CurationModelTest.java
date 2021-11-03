@@ -238,7 +238,13 @@ public class CurationModelTest {
     public void canTranslateAllergies() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Allergy test = ImmutableAllergy.builder().name("Naam").category(Strings.EMPTY).criticality(Strings.EMPTY).build();
+        Allergy test = ImmutableAllergy.builder()
+                .name("Naam")
+                .category(Strings.EMPTY)
+                .clinicalStatus(Strings.EMPTY)
+                .verificationStatus(Strings.EMPTY)
+                .criticality(Strings.EMPTY)
+                .build();
 
         Allergy translated = model.translateAllergy(test);
         assertEquals("Name", translated.name());

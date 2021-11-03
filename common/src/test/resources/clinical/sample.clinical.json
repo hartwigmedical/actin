@@ -159,11 +159,15 @@
     {
       "name": "Drug",
       "category": "medication",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
       "criticality": "low"
     },
     {
       "name": "Condition",
       "category": "environment",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
       "criticality": "unable-to-assess"
     }
   ],

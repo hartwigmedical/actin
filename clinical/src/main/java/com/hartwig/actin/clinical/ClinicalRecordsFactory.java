@@ -252,6 +252,8 @@ public class ClinicalRecordsFactory {
             allergies.add(curation.translateAllergy(ImmutableAllergy.builder()
                     .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
                     .category(CurationUtil.capitalizeFirstLetterOnly(entry.category()))
+                    .clinicalStatus(Strings.EMPTY)
+                    .verificationStatus(Strings.EMPTY)
                     .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
                     .build()));
         }

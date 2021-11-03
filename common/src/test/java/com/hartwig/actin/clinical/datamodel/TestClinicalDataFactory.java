@@ -319,8 +319,21 @@ public final class TestClinicalDataFactory {
     private static List<Allergy> createTestAllergies() {
         List<Allergy> allergies = Lists.newArrayList();
 
-        allergies.add(ImmutableAllergy.builder().name("Wasps").category("Environment").criticality("Unable-to-assess").build());
-        allergies.add(ImmutableAllergy.builder().name("Pembrolizumab").category("Medication").criticality("High").build());
+        allergies.add(ImmutableAllergy.builder()
+                .name("Wasps")
+                .category("Environment")
+                .clinicalStatus("Active")
+                .verificationStatus("Confirmed")
+                .criticality("Unable-to-assess")
+                .build());
+
+        allergies.add(ImmutableAllergy.builder()
+                .name("Pembrolizumab")
+                .category("Medication")
+                .clinicalStatus("Active")
+                .verificationStatus("Confirmed")
+                .criticality("High")
+                .build());
 
         return allergies;
     }

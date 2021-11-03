@@ -293,8 +293,19 @@ class ClinicalDAO {
 
     private void writeAllergies(@NotNull String sampleId, @NotNull List<Allergy> allergies) {
         for (Allergy allergy : allergies) {
-            context.insertInto(ALLERGY, ALLERGY.SAMPLEID, ALLERGY.NAME, ALLERGY.CATEGORY, ALLERGY.CRITICALITY)
-                    .values(sampleId, allergy.name(), allergy.category(), allergy.criticality())
+            context.insertInto(ALLERGY,
+                    ALLERGY.SAMPLEID,
+                    ALLERGY.NAME,
+                    ALLERGY.CATEGORY,
+                    ALLERGY.CLINICALSTATUS,
+                    ALLERGY.VERIFICATIONSTATUS,
+                    ALLERGY.CRITICALITY)
+                    .values(sampleId,
+                            allergy.name(),
+                            allergy.category(),
+                            allergy.clinicalStatus(),
+                            allergy.verificationStatus(),
+                            allergy.criticality())
                     .execute();
         }
     }

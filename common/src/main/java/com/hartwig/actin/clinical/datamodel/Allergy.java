@@ -15,6 +15,12 @@ public abstract class Allergy {
     public abstract String category();
 
     @NotNull
+    public abstract String clinicalStatus();
+
+    @NotNull
+    public abstract String verificationStatus();
+
+    @NotNull
     public abstract String criticality();
 
 }
