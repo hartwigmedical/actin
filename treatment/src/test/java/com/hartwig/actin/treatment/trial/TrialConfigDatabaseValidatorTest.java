@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.trial.config.ImmutableCohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaReferenceConfig;
 import com.hartwig.actin.treatment.trial.config.ImmutableTrialDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
 
@@ -42,6 +43,7 @@ public class TrialConfigDatabaseValidatorTest {
                         .acronym(Strings.EMPTY)
                         .title(Strings.EMPTY)
                         .build())
+
                 .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
                         .trialId(trial1)
                         .open(true)
@@ -60,13 +62,14 @@ public class TrialConfigDatabaseValidatorTest {
                         .cohortId("A")
                         .description(Strings.EMPTY)
                         .build())
-                .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder()
-                        .trialId(trial1)
+
+                .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder().trialId(trial1).addCriterionIds("I-01")
                         .addAppliesToCohorts("B")
                         .inclusionRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
                         .build())
                 .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder()
                         .trialId(trial2)
+                        .addCriterionIds("I-02")
                         .addAppliesToCohorts("A")
                         .inclusionRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
                         .build())
@@ -75,6 +78,18 @@ public class TrialConfigDatabaseValidatorTest {
                         .addAppliesToCohorts("A")
                         .inclusionRule("not a valid inclusion criterion")
                         .build())
+
+                .addInclusionCriteriaReferenceConfigs(ImmutableInclusionCriteriaReferenceConfig.builder()
+                        .trialId("does not exist")
+                        .criterionId("I-01")
+                        .criterionText("irrelevant")
+                        .build())
+                .addInclusionCriteriaReferenceConfigs(ImmutableInclusionCriteriaReferenceConfig.builder()
+                        .trialId(trial2)
+                        .criterionId("I-02")
+                        .criterionText("Some rule")
+                        .build())
+
                 .build();
     }
 }

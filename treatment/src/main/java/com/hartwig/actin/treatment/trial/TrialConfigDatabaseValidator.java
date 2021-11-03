@@ -9,6 +9,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
+import com.hartwig.actin.treatment.trial.config.TrialConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,33 +33,11 @@ public final class TrialConfigDatabaseValidator {
 
         boolean validInclusionCriteria = validateInclusionCriteria(cohortIdsPerTrial, database.inclusionCriteriaConfigs());
 
-        return validCohorts && validInclusionCriteria;
-    }
+        boolean validInclusionCriteriaReferences = validateInclusionCriteriaReferences(trialIds,
+                database.inclusionCriteriaConfigs(),
+                database.inclusionCriteriaReferenceConfigs());
 
-    private static boolean validateInclusionCriteria(@NotNull Multimap<String, String> cohortIdsPerTrial,
-            @NotNull List<InclusionCriteriaConfig> inclusionCriteria) {
-        boolean valid = true;
-        Set<String> trialIds = cohortIdsPerTrial.keySet();
-        for (InclusionCriteriaConfig criterion : inclusionCriteria) {
-            if (!trialIds.contains(criterion.trialId())) {
-                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}", criterion.inclusionRule(), criterion.trialId());
-                valid = false;
-            } else {
-                Collection<String> cohortIdsForTrial = cohortIdsPerTrial.get(criterion.trialId());
-                for (String cohortId : criterion.appliesToCohorts()) {
-                    if (!cohortIdsForTrial.contains(cohortId)) {
-                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}", criterion.inclusionRule(), cohortId);
-                        valid = false;
-                    }
-                }
-            }
-
-            if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule())) {
-                LOGGER.warn("Not a valid inclusion criterion for trial '{}': {}", criterion.trialId(), criterion.inclusionRule());
-                valid = false;
-            }
-        }
-        return valid;
+        return validCohorts && validInclusionCriteria && validInclusionCriteriaReferences;
     }
 
     @NotNull
@@ -105,5 +85,90 @@ public final class TrialConfigDatabaseValidator {
             }
         }
         return cohortIds;
+    }
+
+    private static boolean validateInclusionCriteria(@NotNull Multimap<String, String> cohortIdsPerTrial,
+            @NotNull List<InclusionCriteriaConfig> inclusionCriteria) {
+        boolean valid = true;
+        Set<String> trialIds = cohortIdsPerTrial.keySet();
+        for (InclusionCriteriaConfig criterion : inclusionCriteria) {
+            if (!trialIds.contains(criterion.trialId())) {
+                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}", criterion.inclusionRule(), criterion.trialId());
+                valid = false;
+            } else {
+                Collection<String> cohortIdsForTrial = cohortIdsPerTrial.get(criterion.trialId());
+                for (String cohortId : criterion.appliesToCohorts()) {
+                    if (!cohortIdsForTrial.contains(cohortId)) {
+                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}", criterion.inclusionRule(), cohortId);
+                        valid = false;
+                    }
+                }
+            }
+
+            if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule())) {
+                LOGGER.warn("Not a valid inclusion criterion for trial '{}': {}", criterion.trialId(), criterion.inclusionRule());
+                valid = false;
+            }
+
+            if (criterion.criterionIds().isEmpty()) {
+                LOGGER.warn("No criterion IDs defined for criterion {} on trial '{}", criterion.inclusionRule(), criterion.trialId());
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    private static boolean validateInclusionCriteriaReferences(@NotNull Set<String> trialIds,
+            @NotNull List<InclusionCriteriaConfig> inclusionCriteriaConfigs,
+            @NotNull List<InclusionCriteriaReferenceConfig> inclusionCriteriaReferenceConfigs) {
+        boolean valid = true;
+        for (InclusionCriteriaReferenceConfig referenceConfig : inclusionCriteriaReferenceConfigs) {
+            if (!trialIds.contains(referenceConfig.trialId())) {
+                LOGGER.warn("Reference '{}' defined on non-existing trial: {}", referenceConfig.criterionId(), referenceConfig.trialId());
+                valid = false;
+            }
+        }
+
+        Multimap<String, InclusionCriteriaReferenceConfig> referencesPerTrial = buildMapPerTrial(inclusionCriteriaReferenceConfigs);
+        Multimap<String, InclusionCriteriaConfig> criteriaPerTrial = buildMapPerTrial(inclusionCriteriaConfigs);
+        for (String trialId : trialIds) {
+            Collection<InclusionCriteriaReferenceConfig> references = referencesPerTrial.get(trialId);
+            Collection<InclusionCriteriaConfig> criteria = criteriaPerTrial.get(trialId);
+
+            if (references != null && criteria != null) {
+                for (InclusionCriteriaConfig criterion : criteria) {
+                    if (!allReferencesExist(references, criterion.criterionIds())) {
+                        LOGGER.warn("Not all references are defined on trial '{}': {}", trialId, criterion.criterionIds());
+                        valid = false;
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    @NotNull
+    private static <T extends TrialConfig> Multimap<String, T> buildMapPerTrial(@NotNull List<T> configs) {
+        Multimap<String, T> map = ArrayListMultimap.create();
+        for (T config : configs) {
+            map.put(config.trialId(), config);
+        }
+        return map;
+    }
+
+    private static boolean allReferencesExist(@NotNull Collection<InclusionCriteriaReferenceConfig> references,
+            @NotNull Set<String> criterionIds) {
+        Set<String> referenceIds = Sets.newHashSet();
+        for (InclusionCriteriaReferenceConfig reference : references) {
+            referenceIds.add(reference.criterionId());
+        }
+
+        for (String criterionId : criterionIds) {
+            if (!referenceIds.contains(criterionId)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
