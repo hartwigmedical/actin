@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.treatment.datamodel.Cohort;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory;
@@ -52,9 +53,9 @@ public class TrialJsonTest {
         assertEquals("TEST-TRIAL", trial.acronym());
         assertEquals("This is a trial to test ACTIN", trial.title());
 
-        assertEquals(1, trial.generalEligibilityFunctions().size());
+        assertEquals(1, trial.generalEligibility().size());
 
-        EligibilityFunction generalFunction = findFunction(trial.generalEligibilityFunctions(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD);
+        EligibilityFunction generalFunction = findBaseFunction(trial.generalEligibility(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD);
         assertTrue(generalFunction.parameters().isEmpty());
 
         assertEquals(3, trial.cohorts().size());
@@ -62,39 +63,40 @@ public class TrialJsonTest {
         Cohort cohortA = findCohort(trial.cohorts(), "A");
         assertTrue(cohortA.open());
         assertEquals("Cohort A", cohortA.description());
-        assertEquals(1, cohortA.eligibilityFunctions().size());
+        assertEquals(1, cohortA.eligibility().size());
 
-        EligibilityFunction functionA = findFunction(cohortA.eligibilityFunctions(), EligibilityRule.NOT);
+        EligibilityFunction functionA = findBaseFunction(cohortA.eligibility(), EligibilityRule.NOT);
         assertEquals(1, functionA.parameters().size());
 
-        EligibilityFunction subFunctionA = findFunction(functionA.parameters(), EligibilityRule.HAS_ACTIVE_CNS_METASTASES);
+        EligibilityFunction subFunctionA = findSubFunction(functionA.parameters(), EligibilityRule.HAS_ACTIVE_CNS_METASTASES);
         assertTrue(subFunctionA.parameters().isEmpty());
 
         Cohort cohortB = findCohort(trial.cohorts(), "B");
         assertTrue(cohortB.open());
         assertEquals("Cohort B", cohortB.description());
-        assertTrue(cohortB.eligibilityFunctions().isEmpty());
+        assertTrue(cohortB.eligibility().isEmpty());
 
         Cohort cohortC = findCohort(trial.cohorts(), "C");
         assertFalse(cohortC.open());
         assertEquals("Cohort C", cohortC.description());
-        assertEquals(3, cohortC.eligibilityFunctions().size());
+        assertEquals(3, cohortC.eligibility().size());
 
-        EligibilityFunction functionC1 = findFunction(cohortC.eligibilityFunctions(), EligibilityRule.HAS_BIOPSY_AMENABLE_LESION);
+        EligibilityFunction functionC1 = findBaseFunction(cohortC.eligibility(), EligibilityRule.HAS_BIOPSY_AMENABLE_LESION);
         assertTrue(functionC1.parameters().isEmpty());
 
-        EligibilityFunction functionC2 = findFunction(cohortC.eligibilityFunctions(), EligibilityRule.OR);
+        EligibilityFunction functionC2 = findBaseFunction(cohortC.eligibility(), EligibilityRule.OR);
         assertEquals(2, functionC2.parameters().size());
 
-        EligibilityFunction subFunction1 = findFunction(functionC2.parameters(), EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X);
+        EligibilityFunction subFunction1 =
+                findSubFunction(functionC2.parameters(), EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X);
         assertEquals(1, subFunction1.parameters().size());
         assertTrue(subFunction1.parameters().contains("0123"));
 
-        EligibilityFunction subFunction2 = findFunction(functionC2.parameters(), EligibilityRule.IS_PREGNANT);
+        EligibilityFunction subFunction2 = findSubFunction(functionC2.parameters(), EligibilityRule.IS_PREGNANT);
         assertTrue(subFunction2.parameters().isEmpty());
 
         EligibilityFunction functionC3 =
-                findFunction(cohortC.eligibilityFunctions(), EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES);
+                findBaseFunction(cohortC.eligibility(), EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES);
         assertEquals(1, functionC3.parameters().size());
         assertTrue(functionC3.parameters().contains("2"));
     }
@@ -111,7 +113,18 @@ public class TrialJsonTest {
     }
 
     @NotNull
-    private static <X> EligibilityFunction findFunction(@NotNull List<X> functions, @NotNull EligibilityRule rule) {
+    private static EligibilityFunction findBaseFunction(@NotNull List<Eligibility> eligibility, @NotNull EligibilityRule rule) {
+        for (Eligibility entry : eligibility) {
+            if (entry.function().rule() == rule) {
+                return entry.function();
+            }
+        }
+
+        throw new IllegalStateException("Could not find base eligibility function with rule: " + rule);
+    }
+
+    @NotNull
+    private static <X> EligibilityFunction findSubFunction(@NotNull List<X> functions, @NotNull EligibilityRule rule) {
         for (X function : functions) {
             EligibilityFunction func = (EligibilityFunction) function;
             if (func.rule() == rule) {
@@ -119,6 +132,6 @@ public class TrialJsonTest {
             }
         }
 
-        throw new IllegalStateException("Could not find function with rule: " + rule);
+        throw new IllegalStateException("Could not find sub function with rule: " + rule);
     }
 }

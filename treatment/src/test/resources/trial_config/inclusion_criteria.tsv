@@ -1,2 +1,2 @@
-trialId	appliesToCohorts	inclusionCriterion
-ACTN 2021	all	IS_AT_LEAST_18_YEARS_OLD
+trialId	appliesToCohorts	reference	description	inclusionCriterion
+ACTN 2021	all	I-01	Is adult?	IS_AT_LEAST_18_YEARS_OLD

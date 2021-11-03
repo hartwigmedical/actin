@@ -6,11 +6,13 @@ import java.util.List;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.Cohort;
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
+import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +43,7 @@ public class TrialFactory {
                     .trialId(trialId)
                     .acronym(trialConfig.acronym())
                     .title(trialConfig.title())
-                    .generalEligibilityFunctions(toEligibilityFunctions(trialModel.generalInclusionCriteriaForTrial(trialId)))
+                    .generalEligibility(toEligibility(trialModel.generalInclusionCriteriaForTrial(trialId)))
                     .cohorts(cohortsForTrial(trialId))
                     .build());
         }
@@ -59,7 +61,7 @@ public class TrialFactory {
                     .cohortId(cohortId)
                     .open(cohortConfig.open())
                     .description(cohortConfig.description())
-                    .eligibilityFunctions(toEligibilityFunctions(trialModel.specificInclusionCriteriaForCohort(trialId, cohortId)))
+                    .eligibility(toEligibility(trialModel.specificInclusionCriteriaForCohort(trialId, cohortId)))
                     .build());
         }
 
@@ -67,11 +69,15 @@ public class TrialFactory {
     }
 
     @NotNull
-    private static List<EligibilityFunction> toEligibilityFunctions(@NotNull List<String> inclusionCriteria) {
-        List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
-        for (String inclusionCriterion : inclusionCriteria) {
-            eligibilityFunctions.add(EligibilityFactory.generateEligibilityFunction(inclusionCriterion));
+    private static List<Eligibility> toEligibility(@NotNull List<InclusionCriteriaConfig> configs) {
+        List<Eligibility> eligibility = Lists.newArrayList();
+        for (InclusionCriteriaConfig config : configs) {
+            eligibility.add(ImmutableEligibility.builder()
+                    .reference(config.reference())
+                    .description(config.description())
+                    .function(EligibilityFactory.generateEligibilityFunction(config.inclusionCriterion()))
+                    .build());
         }
-        return eligibilityFunctions;
+        return eligibility;
     }
 }

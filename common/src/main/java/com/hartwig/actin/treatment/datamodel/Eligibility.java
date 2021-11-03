@@ -1,6 +1,4 @@
-package com.hartwig.actin.treatment.trial.config;
-
-import java.util.Set;
+package com.hartwig.actin.treatment.datamodel;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -8,14 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class InclusionCriteriaConfig implements TrialConfig {
-
-    @NotNull
-    @Override
-    public abstract String trialId();
-
-    @NotNull
-    public abstract Set<String> appliesToCohorts();
+public abstract class Eligibility {
 
     @NotNull
     public abstract String reference();
@@ -24,5 +15,6 @@ public abstract class InclusionCriteriaConfig implements TrialConfig {
     public abstract String description();
 
     @NotNull
-    public abstract String inclusionCriterion();
+    public abstract EligibilityFunction function();
+
 }

@@ -20,7 +20,7 @@ public abstract class Trial {
     public abstract String title();
 
     @NotNull
-    public abstract List<EligibilityFunction> generalEligibilityFunctions();
+    public abstract List<Eligibility> generalEligibility();
 
     @NotNull
     public abstract List<Cohort> cohorts();

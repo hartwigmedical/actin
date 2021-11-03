@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.treatment.datamodel.Cohort;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.Trial;
@@ -38,23 +39,22 @@ public class TrialFactoryTest {
         assertEquals("Acronym-TEST", trial.acronym());
         assertEquals("Title for TEST", trial.title());
 
-        assertEquals(1, trial.generalEligibilityFunctions().size());
+        assertEquals(1, trial.generalEligibility().size());
 
-        EligibilityFunction generalFunction = trial.generalEligibilityFunctions().get(0);
-        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, generalFunction.rule());
+        EligibilityFunction generalFunction = findFunction(trial.generalEligibility(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD);
         assertTrue(generalFunction.parameters().isEmpty());
 
         assertEquals(3, trial.cohorts().size());
 
         Cohort cohortA = findCohort(trial.cohorts(), "A");
         assertEquals("Cohort A", cohortA.description());
-        assertEquals(2, cohortA.eligibilityFunctions().size());
+        assertEquals(2, cohortA.eligibility().size());
 
-        EligibilityFunction cohortFunction1 = findFunction(cohortA.eligibilityFunctions(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
+        EligibilityFunction cohortFunction1 = findFunction(cohortA.eligibility(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
         assertEquals(1, cohortFunction1.parameters().size());
         assertTrue(cohortFunction1.parameters().contains("1"));
 
-        EligibilityFunction cohortFunction2 = findFunction(cohortA.eligibilityFunctions(), EligibilityRule.NOT);
+        EligibilityFunction cohortFunction2 = findFunction(cohortA.eligibility(), EligibilityRule.NOT);
         assertEquals(1, cohortFunction1.parameters().size());
         EligibilityFunction subFunction = (EligibilityFunction) cohortFunction2.parameters().get(0);
         assertEquals(EligibilityRule.OR, subFunction.rule());
@@ -62,11 +62,11 @@ public class TrialFactoryTest {
 
         Cohort cohortB = findCohort(trial.cohorts(), "B");
         assertEquals("Cohort B", cohortB.description());
-        assertTrue(cohortB.eligibilityFunctions().isEmpty());
+        assertTrue(cohortB.eligibility().isEmpty());
 
         Cohort cohortC = findCohort(trial.cohorts(), "C");
         assertEquals("Cohort C", cohortC.description());
-        assertTrue(cohortC.eligibilityFunctions().isEmpty());
+        assertTrue(cohortC.eligibility().isEmpty());
     }
 
     @NotNull
@@ -81,14 +81,13 @@ public class TrialFactoryTest {
     }
 
     @NotNull
-    private static EligibilityFunction findFunction(@NotNull List<EligibilityFunction> functions, @NotNull EligibilityRule rule) {
-        for (EligibilityFunction function : functions) {
-            if (function.rule() == rule) {
-                return function;
+    private static EligibilityFunction findFunction(@NotNull List<Eligibility> eligibility, @NotNull EligibilityRule rule) {
+        for (Eligibility entry : eligibility) {
+            if (entry.function().rule() == rule) {
+                return entry.function();
             }
         }
 
         throw new IllegalStateException("Could not find eligibility function with rule: " + rule);
-
     }
 }

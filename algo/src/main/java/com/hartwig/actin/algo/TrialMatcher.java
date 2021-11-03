@@ -16,7 +16,7 @@ import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
 import com.hartwig.actin.treatment.datamodel.Cohort;
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.Trial;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +34,13 @@ public final class TrialMatcher {
             for (Cohort cohort : trial.cohorts()) {
                 cohortMatching.add(ImmutableCohortEligibility.builder()
                         .cohortId(cohort.cohortId())
-                        .evaluations(evaluateEligibility(patient, cohort.eligibilityFunctions()))
+                        .evaluations(evaluateEligibility(patient, cohort.eligibility()))
                         .build());
             }
 
             trialMatches.add(ImmutableTrialEligibility.builder()
                     .trialId(trial.trialId())
-                    .evaluations(evaluateEligibility(patient, trial.generalEligibilityFunctions()))
+                    .evaluations(evaluateEligibility(patient, trial.generalEligibility()))
                     .cohorts(cohortMatching)
                     .build());
         }
@@ -49,13 +49,13 @@ public final class TrialMatcher {
     }
 
     @NotNull
-    private static Map<EligibilityFunction, Evaluation> evaluateEligibility(@NotNull PatientRecord patient,
-            @NotNull List<EligibilityFunction> eligibilityFunctions) {
-        Map<EligibilityFunction, Evaluation> eligibility = Maps.newHashMap();
-        for (EligibilityFunction function : eligibilityFunctions) {
-            EvaluationFunction evaluator = EvaluationFunctionFactory.create(function);
-            eligibility.put(function, evaluator.evaluate(patient));
+    private static Map<Eligibility, Evaluation> evaluateEligibility(@NotNull PatientRecord patient,
+            @NotNull List<Eligibility> eligibility) {
+        Map<Eligibility, Evaluation> evaluations = Maps.newHashMap();
+        for (Eligibility entry : eligibility) {
+            EvaluationFunction evaluator = EvaluationFunctionFactory.create(entry.function());
+            evaluations.put(entry, evaluator.evaluate(patient));
         }
-        return eligibility;
+        return evaluations;
     }
 }

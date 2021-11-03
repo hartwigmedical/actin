@@ -7,6 +7,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.trial.ImmutableTrialConfigDatabase;
 import com.hartwig.actin.treatment.trial.TrialConfigDatabase;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestTrialConfigFactory {
@@ -60,7 +61,8 @@ public final class TestTrialConfigFactory {
     private static List<InclusionCriteriaConfig> createTestInclusionCriteriaConfigs() {
         List<InclusionCriteriaConfig> configs = Lists.newArrayList();
 
-        ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
+        ImmutableInclusionCriteriaConfig.Builder builder =
+                ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID).reference(Strings.EMPTY).description(Strings.EMPTY);
 
         configs.add(builder.inclusionCriterion(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString()).build());
         configs.add(builder.inclusionCriterion(EligibilityRule.HAS_INR_ULN_AT_MOST_X + "[1]").addAppliesToCohorts("A").build());

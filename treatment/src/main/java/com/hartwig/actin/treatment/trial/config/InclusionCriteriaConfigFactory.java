@@ -14,6 +14,8 @@ public class InclusionCriteriaConfigFactory implements TrialConfigFactory<Inclus
         return ImmutableInclusionCriteriaConfig.builder()
                 .trialId(parts[fields.get("trialId")])
                 .appliesToCohorts(TrialConfigDatabaseUtil.toCohorts(parts[fields.get("appliesToCohorts")]))
+                .reference(parts[fields.get("reference")])
+                .description(parts[fields.get("description")])
                 .inclusionCriterion(parts[fields.get("inclusionCriterion")])
                 .build();
     }

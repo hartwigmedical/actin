@@ -12,7 +12,7 @@ import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory;
 import com.hartwig.actin.treatment.datamodel.Trial;
@@ -46,9 +46,9 @@ public class TrialMatcherTest {
     }
 
     @NotNull
-    private static Evaluation find(@NotNull Map<EligibilityFunction, Evaluation> evaluations, @NotNull EligibilityRule ruleToFind) {
-        for (Map.Entry<EligibilityFunction, Evaluation> evaluation : evaluations.entrySet()) {
-            if (evaluation.getKey().rule() == ruleToFind) {
+    private static Evaluation find(@NotNull Map<Eligibility, Evaluation> evaluations, @NotNull EligibilityRule ruleToFind) {
+        for (Map.Entry<Eligibility, Evaluation> evaluation : evaluations.entrySet()) {
+            if (evaluation.getKey().function().rule() == ruleToFind) {
                 return evaluation.getValue();
             }
         }

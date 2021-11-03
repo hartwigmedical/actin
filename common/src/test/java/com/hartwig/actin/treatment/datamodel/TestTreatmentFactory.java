@@ -25,16 +25,20 @@ public final class TestTreatmentFactory {
                 .from(createMinimalTestTrial())
                 .acronym("TEST-TRIAL")
                 .title("This is an ACTIN test trial")
-                .generalEligibilityFunctions(createGeneralEligibilityFunctions())
+                .generalEligibility(createGeneralEligibility())
                 .cohorts(createTestCohorts())
                 .build();
     }
 
     @NotNull
-    private static List<EligibilityFunction> createGeneralEligibilityFunctions() {
-        List<EligibilityFunction> functions = Lists.newArrayList();
+    private static List<Eligibility> createGeneralEligibility() {
+        List<Eligibility> functions = Lists.newArrayList();
 
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build());
+        functions.add(ImmutableEligibility.builder()
+                .reference("I-01")
+                .description("Is adult?")
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
+                .build());
 
         return functions;
     }

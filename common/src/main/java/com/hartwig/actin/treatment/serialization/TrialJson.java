@@ -2,6 +2,7 @@ package com.hartwig.actin.treatment.serialization;
 
 import static com.hartwig.actin.util.Json.array;
 import static com.hartwig.actin.util.Json.bool;
+import static com.hartwig.actin.util.Json.object;
 import static com.hartwig.actin.util.Json.string;
 
 import java.io.BufferedWriter;
@@ -23,9 +24,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.treatment.datamodel.Cohort;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
+import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.Trial;
@@ -95,18 +98,46 @@ public final class TrialJson {
                     .trialId(string(trial, "trialId"))
                     .acronym(string(trial, "acronym"))
                     .title(string(trial, "title"))
-                    .generalEligibilityFunctions(toEligibilityFunctions(array(trial, "generalEligibilityFunctions")))
+                    .generalEligibility(toEligibility(array(trial, "generalEligibility")))
                     .cohorts(toCohorts(array(trial, "cohorts")))
                     .build();
         }
 
         @NotNull
-        private static List<EligibilityFunction> toEligibilityFunctions(@NotNull JsonArray eligibilityFunctionArray) {
-            List<EligibilityFunction> eligibilityFunctions = Lists.newArrayList();
-            for (JsonElement element : eligibilityFunctionArray) {
-                eligibilityFunctions.add(toEligibilityFunction(element.getAsJsonObject()));
+        private static List<Cohort> toCohorts(@NotNull JsonArray cohortArray) {
+            List<Cohort> cohorts = Lists.newArrayList();
+            for (JsonElement element : cohortArray) {
+                JsonObject cohort = element.getAsJsonObject();
+                cohorts.add(ImmutableCohort.builder()
+                        .cohortId(string(cohort, "cohortId"))
+                        .open(bool(cohort, "open"))
+                        .description(string(cohort, "description"))
+                        .eligibility(toEligibility(array(cohort, "eligibility")))
+                        .build());
             }
-            return eligibilityFunctions;
+            return cohorts;
+        }
+
+        @NotNull
+        private static List<Eligibility> toEligibility(@NotNull JsonArray eligibilityFunctionArray) {
+            List<Eligibility> eligibility = Lists.newArrayList();
+            for (JsonElement element : eligibilityFunctionArray) {
+                JsonObject obj = element.getAsJsonObject();
+                eligibility.add(ImmutableEligibility.builder()
+                        .reference(string(obj, "reference"))
+                        .description(string(obj, "description"))
+                        .function(toEligibilityFunction(object(obj, "function")))
+                        .build());
+            }
+            return eligibility;
+        }
+
+        @NotNull
+        private static EligibilityFunction toEligibilityFunction(@NotNull JsonObject function) {
+            return ImmutableEligibilityFunction.builder()
+                    .rule(EligibilityRule.valueOf(string(function, "rule")))
+                    .parameters(toParameters(array(function, "parameters")))
+                    .build();
         }
 
         @NotNull
@@ -120,29 +151,6 @@ public final class TrialJson {
                 }
             }
             return parameters;
-        }
-
-        @NotNull
-        private static EligibilityFunction toEligibilityFunction(@NotNull JsonObject eligibilityFunction) {
-            return ImmutableEligibilityFunction.builder()
-                    .rule(EligibilityRule.valueOf(string(eligibilityFunction, "rule")))
-                    .parameters(toParameters(array(eligibilityFunction, "parameters")))
-                    .build();
-        }
-
-        @NotNull
-        private static List<Cohort> toCohorts(@NotNull JsonArray cohortArray) {
-            List<Cohort> cohorts = Lists.newArrayList();
-            for (JsonElement element : cohortArray) {
-                JsonObject cohort = element.getAsJsonObject();
-                cohorts.add(ImmutableCohort.builder()
-                        .cohortId(string(cohort, "cohortId"))
-                        .open(bool(cohort, "open"))
-                        .description(string(cohort, "description"))
-                        .eligibilityFunctions(toEligibilityFunctions(array(cohort, "eligibilityFunctions")))
-                        .build());
-            }
-            return cohorts;
         }
     }
 }

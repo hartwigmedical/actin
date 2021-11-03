@@ -47,22 +47,22 @@ public class TrialConfigModel {
     }
 
     @NotNull
-    public List<String> generalInclusionCriteriaForTrial(@NotNull String trialId) {
-        List<String> configs = Lists.newArrayList();
+    public List<InclusionCriteriaConfig> generalInclusionCriteriaForTrial(@NotNull String trialId) {
+        List<InclusionCriteriaConfig> configs = Lists.newArrayList();
         for (InclusionCriteriaConfig config : database.inclusionCriteriaConfigs()) {
             if (config.trialId().equals(trialId) && config.appliesToCohorts().isEmpty()) {
-                configs.add(config.inclusionCriterion());
+                configs.add(config);
             }
         }
         return configs;
     }
 
     @NotNull
-    public List<String> specificInclusionCriteriaForCohort(@NotNull String trialId, @NotNull String cohortId) {
-        List<String> configs = Lists.newArrayList();
+    public List<InclusionCriteriaConfig> specificInclusionCriteriaForCohort(@NotNull String trialId, @NotNull String cohortId) {
+        List<InclusionCriteriaConfig> configs = Lists.newArrayList();
         for (InclusionCriteriaConfig config : database.inclusionCriteriaConfigs()) {
             if (config.trialId().equals(trialId) && config.appliesToCohorts().contains(cohortId)) {
-                configs.add(config.inclusionCriterion());
+                configs.add(config);
             }
         }
         return configs;

@@ -2,10 +2,14 @@
   "trialId": "test trial",
   "acronym": "TEST-TRIAL",
   "title": "This is a trial to test ACTIN",
-  "generalEligibilityFunctions": [
+  "generalEligibility": [
     {
-      "rule": "IS_AT_LEAST_18_YEARS_OLD",
-      "parameters": []
+      "reference": "I-01",
+      "description": "Is adult",
+      "function": {
+        "rule": "IS_AT_LEAST_18_YEARS_OLD",
+        "parameters": []
+      }
     }
   ],
   "cohorts": [
@@ -13,15 +17,19 @@
       "cohortId": "A",
       "open": true,
       "description": "Cohort A",
-      "eligibilityFunctions": [
+      "eligibility": [
         {
-          "rule": "NOT",
-          "parameters": [
-            {
-              "rule": "HAS_ACTIVE_CNS_METASTASES",
-              "parameters": []
-            }
-          ]
+          "reference": "I-02",
+          "description": "Has no active CNS metastases",
+          "function": {
+            "rule": "NOT",
+            "parameters": [
+              {
+                "rule": "HAS_ACTIVE_CNS_METASTASES",
+                "parameters": []
+              }
+            ]
+          }
         }
       ]
     },
@@ -29,38 +37,50 @@
       "cohortId": "B",
       "open": true,
       "description": "Cohort B",
-      "eligibilityFunctions": []
+      "eligibility": []
     },
     {
       "cohortId": "C",
       "open": false,
       "description": "Cohort C",
-      "eligibilityFunctions": [
+      "eligibility": [
         {
-          "rule": "HAS_BIOPSY_AMENABLE_LESION",
-          "parameters": []
+          "reference": "I-03",
+          "description": "Has amenable biopsy lesion",
+          "function": {
+            "rule": "HAS_BIOPSY_AMENABLE_LESION",
+            "parameters": []
+          }
         },
         {
-          "rule": "OR",
-          "parameters": [
-            {
-              "rule": "PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X",
-              "parameters": [
-                "0123"
-              ]
-            },
-            {
-              "rule": "IS_PREGNANT",
-              "parameters": [
-              ]
-            }
-          ]
+          "reference": "I-04",
+          "description": "Has 0123 cancer type or is pregnant!",
+          "function": {
+            "rule": "OR",
+            "parameters": [
+              {
+                "rule": "PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X",
+                "parameters": [
+                  "0123"
+                ]
+              },
+              {
+                "rule": "IS_PREGNANT",
+                "parameters": [
+                ]
+              }
+            ]
+          }
         },
         {
-          "rule": "HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES",
-          "parameters": [
-            "2"
-          ]
+          "reference": "I-05",
+          "description": "Has had maximum of 2 immunotherapies",
+          "function": {
+            "rule": "HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES",
+            "parameters": [
+              "2"
+            ]
+          }
         }
       ]
     }
