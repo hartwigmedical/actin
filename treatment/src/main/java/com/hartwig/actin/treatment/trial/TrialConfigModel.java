@@ -7,6 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,17 @@ public class TrialConfigModel {
         List<InclusionCriteriaConfig> configs = Lists.newArrayList();
         for (InclusionCriteriaConfig config : database.inclusionCriteriaConfigs()) {
             if (config.trialId().equals(trialId) && config.appliesToCohorts().contains(cohortId)) {
+                configs.add(config);
+            }
+        }
+        return configs;
+    }
+
+    @NotNull
+    public List<InclusionCriteriaReferenceConfig> referencesForTrial(@NotNull String trialId) {
+        List<InclusionCriteriaReferenceConfig> configs = Lists.newArrayList();
+        for (InclusionCriteriaReferenceConfig config : database.inclusionCriteriaReferenceConfigs()) {
+            if (config.trialId().equals(trialId)) {
                 configs.add(config);
             }
         }

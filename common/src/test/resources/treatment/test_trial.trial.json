@@ -4,8 +4,12 @@
   "title": "This is a trial to test ACTIN",
   "generalEligibility": [
     {
-      "reference": "I-01",
-      "description": "Is adult",
+      "references": [
+        {
+          "id": "I-01",
+          "text": "Is adult"
+        }
+      ],
       "function": {
         "rule": "IS_AT_LEAST_18_YEARS_OLD",
         "parameters": []
@@ -19,8 +23,12 @@
       "description": "Cohort A",
       "eligibility": [
         {
-          "reference": "I-02",
-          "description": "Has no active CNS metastases",
+          "references": [
+            {
+              "id": "I-02",
+              "text": "Has no active CNS metastases"
+            }
+          ],
           "function": {
             "rule": "NOT",
             "parameters": [
@@ -45,16 +53,24 @@
       "description": "Cohort C",
       "eligibility": [
         {
-          "reference": "I-03",
-          "description": "Has amenable biopsy lesion",
+          "references": [
+            {
+              "id": "I-03",
+              "text": "Has amenable biopsy lesion"
+            }
+          ],
           "function": {
             "rule": "HAS_BIOPSY_AMENABLE_LESION",
             "parameters": []
           }
         },
         {
-          "reference": "I-04",
-          "description": "Has 0123 cancer type or is pregnant!",
+          "references": [
+            {
+              "id": "I-04",
+              "text": "Has 0123 cancer type or is pregnant!"
+            }
+          ],
           "function": {
             "rule": "OR",
             "parameters": [
@@ -73,8 +89,12 @@
           }
         },
         {
-          "reference": "I-05",
-          "description": "Has had maximum of 2 immunotherapies",
+          "references": [
+            {
+              "id": "I-05",
+              "text": "Has had maximum of 2 immunotherapies"
+            }
+          ],
           "function": {
             "rule": "HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES",
             "parameters": [

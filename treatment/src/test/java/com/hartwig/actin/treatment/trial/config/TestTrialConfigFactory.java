@@ -3,11 +3,11 @@ package com.hartwig.actin.treatment.trial.config;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.trial.ImmutableTrialConfigDatabase;
 import com.hartwig.actin.treatment.trial.TrialConfigDatabase;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestTrialConfigFactory {
@@ -28,6 +28,7 @@ public final class TestTrialConfigFactory {
                 .trialDefinitionConfigs(createTestTrialDefinitionConfigs())
                 .cohortDefinitionConfigs(createTestCohortDefinitionConfigs())
                 .inclusionCriteriaConfigs(createTestInclusionCriteriaConfigs())
+                .inclusionCriteriaReferenceConfigs(createTestInclusionCriteriaReferenceConfigs())
                 .build();
     }
 
@@ -61,17 +62,39 @@ public final class TestTrialConfigFactory {
     private static List<InclusionCriteriaConfig> createTestInclusionCriteriaConfigs() {
         List<InclusionCriteriaConfig> configs = Lists.newArrayList();
 
-        ImmutableInclusionCriteriaConfig.Builder builder =
-                ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID).reference(Strings.EMPTY).description(Strings.EMPTY);
+        ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
 
-        configs.add(builder.inclusionCriterion(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString()).build());
-        configs.add(builder.inclusionCriterion(EligibilityRule.HAS_INR_ULN_AT_MOST_X + "[1]").addAppliesToCohorts("A").build());
+        configs.add(builder.criterionIds(Sets.newHashSet("I-01"))
+                .inclusionRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
+                .build());
+        configs.add(builder.criterionIds(Sets.newHashSet("I-02"))
+                .inclusionRule(EligibilityRule.HAS_INR_ULN_AT_MOST_X + "[1]")
+                .addAppliesToCohorts("A")
+                .build());
 
-        configs.add(builder.inclusionCriterion(
-                "NOT(OR(" + EligibilityRule.HAS_ACTIVE_INFECTION + ", " + EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS + "))")
+        String rule1 = EligibilityRule.HAS_ACTIVE_INFECTION.toString();
+        String rule2 = EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS.toString();
+
+        configs.add(builder.criterionIds(Sets.newHashSet("I-03"))
+                .inclusionRule("NOT(OR(" + rule1 + ", " + rule2 + "))")
                 .addAppliesToCohorts("A")
                 .build());
 
         return configs;
     }
+
+    @NotNull
+    private static List<InclusionCriteriaReferenceConfig> createTestInclusionCriteriaReferenceConfigs() {
+        List<InclusionCriteriaReferenceConfig> configs = Lists.newArrayList();
+
+        ImmutableInclusionCriteriaReferenceConfig.Builder builder =
+                ImmutableInclusionCriteriaReferenceConfig.builder().trialId(TEST_TRIAL_ID);
+
+        configs.add(builder.criterionId("I-01").criterionText("Should be an adult").build());
+        configs.add(builder.criterionId("I-02").criterionText("Should be tested in the lab").build());
+        configs.add(builder.criterionId("I-03").criterionText("Should not have any serious other conditions").build());
+
+        return configs;
+    }
+
 }

@@ -1,19 +1,16 @@
 package com.hartwig.actin.treatment.datamodel;
 
-import java.util.Set;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Eligibility {
+public abstract class CriterionReference {
 
     @NotNull
-    public abstract Set<CriterionReference> references();
+    public abstract String id();
 
     @NotNull
-    public abstract EligibilityFunction function();
-
+    public abstract String text();
 }

@@ -7,6 +7,8 @@ import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfigFactory;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfigFactory;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfigFactory;
 import com.hartwig.actin.treatment.trial.config.TrialConfigFile;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfigFactory;
@@ -23,6 +25,7 @@ public final class TrialConfigDatabaseReader {
     private static final String TRIAL_DEFINITION_TSV = "trial_definition.tsv";
     private static final String COHORT_DEFINITION_TSV = "cohort_definition.tsv";
     private static final String INCLUSION_CRITERIA_TSV = "inclusion_criteria.tsv";
+    private static final String INCLUSION_CRITERIA_REFERENCE_TSV = "inclusion_criteria_reference.tsv";
 
     private TrialConfigDatabaseReader() {
     }
@@ -37,6 +40,7 @@ public final class TrialConfigDatabaseReader {
                 .trialDefinitionConfigs(readTrialDefinitionConfigs(basePath + TRIAL_DEFINITION_TSV))
                 .cohortDefinitionConfigs(readCohortDefinitionConfigs(basePath + COHORT_DEFINITION_TSV))
                 .inclusionCriteriaConfigs(readInclusionCriteriaConfigs(basePath + INCLUSION_CRITERIA_TSV))
+                .inclusionCriteriaReferenceConfigs(readInclusionCriteriaReferenceConfigs(basePath + INCLUSION_CRITERIA_REFERENCE_TSV))
                 .build();
     }
 
@@ -58,6 +62,13 @@ public final class TrialConfigDatabaseReader {
     private static List<InclusionCriteriaConfig> readInclusionCriteriaConfigs(@NotNull String tsv) throws IOException {
         List<InclusionCriteriaConfig> configs = TrialConfigFile.read(tsv, new InclusionCriteriaConfigFactory());
         LOGGER.info(" Read {} inclusion criteria configs from {}", configs.size(), tsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<InclusionCriteriaReferenceConfig> readInclusionCriteriaReferenceConfigs(@NotNull String tsv) throws IOException {
+        List<InclusionCriteriaReferenceConfig> configs = TrialConfigFile.read(tsv, new InclusionCriteriaReferenceConfigFactory());
+        LOGGER.info(" Read {} inclusion criteria reference configs from {}", configs.size(), tsv);
         return configs;
     }
 }

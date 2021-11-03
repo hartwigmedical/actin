@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -24,10 +26,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.treatment.datamodel.Cohort;
+import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
+import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
@@ -124,12 +128,21 @@ public final class TrialJson {
             for (JsonElement element : eligibilityFunctionArray) {
                 JsonObject obj = element.getAsJsonObject();
                 eligibility.add(ImmutableEligibility.builder()
-                        .reference(string(obj, "reference"))
-                        .description(string(obj, "description"))
+                        .references(toReferences(array(obj, "references")))
                         .function(toEligibilityFunction(object(obj, "function")))
                         .build());
             }
             return eligibility;
+        }
+
+        @NotNull
+        private static Set<CriterionReference> toReferences(@NotNull JsonArray referenceArray) {
+            Set<CriterionReference> references = Sets.newHashSet();
+            for (JsonElement element : referenceArray) {
+                JsonObject obj = element.getAsJsonObject();
+                references.add(ImmutableCriterionReference.builder().id(string(obj, "id")).text(string(obj, "text")).build());
+            }
+            return references;
         }
 
         @NotNull

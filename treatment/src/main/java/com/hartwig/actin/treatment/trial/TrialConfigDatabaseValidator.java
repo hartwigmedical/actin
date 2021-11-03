@@ -40,24 +40,20 @@ public final class TrialConfigDatabaseValidator {
         Set<String> trialIds = cohortIdsPerTrial.keySet();
         for (InclusionCriteriaConfig criterion : inclusionCriteria) {
             if (!trialIds.contains(criterion.trialId())) {
-                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}",
-                        criterion.inclusionCriterion(),
-                        criterion.trialId());
+                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}", criterion.inclusionRule(), criterion.trialId());
                 valid = false;
             } else {
                 Collection<String> cohortIdsForTrial = cohortIdsPerTrial.get(criterion.trialId());
                 for (String cohortId : criterion.appliesToCohorts()) {
                     if (!cohortIdsForTrial.contains(cohortId)) {
-                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}",
-                                criterion.inclusionCriterion(),
-                                cohortId);
+                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}", criterion.inclusionRule(), cohortId);
                         valid = false;
                     }
                 }
             }
 
-            if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionCriterion())) {
-                LOGGER.warn("Not a valid inclusion criterion for trial '{}': {}", criterion.trialId(), criterion.inclusionCriterion());
+            if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule())) {
+                LOGGER.warn("Not a valid inclusion criterion for trial '{}': {}", criterion.trialId(), criterion.inclusionRule());
                 valid = false;
             }
         }

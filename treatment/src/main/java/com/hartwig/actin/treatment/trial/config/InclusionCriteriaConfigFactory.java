@@ -13,10 +13,9 @@ public class InclusionCriteriaConfigFactory implements TrialConfigFactory<Inclus
     public InclusionCriteriaConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         return ImmutableInclusionCriteriaConfig.builder()
                 .trialId(parts[fields.get("trialId")])
+                .criterionIds(TrialConfigDatabaseUtil.toCriterionIds(parts[fields.get("criterionIds")]))
                 .appliesToCohorts(TrialConfigDatabaseUtil.toCohorts(parts[fields.get("appliesToCohorts")]))
-                .reference(parts[fields.get("reference")])
-                .description(parts[fields.get("description")])
-                .inclusionCriterion(parts[fields.get("inclusionCriterion")])
+                .inclusionRule(parts[fields.get("inclusionRule")])
                 .build();
     }
 }

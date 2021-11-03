@@ -28,6 +28,7 @@ public class TrialConfigModelTest {
         assertTrue(model.cohortsForTrial("any trial").isEmpty());
         assertTrue(model.generalInclusionCriteriaForTrial("any trial").isEmpty());
         assertTrue(model.specificInclusionCriteriaForCohort("any trial", "any cohort").isEmpty());
+        assertTrue(model.referencesForTrial("any trial").isEmpty());
     }
 
     @Test
@@ -39,5 +40,6 @@ public class TrialConfigModelTest {
         assertEquals(1, model.generalInclusionCriteriaForTrial(TestTrialConfigFactory.TEST_TRIAL_ID).size());
         assertEquals(2, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID, "A").size());
         assertEquals(0, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID, "B").size());
+        assertEquals(3, model.referencesForTrial(TestTrialConfigFactory.TEST_TRIAL_ID).size());
     }
 }
