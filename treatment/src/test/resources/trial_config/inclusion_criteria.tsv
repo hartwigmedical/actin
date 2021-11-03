@@ -1,2 +1,2 @@
-trialId	criterionIds	appliesToCohorts	inclusionRule
+trialId	referenceIds	appliesToCohorts	inclusionRule
 ACTN 2021	I-01; I-02	all	IS_AT_LEAST_18_YEARS_OLD

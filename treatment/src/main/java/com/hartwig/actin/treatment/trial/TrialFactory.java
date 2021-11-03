@@ -80,8 +80,7 @@ public class TrialFactory {
         List<Eligibility> eligibility = Lists.newArrayList();
 
         for (InclusionCriteriaConfig criterion : criteria) {
-            eligibility.add(ImmutableEligibility.builder()
-                    .references(resolveReferences(references, criterion.criterionIds()))
+            eligibility.add(ImmutableEligibility.builder().references(resolveReferences(references, criterion.referenceIds()))
                     .function(EligibilityFactory.generateEligibilityFunction(criterion.inclusionRule()))
                     .build());
         }
@@ -91,12 +90,12 @@ public class TrialFactory {
 
     @NotNull
     private static Set<CriterionReference> resolveReferences(@NotNull List<InclusionCriteriaReferenceConfig> configs,
-            @NotNull Set<String> criterionIds) {
+            @NotNull Set<String> referenceIds) {
         Set<CriterionReference> references = Sets.newHashSet();
 
-        for (String criterionId : criterionIds) {
-            InclusionCriteriaReferenceConfig config = findReferenceConfig(configs, criterionId);
-            references.add(ImmutableCriterionReference.builder().id(config.criterionId()).text(config.criterionText()).build());
+        for (String referenceId : referenceIds) {
+            InclusionCriteriaReferenceConfig config = findReferenceConfig(configs, referenceId);
+            references.add(ImmutableCriterionReference.builder().id(config.referenceId()).text(config.referenceText()).build());
         }
 
         return references;
@@ -104,14 +103,14 @@ public class TrialFactory {
 
     @NotNull
     private static InclusionCriteriaReferenceConfig findReferenceConfig(@NotNull List<InclusionCriteriaReferenceConfig> configs,
-            @NotNull String criterionId) {
+            @NotNull String referenceId) {
         for (InclusionCriteriaReferenceConfig config : configs) {
-            if (config.criterionId().equals(criterionId)) {
+            if (config.referenceId().equals(referenceId)) {
                 return config;
             }
         }
 
         // Should not happen in a valid trial config database.
-        throw new IllegalStateException("No config found for criterion: " + criterionId);
+        throw new IllegalStateException("No config found for reference with ID: " + referenceId);
     }
 }

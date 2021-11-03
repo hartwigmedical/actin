@@ -110,7 +110,7 @@ public final class TrialConfigDatabaseValidator {
                 valid = false;
             }
 
-            if (criterion.criterionIds().isEmpty()) {
+            if (criterion.referenceIds().isEmpty()) {
                 LOGGER.warn("No criterion IDs defined for criterion {} on trial '{}", criterion.inclusionRule(), criterion.trialId());
                 valid = false;
             }
@@ -124,7 +124,7 @@ public final class TrialConfigDatabaseValidator {
         boolean valid = true;
         for (InclusionCriteriaReferenceConfig referenceConfig : inclusionCriteriaReferenceConfigs) {
             if (!trialIds.contains(referenceConfig.trialId())) {
-                LOGGER.warn("Reference '{}' defined on non-existing trial: {}", referenceConfig.criterionId(), referenceConfig.trialId());
+                LOGGER.warn("Reference '{}' defined on non-existing trial: {}", referenceConfig.referenceId(), referenceConfig.trialId());
                 valid = false;
             }
         }
@@ -137,8 +137,8 @@ public final class TrialConfigDatabaseValidator {
 
             if (references != null && criteria != null) {
                 for (InclusionCriteriaConfig criterion : criteria) {
-                    if (!allReferencesExist(references, criterion.criterionIds())) {
-                        LOGGER.warn("Not all references are defined on trial '{}': {}", trialId, criterion.criterionIds());
+                    if (!allReferencesExist(references, criterion.referenceIds())) {
+                        LOGGER.warn("Not all references are defined on trial '{}': {}", trialId, criterion.referenceIds());
                         valid = false;
                     }
                 }
@@ -158,14 +158,14 @@ public final class TrialConfigDatabaseValidator {
     }
 
     private static boolean allReferencesExist(@NotNull Collection<InclusionCriteriaReferenceConfig> references,
-            @NotNull Set<String> criterionIds) {
-        Set<String> referenceIds = Sets.newHashSet();
+            @NotNull Set<String> referenceIdsThatHaveToExist) {
+        Set<String> referenceIdTruthSet = Sets.newHashSet();
         for (InclusionCriteriaReferenceConfig reference : references) {
-            referenceIds.add(reference.criterionId());
+            referenceIdTruthSet.add(reference.referenceId());
         }
 
-        for (String criterionId : criterionIds) {
-            if (!referenceIds.contains(criterionId)) {
+        for (String referenceId : referenceIdsThatHaveToExist) {
+            if (!referenceIdTruthSet.contains(referenceId)) {
                 return false;
             }
         }

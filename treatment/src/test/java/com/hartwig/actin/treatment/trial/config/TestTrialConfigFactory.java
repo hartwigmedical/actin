@@ -64,10 +64,10 @@ public final class TestTrialConfigFactory {
 
         ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
 
-        configs.add(builder.criterionIds(Sets.newHashSet("I-01"))
+        configs.add(builder.referenceIds(Sets.newHashSet("I-01"))
                 .inclusionRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
                 .build());
-        configs.add(builder.criterionIds(Sets.newHashSet("I-02"))
+        configs.add(builder.referenceIds(Sets.newHashSet("I-02"))
                 .inclusionRule(EligibilityRule.HAS_INR_ULN_AT_MOST_X + "[1]")
                 .addAppliesToCohorts("A")
                 .build());
@@ -75,7 +75,7 @@ public final class TestTrialConfigFactory {
         String rule1 = EligibilityRule.HAS_ACTIVE_INFECTION.toString();
         String rule2 = EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS.toString();
 
-        configs.add(builder.criterionIds(Sets.newHashSet("I-03"))
+        configs.add(builder.referenceIds(Sets.newHashSet("I-03"))
                 .inclusionRule("NOT(OR(" + rule1 + ", " + rule2 + "))")
                 .addAppliesToCohorts("A")
                 .build());
@@ -90,9 +90,9 @@ public final class TestTrialConfigFactory {
         ImmutableInclusionCriteriaReferenceConfig.Builder builder =
                 ImmutableInclusionCriteriaReferenceConfig.builder().trialId(TEST_TRIAL_ID);
 
-        configs.add(builder.criterionId("I-01").criterionText("Should be an adult").build());
-        configs.add(builder.criterionId("I-02").criterionText("Should be tested in the lab").build());
-        configs.add(builder.criterionId("I-03").criterionText("Should not have any serious other conditions").build());
+        configs.add(builder.referenceId("I-01").referenceText("Should be an adult").build());
+        configs.add(builder.referenceId("I-02").referenceText("Should be tested in the lab").build());
+        configs.add(builder.referenceId("I-03").referenceText("Should not have any serious other conditions").build());
 
         return configs;
     }

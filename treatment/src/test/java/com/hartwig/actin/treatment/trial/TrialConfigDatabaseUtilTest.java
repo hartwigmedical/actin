@@ -11,14 +11,19 @@ import org.junit.Test;
 public class TrialConfigDatabaseUtilTest {
 
     @Test
-    public void canConvertToCriterionIds() {
-        assertEquals(1, TrialConfigDatabaseUtil.toCriterionIds("all").size());
-        assertEquals(1, TrialConfigDatabaseUtil.toCriterionIds("I-01").size());
+    public void canConvertToReferenceIds() {
+        assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("all").size());
+        assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("I-01").size());
 
-        Set<String> criterionIds = TrialConfigDatabaseUtil.toCriterionIds("I-01; I-02");
-        assertEquals(2, criterionIds.size());
-        assertTrue(criterionIds.contains("I-01"));
-        assertTrue(criterionIds.contains("I-02"));
+        Set<String> referenceIds = TrialConfigDatabaseUtil.toReferenceIds("I-01; I-02");
+        assertEquals(2, referenceIds.size());
+        assertTrue(referenceIds.contains("I-01"));
+        assertTrue(referenceIds.contains("I-02"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void crashOnMissingReferenceIdsParam() {
+        TrialConfigDatabaseUtil.toReferenceIds(Strings.EMPTY);
     }
 
     @Test
@@ -37,10 +42,4 @@ public class TrialConfigDatabaseUtilTest {
         TrialConfigDatabaseUtil.toCohorts(Strings.EMPTY);
     }
 
-    @Test
-    public void canConvertToParams() {
-        assertEquals(0, TrialConfigDatabaseUtil.toParameters(Strings.EMPTY).size());
-        assertEquals(1, TrialConfigDatabaseUtil.toParameters("param1").size());
-        assertEquals(2, TrialConfigDatabaseUtil.toParameters("param1;4").size());
-    }
 }

@@ -13,8 +13,8 @@ public abstract class InclusionCriteriaReferenceConfig implements TrialConfig {
     public abstract String trialId();
 
     @NotNull
-    public abstract String criterionId();
+    public abstract String referenceId();
 
     @NotNull
-    public abstract String criterionText();
+    public abstract String referenceText();
 }

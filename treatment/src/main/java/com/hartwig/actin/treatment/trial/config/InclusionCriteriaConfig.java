@@ -15,7 +15,7 @@ public abstract class InclusionCriteriaConfig implements TrialConfig {
     public abstract String trialId();
 
     @NotNull
-    public abstract Set<String> criterionIds();
+    public abstract Set<String> referenceIds();
 
     @NotNull
     public abstract Set<String> appliesToCohorts();

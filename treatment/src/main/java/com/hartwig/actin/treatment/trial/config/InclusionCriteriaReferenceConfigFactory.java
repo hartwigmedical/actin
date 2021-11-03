@@ -11,8 +11,8 @@ public class InclusionCriteriaReferenceConfigFactory implements TrialConfigFacto
     public InclusionCriteriaReferenceConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         return ImmutableInclusionCriteriaReferenceConfig.builder()
                 .trialId(parts[fields.get("trialId")])
-                .criterionId(parts[fields.get("criterionId")])
-                .criterionText(parts[fields.get("criterionText")])
+                .referenceId(parts[fields.get("referenceId")])
+                .referenceText(parts[fields.get("referenceText")])
                 .build();
     }
 }
