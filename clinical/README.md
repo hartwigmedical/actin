@@ -142,6 +142,8 @@ Field | Example Value | Details
 ---|---|---
 name | Pembrolizumab | Allergy
 category | Medication | Category of allergy
+clinicalStatus | Active | Clinical applicability
+verificationStatus | Confirmed | Confirmation status
 criticality | High | Assigned criticality of allergy
 
 N surgeries

@@ -143,6 +143,8 @@ CREATE TABLE allergy
     sampleId varchar(50) NOT NULL,
     name varchar(50),
     category varchar(50),
+    clinicalStatus varchar(50),
+    verificationStatus varchar(50),
     criticality varchar(50),
     PRIMARY KEY (id)
 );
