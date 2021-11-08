@@ -66,7 +66,8 @@ N prior tumor treatments
 Field | Example Value | Details
 ---|---|---
 name | Ipilimumab | Treatment name
-year | 2021 | Year in which treatment was given
+year | 2021 | Year in which treatment was started
+month | 11 | Month in which treatment was started 
 category | Immunotherapy | Type of treatment
 isSystemic | 1 | Treatment is systemic?
 chemoType | | Type of chemotherapy (if applicable)
@@ -74,6 +75,7 @@ immunoType | Anti-CTLA-4 | Type of immunotherapy (if applicable)
 targetedType | | Type of targeted therapy (if applicable)
 hormoneType | | Type of hormonal therapy (if applicable)
 stemCellTransType | | Type of stem cell transplantation therapy (if applicable)
+supportiveType | | Type of supportive treatment (if applicable)
 
 N prior second primaries   
 
@@ -85,6 +87,7 @@ tumorType | Schwannoma | Tumor type
 tumorSubType | | Tumor sub type
 doids | 3192 | Separated by ";"
 diagnosedYear | 2018 | Year in which diagnosis of other tumor was made
+diagnosedMonth | 10 | Month in which diagnosis of other tumor was made
 treatmentHistory | Resection | Treatment history of the other primary tumor
 isActive | 1 | Is the other primary tumor considered active?
 
