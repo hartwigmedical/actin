@@ -87,14 +87,18 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String toTreatmentString(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        String year = Strings.EMPTY;
-        if (priorTumorTreatment.year() != null) {
-            year = " (" + priorTumorTreatment.year() + ")";
+        String date = Strings.EMPTY;
+        if (priorTumorTreatment.year() != null && priorTumorTreatment.month() == null) {
+            date = " (" + priorTumorTreatment.year() + ")";
+        }
+
+        if (priorTumorTreatment.year() != null && priorTumorTreatment.month() != null) {
+            date = " (" + priorTumorTreatment.month() + "/" + priorTumorTreatment.year() + ")";
         }
 
         String treatmentName = !priorTumorTreatment.name().isEmpty() ? priorTumorTreatment.name() : priorTumorTreatment.category();
 
-        return treatmentName + year;
+        return treatmentName + date;
     }
 
     @NotNull
@@ -106,14 +110,18 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
             }
 
-            String year = Strings.EMPTY;
-            if (priorSecondPrimary.diagnosedYear() != null) {
-                year = priorSecondPrimary.diagnosedYear() + ", ";
+            String date = Strings.EMPTY;
+            if (priorSecondPrimary.diagnosedYear() != null && priorSecondPrimary.diagnosedMonth() == null) {
+                date = priorSecondPrimary.diagnosedYear() + ", ";
+            }
+
+            if (priorSecondPrimary.diagnosedYear() != null && priorSecondPrimary.diagnosedMonth() != null) {
+                date = priorSecondPrimary.diagnosedMonth() + "/" + priorSecondPrimary.diagnosedYear() + ", ";
             }
 
             String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
 
-            joiner.add(tumorDetails + " (" + year + active + ")");
+            joiner.add(tumorDetails + " (" + date + active + ")");
         }
 
         if (record.priorSecondPrimaries().size() > 1) {
