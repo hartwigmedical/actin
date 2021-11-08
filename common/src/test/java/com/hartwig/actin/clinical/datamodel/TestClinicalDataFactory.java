@@ -121,6 +121,7 @@ public final class TestClinicalDataFactory {
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Vemurafenib")
                 .year(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2)
+                .month(TODAY.getMonthValue())
                 .category("Targeted therapy")
                 .isSystemic(true)
                 .targetedType("BRAF inhibitor")
