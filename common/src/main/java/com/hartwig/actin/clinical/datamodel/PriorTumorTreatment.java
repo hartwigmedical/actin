@@ -14,6 +14,9 @@ public abstract class PriorTumorTreatment {
     @Nullable
     public abstract Integer year();
 
+    @Nullable
+    public abstract Integer month();
+
     @NotNull
     public abstract String category();
 
@@ -33,5 +36,8 @@ public abstract class PriorTumorTreatment {
 
     @Nullable
     public abstract String stemCellTransType();
+
+    @Nullable
+    public abstract String supportiveType();
 
 }

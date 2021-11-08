@@ -85,6 +85,7 @@ public class CurationDatabaseReaderTest {
         PriorTumorTreatment curated1 = (PriorTumorTreatment) config1.curatedObject();
         assertEquals("Capecitabine+Oxaliplatin", curated1.name());
         assertEquals(2020, (int) curated1.year());
+        assertNull(curated1.month());
         assertEquals("chemotherapy", curated1.category());
         assertTrue(curated1.isSystemic());
         assertEquals("antimetabolite,platinum", curated1.chemoType());
@@ -92,8 +93,9 @@ public class CurationDatabaseReaderTest {
         assertNull(curated1.targetedType());
         assertNull(curated1.hormoneType());
         assertNull(curated1.stemCellTransType());
+        assertNull(curated1.supportiveType());
 
-        OncologicalHistoryConfig config2 = find(configs, "Breast 2018");
+        OncologicalHistoryConfig config2 = find(configs, "Breast Jan-2018");
         assertFalse(config2.ignore());
 
         PriorSecondPrimary curated2 = (PriorSecondPrimary) config2.curatedObject();
@@ -103,6 +105,7 @@ public class CurationDatabaseReaderTest {
         assertEquals(Strings.EMPTY, curated2.tumorSubType());
         assertTrue(curated2.doids().isEmpty());
         assertEquals(2018, (int) curated2.diagnosedYear());
+        assertEquals(1, (int) curated2.diagnosedMonth());
         assertEquals("Surgery", curated2.treatmentHistory());
         assertTrue(curated2.isActive());
     }

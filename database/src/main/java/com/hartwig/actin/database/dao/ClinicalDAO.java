@@ -165,23 +165,27 @@ class ClinicalDAO {
                     PRIORTUMORTREATMENT.SAMPLEID,
                     PRIORTUMORTREATMENT.NAME,
                     PRIORTUMORTREATMENT.YEAR,
+                    PRIORTUMORTREATMENT.MONTH,
                     PRIORTUMORTREATMENT.CATEGORY,
                     PRIORTUMORTREATMENT.ISSYSTEMIC,
                     PRIORTUMORTREATMENT.CHEMOTYPE,
                     PRIORTUMORTREATMENT.IMMUNOTYPE,
                     PRIORTUMORTREATMENT.TARGETEDTYPE,
                     PRIORTUMORTREATMENT.HORMONETYPE,
-                    PRIORTUMORTREATMENT.STEMCELLTRANSTYPE)
+                    PRIORTUMORTREATMENT.STEMCELLTRANSTYPE,
+                    PRIORTUMORTREATMENT.SUPPORTIVETYPE)
                     .values(sampleId,
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
+                            priorTumorTreatment.month(),
                             priorTumorTreatment.category(),
                             DataUtil.toByte(priorTumorTreatment.isSystemic()),
                             priorTumorTreatment.chemoType(),
                             priorTumorTreatment.immunoType(),
                             priorTumorTreatment.targetedType(),
                             priorTumorTreatment.hormoneType(),
-                            priorTumorTreatment.stemCellTransType())
+                            priorTumorTreatment.stemCellTransType(),
+                            priorTumorTreatment.supportiveType())
                     .execute();
         }
     }
@@ -196,6 +200,7 @@ class ClinicalDAO {
                     PRIORSECONDPRIMARY.TUMORSUBTYPE,
                     PRIORSECONDPRIMARY.DOIDS,
                     PRIORSECONDPRIMARY.DIAGNOSEDYEAR,
+                    PRIORSECONDPRIMARY.DIAGNOSEDMONTH,
                     PRIORSECONDPRIMARY.TREATMENTHISTORY,
                     PRIORSECONDPRIMARY.ISACTIVE)
                     .values(sampleId,
@@ -205,6 +210,7 @@ class ClinicalDAO {
                             priorSecondPrimary.tumorSubType(),
                             DataUtil.concat(priorSecondPrimary.doids()),
                             priorSecondPrimary.diagnosedYear(),
+                            priorSecondPrimary.diagnosedMonth(),
                             priorSecondPrimary.treatmentHistory(),
                             DataUtil.toByte(priorSecondPrimary.isActive()))
                     .execute();

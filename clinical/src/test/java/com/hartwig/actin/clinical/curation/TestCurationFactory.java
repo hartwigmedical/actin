@@ -117,8 +117,7 @@ public final class TestCurationFactory {
                         .build())
                 .build());
 
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Breast cancer 2018")
+        configs.add(ImmutableOncologicalHistoryConfig.builder().input("Breast cancer Jan-2018")
                 .ignore(false)
                 .curatedObject(ImmutablePriorSecondPrimary.builder()
                         .tumorLocation("Breast")
@@ -126,6 +125,7 @@ public final class TestCurationFactory {
                         .tumorType("Carcinoma")
                         .tumorSubType(Strings.EMPTY)
                         .diagnosedYear(2018)
+                        .diagnosedMonth(1)
                         .treatmentHistory("Surgery")
                         .isActive(false)
                         .build())

@@ -54,6 +54,7 @@ CREATE TABLE priorTumorTreatment
     sampleId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
     year int,
+    month int,
     category varchar(50) NOT NULL,
     isSystemic BOOLEAN NOT NULL,
     chemoType varchar(50),
@@ -61,6 +62,7 @@ CREATE TABLE priorTumorTreatment
     targetedType varchar(200),
     hormoneType varchar(50),
     stemCellTransType varchar(50),
+    supportiveType varchar(50),
     PRIMARY KEY (id)
 );
 
@@ -74,6 +76,7 @@ CREATE TABLE priorSecondPrimary
     tumorSubType varchar(50) NOT NULL,
     doids varchar(50) NOT NULL,
     diagnosedYear int,
+    diagnosedMonth int,
     treatmentHistory varchar(150) NOT NULL,
     isActive BOOLEAN NOT NULL,
     PRIMARY KEY (id)

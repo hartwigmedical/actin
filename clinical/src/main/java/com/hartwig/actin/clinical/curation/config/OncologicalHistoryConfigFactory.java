@@ -35,6 +35,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .tumorSubType(parts[fields.get("tumorSubType")])
                     .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
                     .diagnosedYear(ResourceFile.optionalInteger(parts[fields.get("year")]))
+                    .diagnosedMonth(ResourceFile.optionalInteger(parts[fields.get("month")]))
                     .treatmentHistory(parts[fields.get("treatmentHistoryPreviousPrimary")])
                     .isActive(ResourceFile.bool(parts[fields.get("isSecondPrimaryActive")]))
                     .build();
@@ -42,6 +43,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
             return ImmutablePriorTumorTreatment.builder()
                     .name(parts[fields.get("name")])
                     .year(ResourceFile.optionalInteger(parts[fields.get("year")]))
+                    .month(ResourceFile.optionalInteger(parts[fields.get("month")]))
                     .category(parts[fields.get("category")])
                     .isSystemic(ResourceFile.bool(parts[fields.get("isSystemic")]))
                     .chemoType(ResourceFile.optionalString(parts[fields.get("chemoType")]))
@@ -49,6 +51,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .targetedType(ResourceFile.optionalString(parts[fields.get("targetedType")]))
                     .hormoneType(ResourceFile.optionalString(parts[fields.get("hormoneType")]))
                     .stemCellTransType(ResourceFile.optionalString(parts[fields.get("stemCellTransplantType")]))
+                    .supportiveType(ResourceFile.optionalString(parts[fields.get("supportiveType")]))
                     .build();
         }
     }

@@ -28,6 +28,9 @@ public abstract class PriorSecondPrimary {
     @Nullable
     public abstract Integer diagnosedYear();
 
+    @Nullable
+    public abstract Integer diagnosedMonth();
+
     @NotNull
     public abstract String treatmentHistory();
 
