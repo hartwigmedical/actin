@@ -47,13 +47,15 @@
     {
       "name": "Capecitabine",
       "year": 2019,
+      "month": 3,
       "category": "chemotherapy",
       "isSystemic": true,
       "chemoType": "antimetabolite",
       "immunoType": null,
       "targetedType": null,
       "hormoneType": null,
-      "stemCellTransType": null
+      "stemCellTransType": null,
+      "supportiveType": null
     }
   ],
   "priorSecondPrimaries": [
@@ -66,6 +68,7 @@
         "162"
       ],
       "diagnosedYear": 2015,
+      "diagnosedMonth": null,
       "treatmentHistory": "Surgery",
       "isActive": false
     }

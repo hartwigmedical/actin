@@ -205,6 +205,7 @@ public final class ClinicalRecordJson {
                 priorTumorTreatmentList.add(ImmutablePriorTumorTreatment.builder()
                         .name(string(object, "name"))
                         .year(nullableInteger(object, "year"))
+                        .month(nullableInteger(object, "month"))
                         .category(string(object, "category"))
                         .isSystemic(bool(object, "isSystemic"))
                         .chemoType(nullableString(object, "chemoType"))
@@ -212,6 +213,7 @@ public final class ClinicalRecordJson {
                         .targetedType(nullableString(object, "targetedType"))
                         .hormoneType(nullableString(object, "hormoneType"))
                         .stemCellTransType(nullableString(object, "stemCellTransType"))
+                        .supportiveType(nullableString(object, "supportiveType"))
                         .build());
             }
             return priorTumorTreatmentList;
@@ -229,6 +231,7 @@ public final class ClinicalRecordJson {
                         .tumorSubType(string(object, "tumorSubType"))
                         .doids(stringList(object, "doids"))
                         .diagnosedYear(nullableInteger(object, "diagnosedYear"))
+                        .diagnosedMonth(nullableInteger(object, "diagnosedMonth"))
                         .treatmentHistory(string(object, "treatmentHistory"))
                         .isActive(bool(object, "isActive"))
                         .build());
