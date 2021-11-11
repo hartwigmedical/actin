@@ -19,7 +19,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LaboratoryGenerator implements TableGenerator {
+public class LaboratoryResultsGenerator implements TableGenerator {
 
     @NotNull
     private final LabInterpretation labInterpretation;
@@ -29,19 +29,19 @@ public class LaboratoryGenerator implements TableGenerator {
     private final float valueWidth;
 
     @NotNull
-    public static LaboratoryGenerator fromRecord(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
+    public static LaboratoryResultsGenerator fromRecord(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
         float key1Width = keyWidth / 3;
         float key2Width = keyWidth / 3;
         float key3Width = keyWidth - key1Width - key2Width;
 
-        return new LaboratoryGenerator(LabInterpretationFactory.fromLabValues(record.labValues()),
+        return new LaboratoryResultsGenerator(LabInterpretationFactory.fromLabValues(record.labValues()),
                 key1Width,
                 key2Width,
                 key3Width,
                 valueWidth);
     }
 
-    public LaboratoryGenerator(@NotNull final LabInterpretation labInterpretation, final float key1Width, final float key2Width,
+    private LaboratoryResultsGenerator(@NotNull final LabInterpretation labInterpretation, final float key1Width, final float key2Width,
             final float key3Width, final float valueWidth) {
         this.labInterpretation = labInterpretation;
         this.key1Width = key1Width;
@@ -53,7 +53,7 @@ public class LaboratoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Laboratory (" + Formats.date(labInterpretation.mostRecentRelevantDate()) + ")";
+        return "Laboratory results (" + Formats.date(labInterpretation.mostRecentRelevantDate()) + ")";
     }
 
     @NotNull

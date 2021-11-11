@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,9 @@ public abstract class MolecularRecord {
 
     @NotNull
     public abstract String sampleId();
+
+    @Nullable
+    public abstract LocalDate date();
 
     public abstract boolean hasReliableQuality();
 

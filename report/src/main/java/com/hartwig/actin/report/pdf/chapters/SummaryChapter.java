@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.report.pdf.tables.LaboratoryGenerator;
+import com.hartwig.actin.report.pdf.tables.LaboratoryResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsGenerator;
@@ -129,7 +129,7 @@ public class SummaryChapter implements ReportChapter {
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(record.clinical(), keyWidth, valueWidth),
                 new PatientCurrentDetailsGenerator(record.clinical(), keyWidth, valueWidth),
                 new TumorDetailsGenerator(record.clinical(), keyWidth, valueWidth),
-                LaboratoryGenerator.fromRecord(record.clinical(), keyWidth, valueWidth),
+                LaboratoryResultsGenerator.fromRecord(record.clinical(), keyWidth, valueWidth),
                 new MolecularResultsGenerator(record.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {

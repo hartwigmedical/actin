@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.serialization;
 
 import static com.hartwig.actin.util.Json.array;
 import static com.hartwig.actin.util.Json.bool;
+import static com.hartwig.actin.util.Json.nullableDate;
 import static com.hartwig.actin.util.Json.object;
 import static com.hartwig.actin.util.Json.string;
 
@@ -52,8 +53,7 @@ public final class MolecularRecordJson {
             JsonObject record = jsonElement.getAsJsonObject();
 
             JsonObject purple = object(record, "purple");
-            return ImmutableMolecularRecord.builder()
-                    .sampleId(string(record, "sampleId"))
+            return ImmutableMolecularRecord.builder().sampleId(string(record, "sampleId")).date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
                     .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
                     .evidences(toEvidences(array(record, "protect")))

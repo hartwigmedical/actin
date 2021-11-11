@@ -29,7 +29,7 @@ public class MolecularResultsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Molecular results";
+        return "Molecular results (" + Formats.date(record.date()) + ")";
     }
 
     @NotNull

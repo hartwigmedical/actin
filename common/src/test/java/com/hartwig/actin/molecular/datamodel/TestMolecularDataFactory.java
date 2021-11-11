@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -11,21 +12,23 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TestMolecularDataFactory {
 
+    private static final LocalDate TODAY = LocalDate.now();
+
+    private static final int DAYS_SINCE_MOLECULAR_ANALYSIS = 5;
+
     private TestMolecularDataFactory() {
     }
 
     @NotNull
     public static MolecularRecord createMinimalTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder()
-                .sampleId(TestDataFactory.TEST_SAMPLE)
-                .hasReliableQuality(true)
-                .build();
+        return ImmutableMolecularRecord.builder().sampleId(TestDataFactory.TEST_SAMPLE).hasReliableQuality(true).build();
     }
 
     @NotNull
     public static MolecularRecord createProperTestMolecularRecord() {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
+                .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
                 .configuredPrimaryTumorDoids(createTestConfiguredPrimaryTumorDoids())
                 .evidences(createTestEvidences())
                 .build();
