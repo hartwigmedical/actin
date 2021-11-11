@@ -156,6 +156,7 @@ public final class TestCurationFactory {
         List<ECGConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableECGConfig.builder().input("Weird aberration").interpretation("Cleaned aberration").build());
+        configs.add(ImmutableECGConfig.builder().input("No aberration").interpretation("NULL").build());
 
         return configs;
     }

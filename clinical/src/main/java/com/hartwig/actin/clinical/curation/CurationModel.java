@@ -215,7 +215,12 @@ public class CurationModel {
         ECGConfig config = find(database.ecgConfigs(), input);
 
         // Assume ECGs can also be pass-through.
-        return config != null ? config.interpretation() : input;
+        if (config != null) {
+            String interpretation = config.interpretation();
+            return !interpretation.equals("NULL") ? interpretation : null;
+        } else {
+            return input;
+        }
     }
 
     @Nullable

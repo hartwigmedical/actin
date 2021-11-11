@@ -172,6 +172,7 @@ public class CurationModelTest {
 
         assertEquals("Cleaned aberration", model.curateAberrationECG("Weird aberration"));
         assertEquals("No curation needed", model.curateAberrationECG("No curation needed"));
+        assertNull(model.curateAberrationECG("No aberration"));
         assertNull(model.curateAberrationECG(null));
 
         model.evaluate();
