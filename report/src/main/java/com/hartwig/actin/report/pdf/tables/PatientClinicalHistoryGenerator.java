@@ -13,6 +13,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PatientClinicalHistoryGenerator implements TableGenerator {
 
@@ -87,18 +88,16 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String toTreatmentString(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        String date = Strings.EMPTY;
-        if (priorTumorTreatment.year() != null && priorTumorTreatment.month() == null) {
-            date = " (" + priorTumorTreatment.year() + ")";
-        }
+        String date = toDateString(priorTumorTreatment.year(), priorTumorTreatment.month());
 
-        if (priorTumorTreatment.year() != null && priorTumorTreatment.month() != null) {
-            date = " (" + priorTumorTreatment.month() + "/" + priorTumorTreatment.year() + ")";
+        String dateAddition = Strings.EMPTY;
+        if (date != null) {
+            dateAddition = " (" + date + ")";
         }
 
         String treatmentName = !priorTumorTreatment.name().isEmpty() ? priorTumorTreatment.name() : priorTumorTreatment.category();
 
-        return treatmentName + date;
+        return treatmentName + dateAddition;
     }
 
     @NotNull
@@ -110,18 +109,15 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
             }
 
-            String date = Strings.EMPTY;
-            if (priorSecondPrimary.diagnosedYear() != null && priorSecondPrimary.diagnosedMonth() == null) {
-                date = priorSecondPrimary.diagnosedYear() + ", ";
-            }
-
-            if (priorSecondPrimary.diagnosedYear() != null && priorSecondPrimary.diagnosedMonth() != null) {
-                date = priorSecondPrimary.diagnosedMonth() + "/" + priorSecondPrimary.diagnosedYear() + ", ";
+            String date = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth());
+            String dateAddition = Strings.EMPTY;
+            if (date != null) {
+                dateAddition = date + ", ";
             }
 
             String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
 
-            joiner.add(tumorDetails + " (" + date + active + ")");
+            joiner.add(tumorDetails + " (" + dateAddition + active + ")");
         }
 
         if (record.priorSecondPrimaries().size() > 1) {
@@ -130,6 +126,15 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
             return "Previous primary tumor: " + joiner;
         } else {
             return Strings.EMPTY;
+        }
+    }
+
+    @Nullable
+    private static String toDateString(@Nullable Integer year, @Nullable Integer month) {
+        if (year != null) {
+            return month != null ? month + "/" + year : String.valueOf(year);
+        } else {
+            return null;
         }
     }
 
