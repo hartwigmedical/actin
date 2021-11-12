@@ -286,6 +286,17 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(false)
                 .build());
 
+        labValues.add(ImmutableLabValue.builder()
+                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
+                .code("LDH")
+                .name("Lactate dehydrogenase")
+                .comparator(Strings.EMPTY)
+                .value(240)
+                .unit("U/L")
+                .refLimitUp(245D)
+                .isOutsideRef(false)
+                .build());
+
         return labValues;
     }
 

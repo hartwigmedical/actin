@@ -81,7 +81,8 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         addMostRecentLabEntryByName(table, "Hemoglobin");
         table.addCell(Cells.createEmpty());
         addMostRecentLabEntryByName(table, "Thrombocytes");
-
+        table.addCell(Cells.createEmpty());
+        addMostRecentLabEntryByCode(table, "LDH");
         return table;
     }
 
