@@ -37,8 +37,8 @@ public class ReportWriter {
     }
 
     public void write(@NotNull Report report) throws IOException {
-        ReportChapter[] chapters =
-                new ReportChapter[] { new SummaryChapter(report), new TreatmentSummaryChapter(report), new TrialMatchingDetailsChapter() };
+        ReportChapter[] chapters = new ReportChapter[] { new SummaryChapter(report), new TreatmentSummaryChapter(report),
+                new TrialMatchingDetailsChapter(report) };
 
         writePdfChapters(report.sampleId(), chapters);
     }

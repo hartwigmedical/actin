@@ -51,7 +51,7 @@ public class TreatmentSummaryChapter implements ReportChapter {
 
     private void addTreatmentSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
-        table.addCell(Cells.createTitle("Summary"));
+        table.addCell(Cells.createTitle("Trial Eligibility Summary"));
         table.addCell(Cells.create(createTreatmentSummaryTable(TreatmentSummarizer.summarize(report.treatmentMatch()))));
         document.add(table);
     }
@@ -99,7 +99,7 @@ public class TreatmentSummaryChapter implements ReportChapter {
             }
         }
 
-        document.add(Tables.addTitle(table, "Trial Matching Details"));
+        document.add(Tables.addTitle(table, "Trial Matching Summary"));
     }
 
     private static void addSummaryToTable(@NotNull Table table, @NotNull EvaluationSummary summary) {
