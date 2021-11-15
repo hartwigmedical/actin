@@ -4,5 +4,6 @@ public enum Evaluation {
     PASS,
     PASS_BUT_WARN,
     FAIL,
-    UNDETERMINED
+    UNDETERMINED,
+    NOT_IMPLEMENTED
 }

@@ -145,7 +145,7 @@ public final class EvaluationFunctionFactory {
     @NotNull
     public static EvaluationFunction create(@NotNull EligibilityFunction function) {
         if (!EligibilityParameterResolver.hasValidParameters(function)) {
-            LOGGER.warn("Function with rule '{}' has invalid inputs {}. Evaluation for this rule will always fail",
+            LOGGER.warn("Function with rule '{}' has invalid inputs {}. Evaluation for this rule will always be undetermined",
                     function.rule(),
                     function.parameters());
             return cannotBeDeterminedCreator().create(function);
@@ -425,12 +425,7 @@ public final class EvaluationFunctionFactory {
 
     @NotNull
     private static FunctionCreator cannotBeDeterminedCreator() {
-        return function -> isAlwaysUndetermined();
-    }
-
-    @NotNull
-    private static EvaluationFunction isAlwaysUndetermined() {
-        return evaluation -> Evaluation.UNDETERMINED;
+        return function -> evaluation -> Evaluation.UNDETERMINED;
     }
 
     private interface FunctionCreator {

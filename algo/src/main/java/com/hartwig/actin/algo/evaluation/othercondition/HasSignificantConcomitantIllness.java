@@ -12,6 +12,6 @@ public class HasSignificantConcomitantIllness implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         // TODO Implement
-        return Evaluation.UNDETERMINED;
+        return Evaluation.NOT_IMPLEMENTED;
     }
 }

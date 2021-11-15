@@ -30,6 +30,11 @@ public final class TestEvaluationFunctionFactory {
     }
 
     @NotNull
+    public static EvaluationFunction notImplemented() {
+        return fixedEvaluation(Evaluation.NOT_IMPLEMENTED);
+    }
+
+    @NotNull
     private static EvaluationFunction fixedEvaluation(@NotNull Evaluation output) {
         return record -> output;
     }
