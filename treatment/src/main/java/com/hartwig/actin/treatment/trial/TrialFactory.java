@@ -19,6 +19,8 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
+import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
+import com.hartwig.actin.treatment.sort.EligibilityComparator;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
@@ -104,13 +106,15 @@ public class TrialFactory {
                     .build());
         }
 
+        eligibility.sort(new EligibilityComparator());
+
         return eligibility;
     }
 
     @NotNull
     private static Set<CriterionReference> resolveReferences(@NotNull List<InclusionCriteriaReferenceConfig> configs,
             @NotNull Set<String> referenceIds) {
-        Set<CriterionReference> references = Sets.newHashSet();
+        Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
 
         for (String referenceId : referenceIds) {
             InclusionCriteriaReferenceConfig config = findReferenceConfig(configs, referenceId);
