@@ -36,6 +36,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
@@ -81,7 +82,7 @@ public final class TrialJson {
     @VisibleForTesting
     @NotNull
     static String toJson(@NotNull Trial trial) {
-        return new GsonBuilder().serializeNulls().create().toJson(trial);
+        return GsonSerializer.create().toJson(trial);
     }
 
     @VisibleForTesting

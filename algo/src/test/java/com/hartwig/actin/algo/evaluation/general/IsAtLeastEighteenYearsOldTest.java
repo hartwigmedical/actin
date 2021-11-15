@@ -34,7 +34,7 @@ public class IsAtLeastEighteenYearsOldTest {
                 .patient(ImmutablePatientDetails.builder().from(baseRecord.patient()).birthYear(birthYear).build())
                 .build();
 
-        return ImmutablePatientRecord.builder().from(TestDataFactory.createTestPatientRecord()).clinical(recordWithBirthYear).build();
+        return ImmutablePatientRecord.builder().from(TestDataFactory.createProperTestPatientRecord()).clinical(recordWithBirthYear).build();
     }
 
 }

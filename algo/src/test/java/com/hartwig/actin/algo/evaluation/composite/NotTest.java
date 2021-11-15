@@ -13,7 +13,7 @@ public class NotTest {
 
     @Test
     public void canNegateEvaluation() {
-        PatientRecord patient = TestDataFactory.createTestPatientRecord();
+        PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
 
         assertEquals(Evaluation.FAIL, new Not(TestEvaluationFunctionFactory.pass()).evaluate(patient));
         assertEquals(Evaluation.FAIL, new Not(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));

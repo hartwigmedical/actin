@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class AndTest {
 
-    private static final PatientRecord TEST_PATIENT = TestDataFactory.createTestPatientRecord();
+    private static final PatientRecord TEST_PATIENT = TestDataFactory.createProperTestPatientRecord();
 
     @Test
     public void canCombineEvaluations() {

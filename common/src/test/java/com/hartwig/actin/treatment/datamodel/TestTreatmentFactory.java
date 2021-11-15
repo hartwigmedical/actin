@@ -36,6 +36,7 @@ public final class TestTreatmentFactory {
 
         functions.add(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
+                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
                 .build());
 
         return functions;
@@ -45,7 +46,20 @@ public final class TestTreatmentFactory {
     private static List<Cohort> createTestCohorts() {
         List<Cohort> cohorts = Lists.newArrayList();
 
-        cohorts.add(ImmutableCohort.builder().cohortId("A").open(true).description("Cohort A").build());
+        cohorts.add(ImmutableCohort.builder()
+                .cohortId("A")
+                .open(true)
+                .description("Cohort A")
+                .addEligibility(ImmutableEligibility.builder()
+                        .function(ImmutableEligibilityFunction.builder()
+                                .rule(EligibilityRule.NOT)
+                                .addParameters(ImmutableEligibilityFunction.builder()
+                                        .rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES)
+                                        .build())
+                                .build())
+                        .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
+                        .build())
+                .build());
         cohorts.add(ImmutableCohort.builder().cohortId("B").open(true).description("Cohort B").build());
         cohorts.add(ImmutableCohort.builder().cohortId("C").open(false).description("Cohort C").build());
 

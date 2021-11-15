@@ -18,7 +18,7 @@ public class TestReportWriterApplication {
     private static final String OUTPUT_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
 
     public static void main(String[] args) throws IOException {
-        PatientRecord record = TestDataFactory.createTestPatientRecord();
+        PatientRecord record = TestDataFactory.createProperTestPatientRecord();
 
         LOGGER.info("Printing clinical record");
         ClinicalPrinter.printRecord(record.clinical());

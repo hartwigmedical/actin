@@ -3,6 +3,7 @@ package com.hartwig.actin.algo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
@@ -10,7 +11,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -24,10 +25,10 @@ public class TrialMatcherTest {
 
     @Test
     public void canMatchTrialsOnProperTestData() {
-        PatientRecord patient = TestDataFactory.createTestPatientRecord();
+        PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
         Trial trial = TestTreatmentFactory.createProperTestTrial();
 
-        SampleTreatmentMatch match = TrialMatcher.determineEligibility(patient, Lists.newArrayList(trial));
+        TreatmentMatch match = TrialMatcher.determineEligibility(patient, Lists.newArrayList(trial));
 
         assertEquals(match.sampleId(), patient.sampleId());
         assertEquals(1, match.trialMatches().size());
@@ -38,23 +39,44 @@ public class TrialMatcherTest {
     private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {
         assertEquals(1, trialEligibility.evaluations().size());
         assertEquals(Evaluation.PASS, trialEligibility.overallEvaluation());
-        assertEquals(Evaluation.PASS, find(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD));
+        assertEquals(Evaluation.PASS, findEvaluationForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD));
 
         assertEquals(3, trialEligibility.cohorts().size());
-        for (CohortEligibility cohort : trialEligibility.cohorts()) {
-            assertEquals(Evaluation.PASS, cohort.overallEvaluation());
-            assertTrue(cohort.evaluations().isEmpty());
-        }
+
+        CohortEligibility cohortA = findCohort(trialEligibility.cohorts(), "A");
+        assertEquals(1, cohortA.evaluations().size());
+        assertEquals(Evaluation.UNDETERMINED, cohortA.overallEvaluation());
+        assertEquals(Evaluation.NOT_IMPLEMENTED, findEvaluationForRule(cohortA.evaluations(), EligibilityRule.NOT));
+
+        CohortEligibility cohortB = findCohort(trialEligibility.cohorts(), "B");
+        assertEquals(Evaluation.PASS, cohortB.overallEvaluation());
+        assertTrue(cohortB.evaluations().isEmpty());
+
+        CohortEligibility cohortC = findCohort(trialEligibility.cohorts(), "C");
+        assertEquals(Evaluation.PASS, cohortC.overallEvaluation());
+        assertTrue(cohortC.evaluations().isEmpty());
     }
 
     @NotNull
-    private static Evaluation find(@NotNull Map<Eligibility, Evaluation> evaluations, @NotNull EligibilityRule ruleToFind) {
+    private static Evaluation findEvaluationForRule(@NotNull Map<Eligibility, Evaluation> evaluations,
+            @NotNull EligibilityRule ruleToFind) {
         for (Map.Entry<Eligibility, Evaluation> evaluation : evaluations.entrySet()) {
             if (evaluation.getKey().function().rule() == ruleToFind) {
                 return evaluation.getValue();
             }
         }
 
-        throw new IllegalStateException("Cannot find evaluation for rule " + ruleToFind);
+        throw new IllegalStateException("Cannot find evaluation for rule '" + ruleToFind + "'");
+    }
+
+    @NotNull
+    private static CohortEligibility findCohort(@NotNull List<CohortEligibility> cohorts, @NotNull String cohortIdToFind) {
+        for (CohortEligibility cohort : cohorts) {
+            if (cohort.cohortId().equals(cohortIdToFind)) {
+                return cohort;
+            }
+        }
+
+        throw new IllegalStateException("Cannot find cohort with id '" + cohortIdToFind + "'");
     }
 }

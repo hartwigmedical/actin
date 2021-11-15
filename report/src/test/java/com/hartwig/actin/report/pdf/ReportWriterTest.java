@@ -11,7 +11,7 @@ public class ReportWriterTest {
 
     @Test
     public void canGenerateInMemoryReport() throws IOException {
-        PatientRecord record = TestDataFactory.createTestPatientRecord();
+        PatientRecord record = TestDataFactory.createProperTestPatientRecord();
 
         ReportWriter memoryWriter = ReportWriterFactory.createInMemoryReportWriter();
 

@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
-import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
-import com.hartwig.actin.algo.serialization.SampleTreatmentMatchJson;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
@@ -71,9 +71,9 @@ public class TreatmentMatcherApplication {
         LOGGER.info(" Loaded {} trials", trials.size());
 
         LOGGER.info(("Matching patient to available trials"));
-        SampleTreatmentMatch match = TrialMatcher.determineEligibility(patient, trials);
+        TreatmentMatch match = TrialMatcher.determineEligibility(patient, trials);
 
-        SampleTreatmentMatchJson.write(match, config.outputDirectory());
+        TreatmentMatchJson.write(match, config.outputDirectory());
 
         LOGGER.info("Done!");
     }

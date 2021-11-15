@@ -13,7 +13,7 @@ public final class TestDataFactory {
     }
 
     @NotNull
-    public static PatientRecord createTestPatientRecord() {
+    public static PatientRecord createProperTestPatientRecord() {
         return ImmutablePatientRecord.builder()
                 .sampleId(TEST_SAMPLE)
                 .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())

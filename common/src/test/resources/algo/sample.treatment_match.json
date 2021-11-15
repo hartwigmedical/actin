@@ -1,0 +1,64 @@
+{
+  "sampleId": "ACTN01029999T",
+  "trialMatches": [
+    {
+      "trialId": "test trial",
+      "overallEvaluation": "PASS",
+      "evaluations": [
+        [
+          {
+            "references": [
+              {
+                "id": "I-01",
+                "text": "Is adult"
+              }
+            ],
+            "function": {
+              "rule": "IS_AT_LEAST_18_YEARS_OLD",
+              "parameters": []
+            }
+          },
+          "PASS"
+        ]
+      ],
+      "cohorts": [
+        {
+          "cohortId": "A",
+          "overallEvaluation": "UNDETERMINED",
+          "evaluations": [
+            [
+              {
+                "references": [
+                  {
+                    "id": "I-02",
+                    "text": "Has no active CNS metastases"
+                  }
+                ],
+                "function": {
+                  "rule": "NOT",
+                  "parameters": [
+                    {
+                      "rule": "HAS_ACTIVE_CNS_METASTASES",
+                      "parameters": []
+                    }
+                  ]
+                }
+              },
+              "NOT_IMPLEMENTED"
+            ]
+          ]
+        },
+        {
+          "cohortId": "B",
+          "overallEvaluation": "PASS",
+          "evaluations": {}
+        },
+        {
+          "cohortId": "C",
+          "overallEvaluation": "PASS",
+          "evaluations": {}
+        }
+      ]
+    }
+  ]
+}

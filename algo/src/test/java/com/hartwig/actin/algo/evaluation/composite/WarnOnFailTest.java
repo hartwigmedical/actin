@@ -13,7 +13,7 @@ public class WarnOnFailTest {
 
     @Test
     public void canWarnOnFail() {
-        PatientRecord patient = TestDataFactory.createTestPatientRecord();
+        PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
 
         assertEquals(Evaluation.PASS, new WarnOnFail(TestEvaluationFunctionFactory.pass()).evaluate(patient));
         assertEquals(Evaluation.PASS_BUT_WARN, new WarnOnFail(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));

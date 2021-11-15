@@ -11,9 +11,9 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
-import com.hartwig.actin.algo.datamodel.ImmutableSampleTreatmentMatch;
+import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
-import com.hartwig.actin.algo.datamodel.SampleTreatmentMatch;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
@@ -29,7 +29,7 @@ public final class TrialMatcher {
     }
 
     @NotNull
-    public static SampleTreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
+    public static TreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
         List<TrialEligibility> trialMatches = Lists.newArrayList();
         for (Trial trial : trials) {
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
@@ -51,7 +51,7 @@ public final class TrialMatcher {
                     .build());
         }
 
-        return ImmutableSampleTreatmentMatch.builder().sampleId(patient.sampleId()).trialMatches(trialMatches).build();
+        return ImmutableTreatmentMatch.builder().sampleId(patient.sampleId()).trialMatches(trialMatches).build();
     }
 
     @NotNull
@@ -71,7 +71,7 @@ public final class TrialMatcher {
 
         if (unique.contains(Evaluation.FAIL)) {
             return Evaluation.FAIL;
-        } else if (unique.contains(Evaluation.UNDETERMINED)) {
+        } else if (unique.contains(Evaluation.UNDETERMINED) || unique.contains(Evaluation.NOT_IMPLEMENTED)) {
             return Evaluation.UNDETERMINED;
         } else if (unique.contains(Evaluation.PASS_BUT_WARN)) {
             return Evaluation.PASS_BUT_WARN;

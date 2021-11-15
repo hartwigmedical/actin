@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class SampleTreatmentMatch {
+public abstract class TreatmentMatch {
 
     @NotNull
     public abstract String sampleId();
