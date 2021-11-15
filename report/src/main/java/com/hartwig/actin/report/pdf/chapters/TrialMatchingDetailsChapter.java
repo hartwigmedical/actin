@@ -57,16 +57,17 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
         String trialIdentification = trialIdentificationString(trial.identification());
-        document.add(Tables.addTitle(createEvaluationTable(trial.evaluations()), trialIdentification + " - General"));
+        Table trialTable = Tables.addTitle(createEvaluationTable(trial.evaluations()), trialIdentification + " - General");
+        document.add(Tables.makeWrapping(trialTable));
 
         for (CohortEligibility cohort : trial.cohorts()) {
             String cohortIdentification = cohortIdentificationString(cohort.metadata());
-            Table table = new Table(1).setMinWidth(contentWidth());
+            Table cohortTable = new Table(1).setMinWidth(contentWidth());
 
-            table.addCell(Cells.createHeader(trialIdentification + " - " + cohortIdentification));
-            table.addCell(Cells.create(createEvaluationTable(cohort.evaluations())));
+            cohortTable.addCell(Cells.createHeader(trialIdentification + " - " + cohortIdentification));
+            cohortTable.addCell(Cells.create(createEvaluationTable(cohort.evaluations())));
 
-            document.add(table);
+            document.add(Tables.makeWrapping(cohortTable));
         }
     }
 
@@ -96,7 +97,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private static String trialIdentificationString(@NotNull TrialIdentification identification) {
-        return identification.trialId() + " (" + identification.acronym() + " - " + identification.title() + ")";
+        return identification.trialId() + " (" + identification.acronym() + ")";
     }
 
     @NotNull
