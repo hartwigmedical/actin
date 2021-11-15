@@ -15,6 +15,7 @@ public interface ReporterConfig {
 
     String CLINICAL_JSON = "clinical_json";
     String MOLECULAR_JSON = "molecular_json";
+    String TREATMENT_MATCH_JSON = "treatment_match_json";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -24,6 +25,7 @@ public interface ReporterConfig {
 
         options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the sample");
         options.addOption(MOLECULAR_JSON, true, "File containing the molecular record of the sample");
+        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the sample");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to");
 
@@ -37,6 +39,9 @@ public interface ReporterConfig {
     String molecularJson();
 
     @NotNull
+    String treatmentMatchJson();
+
+    @NotNull
     String outputDirectory();
 
     @NotNull
@@ -44,6 +49,7 @@ public interface ReporterConfig {
         return ImmutableReporterConfig.builder()
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
+                .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

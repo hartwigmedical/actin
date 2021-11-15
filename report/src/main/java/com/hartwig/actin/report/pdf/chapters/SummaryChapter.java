@@ -3,9 +3,9 @@ package com.hartwig.actin.report.pdf.chapters;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.tables.LaboratoryResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
@@ -30,10 +30,10 @@ import org.jetbrains.annotations.Nullable;
 public class SummaryChapter implements ReportChapter {
 
     @NotNull
-    private final PatientRecord record;
+    private final Report report;
 
-    public SummaryChapter(@NotNull final PatientRecord record) {
-        this.record = record;
+    public SummaryChapter(@NotNull final Report report) {
+        this.report = report;
     }
 
     @NotNull
@@ -58,18 +58,18 @@ public class SummaryChapter implements ReportChapter {
     private void addPatientDetails(@NotNull Document document) {
         Paragraph patientDetailsLine = new Paragraph();
         patientDetailsLine.add(new Text("Sample ID: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(record.sampleId()).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text(report.sampleId()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Gender: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(record.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(String.valueOf(record.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
 
         Paragraph tumorDetailsLine = new Paragraph();
         tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(tumor(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(stage(record.clinical().tumor())).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 
@@ -126,11 +126,11 @@ public class SummaryChapter implements ReportChapter {
 
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth - 10;
-        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(record.clinical(), keyWidth, valueWidth),
-                new PatientCurrentDetailsGenerator(record.clinical(), keyWidth, valueWidth),
-                new TumorDetailsGenerator(record.clinical(), keyWidth, valueWidth),
-                LaboratoryResultsGenerator.fromRecord(record.clinical(), keyWidth, valueWidth),
-                new MolecularResultsGenerator(record.molecular(), keyWidth, valueWidth));
+        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
+                new PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
+                new TumorDetailsGenerator(report.clinical(), keyWidth, valueWidth),
+                LaboratoryResultsGenerator.fromRecord(report.clinical(), keyWidth, valueWidth),
+                new MolecularResultsGenerator(report.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

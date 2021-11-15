@@ -38,6 +38,16 @@ public final class Styles {
     }
 
     @NotNull
+    public static Style tableHeaderStyle() {
+        return new Style().setFont(fontRegular()).setFontSize(7).setBold().setFontColor(Styles.PALETTE_BLACK);
+    }
+
+    @NotNull
+    public static Style tableContentStyle() {
+        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
+    }
+
+    @NotNull
     public static Style tableKeyStyle() {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
     }

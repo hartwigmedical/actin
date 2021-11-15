@@ -2,14 +2,18 @@ package com.hartwig.actin.report;
 
 import java.io.IOException;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
+import com.hartwig.actin.algo.util.TreatmentMatchPrinter;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
+import com.hartwig.actin.report.datamodel.Report;
+import com.hartwig.actin.report.datamodel.ReportFactory;
 import com.hartwig.actin.report.pdf.ReportWriter;
 import com.hartwig.actin.report.pdf.ReportWriterFactory;
 
@@ -29,8 +33,6 @@ public class ReporterApplication {
     public static final String VERSION = ReporterApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
         Options options = ReporterConfig.createOptions();
 
         ReporterConfig config = null;
@@ -53,20 +55,44 @@ public class ReporterApplication {
     }
 
     public void run() throws IOException {
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson());
-        ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
-        ClinicalPrinter.printRecord(clinical);
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
-        LOGGER.info("Loading molecular record from {}", config.molecularJson());
-        MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
-        MolecularPrinter.printRecord(molecular);
+        ClinicalRecord clinical = loadClinicalRecord(config.clinicalJson());
+        MolecularRecord molecular = loadMolecularRecord(config.molecularJson());
+        TreatmentMatch treatments = loadTreatmentMatches(config.treatmentMatchJson());
 
-        PatientRecord record = PatientRecordFactory.fromInputs(clinical, molecular);
-
+        Report report = ReportFactory.fromInputs(PatientRecordFactory.fromInputs(clinical, molecular), treatments);
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory());
 
-        writer.write(record);
+        writer.write(report);
 
         LOGGER.info("Done!");
+    }
+
+    @NotNull
+    private static ClinicalRecord loadClinicalRecord(@NotNull String clinicalJson) throws IOException {
+        LOGGER.info("Loading clinical record from {}", clinicalJson);
+        ClinicalRecord clinical = ClinicalRecordJson.read(clinicalJson);
+        ClinicalPrinter.printRecord(clinical);
+
+        return clinical;
+    }
+
+    @NotNull
+    private static MolecularRecord loadMolecularRecord(@NotNull String molecularJson) throws IOException {
+        LOGGER.info("Loading molecular record from {}", molecularJson);
+        MolecularRecord molecular = MolecularRecordJson.read(molecularJson);
+        MolecularPrinter.printRecord(molecular);
+
+        return molecular;
+    }
+
+    @NotNull
+    private static TreatmentMatch loadTreatmentMatches(@NotNull String treatmentMatchJson) throws IOException {
+        LOGGER.info("Loading treatment match results from {}", treatmentMatchJson);
+        TreatmentMatch treatmentMatch = TreatmentMatchJson.read(treatmentMatchJson);
+        TreatmentMatchPrinter.printMatch(treatmentMatch);
+
+        return treatmentMatch;
     }
 }

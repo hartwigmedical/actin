@@ -13,9 +13,18 @@ public final class TestDataFactory {
     }
 
     @NotNull
-    public static PatientRecord createProperTestPatientRecord() {
+    public static PatientRecord createMinimalTestPatientRecord() {
         return ImmutablePatientRecord.builder()
                 .sampleId(TEST_SAMPLE)
+                .clinical(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .molecular(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord createProperTestPatientRecord() {
+        return ImmutablePatientRecord.builder()
+                .from(createMinimalTestPatientRecord())
                 .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
                 .molecular(TestMolecularDataFactory.createProperTestMolecularRecord())
                 .build();

@@ -19,7 +19,7 @@ public class MolecularPrinter {
         new MolecularPrinter(DatamodelPrinter.withDefaultIndentation()).print(record);
     }
 
-    public MolecularPrinter(@NotNull final DatamodelPrinter printer) {
+    private MolecularPrinter(@NotNull final DatamodelPrinter printer) {
         this.printer = printer;
     }
 

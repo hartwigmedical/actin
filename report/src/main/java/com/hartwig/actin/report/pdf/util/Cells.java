@@ -35,6 +35,20 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createHeader(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
+        cell.addStyle(Styles.tableHeaderStyle());
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createContent(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
+        cell.addStyle(Styles.tableContentStyle());
+        return cell;
+    }
+
+    @NotNull
     public static Cell createKey(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableKeyStyle());

@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.chapters.ConclusionChapter;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
@@ -21,24 +21,26 @@ import com.itextpdf.layout.property.AreaBreakType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ReportWriter {
 
     private static final Logger LOGGER = LogManager.getLogger(ReportWriter.class);
 
     private final boolean writeToDisk;
-    @NotNull
+    @Nullable
     private final String outputDirectory;
 
-    ReportWriter(final boolean writeToDisk, @NotNull final String outputDirectory) {
+    ReportWriter(final boolean writeToDisk, @Nullable final String outputDirectory) {
         this.writeToDisk = writeToDisk;
         this.outputDirectory = outputDirectory;
     }
 
-    public void write(@NotNull PatientRecord record) throws IOException {
-        ReportChapter[] chapters = new ReportChapter[] { new SummaryChapter(record), new ConclusionChapter(), new TreatmentChapter() };
+    public void write(@NotNull Report report) throws IOException {
+        ReportChapter[] chapters =
+                new ReportChapter[] { new SummaryChapter(report), new TreatmentChapter(report), new ConclusionChapter() };
 
-        writePdfChapters(record.sampleId(), chapters);
+        writePdfChapters(report.sampleId(), chapters);
     }
 
     private void writePdfChapters(@NotNull String sampleId, @NotNull ReportChapter[] chapters) throws IOException {
@@ -69,7 +71,7 @@ public class ReportWriter {
     @NotNull
     private Document initializeReport(@NotNull String sampleId) throws IOException {
         PdfWriter writer;
-        if (writeToDisk) {
+        if (writeToDisk && outputDirectory != null) {
             String outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + sampleId + ".actin.pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
             writer = new PdfWriter(outputFilePath);

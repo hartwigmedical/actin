@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class ReportWriterFactory {
@@ -15,6 +14,6 @@ public final class ReportWriterFactory {
 
     @NotNull
     public static ReportWriter createInMemoryReportWriter() {
-        return new ReportWriter(false, Strings.EMPTY);
+        return new ReportWriter(false, null);
     }
 }

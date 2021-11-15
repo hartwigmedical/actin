@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf;
 
 import java.io.IOException;
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.report.datamodel.Report;
+import com.hartwig.actin.report.datamodel.TestReportFactory;
 
 import org.junit.Test;
 
@@ -11,10 +11,10 @@ public class ReportWriterTest {
 
     @Test
     public void canGenerateInMemoryReport() throws IOException {
-        PatientRecord record = TestDataFactory.createProperTestPatientRecord();
+        Report report = TestReportFactory.createProperTestReport();
 
         ReportWriter memoryWriter = ReportWriterFactory.createInMemoryReportWriter();
 
-        memoryWriter.write(record);
+        memoryWriter.write(report);
     }
 }

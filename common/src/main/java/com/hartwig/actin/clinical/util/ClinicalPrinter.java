@@ -16,7 +16,7 @@ public class ClinicalPrinter {
         new ClinicalPrinter(DatamodelPrinter.withDefaultIndentation()).print(record);
     }
 
-    public ClinicalPrinter(@NotNull final DatamodelPrinter printer) {
+    private ClinicalPrinter(@NotNull final DatamodelPrinter printer) {
         this.printer = printer;
     }
 
