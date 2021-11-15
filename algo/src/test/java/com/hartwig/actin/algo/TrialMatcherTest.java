@@ -72,7 +72,7 @@ public class TrialMatcherTest {
     @NotNull
     private static CohortEligibility findCohort(@NotNull List<CohortEligibility> cohorts, @NotNull String cohortIdToFind) {
         for (CohortEligibility cohort : cohorts) {
-            if (cohort.cohortId().equals(cohortIdToFind)) {
+            if (cohort.metadata().cohortId().equals(cohortIdToFind)) {
                 return cohort;
             }
         }

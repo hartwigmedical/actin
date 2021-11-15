@@ -16,15 +16,25 @@ public final class TestTreatmentFactory {
 
     @NotNull
     public static Trial createMinimalTestTrial() {
-        return ImmutableTrial.builder().trialId(TEST_TRIAL).acronym(Strings.EMPTY).title(Strings.EMPTY).build();
+        return ImmutableTrial.builder()
+                .identification(ImmutableTrialIdentification.builder()
+                        .trialId(TEST_TRIAL)
+                        .acronym(Strings.EMPTY)
+                        .title(Strings.EMPTY)
+                        .build())
+                .build();
     }
 
     @NotNull
     public static Trial createProperTestTrial() {
+        Trial minimal = createMinimalTestTrial();
         return ImmutableTrial.builder()
-                .from(createMinimalTestTrial())
-                .acronym("TEST-TRIAL")
-                .title("This is an ACTIN test trial")
+                .from(minimal)
+                .identification(ImmutableTrialIdentification.builder()
+                        .from(minimal.identification())
+                        .acronym("TEST-TRIAL")
+                        .title("This is an ACTIN test trial")
+                        .build())
                 .generalEligibility(createGeneralEligibility())
                 .cohorts(createTestCohorts())
                 .build();
@@ -47,9 +57,7 @@ public final class TestTreatmentFactory {
         List<Cohort> cohorts = Lists.newArrayList();
 
         cohorts.add(ImmutableCohort.builder()
-                .cohortId("A")
-                .open(true)
-                .description("Cohort A")
+                .metadata(createTestMetadata("A"))
                 .addEligibility(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.NOT)
@@ -60,9 +68,14 @@ public final class TestTreatmentFactory {
                         .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
                         .build())
                 .build());
-        cohorts.add(ImmutableCohort.builder().cohortId("B").open(true).description("Cohort B").build());
-        cohorts.add(ImmutableCohort.builder().cohortId("C").open(false).description("Cohort C").build());
+        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("B")).build());
+        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("C")).build());
 
         return cohorts;
+    }
+
+    @NotNull
+    private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
+        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(true).description("Cohort " + cohortId).build();
     }
 }

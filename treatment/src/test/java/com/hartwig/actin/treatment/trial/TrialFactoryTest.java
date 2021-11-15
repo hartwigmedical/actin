@@ -35,9 +35,9 @@ public class TrialFactoryTest {
         assertEquals(1, trials.size());
 
         Trial trial = trials.get(0);
-        assertEquals("TEST", trial.trialId());
-        assertEquals("Acronym-TEST", trial.acronym());
-        assertEquals("Title for TEST", trial.title());
+        assertEquals("TEST", trial.identification().trialId());
+        assertEquals("Acronym-TEST", trial.identification().acronym());
+        assertEquals("Title for TEST", trial.identification().title());
 
         assertEquals(1, trial.generalEligibility().size());
 
@@ -47,7 +47,7 @@ public class TrialFactoryTest {
         assertEquals(3, trial.cohorts().size());
 
         Cohort cohortA = findCohort(trial.cohorts(), "A");
-        assertEquals("Cohort A", cohortA.description());
+        assertEquals("Cohort A", cohortA.metadata().description());
         assertEquals(2, cohortA.eligibility().size());
 
         EligibilityFunction cohortFunction1 = findFunction(cohortA.eligibility(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
@@ -61,18 +61,18 @@ public class TrialFactoryTest {
         assertEquals(2, subFunction.parameters().size());
 
         Cohort cohortB = findCohort(trial.cohorts(), "B");
-        assertEquals("Cohort B", cohortB.description());
+        assertEquals("Cohort B", cohortB.metadata().description());
         assertTrue(cohortB.eligibility().isEmpty());
 
         Cohort cohortC = findCohort(trial.cohorts(), "C");
-        assertEquals("Cohort C", cohortC.description());
+        assertEquals("Cohort C", cohortC.metadata().description());
         assertTrue(cohortC.eligibility().isEmpty());
     }
 
     @NotNull
     private static Cohort findCohort(@NotNull List<Cohort> cohorts, @NotNull String cohortId) {
         for (Cohort cohort : cohorts) {
-            if (cohort.cohortId().equals(cohortId)) {
+            if (cohort.metadata().cohortId().equals(cohortId)) {
                 return cohort;
             }
         }

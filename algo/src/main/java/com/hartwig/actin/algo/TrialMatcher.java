@@ -35,16 +35,14 @@ public final class TrialMatcher {
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
                 Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, cohort.eligibility());
-                cohortMatching.add(ImmutableCohortEligibility.builder()
-                        .cohortId(cohort.cohortId())
+                cohortMatching.add(ImmutableCohortEligibility.builder().metadata(cohort.metadata())
                         .overallEvaluation(determineOverallEvaluation(evaluations))
                         .evaluations(evaluations)
                         .build());
             }
 
             Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, trial.generalEligibility());
-            trialMatches.add(ImmutableTrialEligibility.builder()
-                    .trialId(trial.trialId())
+            trialMatches.add(ImmutableTrialEligibility.builder().identification(trial.identification())
                     .overallEvaluation(determineOverallEvaluation(evaluations))
                     .evaluations(evaluations)
                     .cohorts(cohortMatching)

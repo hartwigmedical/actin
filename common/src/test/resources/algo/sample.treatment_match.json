@@ -2,7 +2,11 @@
   "sampleId": "ACTN01029999T",
   "trialMatches": [
     {
-      "trialId": "test trial",
+      "identification": {
+        "trialId": "test trial",
+        "acronym": "TEST-TRIAL",
+        "title": "This is an ACTIN test trial"
+      },
       "overallEvaluation": "PASS",
       "evaluations": [
         [
@@ -23,7 +27,11 @@
       ],
       "cohorts": [
         {
-          "cohortId": "A",
+          "metadata": {
+            "cohortId": "A",
+            "open": true,
+            "description": "Cohort A"
+          },
           "overallEvaluation": "UNDETERMINED",
           "evaluations": [
             [
@@ -49,12 +57,20 @@
           ]
         },
         {
-          "cohortId": "B",
+          "metadata": {
+            "cohortId": "B",
+            "open": true,
+            "description": "Cohort B"
+          },
           "overallEvaluation": "PASS",
           "evaluations": {}
         },
         {
-          "cohortId": "C",
+          "metadata": {
+            "cohortId": "C",
+            "open": true,
+            "description": "Cohort C"
+          },
           "overallEvaluation": "PASS",
           "evaluations": {}
         }

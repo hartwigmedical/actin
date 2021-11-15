@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hartwig.actin.treatment.datamodel.Eligibility;
+import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TrialEligibility {
 
     @NotNull
-    public abstract String trialId();
+    public abstract TrialIdentification identification();
 
     @NotNull
     public abstract Evaluation overallEvaluation();

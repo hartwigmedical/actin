@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.datamodel;
 
 import java.util.Map;
 
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.immutables.value.Value;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class CohortEligibility {
 
     @NotNull
-    public abstract String cohortId();
+    public abstract CohortMetadata metadata();
 
     @NotNull
     public abstract Evaluation overallEvaluation();

@@ -49,9 +49,9 @@ public class TrialJsonTest {
     }
 
     private static void assertTrial(@NotNull Trial trial) {
-        assertEquals("test trial", trial.trialId());
-        assertEquals("TEST-TRIAL", trial.acronym());
-        assertEquals("This is a trial to test ACTIN", trial.title());
+        assertEquals("test trial", trial.identification().trialId());
+        assertEquals("TEST-TRIAL", trial.identification().acronym());
+        assertEquals("This is a trial to test ACTIN", trial.identification().title());
 
         assertEquals(1, trial.generalEligibility().size());
 
@@ -61,8 +61,8 @@ public class TrialJsonTest {
         assertEquals(3, trial.cohorts().size());
 
         Cohort cohortA = findCohort(trial.cohorts(), "A");
-        assertTrue(cohortA.open());
-        assertEquals("Cohort A", cohortA.description());
+        assertTrue(cohortA.metadata().open());
+        assertEquals("Cohort A", cohortA.metadata().description());
         assertEquals(1, cohortA.eligibility().size());
 
         EligibilityFunction functionA = findBaseFunction(cohortA.eligibility(), EligibilityRule.NOT);
@@ -72,13 +72,13 @@ public class TrialJsonTest {
         assertTrue(subFunctionA.parameters().isEmpty());
 
         Cohort cohortB = findCohort(trial.cohorts(), "B");
-        assertTrue(cohortB.open());
-        assertEquals("Cohort B", cohortB.description());
+        assertTrue(cohortB.metadata().open());
+        assertEquals("Cohort B", cohortB.metadata().description());
         assertTrue(cohortB.eligibility().isEmpty());
 
         Cohort cohortC = findCohort(trial.cohorts(), "C");
-        assertFalse(cohortC.open());
-        assertEquals("Cohort C", cohortC.description());
+        assertFalse(cohortC.metadata().open());
+        assertEquals("Cohort C", cohortC.metadata().description());
         assertEquals(3, cohortC.eligibility().size());
 
         EligibilityFunction functionC1 = findBaseFunction(cohortC.eligibility(), EligibilityRule.HAS_BIOPSY_AMENABLE_LESION);
@@ -104,7 +104,7 @@ public class TrialJsonTest {
     @NotNull
     private static Cohort findCohort(@NotNull List<Cohort> cohorts, @NotNull String cohortId) {
         for (Cohort cohort : cohorts) {
-            if (cohort.cohortId().equals(cohortId)) {
+            if (cohort.metadata().cohortId().equals(cohortId)) {
                 return cohort;
             }
         }

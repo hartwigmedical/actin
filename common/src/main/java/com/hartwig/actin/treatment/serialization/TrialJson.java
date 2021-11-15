@@ -26,16 +26,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.treatment.datamodel.Cohort;
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
+import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
+import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
@@ -55,9 +59,9 @@ public final class TrialJson {
     public static void write(@NotNull List<Trial> trials, @NotNull String directory) throws IOException {
         String path = Paths.forceTrailingFileSeparator(directory);
         for (Trial trial : trials) {
-            String jsonFile = path + trial.trialId().replaceAll(" ", "_") + TRIAL_JSON_EXTENSION;
+            String jsonFile = path + trial.identification().trialId().replaceAll(" ", "_") + TRIAL_JSON_EXTENSION;
 
-            LOGGER.info(" Writing '{}' to {}", trial.trialId(), jsonFile);
+            LOGGER.info(" Writing '{}' to {}", trial.identification().trialId(), jsonFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
             writer.write(toJson(trial));
             writer.close();
@@ -100,11 +104,18 @@ public final class TrialJson {
             JsonObject trial = jsonElement.getAsJsonObject();
 
             return ImmutableTrial.builder()
+                    .identification(toTrialIdentification(object(trial, "identification")))
+                    .generalEligibility(toEligibility(array(trial, "generalEligibility")))
+                    .cohorts(toCohorts(array(trial, "cohorts")))
+                    .build();
+        }
+
+        @NotNull
+        private static TrialIdentification toTrialIdentification(@NotNull JsonObject trial) {
+            return ImmutableTrialIdentification.builder()
                     .trialId(string(trial, "trialId"))
                     .acronym(string(trial, "acronym"))
                     .title(string(trial, "title"))
-                    .generalEligibility(toEligibility(array(trial, "generalEligibility")))
-                    .cohorts(toCohorts(array(trial, "cohorts")))
                     .build();
         }
 
@@ -114,13 +125,20 @@ public final class TrialJson {
             for (JsonElement element : cohortArray) {
                 JsonObject cohort = element.getAsJsonObject();
                 cohorts.add(ImmutableCohort.builder()
-                        .cohortId(string(cohort, "cohortId"))
-                        .open(bool(cohort, "open"))
-                        .description(string(cohort, "description"))
+                        .metadata(toMetadata(object(cohort, "metadata")))
                         .eligibility(toEligibility(array(cohort, "eligibility")))
                         .build());
             }
             return cohorts;
+        }
+
+        @NotNull
+        private static CohortMetadata toMetadata(@NotNull JsonObject cohort) {
+            return ImmutableCohortMetadata.builder()
+                    .cohortId(string(cohort, "cohortId"))
+                    .open(bool(cohort, "open"))
+                    .description(string(cohort, "description"))
+                    .build();
         }
 
         @NotNull

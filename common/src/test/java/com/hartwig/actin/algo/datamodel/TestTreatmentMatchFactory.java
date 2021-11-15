@@ -6,11 +6,14 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +37,11 @@ public final class TestTreatmentMatchFactory {
         List<TrialEligibility> matches = Lists.newArrayList();
 
         matches.add(ImmutableTrialEligibility.builder()
-                .trialId("test trial")
+                .identification(ImmutableTrialIdentification.builder()
+                        .trialId("test trial")
+                        .acronym("TEST-TRIAL")
+                        .title("This is an ACTIN test trial")
+                        .build())
                 .overallEvaluation(Evaluation.PASS)
                 .evaluations(createTestGeneralEvaluations())
                 .cohorts(createTestCohorts())
@@ -60,15 +67,20 @@ public final class TestTreatmentMatchFactory {
         List<CohortEligibility> cohorts = Lists.newArrayList();
 
         cohorts.add(ImmutableCohortEligibility.builder()
-                .cohortId("A")
+                .metadata(createTestMetadata("A"))
                 .overallEvaluation(Evaluation.UNDETERMINED)
                 .evaluations(createTestCohortEvaluations())
                 .build());
 
-        cohorts.add(ImmutableCohortEligibility.builder().cohortId("B").overallEvaluation(Evaluation.PASS).build());
-        cohorts.add(ImmutableCohortEligibility.builder().cohortId("C").overallEvaluation(Evaluation.PASS).build());
+        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("B")).overallEvaluation(Evaluation.PASS).build());
+        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("C")).overallEvaluation(Evaluation.PASS).build());
 
         return cohorts;
+    }
+
+    @NotNull
+    private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
+        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(true).description("Cohort " + cohortId).build();
     }
 
     @NotNull

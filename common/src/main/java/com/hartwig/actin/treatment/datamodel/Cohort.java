@@ -11,12 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class Cohort {
 
     @NotNull
-    public abstract String cohortId();
-
-    public abstract boolean open();
-
-    @NotNull
-    public abstract String description();
+    public abstract CohortMetadata metadata();
 
     @NotNull
     public abstract List<Eligibility> eligibility();

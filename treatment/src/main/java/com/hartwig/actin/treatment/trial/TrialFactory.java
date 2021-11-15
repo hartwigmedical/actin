@@ -8,13 +8,17 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.treatment.datamodel.Cohort;
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
+import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
+import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
@@ -46,9 +50,7 @@ public class TrialFactory {
 
             List<InclusionCriteriaReferenceConfig> references = trialModel.referencesForTrial(trialId);
             trials.add(ImmutableTrial.builder()
-                    .trialId(trialId)
-                    .acronym(trialConfig.acronym())
-                    .title(trialConfig.title())
+                    .identification(toIdentification(trialConfig))
                     .generalEligibility(toEligibility(trialModel.generalInclusionCriteriaForTrial(trialId), references))
                     .cohorts(cohortsForTrial(trialId, references))
                     .build());
@@ -58,15 +60,22 @@ public class TrialFactory {
     }
 
     @NotNull
+    private static TrialIdentification toIdentification(final TrialDefinitionConfig trialConfig) {
+        return ImmutableTrialIdentification.builder()
+                .trialId(trialConfig.trialId())
+                .acronym(trialConfig.acronym())
+                .title(trialConfig.title())
+                .build();
+    }
+
+    @NotNull
     private List<Cohort> cohortsForTrial(@NotNull String trialId, @NotNull List<InclusionCriteriaReferenceConfig> references) {
         List<Cohort> cohorts = Lists.newArrayList();
 
         for (CohortDefinitionConfig cohortConfig : trialModel.cohortsForTrial(trialId)) {
             String cohortId = cohortConfig.cohortId();
             cohorts.add(ImmutableCohort.builder()
-                    .cohortId(cohortId)
-                    .open(cohortConfig.open())
-                    .description(cohortConfig.description())
+                    .metadata(toMetadata(cohortConfig))
                     .eligibility(toEligibility(trialModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
                     .build());
         }
@@ -75,12 +84,22 @@ public class TrialFactory {
     }
 
     @NotNull
+    private static CohortMetadata toMetadata(@NotNull CohortDefinitionConfig cohortConfig) {
+        return ImmutableCohortMetadata.builder()
+                .cohortId(cohortConfig.cohortId())
+                .open(cohortConfig.open())
+                .description(cohortConfig.description())
+                .build();
+    }
+
+    @NotNull
     private List<Eligibility> toEligibility(@NotNull List<InclusionCriteriaConfig> criteria,
             @NotNull List<InclusionCriteriaReferenceConfig> references) {
         List<Eligibility> eligibility = Lists.newArrayList();
 
         for (InclusionCriteriaConfig criterion : criteria) {
-            eligibility.add(ImmutableEligibility.builder().references(resolveReferences(references, criterion.referenceIds()))
+            eligibility.add(ImmutableEligibility.builder()
+                    .references(resolveReferences(references, criterion.referenceIds()))
                     .function(EligibilityFactory.generateEligibilityFunction(criterion.inclusionRule()))
                     .build());
         }

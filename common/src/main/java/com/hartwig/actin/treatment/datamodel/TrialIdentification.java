@@ -1,22 +1,19 @@
 package com.hartwig.actin.treatment.datamodel;
 
-import java.util.List;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Trial {
+public abstract class TrialIdentification {
 
     @NotNull
-    public abstract TrialIdentification identification();
+    public abstract String trialId();
 
     @NotNull
-    public abstract List<Eligibility> generalEligibility();
+    public abstract String acronym();
 
     @NotNull
-    public abstract List<Cohort> cohorts();
-
+    public abstract String title();
 }

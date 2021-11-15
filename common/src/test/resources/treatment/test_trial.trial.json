@@ -1,7 +1,9 @@
 {
-  "trialId": "test trial",
-  "acronym": "TEST-TRIAL",
-  "title": "This is a trial to test ACTIN",
+  "identification": {
+    "trialId": "test trial",
+    "acronym": "TEST-TRIAL",
+    "title": "This is a trial to test ACTIN"
+  },
   "generalEligibility": [
     {
       "references": [
@@ -18,9 +20,11 @@
   ],
   "cohorts": [
     {
-      "cohortId": "A",
-      "open": true,
-      "description": "Cohort A",
+      "metadata": {
+        "cohortId": "A",
+        "open": true,
+        "description": "Cohort A"
+      },
       "eligibility": [
         {
           "references": [
@@ -42,15 +46,19 @@
       ]
     },
     {
-      "cohortId": "B",
-      "open": true,
-      "description": "Cohort B",
+      "metadata": {
+        "cohortId": "B",
+        "open": true,
+        "description": "Cohort B"
+      },
       "eligibility": []
     },
     {
-      "cohortId": "C",
-      "open": false,
-      "description": "Cohort C",
+      "metadata": {
+        "cohortId": "C",
+        "open": false,
+        "description": "Cohort C"
+      },
       "eligibility": [
         {
           "references": [

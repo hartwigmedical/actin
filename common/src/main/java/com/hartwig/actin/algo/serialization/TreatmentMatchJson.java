@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.serialization;
 
 import static com.hartwig.actin.util.Json.array;
+import static com.hartwig.actin.util.Json.bool;
 import static com.hartwig.actin.util.Json.object;
 import static com.hartwig.actin.util.Json.string;
 
@@ -33,13 +34,17 @@ import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
+import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
@@ -109,7 +114,7 @@ public final class TreatmentMatchJson {
         @NotNull
         private static TrialEligibility toTrialEligibility(@NotNull JsonObject object) {
             return ImmutableTrialEligibility.builder()
-                    .trialId(string(object, "trialId"))
+                    .identification(toIdentification(object(object, "identification")))
                     .overallEvaluation(Evaluation.valueOf(string(object, "overallEvaluation")))
                     .evaluations(toEvaluations(object.get("evaluations")))
                     .cohorts(toCohorts(array(object, "cohorts")))
@@ -117,18 +122,36 @@ public final class TreatmentMatchJson {
         }
 
         @NotNull
+        private static TrialIdentification toIdentification(@NotNull JsonObject identification) {
+            return ImmutableTrialIdentification.builder()
+                    .trialId(string(identification, "trialId"))
+                    .acronym(string(identification, "acronym"))
+                    .title(string(identification, "title"))
+                    .build();
+        }
+
+        @NotNull
         private static List<CohortEligibility> toCohorts(@NotNull JsonArray cohorts) {
             List<CohortEligibility> cohortEligibilities = Lists.newArrayList();
             for (JsonElement element : cohorts) {
-                JsonObject object = element.getAsJsonObject();
+                JsonObject cohort = element.getAsJsonObject();
 
                 cohortEligibilities.add(ImmutableCohortEligibility.builder()
-                        .cohortId(string(object, "cohortId"))
-                        .overallEvaluation(Evaluation.valueOf(string(object, "overallEvaluation")))
-                        .evaluations(toEvaluations(object.get("evaluations")))
+                        .metadata(toMetadata(object(cohort, "metadata")))
+                        .overallEvaluation(Evaluation.valueOf(string(cohort, "overallEvaluation")))
+                        .evaluations(toEvaluations(cohort.get("evaluations")))
                         .build());
             }
             return cohortEligibilities;
+        }
+
+        @NotNull
+        private static CohortMetadata toMetadata(@NotNull JsonObject cohort) {
+            return ImmutableCohortMetadata.builder()
+                    .cohortId(string(cohort, "cohortId"))
+                    .open(bool(cohort, "open"))
+                    .description(string(cohort, "description"))
+                    .build();
         }
 
         @NotNull
