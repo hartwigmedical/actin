@@ -27,7 +27,7 @@ public class TestReportWriterApplication {
         LOGGER.info("Printing molecular record");
         MolecularPrinter.printRecord(report.molecular());
 
-        LOGGER.info("Printing treatment match");
+        LOGGER.info("Printing treatment match results");
         TreatmentMatchPrinter.printMatch(report.treatmentMatch());
 
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(OUTPUT_DIRECTORY);
