@@ -92,7 +92,7 @@ public final class TestTreatmentMatchFactory {
                         .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
-                .build(), Evaluation.PASS);
+                .build(), Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }

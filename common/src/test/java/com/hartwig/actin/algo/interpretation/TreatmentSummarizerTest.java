@@ -9,7 +9,7 @@ import org.junit.Test;
 public class TreatmentSummarizerTest {
 
     @Test
-    public void canSummarizeProperTestData() {
+    public void canSummarizeTestData() {
         TreatmentSummary summary = TreatmentSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch());
 
         assertEquals(1, summary.trialCount());

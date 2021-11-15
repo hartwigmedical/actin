@@ -2,6 +2,8 @@ package com.hartwig.actin.report.pdf.chapters;
 
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.interpretation.EvaluationSummarizer;
+import com.hartwig.actin.algo.interpretation.EvaluationSummary;
 import com.hartwig.actin.algo.interpretation.TreatmentSummarizer;
 import com.hartwig.actin.algo.interpretation.TreatmentSummary;
 import com.hartwig.actin.report.datamodel.Report;
@@ -77,33 +79,35 @@ public class TreatmentSummaryChapter implements ReportChapter {
     }
 
     private void addTreatmentDetailsTable(@NotNull Document document) {
-        Table table = Tables.createFixedWidthCols(new float[] { 3, 1, 1, 1, 1, 1 }).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(new float[] { 3, 1, 1, 1, 1, 1, 1 }).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Trial / Cohort"));
-        table.addHeaderCell(Cells.createHeader("# Passed criteria"));
+        table.addHeaderCell(Cells.createHeader("# Criteria"));
+        table.addHeaderCell(Cells.createHeader("# Passed"));
         table.addHeaderCell(Cells.createHeader("# Warnings"));
-        table.addHeaderCell(Cells.createHeader("# Failed criteria"));
-        table.addHeaderCell(Cells.createHeader("# Undetermined criteria"));
-        table.addHeaderCell(Cells.createHeader("# Non-implemented criteria"));
+        table.addHeaderCell(Cells.createHeader("# Failed"));
+        table.addHeaderCell(Cells.createHeader("# Undetermined"));
+        table.addHeaderCell(Cells.createHeader("# Non-implemented"));
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
             String trialId = trial.identification().trialId();
             table.addCell(Cells.createContent(trialId));
-            table.addCell(Cells.createContent("?"));
-            table.addCell(Cells.createContent("?"));
-            table.addCell(Cells.createContent("?"));
-            table.addCell(Cells.createContent("?"));
-            table.addCell(Cells.createContent("?"));
+            addSummaryToTable(table, EvaluationSummarizer.summarize(trial.evaluations().values()));
             for (CohortEligibility cohort : trial.cohorts()) {
                 table.addCell(Cells.createContent(trialId + " - " + cohort.metadata().description()));
-                table.addCell(Cells.createContent("?"));
-                table.addCell(Cells.createContent("?"));
-                table.addCell(Cells.createContent("?"));
-                table.addCell(Cells.createContent("?"));
-                table.addCell(Cells.createContent("?"));
+                addSummaryToTable(table, EvaluationSummarizer.summarize(cohort.evaluations().values()));
             }
         }
 
         document.add(Tables.addTitle(table, "Trial Matching Details"));
+    }
+
+    private static void addSummaryToTable(@NotNull Table table, @NotNull EvaluationSummary summary) {
+        table.addCell(Cells.createContent(String.valueOf(summary.count())));
+        table.addCell(Cells.createContent(String.valueOf(summary.passedCount())));
+        table.addCell(Cells.createContent(String.valueOf(summary.warningCount())));
+        table.addCell(Cells.createContent(String.valueOf(summary.failedCount())));
+        table.addCell(Cells.createContent(String.valueOf(summary.undeterminedCount())));
+        table.addCell(Cells.createContent(String.valueOf(summary.nonImplementedCount())));
     }
 }

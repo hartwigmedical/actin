@@ -38,6 +38,7 @@ public final class TreatmentSummarizer {
                 if (hasNoCohortOrAtLeastOneEligible) {
                     eligibleTrialCount += 1;
 
+                    // Assume trials without specific cohorts are always open (or they should otherwise not exist
                     if (!hasCohorts) {
                         eligibleOpenCohortCount += 1;
                     }
