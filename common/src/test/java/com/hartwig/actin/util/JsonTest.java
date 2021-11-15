@@ -22,6 +22,9 @@ public class JsonTest {
 
         object.add("object", new JsonObject());
         assertNotNull(Json.object(object, "object"));
+
+        object.add("null", null);
+        assertNull(Json.nullableObject(object, "null"));
     }
 
     @Test
