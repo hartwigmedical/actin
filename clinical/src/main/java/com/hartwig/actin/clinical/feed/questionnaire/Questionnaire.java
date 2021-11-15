@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.immutables.value.Value;
@@ -77,10 +78,7 @@ public abstract class Questionnaire {
     public abstract Boolean hasSignificantCurrentInfection();
 
     @Nullable
-    public abstract Boolean hasSignificantAberrationLatestECG();
-
-    @Nullable
-    public abstract String significantAberrationLatestECG();
+    public abstract ECGAberration ecgAberration();
 
     @Nullable
     public abstract List<String> cancerRelatedComplications();

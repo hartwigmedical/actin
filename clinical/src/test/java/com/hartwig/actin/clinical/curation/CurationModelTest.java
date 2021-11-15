@@ -15,9 +15,11 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -30,6 +32,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.apache.logging.log4j.util.Strings;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class CurationModelTest {
@@ -170,12 +173,17 @@ public class CurationModelTest {
     public void canCurateECGAberrations() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        assertEquals("Cleaned aberration", model.curateAberrationECG("Weird aberration"));
-        assertEquals("No curation needed", model.curateAberrationECG("No curation needed"));
-        assertNull(model.curateAberrationECG("No aberration"));
-        assertNull(model.curateAberrationECG(null));
+        assertEquals("Cleaned aberration", model.curateECGAberration(toAberration("Weird aberration")).description());
+        assertEquals("No curation needed", model.curateECGAberration(toAberration("No curation needed")).description());
+        assertNull(model.curateECGAberration(toAberration("No aberration")));
+        assertNull(model.curateECGAberration(null));
 
         model.evaluate();
+    }
+
+    @NotNull
+    private static ECGAberration toAberration(@NotNull String description) {
+        return ImmutableECGAberration.builder().hasSigAberrationLatestECG(true).description(description).build();
     }
 
     @Test

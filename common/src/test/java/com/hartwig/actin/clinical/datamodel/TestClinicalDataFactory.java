@@ -99,12 +99,10 @@ public final class TestClinicalDataFactory {
 
     @NotNull
     private static ClinicalStatus createTestClinicalStatus() {
-        return ImmutableClinicalStatus.builder()
-                .who(1)
-                .hasActiveInfection(false)
-                .hasSigAberrationLatestEcg(true)
-                .ecgAberrationDescription("Atrial arrhythmia")
-                .build();
+        ECGAberration ecgAberration =
+                ImmutableECGAberration.builder().hasSigAberrationLatestECG(true).description("Atrial arrhythmia").build();
+
+        return ImmutableClinicalStatus.builder().who(1).hasActiveInfection(false).ecgAberration(ecgAberration).build();
     }
 
     @NotNull

@@ -36,9 +36,11 @@ import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
@@ -207,17 +209,21 @@ public class CurationModel {
     }
 
     @Nullable
-    public String curateAberrationECG(@Nullable String input) {
+    public ECGAberration curateECGAberration(@Nullable ECGAberration input) {
         if (input == null) {
             return null;
         }
 
-        ECGConfig config = find(database.ecgConfigs(), input);
+        ECGConfig config = find(database.ecgConfigs(), input.description());
 
         // Assume ECGs can also be pass-through.
         if (config != null) {
             String interpretation = config.interpretation();
-            return !interpretation.equals("NULL") ? interpretation : null;
+            if (interpretation.equals("NULL")) {
+                return null;
+            } else {
+                return ImmutableECGAberration.builder().from(input).description(interpretation).build();
+            }
         } else {
             return input;
         }

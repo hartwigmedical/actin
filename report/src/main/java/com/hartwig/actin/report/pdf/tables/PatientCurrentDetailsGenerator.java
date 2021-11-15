@@ -4,6 +4,7 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -48,11 +49,10 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Significant infection"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.clinicalStatus().hasActiveInfection())));
 
-        Boolean hasAberration = record.clinicalStatus().hasSigAberrationLatestEcg();
-        if (hasAberration != null && hasAberration) {
+        ECGAberration ecgAberration = record.clinicalStatus().ecgAberration();
+        if (ecgAberration != null && ecgAberration.hasSigAberrationLatestECG()) {
             table.addCell(Cells.createKey("Significant aberration on latest ECG"));
-            String ecg = record.clinicalStatus().ecgAberrationDescription();
-            table.addCell(Cells.createValue(ecg != null ? ecg : Strings.EMPTY));
+            table.addCell(Cells.createValue(ecgAberration.description()));
         }
 
         table.addCell(Cells.createKey("Cancer-related complications"));

@@ -40,8 +40,10 @@
   "clinicalStatus": {
     "who": 0,
     "hasActiveInfection": false,
-    "hasSigAberrationLatestEcg": false,
-    "ecgAberrationDescription": ""
+    "ecgAberration": {
+      "hasSigAberrationLatestECG": false,
+      "description": ""
+    }
   },
   "priorTumorTreatments": [
     {

@@ -8,6 +8,7 @@ import static com.hartwig.actin.util.Json.nullableBool;
 import static com.hartwig.actin.util.Json.nullableDate;
 import static com.hartwig.actin.util.Json.nullableInteger;
 import static com.hartwig.actin.util.Json.nullableNumber;
+import static com.hartwig.actin.util.Json.nullableObject;
 import static com.hartwig.actin.util.Json.nullableString;
 import static com.hartwig.actin.util.Json.nullableStringList;
 import static com.hartwig.actin.util.Json.number;
@@ -40,6 +41,7 @@ import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
@@ -48,6 +50,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
@@ -71,6 +74,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.util.Paths;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ClinicalRecordJson {
 
@@ -192,8 +196,19 @@ public final class ClinicalRecordJson {
             return ImmutableClinicalStatus.builder()
                     .who(nullableInteger(clinicalStatus, "who"))
                     .hasActiveInfection(nullableBool(clinicalStatus, "hasActiveInfection"))
-                    .hasSigAberrationLatestEcg(nullableBool(clinicalStatus, "hasSigAberrationLatestEcg"))
-                    .ecgAberrationDescription(nullableString(clinicalStatus, "ecgAberrationDescription"))
+                    .ecgAberration(toECGAberration(nullableObject(clinicalStatus, "ecgAberration")))
+                    .build();
+        }
+
+        @Nullable
+        private static ECGAberration toECGAberration(@Nullable JsonObject object) {
+            if (object == null) {
+                return null;
+            }
+
+            return ImmutableECGAberration.builder()
+                    .hasSigAberrationLatestECG(bool(object, "hasSigAberrationLatestECG"))
+                    .description(string(object, "description"))
                     .build();
         }
 
@@ -202,8 +217,7 @@ public final class ClinicalRecordJson {
             List<PriorTumorTreatment> priorTumorTreatmentList = Lists.newArrayList();
             for (JsonElement element : priorTumorTreatments) {
                 JsonObject object = element.getAsJsonObject();
-                priorTumorTreatmentList.add(ImmutablePriorTumorTreatment.builder()
-                        .name(string(object, "name"))
+                priorTumorTreatmentList.add(ImmutablePriorTumorTreatment.builder().name(string(object, "name"))
                         .year(nullableInteger(object, "year"))
                         .month(nullableInteger(object, "month"))
                         .category(string(object, "category"))

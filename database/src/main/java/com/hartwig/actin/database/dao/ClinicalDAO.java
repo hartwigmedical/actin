@@ -25,6 +25,7 @@ import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -145,6 +146,8 @@ class ClinicalDAO {
     }
 
     private void writeClinicalStatus(@NotNull String sampleId, @NotNull ClinicalStatus clinicalStatus) {
+        ECGAberration ecgAberration = clinicalStatus.ecgAberration();
+
         context.insertInto(CLINICALSTATUS,
                 CLINICALSTATUS.SAMPLEID,
                 CLINICALSTATUS.WHO,
@@ -154,8 +157,8 @@ class ClinicalDAO {
                 .values(sampleId,
                         clinicalStatus.who(),
                         DataUtil.toByte(clinicalStatus.hasActiveInfection()),
-                        DataUtil.toByte(clinicalStatus.hasSigAberrationLatestEcg()),
-                        clinicalStatus.ecgAberrationDescription())
+                        DataUtil.toByte(ecgAberration != null ? ecgAberration.hasSigAberrationLatestECG() : null),
+                        ecgAberration != null ? ecgAberration.description() : null)
                 .execute();
     }
 

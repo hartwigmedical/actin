@@ -6,15 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ClinicalStatus {
+public abstract class ECGAberration {
 
-    @Nullable
-    public abstract Integer who();
+    public abstract boolean hasSigAberrationLatestECG();
 
-    @Nullable
-    public abstract Boolean hasActiveInfection();
-
-    @Nullable
-    public abstract ECGAberration ecgAberration();
-
+    @NotNull
+    public abstract String description();
 }

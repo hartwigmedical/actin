@@ -43,7 +43,7 @@ CREATE TABLE clinicalStatus
     sampleId varchar(50) UNIQUE,
     who int,
     hasActiveInfection BOOLEAN,
-    hasSigAberrationLatestEcg BOOLEAN,
+    hasSigAberrationLatestECG BOOLEAN,
     ecgAberrationDescription varchar(50),
     PRIMARY KEY (id)
 );

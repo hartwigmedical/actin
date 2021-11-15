@@ -18,13 +18,16 @@ public final class Json {
 
     @NotNull
     public static JsonObject object(@NotNull JsonObject object, @NotNull String field) {
-        assert object.get(field).isJsonObject();
         return object.getAsJsonObject(field);
+    }
+
+    @Nullable
+    public static JsonObject nullableObject(@NotNull JsonObject object, @NotNull String field) {
+        return !isNull(object, field) ? object.getAsJsonObject(field) : null;
     }
 
     @NotNull
     public static JsonArray array(@NotNull JsonObject object, @NotNull String field) {
-        assert object.get(field).isJsonArray();
         return object.getAsJsonArray(field);
     }
 

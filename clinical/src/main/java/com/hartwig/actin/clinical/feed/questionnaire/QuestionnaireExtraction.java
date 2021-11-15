@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,19 +44,6 @@ public final class QuestionnaireExtraction {
         }
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
-
-        String significantAberrationLatestECG = value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG));
-
-        Boolean hasSignificantAberrationLatestECG = null;
-        if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
-            hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
-        } else if (significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty()) {
-            hasSignificantAberrationLatestECG = true;
-        }
-
-        if (hasSignificantAberrationLatestECG == null) {
-            significantAberrationLatestECG = null;
-        }
 
         Boolean hasBrainLesions = toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS)));
         Boolean hasActiveBrainLesions = null;
@@ -99,9 +88,29 @@ public final class QuestionnaireExtraction {
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
                 .unresolvedToxicities(toList(value(entry, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
                 .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
-                .hasSignificantAberrationLatestECG(hasSignificantAberrationLatestECG)
-                .significantAberrationLatestECG(significantAberrationLatestECG)
+                .ecgAberration(ecgAberration(entry, mapping))
                 .cancerRelatedComplications(toList(value(entry, mapping.get(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS))))
+                .build();
+    }
+
+    @Nullable
+    private static ECGAberration ecgAberration(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping) {
+        String significantAberrationLatestECG = value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG));
+
+        Boolean hasSignificantAberrationLatestECG = null;
+        if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
+            hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
+        } else if (significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty()) {
+            hasSignificantAberrationLatestECG = true;
+        }
+
+        if (hasSignificantAberrationLatestECG == null || significantAberrationLatestECG == null) {
+            return null;
+        }
+
+        return ImmutableECGAberration.builder()
+                .hasSigAberrationLatestECG(hasSignificantAberrationLatestECG)
+                .description(significantAberrationLatestECG)
                 .build();
     }
 

@@ -2,12 +2,14 @@ package com.hartwig.actin.clinical.feed.questionnaire;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
@@ -69,8 +71,11 @@ public class QuestionnaireExtractionTest {
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertTrue(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals("Sinus", questionnaire.significantAberrationLatestECG());
+
+        ECGAberration ecgAberration = questionnaire.ecgAberration();
+        assertNotNull(ecgAberration);
+        assertTrue(ecgAberration.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecgAberration.description());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -119,8 +124,11 @@ public class QuestionnaireExtractionTest {
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertTrue(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals("Sinus", questionnaire.significantAberrationLatestECG());
+
+        ECGAberration ecgAberration = questionnaire.ecgAberration();
+        assertNotNull(ecgAberration);
+        assertTrue(ecgAberration.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecgAberration.description());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -169,8 +177,11 @@ public class QuestionnaireExtractionTest {
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertTrue(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals("Sinus", questionnaire.significantAberrationLatestECG());
+
+        ECGAberration ecgAberration = questionnaire.ecgAberration();
+        assertNotNull(ecgAberration);
+        assertTrue(ecgAberration.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecgAberration.description());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -224,8 +235,11 @@ public class QuestionnaireExtractionTest {
         assertTrue(unresolvedToxicities.contains("NA"));
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertFalse(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals("NA", questionnaire.significantAberrationLatestECG());
+
+        ECGAberration ecgAberration = questionnaire.ecgAberration();
+        assertNotNull(ecgAberration);
+        assertFalse(ecgAberration.hasSigAberrationLatestECG());
+        assertEquals("NA", ecgAberration.description());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -272,8 +286,7 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertNull(questionnaire.hasSignificantAberrationLatestECG());
-        assertNull(questionnaire.significantAberrationLatestECG());
+        assertNull(questionnaire.ecgAberration());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -320,8 +333,11 @@ public class QuestionnaireExtractionTest {
         assertTrue(unresolvedToxicities.contains("Neuropathy GR3"));
 
         assertFalse(questionnaire.hasSignificantCurrentInfection());
-        assertFalse(questionnaire.hasSignificantAberrationLatestECG());
-        assertEquals("No", questionnaire.significantAberrationLatestECG());
+
+        ECGAberration ecgAberration = questionnaire.ecgAberration();
+        assertNotNull(ecgAberration);
+        assertFalse(ecgAberration.hasSigAberrationLatestECG());
+        assertEquals("No", ecgAberration.description());
 
         assertTrue(questionnaire.cancerRelatedComplications().isEmpty());
     }

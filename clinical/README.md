@@ -58,8 +58,8 @@ Field | Example Value | Details
 ---|---|---
 who | 1 | Assigned WHO status of patient (0 to 5)
 hasActiveInfection | 0 | Patient has active infection?
-hasSigAberrationLatestEcg | 1 | Patient had significant aberration on latest ECG?
-ecgAberrationDescription | Atrial arrhythmia | Description of ECG aberration, in case hasSigAberrationLatestEcg = 1
+hasSigAberrationLatestECG | 1 | Patient had significant aberration on latest ECG?
+ecgAberrationDescription | Atrial arrhythmia | Description of ECG aberration, in case hasSigAberrationLatestECG = 1
 
 N prior tumor treatments
 
