@@ -2,9 +2,11 @@ package com.hartwig.actin.algo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -32,15 +34,19 @@ public final class TrialMatcher {
         for (Trial trial : trials) {
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
+                Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, cohort.eligibility());
                 cohortMatching.add(ImmutableCohortEligibility.builder()
                         .cohortId(cohort.cohortId())
-                        .evaluations(evaluateEligibility(patient, cohort.eligibility()))
+                        .overallEvaluation(determineOverallEvaluation(evaluations))
+                        .evaluations(evaluations)
                         .build());
             }
 
+            Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, trial.generalEligibility());
             trialMatches.add(ImmutableTrialEligibility.builder()
                     .trialId(trial.trialId())
-                    .evaluations(evaluateEligibility(patient, trial.generalEligibility()))
+                    .overallEvaluation(determineOverallEvaluation(evaluations))
+                    .evaluations(evaluations)
                     .cohorts(cohortMatching)
                     .build());
         }
@@ -57,5 +63,20 @@ public final class TrialMatcher {
             evaluations.put(entry, evaluator.evaluate(patient));
         }
         return evaluations;
+    }
+
+    @NotNull
+    private static Evaluation determineOverallEvaluation(@NotNull Map<Eligibility, Evaluation> evaluations) {
+        Set<Evaluation> unique = Sets.newHashSet(evaluations.values());
+
+        if (unique.contains(Evaluation.FAIL)) {
+            return Evaluation.FAIL;
+        } else if (unique.contains(Evaluation.UNDETERMINED)) {
+            return Evaluation.UNDETERMINED;
+        } else if (unique.contains(Evaluation.PASS_BUT_WARN)) {
+            return Evaluation.PASS_BUT_WARN;
+        } else {
+            return Evaluation.PASS;
+        }
     }
 }

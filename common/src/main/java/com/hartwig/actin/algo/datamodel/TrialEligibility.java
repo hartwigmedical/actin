@@ -17,6 +17,9 @@ public abstract class TrialEligibility {
     public abstract String trialId();
 
     @NotNull
+    public abstract Evaluation overallEvaluation();
+
+    @NotNull
     public abstract Map<Eligibility, Evaluation> evaluations();
 
     @NotNull

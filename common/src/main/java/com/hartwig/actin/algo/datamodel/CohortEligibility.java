@@ -16,5 +16,8 @@ public abstract class CohortEligibility {
     public abstract String cohortId();
 
     @NotNull
+    public abstract Evaluation overallEvaluation();
+
+    @NotNull
     public abstract Map<Eligibility, Evaluation> evaluations();
 }
