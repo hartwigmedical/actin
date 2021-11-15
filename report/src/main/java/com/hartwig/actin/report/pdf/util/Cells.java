@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.util;
 
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
@@ -45,6 +46,7 @@ public final class Cells {
     public static Cell createContent(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableContentStyle());
+        cell.setBorderBottom(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
         return cell;
     }
 

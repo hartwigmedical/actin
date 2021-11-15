@@ -7,12 +7,12 @@ import com.itextpdf.layout.element.Paragraph;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ConclusionChapter implements ReportChapter {
+public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     @Override
     public String name() {
-        return "Conclusion";
+        return "Trial Matching Details";
     }
 
     @NotNull
@@ -23,8 +23,12 @@ public class ConclusionChapter implements ReportChapter {
 
     @Override
     public void render(@NotNull final Document document) {
-        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
+        addChapterTitle(document);
 
         document.add(new Paragraph("Coming soon").addStyle(Styles.highlightStyle()));
+    }
+
+    private void addChapterTitle(@NotNull Document document) {
+        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
     }
 }

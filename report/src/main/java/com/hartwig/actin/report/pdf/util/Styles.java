@@ -16,6 +16,7 @@ public final class Styles {
 
     public static final DeviceRgb PALETTE_WHITE = new DeviceRgb(255, 255, 255);
     public static final DeviceRgb PALETTE_BLACK = new DeviceRgb(0, 0, 0);
+    public static final DeviceRgb PALETTE_MID_GREY = new DeviceRgb(101, 106, 108);
     public static final DeviceRgb PALETTE_BLUE = new DeviceRgb(74, 134, 232);
     public static final DeviceRgb PALETTE_RED = new DeviceRgb(231, 85, 85);
 
@@ -39,7 +40,7 @@ public final class Styles {
 
     @NotNull
     public static Style tableHeaderStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(7).setBold().setFontColor(Styles.PALETTE_BLACK);
+        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_MID_GREY);
     }
 
     @NotNull

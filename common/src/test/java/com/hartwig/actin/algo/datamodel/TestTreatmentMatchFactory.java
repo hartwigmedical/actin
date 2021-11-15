@@ -37,8 +37,7 @@ public final class TestTreatmentMatchFactory {
         List<TrialEligibility> matches = Lists.newArrayList();
 
         matches.add(ImmutableTrialEligibility.builder()
-                .identification(ImmutableTrialIdentification.builder()
-                        .trialId("test trial")
+                .identification(ImmutableTrialIdentification.builder().trialId("Test Trial")
                         .acronym("TEST-TRIAL")
                         .title("This is an ACTIN test trial")
                         .build())
