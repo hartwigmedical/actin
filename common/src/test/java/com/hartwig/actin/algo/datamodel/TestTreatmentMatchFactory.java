@@ -14,6 +14,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
+import com.hartwig.actin.treatment.sort.EligibilityComparator;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +53,7 @@ public final class TestTreatmentMatchFactory {
 
     @NotNull
     private static Map<Eligibility, Evaluation> createTestGeneralEvaluations() {
-        Map<Eligibility, Evaluation> map = Maps.newHashMap();
+        Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
@@ -98,7 +99,7 @@ public final class TestTreatmentMatchFactory {
 
     @NotNull
     private static Map<Eligibility, Evaluation> createTestCohortEvaluations() {
-        Map<Eligibility, Evaluation> map = Maps.newHashMap();
+        Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()

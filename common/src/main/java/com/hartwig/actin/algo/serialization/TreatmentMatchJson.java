@@ -45,6 +45,8 @@ import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
+import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
+import com.hartwig.actin.treatment.sort.EligibilityComparator;
 import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
@@ -156,7 +158,7 @@ public final class TreatmentMatchJson {
 
         @NotNull
         private static Map<Eligibility, Evaluation> toEvaluations(@NotNull JsonElement evaluations) {
-            Map<Eligibility, Evaluation> map = Maps.newHashMap();
+            Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
             if (evaluations.isJsonArray()) {
                 for (JsonElement element : evaluations.getAsJsonArray()) {
                     JsonArray array = element.getAsJsonArray();
@@ -176,7 +178,7 @@ public final class TreatmentMatchJson {
 
         @NotNull
         private static Set<CriterionReference> toReferences(@NotNull JsonArray referenceArray) {
-            Set<CriterionReference> references = Sets.newHashSet();
+            Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
             for (JsonElement element : referenceArray) {
                 JsonObject obj = element.getAsJsonObject();
                 references.add(ImmutableCriterionReference.builder().id(string(obj, "id")).text(string(obj, "text")).build());

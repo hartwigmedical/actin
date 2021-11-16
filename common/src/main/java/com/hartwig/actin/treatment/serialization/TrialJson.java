@@ -40,6 +40,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
+import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
@@ -156,7 +157,7 @@ public final class TrialJson {
 
         @NotNull
         private static Set<CriterionReference> toReferences(@NotNull JsonArray referenceArray) {
-            Set<CriterionReference> references = Sets.newHashSet();
+            Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
             for (JsonElement element : referenceArray) {
                 JsonObject obj = element.getAsJsonObject();
                 references.add(ImmutableCriterionReference.builder().id(string(obj, "id")).text(string(obj, "text")).build());
