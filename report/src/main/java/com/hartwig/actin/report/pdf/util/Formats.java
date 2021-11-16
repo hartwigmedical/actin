@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.StringJoiner;
 
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.Style;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,5 +57,18 @@ public final class Formats {
     @NotNull
     public static Style styleForTableValue(@NotNull String value) {
         return !value.equals(Formats.VALUE_UNKNOWN) ? Styles.tableValueHighlightStyle() : Styles.tableValueUnknownStyle();
+    }
+
+    @NotNull
+    public static DeviceRgb fontColorForEvaluation(@NotNull Evaluation evaluation) {
+        switch (evaluation) {
+            case PASS:
+            case PASS_BUT_WARN:
+                return Styles.PALETTE_PASS;
+            case FAIL:
+                return Styles.PALETTE_FAIL;
+            default:
+                return Styles.PALETTE_UNCLEAR;
+        }
     }
 }

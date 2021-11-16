@@ -99,7 +99,7 @@ public class TreatmentSummaryChapter implements ReportChapter {
             }
         }
 
-        document.add(Tables.addTitle(table, "Trial Matching Summary"));
+        document.add(Tables.makeWrapping(table, "Trial Matching Summary"));
     }
 
     private static void addSummaryToTable(@NotNull Table table, @NotNull EvaluationSummary summary) {

@@ -24,33 +24,34 @@ public final class Tables {
         return new Table(UnitValue.createPercentArray(new float[] { 1 })).setWidth(width);
     }
 
-    @NotNull
-    public static Table addTitle(@NotNull Table contentTable, @Nullable String title) {
-        Table table = new Table(1).setMinWidth(contentTable.getWidth());
-
-        table.addCell(Cells.createTitle(title));
-        table.addCell(Cells.create(contentTable));
-
-        return table;
+    public static void addNoneEntry(@NotNull Table table) {
+        table.addCell(new Cell(1, table.getNumberOfColumns()).setBorder(Border.NO_BORDER)
+                .add(new Paragraph("None"))
+                .addStyle(Styles.tableContentStyle()));
     }
 
     @NotNull
     public static Table makeWrapping(@NotNull Table table) {
+        return makeWrapping(table, null);
+    }
+
+    @NotNull
+    public static Table makeWrapping(@NotNull Table table, @Nullable String title) {
         table.addFooterCell(new Cell(1, table.getNumberOfColumns()).setBorder(Border.NO_BORDER)
                 .setPaddingTop(5)
                 .setPaddingBottom(5)
-                .add(new Paragraph("The table continues on the next page").addStyle(Styles.labelStyle())))
-                .setSkipLastFooter(true)
-                .setFixedLayout();
+                .add(new Paragraph("The table continues on the next page").addStyle(Styles.tableSubStyle()))).setSkipLastFooter(true);
 
         Table wrappingTable = new Table(1).setMinWidth(table.getWidth())
-                .addHeaderCell(new Cell().setBorder(Border.NO_BORDER)
-                        .add(new Paragraph("Continued from the previous page").addStyle(Styles.labelStyle())))
+                .addHeaderCell(Cells.createSubNote("Continued from the previous page"))
                 .setSkipFirstHeader(true)
-                .addCell(new Cell().add(table).setPadding(0).setBorder(Border.NO_BORDER));
+                .addCell(Cells.create(table).setPadding(0));
 
-        Table finalTable = new Table(1).setMinWidth(table.getWidth()).setMarginBottom(20);
-        finalTable.addCell(new Cell().add(wrappingTable).setPadding(0).setBorder(Border.NO_BORDER));
+        Table finalTable = new Table(1).setMinWidth(table.getWidth());
+        if (title != null) {
+            finalTable.addHeaderCell(Cells.createTitle(title));
+        }
+        finalTable.addCell(Cells.create(wrappingTable).setPadding(0));
         return finalTable;
     }
 }

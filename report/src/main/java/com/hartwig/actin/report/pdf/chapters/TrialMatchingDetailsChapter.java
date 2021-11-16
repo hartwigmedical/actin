@@ -56,19 +56,61 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
-        String trialIdentification = trialIdentificationString(trial.identification());
-        Table trialTable = Tables.addTitle(createEvaluationTable(trial.evaluations()), trialIdentification + " - General");
-        document.add(Tables.makeWrapping(trialTable));
+        document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
+        document.add(new Paragraph(" "));
+        document.add(Tables.makeWrapping(createEvaluationTable(trial.evaluations())));
 
         for (CohortEligibility cohort : trial.cohorts()) {
-            String cohortIdentification = cohortIdentificationString(cohort.metadata());
-            Table cohortTable = new Table(1).setMinWidth(contentWidth());
-
-            cohortTable.addCell(Cells.createHeader(trialIdentification + " - " + cohortIdentification));
-            cohortTable.addCell(Cells.create(createEvaluationTable(cohort.evaluations())));
-
-            document.add(Tables.makeWrapping(cohortTable));
+            document.add(new Paragraph(" "));
+            document.add(createCohortIdentificationTable(trial.identification().trialId(), cohort.metadata(), cohort.overallEvaluation()));
+            if (!cohort.evaluations().isEmpty()) {
+                document.add(new Paragraph(" "));
+                document.add(Tables.makeWrapping(createEvaluationTable(cohort.evaluations())));
+            }
         }
+    }
+
+    @NotNull
+    private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull Evaluation overallEvaluation) {
+        Table table = Tables.createFixedWidthCols(new float[] { 1, 2, 3 });
+
+        table.addCell(Cells.createSpanningTitle(identification.trialId(), table));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Evaluation"));
+        table.addCell(Cells.createValue(overallEvaluation));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Acronym"));
+        table.addCell(Cells.createValue(identification.acronym()));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Title"));
+        table.addCell(Cells.createValue(identification.title()));
+
+        return table;
+    }
+
+    @NotNull
+    private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
+            @NotNull Evaluation overallEvaluation) {
+        Table table = Tables.createFixedWidthCols(new float[] { 1, 3, 3 });
+
+        table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.cohortId(), table));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Evaluation"));
+        table.addCell(Cells.createValue(overallEvaluation));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Description"));
+        table.addCell(Cells.createValue(metadata.description()));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Open for inclusion?"));
+        table.addCell(Cells.createValue(metadata.open() ? "Yes" : "No"));
+
+        return table;
     }
 
     @NotNull
@@ -79,30 +121,23 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("Text"));
         table.addHeaderCell(Cells.createHeader("Evaluation"));
 
-        for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
-            boolean hasAddedEvaluation = false;
-            for (CriterionReference reference : entry.getKey().references()) {
-                table.addCell(Cells.createContent(reference.id()));
-                table.addCell(Cells.createContent(reference.text()));
-                if (!hasAddedEvaluation) {
-                    table.addCell(Cells.createContent(entry.getValue().toString()));
-                    hasAddedEvaluation = true;
-                } else {
-                    table.addCell(Cells.createContent(Strings.EMPTY));
+        if (evaluations.isEmpty()) {
+            Tables.addNoneEntry(table);
+        } else {
+            for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
+                boolean hasAddedEvaluation = false;
+                for (CriterionReference reference : entry.getKey().references()) {
+                    table.addCell(Cells.createContent(reference.id()));
+                    table.addCell(Cells.createContent(reference.text()));
+                    if (!hasAddedEvaluation) {
+                        table.addCell(Cells.createContent(entry.getValue()));
+                        hasAddedEvaluation = true;
+                    } else {
+                        table.addCell(Cells.createContent(Strings.EMPTY));
+                    }
                 }
             }
         }
         return table;
-    }
-
-    @NotNull
-    private static String trialIdentificationString(@NotNull TrialIdentification identification) {
-        return identification.trialId() + " (" + identification.acronym() + ")";
-    }
-
-    @NotNull
-    private static String cohortIdentificationString(@NotNull CohortMetadata metadata) {
-        String open = metadata.open() ? "Open" : "Closed";
-        return metadata.cohortId() + " (" + metadata.description() + " - " + open + ")";
     }
 }

@@ -3,9 +3,12 @@ package com.hartwig.actin.report.pdf;
 import java.io.File;
 import java.io.IOException;
 
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
+import com.hartwig.actin.report.datamodel.ImmutableReport;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.datamodel.TestReportFactory;
 
@@ -17,10 +20,11 @@ public class TestReportWriterApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(TestReportWriterApplication.class);
 
-    private static final String OUTPUT_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
+    private static final String WORK_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
+    private static final String OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "sample.treatment_match.json";
 
     public static void main(String[] args) throws IOException {
-        ReportWriter writer = ReportWriterFactory.createProductionReportWriter(OUTPUT_DIRECTORY);
+        ReportWriter writer = ReportWriterFactory.createProductionReportWriter(WORK_DIRECTORY);
 
         Report report = createTestReport();
 
@@ -28,7 +32,7 @@ public class TestReportWriterApplication {
     }
 
     @NotNull
-    private static Report createTestReport() {
+    private static Report createTestReport() throws IOException {
         Report report = TestReportFactory.createProperTestReport();
 
         LOGGER.info("Printing clinical record");
@@ -37,9 +41,18 @@ public class TestReportWriterApplication {
         LOGGER.info("Printing molecular record");
         MolecularPrinter.printRecord(report.molecular());
 
-        LOGGER.info("Printing treatment match results");
-        TreatmentMatchPrinter.printMatch(report.treatmentMatch());
+        Report updated;
+        if (new File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
+            LOGGER.info("Loading treatment matches from {}", OPTIONAL_TREATMENT_MATCH_JSON);
+            TreatmentMatch match = TreatmentMatchJson.read(OPTIONAL_TREATMENT_MATCH_JSON);
+            updated = ImmutableReport.builder().from(report).treatmentMatch(match).build();
+        } else {
+            updated = report;
+        }
 
-        return report;
+        LOGGER.info("Printing treatment match results");
+        TreatmentMatchPrinter.printMatch(updated.treatmentMatch());
+
+        return updated;
     }
 }
