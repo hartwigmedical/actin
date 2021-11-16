@@ -63,6 +63,8 @@ public class SummaryChapter implements ReportChapter {
         patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
         patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text(" | WHO: ").addStyle(Styles.labelStyle()));
+        patientDetailsLine.add(new Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.highlightStyle()));
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
 
         Paragraph tumorDetailsLine = new Paragraph();
@@ -71,6 +73,11 @@ public class SummaryChapter implements ReportChapter {
         tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+    }
+
+    @NotNull
+    private static String whoStatus(@Nullable Integer who) {
+        return who != null ? String.valueOf(who) : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull

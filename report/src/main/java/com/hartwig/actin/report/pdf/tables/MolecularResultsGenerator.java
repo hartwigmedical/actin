@@ -40,6 +40,9 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
+        table.addCell(Cells.createKey("Molecular experiment type"));
+        table.addCell(Cells.createValue(record.type().toString()));
+
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
         table.addCell(Cells.createKey("Actionable mutations"));
         table.addCell(Cells.createValue(concat(interpretation.applicableResponsiveEvents())));

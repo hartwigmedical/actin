@@ -13,8 +13,8 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -98,6 +98,9 @@ public class MolecularInterpreterTest {
 
     @NotNull
     private static MolecularRecord recordWithEvidence(@NotNull List<MolecularTreatmentEvidence> evidences) {
-        return ImmutableMolecularRecord.builder().sampleId(Strings.EMPTY).hasReliableQuality(true).evidences(evidences).build();
+        return ImmutableMolecularRecord.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .evidences(evidences)
+                .build();
     }
 }

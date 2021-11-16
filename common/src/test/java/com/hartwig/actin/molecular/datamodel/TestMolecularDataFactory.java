@@ -21,7 +21,11 @@ public final class TestMolecularDataFactory {
 
     @NotNull
     public static MolecularRecord createMinimalTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder().sampleId(TestDataFactory.TEST_SAMPLE).hasReliableQuality(true).build();
+        return ImmutableMolecularRecord.builder()
+                .sampleId(TestDataFactory.TEST_SAMPLE)
+                .type(MolecularExperimentType.WGS)
+                .hasReliableQuality(true)
+                .build();
     }
 
     @NotNull

@@ -14,7 +14,6 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PatientCurrentDetailsGenerator implements TableGenerator {
 
@@ -40,9 +39,6 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
 
-        table.addCell(Cells.createKey("WHO status"));
-        table.addCell(Cells.createValue(whoStatus(record.clinicalStatus().who())));
-
         table.addCell(Cells.createKey("Unresolved toxicities grade => 2"));
         table.addCell(Cells.createValue(unresolvedToxicities(record)));
 
@@ -59,11 +55,6 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(cancerRelatedComplications(record)));
 
         return table;
-    }
-
-    @NotNull
-    private static String whoStatus(@Nullable Integer who) {
-        return who != null ? String.valueOf(who) : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull

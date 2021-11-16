@@ -15,6 +15,9 @@ public abstract class MolecularRecord {
     @NotNull
     public abstract String sampleId();
 
+    @NotNull
+    public abstract MolecularExperimentType type();
+
     @Nullable
     public abstract LocalDate date();
 

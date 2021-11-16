@@ -27,6 +27,7 @@ import com.hartwig.actin.molecular.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.MolecularExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
 
@@ -53,8 +54,11 @@ public final class MolecularRecordJson {
             JsonObject record = jsonElement.getAsJsonObject();
 
             JsonObject purple = object(record, "purple");
-            return ImmutableMolecularRecord.builder().sampleId(string(record, "sampleId")).date(nullableDate(record, "reportDate"))
+            return ImmutableMolecularRecord.builder()
+                    .sampleId(string(record, "sampleId"))
+                    .date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
+                    .type(MolecularExperimentType.WGS)
                     .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
                     .evidences(toEvidences(array(record, "protect")))
                     .build();
