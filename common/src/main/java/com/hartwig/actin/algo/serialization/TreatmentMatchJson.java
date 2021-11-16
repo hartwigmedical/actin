@@ -45,7 +45,6 @@ import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
-import com.hartwig.actin.treatment.sort.EligibilityComparator;
 import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
@@ -157,7 +156,7 @@ public final class TreatmentMatchJson {
 
         @NotNull
         private static Map<Eligibility, Evaluation> toEvaluations(@NotNull JsonElement evaluations) {
-            Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
+            Map<Eligibility, Evaluation> map = Maps.newHashMap();
             if (evaluations.isJsonArray()) {
                 for (JsonElement element : evaluations.getAsJsonArray()) {
                     JsonArray array = element.getAsJsonArray();

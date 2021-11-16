@@ -65,10 +65,23 @@ public final class TestTreatmentFactory {
                                         .rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES)
                                         .build())
                                 .build())
-                        .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
+                        .addReferences(ImmutableCriterionReference.builder()
+                                .id("E-01")
+                                .text("Has no active CNS metastases and has exhausted SOC")
+                                .build())
+                        .build()).build());
+
+        cohorts.add(ImmutableCohort.builder()
+                .metadata(createTestMetadata("B"))
+                .addEligibility(ImmutableEligibility.builder()
+                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
+                        .addReferences(ImmutableCriterionReference.builder()
+                                .id("E-01")
+                                .text("Has no active CNS metastases and has exhausted SOC")
+                                .build())
                         .build())
                 .build());
-        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("B")).build());
+
         cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("C")).build());
 
         return cohorts;

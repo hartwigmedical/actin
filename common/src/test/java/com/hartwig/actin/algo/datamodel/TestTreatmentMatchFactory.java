@@ -37,7 +37,8 @@ public final class TestTreatmentMatchFactory {
         List<TrialEligibility> matches = Lists.newArrayList();
 
         matches.add(ImmutableTrialEligibility.builder()
-                .identification(ImmutableTrialIdentification.builder().trialId("Test Trial")
+                .identification(ImmutableTrialIdentification.builder()
+                        .trialId("Test Trial")
                         .acronym("TEST-TRIAL")
                         .title("This is an ACTIN test trial")
                         .build())
@@ -56,6 +57,19 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
+                .build(), Evaluation.PASS);
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder()
+                        .rule(EligibilityRule.NOT)
+                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES).build())
+                        .build())
+                .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Has no active metastases and exhausted SOC").build())
+                .build(), Evaluation.PASS);
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
+                .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Has no active metastases and exhausted SOC").build())
                 .build(), Evaluation.PASS);
 
         return map;

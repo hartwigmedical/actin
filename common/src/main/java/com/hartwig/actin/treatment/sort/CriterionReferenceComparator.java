@@ -17,6 +17,10 @@ public class CriterionReferenceComparator implements Comparator<CriterionReferen
             return -1;
         } else if (!ref1Preferred && ref2Preferred) {
             return 1;
+        }
+
+        if (reference1.id().equals(reference2.id())) {
+            return reference1.text().compareTo(reference2.text());
         } else {
             return reference1.id().compareTo(reference2.id());
         }

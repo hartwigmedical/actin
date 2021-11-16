@@ -19,8 +19,8 @@ public class EvaluationSummarizerTest {
         List<Evaluation> firstTrialEvaluations = Lists.newArrayList(match.trialMatches().get(0).evaluations().values());
 
         EvaluationSummary summary = EvaluationSummarizer.summarize(firstTrialEvaluations);
-        assertEquals(1, summary.count());
-        assertEquals(1, summary.passedCount());
+        assertEquals(3, summary.count());
+        assertEquals(3, summary.passedCount());
         assertEquals(0, summary.warningCount());
         assertEquals(0, summary.failedCount());
         assertEquals(0, summary.undeterminedCount());

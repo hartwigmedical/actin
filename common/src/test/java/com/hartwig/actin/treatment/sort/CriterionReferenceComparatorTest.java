@@ -20,6 +20,7 @@ public class CriterionReferenceComparatorTest {
 
         references.add(createReference("E-05"));
         references.add(createReference("I-02"));
+        references.add(createReference("I-02"));
         references.add(createReference("Something else"));
         references.add(createReference("AAA"));
         references.add(createReference("I-03"));
@@ -28,11 +29,12 @@ public class CriterionReferenceComparatorTest {
         references.sort(new CriterionReferenceComparator());
 
         assertEquals("I-02", references.get(0).id());
-        assertEquals("I-03", references.get(1).id());
-        assertEquals("AAA", references.get(2).id());
-        assertEquals("E-01", references.get(3).id());
-        assertEquals("E-05", references.get(4).id());
-        assertEquals("Something else", references.get(5).id());
+        assertEquals("I-02", references.get(1).id());
+        assertEquals("I-03", references.get(2).id());
+        assertEquals("AAA", references.get(3).id());
+        assertEquals("E-01", references.get(4).id());
+        assertEquals("E-05", references.get(5).id());
+        assertEquals("Something else", references.get(6).id());
     }
 
     @NotNull

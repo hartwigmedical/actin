@@ -25,16 +25,18 @@ public class EligibilityComparatorTest {
         eligibilities.add(createWithoutReferences());
         eligibilities.add(createWithReferenceId("Else"));
         eligibilities.add(createWithReferenceId("I-01"));
+        eligibilities.add(createWithReferenceId("I-01"));
         eligibilities.add(createWithReferenceId("AAA"));
         eligibilities.add(createWithoutReferences());
 
         eligibilities.sort(new EligibilityComparator());
 
         assertEquals("I-01", eligibilities.get(0).references().iterator().next().id());
-        assertEquals("AAA", eligibilities.get(1).references().iterator().next().id());
-        assertEquals("Else", eligibilities.get(2).references().iterator().next().id());
-        assertTrue(eligibilities.get(3).references().isEmpty());
+        assertEquals("I-01", eligibilities.get(1).references().iterator().next().id());
+        assertEquals("AAA", eligibilities.get(2).references().iterator().next().id());
+        assertEquals("Else", eligibilities.get(3).references().iterator().next().id());
         assertTrue(eligibilities.get(4).references().isEmpty());
+        assertTrue(eligibilities.get(5).references().isEmpty());
     }
 
     @NotNull
