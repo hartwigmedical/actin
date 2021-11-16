@@ -11,6 +11,7 @@ import com.hartwig.actin.report.datamodel.TestReportFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 public class TestReportWriterApplication {
 
@@ -19,6 +20,15 @@ public class TestReportWriterApplication {
     private static final String OUTPUT_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
 
     public static void main(String[] args) throws IOException {
+        ReportWriter writer = ReportWriterFactory.createProductionReportWriter(OUTPUT_DIRECTORY);
+
+        Report report = createTestReport();
+
+        writer.write(report);
+    }
+
+    @NotNull
+    private static Report createTestReport() {
         Report report = TestReportFactory.createProperTestReport();
 
         LOGGER.info("Printing clinical record");
@@ -30,8 +40,6 @@ public class TestReportWriterApplication {
         LOGGER.info("Printing treatment match results");
         TreatmentMatchPrinter.printMatch(report.treatmentMatch());
 
-        ReportWriter writer = ReportWriterFactory.createProductionReportWriter(OUTPUT_DIRECTORY);
-
-        writer.write(report);
+        return report;
     }
 }
