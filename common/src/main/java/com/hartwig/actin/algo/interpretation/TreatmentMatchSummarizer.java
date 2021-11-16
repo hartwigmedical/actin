@@ -6,13 +6,13 @@ import com.hartwig.actin.algo.datamodel.TrialEligibility;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TreatmentSummarizer {
+public final class TreatmentMatchSummarizer {
 
-    private TreatmentSummarizer() {
+    private TreatmentMatchSummarizer() {
     }
 
     @NotNull
-    public static TreatmentSummary summarize(@NotNull TreatmentMatch treatmentMatch) {
+    public static TreatmentMatchSummary summarize(@NotNull TreatmentMatch treatmentMatch) {
         int eligibleTrialCount = 0;
         int cohortCount = 0;
         int eligibleCohortCount = 0;
@@ -46,7 +46,7 @@ public final class TreatmentSummarizer {
             }
         }
 
-        return ImmutableTreatmentSummary.builder()
+        return ImmutableTreatmentMatchSummary.builder()
                 .trialCount(treatmentMatch.trialMatches().size())
                 .eligibleTrialCount(eligibleTrialCount)
                 .cohortCount(cohortCount)

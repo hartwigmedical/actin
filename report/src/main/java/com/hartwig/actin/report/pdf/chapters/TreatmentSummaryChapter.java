@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer;
 import com.hartwig.actin.algo.interpretation.EvaluationSummary;
-import com.hartwig.actin.algo.interpretation.TreatmentSummarizer;
-import com.hartwig.actin.algo.interpretation.TreatmentSummary;
+import com.hartwig.actin.algo.interpretation.TreatmentMatchSummarizer;
+import com.hartwig.actin.algo.interpretation.TreatmentMatchSummary;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -52,12 +52,12 @@ public class TreatmentSummaryChapter implements ReportChapter {
     private void addTreatmentSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
         table.addCell(Cells.createTitle("Trial Eligibility Summary"));
-        table.addCell(Cells.create(createTreatmentSummaryTable(TreatmentSummarizer.summarize(report.treatmentMatch()))));
+        table.addCell(Cells.create(createTreatmentSummaryTable(TreatmentMatchSummarizer.summarize(report.treatmentMatch()))));
         document.add(table);
     }
 
     @NotNull
-    private Table createTreatmentSummaryTable(@NotNull TreatmentSummary summary) {
+    private Table createTreatmentSummaryTable(@NotNull TreatmentMatchSummary summary) {
         Table table = Tables.createFixedWidthCols(new float[] { 200, contentWidth() - 210 });
 
         table.addCell(Cells.createKey("Number of trials evaluated"));

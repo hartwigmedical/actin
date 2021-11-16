@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 
 import org.junit.Test;
 
-public class TreatmentSummarizerTest {
+public class TreatmentMatchSummarizerTest {
 
     @Test
     public void canSummarizeTestData() {
-        TreatmentSummary summary = TreatmentSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch());
+        TreatmentMatchSummary summary = TreatmentMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch());
 
         assertEquals(1, summary.trialCount());
         assertEquals(1, summary.eligibleTrialCount());
