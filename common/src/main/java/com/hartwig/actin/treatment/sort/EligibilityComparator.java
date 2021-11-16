@@ -13,10 +13,10 @@ public class EligibilityComparator implements Comparator<Eligibility> {
 
     @Override
     public int compare(@NotNull Eligibility eligibility1, @NotNull Eligibility eligibility2) {
-        if (eligibility1.references().isEmpty()) {
-            return -1;
-        } else if (eligibility2.references().isEmpty()) {
+        if (eligibility1.references().isEmpty() && !eligibility2.references().isEmpty()) {
             return 1;
+        } else if (eligibility2.references().isEmpty()) {
+            return -1;
         } else {
             return CRITERION_COMPARATOR.compare(eligibility1.references().iterator().next(), eligibility2.references().iterator().next());
         }
