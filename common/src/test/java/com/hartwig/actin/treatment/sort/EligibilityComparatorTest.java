@@ -51,5 +51,4 @@ public class EligibilityComparatorTest {
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
                 .build();
     }
-
 }

@@ -76,7 +76,8 @@ public final class MolecularRecordJson {
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
                 boolean reported = bool(evidence, "reported");
-                if (reported) {
+                boolean germline = bool(evidence, "germline");
+                if (reported && !germline) {
                     evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                             .genomicEvent(string(evidence, "genomicEvent"))
                             .treatment(string(evidence, "treatment"))
