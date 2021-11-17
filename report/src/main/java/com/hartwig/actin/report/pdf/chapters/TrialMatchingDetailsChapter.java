@@ -96,7 +96,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             @NotNull Evaluation overallEvaluation) {
         Table table = Tables.createFixedWidthCols(new float[] { 1, 3, 3 });
 
-        table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.cohortId(), table));
+        table.addCell(Cells.createSpanningTitle(trialId + " - Cohort " + metadata.cohortId(), table));
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Evaluation"));
