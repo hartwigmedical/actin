@@ -63,16 +63,16 @@ public class TreatmentSummaryChapter implements ReportChapter {
         table.addCell(Cells.createKey("Number of trials evaluated"));
         table.addCell(Cells.createValue(String.valueOf(summary.trialCount())));
 
-        table.addCell(Cells.createKey("Number of trials considered eligible"));
+        table.addCell(Cells.createKey("Number of trials considered potentially eligible"));
         table.addCell(Cells.createValue(String.valueOf(summary.eligibleTrialCount())));
 
         table.addCell(Cells.createKey("Number of cohorts evaluated"));
         table.addCell(Cells.createValue(String.valueOf(summary.cohortCount())));
 
-        table.addCell(Cells.createKey("Number of cohorts considered eligible"));
+        table.addCell(Cells.createKey("Number of cohorts considered potentially eligible"));
         table.addCell(Cells.createValue(String.valueOf(summary.eligibleCohortCount())));
 
-        table.addCell(Cells.createKey("Number of open cohorts considered eligible"));
+        table.addCell(Cells.createKey("Number of open cohorts considered potentially eligible"));
         table.addCell(Cells.createValue(String.valueOf(summary.eligibleOpenCohortCount())));
 
         return table;
