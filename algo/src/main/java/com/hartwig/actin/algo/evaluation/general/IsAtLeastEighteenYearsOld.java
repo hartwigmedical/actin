@@ -25,6 +25,6 @@ public class IsAtLeastEighteenYearsOld implements EvaluationFunction {
         }
 
         // Since we only know the birth year we cannot determine if someone with 18 yrs difference is actually 18 years old.
-        return Evaluation.UNDETERMINED;
+        return Evaluation.PASS_BUT_WARN;
     }
 }
