@@ -44,11 +44,11 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(record.type().toString()));
 
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
-        table.addCell(Cells.createKey("Actionable mutations"));
+        table.addCell(Cells.createKey("Actionable events"));
         table.addCell(Cells.createValue(concat(interpretation.applicableResponsiveEvents())));
 
         if (!interpretation.applicableResistanceEvents().isEmpty()) {
-            table.addCell(Cells.createKey("Resistance mutations"));
+            table.addCell(Cells.createKey("Resistance events"));
             table.addCell(Cells.createValue(concat(interpretation.applicableResistanceEvents())));
         }
 
