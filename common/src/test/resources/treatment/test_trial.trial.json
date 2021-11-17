@@ -76,7 +76,7 @@
           "references": [
             {
               "id": "I-04",
-              "text": "Has 0123 cancer type or is pregnant!"
+              "text": "Has 2 conditions:<enter> 1. Has 0123 cancer type.<enter> 2. is pregnant!"
             }
           ],
           "function": {

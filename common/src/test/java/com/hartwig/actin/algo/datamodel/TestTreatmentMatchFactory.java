@@ -65,12 +65,18 @@ public final class TestTreatmentMatchFactory {
                         .rule(EligibilityRule.NOT)
                         .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES).build())
                         .build())
-                .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Has no active metastases and exhausted SOC").build())
+                .addReferences(ImmutableCriterionReference.builder()
+                        .id("E-01")
+                        .text("This rule has 2 conditions:\n 1. Patient has no active metastases.\n 2. Patient has exhausted SOC.")
+                        .build())
                 .build(), Evaluation.PASS);
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Has no active metastases and exhausted SOC").build())
+                .addReferences(ImmutableCriterionReference.builder()
+                        .id("E-01")
+                        .text("This rule has 2 conditions:\n 1. Patient has no active metastases.\n 2. Patient has exhausted SOC.")
+                        .build())
                 .build(), Evaluation.PASS);
 
         return map;

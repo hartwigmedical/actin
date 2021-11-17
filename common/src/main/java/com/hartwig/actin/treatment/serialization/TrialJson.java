@@ -54,6 +54,9 @@ public final class TrialJson {
 
     private static final String TRIAL_JSON_EXTENSION = ".trial.json";
 
+    private static final String JSON_REFERENCE_TEXT_LINE_BREAK = "<enter>";
+    private static final String JAVA_REFERENCE_TEXT_LINE_BREAK = "\n";
+
     private TrialJson() {
     }
 
@@ -64,9 +67,38 @@ public final class TrialJson {
 
             LOGGER.info(" Writing '{}' to {}", trial.identification().trialId(), jsonFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
-            writer.write(toJson(trial));
+            writer.write(toJson(convertReferenceTexts(trial)));
             writer.close();
         }
+    }
+
+    @NotNull
+    private static Trial convertReferenceTexts(@NotNull Trial trial) {
+        List<Cohort> convertedCohorts = Lists.newArrayList();
+        for (Cohort cohort : trial.cohorts()) {
+            convertedCohorts.add(ImmutableCohort.builder().from(cohort).eligibility(convertEligibilities(cohort.eligibility())).build());
+        }
+        return ImmutableTrial.builder()
+                .from(trial)
+                .cohorts(convertedCohorts)
+                .generalEligibility(convertEligibilities(trial.generalEligibility()))
+                .build();
+    }
+
+    @NotNull
+    private static List<Eligibility> convertEligibilities(@NotNull List<Eligibility> eligibilities) {
+        List<Eligibility> convertedEligibility = Lists.newArrayList();
+        for (Eligibility eligibility : eligibilities) {
+            Set<CriterionReference> convertedReferences = Sets.newTreeSet(new CriterionReferenceComparator());
+            for (CriterionReference reference : eligibility.references()) {
+                convertedReferences.add(ImmutableCriterionReference.builder()
+                        .from(reference)
+                        .text(toJsonReferenceText(reference.text()))
+                        .build());
+            }
+            convertedEligibility.add(ImmutableEligibility.builder().from(eligibility).references(convertedReferences).build());
+        }
+        return convertedEligibility;
     }
 
     @NotNull
@@ -97,6 +129,16 @@ public final class TrialJson {
         return gson.fromJson(json, Trial.class);
     }
 
+    @NotNull
+    private static String fromJsonReferenceText(@NotNull String text) {
+        return text.replaceAll(JSON_REFERENCE_TEXT_LINE_BREAK, JAVA_REFERENCE_TEXT_LINE_BREAK);
+    }
+
+    @NotNull
+    private static String toJsonReferenceText(@NotNull String text) {
+        return text.replaceAll(JAVA_REFERENCE_TEXT_LINE_BREAK, JSON_REFERENCE_TEXT_LINE_BREAK);
+    }
+
     private static class TrialCreator implements JsonDeserializer<Trial> {
 
         @Override
@@ -104,8 +146,7 @@ public final class TrialJson {
                 @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject trial = jsonElement.getAsJsonObject();
 
-            return ImmutableTrial.builder()
-                    .identification(toTrialIdentification(object(trial, "identification")))
+            return ImmutableTrial.builder().identification(toTrialIdentification(object(trial, "identification")))
                     .generalEligibility(toEligibility(array(trial, "generalEligibility")))
                     .cohorts(toCohorts(array(trial, "cohorts")))
                     .build();
@@ -160,7 +201,10 @@ public final class TrialJson {
             Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
             for (JsonElement element : referenceArray) {
                 JsonObject obj = element.getAsJsonObject();
-                references.add(ImmutableCriterionReference.builder().id(string(obj, "id")).text(string(obj, "text")).build());
+                references.add(ImmutableCriterionReference.builder()
+                        .id(string(obj, "id"))
+                        .text(fromJsonReferenceText(string(obj, "text")))
+                        .build());
             }
             return references;
         }
