@@ -57,57 +57,97 @@ NOT | -
 OR | _
 WARN_ON_FAIL | 
 
-The following individual criteria are supported:
+##### General rules
 
-Category | Rule | When does a patient pass evaluation?
----|---|---
-General | IS_AT_LEAST_18_YEARS_OLD | -
-General | IS_BREASTFEEDING | -
-General | IS_PREGNANT | - 
-General | HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | -
-General | HAS_WHO_STATUS_OF_AT_MOST_X | - 
-General | HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | -
-Pathology | PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X | - 
-Radiology | HAS_ADVANCED_CANCER | -
-Radiology | HAS_METASTATIC_CANCER | -
-Radiology | HAS_LIVER_METASTASES | -
-Radiology | HAS_ACTIVE_CNS_METASTASES | -
-Radiology | HAS_MEASURABLE_DISEASE_RECIST | - 
-Radiology | HAS_BIOPSY_AMENABLE_LESION | -
-Treatment | HAS_EXHAUSTED_SOC_TREATMENTS | - 
-Treatment | HAS_DECLINED_SOC_TREATMENTS | -
-Treatment | HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES | -
-Treatment | HAS_HISTORY_OF_SECOND_MALIGNANCY | -
-Treatment | SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS | -
-Laboratory | HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | -
-Laboratory | HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | -
-Laboratory | HAS_THROMBOCYTES_ABS_AT_LEAST_X | -
-Laboratory | HAS_CREATININE_ULN_OF_AT_MOST_X | -
-Laboratory | HAS_CREATININE_CLEARANCE_CKD_EPI_OF_AT_LEAST_X | -
-Laboratory | HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X | -
-Laboratory | HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X | -
-Laboratory | HAS_ASAT_ULN_OF_AT_MOST_X | -
-Laboratory | HAS_INR_ULN_AT_MOST_X | -
-Laboratory | HAS_PT_ULN_AT_MOST_X | -
-Laboratory | HAS_APTT_ULN_AT_MOST_X | -
-Other condition | HAS_ACTIVE_INFECTION | -
-Other condition | HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | -
-Other condition | HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | -
-Other condition | HAS_HISTORY_OF_CARDIAC_DISEASE | -
-Other condition | HAS_KNOWN_HEPATITIS_B_INFECTION | -
-Other condition | HAS_KNOWN_HEPATITIS_C_INFECTION | -
-Other condition | HAS_KNOWN_HIV_INFECTION | -
-Other condition | HAS_GILBERT_DISEASE | -
-Medication | HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | -
-Medication | HAS_STABLE_ANTICOAGULANT_DOSING | -
-Medication | HAS_TOXICITY_OF_AT_LEAST_GRADE_X | -
-Medication | HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY | -
-Medication | CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | -
-Medication | CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | -
-Blood pressure | HAS_SBP_MMHG_OF_AT_LEAST_X | -
-Blood pressure | HAS_DBP_MMHG_OF_AT_LEAST_X | -
-Blood transfusion | HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | -
-Blood transfusion | HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | -
+Rule | When does a patient pass evaluation?
+---|---
+IS_AT_LEAST_18_YEARS_OLD | -
+IS_BREASTFEEDING | -
+IS_PREGNANT | - 
+HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | -
+HAS_WHO_STATUS_OF_AT_MOST_X | - 
+HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | -
+
+##### Rules related to pathology assessments
+
+Rule | When does a patient pass evaluation?
+---|---
+PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X | -
+
+##### Rules related to radiology assessments
+ 
+Rule | When does a patient pass evaluation?
+---|---
+HAS_ADVANCED_CANCER | -
+HAS_METASTATIC_CANCER | -
+HAS_LIVER_METASTASES | -
+HAS_ACTIVE_CNS_METASTASES | -
+HAS_MEASURABLE_DISEASE_RECIST | - 
+HAS_BIOPSY_AMENABLE_LESION | -
+
+##### Rules related to previously received cancer treatments or prior other tumors
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_EXHAUSTED_SOC_TREATMENTS | - 
+HAS_DECLINED_SOC_TREATMENTS | -
+HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES | -
+HAS_HISTORY_OF_SECOND_MALIGNANCY | -
+SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS | -
+
+##### Rules related to recent laboratory measurements
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | -
+HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | -
+HAS_THROMBOCYTES_ABS_AT_LEAST_X | -
+HAS_CREATININE_ULN_OF_AT_MOST_X | -
+HAS_CREATININE_CLEARANCE_CKD_EPI_OF_AT_LEAST_X | -
+HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X | -
+HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X | -
+HAS_ASAT_ULN_OF_AT_MOST_X | -
+HAS_INR_ULN_AT_MOST_X | -
+HAS_PT_ULN_AT_MOST_X | -
+HAS_APTT_ULN_AT_MOST_X | -
+
+##### Rules related on current other conditions
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_ACTIVE_INFECTION | -
+HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | -
+HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | -
+HAS_HISTORY_OF_CARDIAC_DISEASE | -
+HAS_KNOWN_HEPATITIS_B_INFECTION | -
+HAS_KNOWN_HEPATITIS_C_INFECTION | -
+HAS_KNOWN_HIV_INFECTION | -
+HAS_GILBERT_DISEASE | -
+
+##### Rules depending on current medication
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | -
+HAS_STABLE_ANTICOAGULANT_DOSING | -
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X | -
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY | -
+CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | -
+CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | -
+
+##### Rules related to blood pressure measurements
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_SBP_MMHG_OF_AT_LEAST_X | -
+HAS_DBP_MMHG_OF_AT_LEAST_X | -
+
+##### Rules related to blood transfusions
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | -
+HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | -
  
 ### Version History and Download Links
  - Upcoming (first release) 
