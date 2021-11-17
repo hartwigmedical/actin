@@ -20,30 +20,33 @@ The following assumptions are made about the inputs:
  
 ### Treatment matching
 
-Every treatment defined in the treatment database is evaluated independently. In case a treatment is a trial, then all inclusion 
-and exclusion criteria are evaluated for this trial as well as every criterion for any specific cohort within this trial.  
+Every treatment defined in the treatment database is evaluated independently. 
 
-The potential results for any individual inclusion rule are as follows:
+In case a treatment is a trial, all inclusion and exclusion criteria are evaluated for this trial as well as every criterion 
+for any specific cohort within this trial.  
+
+Every criterion evaluates to one of the following options:
 
 Evaluation | Description
 ---|---
-PASS | The patient complies with the inclusion or exclusion rule.  
-PASS_BUT_WARN | The patient complies with the inclusion or exclusion rule but a manual check is required.
-FAIL | The patient does not comply with the inclusion or exclusion rule. 
-UNDETERMINED | The data provided to the inclusion or exclusion rule is insufficient for determining eligibility.
-NOT_IMPLEMENTED | The rule hasn't been implemented yet.
+PASS | The patient complies with the inclusion or exclusion criterion.  
+PASS_BUT_WARN | The patient complies with the inclusion or exclusion criterion but a manual check is required.
+FAIL | The patient does not comply with the inclusion or exclusion criterion. 
+UNDETERMINED | The data provided to the inclusion or exclusion criterion is insufficient for determining eligibility.
+NOT_IMPLEMENTED | No algo has been defined yet for this criterion.
 
-For every trial (and cohort) an overall evaluation is determined using the following rules:
+For every trial (and cohort) an overall evaluation is determined using the following algorithm:
  1. A patient is eligible for a trial (or cohort) only in case all criteria are `PASS` or `PASS_BUT_WARN`.
- 1. In case one of the criteria evaluates to a `FAIL` the patient fails eligibility. 
- 1. In case of no fails but at least one `UNDETERMINED` or `NOT_IMPLEMENTED` the overall evaluation is `UNDETERMINED`.    
+ 1. In case one of the criteria evaluates to a `FAIL` the patient fails overall eligibility for the trial (or cohort). 
+ 1. In case of no fails but at least one `UNDETERMINED` or `NOT_IMPLEMENTED` evaluation, the overall evaluation is determined 
+ to be `UNDETERMINED`.    
 
-Furthermore there are some specific additional rules related to trials versus cohorts within trials:
+The following additional rules are applied for trials versus cohorts:
  1. A patient is eligible for a specific cohort only if the overall evaluation for both the cohort as well as the trial itself are passed.
  1. A patient is eligible for a trial only if it is eligible for at least one of the cohorts within the trial or if the trial has no 
- cohorts defined and the patient passes the criteria for the trial.  
+ cohorts defined and the patient passes all criteria for the trial.  
 
-#### Individual criterion rules
+#### Individual criteria algorithms
 
 Inclusion and exclusion criteria can be defined as composite functions. The following composite functions are available:
 
@@ -54,7 +57,7 @@ NOT | -
 OR | _
 WARN_ON_FAIL | 
 
-The following individual rules are supported:
+The following individual criteria are supported:
 
 Category | Rule | When does a patient pass evaluation?
 ---|---|---
