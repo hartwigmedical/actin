@@ -78,8 +78,10 @@ HAS_METASTATIC_CANCER | Tumor details > stage IV
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_CNS_METASTASES | Tumor details > hasCnsLesions = 1
 HAS_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
+HAS_SYMPTOMATIC_CNS_METASTASES | Tumor details > hasSymptomaticCnsLesions = 1
 HAS_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
 HAS_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
+HAS_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 
@@ -95,6 +97,12 @@ HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior second primaries > nr of lin
 HAS_HAD_IMMUNOTHERAPY_TREATMENT | Prior tumor treatments > category = Immunotherapy
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
+
+##### Rules related to molecular results
+
+Rule | When does a patient pass evaluation?
+---|---
+MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
 
 ##### Rules related to recent laboratory measurements
 
@@ -131,6 +139,8 @@ HAS_HISTORY_STROKE_X_MONTHS | Prior other conditions > configured doid should be
 HAS_HISTORY_TIA_X_MONTHS | Prior other conditions > configured doid should be equal or be a child of DOID 224 | Months can often not be evaluated; rule is usually combined with NOT & WARN_ON_FAIL
 HAS_GILBERT_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
+HAS_HYPERTENSION | Prior other conditions > configured doid should be equal or be a child of DOID 10763
+HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
 
 ##### Rules related to infections
 Rule | When does a patient pass evaluation?
@@ -188,10 +198,13 @@ Note that some inclusion and exclusion criteria can be mapped to rules that are 
 Rule | Hard-coded setting
 ---|---
 HAS_BIOPSY_AMENABLE_LESION | PASS
+IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | ignored
+IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | ignored
 IS_BREASTFEEDING | ignored
 IS_PREGNANT | ignored
+IS_INVOLVED_IN_STUDY_PROCEDURES | ignored
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | ignored
-
+HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | ignored
  
 ### Version History and Download Links
  - Upcoming (first release) 
