@@ -57,7 +57,7 @@ Function | Description
 AND | indicates that all combined rules should be TRUE in order to PASS
 OR | indicates that either of combined rules should be TRUE in order to PASS
 NOT | indicates that the rule should not be TRUE in order to PASS
-WARN_ON_FAIL | indicates that a warning should be displayed in case of FAIL and resolves to PASS_BUT_WARN
+WARN_ON_PASS | indicates that a warning should be displayed in case of PASS and resolves to PASS_BUT_WARN
 
 Some rules require an additional configuration parameter ("X") that can be set to match the requirements of each trial. The following rules are available:
 
@@ -92,7 +92,7 @@ Rule | When does a patient pass evaluation? | Note
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D 
 HAS_DECLINED_SOC_TREATMENTS | T.B.D
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries > tumorLocation is not empty
-SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries > tumorLocation is not empty AND active = 0 | Years can often not be reliably evaluated; rule will be combined with other rules or with NOT & WARN_ON_FAIL
+SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries > tumorLocation is not empty AND active = 0 | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior second primaries > nr of lines in case systemic = 1 <= X
 HAS_HAD_IMMUNOTHERAPY_TREATMENT | Prior tumor treatments > category = Immunotherapy
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
@@ -128,15 +128,15 @@ HAS_ALP_ULN_OF_AT_MOST_X | ALP <= X*ULN
 
 ##### Rules related to other conditions
 
-Rule | When does a patient pass evaluation? | Note
----|---|---
+Rule | When does a patient pass evaluation?
+---|---
 HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | Prior other conditions > name is not empty
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 417
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 1287
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 850
-HAS_HISTORY_STROKE_X_MONTHS | Prior other conditions > configured doid should be equal or be a child of DOID 6713 | Months can often not be evaluated; rule is usually combined with NOT & WARN_ON_FAIL
-HAS_HISTORY_TIA_X_MONTHS | Prior other conditions > configured doid should be equal or be a child of DOID 224 | Months can often not be evaluated; rule is usually combined with NOT & WARN_ON_FAIL
+HAS_HISTORY_OF_STROKE | Prior other conditions > configured doid should be equal or be a child of DOID 6713 
+HAS_HISTORY_OF_TIA | Prior other conditions > configured doid should be equal or be a child of DOID 224 
 HAS_GILBERT_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > configured doid should be equal or be a child of DOID 10763
@@ -154,7 +154,7 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_ALLERGY_RELATED_TO_STUDY _MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule is usually combined with NOT & WARN_ON_FAIL
+HAS_ALLERGY_RELATED_TO_STUDY _MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
 CURRENTLY_GETS_ANTIBIOTICS _MEDICATION | Medication > type is type of antibiotics
 CURRENTLY_GETS_CORTICOSTEROID _MEDICATION | Medication > type is type of corticosteroids
 CURRENTLY_GETS_IMMUNOSUPPRESSANT _MEDICATION | T.B.D.
