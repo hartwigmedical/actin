@@ -30,7 +30,7 @@ public final class EligibilityFactory {
             generateEligibilityFunction(criterion);
             return true;
         } catch (Exception exc) {
-            LOGGER.debug(exc);
+            LOGGER.debug(exc.getMessage());
             return false;
         }
     }
@@ -53,7 +53,7 @@ public final class EligibilityFactory {
 
         EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
         if (!EligibilityParameterResolver.hasValidParameters(function)) {
-            throw new IllegalStateException("Function " + function.rule() + " has invalid parameters: " + function.parameters());
+            throw new IllegalStateException("Function " + function.rule() + " has invalid parameters: '" + function.parameters() + "'");
         }
         return function;
     }
@@ -62,7 +62,7 @@ public final class EligibilityFactory {
     private static EligibilityRule extractCompositeRule(@NotNull String criterion) {
         EligibilityRule rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(COMPOSITE_START)));
         if (!EligibilityParameterResolver.COMPOSITE_RULES.contains(rule)) {
-            throw new IllegalStateException("Not a valid composite rule: " + rule);
+            throw new IllegalStateException("Not a valid composite rule: '" + rule + "'");
         }
         return rule;
     }
