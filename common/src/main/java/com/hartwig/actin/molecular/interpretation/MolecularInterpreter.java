@@ -22,6 +22,7 @@ public final class MolecularInterpreter {
 
     static {
         NON_APPLICABLE_START_KEYWORDS.add("CDKN2A");
+        NON_APPLICABLE_START_KEYWORDS.add("VEGFA");
     }
 
     private MolecularInterpreter() {
