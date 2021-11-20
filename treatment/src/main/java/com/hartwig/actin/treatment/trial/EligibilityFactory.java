@@ -8,10 +8,14 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class EligibilityFactory {
+
+    private static final Logger LOGGER = LogManager.getLogger(EligibilityFactory.class);
 
     private static final char COMPOSITE_START = '(';
     private static final char COMPOSITE_END = ')';
@@ -26,6 +30,7 @@ public final class EligibilityFactory {
             generateEligibilityFunction(criterion);
             return true;
         } catch (Exception exc) {
+            LOGGER.debug(exc);
             return false;
         }
     }

@@ -79,64 +79,97 @@ public final class EvaluationFunctionFactory {
         FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_ON_PASS, warnOnPassCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, notImplementedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadRecentSurgeryCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, notImplementedCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator());
-
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_CNS_METASTASES, notImplementedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ACTIVE_CNS_METASTASES, hasActiveCNSMetastasesCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_BRAIN_METASTASES, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_SYMPTOMATIC_BRAIN_METASTASES, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_BONE_METASTASES, notImplementedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES,
-                hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS,
                 secondMalignancyHasBeenCuredRecentlyCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_IMMUNOTHERAPY_TREATMENT, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES,
+                hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, notImplementedCreator());
+
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, notImplementedCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, notImplementedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_THROMBOCYTES_ABS_AT_LEAST_X, hasSufficientThrombocytesCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, notImplementedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasSufficientCreatinineCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CKD_EPI_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCKDEPICreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_CREATININE_CLEARANCE_MDRD_OF_AT_LEAST_X, notImplementedCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X, hasLimitedTotalBilirubinCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X, hasLimitedDirectBilirubinCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedASATCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_INR_ULN_AT_MOST_X, hasLimitedINRCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_PT_ULN_AT_MOST_X, hasLimitedPTCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_APTT_ULN_AT_MOST_X, hasLimitedAPPTCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedASATCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, notImplementedCreator());
 
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ACTIVE_INFECTION, hasActiveInfectionCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS, hasSignificantConcomitantIllnessCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_STROKE, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HISTORY_OF_TIA, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HYPERTENSION, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, notImplementedCreator());
+
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ACTIVE_INFECTION, hasActiveInfectionCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_KNOWN_HEPATITIS_B_INFECTION, hasKnownHepatitisBInfectionCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasKnownHepatitisCInfectionCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasKnownHIVInfectionCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, hasStableAnticoagulantDosingCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY, hasToxicityWithGradeInNeuropathyCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, currentlyGetsCorticosteroidMedicationCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION,
                 currentlyGetsImmunoSuppressantMedicationCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, currentlyGetsCorticosteroidMedicationCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, hasStableAnticoagulantDosingCreator());
+
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY, hasToxicityWithGradeInNeuropathyCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_FATIGUE, notImplementedCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_VITILIGO, notImplementedCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientSBPCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientDBPCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, hasHadRecentErythrocyteTransfusion());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, hasHadRecentThrombocyteTransfusion());
+
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadRecentSurgeryCreator());
     }
 
     private EvaluationFunctionFactory() {
@@ -426,6 +459,11 @@ public final class EvaluationFunctionFactory {
     @NotNull
     private static FunctionCreator cannotBeDeterminedCreator() {
         return function -> evaluation -> Evaluation.UNDETERMINED;
+    }
+
+    @NotNull
+    private static FunctionCreator notImplementedCreator() {
+        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 
     private interface FunctionCreator {
