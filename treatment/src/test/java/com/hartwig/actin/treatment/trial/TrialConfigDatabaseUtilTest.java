@@ -15,7 +15,7 @@ public class TrialConfigDatabaseUtilTest {
         assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("all").size());
         assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("I-01").size());
 
-        Set<String> referenceIds = TrialConfigDatabaseUtil.toReferenceIds("I-01; I-02");
+        Set<String> referenceIds = TrialConfigDatabaseUtil.toReferenceIds("I-01, I-02");
         assertEquals(2, referenceIds.size());
         assertTrue(referenceIds.contains("I-01"));
         assertTrue(referenceIds.contains("I-02"));
