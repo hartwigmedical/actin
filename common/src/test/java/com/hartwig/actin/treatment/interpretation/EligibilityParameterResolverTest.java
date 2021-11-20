@@ -59,7 +59,7 @@ public class EligibilityParameterResolverTest {
         List<Object> inputs = Lists.newArrayList();
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND, inputs)));
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_FAIL, inputs)));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_PASS, inputs)));
 
         // Add first param
         inputs.add(createValidTestFunction());
@@ -69,7 +69,7 @@ public class EligibilityParameterResolverTest {
         EligibilityFunction valid1 = create(EligibilityRule.NOT, inputs);
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid1));
         assertNotNull(EligibilityParameterResolver.createSingleCompositeParameter(valid1));
-        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_FAIL, inputs)));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_PASS, inputs)));
 
         // Add 2nd param
         inputs.add(createValidTestFunction());
@@ -81,7 +81,7 @@ public class EligibilityParameterResolverTest {
         // Add 3rd param
         inputs.add(createValidTestFunction());
         assertTrue(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.OR, inputs)));
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_FAIL, inputs)));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.WARN_ON_PASS, inputs)));
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(EligibilityRule.AND,
                 Lists.newArrayList("not a function", "not a function either"))));

@@ -14,7 +14,7 @@ import com.hartwig.actin.algo.evaluation.bloodtransfusion.HasHadRecentThrombocyt
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
 import com.hartwig.actin.algo.evaluation.composite.Or;
-import com.hartwig.actin.algo.evaluation.composite.WarnOnFail;
+import com.hartwig.actin.algo.evaluation.composite.WarnOnPass;
 import com.hartwig.actin.algo.evaluation.general.HasHadRecentSurgery;
 import com.hartwig.actin.algo.evaluation.general.HasMaximumWHOStatus;
 import com.hartwig.actin.algo.evaluation.general.HasSufficientLifeExpectancy;
@@ -76,7 +76,7 @@ public final class EvaluationFunctionFactory {
         FUNCTION_CREATOR_MAP.put(EligibilityRule.AND, andCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.OR, orCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.NOT, notCreator());
-        FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_ON_FAIL, warnOnFailCreator());
+        FUNCTION_CREATOR_MAP.put(EligibilityRule.WARN_ON_PASS, warnOnPassCreator());
 
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
         FUNCTION_CREATOR_MAP.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
@@ -170,8 +170,8 @@ public final class EvaluationFunctionFactory {
     }
 
     @NotNull
-    private static FunctionCreator warnOnFailCreator() {
-        return function -> new WarnOnFail(createSingleCompositeParameter(function));
+    private static FunctionCreator warnOnPassCreator() {
+        return function -> new WarnOnPass(createSingleCompositeParameter(function));
     }
 
     @NotNull

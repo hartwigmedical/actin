@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WarnOnFail implements EvaluationFunction {
+public class WarnOnPass implements EvaluationFunction {
 
     @NotNull
     private final EvaluationFunction function;
 
-    public WarnOnFail(@NotNull final EvaluationFunction function) {
+    public WarnOnPass(@NotNull final EvaluationFunction function) {
         this.function = function;
     }
 
@@ -20,7 +20,7 @@ public class WarnOnFail implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Evaluation evaluation = function.evaluate(record);
 
-        if (evaluation == Evaluation.FAIL) {
+        if (evaluation == Evaluation.PASS) {
             return Evaluation.PASS_BUT_WARN;
         } else {
             return evaluation;

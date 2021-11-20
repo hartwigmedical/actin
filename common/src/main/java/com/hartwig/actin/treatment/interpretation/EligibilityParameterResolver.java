@@ -28,7 +28,7 @@ public final class EligibilityParameterResolver {
         COMPOSITE_RULES.add(EligibilityRule.AND);
         COMPOSITE_RULES.add(EligibilityRule.OR);
         COMPOSITE_RULES.add(EligibilityRule.NOT);
-        COMPOSITE_RULES.add(EligibilityRule.WARN_ON_FAIL);
+        COMPOSITE_RULES.add(EligibilityRule.WARN_ON_PASS);
 
         RULES_WITH_SINGLE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS);
         RULES_WITH_SINGLE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X);
