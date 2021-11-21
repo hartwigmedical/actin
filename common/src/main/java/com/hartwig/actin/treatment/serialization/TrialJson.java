@@ -65,7 +65,7 @@ public final class TrialJson {
         for (Trial trial : trials) {
             String jsonFile = path + trial.identification().trialId().replaceAll(" ", "_") + TRIAL_JSON_EXTENSION;
 
-            LOGGER.info(" Writing '{}' to {}", trial.identification().trialId(), jsonFile);
+            LOGGER.info(" Writing '{} ({})' to {}", trial.identification().trialId(), trial.identification().acronym(), jsonFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
             writer.write(toJson(convertReferenceTexts(trial)));
             writer.close();
