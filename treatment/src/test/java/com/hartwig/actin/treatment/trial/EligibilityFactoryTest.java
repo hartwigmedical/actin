@@ -16,11 +16,18 @@ public class EligibilityFactoryTest {
 
     @Test
     public void canDetermineWhetherRuleIsValid() {
+        // Simple rules
         assertTrue(EligibilityFactory.isValidInclusionCriterion("HAS_INR_ULN_AT_MOST_X[1]"));
         assertTrue(EligibilityFactory.isValidInclusionCriterion("NOT(HAS_INR_ULN_AT_MOST_X[1])"));
-        String complex = "OR(AND(OR(HAS_INR_ULN_AT_MOST_X[1], HAS_PT_ULN_AT_MOST_X[2]), HAS_APTT_ULN_AT_MOST_X[3]), "
-                + "HAS_STABLE_ANTICOAGULANT_DOSING)";
-        assertTrue(EligibilityFactory.isValidInclusionCriterion(complex));
+
+        // Complex rule with multiple AND and OR.
+        assertTrue(EligibilityFactory.isValidInclusionCriterion("OR(AND(OR(HAS_INR_ULN_AT_MOST_X[1], HAS_PT_ULN_AT_MOST_X[2]), "
+                + " HAS_APTT_ULN_AT_MOST_X[3]), HAS_STABLE_ANTICOAGULANT_DOSING)"));
+
+        // Rules with composite functions with more than 2 inputs.
+        assertTrue(EligibilityFactory.isValidInclusionCriterion(
+                "OR(AND(HAS_LIVER_METASTASES, HAS_ASAT_ULN_OF_AT_MOST_X[5], HAS_ALAT_ULN_OF_AT_MOST_X[5]), "
+                        + "AND(HAS_ASAT_ULN_OF_AT_MOST_X[2.5], HAS_ALAT_ULN_OF_AT_MOST_X[2.5]))"));
 
         // Generally wrong:
         assertFalse(EligibilityFactory.isValidInclusionCriterion("This is not a valid criterion"));

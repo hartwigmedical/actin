@@ -11,7 +11,6 @@ import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class EligibilityFactory {
 
@@ -76,22 +75,30 @@ public final class EligibilityFactory {
     private static List<String> extractCompositeInputs(@NotNull String criterion) {
         String params = criterion.substring(criterion.indexOf(COMPOSITE_START) + 1, criterion.lastIndexOf(COMPOSITE_END));
 
-        Integer relevantCommaPosition = findSeparatingCommaPosition(params);
-        List<String> result = Lists.newArrayList();
-        if (relevantCommaPosition != null) {
-            result.add(params.substring(0, relevantCommaPosition).trim());
-            result.add(params.substring(relevantCommaPosition + 1).trim());
-        } else {
-            result.add(params.trim());
+        List<Integer> relevantCommaPositions = findSeparatingCommaPositions(params);
+        if (relevantCommaPositions.isEmpty()) {
+            return Lists.newArrayList(params.trim());
         }
+
+        List<String> result = Lists.newArrayList();
+
+        int index = 0;
+        while (index < relevantCommaPositions.size()) {
+            int start = index == 0 ? -1 : relevantCommaPositions.get(index - 1);
+            result.add(params.substring(start + 1, relevantCommaPositions.get(index)).trim());
+            index++;
+        }
+        result.add(params.substring(relevantCommaPositions.get(relevantCommaPositions.size() - 1) + 1).trim());
 
         return result;
     }
 
-    @Nullable
-    private static Integer findSeparatingCommaPosition(@NotNull String params) {
+    @NotNull
+    private static List<Integer> findSeparatingCommaPositions(@NotNull String params) {
         int nestedCompositeLevel = 0;
         int nestedParameterSection = 0;
+
+        List<Integer> commaPositions = Lists.newArrayList();
         for (int i = 0; i < params.length(); i++) {
             char character = params.charAt(i);
             if (character == COMPOSITE_START) {
@@ -103,11 +110,11 @@ public final class EligibilityFactory {
             } else if (character == PARAM_END) {
                 nestedParameterSection--;
             } else if (character == ',' && nestedCompositeLevel == 0 && nestedParameterSection == 0) {
-                return i;
+                commaPositions.add(i);
             }
         }
 
-        return null;
+        return commaPositions;
     }
 
     @NotNull
