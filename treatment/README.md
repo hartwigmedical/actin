@@ -19,7 +19,7 @@ Trials are read from the `trial_config_directory`. The following files are expec
  - `inclusion_criteria.tsv` defining all inclusion criteria for the trials and cohorts
  - `inclusion_criteria_reference.tsv` providing (external) reference texts for the inclusion criteria.
  
-The treatment database will only be created if the trial config is entirely consistent and can be resolved to the interpretable rules. 
+The treatment database will only be created if the trial config is entirely consistent and can be resolved to interpretable rules. 
 In case of any configuration issue, this application will crash while providing details on how to solve the configuration issue(s).
 
 An example trial configuration database can be found [here](src/test/resources/trial_config) 
