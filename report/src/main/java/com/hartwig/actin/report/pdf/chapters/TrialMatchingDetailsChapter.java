@@ -47,6 +47,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         addChapterTitle(document);
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
+            document.add(blankLine());
             addTrialDetails(document, trial);
         }
     }
@@ -57,14 +58,14 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
         document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
-        document.add(new Paragraph(" "));
+        document.add(blankLine());
         document.add(Tables.makeWrapping(createEvaluationTable(trial.evaluations())));
 
         for (CohortEligibility cohort : trial.cohorts()) {
-            document.add(new Paragraph(" "));
+            document.add(blankLine());
             document.add(createCohortIdentificationTable(trial.identification().trialId(), cohort.metadata(), cohort.overallEvaluation()));
             if (!cohort.evaluations().isEmpty()) {
-                document.add(new Paragraph(" "));
+                document.add(blankLine());
                 document.add(Tables.makeWrapping(createEvaluationTable(cohort.evaluations())));
             }
         }
@@ -139,5 +140,10 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             }
         }
         return table;
+    }
+
+    @NotNull
+    private static Paragraph blankLine() {
+        return new Paragraph(" ");
     }
 }
