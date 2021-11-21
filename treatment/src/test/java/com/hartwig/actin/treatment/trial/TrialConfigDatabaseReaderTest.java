@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +27,7 @@ public class TrialConfigDatabaseReaderTest {
         assertTrialDefinitionConfigs(database.trialDefinitionConfigs());
         assertCohortConfigs(database.cohortDefinitionConfigs());
         assertInclusionCriteriaConfigs(database.inclusionCriteriaConfigs());
+        assertInclusionCriteriaReferenceConfigs(database.inclusionCriteriaReferenceConfigs());
     }
 
     private static void assertTrialDefinitionConfigs(@NotNull List<TrialDefinitionConfig> configs) {
@@ -41,19 +42,19 @@ public class TrialConfigDatabaseReaderTest {
     private static void assertCohortConfigs(@NotNull List<CohortDefinitionConfig> configs) {
         assertEquals(2, configs.size());
 
-        CohortDefinitionConfig config1 = find(configs, "A");
+        CohortDefinitionConfig config1 = findCohort(configs, "A");
         assertEquals("ACTN 2021", config1.trialId());
         assertTrue(config1.open());
         assertEquals("Dose escalation phase (monotherapy)", config1.description());
 
-        CohortDefinitionConfig config2 = find(configs, "B");
+        CohortDefinitionConfig config2 = findCohort(configs, "B");
         assertEquals("ACTN 2021", config2.trialId());
         assertFalse(config2.open());
         assertEquals("Dose escalation phase (combination therapy)", config2.description());
     }
 
     @NotNull
-    private static CohortDefinitionConfig find(@NotNull List<CohortDefinitionConfig> configs, @NotNull String cohortId) {
+    private static CohortDefinitionConfig findCohort(@NotNull List<CohortDefinitionConfig> configs, @NotNull String cohortId) {
         for (CohortDefinitionConfig config : configs) {
             if (config.cohortId().equals(cohortId)) {
                 return config;
@@ -69,6 +70,30 @@ public class TrialConfigDatabaseReaderTest {
         InclusionCriteriaConfig config = configs.get(0);
         assertEquals("ACTN 2021", config.trialId());
         assertTrue(config.appliesToCohorts().isEmpty());
-        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString(), config.inclusionRule());
+        assertEquals("AND(IS_AT_LEAST_18_YEARS_OLD, HAS_METASTATIC_CANCER)", config.inclusionRule());
+    }
+
+    private static void assertInclusionCriteriaReferenceConfigs(@NotNull List<InclusionCriteriaReferenceConfig> configs) {
+        assertEquals(2, configs.size());
+
+        InclusionCriteriaReferenceConfig config1 = findReference(configs, "I-01");
+        assertEquals("ACTN 2021", config1.trialId());
+        assertEquals("Patient has to be 18 years old", config1.referenceText());
+
+        InclusionCriteriaReferenceConfig config2 = findReference(configs, "I-02");
+        assertEquals("ACTN 2021", config2.trialId());
+        assertEquals("Patient has metastatic cancer", config2.referenceText());
+    }
+
+    @NotNull
+    private static InclusionCriteriaReferenceConfig findReference(@NotNull List<InclusionCriteriaReferenceConfig> configs,
+            @NotNull String referenceId) {
+        for (InclusionCriteriaReferenceConfig config : configs) {
+            if (config.referenceId().equals(referenceId)) {
+                return config;
+            }
+        }
+
+        throw new IllegalStateException("Could not find reference config for ID " + referenceId);
     }
 }

@@ -31,7 +31,7 @@ public class TrialConfigDatabaseUtilTest {
         assertEquals(0, TrialConfigDatabaseUtil.toCohorts("all").size());
         assertEquals(1, TrialConfigDatabaseUtil.toCohorts("A").size());
 
-        Set<String> cohorts = TrialConfigDatabaseUtil.toCohorts("A; B");
+        Set<String> cohorts = TrialConfigDatabaseUtil.toCohorts("A, B");
         assertEquals(2, cohorts.size());
         assertTrue(cohorts.contains("A"));
         assertTrue(cohorts.contains("B"));

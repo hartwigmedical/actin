@@ -63,7 +63,7 @@ public final class TrialJson {
     public static void write(@NotNull List<Trial> trials, @NotNull String directory) throws IOException {
         String path = Paths.forceTrailingFileSeparator(directory);
         for (Trial trial : trials) {
-            String jsonFile = path + trial.identification().trialId().replaceAll(" ", "_") + TRIAL_JSON_EXTENSION;
+            String jsonFile = path + trialFileId(trial.identification().trialId()) + TRIAL_JSON_EXTENSION;
 
             LOGGER.info(" Writing '{} ({})' to {}", trial.identification().trialId(), trial.identification().acronym(), jsonFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
@@ -73,14 +73,17 @@ public final class TrialJson {
     }
 
     @NotNull
+    public static String trialFileId(@NotNull String trialId) {
+        return trialId.replaceAll(" ", "_");
+    }
+
+    @NotNull
     private static Trial reformatReferenceTexts(@NotNull Trial trial) {
         List<Cohort> reformattedCohorts = Lists.newArrayList();
         for (Cohort cohort : trial.cohorts()) {
             reformattedCohorts.add(ImmutableCohort.builder().from(cohort).eligibility(reformatEligibilities(cohort.eligibility())).build());
         }
-        return ImmutableTrial.builder()
-                .from(trial)
-                .cohorts(reformattedCohorts)
+        return ImmutableTrial.builder().from(trial).cohorts(reformattedCohorts)
                 .generalEligibility(reformatEligibilities(trial.generalEligibility()))
                 .build();
     }

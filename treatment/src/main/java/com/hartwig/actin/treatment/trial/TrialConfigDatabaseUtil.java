@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TrialConfigDatabaseUtil {
 
-    private static final String COHORT_SEPARATOR = ";";
+    private static final String COHORT_SEPARATOR = ",";
     private static final String REFERENCE_ID_SEPARATOR = ",";
 
     private static final String ALL_COHORTS = "all";

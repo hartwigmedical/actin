@@ -2,11 +2,14 @@ package com.hartwig.actin.treatment.trial;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
@@ -27,6 +30,8 @@ public final class TrialConfigDatabaseValidator {
     public static boolean isValid(@NotNull TrialConfigDatabase database) {
         Set<String> trialIds = extractTrialIds(database.trialDefinitionConfigs());
 
+        boolean validTrials = validateTrials(database.trialDefinitionConfigs());
+
         boolean validCohorts = validateCohorts(trialIds, database.cohortDefinitionConfigs());
 
         Multimap<String, String> cohortIdsPerTrial = extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs());
@@ -37,28 +42,60 @@ public final class TrialConfigDatabaseValidator {
                 database.inclusionCriteriaConfigs(),
                 database.inclusionCriteriaReferenceConfigs());
 
-        return validCohorts && validInclusionCriteria && validInclusionCriteriaReferences;
+        return validTrials && validCohorts && validInclusionCriteria && validInclusionCriteriaReferences;
     }
 
     @NotNull
     private static Set<String> extractTrialIds(@NotNull List<TrialDefinitionConfig> configs) {
         Set<String> trialIds = Sets.newHashSet();
         for (TrialDefinitionConfig config : configs) {
-            if (trialIds.contains(config.trialId())) {
-                LOGGER.warn("Duplicate trial ID found: {}", config.trialId());
-            }
             trialIds.add(config.trialId());
         }
         return trialIds;
     }
 
-    private static boolean validateCohorts(@NotNull Set<String> trialIds, @NotNull List<CohortDefinitionConfig> cohortDefinitions) {
+    private static boolean validateTrials(@NotNull List<TrialDefinitionConfig> trialDefinitions) {
         boolean valid = true;
-        for (CohortDefinitionConfig cohortDefinition : cohortDefinitions) {
-            if (!trialIds.contains(cohortDefinition.trialId())) {
-                LOGGER.warn("Cohort '{}' defined on non-existing trial: {}", cohortDefinition.cohortId(), cohortDefinition.trialId());
+        Set<String> trialIds = Sets.newHashSet();
+        Set<String> trialFileIds = Sets.newHashSet();
+        for (TrialDefinitionConfig trialDefinition : trialDefinitions) {
+            String trialId = trialDefinition.trialId();
+            if (trialIds.contains(trialId)) {
+                LOGGER.warn("Duplicate trial ID found: '{}'", trialId);
                 valid = false;
             }
+            trialIds.add(trialId);
+
+            String trialFileId = TrialJson.trialFileId(trialDefinition.trialId());
+            if (trialFileIds.contains(trialFileId)) {
+                LOGGER.warn("Duplicate trial file ID found: '{}'", trialFileId);
+                valid = false;
+            }
+            trialFileIds.add(trialFileId);
+        }
+        return valid;
+    }
+
+    private static boolean validateCohorts(@NotNull Set<String> trialIds, @NotNull List<CohortDefinitionConfig> cohortDefinitions) {
+        boolean valid = true;
+        Map<String, Set<String>> cohortIdsPerTrial = Maps.newHashMap();
+        for (CohortDefinitionConfig cohortDefinition : cohortDefinitions) {
+            String trialId = cohortDefinition.trialId();
+            String cohortId = cohortDefinition.cohortId();
+            if (!trialIds.contains(trialId)) {
+                LOGGER.warn("Cohort '{}' defined on non-existing trial: '{}'", cohortId, trialId);
+                valid = false;
+            }
+            Set<String> cohortIdsForTrial = cohortIdsPerTrial.get(cohortDefinition.trialId());
+            if (cohortIdsForTrial == null) {
+                cohortIdsForTrial = Sets.newHashSet();
+            } else if (cohortIdsForTrial.contains(cohortDefinition.cohortId())) {
+                LOGGER.warn("Duplicate cohort ID found for trial '{}': '{}'", trialId, cohortId);
+                valid = false;
+            }
+
+            cohortIdsForTrial.add(cohortId);
+            cohortIdsPerTrial.put(trialId, cohortIdsForTrial);
         }
         return valid;
     }
@@ -78,9 +115,6 @@ public final class TrialConfigDatabaseValidator {
         Set<String> cohortIds = Sets.newHashSet();
         for (CohortDefinitionConfig cohortDefinition : cohortDefinitions) {
             if (cohortDefinition.trialId().equals(trialId)) {
-                if (cohortIds.contains(cohortDefinition.cohortId())) {
-                    LOGGER.warn("Duplicate cohort ID found for trial {}: {}", trialId, cohortDefinition.cohortId());
-                }
                 cohortIds.add(cohortDefinition.cohortId());
             }
         }
@@ -93,25 +127,25 @@ public final class TrialConfigDatabaseValidator {
         Set<String> trialIds = cohortIdsPerTrial.keySet();
         for (InclusionCriteriaConfig criterion : inclusionCriteria) {
             if (!trialIds.contains(criterion.trialId())) {
-                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: {}", criterion.inclusionRule(), criterion.trialId());
+                LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: '{}'", criterion.inclusionRule(), criterion.trialId());
                 valid = false;
             } else {
                 Collection<String> cohortIdsForTrial = cohortIdsPerTrial.get(criterion.trialId());
                 for (String cohortId : criterion.appliesToCohorts()) {
                     if (!cohortIdsForTrial.contains(cohortId)) {
-                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: {}", criterion.inclusionRule(), cohortId);
+                        LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: '{}'", criterion.inclusionRule(), cohortId);
                         valid = false;
                     }
                 }
             }
 
             if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule())) {
-                LOGGER.warn("Not a valid inclusion criterion for trial '{}': {}", criterion.trialId(), criterion.inclusionRule());
+                LOGGER.warn("Not a valid inclusion criterion for trial '{}': '{}'", criterion.trialId(), criterion.inclusionRule());
                 valid = false;
             }
 
             if (criterion.referenceIds().isEmpty()) {
-                LOGGER.warn("No criterion IDs defined for criterion {} on trial '{}", criterion.inclusionRule(), criterion.trialId());
+                LOGGER.warn("No criterion IDs defined for criterion '{}' on trial '{}'", criterion.inclusionRule(), criterion.trialId());
                 valid = false;
             }
         }
@@ -124,9 +158,25 @@ public final class TrialConfigDatabaseValidator {
         boolean valid = true;
         for (InclusionCriteriaReferenceConfig referenceConfig : inclusionCriteriaReferenceConfigs) {
             if (!trialIds.contains(referenceConfig.trialId())) {
-                LOGGER.warn("Reference '{}' defined on non-existing trial: {}", referenceConfig.referenceId(), referenceConfig.trialId());
+                LOGGER.warn("Reference '{}' defined on non-existing trial: '{}'", referenceConfig.referenceId(), referenceConfig.trialId());
                 valid = false;
             }
+        }
+
+        Map<String, Set<String>> referenceIdsPerTrial = Maps.newHashMap();
+        for (InclusionCriteriaReferenceConfig config : inclusionCriteriaReferenceConfigs) {
+            String trialId = config.trialId();
+            String referenceId = config.referenceId();
+
+            Set<String> referenceIdsForTrial = referenceIdsPerTrial.get(trialId);
+            if (referenceIdsForTrial == null) {
+                referenceIdsForTrial = Sets.newHashSet();
+            } else if (referenceIdsForTrial.contains(referenceId)) {
+                LOGGER.warn("Duplicate reference ID found for trial '{}': '{}'", trialId, referenceId);
+                valid = false;
+            }
+            referenceIdsForTrial.add(referenceId);
+            referenceIdsPerTrial.put(trialId, referenceIdsForTrial);
         }
 
         Multimap<String, InclusionCriteriaReferenceConfig> referencesPerTrial = buildMapPerTrial(inclusionCriteriaReferenceConfigs);
@@ -138,7 +188,7 @@ public final class TrialConfigDatabaseValidator {
             if (references != null && criteria != null) {
                 for (InclusionCriteriaConfig criterion : criteria) {
                     if (!allReferencesExist(references, criterion.referenceIds())) {
-                        LOGGER.warn("Not all references are defined on trial '{}': {}", trialId, criterion.referenceIds());
+                        LOGGER.warn("Not all references are defined on trial '{}': '{}'", trialId, criterion.referenceIds());
                         valid = false;
                     }
                 }
