@@ -19,6 +19,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
+import com.hartwig.actin.treatment.sort.CohortComparator;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.hartwig.actin.treatment.sort.EligibilityComparator;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
@@ -81,6 +82,8 @@ public class TrialFactory {
                     .eligibility(toEligibility(trialModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
                     .build());
         }
+
+        cohorts.sort(new CohortComparator());
 
         return cohorts;
     }

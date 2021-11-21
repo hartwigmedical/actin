@@ -67,26 +67,26 @@ public final class TrialJson {
 
             LOGGER.info(" Writing '{} ({})' to {}", trial.identification().trialId(), trial.identification().acronym(), jsonFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
-            writer.write(toJson(convertReferenceTexts(trial)));
+            writer.write(toJson(reformatReferenceTexts(trial)));
             writer.close();
         }
     }
 
     @NotNull
-    private static Trial convertReferenceTexts(@NotNull Trial trial) {
-        List<Cohort> convertedCohorts = Lists.newArrayList();
+    private static Trial reformatReferenceTexts(@NotNull Trial trial) {
+        List<Cohort> reformattedCohorts = Lists.newArrayList();
         for (Cohort cohort : trial.cohorts()) {
-            convertedCohorts.add(ImmutableCohort.builder().from(cohort).eligibility(convertEligibilities(cohort.eligibility())).build());
+            reformattedCohorts.add(ImmutableCohort.builder().from(cohort).eligibility(reformatEligibilities(cohort.eligibility())).build());
         }
         return ImmutableTrial.builder()
                 .from(trial)
-                .cohorts(convertedCohorts)
-                .generalEligibility(convertEligibilities(trial.generalEligibility()))
+                .cohorts(reformattedCohorts)
+                .generalEligibility(reformatEligibilities(trial.generalEligibility()))
                 .build();
     }
 
     @NotNull
-    private static List<Eligibility> convertEligibilities(@NotNull List<Eligibility> eligibilities) {
+    private static List<Eligibility> reformatEligibilities(@NotNull List<Eligibility> eligibilities) {
         List<Eligibility> convertedEligibility = Lists.newArrayList();
         for (Eligibility eligibility : eligibilities) {
             Set<CriterionReference> convertedReferences = Sets.newTreeSet(new CriterionReferenceComparator());
@@ -146,7 +146,8 @@ public final class TrialJson {
                 @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject trial = jsonElement.getAsJsonObject();
 
-            return ImmutableTrial.builder().identification(toTrialIdentification(object(trial, "identification")))
+            return ImmutableTrial.builder()
+                    .identification(toTrialIdentification(object(trial, "identification")))
                     .generalEligibility(toEligibility(array(trial, "generalEligibility")))
                     .cohorts(toCohorts(array(trial, "cohorts")))
                     .build();
