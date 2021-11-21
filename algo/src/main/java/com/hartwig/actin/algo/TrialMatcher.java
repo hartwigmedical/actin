@@ -17,6 +17,7 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
+import com.hartwig.actin.algo.sort.TrialEligibilityComparator;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.Trial;
@@ -43,12 +44,15 @@ public final class TrialMatcher {
             }
 
             Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, trial.generalEligibility());
-            trialMatches.add(ImmutableTrialEligibility.builder().identification(trial.identification())
+            trialMatches.add(ImmutableTrialEligibility.builder()
+                    .identification(trial.identification())
                     .overallEvaluation(determineOverallEvaluation(evaluations))
                     .evaluations(evaluations)
                     .cohorts(cohortMatching)
                     .build());
         }
+
+        trialMatches.sort(new TrialEligibilityComparator());
 
         return ImmutableTreatmentMatch.builder().sampleId(patient.sampleId()).trialMatches(trialMatches).build();
     }

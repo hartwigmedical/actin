@@ -31,6 +31,7 @@ public class CohortComparator implements Comparator<Cohort> {
             if (eligibilityCompare != 0) {
                 return eligibilityCompare;
             }
+            index++;
         }
 
         return 0;
