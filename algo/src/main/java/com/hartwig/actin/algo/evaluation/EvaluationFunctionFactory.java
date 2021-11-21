@@ -177,7 +177,8 @@ public final class EvaluationFunctionFactory {
 
     @NotNull
     public static EvaluationFunction create(@NotNull EligibilityFunction function) {
-        if (!EligibilityParameterResolver.hasValidParameters(function)) {
+        Boolean hasValidParameters = EligibilityParameterResolver.hasValidParameters(function);
+        if (hasValidParameters == null || !hasValidParameters) {
             LOGGER.warn("Function with rule '{}' has invalid inputs {}. Evaluation for this rule will always be undetermined",
                     function.rule(),
                     function.parameters());

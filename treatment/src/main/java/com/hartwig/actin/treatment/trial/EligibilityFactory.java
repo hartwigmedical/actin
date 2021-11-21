@@ -51,7 +51,8 @@ public final class EligibilityFactory {
         }
 
         EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
-        if (!EligibilityParameterResolver.hasValidParameters(function)) {
+        Boolean hasValidParameters = EligibilityParameterResolver.hasValidParameters(function);
+        if (hasValidParameters == null || !hasValidParameters) {
             throw new IllegalStateException("Function " + function.rule() + " has invalid parameters: '" + function.parameters() + "'");
         }
         return function;

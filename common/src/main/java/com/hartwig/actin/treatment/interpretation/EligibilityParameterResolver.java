@@ -137,7 +137,7 @@ public final class EligibilityParameterResolver {
             } else if (RULES_WITHOUT_PARAMETERS.contains(function.rule())) {
                 return function.parameters().isEmpty();
             } else {
-                LOGGER.warn("Could not determine validity of parameters for function with rule '{}'", function.rule());
+                LOGGER.warn("Rule '{}' not defined in eligibility parameter resolver!", function.rule());
                 return null;
             }
         } catch (Exception exception) {
