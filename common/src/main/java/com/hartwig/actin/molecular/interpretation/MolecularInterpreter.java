@@ -19,16 +19,13 @@ import org.jetbrains.annotations.NotNull;
 public final class MolecularInterpreter {
 
     private static final Set<String> NON_APPLICABLE_START_KEYWORDS = Sets.newHashSet();
+    private static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
 
     static {
         NON_APPLICABLE_START_KEYWORDS.add("CDKN2A");
-    }
 
-    private static final Set<String> NON_APPLICABLE_FULL_EVENT_KEYWORDS = Sets.newHashSet();
-
-    static {
-        NON_APPLICABLE_FULL_EVENT_KEYWORDS.add("VEGFA full gain");
-        NON_APPLICABLE_FULL_EVENT_KEYWORDS.add("VEGFA partial gain");
+        NON_APPLICABLE_EVENTS.add("VEGFA full gain");
+        NON_APPLICABLE_EVENTS.add("VEGFA partial gain");
     }
 
     private MolecularInterpreter() {
@@ -103,8 +100,8 @@ public final class MolecularInterpreter {
             }
         }
 
-        for (String nonApplicableFullEventKeyword : NON_APPLICABLE_FULL_EVENT_KEYWORDS) {
-            if (evidence.genomicEvent().equals(nonApplicableFullEventKeyword)) {
+        for (String nonApplicableEvent : NON_APPLICABLE_EVENTS) {
+            if (evidence.genomicEvent().equals(nonApplicableEvent)) {
                 return false;
             }
         }
