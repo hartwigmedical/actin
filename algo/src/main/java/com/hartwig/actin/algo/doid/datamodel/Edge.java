@@ -13,7 +13,13 @@ public abstract class Edge {
     public abstract String subject();
 
     @NotNull
+    public abstract String subjectDoid();
+
+    @NotNull
     public abstract String object();
+
+    @NotNull
+    public abstract String objectDoid();
 
     @NotNull
     public abstract String predicate();

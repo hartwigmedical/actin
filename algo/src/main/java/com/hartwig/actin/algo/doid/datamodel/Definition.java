@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class Definition {
 
     @NotNull
-    public abstract String definitionVal();
+    public abstract String val();
 
     @NotNull
-    public abstract List<String> definitionXrefs();
+    public abstract List<String> xrefs();
 }

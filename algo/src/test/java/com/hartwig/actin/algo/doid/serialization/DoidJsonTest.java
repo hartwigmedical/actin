@@ -11,13 +11,14 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.hartwig.actin.algo.doid.datamodel.BasicPropertyValue;
 import com.hartwig.actin.algo.doid.datamodel.Definition;
+import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
 import com.hartwig.actin.algo.doid.datamodel.Edge;
-import com.hartwig.actin.algo.doid.datamodel.Entry;
 import com.hartwig.actin.algo.doid.datamodel.ImmutableXref;
 import com.hartwig.actin.algo.doid.datamodel.Node;
 import com.hartwig.actin.algo.doid.datamodel.Synonym;
 import com.hartwig.actin.algo.doid.datamodel.Xref;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -27,8 +28,8 @@ public class DoidJsonTest {
 
     @Test
     public void canExtractDoidFromUrl() {
-        String url = "http://purl.obolibrary.org/obo/DOID_345";
-        assertEquals("345", DoidJson.extractDoid(url));
+        String url = DoidJson.DOID_URL_PREFIX + "300";
+        assertEquals("300", DoidJson.extractDoid(url));
     }
 
     @Test
@@ -45,7 +46,7 @@ public class DoidJsonTest {
 
     @Test
     public void canReadDoidJsonFile() throws IOException {
-        Entry entry = DoidJson.readDoidOwlEntryFromDoidJson(DOID_EXAMPLE_FILE_JSON);
+        DoidEntry entry = DoidJson.readDoidOwlEntry(DOID_EXAMPLE_FILE_JSON);
 
         assertEquals(DoidJson.ID_TO_READ, entry.id());
 
@@ -76,8 +77,8 @@ public class DoidJsonTest {
 
         Definition definition = node1.metadata().definition();
         assertEquals("A carcinoma in situ that is characterized by the spread of cancer in the respiratory "
-                + "system and the lack of invasion of surrounding tissues.", definition.definitionVal());
-        assertEquals(Lists.newArrayList("url:http://en.wikipedia.org/wiki/Carcinoma_in_situ"), definition.definitionXrefs());
+                + "system and the lack of invasion of surrounding tissues.", definition.val());
+        assertEquals(Lists.newArrayList("url:http://en.wikipedia.org/wiki/Carcinoma_in_situ"), definition.xrefs());
 
         Synonym synonym = node1.metadata().synonyms().get(0);
         assertEquals("hasExactSynonym", synonym.pred());
@@ -105,9 +106,9 @@ public class DoidJsonTest {
 
         Definition definition = node2.metadata().definition();
         assertEquals("Decubitus ulcer is a chronic ulcer of skin where the ulcer is an ulceration of "
-                + "tissue deprived of adequate blood supply by prolonged pressure.", definition.definitionVal());
+                + "tissue deprived of adequate blood supply by prolonged pressure.", definition.val());
         assertEquals(Lists.newArrayList("url:http://www2.merriam-webster.com/cgi-bin/mwmednlm?book=Medical&va=bedsore"),
-                definition.definitionXrefs());
+                definition.xrefs());
 
         List<String> subset = node2.metadata().subsets();
         assertEquals(Lists.newArrayList("http://purl.obolibrary.org/obo/doid#NCIthesaurus"), subset);
@@ -171,12 +172,16 @@ public class DoidJsonTest {
 
         Edge edge1 = edges.get(0);
         assertEquals("http://purl.obolibrary.org/obo/DOID_8717", edge1.subject());
-        assertEquals("is_a", edge1.predicate());
+        assertEquals("8717", edge1.subjectDoid());
         assertEquals("http://purl.obolibrary.org/obo/DOID_8549", edge1.object());
+        assertEquals("8549", edge1.objectDoid());
+        assertEquals("is_a", edge1.predicate());
 
         Edge edge2 = edges.get(1);
         assertEquals("http://purl.obolibrary.org/obo/CHEBI_50906", edge2.subject());
+        assertEquals(Strings.EMPTY, edge2.subjectDoid());
         assertEquals("is_a", edge2.predicate());
         assertEquals("http://purl.obolibrary.org/obo/doid#chebi", edge2.object());
+        assertEquals(Strings.EMPTY, edge2.objectDoid());
     }
 }

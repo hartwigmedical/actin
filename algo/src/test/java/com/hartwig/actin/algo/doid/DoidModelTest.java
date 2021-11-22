@@ -1,48 +1,44 @@
 package com.hartwig.actin.algo.doid;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.doid.datamodel.Edge;
-import com.hartwig.actin.algo.doid.datamodel.ImmutableEdge;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class DoidModelTest {
 
     @Test
-    public void testBehaviour() {
-        List<Edge> edges = Lists.newArrayList();
-        edges.add(createParent("299", "305"));
-        edges.add(createParent("305", "162"));
-        edges.add(createEdge("305", "has_a", "162"));
+    public void canIncludeParents() {
+        Multimap<String, String> relations = ArrayListMultimap.create();
+        relations.put("200", "300");
+        relations.put("300", "400");
 
-        DoidModel victim = DoidModel.fromEdges(edges);
-        assertEquals(2, victim.size());
+        DoidModel model = new DoidModel(relations);
 
-        Set<String> parents299 = victim.parents("299");
-        assertEquals(2, parents299.size());
-        assertTrue(parents299.contains("305"));
-        assertTrue(parents299.contains("162"));
+        Set<String> withParents200 = model.includeParents("200");
+        assertEquals(3, withParents200.size());
+        assertTrue(withParents200.contains("200"));
+        assertTrue(withParents200.contains("300"));
+        assertTrue(withParents200.contains("400"));
 
-        Set<String> parents305 = victim.parents("305");
-        assertEquals(1, parents305.size());
-        assertTrue(parents305.contains("162"));
-    }
+        Set<String> withParents300 = model.includeParents("300");
+        assertEquals(2, withParents300.size());
+        assertFalse(withParents300.contains("200"));
+        assertTrue(withParents300.contains("300"));
+        assertTrue(withParents300.contains("400"));
 
-    @NotNull
-    private static Edge createParent(@NotNull String child, @NotNull String parent) {
-        String prefix = "http://purl.obolibrary.org/obo/DOID_";
-        return createEdge(prefix + child, "is_a", prefix + parent);
-    }
+        Set<String> withParents400 = model.includeParents("400");
+        assertEquals(1, withParents400.size());
+        assertFalse(withParents400.contains("200"));
+        assertFalse(withParents400.contains("300"));
+        assertTrue(withParents400.contains("400"));
 
-    @NotNull
-    private static Edge createEdge(@NotNull String subject, @NotNull String pred, @NotNull String object) {
-        return ImmutableEdge.builder().subject(subject).predicate(pred).object(object).build();
+        assertEquals(1, model.includeParents("500").size());
     }
 }
