@@ -64,8 +64,8 @@ public final class DoidJson {
     }
 
     @NotNull
-    public static DoidEntry readDoidOwlEntry(@NotNull String doidJsonFile) throws IOException {
-        JsonReader reader = new JsonReader(new FileReader(doidJsonFile));
+    public static DoidEntry readDoidOwlEntry(@NotNull String doidJson) throws IOException {
+        JsonReader reader = new JsonReader(new FileReader(doidJson));
         reader.setLenient(true);
 
         JsonObject rootObject = JsonParser.parseReader(reader).getAsJsonObject();
@@ -95,7 +95,7 @@ public final class DoidJson {
         }
 
         if (reader.peek() != JsonToken.END_DOCUMENT) {
-            LOGGER.warn("More data found in {} after reading main JSON object!", doidJsonFile);
+            LOGGER.warn("More data found in {} after reading main JSON object!", doidJson);
         }
 
         if (entry == null) {
