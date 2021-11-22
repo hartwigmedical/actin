@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.serialization;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,7 +8,16 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import com.hartwig.actin.algo.doid.datamodel.DoidBasicPropertyValue;
+import com.hartwig.actin.algo.doid.datamodel.DoidDefinition;
+import com.hartwig.actin.algo.doid.datamodel.DoidEdge;
+import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
+import com.hartwig.actin.algo.doid.datamodel.DoidNode;
+import com.hartwig.actin.algo.doid.datamodel.DoidSynonym;
+import com.hartwig.actin.algo.doid.datamodel.DoidXref;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidXref;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class DiseaseOntologyTest {
@@ -95,7 +104,7 @@ public class DiseaseOntologyTest {
         assertEquals(Lists.newArrayList("http://purl.obolibrary.org/obo/doid#NCIthesaurus"), subset2);
 
         List<DoidXref> doidXrefs = doidNode2.doidMetadata().xrefs();
-        assertEquals(ImmutableDoidXref.builder().val("NCI:C50706").build(), doidXrefs.get(0));
+        Assert.assertEquals(ImmutableDoidXref.builder().val("NCI:C50706").build(), doidXrefs.get(0));
         assertEquals(ImmutableDoidXref.builder().val("MESH:D003668").build(), doidXrefs.get(1));
         assertEquals(ImmutableDoidXref.builder().val("ICD9CM:707.0").build(), doidXrefs.get(2));
         assertEquals(ImmutableDoidXref.builder().val("UMLS_CUI:C0011127").build(), doidXrefs.get(3));

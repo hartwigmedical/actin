@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.algo.doid.datamodel.DoidEdge;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidEdge;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

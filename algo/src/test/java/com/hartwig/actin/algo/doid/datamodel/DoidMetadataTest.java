@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.datamodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

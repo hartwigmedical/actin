@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.datamodel;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -7,11 +7,14 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DoidRestriction {
+public abstract class DoidEdge {
 
     @NotNull
-    public abstract String propertyId();
+    public abstract String subject();
 
     @NotNull
-    public abstract String fillerId();
+    public abstract String object();
+
+    @NotNull
+    public abstract String predicate();
 }

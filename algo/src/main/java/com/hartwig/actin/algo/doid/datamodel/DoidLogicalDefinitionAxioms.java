@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.datamodel;
 
 import java.util.List;
 
@@ -9,15 +9,14 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DoidSynonym {
+public abstract class DoidLogicalDefinitionAxioms {
 
     @NotNull
-    public abstract String pred();
+    public abstract String definedClassId();
 
     @NotNull
-    public abstract String val();
+    public abstract List<String> genusIds();
 
     @NotNull
-    public abstract List<String> xrefs();
+    public abstract List<DoidRestriction> restrictions();
 }
-

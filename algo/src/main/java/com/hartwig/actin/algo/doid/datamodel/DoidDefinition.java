@@ -1,4 +1,6 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.datamodel;
+
+import java.util.List;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -7,8 +9,11 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DoidXref {
+public abstract class DoidDefinition {
 
     @NotNull
-    public abstract String val();
+    public abstract String definitionVal();
+
+    @NotNull
+    public abstract List<String> definitionXrefs();
 }

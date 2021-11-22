@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.datamodel;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

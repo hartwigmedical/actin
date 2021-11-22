@@ -3,10 +3,11 @@ package com.hartwig.actin.algo.doid;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.algo.doid.datamodel.DoidEdge;
+import com.hartwig.actin.algo.doid.serialization.DiseaseOntology;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,8 +37,7 @@ public class DoidParents {
         return new DoidParents(relationship);
     }
 
-    @VisibleForTesting
-    DoidParents(@NotNull final ListMultimap<String, String> relationship) {
+    public DoidParents(@NotNull final ListMultimap<String, String> relationship) {
         this.relationship = relationship;
     }
 

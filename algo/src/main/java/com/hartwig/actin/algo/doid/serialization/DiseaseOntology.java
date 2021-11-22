@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.algo.doid.serialization;
 
 import static com.hartwig.actin.json.Json.optionalArray;
 import static com.hartwig.actin.json.Json.optionalObject;
@@ -19,6 +19,28 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+import com.hartwig.actin.algo.doid.datamodel.DoidBasicPropertyValue;
+import com.hartwig.actin.algo.doid.datamodel.DoidDefinition;
+import com.hartwig.actin.algo.doid.datamodel.DoidEdge;
+import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
+import com.hartwig.actin.algo.doid.datamodel.DoidGraphMetaData;
+import com.hartwig.actin.algo.doid.datamodel.DoidLogicalDefinitionAxioms;
+import com.hartwig.actin.algo.doid.datamodel.DoidMetadata;
+import com.hartwig.actin.algo.doid.datamodel.DoidNode;
+import com.hartwig.actin.algo.doid.datamodel.DoidRestriction;
+import com.hartwig.actin.algo.doid.datamodel.DoidSynonym;
+import com.hartwig.actin.algo.doid.datamodel.DoidXref;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidBasicPropertyValue;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidDefinition;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidEdge;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidEntry;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidGraphMetaData;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidLogicalDefinitionAxioms;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidMetadata;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidNode;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidRestriction;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidSynonym;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidXref;
 import com.hartwig.actin.json.JsonDatamodelChecker;
 
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +102,7 @@ public final class DiseaseOntology {
     }
 
     @NotNull
-    static String extractDoid(@NotNull String url) {
+    public static String extractDoid(@NotNull String url) {
         return url.replace("http://purl.obolibrary.org/obo/DOID_", "");
     }
 
