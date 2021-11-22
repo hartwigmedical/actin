@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class PrimaryTumorLocationBelongsToDoidTest {
@@ -30,7 +31,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         assertEquals(Evaluation.PASS, function100.evaluate(patientWithDoids("200")));
         assertEquals(Evaluation.PASS, function100.evaluate(patientWithDoids("10", "100")));
         assertEquals(Evaluation.FAIL, function100.evaluate(patientWithDoids("50", "250")));
-        assertEquals(Evaluation.UNDETERMINED, function100.evaluate(patientWithDoids(Lists.newArrayList())));
+        assertEquals(Evaluation.UNDETERMINED, function100.evaluate(patientWithDoids((List<String>) null)));
 
         PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200");
 
@@ -47,7 +48,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @NotNull
-    private static PatientRecord patientWithDoids(@NotNull List<String> doids) {
+    private static PatientRecord patientWithDoids(@Nullable List<String> doids) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()

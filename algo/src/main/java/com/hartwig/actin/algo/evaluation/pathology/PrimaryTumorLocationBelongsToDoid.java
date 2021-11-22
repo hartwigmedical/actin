@@ -26,7 +26,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> doids = record.clinical().tumor().doids();
 
-        if (doids.isEmpty()) {
+        if (doids == null || doids.isEmpty()) {
             return Evaluation.UNDETERMINED;
         } else {
             Evaluation evaluation = Evaluation.FAIL;
