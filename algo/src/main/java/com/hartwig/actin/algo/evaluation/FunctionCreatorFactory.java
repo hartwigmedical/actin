@@ -69,10 +69,7 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
         functionCreatorMap.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         functionCreatorMap.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
-        functionCreatorMap.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
         functionCreatorMap.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
         functionCreatorMap.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, notImplementedCreator());
 
@@ -102,6 +99,18 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.ACTIVATION_OF_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.INACTIVATION_OF_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.DELETION_OF_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.WILDTYPE_OF_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.MSI_SIGNATURE, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.HRD_SIGNATURE, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.TMB_OF_AT_LEAST_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.TML_OF_AT_LEAST_X, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
         functionCreatorMap.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, notImplementedCreator());
@@ -109,10 +118,9 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator());
         functionCreatorMap.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasSufficientCreatinineCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CKD_EPI_OF_AT_LEAST_X,
-                hasSufficientCreatinineClearanceCKDEPICreator());
+        functionCreatorMap.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCKDEPICreator());
+        functionCreatorMap.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_CREATININE_CLEARANCE_MDRD_OF_AT_LEAST_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X, hasLimitedTotalBilirubinCreator());
         functionCreatorMap.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X, hasLimitedDirectBilirubinCreator());
         functionCreatorMap.put(EligibilityRule.HAS_INR_ULN_AT_MOST_X, hasLimitedINRCreator());
@@ -132,6 +140,7 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator());
         functionCreatorMap.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.HAS_HYPERTENSION, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.HAS_KNOWN_LVEF_OF_AT_MOST_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_ACTIVE_INFECTION, hasActiveInfectionCreator());
@@ -140,11 +149,16 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasKnownHIVInfectionCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
+        functionCreatorMap.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, currentlyGetsCorticosteroidMedicationCreator());
         functionCreatorMap.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION,
                 currentlyGetsImmunoSuppressantMedicationCreator());
         functionCreatorMap.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, hasStableAnticoagulantDosingCreator());
+
+        functionCreatorMap.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
+        functionCreatorMap.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
+        functionCreatorMap.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
         functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY, hasToxicityWithGradeInNeuropathyCreator());
