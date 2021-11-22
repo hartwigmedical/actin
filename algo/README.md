@@ -122,9 +122,9 @@ HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes abs => X
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin g/dL => X. In case Hb is measured in mmol/L, the value is converted using 
 HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin mmol/L => X. In case Hb is measured in g/dL, the value is converted using 
 HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine <= X*ULN (upper limit of normal)
-HAS_CREATININE_CLEARANCE_CKD_EPI_OF_AT_LEAST_X | Creatinine clearance (CKD-EPI formula) => X. In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft-Gault formula) => X. In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_MDRD_OF_AT_LEAST_X | Creatinine clearance (MDRD formula) => X. In case CrCl is measured in another unit, the value is converted using
+HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. In case CrCl is measured in another unit, the value is converted using
+HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. In case CrCl is measured in another unit, the value is converted using
+HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. In case CrCl is measured in another unit, the value is converted using
 HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X | Total Bilirubin <= X*ULN
 HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X | Direct Bilirubin <= X*ULN
 HAS_INR_ULN_AT_MOST_X | INR <= X*ULN
@@ -148,6 +148,7 @@ HAS_HISTORY_OF_TIA | Prior other conditions > configured doid should be equal or
 HAS_GILBERT_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > configured doid should be equal or be a child of DOID 10763
+HAS_KNOWN_LVEF_OF_AT_MOST_X | clinicalStatus > lvef should be <= X
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
 
 ##### Rules related to infections
@@ -163,6 +164,7 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
 HAS_ALLERGY_RELATED_TO_STUDY _MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
+CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | ignore
 CURRENTLY_GETS_ANTIBIOTICS _MEDICATION | Medication > type is type of antibiotics
 CURRENTLY_GETS_CORTICOSTEROID _MEDICATION | Medication > type is type of corticosteroids
 CURRENTLY_GETS_IMMUNOSUPPRESSANT _MEDICATION | T.B.D.
