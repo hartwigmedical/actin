@@ -41,9 +41,9 @@ public final class Json {
         return object.getAsJsonArray(field);
     }
 
-    @NotNull
+    @Nullable
     public static List<String> optionalStringList(@NotNull JsonObject object, @NotNull String field) {
-        return object.has(field) ? stringList(object, field) : Lists.newArrayList();
+        return object.has(field) ? stringList(object, field) : null;
     }
 
     @Nullable

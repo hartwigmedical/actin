@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DoidNode {
+public abstract class Node {
 
     @NotNull
     public abstract String doid();
@@ -16,17 +16,17 @@ public abstract class DoidNode {
     public abstract String url();
 
     @Nullable
-    public abstract String doidTerm();
+    public abstract String term();
 
     @Nullable
     public abstract String type();
 
     @Nullable
-    public abstract DoidMetadata doidMetadata();
+    public abstract Metadata metadata();
 
     @Nullable
     @Value.Derived
     public String snomedConceptId() {
-        return doidMetadata() != null ? doidMetadata().snomedConceptId() : null;
+        return metadata() != null ? metadata().snomedConceptId() : null;
     }
 }

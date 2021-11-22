@@ -9,30 +9,30 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DoidEntry {
+public abstract class Entry {
 
     @NotNull
     public abstract String id();
 
     @NotNull
-    public abstract List<DoidNode> nodes();
+    public abstract List<Node> nodes();
 
     @NotNull
-    public abstract List<DoidEdge> edges();
+    public abstract List<Edge> edges();
 
     @NotNull
-    public abstract DoidGraphMetaData meta();
+    public abstract GraphMetadata metadata();
 
     @Nullable
-    public abstract List<DoidLogicalDefinitionAxioms> logicalDefinitionAxioms();
+    public abstract List<LogicalDefinitionAxioms> logicalDefinitionAxioms();
 
-    @NotNull
+    @Nullable
     public abstract List<String> equivalentNodesSets();
 
-    @NotNull
+    @Nullable
     public abstract List<String> domainRangeAxioms();
 
-    @NotNull
+    @Nullable
     public abstract List<String> propertyChainAxioms();
 
 }

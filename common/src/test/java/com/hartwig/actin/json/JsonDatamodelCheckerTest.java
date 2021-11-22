@@ -13,7 +13,7 @@ import org.junit.Test;
 public class JsonDatamodelCheckerTest {
 
     @Test
-    public void checkingWorksAsExpected() {
+    public void canCheckExistenceOfFields() {
         Map<String, Boolean> map = Maps.newHashMap();
         map.put("A", true);
         map.put("B", false);

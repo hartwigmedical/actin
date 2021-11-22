@@ -7,8 +7,14 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DoidXref {
+public abstract class Edge {
 
     @NotNull
-    public abstract String val();
+    public abstract String subject();
+
+    @NotNull
+    public abstract String object();
+
+    @NotNull
+    public abstract String predicate();
 }

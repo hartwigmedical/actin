@@ -20,7 +20,10 @@ public class JsonTest {
     public void canExtractObjects() {
         JsonObject object = new JsonObject();
 
+        assertNull(Json.optionalObject(object, "object"));
+
         object.add("object", new JsonObject());
+        assertNotNull(Json.optionalObject(object, "object"));
         assertNotNull(Json.object(object, "object"));
 
         object.add("null", null);
@@ -31,17 +34,23 @@ public class JsonTest {
     public void canExtractArrays() {
         JsonObject object = new JsonObject();
 
+        assertNull(Json.optionalArray(object, "array1"));
+
         object.add("array1", new JsonArray());
+        assertNotNull(Json.optionalArray(object, "array1"));
         assertNotNull(Json.array(object, "array1"));
 
         object.addProperty("nullable", (String) null);
         assertNull(Json.nullableStringList(object, "nullable"));
+
+        assertNull(Json.optionalStringList(object, "array2"));
 
         JsonArray array = new JsonArray();
         array.add("value1");
         array.add("value2");
         object.add("array2", array);
         assertEquals(2, Json.nullableStringList(object, "array2").size());
+        assertEquals(2, Json.optionalStringList(object, "array2").size());
 
         object.addProperty("string", "string");
         assertEquals(1, Json.nullableStringList(object, "string").size());
@@ -51,11 +60,14 @@ public class JsonTest {
     public void canExtractStrings() {
         JsonObject object = new JsonObject();
 
-        object.addProperty("nullable", (String) null);
-        assertNull(Json.nullableString(object, "nullable"));
+        assertNull(Json.optionalString(object, "string"));
 
         object.addProperty("string", "value");
         assertEquals("value", Json.nullableString(object, "string"));
+        assertEquals("value", Json.optionalString(object, "string"));
+
+        object.addProperty("nullable", (String) null);
+        assertNull(Json.nullableString(object, "nullable"));
     }
 
     @Test

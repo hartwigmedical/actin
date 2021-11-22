@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.doid.datamodel;
 
 import com.google.common.collect.ListMultimap;
-import com.hartwig.actin.algo.doid.DoidParents;
+import com.hartwig.actin.algo.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ public final class TestDoidFactory {
     }
 
     @NotNull
-    public static DoidParents createDoidParents(@NotNull ListMultimap<String, String> relationship) {
-        return new DoidParents(relationship);
+    public static DoidModel createDoidParents(@NotNull ListMultimap<String, String> relationship) {
+        return new DoidModel(relationship);
     }
 }
