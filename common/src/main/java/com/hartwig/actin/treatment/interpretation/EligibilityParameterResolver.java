@@ -67,7 +67,7 @@ public final class EligibilityParameterResolver {
         RULES_WITH_ONE_STRING_PARAMETER.add(EligibilityRule.WILDTYPE_OF_GENE_X);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.MSI_SIGNATURE);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HRD_SIGNATURE);
-        RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.TMB_OF_AT_LEAST_X);
+        RULES_WITH_ONE_DOUBLE_PARAMETER.add(EligibilityRule.TMB_OF_AT_LEAST_X);
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.TML_OF_AT_LEAST_X);
 
         RULES_WITH_ONE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X);
