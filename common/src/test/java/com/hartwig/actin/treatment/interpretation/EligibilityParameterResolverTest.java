@@ -23,7 +23,7 @@ public class EligibilityParameterResolverTest {
     public void everyRuleIsOfSingleType() {
         for (EligibilityRule rule : EligibilityRule.values()) {
             int count = 0;
-            if (EligibilityParameterResolver.COMPOSITE_RULES.contains(rule)) {
+            if (CompositeRules.isComposite(rule)) {
                 count++;
             }
 

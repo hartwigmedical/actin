@@ -78,7 +78,7 @@ public class TreatmentMatcherApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
         LOGGER.info(("Matching patient to available trials"));
-        TrialMatcher matcher = new TrialMatcher(DoidModelFactory.createFromDoidEntry(doidEntry));
+        TrialMatcher matcher = TrialMatcher.withDoidModel(DoidModelFactory.createFromDoidEntry(doidEntry));
         TreatmentMatch match = matcher.determineEligibility(patient, trials);
 
         TreatmentMatchJson.write(match, config.outputDirectory());

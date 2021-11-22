@@ -24,20 +24,20 @@ public class DoidModel {
     }
 
     @NotNull
-    public Set<String> includeParents(@NotNull String doid) {
+    public Set<String> doidWithParents(@NotNull String doid) {
         Set<String> doids = Sets.newHashSet(doid);
-        inner(doid, doids);
+        addParents(doid, doids);
         return doids;
     }
 
-    private void inner(@NotNull String child, @NotNull Set<String> result) {
+    private void addParents(@NotNull String child, @NotNull Set<String> result) {
         if (!relationship.containsKey(child)) {
             return;
         }
 
         for (String parent : relationship.get(child)) {
             if (result.add(parent)) {
-                inner(parent, result);
+                addParents(parent, result);
             }
         }
     }

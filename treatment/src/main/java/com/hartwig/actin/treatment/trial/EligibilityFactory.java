@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.interpretation.CompositeRules;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +62,7 @@ public final class EligibilityFactory {
     @NotNull
     private static EligibilityRule extractCompositeRule(@NotNull String criterion) {
         EligibilityRule rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(COMPOSITE_START)));
-        if (!EligibilityParameterResolver.COMPOSITE_RULES.contains(rule)) {
+        if (!CompositeRules.isComposite(rule)) {
             throw new IllegalStateException("Not a valid composite rule: '" + rule + "'");
         }
         return rule;

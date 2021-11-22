@@ -21,24 +21,24 @@ public class DoidModelTest {
 
         DoidModel model = new DoidModel(relations);
 
-        Set<String> withParents200 = model.includeParents("200");
+        Set<String> withParents200 = model.doidWithParents("200");
         assertEquals(3, withParents200.size());
         assertTrue(withParents200.contains("200"));
         assertTrue(withParents200.contains("300"));
         assertTrue(withParents200.contains("400"));
 
-        Set<String> withParents300 = model.includeParents("300");
+        Set<String> withParents300 = model.doidWithParents("300");
         assertEquals(2, withParents300.size());
         assertFalse(withParents300.contains("200"));
         assertTrue(withParents300.contains("300"));
         assertTrue(withParents300.contains("400"));
 
-        Set<String> withParents400 = model.includeParents("400");
+        Set<String> withParents400 = model.doidWithParents("400");
         assertEquals(1, withParents400.size());
         assertFalse(withParents400.contains("200"));
         assertFalse(withParents400.contains("300"));
         assertTrue(withParents400.contains("400"));
 
-        assertEquals(1, model.includeParents("500").size());
+        assertEquals(1, model.doidWithParents("500").size());
     }
 }

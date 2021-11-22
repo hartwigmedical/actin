@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -29,10 +30,16 @@ import org.jetbrains.annotations.NotNull;
 public class TrialMatcher {
 
     @NotNull
-    private final DoidModel doidModel;
+    private final EvaluationFunctionFactory evaluationFunctionFactory;
 
-    public TrialMatcher(@NotNull final DoidModel doidModel) {
-        this.doidModel = doidModel;
+    @NotNull
+    public static TrialMatcher withDoidModel(@NotNull DoidModel doidModel) {
+        return new TrialMatcher(EvaluationFunctionFactory.withDoidModel(doidModel));
+    }
+
+    @VisibleForTesting
+    TrialMatcher(@NotNull final EvaluationFunctionFactory evaluationFunctionFactory) {
+        this.evaluationFunctionFactory = evaluationFunctionFactory;
     }
 
     @NotNull
@@ -67,7 +74,7 @@ public class TrialMatcher {
     private Map<Eligibility, Evaluation> evaluateEligibility(@NotNull PatientRecord patient, @NotNull List<Eligibility> eligibility) {
         Map<Eligibility, Evaluation> evaluations = Maps.newTreeMap(new EligibilityComparator());
         for (Eligibility entry : eligibility) {
-            EvaluationFunction evaluator = EvaluationFunctionFactory.create(entry.function());
+            EvaluationFunction evaluator = evaluationFunctionFactory.create(entry.function());
             evaluations.put(entry, evaluator.evaluate(patient));
         }
         return evaluations;

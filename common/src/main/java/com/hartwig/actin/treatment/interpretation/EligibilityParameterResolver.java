@@ -17,19 +17,12 @@ public final class EligibilityParameterResolver {
 
     private static final Logger LOGGER = LogManager.getLogger(EligibilityParameterResolver.class);
 
-    public static final Set<EligibilityRule> COMPOSITE_RULES = Sets.newHashSet();
-
     static final Set<EligibilityRule> RULES_WITH_SINGLE_DOUBLE_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_SINGLE_INTEGER_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_SINGLE_STRING_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITHOUT_PARAMETERS = Sets.newHashSet();
 
     static {
-        COMPOSITE_RULES.add(EligibilityRule.AND);
-        COMPOSITE_RULES.add(EligibilityRule.OR);
-        COMPOSITE_RULES.add(EligibilityRule.NOT);
-        COMPOSITE_RULES.add(EligibilityRule.WARN_ON_PASS);
-
         RULES_WITH_SINGLE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X);
         RULES_WITH_SINGLE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X);
         RULES_WITH_SINGLE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_THROMBOCYTES_ABS_AT_LEAST_X);
@@ -118,11 +111,15 @@ public final class EligibilityParameterResolver {
     @Nullable
     public static Boolean hasValidParameters(@NotNull EligibilityFunction function) {
         try {
-            if (COMPOSITE_RULES.contains(function.rule())) {
-                if (function.rule() == EligibilityRule.AND || function.rule() == EligibilityRule.OR) {
+            if (CompositeRules.isComposite(function.rule())) {
+                CompositeInput requiredInputs = CompositeRules.inputsForCompositeRule(function.rule());
+                if (requiredInputs == CompositeInput.AT_LEAST_2) {
                     createAtLeastTwoCompositeParameters(function);
-                } else {
+                } else if (requiredInputs == CompositeInput.MAXIMUM_1) {
                     createSingleCompositeParameter(function);
+                } else {
+                    throw new IllegalStateException(
+                            "Could not interpret composite inputs for rule '" + function.rule() + "': " + requiredInputs);
                 }
                 return true;
             } else if (RULES_WITH_SINGLE_DOUBLE_PARAMETER.contains(function.rule())) {
@@ -175,7 +172,7 @@ public final class EligibilityParameterResolver {
     public static List<EligibilityFunction> createAtLeastTwoCompositeParameters(@NotNull EligibilityFunction function) {
         if (function.parameters().size() < 2) {
             throw new IllegalArgumentException(
-                    "Not enough parameters passed into " + function.rule() + " function: " + function.parameters().size());
+                    "Not enough parameters passed into '" + function.rule() + "': " + function.parameters().size());
         }
 
         List<EligibilityFunction> functions = Lists.newArrayList();
@@ -188,7 +185,7 @@ public final class EligibilityParameterResolver {
     private static void assertExpectedParamCount(@NotNull EligibilityFunction function, int expectedCount) {
         if (function.parameters().size() != expectedCount) {
             throw new IllegalArgumentException(
-                    "Invalid number of inputs passed to function " + function.rule() + ": " + function.parameters().size());
+                    "Invalid number of inputs passed to '" + function.rule() + "': " + function.parameters().size());
         }
     }
 }
