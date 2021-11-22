@@ -35,6 +35,10 @@ public class EligibilityParameterResolverTest {
                 count++;
             }
 
+            if (EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.contains(rule)) {
+                count++;
+            }
+
             if (EligibilityParameterResolver.RULES_WITH_ONE_STRING_PARAMETER.contains(rule)) {
                 count++;
             }
@@ -105,7 +109,7 @@ public class EligibilityParameterResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithSingleIntegerParameter() {
+    public void canResolveFunctionsWithOneIntegerParameter() {
         EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_PARAMETER.iterator().next();
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2"));
@@ -115,6 +119,19 @@ public class EligibilityParameterResolverTest {
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1", "2"))));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not an integer"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneIntegerOneStringParameter() {
+        EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.iterator().next();
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test"));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
+        assertEquals(Lists.newArrayList(2, "test"), EligibilityParameterResolver.createOneIntegerOneStringParameter(valid));
+
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not an integer", "not an integer"))));
     }
 
     @Test

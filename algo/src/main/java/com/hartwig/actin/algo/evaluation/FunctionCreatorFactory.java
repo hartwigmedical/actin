@@ -162,9 +162,8 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY, hasToxicityWithGradeInNeuropathyCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_FATIGUE, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_VITILIGO, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientSBPCreator());
         functionCreatorMap.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientDBPCreator());

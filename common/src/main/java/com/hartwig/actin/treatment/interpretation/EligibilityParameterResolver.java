@@ -19,6 +19,7 @@ public final class EligibilityParameterResolver {
 
     static final Set<EligibilityRule> RULES_WITH_ONE_DOUBLE_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_ONE_INTEGER_PARAMETER = Sets.newHashSet();
+    static final Set<EligibilityRule> RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_ONE_STRING_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_TWO_STRING_PARAMETERS = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITHOUT_PARAMETERS = Sets.newHashSet();
@@ -117,9 +118,8 @@ public final class EligibilityParameterResolver {
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION);
 
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X);
-        RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY);
-        RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_FATIGUE);
-        RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_VITILIGO);
+        RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.add(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y);
+        RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.add(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y);
 
         RULES_WITH_ONE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X);
         RULES_WITH_ONE_DOUBLE_PARAMETER.add(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X);
@@ -143,8 +143,7 @@ public final class EligibilityParameterResolver {
                 } else if (requiredInputs == CompositeInput.MAXIMUM_1) {
                     createOneCompositeParameter(function);
                 } else {
-                    throw new IllegalStateException(
-                            "Could not interpret composite inputs for rule '" + function.rule() + "': " + requiredInputs);
+                    throw new IllegalStateException("Could not interpret composite inputs for rule '" + function.rule() + "': " + requiredInputs);
                 }
                 return true;
             }
@@ -153,6 +152,9 @@ public final class EligibilityParameterResolver {
                 return true;
             } else if (RULES_WITH_ONE_INTEGER_PARAMETER.contains(function.rule())) {
                 createOneIntegerParameter(function);
+                return true;
+            } else if (RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.contains(function.rule())) {
+                createOneIntegerOneStringParameter(function);
                 return true;
             } else if (RULES_WITH_ONE_STRING_PARAMETER.contains(function.rule())) {
                 createOneStringParameter(function);
@@ -169,6 +171,14 @@ public final class EligibilityParameterResolver {
         } catch (Exception exception) {
             return false;
         }
+
+    }
+
+    @NotNull
+    public static List<Object> createOneIntegerOneStringParameter(@NotNull EligibilityFunction function) {
+        assertExpectedParamCount(function, 2);
+
+        return Lists.newArrayList(Integer.parseInt((String) function.parameters().get(0)), function.parameters().get(1));
     }
 
     public static double createOneDoubleParameter(@NotNull EligibilityFunction function) {
