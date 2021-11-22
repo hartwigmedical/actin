@@ -71,7 +71,7 @@ public class EvaluationFunctionFactory {
 
     @NotNull
     private EvaluationFunction createSingleCompositeParameter(@NotNull EligibilityFunction function) {
-        return create(EligibilityParameterResolver.createSingleCompositeParameter(function));
+        return create(EligibilityParameterResolver.createOneCompositeParameter(function));
     }
 
     @NotNull
