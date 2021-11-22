@@ -59,7 +59,9 @@ OR | indicates that either of combined rules should be TRUE in order to PASS
 NOT | indicates that the rule should not be TRUE in order to PASS
 WARN_ON_PASS | indicates that a warning should be displayed in case of PASS and resolves to PASS_BUT_WARN
 
-Some rules require an additional configuration parameter ("X") that can be set to match the requirements of each trial. The following rules are available:
+Some rules require an additional configuration parameter ("X") that can be set to match the requirements of each trial. Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored. 
+
+The following rules are available:
 
 ##### Rules related to general patient characteristics
 
@@ -67,6 +69,10 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_AT_LEAST_18_YEARS_OLD | Current year minus birth year > 18 | PASS_BUT_WARN in case of exactly 18
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
+IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | ignore
+IS_INVOLVED_IN_STUDY_PROCEDURES | ignore
+HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | ignore
+HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | ignore
 
 ##### Rules related to tumor and lesion locations
  
@@ -84,6 +90,7 @@ HAS_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
+HAS_BIOPSY_AMENABLE_LESION | PASS (hard-coded)
 
 ##### Rules related to previous cancer treatments or previous primary tumors
 
@@ -150,7 +157,7 @@ HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid shoul
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
 
-##### Rules depending on current medication
+##### Rules related to current medication
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
@@ -159,6 +166,13 @@ CURRENTLY_GETS_ANTIBIOTICS _MEDICATION | Medication > type is type of antibiotic
 CURRENTLY_GETS_CORTICOSTEROID _MEDICATION | Medication > type is type of corticosteroids
 CURRENTLY_GETS_IMMUNOSUPPRESSANT _MEDICATION | T.B.D.
 HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
+
+##### Rules related to pregnancy/anticonception
+Rule | When does a patient pass evaluation?
+---|---
+IS_BREASTFEEDING | ignore
+IS_PREGNANT | ignore
+IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | ignore
 
 ##### Rules related to toxicity
 
@@ -190,22 +204,6 @@ Rule | When does a patient pass evaluation?
 ---|---
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
 
-
-#### Rules that are currently not evaluated
-
-Note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored:
-
-Rule | Hard-coded setting
----|---
-HAS_BIOPSY_AMENABLE_LESION | PASS
-IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | ignored
-IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | ignored
-IS_INVOLVED_IN_STUDY_PROCEDURES | ignored
-IS_BREASTFEEDING | ignored
-IS_PREGNANT | ignored
-HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | ignored
-HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | ignored
-HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | ignored
  
 ### Version History and Download Links
  - Upcoming (first release) 
