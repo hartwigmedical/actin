@@ -195,10 +195,8 @@ IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | ignore
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_NEUROPATHY | Toxicities > name = Neuropathy AND grade => X
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_FATIGUE | Toxicities > name = Fatigue AND grade => X
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_VITILIGO | Toxicities > name = Vitiligo AND grade => X
-(a.s.o.) | (a.s.o.)
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name = Y
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name = Y
 
 ##### Rules related to blood pressure measurements
 
