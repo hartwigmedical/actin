@@ -20,10 +20,16 @@ public class WarnOnPass implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Evaluation evaluation = function.evaluate(record);
 
-        if (evaluation == Evaluation.PASS) {
+        if (evaluation == Evaluation.PASS || evaluation == Evaluation.PASS_BUT_WARN) {
             return Evaluation.PASS_BUT_WARN;
-        } else {
-            return evaluation;
         }
+        if (evaluation == Evaluation.FAIL) {
+            return Evaluation.PASS;
+        }
+        if (evaluation == Evaluation.UNDETERMINED) {
+            return Evaluation.UNDETERMINED;
+        }
+        else
+            return Evaluation.NOT_IMPLEMENTED;
     }
 }
