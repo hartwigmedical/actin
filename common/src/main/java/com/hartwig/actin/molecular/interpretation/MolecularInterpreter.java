@@ -22,7 +22,13 @@ public final class MolecularInterpreter {
 
     static {
         NON_APPLICABLE_START_KEYWORDS.add("CDKN2A");
-        NON_APPLICABLE_START_KEYWORDS.add("VEGFA");
+    }
+
+    private static final Set<String> NON_APPLICABLE_FULL_EVENT_KEYWORDS = Sets.newHashSet();
+
+    static {
+        NON_APPLICABLE_FULL_EVENT_KEYWORDS.add("VEGFA full gain");
+        NON_APPLICABLE_FULL_EVENT_KEYWORDS.add("VEGFA partial gain");
     }
 
     private MolecularInterpreter() {
@@ -96,6 +102,13 @@ public final class MolecularInterpreter {
                 return false;
             }
         }
+
+        for (String nonApplicableFullEventKeyword : NON_APPLICABLE_FULL_EVENT_KEYWORDS) {
+            if (evidence.genomicEvent().equals(nonApplicableFullEventKeyword)) {
+                return false;
+            }
+        }
+
         return true;
     }
 }

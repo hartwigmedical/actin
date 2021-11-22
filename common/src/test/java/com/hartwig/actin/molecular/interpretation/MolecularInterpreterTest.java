@@ -66,6 +66,15 @@ public class MolecularInterpreterTest {
                 .genomicEvent("CDKN2A loss")
                 .build());
 
+        // Should be filtered out as it is VEGFA amp.
+        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
+                .treatment("Treatment 2")
+                .direction(EvidenceDirection.RESPONSIVE)
+                .level(EvidenceLevel.A)
+                .onLabel(true)
+                .genomicEvent("VEGFA full gain")
+                .build());
+
         // Should be filtered since there is no responsive evidence for treatment 3
         evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                 .treatment("Treatment 3")
