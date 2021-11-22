@@ -111,14 +111,15 @@ HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cel
 Rule | When does a patient pass evaluation?
 ---|---
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
-ACTIVATION_OF_GENE_X | High likelihood driver is found in gene X
-INACTIVATION_OF_GENE_X | High likelihood driver is found in gene X
-ACTIVATING_MUTATION_IN_GENE_X | High likelihood driver mutation is found in gene X
-INACTIVATING_MUTATION_IN_GENE_X | High likelihood driver mutation is found in gene X
+ACTIVATION_OF_GENE_X | Driver is found in gene X
+INACTIVATION_OF_GENE_X | Driver is found in gene X
+ACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
+ACTIVATING_MUTATION_IN_GENE_X_AND_SPECIFIC_MUTATION_Y | Driver mutation Y is found in gene X
+INACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion/Homozygous disruption is found in gene X
-ACTIVATING_FUSION_IN_GENE_X | Fusion of reportedType = 1 is found with fusion partner gene X
-WILDTYPE_OF_GENE_X | No high likelihood driver mutation is found in gene X
+ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
+WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
