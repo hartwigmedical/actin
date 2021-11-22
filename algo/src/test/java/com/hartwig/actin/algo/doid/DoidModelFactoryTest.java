@@ -11,7 +11,7 @@ import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
 import com.hartwig.actin.algo.doid.datamodel.Edge;
 import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidEntry;
 import com.hartwig.actin.algo.doid.datamodel.ImmutableEdge;
-import com.hartwig.actin.algo.doid.datamodel.TestDoidFactory;
+import com.hartwig.actin.algo.doid.datamodel.TestDoidEntryFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +26,8 @@ public class DoidModelFactoryTest {
         edges.add(createParentChildEdge("300", "400"));
         edges.add(createContainmentEdge("400", "500"));
 
-        DoidEntry entry = ImmutableDoidEntry.builder().from(TestDoidFactory.createMinimalTestDoidEntry()).edges(edges).build();
-        DoidModel model = DoidModelFactory.createFromEntry(entry);
+        DoidEntry entry = ImmutableDoidEntry.builder().from(TestDoidEntryFactory.createMinimalTestDoidEntry()).edges(edges).build();
+        DoidModel model = DoidModelFactory.createFromDoidEntry(entry);
 
         assertEquals(2, model.relationship().size());
 

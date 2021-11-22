@@ -466,10 +466,4 @@ public final class EvaluationFunctionFactory {
     private static FunctionCreator notImplementedCreator() {
         return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
-
-    private interface FunctionCreator {
-
-        @NotNull
-        EvaluationFunction create(@NotNull EligibilityFunction function);
-    }
 }

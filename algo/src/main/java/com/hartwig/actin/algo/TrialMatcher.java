@@ -15,6 +15,7 @@ import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
 import com.hartwig.actin.algo.sort.TrialEligibilityComparator;
@@ -25,19 +26,24 @@ import com.hartwig.actin.treatment.sort.EligibilityComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TrialMatcher {
+public class TrialMatcher {
 
-    private TrialMatcher() {
+    @NotNull
+    private final DoidModel doidModel;
+
+    public TrialMatcher(@NotNull final DoidModel doidModel) {
+        this.doidModel = doidModel;
     }
 
     @NotNull
-    public static TreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
+    public TreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
         List<TrialEligibility> trialMatches = Lists.newArrayList();
         for (Trial trial : trials) {
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
                 Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, cohort.eligibility());
-                cohortMatching.add(ImmutableCohortEligibility.builder().metadata(cohort.metadata())
+                cohortMatching.add(ImmutableCohortEligibility.builder()
+                        .metadata(cohort.metadata())
                         .overallEvaluation(determineOverallEvaluation(evaluations))
                         .evaluations(evaluations)
                         .build());
@@ -58,8 +64,7 @@ public final class TrialMatcher {
     }
 
     @NotNull
-    private static Map<Eligibility, Evaluation> evaluateEligibility(@NotNull PatientRecord patient,
-            @NotNull List<Eligibility> eligibility) {
+    private Map<Eligibility, Evaluation> evaluateEligibility(@NotNull PatientRecord patient, @NotNull List<Eligibility> eligibility) {
         Map<Eligibility, Evaluation> evaluations = Maps.newTreeMap(new EligibilityComparator());
         for (Eligibility entry : eligibility) {
             EvaluationFunction evaluator = EvaluationFunctionFactory.create(entry.function());

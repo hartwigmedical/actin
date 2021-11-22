@@ -13,6 +13,7 @@ import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory;
@@ -28,7 +29,8 @@ public class TrialMatcherTest {
         PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
         Trial trial = TestTreatmentFactory.createProperTestTrial();
 
-        TreatmentMatch match = TrialMatcher.determineEligibility(patient, Lists.newArrayList(trial));
+        TrialMatcher matcher = new TrialMatcher(TestDoidModelFactory.createMinimalTestDoidModel());
+        TreatmentMatch match = matcher.determineEligibility(patient, Lists.newArrayList(trial));
 
         assertEquals(match.sampleId(), patient.sampleId());
         assertEquals(1, match.trialMatches().size());

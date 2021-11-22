@@ -6,6 +6,7 @@ import java.util.List;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.algo.doid.DoidModelFactory;
 import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
 import com.hartwig.actin.algo.doid.serialization.DoidJson;
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
@@ -77,7 +78,8 @@ public class TreatmentMatcherApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
         LOGGER.info(("Matching patient to available trials"));
-        TreatmentMatch match = TrialMatcher.determineEligibility(patient, trials);
+        TrialMatcher matcher = new TrialMatcher(DoidModelFactory.createFromDoidEntry(doidEntry));
+        TreatmentMatch match = matcher.determineEligibility(patient, trials);
 
         TreatmentMatchJson.write(match, config.outputDirectory());
 

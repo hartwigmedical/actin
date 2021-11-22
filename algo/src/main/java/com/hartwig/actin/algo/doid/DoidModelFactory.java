@@ -15,9 +15,9 @@ public final class DoidModelFactory {
     }
 
     @NotNull
-    public static DoidModel createFromEntry(@NotNull DoidEntry entry) {
+    public static DoidModel createFromDoidEntry(@NotNull DoidEntry doidEntry) {
         Multimap<String, String> relationship = ArrayListMultimap.create();
-        for (Edge edge : entry.edges()) {
+        for (Edge edge : doidEntry.edges()) {
             if (edge.predicate().equals("is_a")) {
                 String child = edge.subjectDoid();
                 String parent = edge.objectDoid();
