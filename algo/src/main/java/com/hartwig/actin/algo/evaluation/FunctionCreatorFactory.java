@@ -32,7 +32,6 @@ import com.hartwig.actin.algo.evaluation.medication.CurrentlyGetsImmunoSuppressa
 import com.hartwig.actin.algo.evaluation.medication.HasAllergyRelatedToStudyMedication;
 import com.hartwig.actin.algo.evaluation.medication.HasStableAnticoagulantDosing;
 import com.hartwig.actin.algo.evaluation.medication.HasToxicityWithGrade;
-import com.hartwig.actin.algo.evaluation.medication.HasToxicityWithGradeInNeuropathy;
 import com.hartwig.actin.algo.evaluation.othercondition.HasActiveInfection;
 import com.hartwig.actin.algo.evaluation.othercondition.HasGilbertDisease;
 import com.hartwig.actin.algo.evaluation.othercondition.HasHistoryOfAutoimmuneDisease;
@@ -54,6 +53,7 @@ import com.hartwig.actin.algo.evaluation.treatment.HasHadLimitedAntiPDL1OrPD1Imm
 import com.hartwig.actin.algo.evaluation.treatment.HasHistoryOfSecondMalignancy;
 import com.hartwig.actin.algo.evaluation.treatment.SecondMalignancyHasBeenCuredRecently;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,8 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
         functionCreatorMap.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, notImplementedCreator());
 
-        functionCreatorMap.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator());
+        functionCreatorMap.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X,
+                primaryTumorLocationBelongsToDoidCreator(doidModel));
         functionCreatorMap.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         functionCreatorMap.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
         functionCreatorMap.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
@@ -177,8 +178,8 @@ final class FunctionCreatorFactory {
     }
 
     @NotNull
-    private static FunctionCreator hasHadRecentSurgeryCreator() {
-        return function -> new HasHadRecentSurgery();
+    private static FunctionCreator isAtLeast18YearsOldCreator() {
+        return function -> new IsAtLeastEighteenYearsOld(LocalDate.now().getYear());
     }
 
     @NotNull
@@ -192,23 +193,11 @@ final class FunctionCreatorFactory {
     }
 
     @NotNull
-    private static FunctionCreator isAtLeast18YearsOldCreator() {
-        return function -> new IsAtLeastEighteenYearsOld(LocalDate.now().getYear());
-    }
-
-    @NotNull
-    private static FunctionCreator isBreastfeedingCreator() {
-        return function -> new IsBreastfeeding();
-    }
-
-    @NotNull
-    private static FunctionCreator isPregnantCreator() {
-        return function -> new IsPregnant();
-    }
-
-    @NotNull
-    private static FunctionCreator primaryTumorLocationBelongsToDoidCreator() {
-        return function -> new PrimaryTumorLocationBelongsToDoid();
+    private static FunctionCreator primaryTumorLocationBelongsToDoidCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            String doid = EligibilityParameterResolver.createOneStringParameter(function);
+            return new PrimaryTumorLocationBelongsToDoid(doidModel, doid);
+        };
     }
 
     @NotNull
@@ -387,8 +376,13 @@ final class FunctionCreatorFactory {
     }
 
     @NotNull
-    private static FunctionCreator hasToxicityWithGradeInNeuropathyCreator() {
-        return function -> new HasToxicityWithGradeInNeuropathy();
+    private static FunctionCreator isBreastfeedingCreator() {
+        return function -> new IsBreastfeeding();
+    }
+
+    @NotNull
+    private static FunctionCreator isPregnantCreator() {
+        return function -> new IsPregnant();
     }
 
     @NotNull
@@ -409,6 +403,11 @@ final class FunctionCreatorFactory {
     @NotNull
     private static FunctionCreator hasHadRecentThrombocyteTransfusion() {
         return function -> new HasHadRecentThrombocyteTransfusion();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadRecentSurgeryCreator() {
+        return function -> new HasHadRecentSurgery();
     }
 
     @NotNull
