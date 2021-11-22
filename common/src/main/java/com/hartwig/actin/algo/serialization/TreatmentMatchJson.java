@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.serialization;
 
-import static com.hartwig.actin.util.Json.array;
-import static com.hartwig.actin.util.Json.bool;
-import static com.hartwig.actin.util.Json.object;
-import static com.hartwig.actin.util.Json.string;
+import static com.hartwig.actin.json.Json.array;
+import static com.hartwig.actin.json.Json.bool;
+import static com.hartwig.actin.json.Json.object;
+import static com.hartwig.actin.json.Json.string;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.json;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,9 +16,9 @@ public final class Json {
     private Json() {
     }
 
-    @NotNull
-    public static JsonObject object(@NotNull JsonObject object, @NotNull String field) {
-        return object.getAsJsonObject(field);
+    @Nullable
+    public static JsonObject optionalObject(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? object.getAsJsonObject(field) : null;
     }
 
     @Nullable
@@ -27,8 +27,23 @@ public final class Json {
     }
 
     @NotNull
+    public static JsonObject object(@NotNull JsonObject object, @NotNull String field) {
+        return object.getAsJsonObject(field);
+    }
+
+    @Nullable
+    public static JsonArray optionalArray(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? array(object, field) : null;
+    }
+
+    @NotNull
     public static JsonArray array(@NotNull JsonObject object, @NotNull String field) {
         return object.getAsJsonArray(field);
+    }
+
+    @NotNull
+    public static List<String> optionalStringList(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? stringList(object, field) : Lists.newArrayList();
     }
 
     @Nullable
@@ -48,6 +63,11 @@ public final class Json {
             }
         }
         return values;
+    }
+
+    @Nullable
+    public static String optionalString(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? string(object, field) : null;
     }
 
     @Nullable
