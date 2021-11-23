@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pathology;
+package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.Set;
 

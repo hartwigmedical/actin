@@ -34,7 +34,6 @@ import com.hartwig.actin.algo.evaluation.othercondition.HasKnownHIVInfection;
 import com.hartwig.actin.algo.evaluation.othercondition.HasKnownHepatitisBInfection;
 import com.hartwig.actin.algo.evaluation.othercondition.HasKnownHepatitisCInfection;
 import com.hartwig.actin.algo.evaluation.othercondition.HasSignificantConcomitantIllness;
-import com.hartwig.actin.algo.evaluation.pathology.PrimaryTumorLocationBelongsToDoid;
 import com.hartwig.actin.algo.evaluation.pregnancy.IsBreastfeeding;
 import com.hartwig.actin.algo.evaluation.pregnancy.IsPregnant;
 import com.hartwig.actin.algo.evaluation.radiology.HasActiveCNSMetastases;
@@ -49,6 +48,7 @@ import com.hartwig.actin.algo.evaluation.treatment.HasExhaustedSOCTreatments;
 import com.hartwig.actin.algo.evaluation.treatment.HasHadLimitedAntiPDL1OrPD1Immunotherapies;
 import com.hartwig.actin.algo.evaluation.treatment.HasHistoryOfSecondMalignancy;
 import com.hartwig.actin.algo.evaluation.treatment.SecondMalignancyHasBeenCuredRecently;
+import com.hartwig.actin.algo.evaluation.tumor.PrimaryTumorLocationBelongsToDoid;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 

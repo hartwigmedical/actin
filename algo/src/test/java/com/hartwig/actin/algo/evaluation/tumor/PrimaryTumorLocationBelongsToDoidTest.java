@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pathology;
+package com.hartwig.actin.algo.evaluation.tumor;
 
 import static org.junit.Assert.assertEquals;
 
