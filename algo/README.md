@@ -91,7 +91,7 @@ HAS_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
-HAS_BIOPSY_AMENABLE_LESION | PASS (hard-coded)
+HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 
 ##### Rules related to previous cancer treatments or previous primary tumors
 
@@ -105,6 +105,7 @@ HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior second primaries > nr of lin
 HAS_HAD_IMMUNOTHERAPY_TREATMENT | Prior tumor treatments > category = Immunotherapy
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
+IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (to be implemented)
 
 ##### Rules related to molecular results
 
@@ -119,11 +120,14 @@ INACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion/Homozygous disruption is found in gene X
 ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
+SPECIFIC_FUSION_X | Driver fusion with 2 specified fusion partner genes is found
+OVEREXPRESSION_OF_GENE_X | ignore
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
+TML_OF_AT_MOST_X | TML should be <= X
 
 ##### Rules related to recent laboratory measurements
 

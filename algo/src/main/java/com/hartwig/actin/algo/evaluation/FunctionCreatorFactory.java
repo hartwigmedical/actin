@@ -69,6 +69,7 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES,
                 hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         functionCreatorMap.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.ACTIVATION_OF_GENE_X, notImplementedCreator());
@@ -79,11 +80,14 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.DELETION_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.SPECIFIC_FUSION_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.WILDTYPE_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.MSI_SIGNATURE, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.HRD_SIGNATURE, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.TMB_OF_AT_LEAST_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.TML_OF_AT_LEAST_X, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.TML_OF_AT_MOST_X, notImplementedCreator());
 
         functionCreatorMap.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
         functionCreatorMap.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, notImplementedCreator());
