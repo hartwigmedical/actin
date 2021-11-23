@@ -18,16 +18,16 @@ public class OrTest {
 
     @Test
     public void canCombineEvaluations() {
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.notImplemented()));
         assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.undetermined()));
         assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.fail()));
 
         assertEquals(Evaluation.PASS, combinedWithPassButWarn(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.notImplemented()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.undetermined()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.fail()));
