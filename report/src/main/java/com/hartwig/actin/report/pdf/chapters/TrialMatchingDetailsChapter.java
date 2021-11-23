@@ -122,23 +122,20 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("Text"));
         table.addHeaderCell(Cells.createHeader("Evaluation"));
 
-        if (evaluations.isEmpty()) {
-            Tables.addNoneEntry(table);
-        } else {
-            for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
-                boolean hasAddedEvaluation = false;
-                for (CriterionReference reference : entry.getKey().references()) {
-                    table.addCell(Cells.createContent(reference.id()));
-                    table.addCell(Cells.createContent(reference.text()));
-                    if (!hasAddedEvaluation) {
-                        table.addCell(Cells.createContent(entry.getValue()));
-                        hasAddedEvaluation = true;
-                    } else {
-                        table.addCell(Cells.createContent(Strings.EMPTY));
-                    }
+        for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
+            boolean hasAddedEvaluation = false;
+            for (CriterionReference reference : entry.getKey().references()) {
+                table.addCell(Cells.createContent(reference.id()));
+                table.addCell(Cells.createContent(reference.text()));
+                if (!hasAddedEvaluation) {
+                    table.addCell(Cells.createContent(entry.getValue()));
+                    hasAddedEvaluation = true;
+                } else {
+                    table.addCell(Cells.createContent(Strings.EMPTY));
                 }
             }
         }
+
         return table;
     }
 

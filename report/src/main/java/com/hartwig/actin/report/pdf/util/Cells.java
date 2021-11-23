@@ -27,6 +27,13 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createSpanningNoneEntry(@NotNull Table table) {
+        Cell cell = create(new Paragraph("None"), 1, table.getNumberOfColumns());
+        cell.addStyle(Styles.tableContentStyle());
+        return cell;
+    }
+
+    @NotNull
     public static Cell createSpanningTitle(@NotNull String text, @NotNull Table table) {
         Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
         cell.addStyle(Styles.tableTitleStyle());
@@ -44,6 +51,13 @@ public final class Cells {
     public static Cell createHeader(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableHeaderStyle());
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createSpanningSubNote(@NotNull String text, @NotNull Table table) {
+        Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
+        cell.addStyle(Styles.tableSubStyle());
         return cell;
     }
 

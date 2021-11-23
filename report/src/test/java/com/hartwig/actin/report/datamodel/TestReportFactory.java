@@ -13,9 +13,19 @@ public final class TestReportFactory {
     }
 
     @NotNull
-    public static Report createProperTestReport() {
+    public static Report createMinimalTestReport() {
         return ImmutableReport.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
+                .clinical(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .molecular(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .treatmentMatch(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
+                .build();
+    }
+
+    @NotNull
+    public static Report createProperTestReport() {
+        return ImmutableReport.builder()
+                .from(createMinimalTestReport())
                 .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
                 .molecular(TestMolecularDataFactory.createProperTestMolecularRecord())
                 .treatmentMatch(TestTreatmentMatchFactory.createProperTreatmentMatch())
