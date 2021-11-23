@@ -16,6 +16,7 @@ public final class EvaluationSummarizer {
         int warningCount = 0;
         int failedCount = 0;
         int undeterminedCount = 0;
+        int ignoredCount = 0;
         int nonImplementedCount = 0;
 
         for (Evaluation evaluation : evaluations) {
@@ -38,6 +39,10 @@ public final class EvaluationSummarizer {
                     undeterminedCount++;
                     break;
                 }
+                case IGNORED: {
+                    ignoredCount++;
+                    break;
+                }
                 case NOT_IMPLEMENTED: {
                     nonImplementedCount++;
                     break;
@@ -54,6 +59,7 @@ public final class EvaluationSummarizer {
                 .warningCount(warningCount)
                 .failedCount(failedCount)
                 .undeterminedCount(undeterminedCount)
+                .ignoredCount(ignoredCount)
                 .nonImplementedCount(nonImplementedCount)
                 .build();
     }

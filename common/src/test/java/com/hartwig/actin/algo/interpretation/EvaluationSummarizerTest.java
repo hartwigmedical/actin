@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.interpretation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -14,6 +15,11 @@ import org.junit.Test;
 public class EvaluationSummarizerTest {
 
     @Test
+    public void canInterpretAllPossibleEvaluations() {
+        assertNotNull(EvaluationSummarizer.summarize(Lists.newArrayList(Evaluation.values())));
+    }
+
+    @Test
     public void canSummarizeTestData() {
         TreatmentMatch match = TestTreatmentMatchFactory.createProperTreatmentMatch();
         List<Evaluation> firstTrialEvaluations = Lists.newArrayList(match.trialMatches().get(0).evaluations().values());
@@ -24,6 +30,7 @@ public class EvaluationSummarizerTest {
         assertEquals(0, summary.warningCount());
         assertEquals(0, summary.failedCount());
         assertEquals(0, summary.undeterminedCount());
+        assertEquals(0, summary.ignoredCount());
         assertEquals(0, summary.nonImplementedCount());
     }
 }
