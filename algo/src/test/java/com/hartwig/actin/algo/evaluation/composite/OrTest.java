@@ -40,22 +40,22 @@ public class OrTest {
         assertEquals(Evaluation.IGNORED, combinedWithIgnored(TestEvaluationFunctionFactory.fail()));
 
         assertEquals(Evaluation.PASS, combinedWithNotImplemented(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.IGNORED, combinedWithNotImplemented(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithNotImplemented(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.IGNORED, combinedWithNotImplemented(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.notImplemented()));
         assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.undetermined()));
         assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.fail()));
 
         assertEquals(Evaluation.PASS, combinedWithUndetermined(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.IGNORED, combinedWithUndetermined(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithUndetermined(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.IGNORED, combinedWithUndetermined(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithUndetermined(TestEvaluationFunctionFactory.notImplemented()));
         assertEquals(Evaluation.UNDETERMINED, combinedWithUndetermined(TestEvaluationFunctionFactory.undetermined()));
         assertEquals(Evaluation.UNDETERMINED, combinedWithUndetermined(TestEvaluationFunctionFactory.fail()));
 
         assertEquals(Evaluation.PASS, combinedWithFail(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.IGNORED, combinedWithFail(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithFail(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(Evaluation.IGNORED, combinedWithFail(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithFail(TestEvaluationFunctionFactory.notImplemented()));
         assertEquals(Evaluation.UNDETERMINED, combinedWithFail(TestEvaluationFunctionFactory.undetermined()));
         assertEquals(Evaluation.FAIL, combinedWithFail(TestEvaluationFunctionFactory.fail()));
