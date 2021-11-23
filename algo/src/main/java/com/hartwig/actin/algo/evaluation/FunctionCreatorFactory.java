@@ -103,7 +103,7 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.ACTIVATION_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.INACTIVATION_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_IS_SPECIFIC_MUTATION_Y, notImplementedCreator());
+        functionCreatorMap.put(EligibilityRule.MUTATION_IN_GENE_X_IS_SPECIFIC_MUTATION_Y, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, notImplementedCreator());
         functionCreatorMap.put(EligibilityRule.DELETION_OF_GENE_X, notImplementedCreator());

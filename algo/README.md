@@ -114,7 +114,7 @@ MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be e
 ACTIVATION_OF_GENE_X | Driver is found in gene X
 INACTIVATION_OF_GENE_X | Driver is found in gene X
 ACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
-ACTIVATING_MUTATION_IN_GENE_X_IS_SPECIFIC_MUTATION_Y | Driver mutation Y is found in gene X
+MUTATION_IN_GENE_X_IS_SPECIFIC_MUTATION_Y | Driver mutation Y is found in gene X
 INACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion/Homozygous disruption is found in gene X
