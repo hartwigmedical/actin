@@ -36,6 +36,8 @@ public class And implements EvaluationFunction {
             return Evaluation.PASS_BUT_WARN;
         } else if (evaluations.contains(Evaluation.PASS)) {
             return Evaluation.PASS;
+        } else if (evaluations.contains(Evaluation.IGNORED)) {
+            return Evaluation.IGNORED;
         }
 
         throw new IllegalStateException("AND could not combine evaluations: " + evaluations);

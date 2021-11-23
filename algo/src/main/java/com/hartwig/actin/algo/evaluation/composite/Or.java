@@ -26,7 +26,9 @@ public class Or implements EvaluationFunction {
             evaluations.add(function.evaluate(record));
         }
 
-        if (evaluations.contains(Evaluation.PASS)) {
+        if (evaluations.contains(Evaluation.IGNORED)) {
+            return Evaluation.IGNORED;
+        } else if (evaluations.contains(Evaluation.PASS)) {
             return Evaluation.PASS;
         } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {
             return Evaluation.PASS_BUT_WARN;

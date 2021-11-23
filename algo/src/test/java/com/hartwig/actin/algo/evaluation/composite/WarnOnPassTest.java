@@ -20,5 +20,6 @@ public class WarnOnPassTest {
         assertEquals(Evaluation.PASS, new WarnOnPass(TestEvaluationFunctionFactory.fail()).evaluate(patient));
         assertEquals(Evaluation.UNDETERMINED, new WarnOnPass(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
         assertEquals(Evaluation.NOT_IMPLEMENTED, new WarnOnPass(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient));
+        assertEquals(Evaluation.IGNORED, new WarnOnPass(TestEvaluationFunctionFactory.ignored()).evaluate(patient));
     }
 }
