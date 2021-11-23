@@ -36,21 +36,14 @@ import com.hartwig.actin.algo.evaluation.othercondition.HasKnownHepatitisCInfect
 import com.hartwig.actin.algo.evaluation.othercondition.HasSignificantConcomitantIllness;
 import com.hartwig.actin.algo.evaluation.pregnancy.IsBreastfeeding;
 import com.hartwig.actin.algo.evaluation.pregnancy.IsPregnant;
-import com.hartwig.actin.algo.evaluation.radiology.HasActiveCNSMetastases;
-import com.hartwig.actin.algo.evaluation.radiology.HasAdvancedCancer;
-import com.hartwig.actin.algo.evaluation.radiology.HasBiopsyAmenableLesion;
-import com.hartwig.actin.algo.evaluation.radiology.HasLiverMetastases;
-import com.hartwig.actin.algo.evaluation.radiology.HasMeasurableDiseaseRecist;
-import com.hartwig.actin.algo.evaluation.radiology.HasMetastaticCancer;
 import com.hartwig.actin.algo.evaluation.surgery.HasHadRecentSurgery;
 import com.hartwig.actin.algo.evaluation.treatment.HasDeclinedSOCTreatments;
 import com.hartwig.actin.algo.evaluation.treatment.HasExhaustedSOCTreatments;
 import com.hartwig.actin.algo.evaluation.treatment.HasHadLimitedAntiPDL1OrPD1Immunotherapies;
 import com.hartwig.actin.algo.evaluation.treatment.HasHistoryOfSecondMalignancy;
 import com.hartwig.actin.algo.evaluation.treatment.SecondMalignancyHasBeenCuredRecently;
-import com.hartwig.actin.algo.evaluation.tumor.PrimaryTumorLocationBelongsToDoid;
+import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapping;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,21 +57,7 @@ final class FunctionCreatorFactory {
         Map<EligibilityRule, FunctionCreator> functionCreatorMap = Maps.newHashMap();
 
         functionCreatorMap.putAll(GeneralRuleMapping.create());
-
-        functionCreatorMap.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X,
-                primaryTumorLocationBelongsToDoidCreator(doidModel));
-        functionCreatorMap.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_CNS_METASTASES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_ACTIVE_CNS_METASTASES, hasActiveCNSMetastasesCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_BRAIN_METASTASES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_SYMPTOMATIC_BRAIN_METASTASES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_BONE_METASTASES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
+        functionCreatorMap.putAll(TumorRuleMapping.create(doidModel));
 
         functionCreatorMap.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         functionCreatorMap.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
@@ -167,44 +146,6 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadRecentSurgeryCreator());
 
         return functionCreatorMap;
-    }
-
-    @NotNull
-    private static FunctionCreator primaryTumorLocationBelongsToDoidCreator(@NotNull DoidModel doidModel) {
-        return function -> {
-            String doid = EligibilityParameterResolver.createOneStringParameter(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel, doid);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasActiveCNSMetastasesCreator() {
-        return function -> new HasActiveCNSMetastases();
-    }
-
-    @NotNull
-    private static FunctionCreator hasAdvancedCancerCreator() {
-        return function -> new HasAdvancedCancer();
-    }
-
-    @NotNull
-    private static FunctionCreator hasBiopsyAmenableLesionCreator() {
-        return function -> new HasBiopsyAmenableLesion();
-    }
-
-    @NotNull
-    private static FunctionCreator hasLivesMetastasesCreator() {
-        return function -> new HasLiverMetastases();
-    }
-
-    @NotNull
-    private static FunctionCreator hasMeasurableDiseaseRecistCreator() {
-        return function -> new HasMeasurableDiseaseRecist();
-    }
-
-    @NotNull
-    private static FunctionCreator hasMetastaticCancerCreator() {
-        return function -> new HasMetastaticCancer();
     }
 
     @NotNull

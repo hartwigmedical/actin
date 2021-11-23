@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class CanGiveAdequateInformedConsent implements EvaluationFunction {
 
+    CanGiveAdequateInformedConsent() {
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull final PatientRecord record) {

@@ -53,8 +53,8 @@ public class TrialMatcherTest {
 
         CohortEligibility cohortA = findCohort(trialEligibility.cohorts(), "A");
         assertEquals(1, cohortA.evaluations().size());
-        assertEquals(Evaluation.UNDETERMINED, cohortA.overallEvaluation());
-        assertEquals(Evaluation.NOT_IMPLEMENTED, findEvaluationForRule(cohortA.evaluations(), EligibilityRule.NOT));
+        assertEquals(Evaluation.FAIL, cohortA.overallEvaluation());
+        assertEquals(Evaluation.FAIL, findEvaluationForRule(cohortA.evaluations(), EligibilityRule.NOT));
 
         CohortEligibility cohortB = findCohort(trialEligibility.cohorts(), "B");
         assertEquals(Evaluation.UNDETERMINED, cohortB.overallEvaluation());

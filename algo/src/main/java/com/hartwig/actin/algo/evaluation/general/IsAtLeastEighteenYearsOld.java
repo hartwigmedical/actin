@@ -10,7 +10,7 @@ public class IsAtLeastEighteenYearsOld implements EvaluationFunction {
 
     private final int referenceYear;
 
-    public IsAtLeastEighteenYearsOld(final int referenceYear) {
+    IsAtLeastEighteenYearsOld(final int referenceYear) {
         this.referenceYear = referenceYear;
     }
 

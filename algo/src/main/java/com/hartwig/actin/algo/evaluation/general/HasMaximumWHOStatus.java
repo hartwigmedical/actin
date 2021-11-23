@@ -10,7 +10,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
 
     private final int maximumWHO;
 
-    public HasMaximumWHOStatus(final int maximumWHO) {
+    HasMaximumWHOStatus(final int maximumWHO) {
         this.maximumWHO = maximumWHO;
     }
 

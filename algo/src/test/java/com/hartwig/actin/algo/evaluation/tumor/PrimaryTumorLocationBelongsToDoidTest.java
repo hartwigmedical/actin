@@ -5,15 +5,11 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,12 +45,6 @@ public class PrimaryTumorLocationBelongsToDoidTest {
 
     @NotNull
     private static PatientRecord patientWithDoids(@Nullable List<String> doids) {
-        return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .tumor(ImmutableTumorDetails.builder().doids(doids).build())
-                        .build())
-                .build();
+        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().doids(doids).build());
     }
 }

@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSufficientLifeExpectancy implements EvaluationFunction {
 
+    HasSufficientLifeExpectancy() {
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
