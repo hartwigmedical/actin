@@ -25,6 +25,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
@@ -41,7 +42,6 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
-import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;

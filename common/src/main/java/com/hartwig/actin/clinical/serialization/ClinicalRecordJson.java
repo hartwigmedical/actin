@@ -71,7 +71,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.util.GsonSerializer;
+import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
 import org.jetbrains.annotations.NotNull;

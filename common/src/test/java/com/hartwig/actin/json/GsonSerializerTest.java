@@ -1,4 +1,4 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.json;
 
 import static org.junit.Assert.assertNotNull;
 

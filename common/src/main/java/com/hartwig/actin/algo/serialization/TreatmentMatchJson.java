@@ -34,6 +34,7 @@ import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
@@ -47,7 +48,6 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.hartwig.actin.treatment.sort.EligibilityComparator;
-import com.hartwig.actin.util.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
