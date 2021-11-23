@@ -39,16 +39,17 @@ public final class EligibilityFactory {
     public static EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
         EligibilityRule rule;
         List<Object> parameters = Lists.newArrayList();
-        if (isCompositeCriterion(criterion)) {
-            rule = extractCompositeRule(criterion.trim());
-            for (String compositeInput : extractCompositeInputs(criterion)) {
+        String trimmed = criterion.trim();
+        if (isCompositeCriterion(trimmed)) {
+            rule = extractCompositeRule(trimmed);
+            for (String compositeInput : extractCompositeInputs(trimmed)) {
                 parameters.add(generateEligibilityFunction(compositeInput));
             }
-        } else if (isParameterizedCriterion(criterion)) {
-            rule = extractParameterizedRule(criterion);
-            parameters.addAll(extractParameterizedInputs(criterion));
+        } else if (isParameterizedCriterion(trimmed)) {
+            rule = extractParameterizedRule(trimmed);
+            parameters.addAll(extractParameterizedInputs(trimmed));
         } else {
-            rule = EligibilityRule.valueOf(criterion.trim());
+            rule = EligibilityRule.valueOf(trimmed);
         }
 
         EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
