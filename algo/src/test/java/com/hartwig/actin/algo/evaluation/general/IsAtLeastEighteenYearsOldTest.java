@@ -18,7 +18,7 @@ import org.junit.Test;
 public class IsAtLeastEighteenYearsOldTest {
 
     @Test
-    public void canDetermineWhetherPatientIs18() {
+    public void canEvaluate() {
         EvaluationFunction function = new IsAtLeastEighteenYearsOld(2020);
 
         assertEquals(Evaluation.PASS, function.evaluate(patientWithBirthYear(1960)));

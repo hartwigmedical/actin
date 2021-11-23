@@ -8,10 +8,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasMaximumWHOStatus implements EvaluationFunction {
 
+    private final int maximumWHO;
+
+    public HasMaximumWHOStatus(final int maximumWHO) {
+        this.maximumWHO = maximumWHO;
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+        Integer who = record.clinical().clinicalStatus().who();
+        if (who == null) {
+            return Evaluation.UNDETERMINED;
+        }
+
+        return who <= maximumWHO ? Evaluation.PASS : Evaluation.FAIL;
     }
 }

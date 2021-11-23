@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -10,11 +9,7 @@ import com.hartwig.actin.algo.evaluation.bloodpressure.HasSufficientDBP;
 import com.hartwig.actin.algo.evaluation.bloodpressure.HasSufficientSBP;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.HasHadRecentErythrocyteTransfusion;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.HasHadRecentThrombocyteTransfusion;
-import com.hartwig.actin.algo.evaluation.general.HasMaximumWHOStatus;
-import com.hartwig.actin.algo.evaluation.general.HasSufficientLifeExpectancy;
-import com.hartwig.actin.algo.evaluation.general.IsAtLeastEighteenYearsOld;
-import com.hartwig.actin.algo.evaluation.general.IsBreastfeeding;
-import com.hartwig.actin.algo.evaluation.general.IsPregnant;
+import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapping;
 import com.hartwig.actin.algo.evaluation.laboratory.HasLimitedAPTT;
 import com.hartwig.actin.algo.evaluation.laboratory.HasLimitedASAT;
 import com.hartwig.actin.algo.evaluation.laboratory.HasLimitedDirectBilirubin;
@@ -40,6 +35,8 @@ import com.hartwig.actin.algo.evaluation.othercondition.HasKnownHepatitisBInfect
 import com.hartwig.actin.algo.evaluation.othercondition.HasKnownHepatitisCInfection;
 import com.hartwig.actin.algo.evaluation.othercondition.HasSignificantConcomitantIllness;
 import com.hartwig.actin.algo.evaluation.pathology.PrimaryTumorLocationBelongsToDoid;
+import com.hartwig.actin.algo.evaluation.pregnancy.IsBreastfeeding;
+import com.hartwig.actin.algo.evaluation.pregnancy.IsPregnant;
 import com.hartwig.actin.algo.evaluation.radiology.HasActiveCNSMetastases;
 import com.hartwig.actin.algo.evaluation.radiology.HasAdvancedCancer;
 import com.hartwig.actin.algo.evaluation.radiology.HasBiopsyAmenableLesion;
@@ -66,12 +63,7 @@ final class FunctionCreatorFactory {
     public static Map<EligibilityRule, FunctionCreator> createFunctionCreatorMap(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> functionCreatorMap = Maps.newHashMap();
 
-        functionCreatorMap.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
-        functionCreatorMap.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, notImplementedCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
-        functionCreatorMap.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, notImplementedCreator());
+        functionCreatorMap.putAll(GeneralRuleMapping.create());
 
         functionCreatorMap.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X,
                 primaryTumorLocationBelongsToDoidCreator(doidModel));
@@ -175,21 +167,6 @@ final class FunctionCreatorFactory {
         functionCreatorMap.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadRecentSurgeryCreator());
 
         return functionCreatorMap;
-    }
-
-    @NotNull
-    private static FunctionCreator isAtLeast18YearsOldCreator() {
-        return function -> new IsAtLeastEighteenYearsOld(LocalDate.now().getYear());
-    }
-
-    @NotNull
-    private static FunctionCreator hasMaximumWHOStatusCreator() {
-        return function -> new HasMaximumWHOStatus();
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientLifeExpectancyCreator() {
-        return function -> new HasSufficientLifeExpectancy();
     }
 
     @NotNull

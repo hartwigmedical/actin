@@ -6,12 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsPregnant implements EvaluationFunction {
+public class CanGiveAdequateInformedConsent implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+    public Evaluation evaluate(@NotNull final PatientRecord record) {
+        return Evaluation.IGNORED;
     }
 }

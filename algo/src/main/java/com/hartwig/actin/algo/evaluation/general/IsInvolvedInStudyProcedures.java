@@ -6,12 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientLifeExpectancy implements EvaluationFunction {
+public class IsInvolvedInStudyProcedures implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull final PatientRecord record) {
         return Evaluation.IGNORED;
     }
 }
-
