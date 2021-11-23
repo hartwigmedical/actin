@@ -8,10 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasExhaustedSOCTreatments implements EvaluationFunction {
 
+    HasExhaustedSOCTreatments() {
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+        return Evaluation.IGNORED;
     }
 }

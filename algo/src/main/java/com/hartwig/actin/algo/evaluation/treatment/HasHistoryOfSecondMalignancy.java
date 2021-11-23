@@ -8,10 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
 
+    HasHistoryOfSecondMalignancy() {
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+        boolean hasHistoryOfSecondPrimary = !record.clinical().priorSecondPrimaries().isEmpty();
+        return hasHistoryOfSecondPrimary ? Evaluation.PASS : Evaluation.FAIL;
     }
 }

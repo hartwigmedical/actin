@@ -8,10 +8,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class SecondMalignancyHasBeenCuredRecently implements EvaluationFunction {
 
+    private final int years;
+
+    SecondMalignancyHasBeenCuredRecently(final int years) {
+        this.years = years;
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+        // Considered for removal by Nina
+        return Evaluation.IGNORED;
     }
 }

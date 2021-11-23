@@ -16,7 +16,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     @NotNull
     private final String doidToMatch;
 
-    public PrimaryTumorLocationBelongsToDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
+    PrimaryTumorLocationBelongsToDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
         this.doidModel = doidModel;
         this.doidToMatch = doidToMatch;
     }
