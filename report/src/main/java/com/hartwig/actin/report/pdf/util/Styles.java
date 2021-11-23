@@ -20,10 +20,10 @@ public final class Styles {
     public static final DeviceRgb PALETTE_BLUE = new DeviceRgb(74, 134, 232);
     public static final DeviceRgb PALETTE_RED = new DeviceRgb(231, 85, 85);
 
-    // Colors used for evaluation states (pass, fail, unclear).
-    public static final DeviceRgb PALETTE_PASS = new DeviceRgb(0, 150, 0);
-    public static final DeviceRgb PALETTE_FAIL = new DeviceRgb(231, 85, 85);
-    public static final DeviceRgb PALETTE_UNCLEAR = new DeviceRgb(85, 85, 85);
+    public static final DeviceRgb PALETTE_EVALUATION_PASS = new DeviceRgb(0, 150, 0);
+    public static final DeviceRgb PALETTE_EVALUATION_IGNORED = new DeviceRgb(15, 75, 15);
+    public static final DeviceRgb PALETTE_EVALUATION_FAILED = new DeviceRgb(231, 85, 85);
+    public static final DeviceRgb PALETTE_EVALUATION_UNCLEAR = new DeviceRgb(85, 85, 85);
 
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";

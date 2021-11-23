@@ -64,11 +64,13 @@ public final class Formats {
         switch (evaluation) {
             case PASS:
             case PASS_BUT_WARN:
-                return Styles.PALETTE_PASS;
+                return Styles.PALETTE_EVALUATION_PASS;
+            case IGNORED:
+                return Styles.PALETTE_EVALUATION_IGNORED;
             case FAIL:
-                return Styles.PALETTE_FAIL;
+                return Styles.PALETTE_EVALUATION_FAILED;
             default:
-                return Styles.PALETTE_UNCLEAR;
+                return Styles.PALETTE_EVALUATION_UNCLEAR;
         }
     }
 }
