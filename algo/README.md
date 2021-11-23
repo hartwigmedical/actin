@@ -101,8 +101,8 @@ Rule | When does a patient pass evaluation? | Note
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D 
 HAS_DECLINED_SOC_TREATMENTS | T.B.D
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries > tumorLocation is not empty
-SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries > tumorLocation is not empty AND active = 0 | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
-HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior second primaries > nr of lines in case systemic = 1 <= X
+EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries > tumorLocation is not empty AND active = 0 | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
+HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_IMMUNOTHERAPY_TREATMENT | Prior tumor treatments > category = Immunotherapy
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
@@ -116,7 +116,7 @@ MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be e
 ACTIVATION_OF_GENE_X | Driver is found in gene X
 INACTIVATION_OF_GENE_X | Driver is found in gene X
 ACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
-MUTATION_IN_GENE_X_IS_SPECIFIC_MUTATION_Y | Driver mutation Y is found in gene X
+MUTATION_IN_GENE_X_OF_TYPE_Y | Driver mutation Y is found in gene X
 INACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion/Homozygous disruption is found in gene X
