@@ -67,7 +67,7 @@ public final class TrialJson {
 
             LOGGER.info(" Writing '{} ({})' to {}", trial.identification().trialId(), trial.identification().acronym(), jsonFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
-            writer.write(toJson(reformatReferenceTexts(trial)));
+            writer.write(toJson(reformatTrial(trial)));
             writer.close();
         }
     }
@@ -78,30 +78,32 @@ public final class TrialJson {
     }
 
     @NotNull
-    private static Trial reformatReferenceTexts(@NotNull Trial trial) {
+    private static Trial reformatTrial(@NotNull Trial trial) {
         List<Cohort> reformattedCohorts = Lists.newArrayList();
         for (Cohort cohort : trial.cohorts()) {
             reformattedCohorts.add(ImmutableCohort.builder().from(cohort).eligibility(reformatEligibilities(cohort.eligibility())).build());
         }
-        return ImmutableTrial.builder().from(trial).cohorts(reformattedCohorts)
+        return ImmutableTrial.builder()
+                .from(trial)
+                .cohorts(reformattedCohorts)
                 .generalEligibility(reformatEligibilities(trial.generalEligibility()))
                 .build();
     }
 
     @NotNull
     private static List<Eligibility> reformatEligibilities(@NotNull List<Eligibility> eligibilities) {
-        List<Eligibility> convertedEligibility = Lists.newArrayList();
+        List<Eligibility> reformattedEligibility = Lists.newArrayList();
         for (Eligibility eligibility : eligibilities) {
-            Set<CriterionReference> convertedReferences = Sets.newTreeSet(new CriterionReferenceComparator());
+            Set<CriterionReference> reformattedReferences = Sets.newTreeSet(new CriterionReferenceComparator());
             for (CriterionReference reference : eligibility.references()) {
-                convertedReferences.add(ImmutableCriterionReference.builder()
+                reformattedReferences.add(ImmutableCriterionReference.builder()
                         .from(reference)
                         .text(toJsonReferenceText(reference.text()))
                         .build());
             }
-            convertedEligibility.add(ImmutableEligibility.builder().from(eligibility).references(convertedReferences).build());
+            reformattedEligibility.add(ImmutableEligibility.builder().from(eligibility).references(reformattedReferences).build());
         }
-        return convertedEligibility;
+        return reformattedEligibility;
     }
 
     @NotNull
