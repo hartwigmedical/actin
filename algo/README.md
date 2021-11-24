@@ -61,7 +61,8 @@ OR | indicates that either of combined rules should be TRUE in order to PASS
 NOT | indicates that the rule should not be TRUE in order to PASS
 WARN_ON_PASS | indicates that a warning should be displayed in case of PASS and resolves to PASS_BUT_WARN
 
-Some rules require 1 ("X") or 2 ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored. 
+Some rules require 1 ("X") or 2 ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. 
+Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored. 
 
 The following rules are available:
 
