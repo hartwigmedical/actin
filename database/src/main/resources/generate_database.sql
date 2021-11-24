@@ -55,7 +55,7 @@ CREATE TABLE priorTumorTreatment
     name varchar(50) NOT NULL,
     year int,
     month int,
-    category varchar(50) NOT NULL,
+    categories varchar(50) NOT NULL,
     isSystemic BOOLEAN NOT NULL,
     chemoType varchar(50),
     immunoType varchar(50),
