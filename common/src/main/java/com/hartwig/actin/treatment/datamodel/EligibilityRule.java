@@ -126,5 +126,8 @@ public enum EligibilityRule {
     HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS,
 
     // Rules related to surgery
-    HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS
+    HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS,
+
+    // Rules related to hospital
+    PATIENT_IS_TREATED_IN_HOSPITAL_X
 }

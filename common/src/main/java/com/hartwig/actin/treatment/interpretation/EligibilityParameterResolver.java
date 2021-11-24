@@ -132,6 +132,8 @@ public final class EligibilityParameterResolver {
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS);
 
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS);
+
+        RULES_WITH_ONE_STRING_PARAMETER.add(EligibilityRule.PATIENT_IS_TREATED_IN_HOSPITAL_X);
     }
 
     private EligibilityParameterResolver() {

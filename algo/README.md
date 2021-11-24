@@ -170,6 +170,7 @@ HAS_KNOWN_LVEF_OF_AT_MOST_X | clinicalStatus > lvef should be <= X
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
 
 ##### Rules related to infections
+
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_ACTIVE_INFECTION | Clinical status > hasActiveInfection = 1
@@ -189,6 +190,7 @@ CURRENTLY_GETS_IMMUNOSUPPRESSANT _MEDICATION | T.B.D.
 HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
 
 ##### Rules related to pregnancy/anticonception
+
 Rule | When does a patient pass evaluation?
 ---|---
 IS_BREASTFEEDING | ignore
@@ -223,6 +225,11 @@ Rule | When does a patient pass evaluation?
 ---|---
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
 
+##### Rules related to hospital
+
+Rule | When does a patient pass evaluation? 
+---|---
+PATIENT_IS_TREATED_IN_HOSPITAL_X | Sample ID -> Hospital information > hospital should be hospital X
  
 ### Version History and Download Links
  - Upcoming (first release) 

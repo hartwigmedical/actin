@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodpressure.BloodPressureRuleMapping;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapping;
+import com.hartwig.actin.algo.evaluation.hospital.HospitalRuleMapping;
 import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapping;
 import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapping;
 import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapping;
@@ -43,6 +44,7 @@ final class FunctionCreatorFactory {
         map.putAll(BloodPressureRuleMapping.create());
         map.putAll(BloodTransfusionRuleMapping.create());
         map.putAll(SurgeryRuleMapping.create());
+        map.putAll(HospitalRuleMapping.create());
 
         return map;
     }
