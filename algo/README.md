@@ -61,7 +61,7 @@ OR | indicates that either of combined rules should be TRUE in order to PASS
 NOT | indicates that the rule should not be TRUE in order to PASS
 WARN_ON_PASS | indicates that a warning should be displayed in case of PASS and resolves to PASS_BUT_WARN
 
-Some rules require an additional configuration parameter ("X") that can be set to match the requirements of each trial. Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored. 
+Some rules require 1 ("X") or 2 ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored. 
 
 The following rules are available:
 
@@ -230,6 +230,11 @@ HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surg
 Rule | When does a patient pass evaluation? 
 ---|---
 PATIENT_IS_TREATED_IN_HOSPITAL_X | Sample ID -> Hospital information > hospital should be hospital X
+ 
+
+### Disease Ontology ID (DOID)
+ 
+For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For more information, see https://disease-ontology.org/.
  
 ### Version History and Download Links
  - Upcoming (first release) 
