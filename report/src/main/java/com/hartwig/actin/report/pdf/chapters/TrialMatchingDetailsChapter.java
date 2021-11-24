@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -126,14 +127,22 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
             boolean hasAddedEvaluation = false;
             String implementation = EligibilityFunctionDisplay.format(entry.getKey().function());
-            for (CriterionReference reference : entry.getKey().references()) {
-                table.addCell(Cells.createContent(reference.id()));
-                table.addCell(Cells.createContent(implementation + "\n" + reference.text()));
-                if (!hasAddedEvaluation) {
-                    table.addCell(Cells.createContent(entry.getValue()));
-                    hasAddedEvaluation = true;
-                } else {
-                    table.addCell(Cells.createContent(Strings.EMPTY));
+            Evaluation evaluation = entry.getValue();
+            Set<CriterionReference> references = entry.getKey().references();
+            if (references.isEmpty()) {
+                table.addCell(Cells.createEmpty());
+                table.addCell(Cells.createContent(implementation));
+                table.addCell(Cells.createContent(evaluation));
+            } else {
+                for (CriterionReference reference : entry.getKey().references()) {
+                    table.addCell(Cells.createContent(reference.id()));
+                    table.addCell(Cells.createContent(implementation + "\n" + reference.text()));
+                    if (!hasAddedEvaluation) {
+                        table.addCell(Cells.createContent(evaluation));
+                        hasAddedEvaluation = true;
+                    } else {
+                        table.addCell(Cells.createContent(Strings.EMPTY));
+                    }
                 }
             }
         }
