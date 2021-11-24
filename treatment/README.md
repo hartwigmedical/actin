@@ -79,8 +79,8 @@ The following checks are done on the level of inclusion criteria references:
 ### Inclusion rule configuration
 
 An inclusion rule has to be either a specific rule or a composite rule combining specific rules defined in [ACTIN-Algo](../algo/README.md).
- - Inputs to composite rules are expected to be enclosed in parentheses
- - Inputs to specific rules are expected to be enclosed in brackets.
+ - Inputs to composite rules are expected to be enclosed in parentheses (for example `NOT(SPECIFIC_RULE)`).
+ - Inputs to specific rules are expected to be enclosed in brackets (for example `SPECIFIC_RULE_WITH_ONE_PARAM[2]`).
 
 An inclusion rule is configured validly only if the expected number of inputs is provided in the config and the inputs can be resolved to the 
 type of input expected by the function. 
