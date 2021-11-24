@@ -19,7 +19,7 @@ public final class TrialConfigDatabaseUtil {
     @NotNull
     public static Set<String> toReferenceIds(@NotNull String referenceIdsString) {
         if (referenceIdsString.isEmpty()) {
-            throw new IllegalArgumentException("Empty argument referenceIdsString!");
+            return Sets.newHashSet();
         } else {
             return toSet(referenceIdsString, REFERENCE_ID_SEPARATOR);
         }

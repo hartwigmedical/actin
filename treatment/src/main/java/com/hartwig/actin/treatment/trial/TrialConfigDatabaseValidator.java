@@ -143,11 +143,6 @@ public final class TrialConfigDatabaseValidator {
                 LOGGER.warn("Not a valid inclusion criterion for trial '{}': '{}'", criterion.trialId(), criterion.inclusionRule());
                 valid = false;
             }
-
-            if (criterion.referenceIds().isEmpty()) {
-                LOGGER.warn("No criterion IDs defined for criterion '{}' on trial '{}'", criterion.inclusionRule(), criterion.trialId());
-                valid = false;
-            }
         }
         return valid;
     }

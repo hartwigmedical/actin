@@ -60,7 +60,6 @@ inclusionRule | AND(IS_AT_LEAST_18_YEARS_OLD, HAS_METASTATIC_CANCER)
 
 The following checks are done on the level of inclusion criteria:
  - Every trial ID referenced in an inclusion criterion must be defined in the trial definition file
- - The comma-separated list of reference IDs must not be empty.
  - Every reference ID must be defined in the inclusion criteria reference file.
  - Every cohort ID in the comma-separated list of cohorts must be defined in the cohort definition file, unless this field has been set to `all` cohorts.
  - The inclusion rule has to be valid according to [inclusion rule configuration](#inclusion-rule-configuration)

@@ -14,10 +14,10 @@ public class CohortMetadataComparatorTest {
 
     @Test
     public void canSortCohortMetadata() {
-        CohortMetadata metadata1 = ImmutableCohortMetadata.builder().cohortId("A").description("First").open(true).build();
-        CohortMetadata metadata2 = ImmutableCohortMetadata.builder().cohortId("A").description("First").open(false).build();
-        CohortMetadata metadata3 = ImmutableCohortMetadata.builder().cohortId("A").description("Second").open(true).build();
-        CohortMetadata metadata4 = ImmutableCohortMetadata.builder().cohortId("B").description("Third").open(true).build();
+        CohortMetadata metadata1 = ImmutableCohortMetadata.builder().cohortId("A").description("A First").open(true).build();
+        CohortMetadata metadata2 = ImmutableCohortMetadata.builder().cohortId("A").description("A First").open(false).build();
+        CohortMetadata metadata3 = ImmutableCohortMetadata.builder().cohortId("A").description("A Second").open(true).build();
+        CohortMetadata metadata4 = ImmutableCohortMetadata.builder().cohortId("B").description("B Third").open(true).build();
 
         List<CohortMetadata> metadata = Lists.newArrayList(metadata3, metadata1, metadata4, metadata2);
         metadata.sort(new CohortMetadataComparator());

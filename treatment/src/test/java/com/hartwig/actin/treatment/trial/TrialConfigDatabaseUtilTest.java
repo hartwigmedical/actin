@@ -14,16 +14,12 @@ public class TrialConfigDatabaseUtilTest {
     public void canConvertToReferenceIds() {
         assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("all").size());
         assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("I-01").size());
+        assertTrue(TrialConfigDatabaseUtil.toReferenceIds(Strings.EMPTY).isEmpty());
 
         Set<String> referenceIds = TrialConfigDatabaseUtil.toReferenceIds("I-01, I-02");
         assertEquals(2, referenceIds.size());
         assertTrue(referenceIds.contains("I-01"));
         assertTrue(referenceIds.contains("I-02"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void crashOnMissingReferenceIdsParam() {
-        TrialConfigDatabaseUtil.toReferenceIds(Strings.EMPTY);
     }
 
     @Test

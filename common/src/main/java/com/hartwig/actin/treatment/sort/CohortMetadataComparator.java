@@ -10,15 +10,14 @@ public class CohortMetadataComparator implements Comparator<CohortMetadata> {
 
     @Override
     public int compare(@NotNull CohortMetadata metadata1, @NotNull CohortMetadata metadata2) {
-        int idCompare = metadata1.cohortId().compareTo(metadata2.cohortId());
-
-        if (idCompare != 0) {
-            return idCompare;
-        }
-
         int descriptionCompare = metadata1.description().compareTo(metadata2.description());
         if (descriptionCompare != 0) {
             return descriptionCompare;
+        }
+
+        int idCompare = metadata1.cohortId().compareTo(metadata2.cohortId());
+        if (idCompare != 0) {
+            return idCompare;
         }
 
         if (metadata1.open() == metadata2.open()) {
