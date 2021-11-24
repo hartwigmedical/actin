@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.pregnancy;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -20,7 +19,7 @@ public final class PregnancyRuleMapping {
 
         map.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
         map.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
-        map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION, notImplementedCreator());
+        map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION, canUseAdequateAnticonceptionCreator());
 
         return map;
     }
@@ -36,7 +35,7 @@ public final class PregnancyRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
+    private static FunctionCreator canUseAdequateAnticonceptionCreator() {
+        return function -> new CanUseAdequateAnticonception();
     }
 }
