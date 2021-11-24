@@ -13,7 +13,8 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
 ```
 ### Disease Ontology ID
 
-For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
+For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, 
+one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
 ## Clinical Datamodel
 
@@ -69,7 +70,7 @@ Field | Example Value | Details
 name | Ipilimumab | Treatment name
 year | 2021 | Year in which treatment was started
 month | 11 | Month in which treatment was started 
-category | Immunotherapy | Type of treatment
+categories | Immunotherapy | A set of categories assigned to the treatment
 isSystemic | 1 | Treatment is systemic?
 chemoType | | Type of chemotherapy (if applicable)
 immunoType | Anti-CTLA-4 | Type of immunotherapy (if applicable)
