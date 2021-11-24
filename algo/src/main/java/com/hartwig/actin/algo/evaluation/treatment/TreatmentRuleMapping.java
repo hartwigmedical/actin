@@ -23,7 +23,7 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
         map.put(EligibilityRule.SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignancyHasBeenCuredRecentlyCreator());
-        map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, notImplementedCreator());
+        map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_IMMUNOTHERAPY_TREATMENT, notImplementedCreator());
         map.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         map.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, notImplementedCreator());
@@ -49,9 +49,14 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator secondMalignancyHasBeenCuredRecentlyCreator() {
+        return function -> new SecondMalignancyHasBeenCuredRecently();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
-            int years = EligibilityParameterResolver.createOneIntegerParameter(function);
-            return new SecondMalignancyHasBeenCuredRecently(years);
+            int maxSystemicTreatments = EligibilityParameterResolver.createOneIntegerParameter(function);
+            return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
         };
     }
 

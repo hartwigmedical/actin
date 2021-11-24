@@ -3,21 +3,23 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
 import org.jetbrains.annotations.NotNull;
 
 public class SecondMalignancyHasBeenCuredRecently implements EvaluationFunction {
 
-    private final int years;
-
-    SecondMalignancyHasBeenCuredRecently(final int years) {
-        this.years = years;
+    SecondMalignancyHasBeenCuredRecently() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // Considered for removal by Nina
-        return Evaluation.IGNORED;
+        for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
+            if (priorSecondPrimary.isActive()) {
+                return Evaluation.FAIL;
+            }
+        }
+        return Evaluation.PASS;
     }
 }
