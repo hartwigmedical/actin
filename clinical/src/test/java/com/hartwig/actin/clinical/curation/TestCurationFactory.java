@@ -30,6 +30,7 @@ import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +112,7 @@ public final class TestCurationFactory {
                 .curatedObject(ImmutablePriorTumorTreatment.builder()
                         .name("Cisplatin")
                         .year(2020)
-                        .category("Chemotherapy")
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
                         .isSystemic(true)
                         .chemoType("platinum")
                         .build())

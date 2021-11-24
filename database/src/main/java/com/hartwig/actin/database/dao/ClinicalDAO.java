@@ -36,6 +36,7 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.util.TreatmentCategoryDisplay;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -181,7 +182,7 @@ class ClinicalDAO {
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
                             priorTumorTreatment.month(),
-                            priorTumorTreatment.category(),
+                            TreatmentCategoryDisplay.toString(priorTumorTreatment.categories()),
                             DataUtil.toByte(priorTumorTreatment.isSystemic()),
                             priorTumorTreatment.chemoType(),
                             priorTumorTreatment.immunoType(),

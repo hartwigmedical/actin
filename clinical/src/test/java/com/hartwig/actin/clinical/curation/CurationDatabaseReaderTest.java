@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
@@ -24,6 +25,7 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +88,7 @@ public class CurationDatabaseReaderTest {
         assertEquals("Capecitabine+Oxaliplatin", curated1.name());
         assertEquals(2020, (int) curated1.year());
         assertNull(curated1.month());
-        assertEquals("chemotherapy", curated1.category());
+        assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated1.categories());
         assertTrue(curated1.isSystemic());
         assertEquals("antimetabolite,platinum", curated1.chemoType());
         assertNull(curated1.immunoType());

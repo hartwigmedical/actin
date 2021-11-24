@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +20,7 @@ public abstract class PriorTumorTreatment {
     public abstract Integer month();
 
     @NotNull
-    public abstract String category();
+    public abstract Set<TreatmentCategory> categories();
 
     public abstract boolean isSystemic();
 

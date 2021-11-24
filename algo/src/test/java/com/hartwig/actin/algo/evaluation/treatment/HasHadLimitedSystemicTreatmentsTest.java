@@ -29,30 +29,15 @@ public class HasHadLimitedSystemicTreatmentsTest {
         assertEquals(Evaluation.PASS, function.evaluate(withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one non-systemic
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name(Strings.EMPTY)
-                .category(Strings.EMPTY)
-                .isSystemic(false)
-                .build());
-
+        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(false).build());
         assertEquals(Evaluation.PASS, function.evaluate(withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one systemic
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name(Strings.EMPTY)
-                .category(Strings.EMPTY)
-                .isSystemic(true)
-                .build());
-
+        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true).build());
         assertEquals(Evaluation.PASS, function.evaluate(withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one more systemic
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name(Strings.EMPTY)
-                .category(Strings.EMPTY)
-                .isSystemic(true)
-                .build());
-
+        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true).build());
         assertEquals(Evaluation.FAIL, function.evaluate(withPriorTumorTreatments(priorTumorTreatments)));
     }
 

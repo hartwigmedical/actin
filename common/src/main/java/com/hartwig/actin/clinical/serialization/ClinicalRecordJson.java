@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -69,6 +71,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.json.GsonSerializer;
@@ -218,10 +221,11 @@ public final class ClinicalRecordJson {
             List<PriorTumorTreatment> priorTumorTreatmentList = Lists.newArrayList();
             for (JsonElement element : priorTumorTreatments) {
                 JsonObject object = element.getAsJsonObject();
-                priorTumorTreatmentList.add(ImmutablePriorTumorTreatment.builder().name(string(object, "name"))
+                priorTumorTreatmentList.add(ImmutablePriorTumorTreatment.builder()
+                        .name(string(object, "name"))
                         .year(nullableInteger(object, "year"))
                         .month(nullableInteger(object, "month"))
-                        .category(string(object, "category"))
+                        .categories(toTreatmentCategories(array(object, "categories")))
                         .isSystemic(bool(object, "isSystemic"))
                         .chemoType(nullableString(object, "chemoType"))
                         .immunoType(nullableString(object, "immunoType"))
@@ -232,6 +236,15 @@ public final class ClinicalRecordJson {
                         .build());
             }
             return priorTumorTreatmentList;
+        }
+
+        @NotNull
+        private static Set<TreatmentCategory> toTreatmentCategories(@NotNull JsonArray categoryArray) {
+            Set<TreatmentCategory> categories = Sets.newHashSet();
+            for (JsonElement element : categoryArray) {
+                categories.add(TreatmentCategory.valueOf(element.getAsString()));
+            }
+            return categories;
         }
 
         @NotNull

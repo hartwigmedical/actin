@@ -5,11 +5,14 @@ import java.util.Map;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.util.TreatmentCategoryDisplay;
 import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
 public class OncologicalHistoryConfigFactory implements CurationConfigFactory<OncologicalHistoryConfig> {
+
+    private static final String CATEGORY_DELIMITER = ",";
 
     private static final String SECOND_PRIMARY_STRING = "second primary";
 
@@ -17,9 +20,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
     @Override
     public OncologicalHistoryConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         boolean ignore = CurationUtil.isIgnoreString(parts[fields.get("name")]);
-        return ImmutableOncologicalHistoryConfig.builder()
-                .input(parts[fields.get("input")])
-                .ignore(ignore)
+        return ImmutableOncologicalHistoryConfig.builder().input(parts[fields.get("input")]).ignore(ignore)
                 .curatedObject(!ignore ? curateObject(fields, parts) : null)
                 .build();
 
@@ -44,7 +45,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .name(parts[fields.get("name")])
                     .year(ResourceFile.optionalInteger(parts[fields.get("year")]))
                     .month(ResourceFile.optionalInteger(parts[fields.get("month")]))
-                    .category(parts[fields.get("category")])
+                    .categories(TreatmentCategoryDisplay.fromString(parts[fields.get("category")]))
                     .isSystemic(ResourceFile.bool(parts[fields.get("isSystemic")]))
                     .chemoType(ResourceFile.optionalString(parts[fields.get("chemoType")]))
                     .immunoType(ResourceFile.optionalString(parts[fields.get("immunoType")]))
