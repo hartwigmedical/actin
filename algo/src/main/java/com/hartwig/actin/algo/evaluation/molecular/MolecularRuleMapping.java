@@ -18,7 +18,7 @@ public final class MolecularRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, notImplementedCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
         map.put(EligibilityRule.ACTIVATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
@@ -37,6 +37,11 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.TML_OF_AT_MOST_X, notImplementedCreator());
 
         return map;
+    }
+
+    @NotNull
+    private static FunctionCreator molecularResultsAreAvailableCreator() {
+        return function -> new MolecularResultsAreAvailable();
     }
 
     @NotNull
