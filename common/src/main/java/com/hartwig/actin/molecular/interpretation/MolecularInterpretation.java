@@ -11,8 +11,11 @@ import org.jetbrains.annotations.Nullable;
 public abstract class MolecularInterpretation {
 
     @NotNull
-    public abstract Set<String> applicableResponsiveEvents();
+    public abstract Set<String> eventsWithTrialEligibility();
 
     @NotNull
-    public abstract Set<String> applicableResistanceEvents();
+    public abstract Set<String> ckbApplicableResponsiveEvents();
+
+    @NotNull
+    public abstract Set<String> ckbApplicableResistanceEvents();
 }

@@ -47,32 +47,30 @@ public final class TestMolecularDataFactory {
     private static List<MolecularTreatmentEvidence> createTestEvidences() {
         List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
 
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .genomicEvent("BRAF p.Val600Glu")
+        ImmutableMolecularTreatmentEvidence.Builder ckbBuilder = ImmutableMolecularTreatmentEvidence.builder().addSources("CKB");
+
+        evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .genomicEvent("BRAF p.Val600Glu")
+        evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
                 .treatment("Dabrafenib")
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .genomicEvent("BRAF p.Val600Glu")
+        evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .genomicEvent("PTEN partial loss")
+        evidences.add(ckbBuilder.genomicEvent("PTEN partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
                 .level(EvidenceLevel.B)

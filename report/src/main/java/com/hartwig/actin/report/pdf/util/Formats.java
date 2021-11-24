@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public final class Formats {
 
     public static final String VALUE_UNKNOWN = "Unknown";
+    public static final String VALUE_COMING_SOON = "Coming soon";
     public static final String DATE_UNKNOWN = "Date unknown";
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
@@ -56,7 +57,9 @@ public final class Formats {
 
     @NotNull
     public static Style styleForTableValue(@NotNull String value) {
-        return !value.equals(Formats.VALUE_UNKNOWN) ? Styles.tableValueHighlightStyle() : Styles.tableValueUnknownStyle();
+        return !value.equals(Formats.VALUE_UNKNOWN) && !value.equals(Formats.VALUE_COMING_SOON)
+                ? Styles.tableValueHighlightStyle()
+                : Styles.tableValueUnknownStyle();
     }
 
     @NotNull

@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
@@ -17,6 +18,9 @@ import com.hartwig.actin.molecular.util.GenomicEventFormatter;
 import org.jetbrains.annotations.NotNull;
 
 public final class MolecularInterpreter {
+
+    private static final String CKB_SOURCE = "CKB";
+    private static final String TRIAL_ELIGIBILITY_SOURCE = "ACTIN";
 
     private static final Set<String> NON_APPLICABLE_START_KEYWORDS = Sets.newHashSet();
     private static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
@@ -33,16 +37,31 @@ public final class MolecularInterpreter {
 
     @NotNull
     public static MolecularInterpretation interpret(@NotNull MolecularRecord record) {
+        List<MolecularTreatmentEvidence> ckbEvidences = filterEvidences(record, CKB_SOURCE);
+        List<MolecularTreatmentEvidence> evidencesForTrials = filterEvidences(record, TRIAL_ELIGIBILITY_SOURCE);
+
         return ImmutableMolecularInterpretation.builder()
-                .applicableResponsiveEvents(applicableResponsiveEvents(record))
-                .applicableResistanceEvents(applicableResistanceEvents(record))
+                .ckbApplicableResponsiveEvents(applicableResponsiveEvents(ckbEvidences))
+                .ckbApplicableResistanceEvents(applicableResistanceEvents(ckbEvidences))
+                .eventsWithTrialEligibility(applicableResponsiveEvents(evidencesForTrials))
                 .build();
     }
 
     @NotNull
-    private static Set<String> applicableResponsiveEvents(@NotNull MolecularRecord record) {
-        Set<String> events = Sets.newTreeSet();
+    private static List<MolecularTreatmentEvidence> filterEvidences(@NotNull MolecularRecord record, @NotNull String source) {
+        List<MolecularTreatmentEvidence> filtered = Lists.newArrayList();
         for (MolecularTreatmentEvidence evidence : record.evidences()) {
+            if (evidence.sources().contains(source)) {
+                filtered.add(evidence);
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
+    private static Set<String> applicableResponsiveEvents(@NotNull List<MolecularTreatmentEvidence> evidences) {
+        Set<String> events = Sets.newTreeSet();
+        for (MolecularTreatmentEvidence evidence : evidences) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
 
@@ -54,13 +73,13 @@ public final class MolecularInterpreter {
     }
 
     @NotNull
-    private static Set<String> applicableResistanceEvents(@NotNull MolecularRecord record) {
+    private static Set<String> applicableResistanceEvents(@NotNull List<MolecularTreatmentEvidence> evidences) {
         Multimap<String, String> treatmentsPerEvent = ArrayListMultimap.create();
-        for (MolecularTreatmentEvidence evidence : record.evidences()) {
+        for (MolecularTreatmentEvidence evidence : evidences) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
             boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
-                    hasOnLabelResponsiveEvidenceWithMinLevel(record.evidences(), evidence.treatment(), evidence.level());
+                    hasOnLabelResponsiveEvidenceWithMinLevel(evidences, evidence.treatment(), evidence.level());
 
             if (isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
                 treatmentsPerEvent.put(GenomicEventFormatter.format(evidence.genomicEvent()), evidence.treatment());

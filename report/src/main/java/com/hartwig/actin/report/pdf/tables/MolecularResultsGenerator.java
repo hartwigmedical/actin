@@ -41,12 +41,16 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
-        table.addCell(Cells.createKey("Actionable events"));
-        table.addCell(Cells.createValue(concat(interpretation.applicableResponsiveEvents())));
+        table.addCell(Cells.createKey("Events with trial eligibility"));
+        table.addCell(Cells.createValue(Formats.VALUE_COMING_SOON));
+        //table.addCell(Cells.createValue(concat(interpretation.eventsWithTrialEligibility())));
 
-        if (!interpretation.applicableResistanceEvents().isEmpty()) {
-            table.addCell(Cells.createKey("Resistance events"));
-            table.addCell(Cells.createValue(concat(interpretation.applicableResistanceEvents())));
+        table.addCell(Cells.createKey("Events with applicable responsive evidence in CKB"));
+        table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResponsiveEvents())));
+
+        if (!interpretation.ckbApplicableResistanceEvents().isEmpty()) {
+            table.addCell(Cells.createKey("Events with applicable resistance evidence in CKB"));
+            table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResistanceEvents())));
         }
 
         return table;

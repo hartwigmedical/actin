@@ -26,11 +26,11 @@ public class MolecularInterpreterTest {
 
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
 
-        Set<String> responsiveEvidence = interpretation.applicableResponsiveEvents();
+        Set<String> responsiveEvidence = interpretation.ckbApplicableResponsiveEvents();
         assertEquals(1, responsiveEvidence.size());
         assertTrue(responsiveEvidence.contains("Event 1"));
 
-        Set<String> resistanceEvents = interpretation.applicableResistanceEvents();
+        Set<String> resistanceEvents = interpretation.ckbApplicableResistanceEvents();
         assertEquals(1, resistanceEvents.size());
         assertTrue(resistanceEvents.contains("Event 4 (Treatment 1)"));
     }
@@ -39,9 +39,9 @@ public class MolecularInterpreterTest {
     private static List<MolecularTreatmentEvidence> createTestEvidences() {
         List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
 
+        ImmutableMolecularTreatmentEvidence.Builder ckbBuilder = ImmutableMolecularTreatmentEvidence.builder().addSources("CKB");
         // Should be included, all good.
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 1")
+        evidences.add(ckbBuilder.treatment("Treatment 1")
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
@@ -49,8 +49,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Should be filtered out since it is C-level off-label evidence.
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 2")
+        evidences.add(ckbBuilder.treatment("Treatment 2")
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.C)
                 .onLabel(false)
@@ -58,8 +57,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Should be filtered out as it starts with CDKN2A.
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 4")
+        evidences.add(ckbBuilder.treatment("Treatment 4")
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
@@ -67,8 +65,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Should be filtered out as it is VEGFA amp.
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 2")
+        evidences.add(ckbBuilder.treatment("Treatment 2")
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
@@ -76,8 +73,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Should be filtered since there is no responsive evidence for treatment 3
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 3")
+        evidences.add(ckbBuilder.treatment("Treatment 3")
                 .direction(EvidenceDirection.RESISTANT)
                 .level(EvidenceLevel.B)
                 .onLabel(false)
@@ -85,8 +81,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Should be included, all good.
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 1")
+        evidences.add(ckbBuilder.treatment("Treatment 1")
                 .direction(EvidenceDirection.RESISTANT)
                 .level(EvidenceLevel.A)
                 .onLabel(false)
@@ -94,8 +89,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Should be filtered since evidence level is not high enough
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                .treatment("Treatment 1")
+        evidences.add(ckbBuilder.treatment("Treatment 1")
                 .direction(EvidenceDirection.RESISTANT)
                 .level(EvidenceLevel.B)
                 .onLabel(false)

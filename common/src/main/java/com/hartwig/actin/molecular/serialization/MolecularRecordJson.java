@@ -5,6 +5,7 @@ import static com.hartwig.actin.json.Json.bool;
 import static com.hartwig.actin.json.Json.nullableDate;
 import static com.hartwig.actin.json.Json.object;
 import static com.hartwig.actin.json.Json.string;
+import static com.hartwig.actin.json.Json.stringList;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,14 +81,14 @@ public final class MolecularRecordJson {
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
                 boolean reported = bool(evidence, "reported");
-                boolean germline = bool(evidence, "germline");
-                if (reported && !germline) {
+                if (reported) {
                     evidences.add(ImmutableMolecularTreatmentEvidence.builder()
                             .genomicEvent(string(evidence, "genomicEvent"))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))
                             .level(EvidenceLevel.valueOf(string(evidence, "level")))
                             .direction(EvidenceDirection.valueOf(string(evidence, "direction")))
+                            .sources(stringList(evidence, "sources"))
                             .build());
                 }
             }
