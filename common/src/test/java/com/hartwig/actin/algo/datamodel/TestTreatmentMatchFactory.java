@@ -63,11 +63,11 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
                         .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES).build())
+                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("E-01")
-                        .text("This rule has 2 conditions:\n 1. Patient has no active metastases.\n 2. Patient has exhausted SOC.")
+                        .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
                         .build())
                 .build(), Evaluation.PASS);
 
@@ -75,9 +75,9 @@ public final class TestTreatmentMatchFactory {
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("E-01")
-                        .text("This rule has 2 conditions:\n 1. Patient has no active metastases.\n 2. Patient has exhausted SOC.")
+                        .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
                         .build())
-                .build(), Evaluation.PASS);
+                .build(), Evaluation.IGNORED);
 
         return map;
     }
@@ -86,9 +86,7 @@ public final class TestTreatmentMatchFactory {
     private static List<CohortEligibility> createTestCohorts() {
         List<CohortEligibility> cohorts = Lists.newArrayList();
 
-        cohorts.add(ImmutableCohortEligibility.builder()
-                .metadata(createTestMetadata("A"))
-                .overallEvaluation(Evaluation.UNDETERMINED)
+        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("A")).overallEvaluation(Evaluation.FAIL)
                 .evaluations(createTestCohortEvaluations())
                 .build());
 
@@ -113,7 +111,7 @@ public final class TestTreatmentMatchFactory {
                         .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
-                .build(), Evaluation.NOT_IMPLEMENTED);
+                .build(), Evaluation.FAIL);
 
         return map;
     }

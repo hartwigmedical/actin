@@ -26,11 +26,11 @@ public class EvaluationSummarizerTest {
 
         EvaluationSummary summary = EvaluationSummarizer.summarize(firstTrialEvaluations);
         assertEquals(3, summary.count());
-        assertEquals(3, summary.passedCount());
+        assertEquals(2, summary.passedCount());
         assertEquals(0, summary.warningCount());
         assertEquals(0, summary.failedCount());
         assertEquals(0, summary.undeterminedCount());
-        assertEquals(0, summary.ignoredCount());
+        assertEquals(1, summary.ignoredCount());
         assertEquals(0, summary.nonImplementedCount());
     }
 }
