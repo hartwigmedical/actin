@@ -128,7 +128,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             String implementation = EligibilityFunctionDisplay.format(entry.getKey().function());
             for (CriterionReference reference : entry.getKey().references()) {
                 table.addCell(Cells.createContent(reference.id()));
-                table.addCell(Cells.createContent(implementation + "/n" + reference.text()));
+                table.addCell(Cells.createContent(implementation + "\n" + reference.text()));
                 if (!hasAddedEvaluation) {
                     table.addCell(Cells.createContent(entry.getValue()));
                     hasAddedEvaluation = true;
