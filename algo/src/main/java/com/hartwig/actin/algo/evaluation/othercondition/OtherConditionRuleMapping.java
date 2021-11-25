@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -23,14 +22,14 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, hasHistoryOfCardiovascularDiseaseCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, notImplementedCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, notImplementedCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, notImplementedCreator());
-        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, notImplementedCreator());
-        map.put(EligibilityRule.HAS_HYPERTENSION, notImplementedCreator());
-        map.put(EligibilityRule.HAS_KNOWN_LVEF_OF_AT_MOST_X, notImplementedCreator());
-        map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, notImplementedCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasHistoryOfLungDiseaseCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasHistoryOfStrokeCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasHistoryOfTiaCreator(doidModel));
+        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidModel));
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
+        map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidModel));
+        map.put(EligibilityRule.HAS_KNOWN_LVEF_OF_AT_MOST_X, hasLimitedKnownLVEFCreator());
+        map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
 
         return map;
     }
@@ -56,12 +55,42 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasGilbertDiseaseCreator() {
-        return function -> new HasGilbertDisease();
+    private static FunctionCreator hasHistoryOfLungDiseaseCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasHistoryOfLungDisease(doidModel);
     }
 
     @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
+    private static FunctionCreator hasHistoryOfStrokeCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasHistoryOfStroke(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfTiaCreator(final DoidModel doidModel) {
+        return function -> new HasHistoryOfTia(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasGilbertDiseaseCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasGilbertDisease(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasCardiacArrhythmiaCreator() {
+        return function -> new HasCardiacArrhythmia();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHypertensionCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasHypertension(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasKnownMalabsorptionSyndromeCreator() {
+        return function -> new HasKnownMalabsorptionSyndrome();
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedKnownLVEFCreator() {
+        return function -> new HasLimitedKnownLVEF();
     }
 }
