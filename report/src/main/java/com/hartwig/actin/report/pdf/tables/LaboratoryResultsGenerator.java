@@ -5,7 +5,8 @@ import java.util.List;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
-import com.hartwig.actin.clinical.interpretation.LabInterpretationFactory;
+import com.hartwig.actin.clinical.interpretation.LabInterpreter;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -23,6 +24,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
 
     @NotNull
     private final LabInterpretation labInterpretation;
+
     private final float key1Width;
     private final float key2Width;
     private final float key3Width;
@@ -34,11 +36,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         float key2Width = keyWidth / 3;
         float key3Width = keyWidth - key1Width - key2Width;
 
-        return new LaboratoryResultsGenerator(LabInterpretationFactory.fromLabValues(record.labValues()),
-                key1Width,
-                key2Width,
-                key3Width,
-                valueWidth);
+        return new LaboratoryResultsGenerator(LabInterpreter.interpret(record.labValues()), key1Width, key2Width, key3Width, valueWidth);
     }
 
     private LaboratoryResultsGenerator(@NotNull final LabInterpretation labInterpretation, final float key1Width, final float key2Width,
@@ -62,39 +60,33 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, key3Width, valueWidth });
 
         table.addCell(Cells.createKey("Liver function"));
-        addMostRecentLabEntryByName(table, "Total bilirubin");
+        addLabMeasurement(table, LabMeasurement.TOTAL_BILIRUBIN, "Total bilirubin");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByCode(table, "ASAT");
+        addLabMeasurement(table, LabMeasurement.ASAT, "ASAT");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByCode(table, "ALAT");
+        addLabMeasurement(table, LabMeasurement.ALAT, "ALAT");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByCode(table, "ALP");
+        addLabMeasurement(table, LabMeasurement.ALP, "ALP");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByName(table, "Albumin");
+        addLabMeasurement(table, LabMeasurement.ALBUMIN, "Albumin");
 
         table.addCell(Cells.createKey("Kidney function"));
-        addMostRecentLabEntryByName(table, "Creatinine");
+        addLabMeasurement(table, LabMeasurement.CREATININE, "Creatinine");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByName(table, "CKD-EPI eGFR");
+        addLabMeasurement(table, LabMeasurement.CDK_EPI_EGFR, "CDK-EPI eGFR");
 
         table.addCell(Cells.createKey("Other"));
-        addMostRecentLabEntryByName(table, "Hemoglobin");
+        addLabMeasurement(table, LabMeasurement.HEMOGLOBIN, "Hemoglobin");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByName(table, "Thrombocytes");
+        addLabMeasurement(table, LabMeasurement.THROMBOCYTES, "Thrombocytes");
         table.addCell(Cells.createEmpty());
-        addMostRecentLabEntryByCode(table, "LDH");
+        addLabMeasurement(table, LabMeasurement.LDH, "LDH");
+
         return table;
     }
 
-    private void addMostRecentLabEntryByName(@NotNull Table table, @NotNull String name) {
-        addLabEntry(table, name, labInterpretation.mostRecentByName(name));
-    }
-
-    private void addMostRecentLabEntryByCode(@NotNull Table table, @NotNull String code) {
-        addLabEntry(table, code, labInterpretation.mostRecentByCode(code));
-    }
-
-    private void addLabEntry(@NotNull Table table, @NotNull String key, @Nullable LabValue lab) {
+    private void addLabMeasurement(@NotNull Table table, @NotNull LabMeasurement measurement, @NotNull String name) {
+        LabValue lab = labInterpretation.mostRecentValue(measurement);
         String value = Strings.EMPTY;
 
         Style style = Styles.tableValueHighlightStyle();
@@ -114,7 +106,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
             }
         }
 
-        table.addCell(Cells.createKey(key));
+        table.addCell(Cells.createKey(name));
         table.addCell(Cells.createKey(buildLimitString(lab)));
         table.addCell(Cells.create(new Paragraph(value).addStyle(style)));
     }

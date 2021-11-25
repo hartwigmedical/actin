@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.interpretation;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -18,28 +19,19 @@ public class LabInterpretation {
     private static final Logger LOGGER = LogManager.getLogger(LabInterpretation.class);
 
     @NotNull
-    private final Multimap<String, LabValue> labValuesByName;
-    @NotNull
-    private final Multimap<String, LabValue> labValuesByCode;
+    private final Multimap<LabMeasurement, LabValue> labMeasurements;
 
-    public LabInterpretation(@NotNull final Multimap<String, LabValue> labValuesByName,
-            @NotNull final Multimap<String, LabValue> labValuesByCode) {
-        this.labValuesByName = labValuesByName;
-        this.labValuesByCode = labValuesByCode;
+    public LabInterpretation(@NotNull final Multimap<LabMeasurement, LabValue> labMeasurements) {
+        this.labMeasurements = labMeasurements;
     }
 
     @Nullable
     public LocalDate mostRecentRelevantDate() {
         LocalDate mostRecentDate = null;
 
-        LabValue mostRecentLabValueByName = mostRecent(labValuesByName.values());
+        LabValue mostRecentLabValueByName = mostRecent(labMeasurements.values());
         if (mostRecentLabValueByName != null && (mostRecentDate == null || mostRecentLabValueByName.date().isAfter(mostRecentDate))) {
             mostRecentDate = mostRecentLabValueByName.date();
-        }
-
-        LabValue mostRecentLabValueByCode = mostRecent(labValuesByCode.values());
-        if (mostRecentLabValueByCode != null && (mostRecentDate == null || mostRecentLabValueByCode.date().isAfter(mostRecentDate))) {
-            mostRecentDate = mostRecentLabValueByCode.date();
         }
 
         return mostRecentDate;
@@ -47,35 +39,19 @@ public class LabInterpretation {
 
     @Nullable
     public List<LabValue> allValuesForType(@NotNull LabValue reference) {
-        List<LabValue> values = null;
-        if (labValuesByName.values().contains(reference)) {
-            values = Lists.newArrayList(labValuesByName.get(reference.name()));
-        } else if (labValuesByCode.values().contains(reference)) {
-            values = Lists.newArrayList(labValuesByCode.get(reference.code()));
+        for (Map.Entry<LabMeasurement, Collection<LabValue>> entry : labMeasurements.asMap().entrySet()) {
+            if (entry.getValue().contains(reference)) {
+                return Lists.newArrayList(entry.getValue());
+            }
         }
 
-        return values;
+        LOGGER.warn("Could not find lab reference value: " + reference);
+        return null;
     }
 
     @Nullable
-    public LabValue mostRecentByName(@NotNull String name) {
-        if (!LabInterpretationFactory.RELEVANT_LAB_NAMES.contains(name)) {
-            LOGGER.warn("Lab value with name '{}' has not been configured as a relevant lab value!", name);
-        }
-        return mostRecentFromMultimap(labValuesByName, name);
-    }
-
-    @Nullable
-    public LabValue mostRecentByCode(@NotNull String code) {
-        if (!LabInterpretationFactory.RELEVANT_LAB_CODES.contains(code)) {
-            LOGGER.warn("Lab value with code '{}' has not been configured as a relevant lab value!", code);
-        }
-        return mostRecentFromMultimap(labValuesByCode, code);
-    }
-
-    @Nullable
-    private static LabValue mostRecentFromMultimap(@NotNull Multimap<String, LabValue> multimap, @NotNull String key) {
-        Collection<LabValue> values = multimap.get(key);
+    public LabValue mostRecentValue(@NotNull LabMeasurement measurement) {
+        Collection<LabValue> values = labMeasurements.get(measurement);
         return values != null ? mostRecent(values) : null;
     }
 

@@ -7,12 +7,12 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.junit.Test;
 
-public class LabInterpretationFactoryTest {
+public class LabInterpreterTest {
 
     @Test
     public void canGenerateLabInterpretation() {
-        assertNotNull(LabInterpretationFactory.fromLabValues(Lists.newArrayList()));
+        assertNotNull(LabInterpreter.interpret(Lists.newArrayList()));
 
-        assertNotNull(LabInterpretationFactory.fromLabValues(TestClinicalDataFactory.createProperTestClinicalRecord().labValues()));
+        assertNotNull(LabInterpreter.interpret(TestClinicalDataFactory.createProperTestClinicalRecord().labValues()));
     }
 }

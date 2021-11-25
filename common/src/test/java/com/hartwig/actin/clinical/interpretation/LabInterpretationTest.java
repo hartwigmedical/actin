@@ -21,46 +21,32 @@ public class LabInterpretationTest {
 
     @Test
     public void canDealWithMissingLabValues() {
-        LabInterpretation interpretation = new LabInterpretation(ArrayListMultimap.create(), ArrayListMultimap.create());
+        LabInterpretation interpretation = new LabInterpretation(ArrayListMultimap.create());
 
         assertNull(interpretation.mostRecentRelevantDate());
-        assertNull(interpretation.mostRecentByName("name"));
-        assertNull(interpretation.mostRecentByName("code"));
+        assertNull(interpretation.mostRecentValue(LabMeasurement.ALAT));
     }
 
     @Test
     public void canInterpretLabValues() {
-        String name = "name";
-        String code = "code";
-
-        LabInterpretation interpretation = createTestLabInterpretation(name, code);
+        LabInterpretation interpretation = createTestLabInterpretation(LabMeasurement.ALAT);
 
         assertEquals(TEST_DATE, interpretation.mostRecentRelevantDate());
+        LabValue value = (interpretation.mostRecentValue(LabMeasurement.ALAT));
+        assertNotNull(value);
+        assertEquals(2, interpretation.allValuesForType(value).size());
 
-        LabValue valueByName = (interpretation.mostRecentByName(name));
-        assertNotNull(valueByName);
-        assertEquals(2, interpretation.allValuesForType(valueByName).size());
-
-        LabValue valueByCode = interpretation.mostRecentByCode(code);
-        assertNotNull(valueByCode);
-        assertEquals(2, interpretation.allValuesForType(valueByCode).size());
-
-        assertNull(interpretation.mostRecentByName("not a name"));
-        assertNull(interpretation.mostRecentByName("not a code"));
+        assertNull(interpretation.mostRecentValue(LabMeasurement.ALBUMIN));
         assertNull(interpretation.allValuesForType(builder().build()));
     }
 
     @NotNull
-    private static LabInterpretation createTestLabInterpretation(@NotNull String name, @NotNull String code) {
-        Multimap<String, LabValue> labValuesByName = ArrayListMultimap.create();
-        labValuesByName.put(name, builder().name(name).build());
-        labValuesByName.put(name, builder().name(name).build());
+    private static LabInterpretation createTestLabInterpretation(@NotNull LabMeasurement measurement) {
+        Multimap<LabMeasurement, LabValue> labValuesMap = ArrayListMultimap.create();
+        labValuesMap.put(measurement, builder().code(measurement.code()).build());
+        labValuesMap.put(measurement, builder().code(measurement.code()).build());
 
-        Multimap<String, LabValue> labValuesByCode = ArrayListMultimap.create();
-        labValuesByCode.put(code, builder().code(code).build());
-        labValuesByCode.put(code, builder().code(code).build());
-
-        return new LabInterpretation(labValuesByName, labValuesByCode);
+        return new LabInterpretation(labValuesMap);
     }
 
     @NotNull
