@@ -9,17 +9,16 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.jetbrains.annotations.NotNull;
 
-final class TumorTestUtil {
+final class TumorEvaluationTestUtil {
 
-    private TumorTestUtil() {
+    private TumorEvaluationTestUtil() {
     }
 
     @NotNull
     public static PatientRecord withTumorDetails(@NotNull TumorDetails tumor) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .clinical(ImmutableClinicalRecord.builder().from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
                         .tumor(tumor)
                         .build())
                 .build();

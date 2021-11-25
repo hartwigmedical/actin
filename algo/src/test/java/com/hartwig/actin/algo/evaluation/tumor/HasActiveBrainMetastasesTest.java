@@ -23,6 +23,8 @@ public class HasActiveBrainMetastasesTest {
 
     @NotNull
     private static PatientRecord patientWithActiveBrainLesions(@Nullable Boolean hasActiveBrainLesions) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasActiveBrainLesions(hasActiveBrainLesions).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
+                .hasActiveBrainLesions(hasActiveBrainLesions)
+                .build());
     }
 }

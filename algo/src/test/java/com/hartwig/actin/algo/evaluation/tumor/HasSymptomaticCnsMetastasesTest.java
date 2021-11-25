@@ -23,6 +23,8 @@ public class HasSymptomaticCnsMetastasesTest {
 
     @NotNull
     private static PatientRecord patientWithSymptomaticCnsLesions(@Nullable Boolean hasSymptomaticCnsLesions) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasSymptomaticCnsLesions(hasSymptomaticCnsLesions).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
+                .hasSymptomaticCnsLesions(hasSymptomaticCnsLesions)
+                .build());
     }
 }

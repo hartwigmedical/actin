@@ -23,6 +23,6 @@ public class HasLiverMetastasesTest {
 
     @NotNull
     private static PatientRecord patientWithLiverLesions(@Nullable Boolean hasLiverLesions) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasLiverLesions(hasLiverLesions).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasLiverLesions(hasLiverLesions).build());
     }
 }

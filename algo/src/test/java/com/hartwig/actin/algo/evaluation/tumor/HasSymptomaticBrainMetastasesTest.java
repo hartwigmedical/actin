@@ -23,7 +23,7 @@ public class HasSymptomaticBrainMetastasesTest {
 
     @NotNull
     private static PatientRecord patientWithSymptomaticBrainLesions(@Nullable Boolean hasSymptomaticBrainLesions) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
                 .hasSymptomaticBrainLesions(hasSymptomaticBrainLesions)
                 .build());
     }

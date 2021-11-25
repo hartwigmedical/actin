@@ -23,6 +23,6 @@ public class HasActiveCnsMetastasesTest {
 
     @NotNull
     private static PatientRecord patientWithActiveCnsLesions(@Nullable Boolean hasActiveCnsLesions) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasActiveCnsLesions(hasActiveCnsLesions).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasActiveCnsLesions(hasActiveCnsLesions).build());
     }
 }

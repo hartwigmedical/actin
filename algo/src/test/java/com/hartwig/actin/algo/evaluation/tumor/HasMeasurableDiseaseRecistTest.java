@@ -23,7 +23,8 @@ public class HasMeasurableDiseaseRecistTest {
 
     @NotNull
     private static PatientRecord patientWithMeasurableLesionRecist(@Nullable Boolean hasMeasurableLesionRecist) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasMeasurableLesionRecist(hasMeasurableLesionRecist).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
+                .hasMeasurableLesionRecist(hasMeasurableLesionRecist)
+                .build());
     }
-
 }

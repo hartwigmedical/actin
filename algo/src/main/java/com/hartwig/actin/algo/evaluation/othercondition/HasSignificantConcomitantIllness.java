@@ -8,10 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSignificantConcomitantIllness implements EvaluationFunction {
 
+    HasSignificantConcomitantIllness() {
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+        return !record.clinical().priorOtherConditions().isEmpty() ? Evaluation.PASS : Evaluation.FAIL;
     }
 }

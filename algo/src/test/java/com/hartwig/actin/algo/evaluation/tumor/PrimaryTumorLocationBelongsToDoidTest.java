@@ -45,6 +45,6 @@ public class PrimaryTumorLocationBelongsToDoidTest {
 
     @NotNull
     private static PatientRecord patientWithDoids(@Nullable List<String> doids) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().doids(doids).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().doids(doids).build());
     }
 }

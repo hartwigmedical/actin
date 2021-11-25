@@ -157,16 +157,16 @@ HAS_ALP_ULN_OF_AT_MOST_X | ALP <= X*ULN
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | Prior other conditions > name is not empty
-HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 417
-HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 114
-HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 1287
-HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 850
-HAS_HISTORY_OF_STROKE | Prior other conditions > configured doid should be equal or be a child of DOID 6713 
-HAS_HISTORY_OF_TIA | Prior other conditions > configured doid should be equal or be a child of DOID 224 
-HAS_GILBERT_DISEASE | Prior other conditions > configured doid should be equal or be a child of DOID 2739
+HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | Prior other conditions > is not empty
+HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
+HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
+HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
+HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
+HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
+HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
+HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
-HAS_HYPERTENSION | Prior other conditions > configured doid should be equal or be a child of DOID 10763
+HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_KNOWN_LVEF_OF_AT_MOST_X | clinicalStatus > lvef should be <= X
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
 

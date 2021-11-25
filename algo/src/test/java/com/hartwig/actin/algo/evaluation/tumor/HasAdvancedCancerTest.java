@@ -24,6 +24,6 @@ public class HasAdvancedCancerTest {
 
     @NotNull
     private static PatientRecord patientWithTumorStage(@Nullable TumorStage stage) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().stage(stage).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().stage(stage).build());
     }
 }

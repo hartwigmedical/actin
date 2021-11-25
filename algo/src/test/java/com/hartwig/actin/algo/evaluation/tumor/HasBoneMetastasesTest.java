@@ -23,6 +23,6 @@ public class HasBoneMetastasesTest {
 
     @NotNull
     private static PatientRecord patientWithBoneLesions(@Nullable Boolean hasBoneLesions) {
-        return TumorTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasBoneLesions(hasBoneLesions).build());
+        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasBoneLesions(hasBoneLesions).build());
     }
 }
