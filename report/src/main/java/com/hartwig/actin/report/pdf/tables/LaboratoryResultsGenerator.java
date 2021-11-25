@@ -60,32 +60,42 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, key3Width, valueWidth });
 
         table.addCell(Cells.createKey("Liver function"));
-        addLabMeasurement(table, LabMeasurement.TOTAL_BILIRUBIN, "Total bilirubin");
+        table.addCell(Cells.createKey("Total bilirubin"));
+        addLabMeasurement(table, LabMeasurement.TOTAL_BILIRUBIN);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.ASAT, "ASAT");
+        table.addCell(Cells.createKey("ASAT"));
+        addLabMeasurement(table, LabMeasurement.ASAT);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.ALAT, "ALAT");
+        table.addCell(Cells.createKey("ALAT"));
+        addLabMeasurement(table, LabMeasurement.ALAT);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.ALP, "ALP");
+        table.addCell(Cells.createKey("ALP"));
+        addLabMeasurement(table, LabMeasurement.ALP);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.ALBUMIN, "Albumin");
+        table.addCell(Cells.createKey("Albumin"));
+        addLabMeasurement(table, LabMeasurement.ALBUMIN);
 
         table.addCell(Cells.createKey("Kidney function"));
-        addLabMeasurement(table, LabMeasurement.CREATININE, "Creatinine");
+        table.addCell(Cells.createKey("Creatinine"));
+        addLabMeasurement(table, LabMeasurement.CREATININE);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.CDK_EPI_EGFR, "CDK-EPI eGFR");
+        table.addCell(Cells.createKey("CKD-EPI eGFR"));
+        addLabMeasurement(table, LabMeasurement.CDK_EPI_EGFR);
 
         table.addCell(Cells.createKey("Other"));
-        addLabMeasurement(table, LabMeasurement.HEMOGLOBIN, "Hemoglobin");
+        table.addCell(Cells.createKey("Hemoglobin"));
+        addLabMeasurement(table, LabMeasurement.HEMOGLOBIN);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.THROMBOCYTES, "Thrombocytes");
+        table.addCell(Cells.createKey("Thrombocytes"));
+        addLabMeasurement(table, LabMeasurement.THROMBOCYTES);
         table.addCell(Cells.createEmpty());
-        addLabMeasurement(table, LabMeasurement.LDH, "LDH");
+        table.addCell(Cells.createKey("LDH"));
+        addLabMeasurement(table, LabMeasurement.LDH);
 
         return table;
     }
 
-    private void addLabMeasurement(@NotNull Table table, @NotNull LabMeasurement measurement, @NotNull String name) {
+    private void addLabMeasurement(@NotNull Table table, @NotNull LabMeasurement measurement) {
         LabValue lab = labInterpretation.mostRecentValue(measurement);
         String value = Strings.EMPTY;
 
@@ -106,7 +116,6 @@ public class LaboratoryResultsGenerator implements TableGenerator {
             }
         }
 
-        table.addCell(Cells.createKey(name));
         table.addCell(Cells.createKey(buildLimitString(lab)));
         table.addCell(Cells.create(new Paragraph(value).addStyle(style)));
     }
