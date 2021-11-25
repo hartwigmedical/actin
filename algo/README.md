@@ -135,23 +135,23 @@ TML_OF_AT_MOST_X | TML should be <= X
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes abs => X
-HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophils abs => X 
-HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes abs => X 
-HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin g/dL => X. In case Hb is measured in mmol/L, the value is converted using 
-HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin mmol/L => X. In case Hb is measured in g/dL, the value is converted using 
-HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine <= X*ULN (upper limit of normal)
+HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) => X
+HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) => X 
+HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) => X 
+HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
+HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
+HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN (upper limit of normal, implemented as refLimitUp)
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. In case CrCl is measured in another unit, the value is converted using
-HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X | Total Bilirubin <= X*ULN
-HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X | Direct Bilirubin <= X*ULN
-HAS_INR_ULN_AT_MOST_X | INR <= X*ULN
-HAS_PT_ULN_AT_MOST_X | PT <= X*ULN
-HAS_APTT_ULN_AT_MOST_X | APTT <= X*ULN
-HAS_ASAT_ULN_OF_AT_MOST_X | ASAT <= X*ULN
-HAS_ALAT_ULN_OF_AT_MOST_X | ALAT <= X*ULN
-HAS_ALP_ULN_OF_AT_MOST_X | ALP <= X*ULN
+HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN 
+HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
+HAS_INR_ULN_AT_MOST_X | International normalized ratio (INR) <= X*ULN 
+HAS_PT_ULN_AT_MOST_X | Prothrombin time (PT) <= X*ULN 
+HAS_APTT_ULN_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN 
+HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
+HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
+HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
 
 ##### Rules related to other conditions
 
