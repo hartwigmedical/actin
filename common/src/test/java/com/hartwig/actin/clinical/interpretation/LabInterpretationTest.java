@@ -32,12 +32,12 @@ public class LabInterpretationTest {
         LabInterpretation interpretation = createTestLabInterpretation(LabMeasurement.ALAT);
 
         assertEquals(TEST_DATE, interpretation.mostRecentRelevantDate());
-        LabValue value = (interpretation.mostRecentValue(LabMeasurement.ALAT));
+        LabValue value = interpretation.mostRecentValue(LabMeasurement.ALAT);
         assertNotNull(value);
-        assertEquals(2, interpretation.allValuesForType(value).size());
+        assertEquals(2, interpretation.allValues(LabMeasurement.ALAT).size());
 
         assertNull(interpretation.mostRecentValue(LabMeasurement.ALBUMIN));
-        assertNull(interpretation.allValuesForType(builder().build()));
+        assertNull(interpretation.allValues(LabMeasurement.ALBUMIN));
     }
 
     @NotNull

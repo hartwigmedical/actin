@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.interpretation;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -38,15 +37,13 @@ public class LabInterpretation {
     }
 
     @Nullable
-    public List<LabValue> allValuesForType(@NotNull LabValue reference) {
-        for (Map.Entry<LabMeasurement, Collection<LabValue>> entry : labMeasurements.asMap().entrySet()) {
-            if (entry.getValue().contains(reference)) {
-                return Lists.newArrayList(entry.getValue());
-            }
+    public List<LabValue> allValues(@NotNull LabMeasurement measurement) {
+        if (!labMeasurements.containsKey(measurement)) {
+            LOGGER.warn("Could not find measurement for '" + measurement + "'");
+            return null;
         }
-
-        LOGGER.warn("Could not find lab reference value: " + reference);
-        return null;
+        Collection<LabValue> values = labMeasurements.get(measurement);
+        return values != null ? Lists.newArrayList(values) : null;
     }
 
     @Nullable

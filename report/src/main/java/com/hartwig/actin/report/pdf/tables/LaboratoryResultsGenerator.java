@@ -112,7 +112,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
 
             if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
                 style = Styles.tableValueWarnStyle();
-                value = value + " (" + buildOutOfRangeAddition(labInterpretation.allValuesForType(lab)) + ")";
+                value = value + " (" + buildOutOfRangeAddition(labInterpretation.allValues(measurement)) + ")";
             }
         }
 
