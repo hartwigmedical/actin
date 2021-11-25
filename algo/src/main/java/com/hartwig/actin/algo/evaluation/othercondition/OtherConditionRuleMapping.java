@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -15,13 +16,13 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS, hasSignificantConcomitantIllnessCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, notImplementedCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, hasHistoryOfCardiovascularDiseaseCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, notImplementedCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, notImplementedCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, notImplementedCreator());
@@ -40,13 +41,18 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfAutoimmuneDiseaseCreator() {
-        return function -> new HasHistoryOfAutoimmuneDisease();
+    private static FunctionCreator hasHistoryOfAutoimmuneDiseaseCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasHistoryOfAutoimmuneDisease(doidModel);
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfCardiacDiseaseCreator() {
-        return function -> new HasHistoryOfCardiacDisease();
+    private static FunctionCreator hasHistoryOfCardiacDiseaseCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasHistoryOfCardiacDisease(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfCardiovascularDiseaseCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasHistoryOfCardiovascularDisease(doidModel);
     }
 
     @NotNull

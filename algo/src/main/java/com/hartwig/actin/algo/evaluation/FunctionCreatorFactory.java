@@ -36,7 +36,7 @@ final class FunctionCreatorFactory {
         map.putAll(TreatmentRuleMapping.create());
         map.putAll(MolecularRuleMapping.create());
         map.putAll(LaboratoryRuleMapping.create());
-        map.putAll(OtherConditionRuleMapping.create());
+        map.putAll(OtherConditionRuleMapping.create(doidModel));
         map.putAll(InfectionRuleMapping.create());
         map.putAll(MedicationRuleMapping.create());
         map.putAll(PregnancyRuleMapping.create());

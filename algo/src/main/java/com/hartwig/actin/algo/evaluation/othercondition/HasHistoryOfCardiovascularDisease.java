@@ -7,21 +7,21 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHistoryOfCardiacDisease implements EvaluationFunction {
+public class HasHistoryOfCardiovascularDisease implements EvaluationFunction {
 
-    static final String CARDIAC_DISEASE_DOID = "114";
+    static final String CARDIOVASCULAR_DISEASE_DOID = "1287";
 
     @NotNull
     private final DoidModel doidModel;
 
-    HasHistoryOfCardiacDisease(@NotNull final DoidModel doidModel) {
+    HasHistoryOfCardiovascularDisease(@NotNull final DoidModel doidModel) {
         this.doidModel = doidModel;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return OtherConditionEvaluation.hasDoid(doidModel, record.clinical().priorOtherConditions(), CARDIAC_DISEASE_DOID)
+        return OtherConditionEvaluation.hasDoid(doidModel, record.clinical().priorOtherConditions(), CARDIOVASCULAR_DISEASE_DOID)
                 ? Evaluation.PASS
                 : Evaluation.FAIL;
     }

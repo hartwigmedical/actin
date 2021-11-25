@@ -29,14 +29,12 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return Evaluation.UNDETERMINED;
         } else {
-            Evaluation evaluation = Evaluation.FAIL;
-
             for (String doid : doids) {
                 if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
-                    evaluation = Evaluation.PASS;
+                    return Evaluation.PASS;
                 }
             }
-            return evaluation;
+            return Evaluation.FAIL;
         }
     }
 }
