@@ -45,6 +45,7 @@ CREATE TABLE clinicalStatus
     hasActiveInfection BOOLEAN,
     hasSigAberrationLatestECG BOOLEAN,
     ecgAberrationDescription varchar(50),
+    lvef double precision,
     PRIMARY KEY (id)
 );
 

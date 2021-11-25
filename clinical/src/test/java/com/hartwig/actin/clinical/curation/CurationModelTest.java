@@ -47,6 +47,19 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canDetermineLVEF() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertNull(model.determineLVEF(null));
+
+        assertNull(model.determineLVEF(Lists.newArrayList("not an LVEF")));
+
+        assertEquals(0.17, model.determineLVEF(Lists.newArrayList("LVEF 0.17")), EPSILON);
+
+        model.evaluate();
+    }
+
+    @Test
     public void canCurateTumorDetails() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 

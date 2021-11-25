@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,11 +22,15 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
     }
 
     @NotNull
-    private static PriorOtherCondition toCuratedObject(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutablePriorOtherCondition.builder()
-                .name(parts[fields.get("name")])
-                .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
-                .category(parts[fields.get("category")])
-                .build();
+    private static Object toCuratedObject(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
+        if (parts[fields.get("isLVEF")].equals("1")) {
+            return Double.valueOf(parts[fields.get("lvefValue")]);
+        } else {
+            return ImmutablePriorOtherCondition.builder()
+                    .name(parts[fields.get("name")])
+                    .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
+                    .category(parts[fields.get("category")])
+                    .build();
+        }
     }
 }

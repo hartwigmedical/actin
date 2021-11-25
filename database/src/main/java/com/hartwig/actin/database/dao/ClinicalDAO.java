@@ -154,12 +154,14 @@ class ClinicalDAO {
                 CLINICALSTATUS.WHO,
                 CLINICALSTATUS.HASACTIVEINFECTION,
                 CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
-                CLINICALSTATUS.ECGABERRATIONDESCRIPTION)
+                CLINICALSTATUS.ECGABERRATIONDESCRIPTION,
+                CLINICALSTATUS.LVEF)
                 .values(sampleId,
                         clinicalStatus.who(),
                         DataUtil.toByte(clinicalStatus.hasActiveInfection()),
                         DataUtil.toByte(ecgAberration != null ? ecgAberration.hasSigAberrationLatestECG() : null),
-                        ecgAberration != null ? ecgAberration.description() : null)
+                        ecgAberration != null ? ecgAberration.description() : null,
+                        clinicalStatus.lvef())
                 .execute();
     }
 

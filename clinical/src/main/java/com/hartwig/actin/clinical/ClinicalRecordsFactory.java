@@ -163,6 +163,7 @@ public class ClinicalRecordsFactory {
                 .who(questionnaire.whoStatus())
                 .hasActiveInfection(questionnaire.hasSignificantCurrentInfection())
                 .ecgAberration(curation.curateECGAberration(questionnaire.ecgAberration()))
+                .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory()))
                 .build();
     }
 

@@ -149,6 +149,8 @@ public final class TestCurationFactory {
 
         configs.add(ImmutableNonOncologicalHistoryConfig.builder().input("not a condition").ignore(true).build());
 
+        configs.add(ImmutableNonOncologicalHistoryConfig.builder().input("LVEF 0.17").ignore(false).curated(0.17).build());
+
         return configs;
     }
 

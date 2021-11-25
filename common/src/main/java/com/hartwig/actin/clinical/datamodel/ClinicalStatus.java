@@ -17,4 +17,6 @@ public abstract class ClinicalStatus {
     @Nullable
     public abstract ECGAberration ecgAberration();
 
+    @Nullable
+    public abstract Double lvef();
 }
