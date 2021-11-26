@@ -28,7 +28,7 @@ public class WarnOnPass implements EvaluationFunction {
                 return Evaluation.PASS;
             case NOT_IMPLEMENTED:
             case UNDETERMINED:
-            case IGNORED:
+            case NOT_EVALUATED:
                 return evaluation;
             default: {
                 throw new IllegalStateException("Could not determine output for WarnOnPass for evaluation: " + evaluation);

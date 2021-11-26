@@ -5,10 +5,10 @@ public enum Evaluation {
     PASS_BUT_WARN,
     FAIL,
     UNDETERMINED,
-    IGNORED,
+    NOT_EVALUATED,
     NOT_IMPLEMENTED;
 
     public boolean isPass() {
-        return this == PASS || this == PASS_BUT_WARN || this == IGNORED;
+        return this == PASS || this == PASS_BUT_WARN || this == NOT_EVALUATED;
     }
 }

@@ -39,7 +39,7 @@ public final class EvaluationSummarizer {
                     undeterminedCount++;
                     break;
                 }
-                case IGNORED: {
+                case NOT_EVALUATED: {
                     ignoredCount++;
                     break;
                 }

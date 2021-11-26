@@ -13,7 +13,7 @@ public class HasSufficientLifeExpectancyTest {
     public void canEvaluate() {
         HasSufficientLifeExpectancy function = new HasSufficientLifeExpectancy();
 
-        assertEquals(Evaluation.IGNORED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(Evaluation.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 
 }

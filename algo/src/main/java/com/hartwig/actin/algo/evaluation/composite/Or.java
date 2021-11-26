@@ -30,8 +30,8 @@ public class Or implements EvaluationFunction {
             return Evaluation.PASS;
         } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {
             return Evaluation.PASS_BUT_WARN;
-        } else if (evaluations.contains(Evaluation.IGNORED)) {
-            return Evaluation.IGNORED;
+        } else if (evaluations.contains(Evaluation.NOT_EVALUATED)) {
+            return Evaluation.NOT_EVALUATED;
         } else if (evaluations.contains(Evaluation.NOT_IMPLEMENTED)) {
             return Evaluation.NOT_IMPLEMENTED;
         } else if (evaluations.contains(Evaluation.UNDETERMINED)) {

@@ -13,6 +13,6 @@ public class CanGiveAdequateInformedConsentTest {
     public void canEvaluate() {
         CanGiveAdequateInformedConsent function = new CanGiveAdequateInformedConsent();
 
-        assertEquals(Evaluation.IGNORED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(Evaluation.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

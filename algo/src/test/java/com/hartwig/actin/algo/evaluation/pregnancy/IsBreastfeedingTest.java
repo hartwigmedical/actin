@@ -13,6 +13,6 @@ public class IsBreastfeedingTest {
     public void canEvaluate() {
         IsBreastfeeding function = new IsBreastfeeding();
 
-        assertEquals(Evaluation.IGNORED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(Evaluation.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

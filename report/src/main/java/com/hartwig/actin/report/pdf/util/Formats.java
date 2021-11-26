@@ -68,8 +68,6 @@ public final class Formats {
             case PASS:
             case PASS_BUT_WARN:
                 return Styles.PALETTE_EVALUATION_PASS;
-            case IGNORED:
-                return Styles.PALETTE_EVALUATION_IGNORED;
             case FAIL:
                 return Styles.PALETTE_EVALUATION_FAILED;
             default:

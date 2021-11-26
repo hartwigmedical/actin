@@ -24,7 +24,8 @@ public class Not implements EvaluationFunction {
             return Evaluation.FAIL;
         } else if (evaluation == Evaluation.FAIL) {
             return Evaluation.PASS;
-        } else if (evaluation == Evaluation.UNDETERMINED || evaluation == Evaluation.NOT_IMPLEMENTED || evaluation == Evaluation.IGNORED) {
+        } else if (evaluation == Evaluation.UNDETERMINED || evaluation == Evaluation.NOT_IMPLEMENTED
+                || evaluation == Evaluation.NOT_EVALUATED) {
             return evaluation;
         }
 

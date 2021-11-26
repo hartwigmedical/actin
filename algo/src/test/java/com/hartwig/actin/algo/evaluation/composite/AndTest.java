@@ -18,7 +18,7 @@ public class AndTest {
 
     @Test
     public void canCombineEvaluations() {
-        assertEquals(Evaluation.IGNORED, combinedWithIgnored(TestEvaluationFunctionFactory.ignored()));
+        assertEquals(Evaluation.NOT_EVALUATED, combinedWithIgnored(TestEvaluationFunctionFactory.ignored()));
         assertEquals(Evaluation.PASS, combinedWithIgnored(TestEvaluationFunctionFactory.pass()));
         assertEquals(Evaluation.PASS_BUT_WARN, combinedWithIgnored(TestEvaluationFunctionFactory.passButWarn()));
         assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithIgnored(TestEvaluationFunctionFactory.notImplemented()));

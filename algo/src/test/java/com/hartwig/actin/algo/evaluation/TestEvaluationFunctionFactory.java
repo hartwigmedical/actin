@@ -31,7 +31,7 @@ public final class TestEvaluationFunctionFactory {
 
     @NotNull
     public static EvaluationFunction ignored() {
-        return fixedEvaluation(Evaluation.IGNORED);
+        return fixedEvaluation(Evaluation.NOT_EVALUATED);
     }
 
     @NotNull

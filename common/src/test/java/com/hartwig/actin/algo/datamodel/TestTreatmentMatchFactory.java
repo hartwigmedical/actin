@@ -77,7 +77,7 @@ public final class TestTreatmentMatchFactory {
                         .id("E-01")
                         .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
                         .build())
-                .build(), Evaluation.IGNORED);
+                .build(), Evaluation.NOT_EVALUATED);
 
         return map;
     }

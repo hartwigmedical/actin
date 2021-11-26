@@ -14,6 +14,6 @@ public class IsPregnant implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return Evaluation.IGNORED;
+        return Evaluation.NOT_EVALUATED;
     }
 }

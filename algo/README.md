@@ -34,11 +34,11 @@ PASS | The patient complies with the inclusion or exclusion criterion.
 PASS_BUT_WARN | The patient complies with the inclusion or exclusion criterion but a manual check is required.
 FAIL | The patient does not comply with the inclusion or exclusion criterion. 
 UNDETERMINED | The data provided to the inclusion or exclusion criterion is insufficient for determining eligibility.
-IGNORED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant in the context of ACTIN. 
+NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. 
 NOT_IMPLEMENTED | No algo has been defined yet for this criterion.
 
 For every trial (and cohort) an overall evaluation is determined using the following algorithm:
- 1. A patient is eligible for a trial (or cohort) only in case all criteria are `PASS`, `PASS_BUT_WARN` or `IGNORED`
+ 1. A patient is eligible for a trial (or cohort) only in case all criteria are `PASS`, `PASS_BUT_WARN` or `NOT_EVALUATED`
  1. In case one of the criteria evaluates to a `FAIL` the patient fails overall eligibility for the trial (or cohort). 
  1. In case of no fails but at least one `UNDETERMINED` or `NOT_IMPLEMENTED` evaluation, the overall evaluation is determined 
  to be `UNDETERMINED`.    

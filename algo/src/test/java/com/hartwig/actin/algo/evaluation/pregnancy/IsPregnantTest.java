@@ -13,6 +13,6 @@ public class IsPregnantTest {
     public void canEvaluate() {
         IsPregnant function = new IsPregnant();
 
-        assertEquals(Evaluation.IGNORED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(Evaluation.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }
