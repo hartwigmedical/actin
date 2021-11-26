@@ -33,4 +33,27 @@ public class EvaluationSummarizerTest {
         assertEquals(1, summary.notEvaluatedCount());
         assertEquals(0, summary.nonImplementedCount());
     }
+
+    @Test
+    public void canSumSummaries() {
+        EvaluationSummary summary = ImmutableEvaluationSummary.builder()
+                .count(1)
+                .passedCount(2)
+                .warningCount(3)
+                .failedCount(4)
+                .undeterminedCount(5)
+                .notEvaluatedCount(6)
+                .nonImplementedCount(7)
+                .build();
+
+        EvaluationSummary sum = EvaluationSummarizer.sum(Lists.newArrayList(summary, summary));
+
+        assertEquals(2, sum.count());
+        assertEquals(4, sum.passedCount());
+        assertEquals(6, sum.warningCount());
+        assertEquals(8, sum.failedCount());
+        assertEquals(10, sum.undeterminedCount());
+        assertEquals(12, sum.notEvaluatedCount());
+        assertEquals(14, sum.nonImplementedCount());
+    }
 }

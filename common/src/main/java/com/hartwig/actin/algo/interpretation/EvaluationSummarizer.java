@@ -12,7 +12,7 @@ public final class EvaluationSummarizer {
     @NotNull
     public static EvaluationSummary summarize(@NotNull Iterable<Evaluation> evaluations) {
         int count = 0;
-        int passCount = 0;
+        int passedCount = 0;
         int warningCount = 0;
         int failedCount = 0;
         int undeterminedCount = 0;
@@ -23,11 +23,11 @@ public final class EvaluationSummarizer {
             count++;
             switch (evaluation) {
                 case PASS: {
-                    passCount++;
+                    passedCount++;
                     break;
                 }
                 case PASS_BUT_WARN: {
-                    passCount++;
+                    passedCount++;
                     warningCount++;
                     break;
                 }
@@ -55,7 +55,38 @@ public final class EvaluationSummarizer {
 
         return ImmutableEvaluationSummary.builder()
                 .count(count)
-                .passedCount(passCount)
+                .passedCount(passedCount)
+                .warningCount(warningCount)
+                .failedCount(failedCount)
+                .undeterminedCount(undeterminedCount)
+                .notEvaluatedCount(notEvaluatedCount)
+                .nonImplementedCount(nonImplementedCount)
+                .build();
+    }
+
+    @NotNull
+    public static EvaluationSummary sum(@NotNull Iterable<EvaluationSummary> summaries) {
+        int count = 0;
+        int passedCount = 0;
+        int warningCount = 0;
+        int failedCount = 0;
+        int undeterminedCount = 0;
+        int notEvaluatedCount = 0;
+        int nonImplementedCount = 0;
+
+        for (EvaluationSummary summary : summaries) {
+            count += summary.count();
+            passedCount += summary.passedCount();
+            warningCount += summary.warningCount();
+            failedCount += summary.failedCount();
+            undeterminedCount += summary.undeterminedCount();
+            notEvaluatedCount += summary.notEvaluatedCount();
+            nonImplementedCount += summary.nonImplementedCount();
+        }
+
+        return ImmutableEvaluationSummary.builder()
+                .count(count)
+                .passedCount(passedCount)
                 .warningCount(warningCount)
                 .failedCount(failedCount)
                 .undeterminedCount(undeterminedCount)
