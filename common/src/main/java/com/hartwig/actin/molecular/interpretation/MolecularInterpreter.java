@@ -19,9 +19,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MolecularInterpreter {
 
-    static final String CKB_SOURCE = "CKB";
-    static final String ICLUSION_SOURCE = "ICLUSION";
     static final String ACTIN_SOURCE = "ACTIN";
+    static final String ICLUSION_SOURCE = "ICLUSION";
+    static final String CKB_SOURCE = "CKB";
 
     private static final Set<String> NON_APPLICABLE_START_KEYWORDS = Sets.newHashSet();
     private static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
