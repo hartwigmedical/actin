@@ -156,6 +156,8 @@ HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
 
+Note: for all lab values, the latest available lab value is evaluated. If the latest lab value is out of the requested range, the second-last lab value is evaluated (if available). In case that the second-last lab value is available AND within requested range, the evaluation resolves to UNDETERMINED. In case no second-last value is available, or that value is also out of requested range, the evaluation resolves to FAIL.
+
 ##### Rules related to other conditions
 
 Rule | When does a patient pass evaluation?
