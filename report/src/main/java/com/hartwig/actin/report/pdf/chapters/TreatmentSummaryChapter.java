@@ -87,7 +87,7 @@ public class TreatmentSummaryChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("# Warnings"));
         table.addHeaderCell(Cells.createHeader("# Failed"));
         table.addHeaderCell(Cells.createHeader("# Undetermined"));
-        table.addHeaderCell(Cells.createHeader("# Ignored"));
+        table.addHeaderCell(Cells.createHeader("# Not evaluated"));
         table.addHeaderCell(Cells.createHeader("# Non-implemented"));
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
@@ -109,7 +109,7 @@ public class TreatmentSummaryChapter implements ReportChapter {
         table.addCell(Cells.createContent(String.valueOf(summary.warningCount())));
         table.addCell(Cells.createContent(String.valueOf(summary.failedCount())));
         table.addCell(Cells.createContent(String.valueOf(summary.undeterminedCount())));
-        table.addCell(Cells.createContent(String.valueOf(summary.ignoredCount())));
+        table.addCell(Cells.createContent(String.valueOf(summary.notEvaluatedCount())));
         table.addCell(Cells.createContent(String.valueOf(summary.nonImplementedCount())));
     }
 }

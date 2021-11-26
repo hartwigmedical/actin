@@ -30,7 +30,7 @@ public class EvaluationSummarizerTest {
         assertEquals(0, summary.warningCount());
         assertEquals(0, summary.failedCount());
         assertEquals(0, summary.undeterminedCount());
-        assertEquals(1, summary.ignoredCount());
+        assertEquals(1, summary.notEvaluatedCount());
         assertEquals(0, summary.nonImplementedCount());
     }
 }

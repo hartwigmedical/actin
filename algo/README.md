@@ -62,7 +62,8 @@ NOT | indicates that the rule should not be TRUE in order to PASS
 WARN_ON_PASS | indicates that a warning should be displayed in case of PASS and resolves to PASS_BUT_WARN
 
 Some rules require 1 ("X") or 2 ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. 
-Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly ignored. 
+Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly 
+won't be evaluated. 
 
 The following rules are available:
 
@@ -72,10 +73,10 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_AT_LEAST_18_YEARS_OLD | Current year minus birth year > 18 | PASS_BUT_WARN in case of exactly 18
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
-IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | ignore
-IS_INVOLVED_IN_STUDY_PROCEDURES | ignore
-HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | ignore
-HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | ignore
+IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
+IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
+HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
+HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
 
 ##### Rules related to tumor and lesion locations
  
@@ -125,7 +126,7 @@ AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion/Homozygous disruption is found in gene X
 ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
 SPECIFIC_FUSION_X | Driver fusion with 2 specified fusion partner genes is found
-OVEREXPRESSION_OF_GENE_X | ignore
+OVEREXPRESSION_OF_GENE_X | > won't be evaluated
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
@@ -186,7 +187,7 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
 HAS_ALLERGY_RELATED_TO_STUDY _MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
-CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | ignore
+CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_ANTIBIOTICS _MEDICATION | Medication > type is type of antibiotics
 CURRENTLY_GETS_CORTICOSTEROID _MEDICATION | Medication > type is type of corticosteroids
 CURRENTLY_GETS_IMMUNOSUPPRESSANT _MEDICATION | T.B.D.
@@ -196,9 +197,9 @@ HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AN
 
 Rule | When does a patient pass evaluation?
 ---|---
-IS_BREASTFEEDING | ignore
-IS_PREGNANT | ignore
-IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | ignore
+IS_BREASTFEEDING | > won't be evaluated
+IS_PREGNANT | > won't be evaluated
+IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | > won't be evaluated
 
 ##### Rules related to toxicity
 

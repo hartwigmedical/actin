@@ -25,8 +25,11 @@ public class TreatmentCategoryDisplayTest {
         assertEquals(Strings.EMPTY, TreatmentCategoryDisplay.toString(Sets.newHashSet()));
         assertEquals("Chemotherapy", TreatmentCategoryDisplay.toString(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY)));
         assertEquals("Antiviral therapy", TreatmentCategoryDisplay.toString(Sets.newHashSet(TreatmentCategory.ANTIVIRAL_THERAPY)));
-        assertEquals("Chemotherapy, Radiotherapy",
-                TreatmentCategoryDisplay.toString(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)));
+
+        Set<TreatmentCategory> categories = Sets.newTreeSet();
+        categories.add(TreatmentCategory.CHEMOTHERAPY);
+        categories.add(TreatmentCategory.RADIOTHERAPY);
+        assertEquals("Chemotherapy, Radiotherapy", TreatmentCategoryDisplay.toString(categories));
     }
 
     @Test

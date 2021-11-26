@@ -18,7 +18,7 @@ public abstract class EvaluationSummary {
 
     public abstract int undeterminedCount();
 
-    public abstract int ignoredCount();
+    public abstract int notEvaluatedCount();
 
     public abstract int nonImplementedCount();
 }

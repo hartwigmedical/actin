@@ -17,7 +17,7 @@ public final class TreatmentCategoryDisplay {
 
     @NotNull
     public static Set<TreatmentCategory> fromString(@NotNull String categoryString) {
-        Set<TreatmentCategory> categories = Sets.newHashSet();
+        Set<TreatmentCategory> categories = Sets.newTreeSet();
         for (String value : categoryString.split(DELIMITER)) {
             categories.add(TreatmentCategory.valueOf(value.trim().replaceAll(" ", "_").toUpperCase()));
         }
