@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MolecularInterpreter {
 
-    private static final String CKB_SOURCE = "CKB";
-    private static final String TRIAL_ELIGIBILITY_SOURCE = "ACTIN";
+    static final String CKB_SOURCE = "CKB";
+    static final String ICLUSION_SOURCE = "ICLUSION";
+    static final String ACTIN_SOURCE = "ACTIN";
 
     private static final Set<String> NON_APPLICABLE_START_KEYWORDS = Sets.newHashSet();
     private static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
@@ -37,13 +38,15 @@ public final class MolecularInterpreter {
 
     @NotNull
     public static MolecularInterpretation interpret(@NotNull MolecularRecord record) {
+        List<MolecularTreatmentEvidence> evidencesForTrials = filterEvidences(record, ACTIN_SOURCE);
+        List<MolecularTreatmentEvidence> iclusionEvidences = filterEvidences(record, ICLUSION_SOURCE);
         List<MolecularTreatmentEvidence> ckbEvidences = filterEvidences(record, CKB_SOURCE);
-        List<MolecularTreatmentEvidence> evidencesForTrials = filterEvidences(record, TRIAL_ELIGIBILITY_SOURCE);
 
         return ImmutableMolecularInterpretation.builder()
+                .eventsWithTrialEligibility(applicableResponsiveEvents(evidencesForTrials))
+                .iclusionApplicableEvents(applicableResponsiveEvents(iclusionEvidences))
                 .ckbApplicableResponsiveEvents(applicableResponsiveEvents(ckbEvidences))
                 .ckbApplicableResistanceEvents(applicableResistanceEvents(ckbEvidences))
-                .eventsWithTrialEligibility(applicableResponsiveEvents(evidencesForTrials))
                 .build();
     }
 

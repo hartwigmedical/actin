@@ -14,6 +14,9 @@ public abstract class MolecularInterpretation {
     public abstract Set<String> eventsWithTrialEligibility();
 
     @NotNull
+    public abstract Set<String> iclusionApplicableEvents();
+
+    @NotNull
     public abstract Set<String> ckbApplicableResponsiveEvents();
 
     @NotNull

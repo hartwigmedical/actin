@@ -45,6 +45,9 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(Formats.VALUE_COMING_SOON));
         //table.addCell(Cells.createValue(concat(interpretation.eventsWithTrialEligibility())));
 
+        table.addCell(Cells.createKey("Events with applicable evidence in iClusion"));
+        table.addCell(Cells.createValue(concat(interpretation.iclusionApplicableEvents())));
+
         table.addCell(Cells.createKey("Events with applicable responsive evidence in CKB"));
         table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResponsiveEvents())));
 
