@@ -100,6 +100,8 @@ HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D 
+HAS_CONTRAINDICATION_FOR_EXHAUSTING_SOC_TREATMENTS | T.B.D
+HAS_UNAVAILABILITY_FOR_EXHAUSTING_SOC_TREATMENTS | T.B.D
 HAS_DECLINED_SOC_TREATMENTS | T.B.D
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
