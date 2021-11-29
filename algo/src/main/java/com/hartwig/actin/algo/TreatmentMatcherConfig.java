@@ -5,6 +5,10 @@ import com.hartwig.actin.util.ApplicationConfig;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public interface TreatmentMatcherConfig {
 
+    Logger LOGGER = LogManager.getLogger(TreatmentMatcherConfig.class);
+
     String CLINICAL_JSON = "clinical_json";
     String MOLECULAR_JSON = "molecular_json";
 
@@ -20,6 +26,8 @@ public interface TreatmentMatcherConfig {
     String DOID_JSON = "doid_json";
 
     String OUTPUT_DIRECTORY = "output_directory";
+
+    String LOG_DEBUG = "log_debug";
 
     @NotNull
     static Options createOptions() {
@@ -32,6 +40,8 @@ public interface TreatmentMatcherConfig {
         options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to");
+
+        options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled");
 
         return options;
     }
@@ -53,6 +63,11 @@ public interface TreatmentMatcherConfig {
 
     @NotNull
     static TreatmentMatcherConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
+        if (cmd.hasOption(LOG_DEBUG)) {
+            Configurator.setRootLevel(Level.DEBUG);
+            LOGGER.debug("Switched root level logging to DEBUG");
+        }
+
         return ImmutableTreatmentMatcherConfig.builder()
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
