@@ -69,20 +69,11 @@ public final class ServeRecordExtractor {
             records.add(ImmutableServeRecord.builder()
                     .trialId(trialId)
                     .cohortId(cohortId)
-                    .rule(function.rule().toString())
-                    .parameters(toStrings(function.parameters()))
+                    .rule(function.rule())
+                    .parameters(function.parameters())
                     .build());
         }
 
         return records;
-    }
-
-    @NotNull
-    private static List<String> toStrings(@NotNull List<Object> objects) {
-        List<String> strings = Lists.newArrayList();
-        for (Object object : objects) {
-            strings.add((String) object);
-        }
-        return strings;
     }
 }

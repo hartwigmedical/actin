@@ -2,6 +2,8 @@ package com.hartwig.actin.serve.datamodel;
 
 import java.util.List;
 
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +19,8 @@ public abstract class ServeRecord {
     public abstract String cohortId();
 
     @NotNull
-    public abstract String rule();
+    public abstract EligibilityRule rule();
 
     @NotNull
-    public abstract List<String> parameters();
+    public abstract List<Object> parameters();
 }

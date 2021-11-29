@@ -38,11 +38,15 @@ public final class ServeRecordTsv {
     @NotNull
     private static String toLine(@NotNull ServeRecord record) {
         StringJoiner params = new StringJoiner(PARAM_DELIMITER);
-        for (String param : record.parameters()) {
-            params.add(param);
+        for (Object param : record.parameters()) {
+            params.add(param.toString());
         }
         String cohortId = record.cohortId() != null ? record.cohortId() : Strings.EMPTY;
 
-        return new StringJoiner(FIELD_DELIMITER).add(record.trialId()).add(cohortId).add(record.rule()).add(params.toString()).toString();
+        return new StringJoiner(FIELD_DELIMITER).add(record.trialId())
+                .add(cohortId)
+                .add(record.rule().toString())
+                .add(params.toString())
+                .toString();
     }
 }
