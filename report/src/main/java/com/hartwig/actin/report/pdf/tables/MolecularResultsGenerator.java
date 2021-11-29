@@ -41,7 +41,7 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
-        table.addCell(Cells.createKey("Events with trial eligibility"));
+        table.addCell(Cells.createKey("Events with applicable evidence in local trial database"));
         table.addCell(Cells.createValue(Formats.VALUE_COMING_SOON));
         //table.addCell(Cells.createValue(concat(interpretation.eventsWithTrialEligibility())));
 
