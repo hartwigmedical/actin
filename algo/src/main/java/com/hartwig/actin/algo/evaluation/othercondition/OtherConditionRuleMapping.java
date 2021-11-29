@@ -18,18 +18,20 @@ public final class OtherConditionRuleMapping {
 
     @NotNull
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+        DoidEvaluator doidEvaluator = new DoidEvaluator(doidModel);
+
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS, hasSignificantConcomitantIllnessCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, hasHistoryOfCardiovascularDiseaseCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasHistoryOfLungDiseaseCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasHistoryOfStrokeCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasHistoryOfTiaCreator(doidModel));
-        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, hasHistoryOfCardiovascularDiseaseCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasHistoryOfLungDiseaseCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasHistoryOfStrokeCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasHistoryOfTiaCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidModel));
+        map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
@@ -43,38 +45,38 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfAutoimmuneDiseaseCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasHistoryOfAutoimmuneDisease(doidModel);
+    private static FunctionCreator hasHistoryOfAutoimmuneDiseaseCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHistoryOfAutoimmuneDisease(doidEvaluator);
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfCardiacDiseaseCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasHistoryOfCardiacDisease(doidModel);
+    private static FunctionCreator hasHistoryOfCardiacDiseaseCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHistoryOfCardiacDisease(doidEvaluator);
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfCardiovascularDiseaseCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasHistoryOfCardiovascularDisease(doidModel);
+    private static FunctionCreator hasHistoryOfCardiovascularDiseaseCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHistoryOfCardiovascularDisease(doidEvaluator);
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfLungDiseaseCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasHistoryOfLungDisease(doidModel);
+    private static FunctionCreator hasHistoryOfLungDiseaseCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHistoryOfLungDisease(doidEvaluator);
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfStrokeCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasHistoryOfStroke(doidModel);
+    private static FunctionCreator hasHistoryOfStrokeCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHistoryOfStroke(doidEvaluator);
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfTiaCreator(final DoidModel doidModel) {
-        return function -> new HasHistoryOfTia(doidModel);
+    private static FunctionCreator hasHistoryOfTiaCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHistoryOfTia(doidEvaluator);
     }
 
     @NotNull
-    private static FunctionCreator hasGilbertDiseaseCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasGilbertDisease(doidModel);
+    private static FunctionCreator hasGilbertDiseaseCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasGilbertDisease(doidEvaluator);
     }
 
     @NotNull
@@ -83,8 +85,8 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHypertensionCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasHypertension(doidModel);
+    private static FunctionCreator hasHypertensionCreator(@NotNull DoidEvaluator doidEvaluator) {
+        return function -> new HasHypertension(doidEvaluator);
     }
 
     @NotNull

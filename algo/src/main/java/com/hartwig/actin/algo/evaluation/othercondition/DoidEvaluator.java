@@ -7,13 +7,16 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
 
-final class OtherConditionEvaluation {
+class DoidEvaluator {
 
-    private OtherConditionEvaluation() {
+    @NotNull
+    private final DoidModel doidModel;
+
+    public DoidEvaluator(@NotNull final DoidModel doidModel) {
+        this.doidModel = doidModel;
     }
 
-    public static boolean hasDoid(@NotNull DoidModel doidModel, @NotNull List<PriorOtherCondition> priorOtherConditions,
-            @NotNull String doidToFind) {
+    public boolean hasDoid(@NotNull List<PriorOtherCondition> priorOtherConditions, @NotNull String doidToFind) {
         for (PriorOtherCondition priorOtherCondition : priorOtherConditions) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
