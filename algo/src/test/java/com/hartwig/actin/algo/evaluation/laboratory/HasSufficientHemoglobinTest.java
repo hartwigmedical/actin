@@ -15,14 +15,23 @@ public class HasSufficientHemoglobinTest {
     public void canEvaluate() {
         HasSufficientHemoglobin function = new HasSufficientHemoglobin(7.5, LabUnit.MMOL_PER_L);
 
-        // No measurements done
+        // No measurements done -> UNDETERMINED
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         ImmutableLabValue.Builder hemoglobin = LaboratoryTestUtil.builder().code(LabMeasurement.HEMOGLOBIN.code());
+        ImmutableLabValue.Builder hemoglobinWithComparator =
+                LaboratoryTestUtil.builder().code(LabMeasurement.HEMOGLOBIN.code()).comparator(">");
 
         // Standard evaluation
         assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobin.unit("mmol/L").value(8.5).build())));
+        assertEquals(Evaluation.PASS,
+                function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobinWithComparator.unit("mmol/L").value(8.5).build())));
+        assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobin.unit("mmol/L").value(7.5).build())));
+        assertEquals(Evaluation.PASS,
+                function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobinWithComparator.unit("mmol/L").value(7.5).build())));
         assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobin.unit("mmol/L").value(6.5).build())));
+        assertEquals(Evaluation.UNDETERMINED,
+                function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobinWithComparator.unit("mmol/L").value(5.0).build())));
 
         // Different unit
         assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobin.unit("g/dL").value(12.2).build())));
@@ -32,10 +41,9 @@ public class HasSufficientHemoglobinTest {
         assertEquals(Evaluation.UNDETERMINED,
                 function.evaluate(LaboratoryTestUtil.withLabValue(hemoglobin.unit("not a unit").value(4.2).build())));
 
-        // Works with other unit as well.
+        // Works with other unit as target unit as well.
         HasSufficientHemoglobin function2 = new HasSufficientHemoglobin(7.5, LabUnit.G_PER_DL);
 
         assertEquals(Evaluation.PASS, function2.evaluate(LaboratoryTestUtil.withLabValue(hemoglobin.unit("mmol/L").value(6.5).build())));
-
     }
 }
