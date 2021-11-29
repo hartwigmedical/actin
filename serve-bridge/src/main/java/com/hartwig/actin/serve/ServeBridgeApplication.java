@@ -1,6 +1,12 @@
 package com.hartwig.actin.serve;
 
 import java.io.IOException;
+import java.util.List;
+
+import com.hartwig.actin.serve.datamodel.ServeRecord;
+import com.hartwig.actin.serve.serialization.ServeRecordTsv;
+import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.serialization.TrialJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -39,8 +45,19 @@ public class ServeBridgeApplication {
         this.config = config;
     }
 
-    public void run() {
+    public void run() throws IOException {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION);
+
+        LOGGER.info("Loading trials from {}", config.treatmentDatabaseDirectory());
+        List<Trial> trials = TrialJson.readFromDir(config.treatmentDatabaseDirectory());
+        LOGGER.info(" Loaded {} trials", trials.size());
+
+        LOGGER.info("Creating SERVE records");
+        List<ServeRecord> records = ServeRecordExtractor.extract(trials);
+        LOGGER.info(" Extracted {} records from {} trials", records.size(), trials.size());
+
+        LOGGER.info("Writing SERVE records to {}", config.outputServeKnowledgebaseTsv());
+        ServeRecordTsv.write(config.outputServeKnowledgebaseTsv(), records);
 
         LOGGER.info("Done!");
     }
