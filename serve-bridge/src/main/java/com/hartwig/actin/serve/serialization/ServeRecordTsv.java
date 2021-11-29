@@ -38,8 +38,8 @@ public final class ServeRecordTsv {
     @NotNull
     private static String toLine(@NotNull ServeRecord record) {
         StringJoiner params = new StringJoiner(PARAM_DELIMITER);
-        for (Object param : record.parameters()) {
-            params.add(param.toString());
+        for (String param : record.parameters()) {
+            params.add(param);
         }
         String cohortId = record.cohortId() != null ? record.cohortId() : Strings.EMPTY;
 
