@@ -14,7 +14,6 @@ import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
-import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
@@ -121,22 +120,21 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         Table table = Tables.createFixedWidthCols(new float[] { 1, 4, 1 }).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Rule"));
-        table.addHeaderCell(Cells.createHeader("Implementation & Reference"));
+        table.addHeaderCell(Cells.createHeader("Reference"));
         table.addHeaderCell(Cells.createHeader("Evaluation"));
 
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
             boolean hasAddedEvaluation = false;
-            String implementation = EligibilityFunctionDisplay.format(entry.getKey().function());
             Evaluation evaluation = entry.getValue();
             Set<CriterionReference> references = entry.getKey().references();
             if (references.isEmpty()) {
-                table.addCell(Cells.createEmpty());
-                table.addCell(Cells.createContent(implementation));
+                table.addCell(Cells.createContent(Strings.EMPTY));
+                table.addCell(Cells.createContent(Strings.EMPTY));
                 table.addCell(Cells.createContent(evaluation));
             } else {
                 for (CriterionReference reference : entry.getKey().references()) {
                     table.addCell(Cells.createContent(reference.id()));
-                    table.addCell(Cells.createContent(implementation + "\n" + reference.text()));
+                    table.addCell(Cells.createContent(reference.text()));
                     if (!hasAddedEvaluation) {
                         table.addCell(Cells.createContent(evaluation));
                         hasAddedEvaluation = true;
