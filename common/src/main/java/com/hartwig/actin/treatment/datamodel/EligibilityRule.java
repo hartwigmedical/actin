@@ -92,7 +92,8 @@ public enum EligibilityRule {
     HAS_GILBERT_DISEASE,
     HAS_CARDIAC_ARRHYTHMIA,
     HAS_HYPERTENSION,
-    HAS_KNOWN_LVEF_OF_AT_MOST_X,
+    HAS_LVEF_OF_AT_LEAST_X,
+    HAS_KNOWN_LVEF_OF_AT_LEAST_X,
     HAS_KNOWN_MALABSORPTION_SYNDROME,
 
     // Rules related to infections

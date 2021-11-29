@@ -107,7 +107,7 @@ HAS_DECLINED_SOC_TREATMENTS | T.B.D
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
-HAS_HAD_IMMUNOTHERAPY_TREATMENT | Prior tumor treatments > category = Immunotherapy
+HAS_HAD_IMMUNOTHERAPY_TYPE_TREATMENT | Prior tumor treatments > categories contains Immunotherapy
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (to be implemented)
@@ -175,7 +175,8 @@ HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equa
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
-HAS_KNOWN_LVEF_OF_AT_MOST_X | clinicalStatus > lvef should be <= X
+HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
+HAS_KNOWN_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
 
 ##### Rules related to infections

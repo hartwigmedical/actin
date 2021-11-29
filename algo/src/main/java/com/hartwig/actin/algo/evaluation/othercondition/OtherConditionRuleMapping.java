@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -29,7 +30,8 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidModel));
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
         map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidModel));
-        map.put(EligibilityRule.HAS_KNOWN_LVEF_OF_AT_MOST_X, hasLimitedKnownLVEFCreator());
+        map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_KNOWN_LVEF_OF_AT_LEAST_X, hasLimitedKnownLVEFCreator());
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
 
         return map;
@@ -96,5 +98,10 @@ public final class OtherConditionRuleMapping {
             double maxLVEF = EligibilityParameterResolver.createOneDoubleParameter(function);
             return new HasLimitedKnownLVEF(maxLVEF);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator notImplementedCreator() {
+        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }
