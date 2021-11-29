@@ -9,11 +9,14 @@ import java.util.StringJoiner;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class ServeRecordTsv {
 
     private static final String FIELD_DELIMITER = "\t";
+
+    private static final String PARAM_DELIMITER = ", ";
 
     private ServeRecordTsv() {
     }
@@ -29,11 +32,17 @@ public final class ServeRecordTsv {
 
     @NotNull
     private static String header() {
-        return new StringJoiner(FIELD_DELIMITER).add("trialId").add("event").toString();
+        return new StringJoiner(FIELD_DELIMITER).add("trialId").add("cohortId").add("rule").add("parameters").toString();
     }
 
     @NotNull
     private static String toLine(@NotNull ServeRecord record) {
-        return new StringJoiner(FIELD_DELIMITER).add(record.trialId()).add(record.event()).toString();
+        StringJoiner params = new StringJoiner(PARAM_DELIMITER);
+        for (String param : record.parameters()) {
+            params.add(param);
+        }
+        String cohortId = record.cohortId() != null ? record.cohortId() : Strings.EMPTY;
+
+        return new StringJoiner(FIELD_DELIMITER).add(record.trialId()).add(cohortId).add(record.rule()).add(params.toString()).toString();
     }
 }

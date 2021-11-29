@@ -1,5 +1,7 @@
 package com.hartwig.actin.serve.datamodel;
 
+import java.util.List;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +13,12 @@ public abstract class ServeRecord {
     @NotNull
     public abstract String trialId();
 
+    @Nullable
+    public abstract String cohortId();
+
     @NotNull
-    public abstract String event();
+    public abstract String rule();
+
+    @NotNull
+    public abstract List<String> parameters();
 }
