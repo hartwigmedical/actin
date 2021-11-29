@@ -22,5 +22,5 @@ public abstract class ServeRecord {
     public abstract EligibilityRule rule();
 
     @NotNull
-    public abstract List<Object> parameters();
+    public abstract List<String> parameters();
 }

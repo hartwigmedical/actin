@@ -70,10 +70,19 @@ public final class ServeRecordExtractor {
                     .trialId(trialId)
                     .cohortId(cohortId)
                     .rule(function.rule())
-                    .parameters(function.parameters())
+                    .parameters(toStrings(function.parameters()))
                     .build());
         }
 
         return records;
+    }
+
+    @NotNull
+    private static List<String> toStrings(@NotNull List<Object> objects) {
+        List<String> strings = Lists.newArrayList();
+        for (Object object : objects) {
+            strings.add((String) object);
+        }
+        return strings;
     }
 }
