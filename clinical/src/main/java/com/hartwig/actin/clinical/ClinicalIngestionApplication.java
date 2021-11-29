@@ -22,8 +22,6 @@ public class ClinicalIngestionApplication {
     private static final String VERSION = ClinicalIngestionApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
         Options options = ClinicalIngestionConfig.createOptions();
 
         ClinicalIngestionConfig config = null;
@@ -46,6 +44,8 @@ public class ClinicalIngestionApplication {
     }
 
     public void run() throws IOException {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
+
         String feedDirectory = config.feedDirectory();
         String curationDirectory = config.curationDirectory();
 

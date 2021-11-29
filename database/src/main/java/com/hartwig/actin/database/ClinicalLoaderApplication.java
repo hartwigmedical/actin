@@ -24,8 +24,6 @@ public class ClinicalLoaderApplication {
     private static final String VERSION = ClinicalLoaderApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException, SQLException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
         Options options = ClinicalLoaderConfig.createOptions();
 
         ClinicalLoaderConfig config = null;
@@ -48,6 +46,8 @@ public class ClinicalLoaderApplication {
     }
 
     public void run() throws IOException, SQLException {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
+
         LOGGER.info("Loading clinical model from {}", config.clinicalDirectory());
         List<ClinicalRecord> records = ClinicalRecordJson.readFromDir(config.clinicalDirectory());
         LOGGER.info(" Loaded {} clinical records", records.size());

@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.TreatmentMatcherApplication;
 import com.hartwig.actin.clinical.ClinicalIngestionApplication;
 import com.hartwig.actin.database.ClinicalLoaderApplication;
 import com.hartwig.actin.report.ReporterApplication;
+import com.hartwig.actin.serve.ServeBridgeApplication;
 import com.hartwig.actin.treatment.TreatmentCreatorApplication;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,7 @@ public class SystemApplication {
         LOGGER.info(" {}", TreatmentCreatorApplication.class);
         LOGGER.info(" {}", TreatmentMatcherApplication.class);
         LOGGER.info(" {}", ClinicalLoaderApplication.class);
+        LOGGER.info(" {}", ServeBridgeApplication.class);
         LOGGER.info(" {}", ReporterApplication.class);
     }
 }

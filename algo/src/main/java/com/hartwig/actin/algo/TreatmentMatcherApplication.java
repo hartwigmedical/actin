@@ -35,8 +35,6 @@ public class TreatmentMatcherApplication {
     private static final String VERSION = TreatmentMatcherApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
         Options options = TreatmentMatcherConfig.createOptions();
 
         TreatmentMatcherConfig config = null;
@@ -59,6 +57,8 @@ public class TreatmentMatcherApplication {
     }
 
     public void run() throws IOException {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
+
         LOGGER.info("Loading clinical record from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
         ClinicalPrinter.printRecord(clinical);
