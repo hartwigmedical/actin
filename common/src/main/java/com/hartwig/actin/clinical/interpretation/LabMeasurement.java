@@ -11,7 +11,8 @@ public enum LabMeasurement {
     CREATININE("CREA"),
     HEMOGLOBIN("Hb"),
     LDH("LDH"),
-    THROMBOCYTES("THROMBO"),
+    LEUKOCYTES("LEUKO-ABS"),
+    THROMBOCYTES("THROMBO-ABS"),
     TOTAL_BILIRUBIN("TBIL");
 
     @NotNull

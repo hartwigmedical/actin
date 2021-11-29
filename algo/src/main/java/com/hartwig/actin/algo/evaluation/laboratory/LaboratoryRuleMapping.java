@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +22,8 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
         map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, notImplementedCreator());
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_AT_LEAST_X, hasSufficientThrombocytesCreator());
-        map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator());
-        map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
+        map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
         map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasSufficientCreatinineCreator());
         map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCKDEPICreator());
         map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, notImplementedCreator());
@@ -50,8 +51,11 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientHemoglobinCreator() {
-        return function -> new HasSufficientHemoglobin();
+    private static FunctionCreator hasSufficientHemoglobinCreator(@NotNull LabUnit targetUnit) {
+        return function -> {
+            double minHemoglobin = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasSufficientHemoglobin(minHemoglobin, targetUnit);
+        };
     }
 
     @NotNull
