@@ -20,7 +20,7 @@ public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         List<PriorTumorTreatment> systemicOnly = systemicOnly(record.clinical().priorTumorTreatments());
 
         return systemicOnly.size() <= maxSystemicTreatments ? Evaluation.PASS : Evaluation.FAIL;

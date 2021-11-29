@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -91,6 +92,9 @@ public final class OtherConditionRuleMapping {
 
     @NotNull
     private static FunctionCreator hasLimitedKnownLVEFCreator() {
-        return function -> new HasLimitedKnownLVEF();
+        return function -> {
+            double maxLVEF = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasLimitedKnownLVEF(maxLVEF);
+        };
     }
 }

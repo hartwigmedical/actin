@@ -15,7 +15,7 @@ public class HasHadImmunotherapyTreatment implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment priorTumorTreatment : record.clinical().priorTumorTreatments()) {
             if (priorTumorTreatment.categories().contains(TreatmentCategory.IMMUNOTHERAPY)) {
                 return Evaluation.PASS;

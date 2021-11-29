@@ -37,8 +37,8 @@ public final class TestClinicalDataFactory {
         return ImmutableClinicalRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .patient(createTestPatientDetails())
-                .tumor(createTestTumorDetails())
-                .clinicalStatus(createTestClinicalStatus())
+                .tumor(ImmutableTumorDetails.builder().build())
+                .clinicalStatus(ImmutableClinicalStatus.builder().build())
                 .build();
     }
 
@@ -46,6 +46,8 @@ public final class TestClinicalDataFactory {
     public static ClinicalRecord createProperTestClinicalRecord() {
         return ImmutableClinicalRecord.builder()
                 .from(createMinimalTestClinicalRecord())
+                .tumor(createTestTumorDetails())
+                .clinicalStatus(createTestClinicalStatus())
                 .priorTumorTreatments(createTestPriorTumorTreatments())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())

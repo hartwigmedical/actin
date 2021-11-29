@@ -8,13 +8,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLimitedKnownLVEF implements EvaluationFunction {
 
-    HasLimitedKnownLVEF() {
+    private final double maxLVEF;
+
+    HasLimitedKnownLVEF(final double maxLVEF) {
+        this.maxLVEF = maxLVEF;
     }
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        Double lvef = record.clinical().clinicalStatus().lvef();
+        if (lvef == null) {
+            return Evaluation.FAIL;
+        }
+
+        return Double.compare(lvef, maxLVEF) > 0 ? Evaluation.FAIL : Evaluation.PASS;
     }
 }

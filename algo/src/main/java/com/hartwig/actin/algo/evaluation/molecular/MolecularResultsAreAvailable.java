@@ -13,7 +13,7 @@ public class MolecularResultsAreAvailable implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         // This was implemented when ACTIN requires a mandatory molecular record.
         return Evaluation.PASS;
     }
