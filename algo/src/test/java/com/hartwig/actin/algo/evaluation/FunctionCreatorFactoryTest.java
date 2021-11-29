@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
+import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.CompositeRules;
@@ -14,8 +15,8 @@ public class FunctionCreatorFactoryTest {
 
     @Test
     public void everyFunctionIsMapped() {
-        Map<EligibilityRule, FunctionCreator> map =
-                FunctionCreatorFactory.createFunctionCreatorMap(TestDoidModelFactory.createMinimalTestDoidModel());
+        DoidModel doidModel = TestDoidModelFactory.createMinimalTestDoidModel();
+        Map<EligibilityRule, FunctionCreator> map = FunctionCreatorFactory.createFunctionCreatorMap(doidModel);
 
         for (EligibilityRule rule : EligibilityRule.values()) {
             if (!CompositeRules.isComposite(rule)) {
