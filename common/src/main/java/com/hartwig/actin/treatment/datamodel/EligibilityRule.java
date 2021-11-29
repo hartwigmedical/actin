@@ -91,7 +91,7 @@ public enum EligibilityRule {
     HAS_CARDIAC_ARRHYTHMIA,
     HAS_HYPERTENSION,
     HAS_LVEF_OF_AT_LEAST_X,
-    HAS_KNOWN_LVEF_OF_AT_LEAST_X,
+    HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN,
     HAS_KNOWN_MALABSORPTION_SYNDROME,
 
     // Rules related to infections

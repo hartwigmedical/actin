@@ -30,8 +30,8 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidModel));
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
         map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidModel));
-        map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, notImplementedCreator());
-        map.put(EligibilityRule.HAS_KNOWN_LVEF_OF_AT_LEAST_X, hasLimitedKnownLVEFCreator());
+        map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
+        map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
 
         return map;
@@ -93,10 +93,10 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedKnownLVEFCreator() {
+    private static FunctionCreator hasSufficientLVEFCreator(boolean passIfUnknown) {
         return function -> {
-            double maxLVEF = EligibilityParameterResolver.createOneDoubleParameter(function);
-            return new HasLimitedKnownLVEF(maxLVEF);
+            double minLVEF = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasSufficientLVEF(minLVEF, passIfUnknown);
         };
     }
 

@@ -11,24 +11,28 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-public class HasLimitedKnownLVEFTest {
+public class HasSufficientLVEFTest {
 
     @Test
     public void canEvaluate() {
-        HasLimitedKnownLVEF function = new HasLimitedKnownLVEF(0.71);
+        HasSufficientLVEF function = new HasSufficientLVEF(0.71, false);
 
         // No LVEF known
-        assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(withLVEF(null)));
 
-        assertEquals(Evaluation.PASS, function.evaluate(withLVEF(0.1)));
+        assertEquals(Evaluation.FAIL, function.evaluate(withLVEF(0.1)));
         assertEquals(Evaluation.PASS, function.evaluate(withLVEF(0.71)));
-        assertEquals(Evaluation.FAIL, function.evaluate(withLVEF(0.9)));
+        assertEquals(Evaluation.PASS, function.evaluate(withLVEF(0.9)));
+
+        HasSufficientLVEF functionWithPass = new HasSufficientLVEF(0.71, true);
+        assertEquals(Evaluation.PASS, functionWithPass.evaluate(withLVEF(null)));
     }
 
     @NotNull
-    private static PatientRecord withLVEF(double lvef) {
+    private static PatientRecord withLVEF(@Nullable Double lvef) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()

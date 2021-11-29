@@ -174,7 +174,7 @@ HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equ
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
-HAS_KNOWN_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
+HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
 
 ##### Rules related to infections

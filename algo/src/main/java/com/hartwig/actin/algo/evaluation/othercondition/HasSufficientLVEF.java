@@ -6,12 +6,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasLimitedKnownLVEF implements EvaluationFunction {
+public class HasSufficientLVEF implements EvaluationFunction {
 
-    private final double maxLVEF;
+    private final double minLVEF;
+    private final boolean passIfUnknown;
 
-    HasLimitedKnownLVEF(final double maxLVEF) {
-        this.maxLVEF = maxLVEF;
+    public HasSufficientLVEF(final double minLVEF, final boolean passIfUnknown) {
+        this.minLVEF = minLVEF;
+        this.passIfUnknown = passIfUnknown;
     }
 
     @NotNull
@@ -19,9 +21,9 @@ public class HasLimitedKnownLVEF implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Double lvef = record.clinical().clinicalStatus().lvef();
         if (lvef == null) {
-            return Evaluation.FAIL;
+            return passIfUnknown ? Evaluation.PASS : Evaluation.UNDETERMINED;
         }
 
-        return Double.compare(lvef, maxLVEF) > 0 ? Evaluation.FAIL : Evaluation.PASS;
+        return Double.compare(lvef, minLVEF) >= 0 ? Evaluation.PASS : Evaluation.FAIL;
     }
 }
