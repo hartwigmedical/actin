@@ -19,8 +19,6 @@ public final class TreatmentRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
-        map.put(EligibilityRule.HAS_CONTRAINDICATION_FOR_EXHAUSTING_SOC_TREATMENTS, hasContraindicationForSOCTreatmentsCreator());
-        map.put(EligibilityRule.HAS_UNAVAILABILITY_FOR_EXHAUSTING_SOC_TREATMENTS, hasUnavailabilityForSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
         map.put(EligibilityRule.SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignancyHasBeenCuredRecentlyCreator());
@@ -36,16 +34,6 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasExhaustedSOCTreatmentsCreator() {
         return function -> new HasExhaustedSOCTreatments();
-    }
-
-    @NotNull
-    private static FunctionCreator hasContraindicationForSOCTreatmentsCreator() {
-        return function -> new HasContraindicationForSOCTreatments();
-    }
-
-    @NotNull
-    private static FunctionCreator hasUnavailabilityForSOCTreatmentsCreator() {
-        return function -> new HasUnavailabilityForSOCTreatments();
     }
 
     @NotNull
