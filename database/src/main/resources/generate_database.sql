@@ -161,6 +161,16 @@ CREATE TABLE surgery
     PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS bodyWeight;
+CREATE TABLE bodyWeight
+(   id int NOT NULL AUTO_INCREMENT,
+     sampleId varchar(50) NOT NULL,
+     date DATE NOT NULL,
+     value double precision NOT NULL,
+     unit varchar(50) NOT NULL,
+     PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS bloodPressure;
 CREATE TABLE bloodPressure
 (   id int NOT NULL AUTO_INCREMENT,
