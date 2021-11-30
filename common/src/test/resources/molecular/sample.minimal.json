@@ -3,10 +3,6 @@
   "reportDate": null,
   "configuredPrimaryTumor": [],
   "purple": {
-    "qc": {
-      "cobaltGender": "MALE",
-      "amberGender": "FEMALE"
-    },
     "hasReliableQuality": true
   },
   "protect": []

@@ -25,7 +25,6 @@ public class MolecularPrinter {
 
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
-        printer.print("Gender: " + record.gender() != null ? record.gender().toString() : "Unknown");
         printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
 
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
