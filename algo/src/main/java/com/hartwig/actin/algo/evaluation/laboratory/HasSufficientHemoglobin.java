@@ -51,7 +51,7 @@ public class HasSufficientHemoglobin implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateOnMinimalValue(value, hemoglobin.comparator(), minHemoglobin);
+        return LabValueEvaluation.evaluateVersusMinValue(value, hemoglobin.comparator(), minHemoglobin);
     }
 
     @Nullable

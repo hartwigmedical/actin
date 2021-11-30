@@ -33,7 +33,7 @@ public class HasSufficientAbsNeutrophils implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateOnMinimalValue(best.value(), best.comparator(), minNeutrophils);
+        return LabValueEvaluation.evaluateVersusMinValue(best.value(), best.comparator(), minNeutrophils);
     }
 
     @Nullable

@@ -16,11 +16,24 @@ final class LabValueEvaluation {
     }
 
     @NotNull
-    public static Evaluation evaluateOnMinimalValue(double value, @NotNull String comparator, double minValue) {
-        if (comparator.equals(LARGER_THAN) && value < minValue || comparator.equals(SMALLER_THAN) && value > minValue) {
+    public static Evaluation evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
+        if (cannotBeDetermined(value, comparator, minValue)) {
             return Evaluation.UNDETERMINED;
         } else {
             return Double.compare(value, minValue) >= 0 ? Evaluation.PASS : Evaluation.FAIL;
         }
+    }
+
+    @NotNull
+    public static Evaluation evaluateVersusMaxValue(double value, @NotNull String comparator, double maxValue) {
+        if (cannotBeDetermined(value, comparator, maxValue)) {
+            return Evaluation.UNDETERMINED;
+        } else {
+            return Double.compare(value, maxValue) <= 0 ? Evaluation.PASS : Evaluation.FAIL;
+        }
+    }
+
+    private static boolean cannotBeDetermined(double value, @NotNull String comparator, double refValue) {
+        return comparator.equals(LARGER_THAN) && value < refValue || comparator.equals(SMALLER_THAN) && value > refValue;
     }
 }

@@ -10,12 +10,12 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientAbsLeukocytes implements EvaluationFunction {
+public class HasLimitedCreatinineULN implements EvaluationFunction {
 
-    private final double minLeukocytes;
+    private final double maxCreatinineULN;
 
-    HasSufficientAbsLeukocytes(final double minLeukocytes) {
-        this.minLeukocytes = minLeukocytes;
+    HasLimitedCreatinineULN(final double maxCreatinineULN) {
+        this.maxCreatinineULN = maxCreatinineULN;
     }
 
     @NotNull
@@ -23,12 +23,18 @@ public class HasSufficientAbsLeukocytes implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
-        LabValue leukocytes = interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS);
+        LabValue creatinine = interpretation.mostRecentValue(LabMeasurement.CREATININE);
 
-        if (leukocytes == null) {
+        if (creatinine == null) {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateVersusMinValue(leukocytes.value(), leukocytes.comparator(), minLeukocytes);
+        Double upperLimit = creatinine.refLimitUp();
+        if (upperLimit == null) {
+            return Evaluation.UNDETERMINED;
+        }
+
+        double maxCreatinine = upperLimit * maxCreatinineULN;
+        return LabValueEvaluation.evaluateVersusMaxValue(creatinine.value(), creatinine.comparator(), maxCreatinine);
     }
 }

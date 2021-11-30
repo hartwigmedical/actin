@@ -29,6 +29,6 @@ public class HasSufficientThrombocytes implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateOnMinimalValue(thrombocytes.value(), thrombocytes.comparator(), minThrombocytes);
+        return LabValueEvaluation.evaluateVersusMinValue(thrombocytes.value(), thrombocytes.comparator(), minThrombocytes);
     }
 }
