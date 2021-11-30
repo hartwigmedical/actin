@@ -20,7 +20,7 @@ public final class LaboratoryRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
-        map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, hasSufficientAbsNeutrophilsCreator());
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_AT_LEAST_X, hasSufficientThrombocytesCreator());
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
@@ -44,7 +44,18 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasSufficientAbsLeukocytesCreator() {
-        return function -> new HasSufficientAbsLeukocytes();
+        return function -> {
+            double minLeukocytes = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasSufficientAbsLeukocytes(minLeukocytes);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientAbsNeutrophilsCreator() {
+        return function -> {
+            double minNeutrophils = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasSufficientAbsNeutrophils(minNeutrophils);
+        };
     }
 
     @NotNull

@@ -87,7 +87,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         addLabMeasurement(table, LabMeasurement.HEMOGLOBIN);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Thrombocytes"));
-        addLabMeasurement(table, LabMeasurement.THROMBOCYTES);
+        addLabMeasurement(table, LabMeasurement.THROMBOCYTES_ABS);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("LDH"));
         addLabMeasurement(table, LabMeasurement.LDH);
