@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
+import com.hartwig.actin.molecular.datamodel.Gender;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularExperimentType;
@@ -33,6 +34,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class MolecularRecordJson {
 
@@ -55,14 +57,24 @@ public final class MolecularRecordJson {
             JsonObject record = jsonElement.getAsJsonObject();
 
             JsonObject purple = object(record, "purple");
+            JsonObject purpleQc = object(purple, "qc");
             return ImmutableMolecularRecord.builder()
                     .sampleId(string(record, "sampleId"))
+                    .gender(determineGender(string(purpleQc, "amberGender"), string(purpleQc, "cobaltGender")))
                     .date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
                     .type(MolecularExperimentType.WGS)
                     .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
                     .evidences(toEvidences(array(record, "protect")))
                     .build();
+        }
+
+        @Nullable
+        private static Gender determineGender(@NotNull String amberGenderString, @NotNull String cobaltGenderString) {
+            Gender amberGender = Gender.valueOf(amberGenderString);
+            Gender cobaltGender = Gender.valueOf(cobaltGenderString);
+
+            return amberGender == cobaltGender ? amberGender : null;
         }
 
         @NotNull

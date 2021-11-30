@@ -15,6 +15,9 @@ public abstract class MolecularRecord {
     @NotNull
     public abstract String sampleId();
 
+    @Nullable
+    public abstract Gender gender();
+
     @NotNull
     public abstract MolecularExperimentType type();
 
