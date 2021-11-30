@@ -166,6 +166,14 @@ category | Systolic blood pressure | Mean, systolic or diastolic blood pressure
 value | 155 | 
 unit | mm[Hg] | Unit in which blood pressure was measured
 
+N body weight measurements
+
+Field | Example Value | Details
+---|---|---
+date | 2021-07-01 | Date on which body weight was measured
+value | 70 
+unit | kilogram | Unit in which body weight was measured
+
 N blood transfusions (!! In development)
 
 Field | Example Value | Details
