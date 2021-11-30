@@ -26,12 +26,14 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasHistoryOfAutoimmuneDiseaseCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, hasHistoryOfCardiovascularDiseaseCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, notImplementedCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasHistoryOfLungDiseaseCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasHistoryOfStrokeCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasHistoryOfTiaCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
         map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_DIABETES, notImplementedCreator());
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());

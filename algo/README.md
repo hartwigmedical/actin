@@ -103,6 +103,8 @@ Rule | When does a patient pass evaluation? | Note
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D 
 HAS_DECLINED_SOC_TREATMENTS | T.B.D
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
+HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_IMMUNOTHERAPY_TYPE_TREATMENT | Prior tumor treatments > categories contains Immunotherapy
@@ -153,6 +155,9 @@ HAS_APTT_ULN_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
+HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Potassium (K) LLN<X<ULN (LLN: lower limit of normal, implemented as refLimitLow)
+HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN
+
 
 Note: for all lab values, the latest available lab value is evaluated. 
 If the latest lab value is out of the requested range, the second-last lab value is evaluated (if available). 
@@ -167,12 +172,14 @@ HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | Prior other conditions > is not empty
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
+HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
+HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
@@ -191,6 +198,7 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
 HAS_ALLERGY_RELATED_TO_STUDY _MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
+IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_ANTIBIOTICS _MEDICATION | Medication > type is type of antibiotics
 CURRENTLY_GETS_CORTICOSTEROID _MEDICATION | Medication > type is type of corticosteroids
@@ -203,7 +211,7 @@ Rule | When does a patient pass evaluation?
 ---|---
 IS_BREASTFEEDING | > won't be evaluated
 IS_PREGNANT | > won't be evaluated
-IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION | > won't be evaluated
+IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION_IF_REQUIRED | > won't be evaluated
 
 ##### Rules related to toxicity
 
@@ -217,8 +225,8 @@ HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignori
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SBP_MMHG_OF_AT_MOST_X | Blood pressures > category = Systolic blood pressure AND value <= X
-HAS_DBP_MMHG_OF_AT_MOST_X | Blood pressures > category = Diastolic blood pressure AND value <= X
+HAS_SBP_MMHG_OF_AT_MOST_X | Blood pressures > category = Up to 5 most recent systolic blood pressure AND average value <= X
+HAS_DBP_MMHG_OF_AT_MOST_X | Blood pressures > category = Up to 5 most recent diastolic blood pressure AND average value <= X
 
 ##### Rules related to blood transfusions
 

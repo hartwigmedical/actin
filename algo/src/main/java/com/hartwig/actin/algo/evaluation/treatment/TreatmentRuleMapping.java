@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
@@ -21,6 +22,8 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE, notImplementedCreator());
         map.put(EligibilityRule.SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignancyHasBeenCuredRecentlyCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_IMMUNOTHERAPY_TREATMENT, hasHadImmunotherapyTreatmentCreator());
@@ -80,5 +83,10 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator isEligibleForOnLabelDrugCreator() {
         return function -> new IsEligibleForOnLabelDrug();
+    }
+
+    @NotNull
+    private static FunctionCreator notImplementedCreator() {
+        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }

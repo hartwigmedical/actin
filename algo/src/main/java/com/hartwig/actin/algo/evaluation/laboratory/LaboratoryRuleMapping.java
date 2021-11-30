@@ -36,6 +36,8 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedASATCreator());
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, notImplementedCreator());
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, notImplementedCreator());
+        map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, notImplementedCreator());
 
         return map;
     }
