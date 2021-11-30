@@ -187,6 +187,17 @@
       }
     }
   ],
+  "bodyWeights": [
+    {
+      "date": {
+        "year": 2020,
+        "month": 6,
+        "day": 18
+      },
+      "value": 70,
+      "unit": "kilogram"
+    }
+  ],
   "bloodPressures": [
     {
       "date": {

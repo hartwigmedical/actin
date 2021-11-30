@@ -96,4 +96,11 @@ public class FeedModelTest {
 
         assertNotNull(model.intoleranceEntries(TestFeedFactory.TEST_SUBJECT));
     }
+
+    @Test
+    public void canRetrieveBodyWeightEntries() {
+        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+
+        assertNotNull(model.uniqueBodyWeightEntries(TestFeedFactory.TEST_SUBJECT));
+    }
 }

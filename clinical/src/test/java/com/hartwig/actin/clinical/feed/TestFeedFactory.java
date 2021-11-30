@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bloodpressure.ImmutableBloodPressureEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.ImmutableBodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.encounter.ImmutableEncounterEntry;
@@ -53,6 +55,7 @@ public final class TestFeedFactory {
                 .bloodPressureEntries(createTestBloodPressureEntries())
                 .complicationEntries(createTestComplicationEntries())
                 .intoleranceEntries(createTestIntoleranceEntries())
+                .bodyWeightEntries(createTestBodyWeightEntries())
                 .build();
     }
 
@@ -246,6 +249,34 @@ public final class TestFeedFactory {
                 .clinicalStatusAllergyStatusDisplayNl(Strings.EMPTY)
                 .codeText("pills")
                 .criticality("unknown")
+                .build());
+
+        return entries;
+    }
+
+    @NotNull
+    private static List<BodyWeightEntry> createTestBodyWeightEntries() {
+        List<BodyWeightEntry> entries = Lists.newArrayList();
+
+        entries.add(ImmutableBodyWeightEntry.builder()
+                .subject(TEST_SUBJECT)
+                .valueQuantityValue(58.1)
+                .valueQuantityUnit("kilogram")
+                .effectiveDateTime(LocalDate.of(2018, 4, 5))
+                .build());
+
+        entries.add(ImmutableBodyWeightEntry.builder()
+                .subject(TEST_SUBJECT)
+                .valueQuantityValue(61.1)
+                .valueQuantityUnit("kilogram")
+                .effectiveDateTime(LocalDate.of(2018, 5, 5))
+                .build());
+
+        entries.add(ImmutableBodyWeightEntry.builder()
+                .subject(TEST_SUBJECT)
+                .valueQuantityValue(61.1)
+                .valueQuantityUnit("kilogram")
+                .effectiveDateTime(LocalDate.of(2018, 5, 5))
                 .build());
 
         return entries;

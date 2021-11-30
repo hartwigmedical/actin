@@ -50,6 +50,9 @@ public abstract class ClinicalRecord {
     public abstract List<Surgery> surgeries();
 
     @NotNull
+    public abstract List<BodyWeight> bodyWeights();
+
+    @NotNull
     public abstract List<BloodPressure> bloodPressures();
 
     @NotNull

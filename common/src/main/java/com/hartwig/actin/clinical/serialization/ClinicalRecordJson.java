@@ -39,6 +39,7 @@ import com.google.gson.JsonParseException;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
+import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
@@ -48,6 +49,7 @@ import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
+import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
@@ -152,6 +154,7 @@ public final class ClinicalRecordJson {
                     .toxicities(toToxicities(array(record, "toxicities")))
                     .allergies(toAllergies(array(record, "allergies")))
                     .surgeries(toSurgeries(array(record, "surgeries")))
+                    .bodyWeights(toBodyWeights(array(record, "bodyWeights")))
                     .bloodPressures(toBloodPressures(array(record, "bloodPressures")))
                     .bloodTransfusions(toBloodTransfusions(array(record, "bloodTransfusions")))
                     .medications(toMedications(array(record, "medications")))
@@ -367,6 +370,20 @@ public final class ClinicalRecordJson {
                 surgeryList.add(ImmutableSurgery.builder().endDate(date(object, "endDate")).build());
             }
             return surgeryList;
+        }
+
+        @NotNull
+        private static List<BodyWeight> toBodyWeights(@NotNull JsonArray bodyWeights) {
+            List<BodyWeight> bodyWeightList = Lists.newArrayList();
+            for (JsonElement element : bodyWeights) {
+                JsonObject object = element.getAsJsonObject();
+                bodyWeightList.add(ImmutableBodyWeight.builder()
+                        .date(date(object, "date"))
+                        .value(number(object, "value"))
+                        .unit(string(object, "unit"))
+                        .build());
+            }
+            return bodyWeightList;
         }
 
         @NotNull

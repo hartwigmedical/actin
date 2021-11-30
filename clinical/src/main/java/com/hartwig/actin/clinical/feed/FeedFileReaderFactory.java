@@ -2,6 +2,8 @@ package com.hartwig.actin.clinical.feed;
 
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntryCreator;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryCreator;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntryCreator;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
@@ -62,5 +64,10 @@ public final class FeedFileReaderFactory {
     @NotNull
     public static FeedFileReader<IntoleranceEntry> createIntoleranceReader() {
         return new FeedFileReader<>(new IntoleranceEntryCreator());
+    }
+
+    @NotNull
+    public static FeedFileReader<BodyWeightEntry> createBodyWeightReader() {
+        return new FeedFileReader<>(new BodyWeightEntryCreator());
     }
 }

@@ -14,6 +14,7 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodPressure;
+import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ECGAberration;
@@ -66,6 +67,7 @@ public class ClinicalRecordsFactoryTest {
         assertToxicities(record.toxicities());
         assertAllergies(record.allergies());
         assertSurgeries(record.surgeries());
+        assertBodyWeights(record.bodyWeights());
         assertBloodPressures(record.bloodPressures());
         assertMedications(record.medications());
     }
@@ -132,6 +134,29 @@ public class ClinicalRecordsFactoryTest {
 
         Surgery surgery = surgeries.get(0);
         assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
+    }
+
+    private static void assertBodyWeights(@NotNull List<BodyWeight> bodyWeights) {
+        assertEquals(2, bodyWeights.size());
+
+        BodyWeight bodyWeight1 = findByDate(bodyWeights, LocalDate.of(2018, 4, 5));
+        assertEquals(58.1, bodyWeight1.value(), EPSILON);
+        assertEquals("kilogram", bodyWeight1.unit());
+
+        BodyWeight bodyWeight2 = findByDate(bodyWeights, LocalDate.of(2018, 5, 5));
+        assertEquals(61.1, bodyWeight2.value(), EPSILON);
+        assertEquals("kilogram", bodyWeight2.unit());
+    }
+
+    @NotNull
+    private static BodyWeight findByDate(@NotNull List<BodyWeight> bodyWeights, @NotNull LocalDate dateToFind) {
+        for (BodyWeight bodyWeight : bodyWeights) {
+            if (bodyWeight.date().equals(dateToFind)) {
+                return bodyWeight;
+            }
+        }
+
+        throw new IllegalStateException("Could not find body weight with date '" + dateToFind + "'");
     }
 
     private static void assertBloodPressures(@NotNull List<BloodPressure> bloodPressures) {

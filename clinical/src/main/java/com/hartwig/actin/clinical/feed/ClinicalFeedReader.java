@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
@@ -29,6 +30,7 @@ public final class ClinicalFeedReader {
     private static final String BLOOD_PRESSURE_TSV = "bloodpressure.tsv";
     private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
+    private static final String BODY_WEIGHT_TSV = "bodyweight.tsv";
 
     private ClinicalFeedReader() {
     }
@@ -47,6 +49,7 @@ public final class ClinicalFeedReader {
                 .bloodPressureEntries(readBloodPressureEntries(basePath + BLOOD_PRESSURE_TSV))
                 .complicationEntries(readComplicationEntries(basePath + COMPLICATION_TSV))
                 .intoleranceEntries(readIntoleranceEntries(basePath + INTOLERANCE_TSV))
+                .bodyWeightEntries(readBodyWeightEntries(basePath + BODY_WEIGHT_TSV))
                 .build();
 
         ClinicalFeedValidation.validate(feed);
@@ -107,6 +110,13 @@ public final class ClinicalFeedReader {
     private static List<IntoleranceEntry> readIntoleranceEntries(@NotNull String intoleranceTsv) throws IOException {
         List<IntoleranceEntry> entries = FeedFileReaderFactory.createIntoleranceReader().read(intoleranceTsv);
         LOGGER.info(" Read {} intolerance entries from {}", entries.size(), intoleranceTsv);
+        return entries;
+    }
+
+    @NotNull
+    private static List<BodyWeightEntry> readBodyWeightEntries(@NotNull String bodyWeightTsv) throws IOException {
+        List<BodyWeightEntry> entries = FeedFileReaderFactory.createBodyWeightReader().read(bodyWeightTsv);
+        LOGGER.info(" Read {} body weight entries from {}", entries.size(), bodyWeightTsv);
         return entries;
     }
 }

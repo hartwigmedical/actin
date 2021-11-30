@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,8 @@ public final class TestClinicalDataFactory {
     private static final int DAYS_SINCE_LAB_MEASUREMENT_3 = 10;
     private static final int DAYS_SINCE_TOXICITIES = 30;
     private static final int DAYS_SINCE_SURGERY = 30;
+    private static final int DAYS_SINCE_BODY_WEIGHT_1 = 12;
+    private static final int DAYS_SINCE_BODY_WEIGHT_2 = 18;
     private static final int DAYS_SINCE_BLOOD_PRESSURE = 15;
     private static final int DAYS_SINCE_BLOOD_TRANSFUSION = 15;
     private static final int DAYS_SINCE_MEDICATION_START = 30;
@@ -57,6 +60,7 @@ public final class TestClinicalDataFactory {
                 .toxicities(createTestToxicities())
                 .allergies(createTestAllergies())
                 .surgeries(createTestSurgeries())
+                .bodyWeights(createTestBodyWeights())
                 .bloodPressures(createTestBloodPressures())
                 .bloodTransfusions(createTestBloodTransfusions())
                 .medications(createTestMedications())
@@ -204,9 +208,7 @@ public final class TestClinicalDataFactory {
     private static List<LabValue> createTestLabValues() {
         List<LabValue> labValues = Lists.newArrayList();
 
-        labValues.add(ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
-                .code("ASAT")
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3)).code(LabMeasurement.ASAT.code())
                 .name("Aspartate aminotransferase")
                 .comparator(Strings.EMPTY)
                 .value(36)
@@ -215,9 +217,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(true)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
-                .code("Hb")
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3)).code(LabMeasurement.HEMOGLOBIN.code())
                 .name("Hemoglobin")
                 .comparator(Strings.EMPTY)
                 .value(5.5)
@@ -229,7 +229,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
-                .code("THROMBO")
+                .code(LabMeasurement.THROMBOCYTES_ABS.code())
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
                 .value(155)
@@ -241,7 +241,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
-                .code("THROMBO")
+                .code(LabMeasurement.THROMBOCYTES_ABS.code())
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
                 .value(151)
@@ -253,7 +253,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
-                .code("THROMBO")
+                .code(LabMeasurement.THROMBOCYTES_ABS.code())
                 .name("Thrombocytes")
                 .comparator(Strings.EMPTY)
                 .value(150)
@@ -265,7 +265,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
-                .code("LEUKO")
+                .code(LabMeasurement.LEUKOCYTES_ABS.code())
                 .name("Leukocytes")
                 .comparator(Strings.EMPTY)
                 .value(6.5)
@@ -277,7 +277,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
-                .code("CKD-EPIeGFR")
+                .code(LabMeasurement.EGFR_CDK_EPI.code())
                 .name("CKD-EPI eGFR")
                 .comparator(">")
                 .value(100)
@@ -286,9 +286,7 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(false)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
-                .code("LDH")
+        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2)).code(LabMeasurement.LDH.code())
                 .name("Lactate dehydrogenase")
                 .comparator(Strings.EMPTY)
                 .value(240)
@@ -358,6 +356,16 @@ public final class TestClinicalDataFactory {
         surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(DAYS_SINCE_SURGERY)).build());
 
         return surgeries;
+    }
+
+    @NotNull
+    private static List<BodyWeight> createTestBodyWeights() {
+        List<BodyWeight> bodyWeights = Lists.newArrayList();
+
+        bodyWeights.add(ImmutableBodyWeight.builder().date(TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_1)).value(70D).unit("Kilogram").build());
+        bodyWeights.add(ImmutableBodyWeight.builder().date(TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_2)).value(68D).unit("Kilogram").build());
+
+        return bodyWeights;
     }
 
     @NotNull

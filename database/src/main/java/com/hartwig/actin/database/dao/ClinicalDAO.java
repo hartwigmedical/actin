@@ -3,6 +3,7 @@ package com.hartwig.actin.database.dao;
 import static com.hartwig.actin.database.Tables.ALLERGY;
 import static com.hartwig.actin.database.Tables.BLOODPRESSURE;
 import static com.hartwig.actin.database.Tables.BLOODTRANSFUSION;
+import static com.hartwig.actin.database.Tables.BODYWEIGHT;
 import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
 import static com.hartwig.actin.database.Tables.MEDICATION;
 import static com.hartwig.actin.database.Tables.OTHERCOMPLICATION;
@@ -21,6 +22,7 @@ import java.util.List;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
+import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
@@ -64,6 +66,7 @@ class ClinicalDAO {
         context.truncate(TOXICITY).execute();
         context.truncate(ALLERGY).execute();
         context.truncate(SURGERY).execute();
+        context.truncate(BODYWEIGHT).execute();
         context.truncate(BLOODPRESSURE).execute();
         context.truncate(BLOODTRANSFUSION).execute();
         context.truncate(MEDICATION).execute();
@@ -85,6 +88,7 @@ class ClinicalDAO {
         writeToxicities(sampleId, record.toxicities());
         writeAllergies(sampleId, record.allergies());
         writeSurgeries(sampleId, record.surgeries());
+        writeBodyWeights(sampleId, record.bodyWeights());
         writeBloodPressures(sampleId, record.bloodPressures());
         writeBloodTransfusions(sampleId, record.bloodTransfusions());
         writeMedications(sampleId, record.medications());
@@ -317,14 +321,21 @@ class ClinicalDAO {
                             allergy.category(),
                             allergy.clinicalStatus(),
                             allergy.verificationStatus(),
-                            allergy.criticality())
-                    .execute();
+                            allergy.criticality()).execute();
         }
     }
 
     private void writeSurgeries(@NotNull String sampleId, @NotNull List<Surgery> surgeries) {
         for (Surgery surgery : surgeries) {
             context.insertInto(SURGERY, SURGERY.SAMPLEID, SURGERY.ENDDATE).values(sampleId, surgery.endDate()).execute();
+        }
+    }
+
+    private void writeBodyWeights(@NotNull String sampleId, @NotNull List<BodyWeight> bodyWeights) {
+        for (BodyWeight bodyWeight : bodyWeights) {
+            context.insertInto(BODYWEIGHT, BODYWEIGHT.SAMPLEID, BODYWEIGHT.DATE, BODYWEIGHT.VALUE, BODYWEIGHT.UNIT)
+                    .values(sampleId, bodyWeight.date(), bodyWeight.value(), bodyWeight.unit())
+                    .execute();
         }
     }
 

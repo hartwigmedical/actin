@@ -11,6 +11,7 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
@@ -41,6 +42,7 @@ public class ClinicalFeedReaderTest {
         assertBloodPressures(feed.bloodPressureEntries());
         assertComplications(feed.complicationEntries());
         assertIntolerances(feed.intoleranceEntries());
+        assertBodyWeights(feed.bodyWeightEntries());
     }
 
     private static void assertPatients(@NotNull List<PatientEntry> entries) {
@@ -240,5 +242,30 @@ public class ClinicalFeedReaderTest {
         assertEquals("Actief", entry.clinicalStatusAllergyStatusDisplayNl());
         assertEquals("SIMVASTATINE", entry.codeText());
         assertEquals("low", entry.criticality());
+    }
+
+    private static void assertBodyWeights(@NotNull List<BodyWeightEntry> entries) {
+        assertEquals(2, entries.size());
+
+        BodyWeightEntry entry1 = findByDate(entries, LocalDate.of(2020, 8, 11));
+        assertEquals("ACTN-01-02-9999", entry1.subject());
+        assertEquals(61.1, entry1.valueQuantityValue(), EPSILON);
+        assertEquals("kilogram", entry1.valueQuantityUnit());
+
+        BodyWeightEntry entry2 = findByDate(entries, LocalDate.of(2020, 8, 20));
+        assertEquals("ACTN-01-02-9999", entry2.subject());
+        assertEquals(58.9, entry2.valueQuantityValue(), EPSILON);
+        assertEquals("kilogram", entry2.valueQuantityUnit());
+    }
+
+    @NotNull
+    private static BodyWeightEntry findByDate(@NotNull List<BodyWeightEntry> entries, @NotNull LocalDate dateToFind) {
+        for (BodyWeightEntry entry : entries) {
+            if (entry.effectiveDateTime().equals(dateToFind)) {
+                return entry;
+            }
+        }
+
+        throw new IllegalStateException("Could not find body weight entry with date '" + dateToFind + "'");
     }
 }

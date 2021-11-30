@@ -9,11 +9,13 @@ import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodPressure;
+import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
+import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
@@ -33,6 +35,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -98,6 +101,7 @@ public class ClinicalRecordsFactory {
                     .toxicities(extractToxicities(subject, questionnaire))
                     .allergies(extractAllergies(subject))
                     .surgeries(extractSurgeries(subject))
+                    .bodyWeights(extractBodyWeights(subject))
                     .bloodPressures(extractBloodPressures(subject))
                     .medications(extractMedications(subject))
                     .build());
@@ -267,6 +271,19 @@ public class ClinicalRecordsFactory {
             surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).build());
         }
         return surgeries;
+    }
+
+    @NotNull
+    private List<BodyWeight> extractBodyWeights(@NotNull String subject) {
+        List<BodyWeight> bodyWeights = Lists.newArrayList();
+        for (BodyWeightEntry entry : feed.uniqueBodyWeightEntries(subject)) {
+            bodyWeights.add(ImmutableBodyWeight.builder()
+                    .date(entry.effectiveDateTime())
+                    .value(entry.valueQuantityValue())
+                    .unit(entry.valueQuantityUnit())
+                    .build());
+        }
+        return bodyWeights;
     }
 
     @NotNull

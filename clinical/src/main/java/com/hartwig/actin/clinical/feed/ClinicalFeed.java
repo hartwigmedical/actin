@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed;
 import java.util.List;
 
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
@@ -42,4 +43,7 @@ public abstract class ClinicalFeed {
 
     @NotNull
     public abstract List<IntoleranceEntry> intoleranceEntries();
+
+    @NotNull
+    public abstract List<BodyWeightEntry> bodyWeightEntries();
 }
