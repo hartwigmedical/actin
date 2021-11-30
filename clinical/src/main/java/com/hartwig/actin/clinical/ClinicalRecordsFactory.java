@@ -165,7 +165,7 @@ public class ClinicalRecordsFactory {
 
         return ImmutableClinicalStatus.builder()
                 .who(questionnaire.whoStatus())
-                .hasActiveInfection(questionnaire.hasSignificantCurrentInfection())
+                .infectionStatus(curation.curateInfectionStatus(questionnaire.infectionStatus()))
                 .ecgAberration(curation.curateECGAberration(questionnaire.ecgAberration()))
                 .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory()))
                 .build();

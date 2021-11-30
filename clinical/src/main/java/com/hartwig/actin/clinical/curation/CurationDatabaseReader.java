@@ -8,6 +8,8 @@ import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfi
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory;
+import com.hartwig.actin.clinical.curation.config.InfectionConfig;
+import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
@@ -44,6 +46,7 @@ public final class CurationDatabaseReader {
     private static final String ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv";
     private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
+    private static final String INFECTION_TSV = "infection.tsv";
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
@@ -68,6 +71,7 @@ public final class CurationDatabaseReader {
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
+                .infectionConfigs(readInfectionConfigs(basePath + INFECTION_TSV))
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
@@ -110,6 +114,13 @@ public final class CurationDatabaseReader {
     private static List<ECGConfig> readECGConfigs(@NotNull String tsv) throws IOException {
         List<ECGConfig> configs = CurationConfigFile.read(tsv, new ECGConfigFactory());
         LOGGER.info(" Read {} ECG configs from {}", configs.size(), tsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<InfectionConfig> readInfectionConfigs(@NotNull String tsv) throws IOException {
+        List<InfectionConfig> configs = CurationConfigFile.read(tsv, new InfectionConfigFactory());
+        LOGGER.info(" Read {} infection configs from {}", configs.size(), tsv);
         return configs;
     }
 

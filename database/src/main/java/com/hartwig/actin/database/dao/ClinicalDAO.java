@@ -28,6 +28,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -151,18 +152,21 @@ class ClinicalDAO {
     }
 
     private void writeClinicalStatus(@NotNull String sampleId, @NotNull ClinicalStatus clinicalStatus) {
+        InfectionStatus infectionStatus = clinicalStatus.infectionStatus();
         ECGAberration ecgAberration = clinicalStatus.ecgAberration();
 
         context.insertInto(CLINICALSTATUS,
                 CLINICALSTATUS.SAMPLEID,
                 CLINICALSTATUS.WHO,
                 CLINICALSTATUS.HASACTIVEINFECTION,
+                CLINICALSTATUS.ACTIVEINFECTIONDESCRIPTION,
                 CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
                 CLINICALSTATUS.ECGABERRATIONDESCRIPTION,
                 CLINICALSTATUS.LVEF)
                 .values(sampleId,
                         clinicalStatus.who(),
-                        DataUtil.toByte(clinicalStatus.hasActiveInfection()),
+                        DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
+                        infectionStatus != null ? infectionStatus.description() : null,
                         DataUtil.toByte(ecgAberration != null ? ecgAberration.hasSigAberrationLatestECG() : null),
                         ecgAberration != null ? ecgAberration.description() : null,
                         clinicalStatus.lvef())
@@ -321,7 +325,8 @@ class ClinicalDAO {
                             allergy.category(),
                             allergy.clinicalStatus(),
                             allergy.verificationStatus(),
-                            allergy.criticality()).execute();
+                            allergy.criticality())
+                    .execute();
         }
     }
 

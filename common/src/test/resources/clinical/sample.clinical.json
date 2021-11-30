@@ -39,7 +39,10 @@
   },
   "clinicalStatus": {
     "who": 0,
-    "hasActiveInfection": false,
+    "infectionStatus": {
+      "hasActiveInfection": false,
+      "description": ""
+    },
     "ecgAberration": {
       "hasSigAberrationLatestECG": false,
       "description": ""

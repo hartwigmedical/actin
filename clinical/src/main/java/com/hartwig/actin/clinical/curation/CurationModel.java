@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationTypeConfig;
@@ -22,6 +23,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistory
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
@@ -41,10 +43,12 @@ import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -246,6 +250,27 @@ public class CurationModel {
     }
 
     @Nullable
+    public InfectionStatus curateInfectionStatus(@Nullable InfectionStatus input) {
+        if (input == null) {
+            return null;
+        }
+
+        InfectionConfig config = find(database.infectionConfigs(), input.description());
+
+        // Assume infections can also be pass-through.
+        if (config != null) {
+            String interpretation = config.interpretation();
+            if (interpretation.equals("NULL")) {
+                return null;
+            } else {
+                return ImmutableInfectionStatus.builder().from(input).description(interpretation).build();
+            }
+        } else {
+            return input;
+        }
+    }
+
+    @Nullable
     public List<String> curateOtherLesions(@Nullable List<String> otherLesions) {
         if (otherLesions == null) {
             return null;
@@ -423,6 +448,8 @@ public class CurationModel {
             return database.cancerRelatedComplicationConfigs();
         } else if (classToLookUp == ImmutableECGConfig.class) {
             return database.ecgConfigs();
+        } else if (classToLookUp == ImmutableInfectionConfig.class) {
+            return database.infectionConfigs();
         } else if (classToLookUp == ImmutableToxicityConfig.class) {
             return database.toxicityConfigs();
         } else if (classToLookUp == ImmutableMedicationDosageConfig.class) {

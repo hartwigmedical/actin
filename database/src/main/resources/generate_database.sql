@@ -43,6 +43,7 @@ CREATE TABLE clinicalStatus
     sampleId varchar(50) UNIQUE,
     who int,
     hasActiveInfection BOOLEAN,
+    activeInfectionDescription varchar(50),
     hasSigAberrationLatestECG BOOLEAN,
     ecgAberrationDescription varchar(50),
     lvef double precision,

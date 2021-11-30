@@ -108,7 +108,9 @@ public final class TestClinicalDataFactory {
         ECGAberration ecgAberration =
                 ImmutableECGAberration.builder().hasSigAberrationLatestECG(true).description("Atrial arrhythmia").build();
 
-        return ImmutableClinicalStatus.builder().who(1).hasActiveInfection(false).ecgAberration(ecgAberration).build();
+        InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).description(Strings.EMPTY).build();
+
+        return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecgAberration(ecgAberration).build();
     }
 
     @NotNull
@@ -208,7 +210,9 @@ public final class TestClinicalDataFactory {
     private static List<LabValue> createTestLabValues() {
         List<LabValue> labValues = Lists.newArrayList();
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3)).code(LabMeasurement.ASAT.code())
+        labValues.add(ImmutableLabValue.builder()
+                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
+                .code(LabMeasurement.ASAT.code())
                 .name("Aspartate aminotransferase")
                 .comparator(Strings.EMPTY)
                 .value(36)
@@ -217,7 +221,9 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(true)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3)).code(LabMeasurement.HEMOGLOBIN.code())
+        labValues.add(ImmutableLabValue.builder()
+                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
+                .code(LabMeasurement.HEMOGLOBIN.code())
                 .name("Hemoglobin")
                 .comparator(Strings.EMPTY)
                 .value(5.5)
@@ -286,7 +292,9 @@ public final class TestClinicalDataFactory {
                 .isOutsideRef(false)
                 .build());
 
-        labValues.add(ImmutableLabValue.builder().date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2)).code(LabMeasurement.LDH.code())
+        labValues.add(ImmutableLabValue.builder()
+                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
+                .code(LabMeasurement.LDH.code())
                 .name("Lactate dehydrogenase")
                 .comparator(Strings.EMPTY)
                 .value(240)

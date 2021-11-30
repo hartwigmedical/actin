@@ -12,7 +12,7 @@ public abstract class ClinicalStatus {
     public abstract Integer who();
 
     @Nullable
-    public abstract Boolean hasActiveInfection();
+    public abstract InfectionStatus infectionStatus();
 
     @Nullable
     public abstract ECGAberration ecgAberration();

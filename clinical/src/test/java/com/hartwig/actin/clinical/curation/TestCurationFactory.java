@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfi
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationTypeConfig;
@@ -14,6 +15,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistory
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
@@ -58,6 +60,7 @@ public final class TestCurationFactory {
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
                 .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
+                .infectionConfigs(createTestInfectionConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
@@ -160,6 +163,16 @@ public final class TestCurationFactory {
 
         configs.add(ImmutableECGConfig.builder().input("Weird aberration").interpretation("Cleaned aberration").build());
         configs.add(ImmutableECGConfig.builder().input("No aberration").interpretation("NULL").build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<InfectionConfig> createTestInfectionConfigs() {
+        List<InfectionConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableInfectionConfig.builder().input("Weird infection").interpretation("Cleaned infection").build());
+        configs.add(ImmutableInfectionConfig.builder().input("No infection").interpretation("NULL").build());
 
         return configs;
     }

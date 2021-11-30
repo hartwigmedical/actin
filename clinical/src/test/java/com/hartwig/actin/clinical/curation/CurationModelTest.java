@@ -20,8 +20,10 @@ import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -197,6 +199,23 @@ public class CurationModelTest {
     @NotNull
     private static ECGAberration toAberration(@NotNull String description) {
         return ImmutableECGAberration.builder().hasSigAberrationLatestECG(true).description(description).build();
+    }
+
+    @Test
+    public void canCurateInfectionStatus() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals("Cleaned infection", model.curateInfectionStatus(toInfection("Weird infection")).description());
+        assertEquals("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")).description());
+        assertNull(model.curateInfectionStatus(toInfection("No infection")));
+        assertNull(model.curateInfectionStatus(null));
+
+        model.evaluate();
+    }
+
+    @NotNull
+    private static InfectionStatus toInfection(@NotNull String description) {
+        return ImmutableInfectionStatus.builder().hasActiveInfection(true).description(description).build();
     }
 
     @Test

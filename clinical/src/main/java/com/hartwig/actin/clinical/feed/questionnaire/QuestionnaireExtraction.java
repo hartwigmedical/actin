@@ -10,6 +10,8 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,16 +89,30 @@ public final class QuestionnaireExtraction {
                 .otherLesions(otherLesions(entry, mapping))
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
                 .unresolvedToxicities(toList(value(entry, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
-                .hasSignificantCurrentInfection(toOption(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
-                .ecgAberration(ecgAberration(entry, mapping))
+                .infectionStatus(infectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
+                .ecgAberration(ecgAberration(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .cancerRelatedComplications(toList(value(entry, mapping.get(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS))))
                 .build();
     }
 
     @Nullable
-    private static ECGAberration ecgAberration(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping) {
-        String significantAberrationLatestECG = value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG));
+    private static InfectionStatus infectionStatus(@Nullable String significantCurrentInfection) {
+        Boolean hasActiveInfection = null;
+        if (QuestionnaireCuration.isConfiguredOption(significantCurrentInfection)) {
+            hasActiveInfection = toOption(significantCurrentInfection);
+        } else if (significantCurrentInfection != null && !significantCurrentInfection.isEmpty()) {
+            hasActiveInfection = true;
+        }
 
+        if (hasActiveInfection == null || significantCurrentInfection == null) {
+            return null;
+        }
+
+        return ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(significantCurrentInfection).build();
+    }
+
+    @Nullable
+    private static ECGAberration ecgAberration(@Nullable String significantAberrationLatestECG) {
         Boolean hasSignificantAberrationLatestECG = null;
         if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
             hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);

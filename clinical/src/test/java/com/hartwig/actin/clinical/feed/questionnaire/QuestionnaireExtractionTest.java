@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +71,10 @@ public class QuestionnaireExtractionTest {
 
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
-        assertFalse(questionnaire.hasSignificantCurrentInfection());
+
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
 
         ECGAberration ecgAberration = questionnaire.ecgAberration();
         assertNotNull(ecgAberration);
@@ -123,7 +127,10 @@ public class QuestionnaireExtractionTest {
 
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
-        assertFalse(questionnaire.hasSignificantCurrentInfection());
+
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
 
         ECGAberration ecgAberration = questionnaire.ecgAberration();
         assertNotNull(ecgAberration);
@@ -176,7 +183,10 @@ public class QuestionnaireExtractionTest {
 
         assertEquals(0, (int) questionnaire.whoStatus());
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
-        assertFalse(questionnaire.hasSignificantCurrentInfection());
+
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
 
         ECGAberration ecgAberration = questionnaire.ecgAberration();
         assertNotNull(ecgAberration);
@@ -234,7 +244,9 @@ public class QuestionnaireExtractionTest {
         assertEquals(1, unresolvedToxicities.size());
         assertTrue(unresolvedToxicities.contains("NA"));
 
-        assertFalse(questionnaire.hasSignificantCurrentInfection());
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
 
         ECGAberration ecgAberration = questionnaire.ecgAberration();
         assertNotNull(ecgAberration);
@@ -285,7 +297,10 @@ public class QuestionnaireExtractionTest {
 
         assertTrue(questionnaire.unresolvedToxicities().isEmpty());
 
-        assertFalse(questionnaire.hasSignificantCurrentInfection());
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
+
         assertNull(questionnaire.ecgAberration());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
@@ -332,7 +347,9 @@ public class QuestionnaireExtractionTest {
         assertEquals(1, unresolvedToxicities.size());
         assertTrue(unresolvedToxicities.contains("Neuropathy GR3"));
 
-        assertFalse(questionnaire.hasSignificantCurrentInfection());
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
 
         ECGAberration ecgAberration = questionnaire.ecgAberration();
         assertNotNull(ecgAberration);

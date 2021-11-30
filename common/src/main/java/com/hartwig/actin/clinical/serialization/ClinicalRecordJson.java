@@ -55,6 +55,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
@@ -64,6 +65,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -202,8 +204,20 @@ public final class ClinicalRecordJson {
         private static ClinicalStatus toClinicalStatus(@NotNull JsonObject clinicalStatus) {
             return ImmutableClinicalStatus.builder()
                     .who(nullableInteger(clinicalStatus, "who"))
-                    .hasActiveInfection(nullableBool(clinicalStatus, "hasActiveInfection"))
+                    .infectionStatus(toInfectionStatus(nullableObject(clinicalStatus, "infectionStatus")))
                     .ecgAberration(toECGAberration(nullableObject(clinicalStatus, "ecgAberration")))
+                    .build();
+        }
+
+        @Nullable
+        private static InfectionStatus toInfectionStatus(@Nullable JsonObject object) {
+            if (object == null) {
+                return null;
+            }
+
+            return ImmutableInfectionStatus.builder()
+                    .hasActiveInfection(bool(object, "hasActiveInfection"))
+                    .description(string(object, "description"))
                     .build();
         }
 
