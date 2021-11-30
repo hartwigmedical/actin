@@ -107,7 +107,10 @@ HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second
 HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
-HAS_HAD_IMMUNOTHERAPY_TYPE_TREATMENT | Prior tumor treatments > categories contains Immunotherapy
+HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatmens > name contains X
+HAS_HAD_DRUG_TYPE_X_TREATMENT | Prior tumor treatments > categories contains X ("X" is one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery)
+HAS_HAD_TARGETED_THERAPY_TREATMENT_ TARGETING_GENE_X | Prior tumor treatments > targetedType contains "X"
+HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (to be implemented)
@@ -197,12 +200,14 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_ALLERGY_RELATED_TO_STUDY _MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
+HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
-CURRENTLY_GETS_ANTIBIOTICS _MEDICATION | Medication > type is type of antibiotics
-CURRENTLY_GETS_CORTICOSTEROID _MEDICATION | Medication > type is type of corticosteroids
-CURRENTLY_GETS_IMMUNOSUPPRESSANT _MEDICATION | T.B.D.
+CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoagulants"
+CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotics"
+CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids"
+CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists"
+CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D.
 HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
 
 ##### Rules related to pregnancy/anticonception
