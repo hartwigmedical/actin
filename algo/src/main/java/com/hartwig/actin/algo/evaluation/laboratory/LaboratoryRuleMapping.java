@@ -60,7 +60,10 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasSufficientThrombocytesCreator() {
-        return function -> new HasSufficientThrombocytes();
+        return function -> {
+            double minThrombocytes = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasSufficientThrombocytes(minThrombocytes);
+        };
     }
 
     @NotNull
