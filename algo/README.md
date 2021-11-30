@@ -211,7 +211,7 @@ Rule | When does a patient pass evaluation?
 ---|---
 IS_BREASTFEEDING | > won't be evaluated
 IS_PREGNANT | > won't be evaluated
-IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION_IF_REQUIRED | > won't be evaluated
+IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be evaluated
 
 ##### Rules related to toxicity
 
