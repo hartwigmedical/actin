@@ -13,17 +13,17 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasSufficientEGFR implements EvaluationFunction {
+public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(HasSufficientEGFR.class);
+    private static final Logger LOGGER = LogManager.getLogger(HasSufficientCreatinineClearance.class);
 
     @NotNull
-    private final EGFRMethod method;
-    private final double minEGFR;
+    private final CreatinineClearanceMethod method;
+    private final double minCreatinineClearance;
 
-    HasSufficientEGFR(@NotNull final EGFRMethod method, final double minEGFR) {
+    HasSufficientCreatinineClearance(@NotNull final CreatinineClearanceMethod method, final double minCreatinineClearance) {
         this.method = method;
-        this.minEGFR = minEGFR;
+        this.minCreatinineClearance = minCreatinineClearance;
     }
 
     @NotNull
@@ -31,13 +31,13 @@ public class HasSufficientEGFR implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
-        LabValue egfr = retrieveForMethod(interpretation);
+        LabValue clearance = retrieveForMethod(interpretation);
 
-        if (egfr != null) {
-            return LabValueEvaluation.evaluateVersusMinValue(egfr.value(), egfr.comparator(), minEGFR);
+        if (clearance != null) {
+            return LabValueEvaluation.evaluateVersusMinValue(clearance.value(), clearance.comparator(), minCreatinineClearance);
         }
 
-        // If no EGFR value was found, we derive it from creatinine. See also https://www.knmp.nl/rekenmodules/creatinine_html
+        // If no clearance value was found, we derive it from creatinine. See also https://www.knmp.nl/rekenmodules/creatinine_html
         LabValue creatinine = interpretation.mostRecentValue(LabMeasurement.CREATININE);
 
         if (creatinine == null) {
@@ -78,12 +78,14 @@ public class HasSufficientEGFR implements EvaluationFunction {
     @Nullable
     private LabValue retrieveForMethod(@NotNull LabInterpretation interpretation) {
         switch (method) {
-            case CDK_EPI:
+            case EGFR_CDK_EPI:
                 return interpretation.mostRecentValue(LabMeasurement.EGFR_CDK_EPI);
-            case MDRD:
+            case EGFR_MDRD:
                 return interpretation.mostRecentValue(LabMeasurement.EGFR_MDRD);
+            case COCKCROFT_GAULT:
+                return interpretation.mostRecentValue(LabMeasurement.CREATININE_CLEARANCE_CG);
             default: {
-                LOGGER.warn("Cannot resolve lab value for EGFR method '{}'", method);
+                LOGGER.warn("Cannot resolve lab value for creatinine clearance method '{}'", method);
                 return null;
             }
         }

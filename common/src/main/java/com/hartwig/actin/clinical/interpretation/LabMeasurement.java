@@ -8,6 +8,7 @@ public enum LabMeasurement {
     ALP("ALP"),
     ASAT("ASAT"),
     CREATININE("CREA"),
+    CREATININE_CLEARANCE_CG("CGCRCL"),
     EGFR_CDK_EPI("CDK-EPIeGFR"),
     EGFR_MDRD("MDRDeGFR"),
     HEMOGLOBIN("Hb"),

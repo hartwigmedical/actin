@@ -25,9 +25,11 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
         map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedCreatinineULNCreator());
-        map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X, hasSufficientEGFRCreator(EGFRMethod.CDK_EPI));
-        map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, hasSufficientEGFRCreator(EGFRMethod.MDRD));
-        map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X,
+                hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CDK_EPI));
+        map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD));
+        map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X,
+                hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X, hasLimitedTotalBilirubinCreator());
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X, hasLimitedDirectBilirubinCreator());
         map.put(EligibilityRule.HAS_INR_ULN_AT_MOST_X, hasLimitedINRCreator());
@@ -83,10 +85,10 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientEGFRCreator(@NotNull EGFRMethod method) {
+    private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
-            double minEGFR = EligibilityParameterResolver.createOneDoubleParameter(function);
-            return new HasSufficientEGFR(method, minEGFR);
+            double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleParameter(function);
+            return new HasSufficientCreatinineClearance(method, minCreatinineClearance);
         };
     }
 
