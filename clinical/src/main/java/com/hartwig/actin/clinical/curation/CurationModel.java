@@ -85,22 +85,6 @@ public class CurationModel {
         this.database = database;
     }
 
-    @Nullable
-    public Double determineLVEF(@Nullable List<String> inputs) {
-        if (inputs == null) {
-            return null;
-        }
-
-        for (String input : inputs) {
-            NonOncologicalHistoryConfig config = find(database.nonOncologicalHistoryConfigs(), input);
-            if (config != null && !config.ignore() && config.curated() instanceof Double) {
-                return (Double) config.curated();
-            }
-        }
-
-        return null;
-    }
-
     @NotNull
     public TumorDetails curateTumorDetails(@Nullable String inputTumorLocation, @Nullable String inputTumorType) {
         PrimaryTumorConfig primaryTumorConfig = null;
@@ -268,6 +252,22 @@ public class CurationModel {
         } else {
             return input;
         }
+    }
+
+    @Nullable
+    public Double determineLVEF(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return null;
+        }
+
+        for (String input : inputs) {
+            NonOncologicalHistoryConfig config = find(database.nonOncologicalHistoryConfigs(), input);
+            if (config != null && !config.ignore() && config.curated() instanceof Double) {
+                return (Double) config.curated();
+            }
+        }
+
+        return null;
     }
 
     @Nullable

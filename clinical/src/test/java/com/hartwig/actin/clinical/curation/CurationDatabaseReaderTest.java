@@ -13,6 +13,7 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
@@ -47,6 +48,7 @@ public class CurationDatabaseReaderTest {
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
+        assertInfectionConfigs(database.infectionConfigs());
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
@@ -140,6 +142,16 @@ public class CurationDatabaseReaderTest {
         ECGConfig config = configs.get(0);
         assertEquals("Sinus Tachycardia", config.input());
         assertEquals("Sinus tachycardia", config.interpretation());
+    }
+
+    private static void assertInfectionConfigs(@NotNull List<InfectionConfig> configs) {
+        assertEquals(2, configs.size());
+
+        InfectionConfig config1 = find(configs, "YES lung abces");
+        assertEquals("Lung abscess", config1.interpretation());
+
+        InfectionConfig config2 = find(configs, "NA");
+        assertEquals("No", config2.interpretation());
     }
 
     private static void assertCancerRelatedComplicationConfigs(@NotNull List<CancerRelatedComplicationConfig> configs) {

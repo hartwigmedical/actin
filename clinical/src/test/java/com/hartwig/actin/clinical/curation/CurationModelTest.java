@@ -49,19 +49,6 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canDetermineLVEF() {
-        CurationModel model = TestCurationFactory.createProperTestCurationModel();
-
-        assertNull(model.determineLVEF(null));
-
-        assertNull(model.determineLVEF(Lists.newArrayList("not an LVEF")));
-
-        assertEquals(0.17, model.determineLVEF(Lists.newArrayList("LVEF 0.17")), EPSILON);
-
-        model.evaluate();
-    }
-
-    @Test
     public void canCurateTumorDetails() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
@@ -155,36 +142,6 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canCurateOtherLesions() {
-        CurationModel model = TestCurationFactory.createProperTestCurationModel();
-
-        assertNull(model.curateOtherLesions(null));
-
-        List<String> notALesion = Lists.newArrayList("not a lesion");
-        assertTrue(model.curateOtherLesions(notALesion).isEmpty());
-
-        List<String> noOtherLesions = Lists.newArrayList("No");
-        assertTrue(model.curateOtherLesions(noOtherLesions).isEmpty());
-
-        List<String> otherLesions = Lists.newArrayList("lever", "not a lesion", "no curation needed");
-        assertEquals(2, model.curateOtherLesions(otherLesions).size());
-
-        model.evaluate();
-    }
-
-    @Test
-    public void canCurateBiopsyLocation() {
-        CurationModel model = TestCurationFactory.createProperTestCurationModel();
-
-        assertEquals("Liver", model.curateBiopsyLocation("lever"));
-        assertTrue(model.curateBiopsyLocation("Not a lesion").isEmpty());
-        assertEquals("No curation needed", model.curateBiopsyLocation("No curation needed"));
-        assertNull(model.curateBiopsyLocation(null));
-
-        model.evaluate();
-    }
-
-    @Test
     public void canCurateECGAberrations() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
@@ -216,6 +173,49 @@ public class CurationModelTest {
     @NotNull
     private static InfectionStatus toInfection(@NotNull String description) {
         return ImmutableInfectionStatus.builder().hasActiveInfection(true).description(description).build();
+    }
+
+    @Test
+    public void canDetermineLVEF() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertNull(model.determineLVEF(null));
+
+        assertNull(model.determineLVEF(Lists.newArrayList("not an LVEF")));
+
+        assertEquals(0.17, model.determineLVEF(Lists.newArrayList("LVEF 0.17")), EPSILON);
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateOtherLesions() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertNull(model.curateOtherLesions(null));
+
+        List<String> notALesion = Lists.newArrayList("not a lesion");
+        assertTrue(model.curateOtherLesions(notALesion).isEmpty());
+
+        List<String> noOtherLesions = Lists.newArrayList("No");
+        assertTrue(model.curateOtherLesions(noOtherLesions).isEmpty());
+
+        List<String> otherLesions = Lists.newArrayList("lever", "not a lesion", "no curation needed");
+        assertEquals(2, model.curateOtherLesions(otherLesions).size());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canCurateBiopsyLocation() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals("Liver", model.curateBiopsyLocation("lever"));
+        assertTrue(model.curateBiopsyLocation("Not a lesion").isEmpty());
+        assertEquals("No curation needed", model.curateBiopsyLocation("No curation needed"));
+        assertNull(model.curateBiopsyLocation(null));
+
+        model.evaluate();
     }
 
     @Test
