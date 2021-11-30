@@ -103,8 +103,8 @@ Rule | When does a patient pass evaluation? | Note
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D 
 HAS_DECLINED_SOC_TREATMENTS | T.B.D
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
-HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
-HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
+HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_IMMUNOTHERAPY_TYPE_TREATMENT | Prior tumor treatments > categories contains Immunotherapy
@@ -155,8 +155,8 @@ HAS_APTT_ULN_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
-HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Potassium (K) LLN<X<ULN (LLN: lower limit of normal, implemented as refLimitLow)
-HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN
+HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (LLN: lower limit of normal, implemented as refLimitLow)
+HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN
 
 
 Note: for all lab values, the latest available lab value is evaluated. 
