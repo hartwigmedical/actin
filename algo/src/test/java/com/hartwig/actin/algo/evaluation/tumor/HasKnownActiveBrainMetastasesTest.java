@@ -14,7 +14,7 @@ public class HasKnownActiveBrainMetastasesTest {
 
     @Test
     public void canEvaluate() {
-        HasActiveBrainMetastases function = new HasActiveBrainMetastases();
+        HasKnownActiveBrainMetastases function = new HasKnownActiveBrainMetastases();
 
         assertEquals(Evaluation.PASS, function.evaluate(patientWithActiveBrainLesions(true)));
         assertEquals(Evaluation.FAIL, function.evaluate(patientWithActiveBrainLesions(false)));

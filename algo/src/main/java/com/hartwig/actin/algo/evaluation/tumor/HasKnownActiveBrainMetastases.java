@@ -6,19 +6,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasCnsMetastases implements EvaluationFunction {
+public class HasKnownActiveBrainMetastases implements EvaluationFunction {
 
-    HasCnsMetastases() {
+    HasKnownActiveBrainMetastases() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
-        if (hasCnsMetastases == null) {
+        Boolean hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions();
+        if (hasActiveBrainMetastases == null) {
             return Evaluation.FAIL;
         }
 
-        return hasCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;
+        return hasActiveBrainMetastases ? Evaluation.PASS : Evaluation.FAIL;
     }
 }

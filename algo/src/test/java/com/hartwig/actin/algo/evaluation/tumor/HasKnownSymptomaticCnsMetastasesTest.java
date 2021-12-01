@@ -14,7 +14,7 @@ public class HasKnownSymptomaticCnsMetastasesTest {
 
     @Test
     public void canEvaluate() {
-        HasSymptomaticCnsMetastases function = new HasSymptomaticCnsMetastases();
+        HasKnownSymptomaticCnsMetastases function = new HasKnownSymptomaticCnsMetastases();
 
         assertEquals(Evaluation.PASS, function.evaluate(patientWithSymptomaticCnsLesions(true)));
         assertEquals(Evaluation.FAIL, function.evaluate(patientWithSymptomaticCnsLesions(false)));

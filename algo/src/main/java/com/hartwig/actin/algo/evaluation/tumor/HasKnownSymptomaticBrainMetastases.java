@@ -6,9 +6,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSymptomaticBrainMetastases implements EvaluationFunction {
+public class HasKnownSymptomaticBrainMetastases implements EvaluationFunction {
 
-    HasSymptomaticBrainMetastases() {
+    HasKnownSymptomaticBrainMetastases() {
     }
 
     @NotNull

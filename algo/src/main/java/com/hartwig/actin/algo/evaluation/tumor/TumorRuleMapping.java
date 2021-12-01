@@ -61,32 +61,32 @@ public final class TumorRuleMapping {
 
     @NotNull
     private static FunctionCreator hasKnownCnsMetastasesCreator() {
-        return function -> new HasCnsMetastases();
+        return function -> new HasKnownCnsMetastases();
     }
 
     @NotNull
     private static FunctionCreator hasKnownActiveCnsMetastasesCreator() {
-        return function -> new HasActiveCnsMetastases();
+        return function -> new HasKnownActiveCnsMetastases();
     }
 
     @NotNull
     private static FunctionCreator hasKnownSymptomaticCnsMetastasesCreator() {
-        return function -> new HasSymptomaticCnsMetastases();
+        return function -> new HasKnownSymptomaticCnsMetastases();
     }
 
     @NotNull
     private static FunctionCreator hasKnownBrainMetastasesCreator() {
-        return function -> new HasBrainMetastases();
+        return function -> new HasKnownBrainMetastases();
     }
 
     @NotNull
     private static FunctionCreator hasKnownActiveBrainMetastasesCreator() {
-        return function -> new HasActiveBrainMetastases();
+        return function -> new HasKnownActiveBrainMetastases();
     }
 
     @NotNull
     private static FunctionCreator hasKnownSymptomaticBrainMetastasesCreator() {
-        return function -> new HasSymptomaticBrainMetastases();
+        return function -> new HasKnownSymptomaticBrainMetastases();
     }
 
     @NotNull
