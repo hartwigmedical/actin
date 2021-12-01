@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-public class HasSymptomaticBrainMetastasesTest {
+public class HasKnownSymptomaticBrainMetastasesTest {
 
     @Test
     public void canEvaluate() {
@@ -18,7 +18,7 @@ public class HasSymptomaticBrainMetastasesTest {
 
         assertEquals(Evaluation.PASS, function.evaluate(patientWithSymptomaticBrainLesions(true)));
         assertEquals(Evaluation.FAIL, function.evaluate(patientWithSymptomaticBrainLesions(false)));
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(patientWithSymptomaticBrainLesions(null)));
+        assertEquals(Evaluation.FAIL, function.evaluate(patientWithSymptomaticBrainLesions(null)));
     }
 
     @NotNull

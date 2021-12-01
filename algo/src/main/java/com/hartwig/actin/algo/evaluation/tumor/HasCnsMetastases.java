@@ -16,7 +16,7 @@ public class HasCnsMetastases implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
         if (hasCnsMetastases == null) {
-            return Evaluation.UNDETERMINED;
+            return Evaluation.FAIL;
         }
 
         return hasCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;

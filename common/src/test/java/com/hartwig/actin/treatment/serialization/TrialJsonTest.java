@@ -68,7 +68,7 @@ public class TrialJsonTest {
         EligibilityFunction functionA = findBaseFunction(cohortA.eligibility(), EligibilityRule.NOT);
         assertEquals(1, functionA.parameters().size());
 
-        EligibilityFunction subFunctionA = findSubFunction(functionA.parameters(), EligibilityRule.HAS_ACTIVE_CNS_METASTASES);
+        EligibilityFunction subFunctionA = findSubFunction(functionA.parameters(), EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES);
         assertTrue(subFunctionA.parameters().isEmpty());
 
         Cohort cohortB = findCohort(trial.cohorts(), "B");

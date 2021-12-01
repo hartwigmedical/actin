@@ -62,7 +62,7 @@ public final class TestTreatmentFactory {
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.NOT)
                                 .addParameters(ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES)
+                                        .rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
                                         .build())
                                 .build())
                         .addReferences(ImmutableCriterionReference.builder()

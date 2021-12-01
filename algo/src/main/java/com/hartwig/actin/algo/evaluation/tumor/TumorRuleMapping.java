@@ -23,12 +23,12 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
-        map.put(EligibilityRule.HAS_CNS_METASTASES, hasCnsMetastasesCreator());
-        map.put(EligibilityRule.HAS_ACTIVE_CNS_METASTASES, hasActiveCnsMetastasesCreator());
-        map.put(EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES, hasSymptomaticCnsMetastasesCreator());
-        map.put(EligibilityRule.HAS_BRAIN_METASTASES, hasBrainMetastasesCreator());
-        map.put(EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES, hasActiveBrainMetastasesCreator());
-        map.put(EligibilityRule.HAS_SYMPTOMATIC_BRAIN_METASTASES, hasSymptomaticBrainMetastasesCreator());
+        map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
+        map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());
+        map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES, hasKnownSymptomaticCnsMetastasesCreator());
+        map.put(EligibilityRule.HAS_KNOWN_BRAIN_METASTASES, hasKnownBrainMetastasesCreator());
+        map.put(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, hasKnownActiveBrainMetastasesCreator());
+        map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES, hasKnownSymptomaticBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
@@ -60,32 +60,32 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasCnsMetastasesCreator() {
+    private static FunctionCreator hasKnownCnsMetastasesCreator() {
         return function -> new HasCnsMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasActiveCnsMetastasesCreator() {
+    private static FunctionCreator hasKnownActiveCnsMetastasesCreator() {
         return function -> new HasActiveCnsMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasSymptomaticCnsMetastasesCreator() {
+    private static FunctionCreator hasKnownSymptomaticCnsMetastasesCreator() {
         return function -> new HasSymptomaticCnsMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasBrainMetastasesCreator() {
+    private static FunctionCreator hasKnownBrainMetastasesCreator() {
         return function -> new HasBrainMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasActiveBrainMetastasesCreator() {
+    private static FunctionCreator hasKnownActiveBrainMetastasesCreator() {
         return function -> new HasActiveBrainMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasSymptomaticBrainMetastasesCreator() {
+    private static FunctionCreator hasKnownSymptomaticBrainMetastasesCreator() {
         return function -> new HasSymptomaticBrainMetastases();
     }
 

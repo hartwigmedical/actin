@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -37,12 +36,12 @@ public final class EligibilityParameterResolver {
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_ADVANCED_CANCER);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_METASTATIC_CANCER);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_LIVER_METASTASES);
-        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_CNS_METASTASES);
-        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_ACTIVE_CNS_METASTASES);
-        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES);
-        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_BRAIN_METASTASES);
-        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES);
-        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_SYMPTOMATIC_BRAIN_METASTASES);
+        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_KNOWN_CNS_METASTASES);
+        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES);
+        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES);
+        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_KNOWN_BRAIN_METASTASES);
+        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES);
+        RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_BONE_METASTASES);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION);

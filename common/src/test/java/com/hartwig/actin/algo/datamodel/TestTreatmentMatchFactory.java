@@ -63,7 +63,7 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
                         .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES).build())
+                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("E-01")
@@ -108,7 +108,7 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
                         .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_CNS_METASTASES).build())
+                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
                 .build(), Evaluation.FAIL);

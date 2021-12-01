@@ -86,12 +86,12 @@ PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Configured DOID should be equal or b
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
-HAS_CNS_METASTASES | Tumor details > hasCnsLesions = 1
-HAS_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
-HAS_SYMPTOMATIC_CNS_METASTASES | Tumor details > hasSymptomaticCnsLesions = 1
-HAS_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
-HAS_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
-HAS_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
+HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1
+HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
+HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES | Tumor details > hasSymptomaticCnsLesions = 1
+HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
+HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
+HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)

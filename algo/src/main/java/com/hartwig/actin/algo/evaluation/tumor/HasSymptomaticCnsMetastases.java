@@ -16,7 +16,7 @@ public class HasSymptomaticCnsMetastases implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasSymptomaticCnsMetastases = record.clinical().tumor().hasSymptomaticCnsLesions();
         if (hasSymptomaticCnsMetastases == null) {
-            return Evaluation.UNDETERMINED;
+            return Evaluation.FAIL;
         }
 
         return hasSymptomaticCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;
