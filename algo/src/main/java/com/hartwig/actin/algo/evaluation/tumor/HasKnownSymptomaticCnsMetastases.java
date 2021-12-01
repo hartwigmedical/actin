@@ -14,11 +14,11 @@ public class HasKnownSymptomaticCnsMetastases implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasSymptomaticCnsMetastases = record.clinical().tumor().hasSymptomaticCnsLesions();
-        if (hasSymptomaticCnsMetastases == null) {
+        Boolean hasKnownSymptomaticCnsMetastases = record.clinical().tumor().hasSymptomaticCnsLesions();
+        if (hasKnownSymptomaticCnsMetastases == null) {
             return Evaluation.FAIL;
         }
 
-        return hasSymptomaticCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;
+        return hasKnownSymptomaticCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;
     }
 }

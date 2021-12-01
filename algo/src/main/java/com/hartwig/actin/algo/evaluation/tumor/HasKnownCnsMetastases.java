@@ -14,11 +14,11 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
-        if (hasCnsMetastases == null) {
+        Boolean hasKnownCnsMetastases = record.clinical().tumor().hasCnsLesions();
+        if (hasKnownCnsMetastases == null) {
             return Evaluation.FAIL;
         }
 
-        return hasCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;
+        return hasKnownCnsMetastases ? Evaluation.PASS : Evaluation.FAIL;
     }
 }
