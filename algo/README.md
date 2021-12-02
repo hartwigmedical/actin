@@ -208,6 +208,7 @@ CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotic
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids"
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D.
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_ISOENZYME_X | T.B.D.
 HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
 
 ##### Rules related to pregnancy/anticonception
