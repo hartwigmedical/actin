@@ -1,8 +1,15 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpreter;
@@ -17,11 +24,14 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
     private static final Logger LOGGER = LogManager.getLogger(HasSufficientCreatinineClearance.class);
 
+    private final int referenceYear;
     @NotNull
     private final CreatinineClearanceMethod method;
     private final double minCreatinineClearance;
 
-    HasSufficientCreatinineClearance(@NotNull final CreatinineClearanceMethod method, final double minCreatinineClearance) {
+    HasSufficientCreatinineClearance(final int referenceYear, @NotNull final CreatinineClearanceMethod method,
+            final double minCreatinineClearance) {
+        this.referenceYear = referenceYear;
         this.method = method;
         this.minCreatinineClearance = minCreatinineClearance;
     }
@@ -44,14 +54,19 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        // TODO Implement
-        return Evaluation.NOT_IMPLEMENTED;
-        /*
-        MDRD
-        GFR (mL/min/1.73 m²) = 175 × (Scr/88.4)^-1.154 × (leeftijd)^-0.203
+        if (!creatinine.unit().toLowerCase().equals("umol/l")) {
+            LOGGER.warn("Suspicious unit detected for creatinine measurement: '{}'. Cannot determine clearance.", creatinine.unit());
+            return Evaluation.UNDETERMINED;
+        }
 
-        bij vrouwen: × 0.742
-        bij negroïde personen: × 1.212
+        switch (method) {
+            case EGFR_MDRD:
+                return evaluateMDRD(record, creatinine);
+            default:
+                return Evaluation.NOT_IMPLEMENTED;
+        }
+
+        /*
 
         Cockcroft Gault
         (140 - leeftijd in jaren) × gewicht / (0.81 × serum creatinine in micromol/l)
@@ -73,6 +88,44 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         min is minimum van Scr/κ of 1
         max is maximum van Scr/κ of 1
         */
+    }
+
+    @NotNull
+    Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        List<Double> mdrdValues = toMDRD(record, creatinine);
+        Set<Evaluation> evaluations = Sets.newHashSet();
+        for (Double mdrdValue : mdrdValues) {
+            evaluations.add(LabValueEvaluation.evaluateVersusMinValue(mdrdValue, creatinine.comparator(), minCreatinineClearance));
+        }
+
+        if (evaluations.contains(Evaluation.FAIL)) {
+            return evaluations.contains(Evaluation.PASS) ? Evaluation.UNDETERMINED : Evaluation.FAIL;
+        } else if (evaluations.contains(Evaluation.UNDETERMINED)) {
+            return Evaluation.UNDETERMINED;
+        } else {
+            // Every value should be pass.
+            return Evaluation.PASS;
+        }
+    }
+
+    @VisibleForTesting
+    @NotNull
+    List<Double> toMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        List<Double> mdrdValues = Lists.newArrayList();
+
+        int age = referenceYear - record.clinical().patient().birthYear();
+
+        double base = 175 * Math.pow(creatinine.value() / 88.4, -1.154) * Math.pow(age, -0.203);
+
+        double adjusted = base;
+        if (record.clinical().patient().gender() == Gender.FEMALE) {
+            adjusted = base * 0.742;
+        }
+
+        mdrdValues.add(adjusted);
+        mdrdValues.add(adjusted * 1.212);
+
+        return mdrdValues;
     }
 
     @Nullable

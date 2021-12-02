@@ -25,7 +25,7 @@ public class HasSufficientCreatinineClearanceTest {
     @Test
     public void canEvaluateAllDirectClearances() {
         for (CreatinineClearanceMethod method : CreatinineClearanceMethod.values()) {
-            HasSufficientCreatinineClearance function = new HasSufficientCreatinineClearance(method, 4D);
+            HasSufficientCreatinineClearance function = new HasSufficientCreatinineClearance(2021, method, 4D);
 
             assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 

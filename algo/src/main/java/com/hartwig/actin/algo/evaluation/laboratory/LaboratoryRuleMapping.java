@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
@@ -88,7 +89,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
             double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleParameter(function);
-            return new HasSufficientCreatinineClearance(method, minCreatinineClearance);
+            return new HasSufficientCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance);
         };
     }
 

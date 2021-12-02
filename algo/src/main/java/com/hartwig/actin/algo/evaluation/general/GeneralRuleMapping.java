@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.general;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
@@ -31,7 +31,7 @@ public final class GeneralRuleMapping {
 
     @NotNull
     private static FunctionCreator isAtLeast18YearsOldCreator() {
-        return function -> new IsAtLeastEighteenYearsOld(LocalDate.now().getYear());
+        return function -> new IsAtLeastEighteenYearsOld(EvaluationConstants.REFERENCE_YEAR);
     }
 
     @NotNull
