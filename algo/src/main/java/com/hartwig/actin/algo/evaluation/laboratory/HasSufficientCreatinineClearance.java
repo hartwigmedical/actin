@@ -62,8 +62,14 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         switch (method) {
             case EGFR_MDRD:
                 return evaluateMDRD(record, creatinine);
-            default:
+            case EGFR_CDK_EPI:
+                return evaluateCDKEPI(record, creatinine);
+            case COCKCROFT_GAULT:
+                return evaluateCockcroftGault(record, creatinine);
+            default: {
+                LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
                 return Evaluation.NOT_IMPLEMENTED;
+            }
         }
 
         /*
@@ -88,6 +94,22 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         min is minimum van Scr/κ of 1
         max is maximum van Scr/κ of 1
         */
+    }
+
+    @Nullable
+    private LabValue retrieveForMethod(@NotNull LabInterpretation interpretation) {
+        switch (method) {
+            case EGFR_CDK_EPI:
+                return interpretation.mostRecentValue(LabMeasurement.EGFR_CDK_EPI);
+            case EGFR_MDRD:
+                return interpretation.mostRecentValue(LabMeasurement.EGFR_MDRD);
+            case COCKCROFT_GAULT:
+                return interpretation.mostRecentValue(LabMeasurement.CREATININE_CLEARANCE_CG);
+            default: {
+                LOGGER.warn("Cannot resolve lab value for creatinine clearance method '{}'", method);
+                return null;
+            }
+        }
     }
 
     @NotNull
@@ -128,19 +150,13 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         return mdrdValues;
     }
 
-    @Nullable
-    private LabValue retrieveForMethod(@NotNull LabInterpretation interpretation) {
-        switch (method) {
-            case EGFR_CDK_EPI:
-                return interpretation.mostRecentValue(LabMeasurement.EGFR_CDK_EPI);
-            case EGFR_MDRD:
-                return interpretation.mostRecentValue(LabMeasurement.EGFR_MDRD);
-            case COCKCROFT_GAULT:
-                return interpretation.mostRecentValue(LabMeasurement.CREATININE_CLEARANCE_CG);
-            default: {
-                LOGGER.warn("Cannot resolve lab value for creatinine clearance method '{}'", method);
-                return null;
-            }
-        }
+    @NotNull
+    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        return Evaluation.NOT_IMPLEMENTED;
+    }
+
+    @NotNull
+    private Evaluation evaluateCDKEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        return Evaluation.NOT_IMPLEMENTED;
     }
 }
