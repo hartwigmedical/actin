@@ -231,8 +231,8 @@ HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignori
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SBP_MMHG_OF_AT_MOST_X | Blood pressures > category = Up to 5 most recent systolic blood pressure AND average value <= X
-HAS_DBP_MMHG_OF_AT_MOST_X | Blood pressures > category = Up to 5 most recent diastolic blood pressure AND average value <= X
+HAS_SBP_MMHG_OF_AT_LEAST_X | Blood pressures > category = Up to 5 most recent systolic blood pressure AND average value => X
+HAS_DBP_MMHG_OF_AT_LEAST_X | Blood pressures > category = Up to 5 most recent diastolic blood pressure AND average value => X
 
 ##### Rules related to blood transfusions
 

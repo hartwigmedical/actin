@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasLimitedDBP implements EvaluationFunction {
+public class HasSufficientDBP implements EvaluationFunction {
 
     @NotNull
     @Override

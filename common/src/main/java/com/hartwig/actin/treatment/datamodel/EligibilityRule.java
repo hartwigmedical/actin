@@ -132,8 +132,8 @@ public enum EligibilityRule {
     HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y,
 
     // Rules related to blood pressure measurements
-    HAS_SBP_MMHG_OF_AT_MOST_X,
-    HAS_DBP_MMHG_OF_AT_MOST_X,
+    HAS_SBP_MMHG_OF_AT_LEAST_X,
+    HAS_DBP_MMHG_OF_AT_LEAST_X,
 
     // Rules related to blood transfusions
     HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS,
