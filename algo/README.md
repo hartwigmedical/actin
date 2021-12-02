@@ -109,7 +109,7 @@ EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries i
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatmens > name contains X
 HAS_HAD_DRUG_TYPE_X_TREATMENT | Prior tumor treatments > categories contains X ("X" is one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery)
-HAS_HAD_TARGETED_THERAPY_TREATMENT_ TARGETING_GENE_X | Prior tumor treatments > targetedType contains "X"
+HAS_HAD_TARGETED_THERAPY_TREATMENT_FOR_GENE_X | Prior tumor treatments > targetedType contains "X"
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
