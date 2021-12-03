@@ -111,7 +111,7 @@ HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lin
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatmens > name contains X
 HAS_HAD_TYPE_X_TREATMENT | Prior tumor treatments > categories contains X | "X" is one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery
 HAS_HAD_TARGETED_THERAPY_TREATMENT_FOR_GENE_X | Prior tumor treatments > targetedType contains "X"
-HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: : Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
+HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = stem cell transplantation
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
