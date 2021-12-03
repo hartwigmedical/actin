@@ -31,6 +31,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasHistoryOfStrokeCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasHistoryOfTiaCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasGilbertDiseaseCreator(doidEvaluator));
+        map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, notImplementedCreator());
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
         map.put(EligibilityRule.HAS_HYPERTENSION, hasHypertensionCreator(doidEvaluator));
         map.put(EligibilityRule.HAS_DIABETES, notImplementedCreator());

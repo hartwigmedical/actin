@@ -95,6 +95,7 @@ HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesi
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
+HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
 
 ##### Rules related to previous cancer treatments or previous primary tumors
 
@@ -142,19 +143,21 @@ TML_OF_AT_MOST_X | TML should be <= X
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) => X
+HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) => X*LLN
 HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) => X 
 HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) => X 
+HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
 HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
 HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN (upper limit of normal, implemented as refLimitUp)
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. In case CrCl is measured in another unit, the value is converted using
-HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN 
-HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
-HAS_INR_ULN_AT_MOST_X | International normalized ratio (INR) <= X*ULN 
-HAS_PT_ULN_AT_MOST_X | Prothrombin time (PT) <= X*ULN 
-HAS_APTT_ULN_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN 
+HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN 
+HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
+HAS_INR_ULN_OF_AT_MOST_X | International normalized ratio (INR) <= X*ULN 
+HAS_PT_ULN_OF_AT_MOST_X | Prothrombin time (PT) <= X*ULN 
+HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN 
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
@@ -180,6 +183,7 @@ HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid shoul
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
+HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
@@ -195,6 +199,7 @@ HAS_ACTIVE_INFECTION | Clinical status > hasActiveInfection = 1
 HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 2043
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
+HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
 
 ##### Rules related to current medication
 
@@ -224,8 +229,8 @@ IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be eva
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name = Y
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name = Y
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. Multiple names can be specified within 1 rule, separated by ";"
 
 ##### Rules related to blood pressure measurements
 

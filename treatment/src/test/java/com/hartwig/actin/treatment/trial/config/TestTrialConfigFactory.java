@@ -68,7 +68,7 @@ public final class TestTrialConfigFactory {
                 .inclusionRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
                 .build());
         configs.add(builder.referenceIds(Sets.newHashSet("I-02"))
-                .inclusionRule(EligibilityRule.HAS_INR_ULN_AT_MOST_X + "[1]")
+                .inclusionRule(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X + "[1]")
                 .addAppliesToCohorts("A")
                 .build());
 

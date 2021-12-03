@@ -50,7 +50,7 @@ public class TrialFactoryTest {
         assertEquals("Cohort A", cohortA.metadata().description());
         assertEquals(2, cohortA.eligibility().size());
 
-        EligibilityFunction cohortFunction1 = findFunction(cohortA.eligibility(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
+        EligibilityFunction cohortFunction1 = findFunction(cohortA.eligibility(), EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X);
         assertEquals(1, cohortFunction1.parameters().size());
         assertTrue(cohortFunction1.parameters().contains("1"));
 

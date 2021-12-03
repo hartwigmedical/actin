@@ -55,7 +55,7 @@ public class EligibilityFactoryTest {
     @Test
     public void canGenerateSimpleEligibilityFunction() {
         EligibilityFunction function = EligibilityFactory.generateEligibilityFunction("HAS_INR_ULN_AT_MOST_X[1]");
-        assertEquals(EligibilityRule.HAS_INR_ULN_AT_MOST_X, function.rule());
+        assertEquals(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, function.rule());
         assertEquals(1, function.parameters().size());
         assertTrue(function.parameters().contains("1"));
 
@@ -63,7 +63,7 @@ public class EligibilityFactoryTest {
         assertEquals(EligibilityRule.NOT, notFunction.rule());
         assertEquals(1, notFunction.parameters().size());
 
-        EligibilityFunction subFunction = find(notFunction.parameters(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
+        EligibilityFunction subFunction = find(notFunction.parameters(), EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X);
         assertEquals(function, subFunction);
     }
 
@@ -85,15 +85,15 @@ public class EligibilityFactoryTest {
         EligibilityFunction andInput1 = find(orRootInput2.parameters(), EligibilityRule.OR);
         assertEquals(2, andInput1.parameters().size());
 
-        EligibilityFunction andInput2 = find(orRootInput2.parameters(), EligibilityRule.HAS_APTT_ULN_AT_MOST_X);
+        EligibilityFunction andInput2 = find(orRootInput2.parameters(), EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X);
         assertEquals(1, andInput2.parameters().size());
         assertTrue(andInput2.parameters().contains("3"));
 
-        EligibilityFunction secondOrInput1 = find(andInput1.parameters(), EligibilityRule.HAS_INR_ULN_AT_MOST_X);
+        EligibilityFunction secondOrInput1 = find(andInput1.parameters(), EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X);
         assertEquals(1, secondOrInput1.parameters().size());
         assertTrue(secondOrInput1.parameters().contains("1.5"));
 
-        EligibilityFunction secondOrInput2 = find(andInput1.parameters(), EligibilityRule.HAS_PT_ULN_AT_MOST_X);
+        EligibilityFunction secondOrInput2 = find(andInput1.parameters(), EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X);
         assertEquals(1, secondOrInput2.parameters().size());
         assertTrue(secondOrInput2.parameters().contains("2"));
     }
