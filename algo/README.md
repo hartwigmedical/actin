@@ -109,12 +109,12 @@ HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Prese
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatmens > name contains X
-HAS_HAD_DRUG_TYPE_X_TREATMENT | Prior tumor treatments > categories contains X ("X" is one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery)
+HAS_HAD_TYPE_X_TREATMENT | Prior tumor treatments > categories contains X | "X" is one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery
 HAS_HAD_TARGETED_THERAPY_TREATMENT_FOR_GENE_X | Prior tumor treatments > targetedType contains "X"
-HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
+HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: : Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
-HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = Stem cell transplantation
-IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (to be implemented)
+HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = stem cell transplantation
+IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 
 ##### Rules related to molecular results
 
@@ -205,7 +205,7 @@ HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid 
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated; rule will be combined with WARN_ON_PASS
+HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoagulants"
@@ -226,11 +226,11 @@ IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be eva
 
 ##### Rules related to toxicity
 
-Rule | When does a patient pass evaluation?
----|---
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X. 
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. Multiple names can be specified within 1 rule, separated by ";"
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. | Multiple names can be specified within 1 rule, separated by ";"
 
 Note for all toxicity rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
@@ -261,7 +261,6 @@ Rule | When does a patient pass evaluation?
 ---|---
 PATIENT_IS_TREATED_IN_HOSPITAL_X | Sample ID -> Hospital information > hospital should be hospital X
  
-
 ### Disease Ontology ID (DOID)
  
 For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For more information, see https://disease-ontology.org/.
