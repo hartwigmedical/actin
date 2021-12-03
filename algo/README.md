@@ -140,19 +140,19 @@ TML_OF_AT_MOST_X | TML should be <= X
 
 ##### Rules related to recent laboratory measurements
 
-Rule | When does a patient pass evaluation?
----|---
-HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) => X
-HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) => X*LLN
-HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) => X 
-HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) => X 
-HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
-HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
-HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X
+HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN
+HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10*9/L => X 
+HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X 
+HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
+HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
+HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
+HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
+HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
+HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN 
-HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. In case CrCl is measured in another unit, the value is converted using
-HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. In case CrCl is measured in another unit, the value is converted using
 HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN 
 HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
 HAS_INR_ULN_OF_AT_MOST_X | International normalized ratio (INR) <= X*ULN 
