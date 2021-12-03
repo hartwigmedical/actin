@@ -106,6 +106,7 @@ public enum EligibilityRule {
     HAS_LVEF_OF_AT_LEAST_X,
     HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN,
     HAS_KNOWN_MALABSORPTION_SYNDROME,
+    IS_IN_DIALYSIS,
 
     // Rules related to infections
     HAS_ACTIVE_INFECTION,

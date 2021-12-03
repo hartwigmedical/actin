@@ -161,9 +161,8 @@ HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*UL
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
-HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (LLN: lower limit of normal, implemented as refLimitLow)
-HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN
-
+HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (LLN: lower limit of normal, implemented as refLimitLow) (isOutsideRef=0)
+HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN (isOutsideRef=0)
 
 Note: for all lab values, the latest available lab value is evaluated. 
 If the latest lab value is out of the requested range, the second-last lab value is evaluated (if available). 
@@ -182,14 +181,15 @@ HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid s
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
-HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
+HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
+IS_IN_DIALYSIS | > won't be evaluated
 
 ##### Rules related to infections
 
@@ -228,9 +228,12 @@ IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be eva
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X
+HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X. 
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. Multiple names can be specified within 1 rule, separated by ";"
+
+Note for all toxicity rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
+In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
 
 ##### Rules related to blood pressure measurements
 

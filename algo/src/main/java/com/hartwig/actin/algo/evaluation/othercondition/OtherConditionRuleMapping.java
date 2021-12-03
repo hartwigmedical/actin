@@ -38,6 +38,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
+        map.put(EligibilityRule.IS_IN_DIALYSIS, notImplementedCreator());
 
         return map;
     }
