@@ -5,7 +5,6 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,7 @@ public final class InfectionRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasKnownHepatitisCInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasKnownHIVInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, notImplementedCreator());
-        map.put(EligibilityRule.HAS_RECEIVED_ATTENUATED_VACCINE_X_DAYS_BEFORE_STUDY_TREATMENT, notImplementedCreator());
+        map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, notImplementedCreator());
 
         return map;
     }
