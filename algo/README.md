@@ -195,13 +195,14 @@ IS_IN_DIALYSIS | > won't be evaluated
 
 ##### Rules related to infections
 
-Rule | When does a patient pass evaluation?
----|---
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 HAS_ACTIVE_INFECTION | Clinical status > hasActiveInfection = 1
 HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 2043
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
+HAS_RECEIVED_ATTENUATED_VACCINE_ X_DAYS_BEFORE_STUDY_TREATMENT | > won't be evaluated. | Won't be known at moment of evaluation
 
 ##### Rules related to current medication
 

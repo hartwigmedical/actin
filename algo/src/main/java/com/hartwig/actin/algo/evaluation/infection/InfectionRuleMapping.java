@@ -24,6 +24,7 @@ public final class InfectionRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasKnownHepatitisCInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasKnownHIVInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, notImplementedCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_ATTENUATED_VACCINE_X_DAYS_BEFORE_STUDY_TREATMENT, notImplementedCreator());
 
         return map;
     }
