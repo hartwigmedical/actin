@@ -37,7 +37,7 @@ public final class GeneralRuleMapping {
     @NotNull
     private static FunctionCreator hasMaximumWHOStatusCreator() {
         return function -> {
-            int maximumWHO = EligibilityParameterResolver.createOneIntegerParameter(function);
+            int maximumWHO = EligibilityParameterResolver.createOneIntegerInput(function);
             return new HasMaximumWHOStatus(maximumWHO);
         };
     }

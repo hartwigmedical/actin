@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
@@ -51,7 +50,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientAbsLeukocytesCreator() {
         return function -> {
-            double minLeukocytes = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double minLeukocytes = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientAbsLeukocytes(minLeukocytes);
         };
     }
@@ -59,7 +58,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientAbsNeutrophilsCreator() {
         return function -> {
-            double minNeutrophils = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double minNeutrophils = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientAbsNeutrophils(minNeutrophils);
         };
     }
@@ -67,7 +66,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientThrombocytesCreator() {
         return function -> {
-            double minThrombocytes = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double minThrombocytes = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientThrombocytes(minThrombocytes);
         };
     }
@@ -75,7 +74,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientHemoglobinCreator(@NotNull LabUnit targetUnit) {
         return function -> {
-            double minHemoglobin = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double minHemoglobin = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientHemoglobin(minHemoglobin, targetUnit);
         };
     }
@@ -83,7 +82,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasLimitedCreatinineULNCreator() {
         return function -> {
-            double maxCreatinineULN = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double maxCreatinineULN = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasLimitedCreatinineULN(maxCreatinineULN);
         };
     }
@@ -91,7 +90,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
-            double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance);
         };
     }

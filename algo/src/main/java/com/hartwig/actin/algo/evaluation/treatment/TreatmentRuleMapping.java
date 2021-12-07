@@ -60,7 +60,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
-            int maxSystemicTreatments = EligibilityParameterResolver.createOneIntegerParameter(function);
+            int maxSystemicTreatments = EligibilityParameterResolver.createOneIntegerInput(function);
             return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
         };
     }
@@ -68,7 +68,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator() {
         return function -> {
-            int maxAntiPDL1OrPD1Immunotherapies = EligibilityParameterResolver.createOneIntegerParameter(function);
+            int maxAntiPDL1OrPD1Immunotherapies = EligibilityParameterResolver.createOneIntegerInput(function);
             return new HasHadLimitedAntiPDL1OrPD1Immunotherapies(maxAntiPDL1OrPD1Immunotherapies);
         };
     }

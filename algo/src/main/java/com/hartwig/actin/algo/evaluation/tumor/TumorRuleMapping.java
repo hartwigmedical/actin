@@ -41,7 +41,7 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator primaryTumorLocationBelongsToDoidCreator(@NotNull DoidModel doidModel) {
         return function -> {
-            String doid = EligibilityParameterResolver.createOneStringParameter(function);
+            String doid = EligibilityParameterResolver.createOneStringInput(function);
             return new PrimaryTumorLocationBelongsToDoid(doidModel, doid);
         };
     }

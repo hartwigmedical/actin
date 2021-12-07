@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -20,38 +21,11 @@ public class EligibilityParameterResolverTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void everyRuleIsOfSingleType() {
+    public void everyRuleHasInputsConfigured() {
         for (EligibilityRule rule : EligibilityRule.values()) {
-            int count = 0;
-            if (CompositeRules.isComposite(rule)) {
-                count++;
+            if (!CompositeRules.isComposite(rule)) {
+                assertTrue(EligibilityParameterResolver.PARAMETER_MAP.containsKey(rule));
             }
-
-            if (EligibilityParameterResolver.RULES_WITH_ONE_DOUBLE_PARAMETER.contains(rule)) {
-                count++;
-            }
-
-            if (EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_PARAMETER.contains(rule)) {
-                count++;
-            }
-
-            if (EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.contains(rule)) {
-                count++;
-            }
-
-            if (EligibilityParameterResolver.RULES_WITH_ONE_STRING_PARAMETER.contains(rule)) {
-                count++;
-            }
-
-            if (EligibilityParameterResolver.RULES_WITH_TWO_STRING_PARAMETERS.contains(rule)) {
-                count++;
-            }
-
-            if (EligibilityParameterResolver.RULES_WITHOUT_PARAMETERS.contains(rule)) {
-                count++;
-            }
-
-            assertEquals(1, count);
         }
     }
 
@@ -96,25 +70,21 @@ public class EligibilityParameterResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneDoubleParameter() {
-        EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_ONE_DOUBLE_PARAMETER.iterator().next();
+    public void canResolveFunctionsWithoutParameters() {
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.NONE);
 
-        EligibilityFunction valid = create(rule, Lists.newArrayList("3.1"));
-        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertEquals(3.1, EligibilityParameterResolver.createOneDoubleParameter(valid), EPSILON);
+        assertTrue(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
 
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("3.1", "3.2"))));
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not a double"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1 is too many"))));
     }
 
     @Test
     public void canResolveFunctionsWithOneIntegerParameter() {
-        EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_PARAMETER.iterator().next();
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.ONE_INTEGER);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertEquals(2, EligibilityParameterResolver.createOneIntegerParameter(valid));
+        assertEquals(2, EligibilityParameterResolver.createOneIntegerInput(valid));
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1", "2"))));
@@ -122,25 +92,25 @@ public class EligibilityParameterResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerOneStringParameter() {
-        EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER.iterator().next();
+    public void canResolveFunctionsWithOneDoubleParameter() {
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.ONE_DOUBLE);
 
-        EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test"));
+        EligibilityFunction valid = create(rule, Lists.newArrayList("3.1"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertEquals(Lists.newArrayList(2, "test"), EligibilityParameterResolver.createOneIntegerOneStringParameter(valid));
+        assertEquals(3.1, EligibilityParameterResolver.createOneDoubleInput(valid), EPSILON);
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1"))));
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not an integer", "not an integer"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("3.1", "3.2"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not a double"))));
     }
 
     @Test
     public void canResolveFunctionsWithOneStringParameter() {
-        EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_ONE_STRING_PARAMETER.iterator().next();
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.ONE_STRING);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("0045"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertEquals("0045", EligibilityParameterResolver.createOneStringParameter(valid));
+        assertEquals("0045", EligibilityParameterResolver.createOneStringInput(valid));
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("012", "234"))));
@@ -148,23 +118,56 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithTwoStringParameters() {
-        EligibilityRule rule = EligibilityParameterResolver.RULES_WITH_TWO_STRING_PARAMETERS.iterator().next();
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.TWO_STRINGS);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF", "V600E"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
-        assertEquals(Lists.newArrayList("BRAF", "V600E"), EligibilityParameterResolver.createTwoStringParameters(valid));
+        assertEquals(ImmutableTwoStringInput.builder().string1("BRAF").string2("V600E").build(),
+                EligibilityParameterResolver.createTwoStringInput(valid));
 
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
         assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("012"))));
     }
 
     @Test
-    public void canResolveFunctionsWithoutParameters() {
-        EligibilityRule rule = EligibilityParameterResolver.RULES_WITHOUT_PARAMETERS.iterator().next();
+    public void canResolveFunctionsWithOneIntegerOneStringParameter() {
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.ONE_INTEGER_ONE_STRING);
 
-        assertTrue(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
+        EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test"));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
+        assertEquals(ImmutableOneIntegerOneStringInput.builder().integer(2).string("test").build(),
+                EligibilityParameterResolver.createOneIntegerOneStringInput(valid));
 
-        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1 is too many"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not an integer", "not an integer"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneIntegerManyStringsParameter() {
+        EligibilityRule rule = firstOfType(EligibilityParameterResolver.Inputs.ONE_INTEGER_MANY_STRINGS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test1;test2;test3"));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
+        OneIntegerManyStringsInput expected =
+                ImmutableOneIntegerManyStringsInput.builder().integer(2).strings(Lists.newArrayList("test1", "test2", "test3")).build();
+
+        assertEquals(expected, EligibilityParameterResolver.createOneIntegerManyStringsInput(valid));
+
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("1"))));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not an integer", "not an integer"))));
+    }
+
+    @NotNull
+    private static EligibilityRule firstOfType(@NotNull EligibilityParameterResolver.Inputs inputs) {
+        for (Map.Entry<EligibilityRule, EligibilityParameterResolver.Inputs> entry : EligibilityParameterResolver.PARAMETER_MAP.entrySet()) {
+            if (entry.getValue() == inputs) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalStateException("Could not find single rule of type: " + inputs);
+
     }
 
     @NotNull

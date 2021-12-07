@@ -101,7 +101,7 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientLVEFCreator(boolean passIfUnknown) {
         return function -> {
-            double minLVEF = EligibilityParameterResolver.createOneDoubleParameter(function);
+            double minLVEF = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientLVEF(minLVEF, passIfUnknown);
         };
     }
