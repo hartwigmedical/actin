@@ -16,7 +16,8 @@ import org.jetbrains.annotations.Nullable;
 public final class EligibilityParameterResolver {
 
     private static final Logger LOGGER = LogManager.getLogger(EligibilityParameterResolver.class);
-    private static final String STRING_SEPARATOR = ";";
+
+    private static final String MANY_STRING_SEPARATOR = ";";
 
     static final Map<EligibilityRule, Inputs> PARAMETER_MAP = Maps.newHashMap();
 
@@ -255,7 +256,7 @@ public final class EligibilityParameterResolver {
         assertParamType(function, Inputs.ONE_INTEGER_MANY_STRINGS);
 
         List<String> strings = Lists.newArrayList();
-        for (String input : ((String) function.parameters().get(1)).split(STRING_SEPARATOR)) {
+        for (String input : ((String) function.parameters().get(1)).split(MANY_STRING_SEPARATOR)) {
             strings.add(input.trim());
         }
         return ImmutableOneIntegerManyStringsInput.builder()
