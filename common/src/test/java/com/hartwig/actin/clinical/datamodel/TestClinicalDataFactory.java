@@ -283,7 +283,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
-                .code(LabMeasurement.EGFR_CDK_EPI.code())
+                .code(LabMeasurement.EGFR_CKD_EPI.code())
                 .name("CKD-EPI eGFR")
                 .comparator(">")
                 .value(100)

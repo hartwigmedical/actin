@@ -80,7 +80,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         addLabMeasurement(table, LabMeasurement.CREATININE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("CKD-EPI eGFR"));
-        addLabMeasurement(table, LabMeasurement.EGFR_CDK_EPI);
+        addLabMeasurement(table, LabMeasurement.EGFR_CKD_EPI);
 
         table.addCell(Cells.createKey("Other"));
         table.addCell(Cells.createKey("Hemoglobin"));

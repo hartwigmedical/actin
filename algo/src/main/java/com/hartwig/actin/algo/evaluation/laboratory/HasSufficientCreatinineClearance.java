@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -23,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
     private static final Logger LOGGER = LogManager.getLogger(HasSufficientCreatinineClearance.class);
+
+    static final String EXPECTED_CREATININE_UNIT = "umol/l";
+    private static final double MIN_EGFR_CKD_EPI_FALL_BACK_COCKCROFT_GAULT = 65D;
 
     private final int referenceYear;
     @NotNull
@@ -54,7 +59,7 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        if (!creatinine.unit().toLowerCase().equals("umol/l")) {
+        if (!creatinine.unit().toLowerCase().equals(EXPECTED_CREATININE_UNIT)) {
             LOGGER.warn("Suspicious unit detected for creatinine measurement: '{}'. Cannot determine clearance.", creatinine.unit());
             return Evaluation.UNDETERMINED;
         }
@@ -62,47 +67,24 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         switch (method) {
             case EGFR_MDRD:
                 return evaluateMDRD(record, creatinine);
-            case EGFR_CDK_EPI:
-                return evaluateCDKEPI(record, creatinine);
+            case EGFR_CKD_EPI:
+                return evaluateCKDEPI(record, creatinine);
             case COCKCROFT_GAULT:
-                return evaluateCockcroftGault(record, creatinine);
+                return evaluateCockcroftGault(record, creatinine, interpretation.mostRecentValue(LabMeasurement.EGFR_CKD_EPI));
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
                 return Evaluation.NOT_IMPLEMENTED;
             }
         }
-
-        /*
-
-        Cockcroft Gault
-        (140 - leeftijd in jaren) × gewicht / (0.81 × serum creatinine in micromol/l)
-
-        bij vrouwen: uitkomst vermenigvuldigen met 0.85
-
-        (morbide) obesen met BMI 30 kg/m2 of meer: vul als gewicht het lean body weight (LBW) in.
-        Dit kunt u berekenen m.b.t. de rekenformule onder het kopje Lengte en gewicht.
-
-        CKD-EPI
-        GFR = 141 × min(Scr/κ, 1)^α × max(Scr/κ, 1)^-1.209 × 0.993^leeftijd
-
-        bij vrouwen: × 1.018
-        bij negroïde personen: × 1.159
-
-        Scr is serum creatinine in µmol/L
-        κ is 61.9 voor vrouwen en 79.6 voor mannen
-        α is -0.329 voor vrouwen en -0.411 voor mannen
-        min is minimum van Scr/κ of 1
-        max is maximum van Scr/κ of 1
-        */
     }
 
     @Nullable
     private LabValue retrieveForMethod(@NotNull LabInterpretation interpretation) {
         switch (method) {
-            case EGFR_CDK_EPI:
-                return interpretation.mostRecentValue(LabMeasurement.EGFR_CDK_EPI);
             case EGFR_MDRD:
                 return interpretation.mostRecentValue(LabMeasurement.EGFR_MDRD);
+            case EGFR_CKD_EPI:
+                return interpretation.mostRecentValue(LabMeasurement.EGFR_CKD_EPI);
             case COCKCROFT_GAULT:
                 return interpretation.mostRecentValue(LabMeasurement.CREATININE_CLEARANCE_CG);
             default: {
@@ -113,11 +95,15 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
     }
 
     @NotNull
-    Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        List<Double> mdrdValues = toMDRD(record, creatinine);
+    private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        return evaluateValues(toMDRD(record, creatinine), creatinine);
+    }
+
+    @NotNull
+    private Evaluation evaluateValues(@NotNull List<Double> values, @NotNull LabValue creatinine) {
         Set<Evaluation> evaluations = Sets.newHashSet();
-        for (Double mdrdValue : mdrdValues) {
-            evaluations.add(LabValueEvaluation.evaluateVersusMinValue(mdrdValue, creatinine.comparator(), minCreatinineClearance));
+        for (Double value : values) {
+            evaluations.add(LabValueEvaluation.evaluateVersusMinValue(value, creatinine.comparator(), minCreatinineClearance));
         }
 
         if (evaluations.contains(Evaluation.FAIL)) {
@@ -130,8 +116,8 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         }
     }
 
-    @VisibleForTesting
     @NotNull
+    @VisibleForTesting
     List<Double> toMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
         List<Double> mdrdValues = Lists.newArrayList();
 
@@ -151,12 +137,72 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
     }
 
     @NotNull
-    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return Evaluation.NOT_IMPLEMENTED;
+    private Evaluation evaluateCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        return evaluateValues(toCKDEPI(record, creatinine), creatinine);
     }
 
     @NotNull
-    private Evaluation evaluateCDKEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return Evaluation.NOT_IMPLEMENTED;
+    @VisibleForTesting
+    List<Double> toCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        List<Double> ckdepiValues = Lists.newArrayList();
+
+        int age = referenceYear - record.clinical().patient().birthYear();
+
+        boolean isFemale = record.clinical().patient().gender() == Gender.FEMALE;
+        double correction = isFemale ? 61.9 : 79.6;
+        double power = isFemale ? -0.329 : -0.411;
+
+        double factor1 = Math.pow(Math.min(creatinine.value() / correction, 1), power);
+        double factor2 = Math.pow(Math.max(creatinine.value() / correction, 1), -1.209);
+
+        double base = 141 * factor1 * factor2 * Math.pow(0.993, age);
+
+        double adjusted = base;
+        if (isFemale) {
+            adjusted = base * 1.018;
+        }
+
+        ckdepiValues.add(adjusted);
+        ckdepiValues.add(adjusted * 1.159);
+
+        return ckdepiValues;
     }
+
+    @NotNull
+    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine, @Nullable LabValue egfrCKDEPI) {
+        Double weight = determineWeight(record.clinical().bodyWeights());
+        if (weight == null) {
+            if (egfrCKDEPI == null) {
+                return Evaluation.UNDETERMINED;
+            }
+
+            return egfrCKDEPI.value() > MIN_EGFR_CKD_EPI_FALL_BACK_COCKCROFT_GAULT ? Evaluation.PASS_BUT_WARN : Evaluation.UNDETERMINED;
+        }
+
+        int age = referenceYear - record.clinical().patient().birthYear();
+
+        double base = (140 - age) * weight / (0.81 * creatinine.value());
+
+        double adjusted = base;
+        if (record.clinical().patient().gender() == Gender.FEMALE) {
+            adjusted = base * 0.85;
+        }
+
+        return LabValueEvaluation.evaluateVersusMinValue(adjusted, creatinine.comparator(), minCreatinineClearance);
+    }
+
+    @Nullable
+    private static Double determineWeight(@NotNull List<BodyWeight> bodyWeights) {
+        Double weight = null;
+        LocalDate mostRecentDate = null;
+        for (BodyWeight bodyWeight : bodyWeights) {
+            if (mostRecentDate == null || bodyWeight.date().isAfter(mostRecentDate)) {
+                weight = bodyWeight.value();
+                mostRecentDate = bodyWeight.date();
+            }
+        }
+
+        return weight;
+    }
+
 }
