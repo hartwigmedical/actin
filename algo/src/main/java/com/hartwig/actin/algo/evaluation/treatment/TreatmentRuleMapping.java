@@ -29,7 +29,6 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT, notImplementedCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, notImplementedCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, notImplementedCreator());
-        map.put(EligibilityRule.HAD_HAD_CATEGORY_X_TREATMENT_WITHIN_Y_WEEKS, notImplementedCreator());
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, notImplementedCreator());
         map.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         map.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, hasHadStemCellTransplantationCreator());
