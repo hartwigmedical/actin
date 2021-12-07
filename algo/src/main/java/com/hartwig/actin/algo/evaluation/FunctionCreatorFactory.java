@@ -17,6 +17,7 @@ import com.hartwig.actin.algo.evaluation.pregnancy.PregnancyRuleMapping;
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapping;
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapping;
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapping;
+import com.hartwig.actin.algo.evaluation.trialparticipation.TrialParticipationRuleMapping;
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapping;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -44,6 +45,7 @@ final class FunctionCreatorFactory {
         map.putAll(BloodPressureRuleMapping.create());
         map.putAll(BloodTransfusionRuleMapping.create());
         map.putAll(SurgeryRuleMapping.create());
+        map.putAll(TrialParticipationRuleMapping.create());
         map.putAll(HospitalRuleMapping.create());
 
         return map;
