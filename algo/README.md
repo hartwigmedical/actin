@@ -183,6 +183,7 @@ HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid s
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
+HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
@@ -211,12 +212,14 @@ Rule | When does a patient pass evaluation?| Note
 HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
+CURRENTLY_GETS_MEDICATION | Medication > name is not empty
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoagulants"
 CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotics"
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids"
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D.
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_ISOENZYME_X | T.B.D.
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. | Cytochrome P450 enzymes
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. | P-glycoprotein
 HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
 
 ##### Rules related to pregnancy/anticonception
@@ -258,6 +261,12 @@ Rule | When does a patient pass evaluation?
 ---|---
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
 
+##### Rules related to other trials
+
+Rule | When does a patient pass evaluation? 
+---|---
+IS_PARTICIPATING_IN_ANOTHER_TRIAL | > Won't be evaluated
+ 
 ##### Rules related to hospital
 
 Rule | When does a patient pass evaluation? 

@@ -21,12 +21,14 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, notImplementedCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, currentlyGetsCorticosteroidMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, currentlyGetsImmunoSuppressantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ISOENZYME_X, notImplementedCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, notImplementedCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, notImplementedCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, hasStableAnticoagulantDosingCreator());
 
         return map;
