@@ -21,6 +21,7 @@ public final class EligibilityParameterResolver {
     static final Set<EligibilityRule> RULES_WITH_ONE_INTEGER_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_ONE_INTEGER_ONE_STRING_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_ONE_STRING_PARAMETER = Sets.newHashSet();
+    static final Set<EligibilityRule> RULES_WITH_ONE_STRING_ONE_INTEGER_PARAMETER = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITH_TWO_STRING_PARAMETERS = Sets.newHashSet();
     static final Set<EligibilityRule> RULES_WITHOUT_PARAMETERS = Sets.newHashSet();
 
@@ -55,8 +56,9 @@ public final class EligibilityParameterResolver {
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS);
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES);
         RULES_WITH_ONE_STRING_PARAMETER.add(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT);
-        RULES_WITH_ONE_STRING_PARAMETER.add(EligibilityRule.HAS_HAD_TYPE_X_TREATMENT);
-        RULES_WITH_ONE_STRING_PARAMETER.add(EligibilityRule.HAS_HAD_TARGETED_THERAPY_TREATMENT_FOR_GENE_X);
+        RULES_WITH_ONE_STRING_PARAMETER.add(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT);
+        RULES_WITH_TWO_STRING_PARAMETERS.add(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y);
+        RULES_WITH_ONE_STRING_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAD_HAD_CATEGORY_X_TREATMENT_WITHIN_Y_WEEKS);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT);
         RULES_WITH_ONE_INTEGER_PARAMETER.add(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES);
         RULES_WITHOUT_PARAMETERS.add(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION);
