@@ -204,5 +204,4 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
         return weight;
     }
-
 }
