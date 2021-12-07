@@ -285,11 +285,15 @@ public class ClinicalRecordsFactory {
     private List<BodyWeight> extractBodyWeights(@NotNull String subject) {
         List<BodyWeight> bodyWeights = Lists.newArrayList();
         for (BodyWeightEntry entry : feed.uniqueBodyWeightEntries(subject)) {
-            bodyWeights.add(ImmutableBodyWeight.builder()
-                    .date(entry.effectiveDateTime())
-                    .value(entry.valueQuantityValue())
-                    .unit(entry.valueQuantityUnit())
-                    .build());
+            double value = entry.valueQuantityValue();
+            // A body weight of 0 can be assumed to be erroneous entry.
+            if (value > 0) {
+                bodyWeights.add(ImmutableBodyWeight.builder()
+                        .date(entry.effectiveDateTime())
+                        .value(value)
+                        .unit(entry.valueQuantityUnit())
+                        .build());
+            }
         }
         return bodyWeights;
     }
