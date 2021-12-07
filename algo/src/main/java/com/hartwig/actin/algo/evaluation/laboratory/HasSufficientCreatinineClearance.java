@@ -96,14 +96,14 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
     @NotNull
     private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return evaluateValues(toMDRD(record, creatinine), creatinine);
+        return evaluateValues(toMDRD(record, creatinine), creatinine.comparator());
     }
 
     @NotNull
-    private Evaluation evaluateValues(@NotNull List<Double> values, @NotNull LabValue creatinine) {
+    private Evaluation evaluateValues(@NotNull List<Double> values, @NotNull String comparator) {
         Set<Evaluation> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LabValueEvaluation.evaluateVersusMinValue(value, creatinine.comparator(), minCreatinineClearance));
+            evaluations.add(LabValueEvaluation.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
         }
 
         if (evaluations.contains(Evaluation.FAIL)) {
@@ -138,7 +138,7 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
     @NotNull
     private Evaluation evaluateCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return evaluateValues(toCKDEPI(record, creatinine), creatinine);
+        return evaluateValues(toCKDEPI(record, creatinine), creatinine.comparator());
     }
 
     @NotNull
