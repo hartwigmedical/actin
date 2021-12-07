@@ -114,9 +114,17 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private static String toSampleId(@NotNull String subject) {
+    @VisibleForTesting
+    static String toSampleId(@NotNull String subject) {
+        String adjusted = subject;
+        // Subjects have been passed with unexpected subject IDs in the past (eg without ACTN prefix)
+        if (subject.length() == 10 && !subject.startsWith("ACTN")) {
+            LOGGER.warn("Suspicious subject detected: {}", subject);
+            adjusted = "ACTN" + subject;
+        }
+
         // Assume a single sample per patient ending with "T". No "TII" supported yet.
-        return subject.replaceAll("-", "") + "T";
+        return adjusted.replaceAll("-", "") + "T";
     }
 
     @NotNull

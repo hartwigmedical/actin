@@ -42,6 +42,12 @@ public class ClinicalRecordsFactoryTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
+    public void canGenerateSampleIds() {
+        assertEquals("ACTN01029999T", ClinicalRecordsFactory.toSampleId("ACTN-01-02-9999"));
+        assertEquals("ACTN01029999T", ClinicalRecordsFactory.toSampleId("01-02-9999"));
+    }
+
+    @Test
     public void canCreateFromFeedAndCurationDirectories() throws IOException {
         assertNotNull(ClinicalRecordsFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
     }
