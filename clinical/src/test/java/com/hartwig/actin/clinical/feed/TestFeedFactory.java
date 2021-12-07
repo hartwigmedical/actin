@@ -261,9 +261,7 @@ public final class TestFeedFactory {
         entries.add(ImmutableBodyWeightEntry.builder()
                 .subject(TEST_SUBJECT)
                 .valueQuantityValue(0)
-                .valueQuantityUnit("kilogram")
-                .effectiveDateTime(LocalDate.of(2018, 4, 2))
-                .build());
+                .valueQuantityUnit("kilogram").effectiveDateTime(LocalDate.of(2018, 4, 2)).build());
 
         entries.add(ImmutableBodyWeightEntry.builder()
                 .subject(TEST_SUBJECT)
@@ -272,7 +270,10 @@ public final class TestFeedFactory {
                 .effectiveDateTime(LocalDate.of(2018, 4, 5))
                 .build());
 
-        entries.add(ImmutableBodyWeightEntry.builder().subject(TEST_SUBJECT).valueQuantityValue(61.1).valueQuantityUnit("kilogram")
+        entries.add(ImmutableBodyWeightEntry.builder()
+                .subject(TEST_SUBJECT)
+                .valueQuantityValue(61.1)
+                .valueQuantityUnit("kilogram")
                 .effectiveDateTime(LocalDate.of(2018, 5, 5))
                 .build());
 
