@@ -7,7 +7,7 @@ public enum LabMeasurement {
     ALAT("ALAT", "U/l"),
     ALBUMIN("ALB", "g/L"),
     ALP("ALP", "U/l"),
-    APTT("APTT", Strings.EMPTY),
+    APTT("APTT", "sec"),
     ASAT("ASAT", "U/l"),
     CREATININE("CREA", "umol/l"),
     CREATININE_CLEARANCE_CG("CGCRCL", Strings.EMPTY),
@@ -15,12 +15,12 @@ public enum LabMeasurement {
     EGFR_CKD_EPI("CKD-EPIeGFR", "mL/min"),
     EGFR_MDRD("MDRDeGFR", Strings.EMPTY),
     HEMOGLOBIN("Hb", "mmol/L"),
-    INR("INR", Strings.EMPTY),
+    INR("INR", ""),
     LDH("LDH", "U/L"),
     LEUKOCYTES_ABS("LEUKO-ABS", "10^9/L"),
     NEUTROPHILS_ABS("NEUTRO-ABS", "10^9/L"),
     NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "10*9/L"),
-    PT("PT", Strings.EMPTY),
+    PT("PT", "sec"),
     THROMBOCYTES_ABS("THROMBO-ABS", "10*9/L"),
     TOTAL_BILIRUBIN("TBIL", "umol/l");
 
