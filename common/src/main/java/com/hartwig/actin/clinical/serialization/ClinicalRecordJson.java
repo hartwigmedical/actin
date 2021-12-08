@@ -78,6 +78,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.util.Paths;
 
@@ -113,6 +114,8 @@ public final class ClinicalRecordJson {
         for (File file : files) {
             records.add(fromJson(Files.readString(file.toPath())));
         }
+
+        records.sort(new ClinicalRecordComparator());
 
         return records;
     }

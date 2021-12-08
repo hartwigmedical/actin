@@ -20,11 +20,11 @@ public class IsAtLeastEighteenYearsOld implements EvaluationFunction {
         int age = referenceYear - record.clinical().patient().birthYear();
         if (age > 18) {
             return Evaluation.PASS;
-        } else if (age < 18) {
+        } else if (age == 18) {
+            // Since we only know the birth year we cannot determine if someone with 18 yrs difference is actually 18 years old.
+            return Evaluation.PASS_BUT_WARN;
+        } else {
             return Evaluation.FAIL;
         }
-
-        // Since we only know the birth year we cannot determine if someone with 18 yrs difference is actually 18 years old.
-        return Evaluation.PASS_BUT_WARN;
     }
 }

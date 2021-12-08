@@ -45,6 +45,7 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
+import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator;
 import com.hartwig.actin.util.ResourceFile;
@@ -88,6 +89,10 @@ public class ClinicalRecordsFactory {
 
             Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
 
+            if (containsSampleId(records, sampleId)) {
+                throw new IllegalStateException("Cannot create clinical records. Duplicate sampleId: " + sampleId);
+            }
+
             records.add(ImmutableClinicalRecord.builder()
                     .sampleId(sampleId)
                     .patient(extractPatientDetails(subject, questionnaire))
@@ -107,10 +112,21 @@ public class ClinicalRecordsFactory {
                     .build());
         }
 
+        records.sort(new ClinicalRecordComparator());
         LOGGER.info("Evaluating curation database");
         curation.evaluate();
 
         return records;
+    }
+
+    private static boolean containsSampleId(@NotNull List<ClinicalRecord> records, @NotNull String sampleId) {
+        for (ClinicalRecord record : records) {
+            if (record.sampleId().equals(sampleId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NotNull
