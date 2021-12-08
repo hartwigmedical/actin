@@ -16,9 +16,9 @@ public enum LabMeasurement {
     LDH("LDH", "U/l"),
     LEUKOCYTES_ABS("LEUKO-ABS", "10^9/L"),
     NEUTROPHILS_ABS("NEUTRO-ABS", "10^9/L"),
-    NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "10^9/L"),
-    THROMBOCYTES_ABS("THROMBO-ABS", "10^9/L"),
-    TOTAL_BILIRUBIN("TBIL", "umol/L");
+    NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "10*9/L"),
+    THROMBOCYTES_ABS("THROMBO-ABS", "10*9/L"),
+    TOTAL_BILIRUBIN("TBIL", "umol/l");
 
     @NotNull
     private final String code;
