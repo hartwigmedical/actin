@@ -23,18 +23,13 @@ public class HasSufficientAbsLeukocytesLLN implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
-        LabValue leukocytes = interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS);
+        LabMeasurement measurement = LabMeasurement.LEUKOCYTES_ABS;
+        LabValue leukocytes = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(leukocytes, LabMeasurement.LEUKOCYTES_ABS.expectedUnit())) {
+        if (!LabValueEvaluation.existsWithExpectedUnit(leukocytes, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
-        Double lowerLimit = leukocytes.refLimitLow();
-        if (lowerLimit == null) {
-            return Evaluation.UNDETERMINED;
-        }
-
-        double minLeukocytes = lowerLimit * minLeukocytesLLN;
-        return LabValueEvaluation.evaluateVersusMinValue(leukocytes.value(), leukocytes.comparator(), minLeukocytes);
+        return LabValueEvaluation.evaluateVersusMinULN(leukocytes, minLeukocytesLLN);
     }
 }

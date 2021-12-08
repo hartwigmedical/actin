@@ -113,7 +113,10 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasLimitedTotalBilirubinCreator() {
-        return function -> new HasLimitedTotalBilirubin();
+        return function -> {
+            double maxTotalBilirubinULN = EligibilityParameterResolver.createOneDoubleInput(function);
+            return new HasLimitedTotalBilirubinULN(maxTotalBilirubinULN);
+        };
     }
 
     @NotNull

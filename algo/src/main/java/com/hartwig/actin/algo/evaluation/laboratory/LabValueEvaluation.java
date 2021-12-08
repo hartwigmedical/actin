@@ -22,12 +22,34 @@ final class LabValueEvaluation {
     }
 
     @NotNull
+    public static Evaluation evaluateVersusMinULN(@NotNull LabValue labValue, double minULN) {
+        Double lowerLimit = labValue.refLimitLow();
+        if (lowerLimit == null) {
+            return Evaluation.UNDETERMINED;
+        }
+
+        double minValue = lowerLimit * minULN;
+        return evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
+    }
+
+    @NotNull
     public static Evaluation evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
         if (cannotBeDetermined(value, comparator, minValue)) {
             return Evaluation.UNDETERMINED;
         } else {
             return Double.compare(value, minValue) >= 0 ? Evaluation.PASS : Evaluation.FAIL;
         }
+    }
+
+    @NotNull
+    public static Evaluation evaluateVersusMaxULN(@NotNull LabValue labValue, double maxULN) {
+        Double upperLimit = labValue.refLimitUp();
+        if (upperLimit == null) {
+            return Evaluation.UNDETERMINED;
+        }
+
+        double maxValue = upperLimit * maxULN;
+        return evaluateVersusMaxValue(labValue.value(), labValue.comparator(), maxValue);
     }
 
     @NotNull
