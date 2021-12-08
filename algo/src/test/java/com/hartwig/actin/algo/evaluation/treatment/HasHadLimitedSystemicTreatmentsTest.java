@@ -6,10 +6,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
-import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class HasHadLimitedSystemicTreatmentsTest {
@@ -23,15 +21,15 @@ public class HasHadLimitedSystemicTreatmentsTest {
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one non-systemic
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(false).build());
+        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().isSystemic(false).build());
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one systemic
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true).build());
+        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().isSystemic(true).build());
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one more systemic
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true).build());
+        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().isSystemic(true).build());
         assertEquals(Evaluation.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
     }
 }

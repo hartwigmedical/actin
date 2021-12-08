@@ -28,13 +28,18 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
         if (doids == null || doids.isEmpty()) {
             return Evaluation.UNDETERMINED;
-        } else {
-            for (String doid : doids) {
-                if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
-                    return Evaluation.PASS;
-                }
-            }
-            return Evaluation.FAIL;
         }
+
+        return isDoidMatch(doids, doidToMatch) ? Evaluation.PASS : Evaluation.FAIL;
+    }
+
+    private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {
+        for (String doid : doids) {
+            if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -21,9 +21,10 @@ public class SecondMalignanciesHaveBeenCuredRecentlyTest {
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)));
 
-        PriorSecondPrimary secondPrimaryInactive = ImmutablePriorSecondPrimary.builder().tumorLocation("Skin")
+        PriorSecondPrimary secondPrimaryInactive = ImmutablePriorSecondPrimary.builder()
+                .tumorLocation(Strings.EMPTY)
                 .tumorSubLocation(Strings.EMPTY)
-                .tumorType("Melanoma")
+                .tumorType(Strings.EMPTY)
                 .tumorSubType(Strings.EMPTY)
                 .treatmentHistory(Strings.EMPTY)
                 .isActive(false)
