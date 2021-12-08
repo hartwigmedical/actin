@@ -13,7 +13,7 @@ public enum LabMeasurement {
     EGFR_CKD_EPI("CKD-EPIeGFR", "mL/min"),
     EGFR_MDRD("MDRDeGFR", Strings.EMPTY),
     HEMOGLOBIN("Hb", "mmol/L"),
-    LDH("LDH", "U/l"),
+    LDH("LDH", "U/L"),
     LEUKOCYTES_ABS("LEUKO-ABS", "10^9/L"),
     NEUTROPHILS_ABS("NEUTRO-ABS", "10^9/L"),
     NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "10*9/L"),
