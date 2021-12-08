@@ -7,9 +7,9 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SecondMalignancyHasBeenCuredRecently implements EvaluationFunction {
+public class SecondMalignanciesHaveBeenCuredRecently implements EvaluationFunction {
 
-    SecondMalignancyHasBeenCuredRecently() {
+    SecondMalignanciesHaveBeenCuredRecently() {
     }
 
     @NotNull

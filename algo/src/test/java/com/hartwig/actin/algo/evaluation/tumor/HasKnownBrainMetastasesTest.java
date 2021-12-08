@@ -25,5 +25,4 @@ public class HasKnownBrainMetastasesTest {
     private static PatientRecord patientWithBrainLesions(@Nullable Boolean hasBrainLesions) {
         return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasBrainLesions(hasBrainLesions).build());
     }
-
 }

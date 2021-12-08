@@ -12,17 +12,16 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
-public class SecondMalignancyHasBeenCuredRecentlyTest {
+public class SecondMalignanciesHaveBeenCuredRecentlyTest {
 
     @Test
     public void canEvaluate() {
-        SecondMalignancyHasBeenCuredRecently function = new SecondMalignancyHasBeenCuredRecently();
+        SecondMalignanciesHaveBeenCuredRecently function = new SecondMalignanciesHaveBeenCuredRecently();
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)));
 
-        PriorSecondPrimary secondPrimaryInactive = ImmutablePriorSecondPrimary.builder()
-                .tumorLocation("Skin")
+        PriorSecondPrimary secondPrimaryInactive = ImmutablePriorSecondPrimary.builder().tumorLocation("Skin")
                 .tumorSubLocation(Strings.EMPTY)
                 .tumorType("Melanoma")
                 .tumorSubType(Strings.EMPTY)

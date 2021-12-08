@@ -15,5 +15,4 @@ public class HasSufficientLifeExpectancyTest {
 
         assertEquals(Evaluation.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
-
 }

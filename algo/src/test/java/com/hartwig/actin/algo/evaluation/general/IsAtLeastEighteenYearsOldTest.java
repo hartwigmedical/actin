@@ -36,5 +36,4 @@ public class IsAtLeastEighteenYearsOldTest {
 
         return ImmutablePatientRecord.builder().from(TestDataFactory.createProperTestPatientRecord()).clinical(recordWithBirthYear).build();
     }
-
 }
