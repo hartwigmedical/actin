@@ -10,12 +10,15 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasLimitedCreatinineULN implements EvaluationFunction {
+public class HasLimitedLabValueULN implements EvaluationFunction {
 
-    private final double maxCreatinineULN;
+    @NotNull
+    private final LabMeasurement measurement;
+    private final double maxULN;
 
-    HasLimitedCreatinineULN(final double maxCreatinineULN) {
-        this.maxCreatinineULN = maxCreatinineULN;
+    HasLimitedLabValueULN(@NotNull final LabMeasurement measurement, final double maxULN) {
+        this.measurement = measurement;
+        this.maxULN = maxULN;
     }
 
     @NotNull
@@ -23,13 +26,12 @@ public class HasLimitedCreatinineULN implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
-        LabMeasurement measurement = LabMeasurement.CREATININE;
-        LabValue creatinine = interpretation.mostRecentValue(measurement);
+        LabValue value = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(creatinine, measurement.expectedUnit())) {
+        if (!LabValueEvaluation.existsWithExpectedUnit(value, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateVersusMaxULN(creatinine, maxCreatinineULN);
+        return LabValueEvaluation.evaluateVersusMaxULN(value, maxULN);
     }
 }

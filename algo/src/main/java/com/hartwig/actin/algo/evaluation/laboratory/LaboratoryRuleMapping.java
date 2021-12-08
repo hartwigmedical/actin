@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
 
@@ -27,20 +28,20 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientAlbuminCreator());
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
-        map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedCreatinineULNCreator());
+        map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.CREATININE));
         map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CKD_EPI));
         map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD));
         map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
-        map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedTotalBilirubinCreator());
-        map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedDirectBilirubinCreator());
-        map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedINRCreator());
-        map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedPTCreator());
-        map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X, hasLimitedAPPTCreator());
-        map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedASATCreator());
-        map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, notImplementedCreator());
-        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
+        map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
+        map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INR));
+        map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PT));
+        map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.APTT));
+        map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASAT));
+        map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALAT));
+        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALP));
         map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, notImplementedCreator());
         map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, notImplementedCreator());
 
@@ -96,10 +97,10 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedCreatinineULNCreator() {
+    private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double maxCreatinineULN = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasLimitedCreatinineULN(maxCreatinineULN);
+            double maxULN = EligibilityParameterResolver.createOneDoubleInput(function);
+            return new HasLimitedLabValueULN(measurement, maxULN);
         };
     }
 
@@ -109,39 +110,6 @@ public final class LaboratoryRuleMapping {
             double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance);
         };
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedTotalBilirubinCreator() {
-        return function -> {
-            double maxTotalBilirubinULN = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasLimitedTotalBilirubinULN(maxTotalBilirubinULN);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedDirectBilirubinCreator() {
-        return function -> new HasLimitedDirectBilirubin();
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedINRCreator() {
-        return function -> new HasLimitedINR();
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedPTCreator() {
-        return function -> new HasLimitedPT();
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedAPPTCreator() {
-        return function -> new HasLimitedAPTT();
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedASATCreator() {
-        return function -> new HasLimitedASAT();
     }
 
     @NotNull

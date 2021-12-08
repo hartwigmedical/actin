@@ -22,7 +22,7 @@ public class HasSufficientAbsNeutrophils implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
         LabValue neutrophils1 = interpretation.mostRecentValue(LabMeasurement.NEUTROPHILS_ABS);
