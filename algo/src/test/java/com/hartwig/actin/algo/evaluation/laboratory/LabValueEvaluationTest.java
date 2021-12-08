@@ -1,13 +1,25 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class LabValueEvaluationTest {
+
+    @Test
+    public void canDetermineWhetherLabValueIsAsExpected() {
+        assertFalse(LabValueEvaluation.existsWithExpectedUnit(null, "expected unit"));
+
+        LabValue value = LaboratoryTestUtil.builder().unit("expected unit").build();
+        assertFalse(LabValueEvaluation.existsWithExpectedUnit(value, "not expected unit"));
+        assertTrue(LabValueEvaluation.existsWithExpectedUnit(value, "expected unit"));
+    }
 
     @Test
     public void canEvaluateVersusMinValue() {

@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -20,18 +19,17 @@ public class HasSufficientAbsNeutrophilsTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder neutrophils1 = LaboratoryTestUtil.builder().code(LabMeasurement.NEUTROPHILS_ABS.code());
-        ImmutableLabValue.Builder neutrophils2 = LaboratoryTestUtil.builder().code(LabMeasurement.NEUTROPHILS_ABS_EDA.code());
+        ImmutableLabValue.Builder neutrophils1 = LaboratoryTestUtil.forMeasurement(LabMeasurement.NEUTROPHILS_ABS);
+        ImmutableLabValue.Builder neutrophils2 = LaboratoryTestUtil.forMeasurement(LabMeasurement.NEUTROPHILS_ABS_EDA);
 
         assertEquals(Evaluation.PASS,
-                function.evaluate(LaboratoryTestUtil.withLabValues(Lists.newArrayList(neutrophils1.value(1.2).build(),
-                        neutrophils2.value(4D).build()))));
+                function.evaluate(LaboratoryTestUtil.withLabValues(neutrophils1.value(1.2).build(), neutrophils2.value(4D).build())));
         assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(neutrophils1.value(1.2).build())));
     }
 
     @Test
     public void canPickBest() {
-        ImmutableLabValue.Builder neutrophils = LaboratoryTestUtil.builder().code(LabMeasurement.NEUTROPHILS_ABS.code());
+        ImmutableLabValue.Builder neutrophils = LaboratoryTestUtil.forMeasurement(LabMeasurement.NEUTROPHILS_ABS);
 
         LabValue worst = neutrophils.value(1D).build();
         LabValue best = neutrophils.value(2D).build();

@@ -21,7 +21,7 @@ public final class LaboratoryRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
-        map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X, hasSufficientAbsLeukocytesLLNCreator());
         map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, hasSufficientAbsNeutrophilsCreator());
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientThrombocytesCreator());
         map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, notImplementedCreator());
@@ -52,6 +52,14 @@ public final class LaboratoryRuleMapping {
         return function -> {
             double minLeukocytes = EligibilityParameterResolver.createOneDoubleInput(function);
             return new HasSufficientAbsLeukocytes(minLeukocytes);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientAbsLeukocytesLLNCreator() {
+        return function -> {
+            double minLeukocytesLLN = EligibilityParameterResolver.createOneDoubleInput(function);
+            return new HasSufficientAbsLeukocytesLLN(minLeukocytesLLN);
         };
     }
 

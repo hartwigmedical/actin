@@ -17,9 +17,7 @@ public class HasLimitedCreatinineULNTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder creatinine = LaboratoryTestUtil.builder().code(LabMeasurement.CREATININE.code());
-
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LaboratoryTestUtil.withLabValue(creatinine.value(80).build())));
+        ImmutableLabValue.Builder creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE);
 
         assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(creatinine.value(80).refLimitUp(75D).build())));
         assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(creatinine.value(100).refLimitUp(75D).build())));

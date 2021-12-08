@@ -25,7 +25,7 @@ public class HasSufficientThrombocytes implements EvaluationFunction {
 
         LabValue thrombocytes = interpretation.mostRecentValue(LabMeasurement.THROMBOCYTES_ABS);
 
-        if (thrombocytes == null) {
+        if (!LabValueEvaluation.existsWithExpectedUnit(thrombocytes, LabMeasurement.THROMBOCYTES_ABS.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 

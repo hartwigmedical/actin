@@ -26,7 +26,6 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
     private static final Logger LOGGER = LogManager.getLogger(HasSufficientCreatinineClearance.class);
 
-    static final String EXPECTED_CREATININE_UNIT = "umol/l";
     private static final double MIN_EGFR_CKD_EPI_FALL_BACK_COCKCROFT_GAULT = 65D;
 
     private final int referenceYear;
@@ -55,12 +54,7 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         // If no clearance value was found, we derive it from creatinine. See also https://www.knmp.nl/rekenmodules/creatinine_html
         LabValue creatinine = interpretation.mostRecentValue(LabMeasurement.CREATININE);
 
-        if (creatinine == null) {
-            return Evaluation.UNDETERMINED;
-        }
-
-        if (!creatinine.unit().toLowerCase().equals(EXPECTED_CREATININE_UNIT)) {
-            LOGGER.warn("Suspicious unit detected for creatinine measurement: '{}'. Cannot determine clearance.", creatinine.unit());
+        if (!LabValueEvaluation.existsWithExpectedUnit(creatinine, LabMeasurement.CREATININE.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 

@@ -61,11 +61,7 @@ public class HasSufficientCreatinineClearanceTest {
     public void canEvaluateMDRD() {
         HasSufficientCreatinineClearance function = new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.builder()
-                .code(LabMeasurement.CREATININE.code())
-                .unit(HasSufficientCreatinineClearance.EXPECTED_CREATININE_UNIT)
-                .value(70D)
-                .build();
+        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         PatientRecord male = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         List<Double> maleValues = function.toMDRD(male, creatinine);
@@ -87,11 +83,7 @@ public class HasSufficientCreatinineClearanceTest {
         HasSufficientCreatinineClearance function =
                 new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.builder()
-                .code(LabMeasurement.CREATININE.code())
-                .unit(HasSufficientCreatinineClearance.EXPECTED_CREATININE_UNIT)
-                .value(70D)
-                .build();
+        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         PatientRecord male = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         List<Double> maleValues = function.toCKDEPI(male, creatinine);
@@ -113,11 +105,7 @@ public class HasSufficientCreatinineClearanceTest {
         HasSufficientCreatinineClearance function =
                 new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.builder()
-                .code(LabMeasurement.CREATININE.code())
-                .unit(HasSufficientCreatinineClearance.EXPECTED_CREATININE_UNIT)
-                .value(70D)
-                .build();
+        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         List<BodyWeight> weights = Lists.newArrayList();
         weights.add(ImmutableBodyWeight.builder().date(LocalDate.of(2020, 1, 1)).value(50D).unit(Strings.EMPTY).build());
@@ -143,11 +131,7 @@ public class HasSufficientCreatinineClearanceTest {
         HasSufficientCreatinineClearance function =
                 new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.builder()
-                .code(LabMeasurement.CREATININE.code())
-                .unit(HasSufficientCreatinineClearance.EXPECTED_CREATININE_UNIT)
-                .value(70D)
-                .build();
+        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         LabValue ckdepiHigh = LaboratoryTestUtil.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(100D).build();
         PatientRecord fallBack1 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine, ckdepiHigh), Lists.newArrayList());

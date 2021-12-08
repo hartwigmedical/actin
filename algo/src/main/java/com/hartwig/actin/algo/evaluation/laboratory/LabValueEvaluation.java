@@ -2,8 +2,10 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class LabValueEvaluation {
 
@@ -13,6 +15,10 @@ final class LabValueEvaluation {
     static final String SMALLER_THAN = "<";
 
     private LabValueEvaluation() {
+    }
+
+    public static boolean existsWithExpectedUnit(@Nullable LabValue value, @NotNull String expectedUnit) {
+        return value != null && value.unit().equals(expectedUnit);
     }
 
     @NotNull

@@ -25,7 +25,7 @@ public class HasSufficientAbsLeukocytes implements EvaluationFunction {
 
         LabValue leukocytes = interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS);
 
-        if (leukocytes == null) {
+        if (!LabValueEvaluation.existsWithExpectedUnit(leukocytes, LabMeasurement.LEUKOCYTES_ABS.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 

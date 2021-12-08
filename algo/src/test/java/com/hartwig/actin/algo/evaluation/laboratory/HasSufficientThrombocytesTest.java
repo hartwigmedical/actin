@@ -17,7 +17,7 @@ public class HasSufficientThrombocytesTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder thrombocytes = LaboratoryTestUtil.builder().code(LabMeasurement.THROMBOCYTES_ABS.code());
+        ImmutableLabValue.Builder thrombocytes = LaboratoryTestUtil.forMeasurement(LabMeasurement.THROMBOCYTES_ABS);
 
         assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(thrombocytes.value(300D).build())));
         assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(thrombocytes.value(100D).build())));
