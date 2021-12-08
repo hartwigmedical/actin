@@ -28,46 +28,47 @@ public final class FeedFileReaderFactory {
 
     @NotNull
     public static FeedFileReader<PatientEntry> createPatientReader() {
-        return new FeedFileReader<>(new PatientEntryCreator());
+        return FeedFileReader.create(new PatientEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader() {
-        return new FeedFileReader<>(new QuestionnaireEntryCreator());
+        // Questionnaires need to remove multiline delimiters since they could incorrect parsing downstream
+        return new FeedFileReader<>(new QuestionnaireEntryCreator(), true);
     }
 
     @NotNull
     public static FeedFileReader<EncounterEntry> createEncounterReader() {
-        return new FeedFileReader<>(new EncounterEntryCreator());
+        return FeedFileReader.create(new EncounterEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<MedicationEntry> createMedicationReader() {
-        return new FeedFileReader<>(new MedicationEntryCreator());
+        return FeedFileReader.create(new MedicationEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<LabEntry> createLabReader() {
-        return new FeedFileReader<>(new LabEntryCreator());
+        return FeedFileReader.create(new LabEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<BloodPressureEntry> createBloodPressureReader() {
-        return new FeedFileReader<>(new BloodPressureEntryCreator());
+        return FeedFileReader.create(new BloodPressureEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<ComplicationEntry> createComplicationReader() {
-        return new FeedFileReader<>(new ComplicationEntryCreator());
+        return FeedFileReader.create(new ComplicationEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<IntoleranceEntry> createIntoleranceReader() {
-        return new FeedFileReader<>(new IntoleranceEntryCreator());
+        return FeedFileReader.create(new IntoleranceEntryCreator());
     }
 
     @NotNull
     public static FeedFileReader<BodyWeightEntry> createBodyWeightReader() {
-        return new FeedFileReader<>(new BodyWeightEntryCreator());
+        return FeedFileReader.create(new BodyWeightEntryCreator());
     }
 }

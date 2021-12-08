@@ -16,10 +16,18 @@ class FeedFileReader<T extends FeedEntry> {
 
     private static final String DELIMITER = "\t";
 
+    @NotNull
     private final FeedEntryCreator<T> feedEntryCreator;
+    private final boolean removeMultilineDelimiters;
 
-    public FeedFileReader(final FeedEntryCreator<T> feedEntryCreator) {
+    @NotNull
+    public static <T extends FeedEntry> FeedFileReader<T> create(@NotNull FeedEntryCreator<T> feedEntryCreator) {
+        return new FeedFileReader<>(feedEntryCreator, false);
+    }
+
+    public FeedFileReader(@NotNull final FeedEntryCreator<T> feedEntryCreator, final boolean removeMultilineDelimiters) {
         this.feedEntryCreator = feedEntryCreator;
+        this.removeMultilineDelimiters = removeMultilineDelimiters;
     }
 
     @NotNull
@@ -31,10 +39,10 @@ class FeedFileReader<T extends FeedEntry> {
         if (lines.size() > 1) {
             StringBuilder curLine = new StringBuilder(lines.get(1));
             for (String line : lines.subList(2, lines.size())) {
-                // Entries appear on multiple lines in case they contain hard line breaks so need to split and append to the end.
+                // Entries appear on multiple lines in case they contain hard line breaks so append to the end.
                 if (splitFeedLine(line).length != fields.size()) {
-                    // Need to remove all DELIMITER since we split further down the track.
-                    curLine.append("\n").append(line.replaceAll(DELIMITER, ""));
+                    String lineToAppend = removeMultilineDelimiters ? line.replaceAll(DELIMITER, "") : line;
+                    curLine.append("\n").append(lineToAppend);
                 } else {
                     addToEntries(entries, fields, curLine.toString());
                     curLine = new StringBuilder(line);
