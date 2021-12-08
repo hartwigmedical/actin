@@ -9,15 +9,16 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.junit.Test;
 
-public class HasSufficientAbsLeukocytesLLNTest {
+public class HasSufficientLabValueLLNTest {
 
     @Test
     public void canEvaluate() {
-        HasSufficientAbsLeukocytesLLN function = new HasSufficientAbsLeukocytesLLN(2);
+        LabMeasurement measurement = LabMeasurement.LEUKOCYTES_ABS;
+        HasSufficientLabValueLLN function = new HasSufficientLabValueLLN(measurement, 2);
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder leukocytes = LaboratoryTestUtil.forMeasurement(LabMeasurement.LEUKOCYTES_ABS);
+        ImmutableLabValue.Builder leukocytes = LaboratoryTestUtil.forMeasurement(measurement);
 
         assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(leukocytes.value(80).refLimitLow(35D).build())));
         assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(leukocytes.value(100).refLimitLow(75D).build())));

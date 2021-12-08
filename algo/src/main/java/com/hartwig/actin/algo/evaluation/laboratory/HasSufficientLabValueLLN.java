@@ -10,12 +10,15 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientAbsLeukocytes implements EvaluationFunction {
+public class HasSufficientLabValueLLN implements EvaluationFunction {
 
-    private final double minLeukocytes;
+    @NotNull
+    private final LabMeasurement measurement;
+    private final double minLLN;
 
-    HasSufficientAbsLeukocytes(final double minLeukocytes) {
-        this.minLeukocytes = minLeukocytes;
+    HasSufficientLabValueLLN(@NotNull final LabMeasurement measurement, final double minLLN) {
+        this.measurement = measurement;
+        this.minLLN = minLLN;
     }
 
     @NotNull
@@ -23,12 +26,12 @@ public class HasSufficientAbsLeukocytes implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
-        LabValue leukocytes = interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS);
+        LabValue labValue = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(leukocytes, LabMeasurement.LEUKOCYTES_ABS.expectedUnit())) {
+        if (!LabValueEvaluation.existsWithExpectedUnit(labValue, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateVersusMinValue(leukocytes.value(), leukocytes.comparator(), minLeukocytes);
+        return LabValueEvaluation.evaluateVersusMinULN(labValue, minLLN);
     }
 }

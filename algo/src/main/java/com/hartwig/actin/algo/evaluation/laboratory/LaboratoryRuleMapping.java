@@ -21,10 +21,10 @@ public final class LaboratoryRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientAbsLeukocytesCreator());
-        map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X, hasSufficientAbsLeukocytesLLNCreator());
+        map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS));
+        map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.LEUKOCYTES_ABS));
         map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, hasSufficientAbsNeutrophilsCreator());
-        map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientThrombocytesCreator());
+        map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS));
         map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientAlbuminCreator());
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
@@ -49,18 +49,10 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientAbsLeukocytesCreator() {
+    private static FunctionCreator hasSufficientLabValueLLNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double minLeukocytes = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientAbsLeukocytes(minLeukocytes);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientAbsLeukocytesLLNCreator() {
-        return function -> {
-            double minLeukocytesLLN = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientAbsLeukocytesLLN(minLeukocytesLLN);
+            double minLLN = EligibilityParameterResolver.createOneDoubleInput(function);
+            return new HasSufficientLabValueLLN(measurement, minLLN);
         };
     }
 
@@ -73,10 +65,10 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientThrombocytesCreator() {
+    private static FunctionCreator hasSufficientLabValueCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double minThrombocytes = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientThrombocytes(minThrombocytes);
+            double minValue = EligibilityParameterResolver.createOneDoubleInput(function);
+            return new HasSufficientLabValue(measurement, minValue);
         };
     }
 
