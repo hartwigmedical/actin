@@ -10,22 +10,22 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.junit.Test;
 
-public class HasHadDrugTest {
+public class HasHadTreatmentTest {
 
     @Test
     public void canEvaluate() {
-        HasHadDrug function = new HasHadDrug("drug 1");
+        HasHadTreatment function = new HasHadTreatment("treatment 1");
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         assertEquals(Evaluation.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
 
-        // Add wrong drug
-        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().name("drug 2").build());
+        // Add wrong treatment
+        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().name("treatment 2").build());
         assertEquals(Evaluation.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
 
-        // Add correct drug
-        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().name("drug 1").build());
+        // Add correct treatment
+        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().name("treatment 1").build());
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
     }
 }

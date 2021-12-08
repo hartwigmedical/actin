@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.util;
+package com.hartwig.actin.clinical.interpretation;
 
 import java.util.Set;
 import java.util.StringJoiner;
@@ -8,20 +8,25 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TreatmentCategoryDisplay {
+public final class TreatmentCategoryResolver {
 
     private static final String DELIMITER = ", ";
 
-    private TreatmentCategoryDisplay() {
+    private TreatmentCategoryResolver() {
     }
 
     @NotNull
-    public static Set<TreatmentCategory> fromString(@NotNull String categoryString) {
+    public static Set<TreatmentCategory> fromStringList(@NotNull String categoryStringList) {
         Set<TreatmentCategory> categories = Sets.newTreeSet();
-        for (String value : categoryString.split(DELIMITER)) {
-            categories.add(TreatmentCategory.valueOf(value.trim().replaceAll(" ", "_").toUpperCase()));
+        for (String categoryString : categoryStringList.split(DELIMITER)) {
+            categories.add(fromString(categoryString));
         }
         return categories;
+    }
+
+    @NotNull
+    public static TreatmentCategory fromString(@NotNull String categoryString) {
+        return TreatmentCategory.valueOf(categoryString.trim().replaceAll(" ", "_").toUpperCase());
     }
 
     @NotNull

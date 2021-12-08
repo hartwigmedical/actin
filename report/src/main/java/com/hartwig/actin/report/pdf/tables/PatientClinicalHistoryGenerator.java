@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.util.TreatmentCategoryDisplay;
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -98,7 +98,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
         String treatmentName = !priorTumorTreatment.name().isEmpty()
                 ? priorTumorTreatment.name()
-                : TreatmentCategoryDisplay.toString(priorTumorTreatment.categories());
+                : TreatmentCategoryResolver.toString(priorTumorTreatment.categories());
 
         return treatmentName + dateAddition;
     }

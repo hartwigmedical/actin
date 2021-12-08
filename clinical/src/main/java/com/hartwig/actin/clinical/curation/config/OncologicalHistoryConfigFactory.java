@@ -5,7 +5,7 @@ import java.util.Map;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.util.TreatmentCategoryDisplay;
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .name(parts[fields.get("name")])
                     .year(ResourceFile.optionalInteger(parts[fields.get("year")]))
                     .month(ResourceFile.optionalInteger(parts[fields.get("month")]))
-                    .categories(TreatmentCategoryDisplay.fromString(parts[fields.get("category")]))
+                    .categories(TreatmentCategoryResolver.fromStringList(parts[fields.get("category")]))
                     .isSystemic(ResourceFile.bool(parts[fields.get("isSystemic")]))
                     .chemoType(ResourceFile.optionalString(parts[fields.get("chemoType")]))
                     .immunoType(ResourceFile.optionalString(parts[fields.get("immunoType")]))

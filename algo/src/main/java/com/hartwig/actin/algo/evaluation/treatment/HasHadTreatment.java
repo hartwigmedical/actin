@@ -7,20 +7,20 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadDrug implements EvaluationFunction {
+public class HasHadTreatment implements EvaluationFunction {
 
     @NotNull
-    private final String drug;
+    private final String name;
 
-    HasHadDrug(@NotNull final String drug) {
-        this.drug = drug;
+    HasHadTreatment(@NotNull final String name) {
+        this.name = name;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.name().equals(drug)) {
+            if (treatment.name().equals(name)) {
                 return Evaluation.PASS;
             }
         }

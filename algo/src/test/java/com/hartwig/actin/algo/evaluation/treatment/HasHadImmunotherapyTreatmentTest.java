@@ -31,5 +31,4 @@ public class HasHadImmunotherapyTreatmentTest {
                 .build());
         assertEquals(Evaluation.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
     }
-
 }

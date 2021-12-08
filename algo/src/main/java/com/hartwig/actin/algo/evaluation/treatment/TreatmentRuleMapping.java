@@ -6,8 +6,11 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.TwoStringInput;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +34,8 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignanciesHaveBeenCuredRecentlyCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT, hasHadDrugCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, notImplementedCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, notImplementedCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadDrugCategoryCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, hasHadDrugCategoryOfTypeCreator());
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, notImplementedCreator());
         map.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         map.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, hasHadStemCellTransplantationCreator());
@@ -82,7 +85,25 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadDrugCreator() {
         return function -> {
             String drug = EligibilityParameterResolver.createOneStringInput(function);
-            return new HasHadDrug(drug);
+            return new HasHadTreatment(drug);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadDrugCategoryCreator() {
+        return function -> {
+            String categoryString = EligibilityParameterResolver.createOneStringInput(function);
+            TreatmentCategory category = TreatmentCategoryResolver.fromString(categoryString);
+            return new HasHadTreatmentCategory(category, null);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadDrugCategoryOfTypeCreator() {
+        return function -> {
+            TwoStringInput input = EligibilityParameterResolver.createTwoStringInput(function);
+            TreatmentCategory category = TreatmentCategoryResolver.fromString(input.string1());
+            return new HasHadTreatmentCategory(category, input.string2());
         };
     }
 
@@ -96,7 +117,7 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadStemCellTransplantationCreator() {
-        return function -> new HasHadStemCellTransplantation();
+        return function -> new HasHadTreatmentCategory(TreatmentCategory.STEM_CELL_TRANSPLANTATION, null);
     }
 
     @NotNull
