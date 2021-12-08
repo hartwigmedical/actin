@@ -29,8 +29,8 @@ public class HasSufficientAbsNeutrophils implements EvaluationFunction {
         LabValue neutrophils2 = interpretation.mostRecentValue(LabMeasurement.NEUTROPHILS_ABS_EDA);
 
         LabValue best = pickBest(neutrophils1, neutrophils2);
-        if (!LabValueEvaluation.existsWithExpectedUnit(best, LabMeasurement.NEUTROPHILS_ABS.expectedUnit())) {
-            // Both measures should expect the same unit.
+        if (best == null || !(best.unit().equals(LabMeasurement.NEUTROPHILS_ABS.expectedUnit()) || best.unit()
+                .equals(LabMeasurement.NEUTROPHILS_ABS_EDA.expectedUnit()))) {
             return Evaluation.UNDETERMINED;
         }
 
