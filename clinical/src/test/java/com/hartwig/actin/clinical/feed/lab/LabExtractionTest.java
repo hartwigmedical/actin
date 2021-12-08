@@ -36,7 +36,7 @@ public class LabExtractionTest {
         assertEquals(LocalDate.of(2018, 5, 29), lab2.date());
         assertEquals(Strings.EMPTY, lab2.comparator());
         assertEquals(22, lab2.value(), EPSILON);
-        assertEquals("mmol/l", lab2.unit());
+        assertEquals("mmol/L", lab2.unit());
         assertEquals(30, lab2.refLimitLow(), EPSILON);
         assertNull(lab2.refLimitUp());
         assertTrue(lab2.isOutsideRef());

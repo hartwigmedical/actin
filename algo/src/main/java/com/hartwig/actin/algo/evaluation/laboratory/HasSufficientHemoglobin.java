@@ -39,34 +39,19 @@ public class HasSufficientHemoglobin implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        LabUnit measuredUnit = determineUnit(hemoglobin);
+        LabUnit measuredUnit = LabUnit.fromString(hemoglobin.unit());
         if (measuredUnit == null) {
-            LOGGER.warn("Could not determine lab unit for {}", hemoglobin);
+            LOGGER.warn("Could not determine lab unit for '{}'", hemoglobin);
             return Evaluation.UNDETERMINED;
         }
 
         Double value = convertValue(hemoglobin.value(), measuredUnit, targetUnit);
         if (value == null) {
-            LOGGER.warn("Could not convert value from {} to {}", measuredUnit, targetUnit);
+            LOGGER.warn("Could not convert value from '{}' to '{}'", measuredUnit, targetUnit);
             return Evaluation.UNDETERMINED;
         }
 
         return LabValueEvaluation.evaluateVersusMinValue(value, hemoglobin.comparator(), minHemoglobin);
-    }
-
-    @Nullable
-    private static LabUnit determineUnit(@NotNull LabValue hemoglobin) {
-        switch (hemoglobin.unit().toLowerCase()) {
-            case "mmol/l": {
-                return LabUnit.MMOL_PER_L;
-            }
-            case "g/dl": {
-                return LabUnit.G_PER_DL;
-            }
-            default: {
-                return null;
-            }
-        }
     }
 
     @Nullable

@@ -182,7 +182,7 @@ public final class TestFeedFactory {
                 .codeDisplayOriginal("Lab Value 2")
                 .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(22D)
-                .valueQuantityUnit("mmol/l")
+                .valueQuantityUnit("mmol/L")
                 .interpretationDisplayOriginal("too low")
                 .referenceRangeText("> 30")
                 .build());
