@@ -6,8 +6,8 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
-import com.hartwig.actin.treatment.interpretation.CompositeRules;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,9 +53,9 @@ public final class EligibilityFactory {
         }
 
         EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
-        Boolean hasValidParameters = EligibilityParameterResolver.hasValidParameters(function);
-        if (hasValidParameters == null || !hasValidParameters) {
-            throw new IllegalStateException("Function " + function.rule() + " has invalid parameters: '" + function.parameters() + "'");
+        Boolean hasValidInputs = FunctionInputResolver.hasValidInputs(function);
+        if (hasValidInputs == null || !hasValidInputs) {
+            throw new IllegalStateException("Function " + function.rule() + " has invalid inputs: '" + function.parameters() + "'");
         }
         return function;
     }

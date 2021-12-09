@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -102,7 +102,7 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientLVEFCreator(boolean passIfUnknown) {
         return function -> {
-            double minLVEF = EligibilityParameterResolver.createOneDoubleInput(function);
+            double minLVEF = FunctionInputResolver.createOneDoubleInput(function);
             return new HasSufficientLVEF(minLVEF, passIfUnknown);
         };
     }

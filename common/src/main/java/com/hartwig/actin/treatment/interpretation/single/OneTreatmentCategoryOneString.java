@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.interpretation.single;
 
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 

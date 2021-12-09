@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +52,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientLabValueCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double minValue = EligibilityParameterResolver.createOneDoubleInput(function);
+            double minValue = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(measurement, new HasSufficientLabValue(minValue));
         };
     }
@@ -60,7 +60,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientLabValueLLNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double minLLN = EligibilityParameterResolver.createOneDoubleInput(function);
+            double minLLN = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(measurement, new HasSufficientLabValueLLN(minLLN));
         };
     }
@@ -68,7 +68,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientAlbuminCreator() {
         return function -> {
-            double minAlbuminGPerDL = EligibilityParameterResolver.createOneDoubleInput(function);
+            double minAlbuminGPerDL = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(LabMeasurement.ALBUMIN, new HasSufficientAlbumin(minAlbuminGPerDL));
         };
     }
@@ -76,7 +76,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientHemoglobinCreator(@NotNull LabUnit targetUnit) {
         return function -> {
-            double minHemoglobin = EligibilityParameterResolver.createOneDoubleInput(function);
+            double minHemoglobin = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(LabMeasurement.HEMOGLOBIN, new HasSufficientHemoglobin(minHemoglobin, targetUnit));
         };
     }
@@ -84,7 +84,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double maxULN = EligibilityParameterResolver.createOneDoubleInput(function);
+            double maxULN = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
         };
     }
@@ -92,7 +92,7 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
-            double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleInput(function);
+            double minCreatinineClearance = FunctionInputResolver.createOneDoubleInput(function);
             return new Fallback(new LabMeasurementEvaluator(retrieveForMethod(method), new HasSufficientLabValue(minCreatinineClearance)),
                     new LabMeasurementEvaluator(LabMeasurement.CREATININE,
                             new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR,

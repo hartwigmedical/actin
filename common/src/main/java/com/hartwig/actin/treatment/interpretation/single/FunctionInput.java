@@ -1,6 +1,6 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.interpretation.single;
 
-enum RuleInput {
+public enum FunctionInput {
     NONE,
     ONE_INTEGER,
     ONE_DOUBLE,

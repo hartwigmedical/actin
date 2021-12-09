@@ -3,7 +3,7 @@ package com.hartwig.actin.treatment.util;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
-import com.hartwig.actin.treatment.interpretation.CompositeRules;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.jetbrains.annotations.NotNull;
 

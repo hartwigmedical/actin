@@ -7,8 +7,8 @@ import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
-import com.hartwig.actin.treatment.interpretation.OneTreatmentCategoryOneString;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +55,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
         return function -> {
-            String doidToMatch = EligibilityParameterResolver.createOneStringInput(function);
+            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
             return new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
         };
     }
@@ -74,7 +74,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
-            int maxSystemicTreatments = EligibilityParameterResolver.createOneIntegerInput(function);
+            int maxSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
             return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
         };
     }
@@ -82,7 +82,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadTreatmentCreator() {
         return function -> {
-            String treatment = EligibilityParameterResolver.createOneStringInput(function);
+            String treatment = FunctionInputResolver.createOneStringInput(function);
             return new HasHadTreatment(treatment);
         };
     }
@@ -90,7 +90,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadTreatmentCategoryCreator() {
         return function -> {
-            TreatmentCategory category = EligibilityParameterResolver.createOneTreatmentCategory(function);
+            TreatmentCategory category = FunctionInputResolver.createOneTreatmentCategoryInput(function);
             return new HasHadTreatmentCategory(category, null);
         };
     }
@@ -98,7 +98,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
         return function -> {
-            OneTreatmentCategoryOneString input = EligibilityParameterResolver.createOneTreatmentCategoryOneString(function);
+            OneTreatmentCategoryOneString input = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(function);
             return new HasHadTreatmentCategory(input.treatmentCategory(), input.string());
         };
     }
@@ -106,7 +106,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator() {
         return function -> {
-            int maxAntiPDL1OrPD1Immunotherapies = EligibilityParameterResolver.createOneIntegerInput(function);
+            int maxAntiPDL1OrPD1Immunotherapies = FunctionInputResolver.createOneIntegerInput(function);
             return new HasHadLimitedAntiPDL1OrPD1Immunotherapies(maxAntiPDL1OrPD1Immunotherapies);
         };
     }

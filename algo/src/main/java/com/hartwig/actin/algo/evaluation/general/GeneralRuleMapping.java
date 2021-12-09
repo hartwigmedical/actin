@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +37,7 @@ public final class GeneralRuleMapping {
     @NotNull
     private static FunctionCreator hasMaximumWHOStatusCreator() {
         return function -> {
-            int maximumWHO = EligibilityParameterResolver.createOneIntegerInput(function);
+            int maximumWHO = FunctionInputResolver.createOneIntegerInput(function);
             return new HasMaximumWHOStatus(maximumWHO);
         };
     }

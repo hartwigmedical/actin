@@ -10,9 +10,9 @@ import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.Trial;
-import com.hartwig.actin.treatment.interpretation.CompositeInput;
-import com.hartwig.actin.treatment.interpretation.CompositeRules;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,10 +56,10 @@ public final class ServeRecordExtractor {
         if (CompositeRules.isComposite(function.rule())) {
             CompositeInput input = CompositeRules.inputsForCompositeRule(function.rule());
             if (input == CompositeInput.EXACTLY_1) {
-                EligibilityFunction subFunction = EligibilityParameterResolver.createOneCompositeParameter(function);
+                EligibilityFunction subFunction = FunctionInputResolver.createOneCompositeParameter(function);
                 records.addAll(extractFromFunction(trialId, cohortId, subFunction));
             } else if (input == CompositeInput.AT_LEAST_2) {
-                for (EligibilityFunction subFunction : EligibilityParameterResolver.createAtLeastTwoCompositeParameters(function)) {
+                for (EligibilityFunction subFunction : FunctionInputResolver.createAtLeastTwoCompositeParameters(function)) {
                     records.addAll(extractFromFunction(trialId, cohortId, subFunction));
                 }
             } else {

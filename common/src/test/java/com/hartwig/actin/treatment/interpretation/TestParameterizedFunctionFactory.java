@@ -8,6 +8,9 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
+import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +38,13 @@ public final class TestParameterizedFunctionFactory {
                 throw new IllegalStateException("Cannot interpret composite input: " + inputs);
             }
         } else {
-            return createForInputs(EligibilityParameterResolver.PARAMETER_MAP.get(rule));
+            return createForInputs(FunctionInputResolver.RULE_INPUT_MAP.get(rule));
         }
     }
 
     @NotNull
-    private static List<Object> createForInputs(@NotNull RuleInput ruleInput) {
-        switch (ruleInput) {
+    private static List<Object> createForInputs(@NotNull FunctionInput input) {
+        switch (input) {
             case NONE: {
                 return Lists.newArrayList();
             }
@@ -68,7 +71,7 @@ public final class TestParameterizedFunctionFactory {
                 return Lists.newArrayList("1", "string1;string2");
             }
             default: {
-                throw new IllegalStateException("Could not create inputs for " + ruleInput);
+                throw new IllegalStateException("Could not create inputs for " + input);
             }
         }
     }

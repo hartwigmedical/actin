@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.interpretation.composite;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

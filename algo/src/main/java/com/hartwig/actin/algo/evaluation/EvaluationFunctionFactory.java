@@ -12,8 +12,8 @@ import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.algo.evaluation.composite.WarnOnPass;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.CompositeRules;
-import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +37,8 @@ public class EvaluationFunctionFactory {
 
     @NotNull
     public EvaluationFunction create(@NotNull EligibilityFunction function) {
-        Boolean hasValidParameters = EligibilityParameterResolver.hasValidParameters(function);
-        if (hasValidParameters == null || !hasValidParameters) {
+        Boolean hasValidInputs = FunctionInputResolver.hasValidInputs(function);
+        if (hasValidInputs == null || !hasValidInputs) {
             LOGGER.warn("Function with rule '{}' has invalid inputs {}. Evaluation for this rule will always be undetermined",
                     function.rule(),
                     function.parameters());
@@ -71,13 +71,13 @@ public class EvaluationFunctionFactory {
 
     @NotNull
     private EvaluationFunction createSingleCompositeParameter(@NotNull EligibilityFunction function) {
-        return create(EligibilityParameterResolver.createOneCompositeParameter(function));
+        return create(FunctionInputResolver.createOneCompositeParameter(function));
     }
 
     @NotNull
     private List<EvaluationFunction> createMultipleCompositeParameters(@NotNull EligibilityFunction function) {
         List<EvaluationFunction> parameters = Lists.newArrayList();
-        for (EligibilityFunction input : EligibilityParameterResolver.createAtLeastTwoCompositeParameters(function)) {
+        for (EligibilityFunction input : FunctionInputResolver.createAtLeastTwoCompositeParameters(function)) {
             parameters.add(create(input));
         }
         return parameters;

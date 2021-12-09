@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.interpretation.composite;
 
 import java.util.Map;
 

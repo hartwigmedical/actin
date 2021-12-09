@@ -3,7 +3,7 @@ package com.hartwig.actin.serve.interpretation;
 import static org.junit.Assert.assertFalse;
 
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.CompositeRules;
+import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.junit.Test;
 

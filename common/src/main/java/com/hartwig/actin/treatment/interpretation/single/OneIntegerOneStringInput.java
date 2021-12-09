@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.interpretation.single;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
