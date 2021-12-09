@@ -1,37 +1,21 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.interpretation.LabInterpretation;
-import com.hartwig.actin.clinical.interpretation.LabInterpreter;
-import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientLabValueLLN implements EvaluationFunction {
+public class HasSufficientLabValueLLN implements LabEvaluationFunction {
 
-    @NotNull
-    private final LabMeasurement measurement;
     private final double minLLN;
 
-    HasSufficientLabValueLLN(@NotNull final LabMeasurement measurement, final double minLLN) {
-        this.measurement = measurement;
+    HasSufficientLabValueLLN(final double minLLN) {
         this.minLLN = minLLN;
     }
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
-
-        LabValue labValue = interpretation.mostRecentValue(measurement);
-
-        if (!LaboratoryUtil.existsWithExpectedUnit(labValue, measurement.expectedUnit())) {
-            return Evaluation.UNDETERMINED;
-        }
-
+    public Evaluation evaluate(@NotNull final LabValue labValue) {
         return LaboratoryUtil.evaluateVersusMinULN(labValue, minLLN);
     }
 }

@@ -52,7 +52,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientLabValueLLNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double minLLN = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientLabValueLLN(measurement, minLLN);
+            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValueLLN(minLLN));
         };
     }
 
@@ -76,7 +76,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientAlbuminCreator() {
         return function -> {
             double minAlbuminGPerDL = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientAlbumin(minAlbuminGPerDL);
+            return new LabMeasurementEvaluator(LabMeasurement.ALBUMIN, new HasSufficientAlbumin(minAlbuminGPerDL));
         };
     }
 
@@ -84,7 +84,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientHemoglobinCreator(@NotNull LabUnit targetUnit) {
         return function -> {
             double minHemoglobin = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientHemoglobin(minHemoglobin, targetUnit);
+            return new LabMeasurementEvaluator(LabMeasurement.HEMOGLOBIN, new HasSufficientHemoglobin(minHemoglobin, targetUnit));
         };
     }
 
@@ -92,7 +92,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double maxULN = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasLimitedLabValueULN(measurement, maxULN);
+            return new LabMeasurementEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
         };
     }
 

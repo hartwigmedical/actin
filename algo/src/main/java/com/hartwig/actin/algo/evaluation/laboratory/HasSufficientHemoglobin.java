@@ -1,19 +1,14 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.interpretation.LabInterpretation;
-import com.hartwig.actin.clinical.interpretation.LabInterpreter;
-import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasSufficientHemoglobin implements EvaluationFunction {
+public class HasSufficientHemoglobin implements LabEvaluationFunction {
 
     private static final Logger LOGGER = LogManager.getLogger(HasSufficientHemoglobin.class);
 
@@ -30,28 +25,20 @@ public class HasSufficientHemoglobin implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
-
-        LabValue hemoglobin = interpretation.mostRecentValue(LabMeasurement.HEMOGLOBIN);
-
-        if (hemoglobin == null) {
-            return Evaluation.UNDETERMINED;
-        }
-
-        LabUnit measuredUnit = LabUnit.fromString(hemoglobin.unit());
+    public Evaluation evaluate(@NotNull LabValue labValue) {
+        LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
         if (measuredUnit == null) {
-            LOGGER.warn("Could not determine lab unit for '{}'", hemoglobin);
+            LOGGER.warn("Could not determine lab unit for '{}'", labValue);
             return Evaluation.UNDETERMINED;
         }
 
-        Double value = convertValue(hemoglobin.value(), measuredUnit, targetUnit);
+        Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
         if (value == null) {
             LOGGER.warn("Could not convert value from '{}' to '{}'", measuredUnit, targetUnit);
             return Evaluation.UNDETERMINED;
         }
 
-        return LaboratoryUtil.evaluateVersusMinValue(value, hemoglobin.comparator(), minHemoglobin);
+        return LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);
     }
 
     @Nullable
