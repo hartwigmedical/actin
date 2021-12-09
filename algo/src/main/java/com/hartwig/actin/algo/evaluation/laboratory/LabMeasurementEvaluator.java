@@ -29,7 +29,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
+        if (!LaboratoryUtil.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
@@ -37,7 +37,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         if (evaluation == Evaluation.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
-            if (LabValueEvaluation.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
+            if (LaboratoryUtil.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
                 Evaluation secondEvaluation = function.evaluate(secondMostRecent);
                 if (secondEvaluation == Evaluation.PASS) {
                     return Evaluation.UNDETERMINED;

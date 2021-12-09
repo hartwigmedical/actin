@@ -17,13 +17,13 @@ public class HasSufficientAlbuminTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder albumin = LaboratoryTestUtil.forMeasurement(LabMeasurement.ALBUMIN);
+        ImmutableLabValue.Builder albumin = LabTestFactory.forMeasurement(LabMeasurement.ALBUMIN);
 
         assertEquals(Evaluation.FAIL,
-                function.evaluate(LaboratoryTestUtil.withLabValue(albumin.value(20D).unit(LabUnit.G_PER_L.display()).build())));
+                function.evaluate(LabTestFactory.withLabValue(albumin.value(20D).unit(LabUnit.G_PER_L.display()).build())));
         assertEquals(Evaluation.PASS,
-                function.evaluate(LaboratoryTestUtil.withLabValue(albumin.value(20D).unit(LabUnit.G_PER_DL.display()).build())));
+                function.evaluate(LabTestFactory.withLabValue(albumin.value(20D).unit(LabUnit.G_PER_DL.display()).build())));
         assertEquals(Evaluation.PASS,
-                function.evaluate(LaboratoryTestUtil.withLabValue(albumin.value(40D).unit(LabUnit.G_PER_L.display()).build())));
+                function.evaluate(LabTestFactory.withLabValue(albumin.value(40D).unit(LabUnit.G_PER_L.display()).build())));
     }
 }

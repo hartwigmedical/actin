@@ -46,14 +46,14 @@ public class HasSufficientCreatinineClearanceTest {
 
             assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-            ImmutableLabValue.Builder lab = LaboratoryTestUtil.builder().code(TEST_CLEARANCE_MAP.get(method).code());
+            ImmutableLabValue.Builder lab = LabTestFactory.builder().code(TEST_CLEARANCE_MAP.get(method).code());
 
-            assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(lab.value(6D).build())));
-            assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(lab.value(2D).build())));
+            assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.withLabValue(lab.value(6D).build())));
+            assertEquals(Evaluation.FAIL, function.evaluate(LabTestFactory.withLabValue(lab.value(2D).build())));
 
             // Fail when only creatinine is passed but not according to expected unit.
-            ImmutableLabValue.Builder creatinine = LaboratoryTestUtil.builder().code(LabMeasurement.CREATININE.code()).unit("not a unit");
-            assertEquals(Evaluation.UNDETERMINED, function.evaluate(LaboratoryTestUtil.withLabValue(creatinine.value(6D).build())));
+            ImmutableLabValue.Builder creatinine = LabTestFactory.builder().code(LabMeasurement.CREATININE.code()).unit("not a unit");
+            assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(creatinine.value(6D).build())));
         }
     }
 
@@ -61,7 +61,7 @@ public class HasSufficientCreatinineClearanceTest {
     public void canEvaluateMDRD() {
         HasSufficientCreatinineClearance function = new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
+        LabValue creatinine = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         PatientRecord male = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         List<Double> maleValues = function.toMDRD(male, creatinine);
@@ -83,7 +83,7 @@ public class HasSufficientCreatinineClearanceTest {
         HasSufficientCreatinineClearance function =
                 new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
+        LabValue creatinine = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         PatientRecord male = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         List<Double> maleValues = function.toCKDEPI(male, creatinine);
@@ -105,7 +105,7 @@ public class HasSufficientCreatinineClearanceTest {
         HasSufficientCreatinineClearance function =
                 new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
+        LabValue creatinine = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         List<BodyWeight> weights = Lists.newArrayList();
         weights.add(ImmutableBodyWeight.builder().date(LocalDate.of(2020, 1, 1)).value(50D).unit(Strings.EMPTY).build());
@@ -131,13 +131,13 @@ public class HasSufficientCreatinineClearanceTest {
         HasSufficientCreatinineClearance function =
                 new HasSufficientCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100D);
 
-        LabValue creatinine = LaboratoryTestUtil.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
+        LabValue creatinine = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
-        LabValue ckdepiHigh = LaboratoryTestUtil.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(100D).build();
+        LabValue ckdepiHigh = LabTestFactory.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(100D).build();
         PatientRecord fallBack1 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine, ckdepiHigh), Lists.newArrayList());
         assertEquals(Evaluation.PASS_BUT_WARN, function.evaluate(fallBack1));
 
-        LabValue ckdepiLow = LaboratoryTestUtil.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(10D).build();
+        LabValue ckdepiLow = LabTestFactory.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(10D).build();
         PatientRecord fallBack2 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine, ckdepiLow), Lists.newArrayList());
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(fallBack2));
 

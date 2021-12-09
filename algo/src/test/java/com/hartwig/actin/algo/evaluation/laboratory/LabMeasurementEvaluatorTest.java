@@ -26,11 +26,11 @@ public class LabMeasurementEvaluatorTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        LabValue wrongUnit = LaboratoryTestUtil.builder().code(measurement.code()).build();
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LaboratoryTestUtil.withLabValue(wrongUnit)));
+        LabValue wrongUnit = LabTestFactory.builder().code(measurement.code()).build();
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)));
 
-        LabValue correct = LaboratoryTestUtil.forMeasurement(measurement).build();
-        assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(correct)));
+        LabValue correct = LabTestFactory.forMeasurement(measurement).build();
+        assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.withLabValue(correct)));
     }
 
     @Test
@@ -38,9 +38,9 @@ public class LabMeasurementEvaluatorTest {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
 
         List<LabValue> values = Lists.newArrayList();
-        values.add(LaboratoryTestUtil.forMeasurement(measurement).date(TEST_DATE).build());
-        values.add(LaboratoryTestUtil.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build());
-        PatientRecord record = LaboratoryTestUtil.withLabValueList(values);
+        values.add(LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build());
+        values.add(LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build());
+        PatientRecord record = LabTestFactory.withLabValueList(values);
 
         LabMeasurementEvaluator functionPass = new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.PASS));
         assertEquals(Evaluation.UNDETERMINED, functionPass.evaluate(record));

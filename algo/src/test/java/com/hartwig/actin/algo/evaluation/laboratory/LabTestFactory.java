@@ -16,9 +16,9 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-final class LaboratoryTestUtil {
+final class LabTestFactory {
 
-    private LaboratoryTestUtil() {
+    private LabTestFactory() {
     }
 
     @NotNull

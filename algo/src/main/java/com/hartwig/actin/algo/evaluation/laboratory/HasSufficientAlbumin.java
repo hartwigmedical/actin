@@ -43,6 +43,6 @@ public class HasSufficientAlbumin implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateVersusMinValue(convertedValue, albumin.comparator(), minAlbuminGPerDL);
+        return LaboratoryUtil.evaluateVersusMinValue(convertedValue, albumin.comparator(), minAlbuminGPerDL);
     }
 }

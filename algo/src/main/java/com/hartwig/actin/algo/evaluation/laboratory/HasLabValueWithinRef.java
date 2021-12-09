@@ -12,8 +12,8 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull LabValue value) {
-        Boolean isOutsideRef = value.isOutsideRef();
+    public Evaluation evaluate(@NotNull LabValue labValue) {
+        Boolean isOutsideRef = labValue.isOutsideRef();
         if (isOutsideRef == null) {
             return Evaluation.UNDETERMINED;
         }

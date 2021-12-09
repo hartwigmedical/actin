@@ -28,10 +28,10 @@ public class HasSufficientLabValueLLN implements EvaluationFunction {
 
         LabValue labValue = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(labValue, measurement.expectedUnit())) {
+        if (!LaboratoryUtil.existsWithExpectedUnit(labValue, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateVersusMinULN(labValue, minLLN);
+        return LaboratoryUtil.evaluateVersusMinULN(labValue, minLLN);
     }
 }

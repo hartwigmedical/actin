@@ -18,9 +18,9 @@ public class HasSufficientLabValueLLNTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder leukocytes = LaboratoryTestUtil.forMeasurement(measurement);
+        ImmutableLabValue.Builder leukocytes = LabTestFactory.forMeasurement(measurement);
 
-        assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.withLabValue(leukocytes.value(80).refLimitLow(35D).build())));
-        assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(leukocytes.value(100).refLimitLow(75D).build())));
+        assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.withLabValue(leukocytes.value(80).refLimitLow(35D).build())));
+        assertEquals(Evaluation.FAIL, function.evaluate(LabTestFactory.withLabValue(leukocytes.value(100).refLimitLow(75D).build())));
     }
 }

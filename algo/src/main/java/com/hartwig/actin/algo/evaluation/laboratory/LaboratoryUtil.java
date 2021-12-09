@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class LabValueEvaluation {
+final class LaboratoryUtil {
 
     @VisibleForTesting
     static final String LARGER_THAN = ">";
@@ -25,7 +25,7 @@ final class LabValueEvaluation {
         REF_LIMIT_UP_OVERRIDES.put(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code(), 1.1);
     }
 
-    private LabValueEvaluation() {
+    private LaboratoryUtil() {
     }
 
     public static boolean existsWithExpectedUnit(@Nullable LabValue value, @NotNull String expectedUnit) {

@@ -28,10 +28,10 @@ public class HasLimitedLabValueULN implements EvaluationFunction {
 
         LabValue value = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(value, measurement.expectedUnit())) {
+        if (!LaboratoryUtil.existsWithExpectedUnit(value, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
-        return LabValueEvaluation.evaluateVersusMaxULN(value, maxULN);
+        return LaboratoryUtil.evaluateVersusMaxULN(value, maxULN);
     }
 }

@@ -8,5 +8,5 @@ import org.jetbrains.annotations.NotNull;
 public interface LabEvaluationFunction {
 
     @NotNull
-    Evaluation evaluate(@NotNull LabValue value);
+    Evaluation evaluate(@NotNull LabValue labValue);
 }

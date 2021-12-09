@@ -48,13 +48,13 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
         LabValue clearance = retrieveForMethod(interpretation);
 
         if (clearance != null) {
-            return LabValueEvaluation.evaluateVersusMinValue(clearance.value(), clearance.comparator(), minCreatinineClearance);
+            return LaboratoryUtil.evaluateVersusMinValue(clearance.value(), clearance.comparator(), minCreatinineClearance);
         }
 
         // If no clearance value was found, we derive it from creatinine. See also https://www.knmp.nl/rekenmodules/creatinine_html
         LabValue creatinine = interpretation.mostRecentValue(LabMeasurement.CREATININE);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(creatinine, LabMeasurement.CREATININE.expectedUnit())) {
+        if (!LaboratoryUtil.existsWithExpectedUnit(creatinine, LabMeasurement.CREATININE.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
@@ -97,7 +97,7 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
     private Evaluation evaluateValues(@NotNull List<Double> values, @NotNull String comparator) {
         Set<Evaluation> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LabValueEvaluation.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
+            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
         }
 
         if (evaluations.contains(Evaluation.FAIL)) {
@@ -182,7 +182,7 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
             adjusted = base * 0.85;
         }
 
-        return LabValueEvaluation.evaluateVersusMinValue(adjusted, creatinine.comparator(), minCreatinineClearance);
+        return LaboratoryUtil.evaluateVersusMinValue(adjusted, creatinine.comparator(), minCreatinineClearance);
     }
 
     @Nullable

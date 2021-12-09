@@ -12,8 +12,8 @@ public class HasLabValueWithinRefTest {
     public void canEvaluate() {
         HasLabValueWithinRef function = new HasLabValueWithinRef();
 
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LaboratoryTestUtil.builder().isOutsideRef(null).build()));
-        assertEquals(Evaluation.PASS, function.evaluate(LaboratoryTestUtil.builder().isOutsideRef(false).build()));
-        assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.builder().isOutsideRef(true).build()));
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.builder().isOutsideRef(null).build()));
+        assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.builder().isOutsideRef(false).build()));
+        assertEquals(Evaluation.FAIL, function.evaluate(LabTestFactory.builder().isOutsideRef(true).build()));
     }
 }

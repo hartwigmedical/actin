@@ -68,7 +68,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientLabValueCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double minValue = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientLabValue(measurement, minValue);
+            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValue(minValue));
         };
     }
 

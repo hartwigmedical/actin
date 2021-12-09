@@ -19,17 +19,17 @@ public class HasSufficientAbsNeutrophilsTest {
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        ImmutableLabValue.Builder neutrophils1 = LaboratoryTestUtil.forMeasurement(LabMeasurement.NEUTROPHILS_ABS);
-        ImmutableLabValue.Builder neutrophils2 = LaboratoryTestUtil.forMeasurement(LabMeasurement.NEUTROPHILS_ABS_EDA);
+        ImmutableLabValue.Builder neutrophils1 = LabTestFactory.forMeasurement(LabMeasurement.NEUTROPHILS_ABS);
+        ImmutableLabValue.Builder neutrophils2 = LabTestFactory.forMeasurement(LabMeasurement.NEUTROPHILS_ABS_EDA);
 
         assertEquals(Evaluation.PASS,
-                function.evaluate(LaboratoryTestUtil.withLabValues(neutrophils1.value(1.2).build(), neutrophils2.value(4D).build())));
-        assertEquals(Evaluation.FAIL, function.evaluate(LaboratoryTestUtil.withLabValue(neutrophils1.value(1.2).build())));
+                function.evaluate(LabTestFactory.withLabValues(neutrophils1.value(1.2).build(), neutrophils2.value(4D).build())));
+        assertEquals(Evaluation.FAIL, function.evaluate(LabTestFactory.withLabValue(neutrophils1.value(1.2).build())));
     }
 
     @Test
     public void canPickBest() {
-        ImmutableLabValue.Builder neutrophils = LaboratoryTestUtil.forMeasurement(LabMeasurement.NEUTROPHILS_ABS);
+        ImmutableLabValue.Builder neutrophils = LabTestFactory.forMeasurement(LabMeasurement.NEUTROPHILS_ABS);
 
         LabValue worst = neutrophils.value(1D).build();
         LabValue best = neutrophils.value(2D).build();
