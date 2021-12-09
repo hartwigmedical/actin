@@ -106,6 +106,6 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasValueWithinRefCreator(@NotNull LabMeasurement measurement) {
-        return function -> new HasLabValueWithinRef(measurement);
+        return function -> new LabMeasurementEvaluator(measurement, new HasLabValueWithinRef());
     }
 }
