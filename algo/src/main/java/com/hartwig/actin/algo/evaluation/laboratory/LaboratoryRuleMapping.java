@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.composite.Fallback;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
@@ -42,8 +43,8 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
-        map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasValueWithinRefCreator(LabMeasurement.POTASSIUM));
-        map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasValueWithinRefCreator(LabMeasurement.MAGNESIUM));
+        map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.POTASSIUM));
+        map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.MAGNESIUM));
 
         return map;
     }
@@ -60,7 +61,10 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientAbsNeutrophilsCreator() {
         return function -> {
             double minNeutrophils = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientAbsNeutrophils(minNeutrophils);
+            LabEvaluationFunction neutrophilsFunction = new HasSufficientLabValue(minNeutrophils);
+
+            return new Fallback(new LabMeasurementEvaluator(LabMeasurement.NEUTROPHILS_ABS, neutrophilsFunction),
+                    new LabMeasurementEvaluator(LabMeasurement.NEUTROPHILS_ABS_EDA, neutrophilsFunction));
         };
     }
 
@@ -100,12 +104,32 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
             double minCreatinineClearance = EligibilityParameterResolver.createOneDoubleInput(function);
-            return new HasSufficientCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance);
+            return new Fallback(new LabMeasurementEvaluator(retrieveForMethod(method), new HasSufficientLabValue(minCreatinineClearance)),
+                    new LabMeasurementEvaluator(LabMeasurement.CREATININE,
+                            new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR,
+                                    method,
+                                    minCreatinineClearance)));
+
         };
     }
 
     @NotNull
-    private static FunctionCreator hasValueWithinRefCreator(@NotNull LabMeasurement measurement) {
+    private static LabMeasurement retrieveForMethod(@NotNull CreatinineClearanceMethod method) {
+        switch (method) {
+            case EGFR_MDRD:
+                return LabMeasurement.EGFR_MDRD;
+            case EGFR_CKD_EPI:
+                return LabMeasurement.EGFR_CKD_EPI;
+            case COCKCROFT_GAULT:
+                return LabMeasurement.CREATININE_CLEARANCE_CG;
+            default: {
+                throw new IllegalStateException("No lab measurement defined for " + method);
+            }
+        }
+    }
+
+    @NotNull
+    private static FunctionCreator hasLabValueWithinRefCreator(@NotNull LabMeasurement measurement) {
         return function -> new LabMeasurementEvaluator(measurement, new HasLabValueWithinRef());
     }
 }

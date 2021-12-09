@@ -22,7 +22,7 @@ public class LabMeasurementEvaluatorTest {
     @Test
     public void canEvaluate() {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
-        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, x -> Evaluation.PASS);
+        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> Evaluation.PASS);
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
@@ -40,7 +40,7 @@ public class LabMeasurementEvaluatorTest {
         List<LabValue> values = Lists.newArrayList();
         values.add(LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build());
         values.add(LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build());
-        PatientRecord record = LabTestFactory.withLabValueList(values);
+        PatientRecord record = LabTestFactory.withLabValues(values);
 
         LabMeasurementEvaluator functionPass = new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.PASS));
         assertEquals(Evaluation.UNDETERMINED, functionPass.evaluate(record));
@@ -55,8 +55,8 @@ public class LabMeasurementEvaluatorTest {
 
     @NotNull
     private static LabEvaluationFunction firstFailAndRestWithParam(@NotNull Evaluation defaultEvaluation) {
-        return value -> {
-            if (value.date().equals(TEST_DATE)) {
+        return (record, labValue) -> {
+            if (labValue.date().equals(TEST_DATE)) {
                 return Evaluation.FAIL;
             } else {
                 return defaultEvaluation;

@@ -144,7 +144,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X
 HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN
-HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10*9/L => X 
+HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS or fallback to NEUTRO-ABS-eDA) in 10^9/L or 10*9/L => X 
 HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X 
 HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206

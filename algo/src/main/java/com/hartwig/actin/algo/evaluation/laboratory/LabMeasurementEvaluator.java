@@ -33,12 +33,12 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             return Evaluation.UNDETERMINED;
         }
 
-        Evaluation evaluation = function.evaluate(mostRecent);
+        Evaluation evaluation = function.evaluate(record, mostRecent);
 
         if (evaluation == Evaluation.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
             if (LaboratoryUtil.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
-                Evaluation secondEvaluation = function.evaluate(secondMostRecent);
+                Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation == Evaluation.PASS) {
                     return Evaluation.UNDETERMINED;
                 }

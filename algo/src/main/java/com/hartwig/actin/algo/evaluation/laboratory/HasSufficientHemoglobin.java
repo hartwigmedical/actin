@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
@@ -25,7 +26,7 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
         if (measuredUnit == null) {
             LOGGER.warn("Could not determine lab unit for '{}'", labValue);

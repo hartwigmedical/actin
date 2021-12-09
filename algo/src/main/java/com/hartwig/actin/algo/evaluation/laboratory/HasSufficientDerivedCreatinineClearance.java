@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -22,9 +21,9 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasSufficientCreatinineClearance implements EvaluationFunction {
+public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(HasSufficientCreatinineClearance.class);
+    private static final Logger LOGGER = LogManager.getLogger(HasSufficientDerivedCreatinineClearance.class);
 
     private static final double MIN_EGFR_CKD_EPI_FALL_BACK_COCKCROFT_GAULT = 65D;
 
@@ -33,7 +32,7 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
     private final CreatinineClearanceMethod method;
     private final double minCreatinineClearance;
 
-    HasSufficientCreatinineClearance(final int referenceYear, @NotNull final CreatinineClearanceMethod method,
+    HasSufficientDerivedCreatinineClearance(final int referenceYear, @NotNull final CreatinineClearanceMethod method,
             final double minCreatinineClearance) {
         this.referenceYear = referenceYear;
         this.method = method;
@@ -42,48 +41,19 @@ public class HasSufficientCreatinineClearance implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
-
-        LabValue clearance = retrieveForMethod(interpretation);
-
-        if (clearance != null) {
-            return LaboratoryUtil.evaluateVersusMinValue(clearance.value(), clearance.comparator(), minCreatinineClearance);
-        }
-
-        // If no clearance value was found, we derive it from creatinine. See also https://www.knmp.nl/rekenmodules/creatinine_html
-        LabValue creatinine = interpretation.mostRecentValue(LabMeasurement.CREATININE);
-
-        if (!LaboratoryUtil.existsWithExpectedUnit(creatinine, LabMeasurement.CREATININE.expectedUnit())) {
-            return Evaluation.UNDETERMINED;
-        }
 
         switch (method) {
             case EGFR_MDRD:
-                return evaluateMDRD(record, creatinine);
+                return evaluateMDRD(record, labValue);
             case EGFR_CKD_EPI:
-                return evaluateCKDEPI(record, creatinine);
+                return evaluateCKDEPI(record, labValue);
             case COCKCROFT_GAULT:
-                return evaluateCockcroftGault(record, creatinine, interpretation.mostRecentValue(LabMeasurement.EGFR_CKD_EPI));
+                return evaluateCockcroftGault(record, labValue, interpretation.mostRecentValue(LabMeasurement.EGFR_CKD_EPI));
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
                 return Evaluation.NOT_IMPLEMENTED;
-            }
-        }
-    }
-
-    @Nullable
-    private LabValue retrieveForMethod(@NotNull LabInterpretation interpretation) {
-        switch (method) {
-            case EGFR_MDRD:
-                return interpretation.mostRecentValue(LabMeasurement.EGFR_MDRD);
-            case EGFR_CKD_EPI:
-                return interpretation.mostRecentValue(LabMeasurement.EGFR_CKD_EPI);
-            case COCKCROFT_GAULT:
-                return interpretation.mostRecentValue(LabMeasurement.CREATININE_CLEARANCE_CG);
-            default: {
-                LOGGER.warn("Cannot resolve lab value for creatinine clearance method '{}'", method);
-                return null;
             }
         }
     }

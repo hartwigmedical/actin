@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
@@ -15,7 +16,7 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         return LaboratoryUtil.evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
     }
 }

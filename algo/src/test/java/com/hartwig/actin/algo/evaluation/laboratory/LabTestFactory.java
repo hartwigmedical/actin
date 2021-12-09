@@ -23,16 +23,11 @@ final class LabTestFactory {
 
     @NotNull
     public static PatientRecord withLabValue(@NotNull LabValue labValue) {
-        return withLabValueList(Lists.newArrayList(labValue));
+        return withLabValues(Lists.newArrayList(labValue));
     }
 
     @NotNull
-    public static PatientRecord withLabValues(@NotNull LabValue... labValues) {
-        return withLabValueList(Lists.newArrayList(labValues));
-    }
-
-    @NotNull
-    public static PatientRecord withLabValueList(@NotNull List<LabValue> labValues) {
+    public static PatientRecord withLabValues(@NotNull List<LabValue> labValues) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()

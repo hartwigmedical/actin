@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
@@ -19,7 +20,7 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         double convertedValue;
         if (labValue.unit().equals(LabUnit.G_PER_DL.display())) {
             convertedValue = labValue.value();
