@@ -6,10 +6,9 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.EligibilityParameterResolver;
-import com.hartwig.actin.treatment.interpretation.TwoStringInput;
+import com.hartwig.actin.treatment.interpretation.OneTreatmentCategoryOneString;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,8 +90,7 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadTreatmentCategoryCreator() {
         return function -> {
-            String categoryString = EligibilityParameterResolver.createOneStringInput(function);
-            TreatmentCategory category = TreatmentCategoryResolver.fromString(categoryString);
+            TreatmentCategory category = EligibilityParameterResolver.createOneTreatmentCategory(function);
             return new HasHadTreatmentCategory(category, null);
         };
     }
@@ -100,9 +98,8 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
         return function -> {
-            TwoStringInput input = EligibilityParameterResolver.createTwoStringInput(function);
-            TreatmentCategory category = TreatmentCategoryResolver.fromString(input.string1());
-            return new HasHadTreatmentCategory(category, input.string2());
+            OneTreatmentCategoryOneString input = EligibilityParameterResolver.createOneTreatmentCategoryOneString(function);
+            return new HasHadTreatmentCategory(input.treatmentCategory(), input.string());
         };
     }
 

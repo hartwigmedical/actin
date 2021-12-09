@@ -33,9 +33,14 @@ public final class TreatmentCategoryResolver {
     public static String toString(@NotNull Set<TreatmentCategory> categories) {
         StringJoiner joiner = new StringJoiner(DELIMITER);
         for (TreatmentCategory category : categories) {
-            String string = category.toString().replaceAll("_", " ");
-            joiner.add(string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase());
+            joiner.add(toString(category));
         }
         return joiner.toString();
+    }
+
+    @NotNull
+    public static String toString(@NotNull TreatmentCategory category) {
+        String string = category.toString().replaceAll("_", " ");
+        return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
     }
 }

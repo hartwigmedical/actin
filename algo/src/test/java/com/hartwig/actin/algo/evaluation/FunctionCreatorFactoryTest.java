@@ -22,8 +22,7 @@ public class FunctionCreatorFactoryTest {
 
         for (EligibilityRule rule : EligibilityRule.values()) {
             EligibilityFunction function = TestParameterizedFunctionFactory.create(rule);
-            if (!CompositeRules.isComposite(rule) && rule != EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT
-                    && rule != EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y) {
+            if (!CompositeRules.isComposite(rule)) {
                 FunctionCreator creator = map.get(rule);
                 assertNotNull(creator.create(function));
             }

@@ -3,6 +3,8 @@ package com.hartwig.actin.treatment.interpretation;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
@@ -38,14 +40,20 @@ public final class TestParameterizedFunctionFactory {
     }
 
     @NotNull
-    private static List<Object> createForInputs(@NotNull Inputs inputs) {
-        switch (inputs) {
+    private static List<Object> createForInputs(@NotNull RuleInput ruleInput) {
+        switch (ruleInput) {
             case NONE: {
                 return Lists.newArrayList();
             }
             case ONE_INTEGER:
             case ONE_DOUBLE: {
                 return Lists.newArrayList("1");
+            }
+            case ONE_TREATMENT_CATEGORY: {
+                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY));
+            }
+            case ONE_TREATMENT_CATEGORY_ONE_STRING: {
+                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string");
             }
             case ONE_STRING: {
                 return Lists.newArrayList("string");
@@ -60,7 +68,7 @@ public final class TestParameterizedFunctionFactory {
                 return Lists.newArrayList("1", "string1;string2");
             }
             default: {
-                throw new IllegalStateException("Could not create inputs for " + inputs);
+                throw new IllegalStateException("Could not create inputs for " + ruleInput);
             }
         }
     }

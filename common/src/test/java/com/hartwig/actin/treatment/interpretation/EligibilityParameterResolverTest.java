@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
@@ -71,7 +73,7 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithoutParameters() {
-        EligibilityRule rule = firstOfType(Inputs.NONE);
+        EligibilityRule rule = firstOfType(RuleInput.NONE);
 
         assertTrue(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
 
@@ -80,7 +82,7 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithOneIntegerParameter() {
-        EligibilityRule rule = firstOfType(Inputs.ONE_INTEGER);
+        EligibilityRule rule = firstOfType(RuleInput.ONE_INTEGER);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
@@ -93,7 +95,7 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithOneDoubleParameter() {
-        EligibilityRule rule = firstOfType(Inputs.ONE_DOUBLE);
+        EligibilityRule rule = firstOfType(RuleInput.ONE_DOUBLE);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("3.1"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
@@ -105,8 +107,37 @@ public class EligibilityParameterResolverTest {
     }
 
     @Test
+    public void canResolveFunctionsWithOneTreatmentCategoryParameter() {
+        EligibilityRule rule = firstOfType(RuleInput.ONE_TREATMENT_CATEGORY);
+
+        String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, EligibilityParameterResolver.createOneTreatmentCategory(valid));
+
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not a treatment category"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneTreatmentCategoryOneStringParameter() {
+        EligibilityRule rule = firstOfType(RuleInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
+
+        String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, "string"));
+        assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
+
+        OneTreatmentCategoryOneString params = EligibilityParameterResolver.createOneTreatmentCategoryOneString(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, params.treatmentCategory());
+        assertEquals("string", params.string());
+
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList())));
+        assertFalse(EligibilityParameterResolver.hasValidParameters(create(rule, Lists.newArrayList("not a treatment category", "test"))));
+    }
+
+    @Test
     public void canResolveFunctionsWithOneStringParameter() {
-        EligibilityRule rule = firstOfType(Inputs.ONE_STRING);
+        EligibilityRule rule = firstOfType(RuleInput.ONE_STRING);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("0045"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
@@ -118,7 +149,7 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithTwoStringParameters() {
-        EligibilityRule rule = firstOfType(Inputs.TWO_STRINGS);
+        EligibilityRule rule = firstOfType(RuleInput.TWO_STRINGS);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF", "V600E"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
@@ -131,7 +162,7 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithOneIntegerOneStringParameter() {
-        EligibilityRule rule = firstOfType(Inputs.ONE_INTEGER_ONE_STRING);
+        EligibilityRule rule = firstOfType(RuleInput.ONE_INTEGER_ONE_STRING);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
@@ -145,7 +176,7 @@ public class EligibilityParameterResolverTest {
 
     @Test
     public void canResolveFunctionsWithOneIntegerManyStringsParameter() {
-        EligibilityRule rule = firstOfType(Inputs.ONE_INTEGER_MANY_STRINGS);
+        EligibilityRule rule = firstOfType(RuleInput.ONE_INTEGER_MANY_STRINGS);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test1;test2;test3"));
         assertTrue(EligibilityParameterResolver.hasValidParameters(valid));
@@ -160,13 +191,13 @@ public class EligibilityParameterResolverTest {
     }
 
     @NotNull
-    private static EligibilityRule firstOfType(@NotNull Inputs inputs) {
-        for (Map.Entry<EligibilityRule, Inputs> entry : EligibilityParameterResolver.PARAMETER_MAP.entrySet()) {
-            if (entry.getValue() == inputs) {
+    private static EligibilityRule firstOfType(@NotNull RuleInput ruleInput) {
+        for (Map.Entry<EligibilityRule, RuleInput> entry : EligibilityParameterResolver.PARAMETER_MAP.entrySet()) {
+            if (entry.getValue() == ruleInput) {
                 return entry.getKey();
             }
         }
-        throw new IllegalStateException("Could not find single rule of type: " + inputs);
+        throw new IllegalStateException("Could not find single rule of type: " + ruleInput);
 
     }
 
