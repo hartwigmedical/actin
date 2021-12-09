@@ -16,12 +16,12 @@ public final class LabInterpreter {
 
     @NotNull
     public static LabInterpretation interpret(@NotNull List<LabValue> labValues) {
-        Multimap<LabMeasurement, LabValue> labValuesMap = ArrayListMultimap.create();
+        Multimap<LabMeasurement, LabValue> measurements = ArrayListMultimap.create();
         for (LabMeasurement measurement : LabMeasurement.values()) {
-            labValuesMap.putAll(measurement, filterByCode(labValues, measurement.code()));
+            measurements.putAll(measurement, filterByCode(labValues, measurement.code()));
         }
 
-        return new LabInterpretation(labValuesMap);
+        return LabInterpretation.fromMeasurements(measurements);
     }
 
     @NotNull

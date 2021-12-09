@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.interpretation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
@@ -21,32 +20,43 @@ public class LabInterpretationTest {
 
     @Test
     public void canDealWithMissingLabValues() {
-        LabInterpretation interpretation = new LabInterpretation(ArrayListMultimap.create());
+        LabInterpretation empty = LabInterpretation.fromMeasurements(ArrayListMultimap.create());
 
-        assertNull(interpretation.mostRecentRelevantDate());
-        assertNull(interpretation.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE));
+        assertNull(empty.mostRecentRelevantDate());
+
+        assertNull(empty.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE));
+        assertNull(empty.secondMostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE));
+        assertNull(empty.allValues(LabMeasurement.ALANINE_AMINOTRANSFERASE));
     }
 
     @Test
     public void canInterpretLabValues() {
-        LabInterpretation interpretation = createTestLabInterpretation(LabMeasurement.ALANINE_AMINOTRANSFERASE);
+        Multimap<LabMeasurement, LabValue> measurements = ArrayListMultimap.create();
+        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(1)).build());
+        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(5)).build());
+        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(3)).build());
+        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(2)).build());
+        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(4)).build());
+        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(4)).build());
 
-        assertEquals(TEST_DATE, interpretation.mostRecentRelevantDate());
-        LabValue value = interpretation.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE);
-        assertNotNull(value);
-        assertEquals(2, interpretation.allValues(LabMeasurement.ALANINE_AMINOTRANSFERASE).size());
+        measurements.put(LabMeasurement.THROMBOCYTES_ABS, builder().date(TEST_DATE.minusDays(2)).build());
+        measurements.put(LabMeasurement.THROMBOCYTES_ABS, builder().date(TEST_DATE.minusDays(3)).build());
 
-        assertNull(interpretation.mostRecentValue(LabMeasurement.ALBUMIN));
-        assertNull(interpretation.allValues(LabMeasurement.ALBUMIN));
-    }
+        LabInterpretation interpretation = LabInterpretation.fromMeasurements(measurements);
 
-    @NotNull
-    private static LabInterpretation createTestLabInterpretation(@NotNull LabMeasurement measurement) {
-        Multimap<LabMeasurement, LabValue> labValuesMap = ArrayListMultimap.create();
-        labValuesMap.put(measurement, builder().code(measurement.code()).build());
-        labValuesMap.put(measurement, builder().code(measurement.code()).build());
+        assertEquals(TEST_DATE.minusDays(1), interpretation.mostRecentRelevantDate());
 
-        return new LabInterpretation(labValuesMap);
+        assertEquals(6, interpretation.allValues(LabMeasurement.ALBUMIN).size());
+        assertEquals(TEST_DATE.minusDays(1), interpretation.mostRecentValue(LabMeasurement.ALBUMIN).date());
+        assertEquals(TEST_DATE.minusDays(2), interpretation.secondMostRecentValue(LabMeasurement.ALBUMIN).date());
+
+        assertEquals(2, interpretation.allValues(LabMeasurement.THROMBOCYTES_ABS).size());
+        assertEquals(TEST_DATE.minusDays(2), interpretation.mostRecentValue(LabMeasurement.THROMBOCYTES_ABS).date());
+        assertEquals(TEST_DATE.minusDays(3), interpretation.secondMostRecentValue(LabMeasurement.THROMBOCYTES_ABS).date());
+
+        assertNull(interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS));
+        assertNull(interpretation.secondMostRecentValue(LabMeasurement.LEUKOCYTES_ABS));
+        assertNull(interpretation.allValues(LabMeasurement.LEUKOCYTES_ABS));
     }
 
     @NotNull

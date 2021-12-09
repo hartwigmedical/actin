@@ -1,12 +1,14 @@
 package com.hartwig.actin.clinical.interpretation;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,19 +20,36 @@ public class LabInterpretation {
     private static final Logger LOGGER = LogManager.getLogger(LabInterpretation.class);
 
     @NotNull
-    private final Multimap<LabMeasurement, LabValue> labMeasurements;
+    private final Map<LabMeasurement, List<LabValue>> measurements;
 
-    public LabInterpretation(@NotNull final Multimap<LabMeasurement, LabValue> labMeasurements) {
-        this.labMeasurements = labMeasurements;
+    @NotNull
+    static LabInterpretation fromMeasurements(@NotNull Multimap<LabMeasurement, LabValue> measurements) {
+        Map<LabMeasurement, List<LabValue>> sortedMap = Maps.newHashMap();
+        for (LabMeasurement measurement : measurements.keySet()) {
+            List<LabValue> values = Lists.newArrayList(measurements.get(measurement));
+            values.sort(new LabValueDescendingDateComparator());
+            sortedMap.put(measurement, values);
+        }
+
+        return new LabInterpretation(sortedMap);
+    }
+
+    private LabInterpretation(@NotNull final Map<LabMeasurement, List<LabValue>> measurements) {
+        this.measurements = measurements;
     }
 
     @Nullable
     public LocalDate mostRecentRelevantDate() {
         LocalDate mostRecentDate = null;
 
-        LabValue mostRecentLabValueByName = mostRecent(labMeasurements.values());
-        if (mostRecentLabValueByName != null && (mostRecentDate == null || mostRecentLabValueByName.date().isAfter(mostRecentDate))) {
-            mostRecentDate = mostRecentLabValueByName.date();
+        for (LabMeasurement measurement : LabMeasurement.values()) {
+            List<LabValue> allValues = allValues(measurement);
+            if (allValues != null && !allValues.isEmpty()) {
+                LabValue mostRecent = allValues.get(0);
+                if (mostRecentDate == null || mostRecent.date().isAfter(mostRecentDate)) {
+                    mostRecentDate = mostRecent.date();
+                }
+            }
         }
 
         return mostRecentDate;
@@ -38,29 +57,23 @@ public class LabInterpretation {
 
     @Nullable
     public List<LabValue> allValues(@NotNull LabMeasurement measurement) {
-        if (!labMeasurements.containsKey(measurement)) {
-            LOGGER.warn("Could not find measurement for '" + measurement + "'");
+        List<LabValue> values = measurements.get(measurement);
+        if (values == null || values.isEmpty()) {
+            LOGGER.warn("Could not find any measurement for '{}'", measurement.code());
             return null;
         }
-        Collection<LabValue> values = labMeasurements.get(measurement);
-        return values != null ? Lists.newArrayList(values) : null;
+        return values;
     }
 
     @Nullable
     public LabValue mostRecentValue(@NotNull LabMeasurement measurement) {
-        Collection<LabValue> values = labMeasurements.get(measurement);
-        return values != null ? mostRecent(values) : null;
+        List<LabValue> values = measurements.get(measurement);
+        return values != null && !values.isEmpty() ? values.get(0) : null;
     }
 
     @Nullable
-    private static LabValue mostRecent(@NotNull Iterable<LabValue> labValues) {
-        LabValue mostRecent = null;
-        for (LabValue labValue : labValues) {
-            if (mostRecent == null || labValue.date().isAfter(mostRecent.date())) {
-                mostRecent = labValue;
-            }
-        }
-
-        return mostRecent;
+    public LabValue secondMostRecentValue(@NotNull LabMeasurement measurement) {
+        List<LabValue> values = measurements.get(measurement);
+        return values != null && values.size() >= 2 ? values.get(1) : null;
     }
 }
