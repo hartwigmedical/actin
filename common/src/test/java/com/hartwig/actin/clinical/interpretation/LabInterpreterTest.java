@@ -1,8 +1,12 @@
 package com.hartwig.actin.clinical.interpretation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.junit.Test;
@@ -14,5 +18,24 @@ public class LabInterpreterTest {
         assertNotNull(LabInterpreter.interpret(Lists.newArrayList()));
 
         assertNotNull(LabInterpreter.interpret(TestClinicalDataFactory.createProperTestClinicalRecord().labValues()));
+    }
+
+    @Test
+    public void canMapValues() {
+        LabMeasurement firstKey = LabInterpreter.MAPPINGS.keySet().iterator().next();
+        LabMeasurement firstValue = LabInterpreter.MAPPINGS.get(firstKey);
+
+        List<LabValue> values = Lists.newArrayList();
+        values.add(LabInterpretationTestUtil.builder().code(firstKey.code()).unit(firstKey.expectedUnit()).build());
+        values.add(LabInterpretationTestUtil.builder().code(firstValue.code()).unit(firstValue.expectedUnit()).build());
+
+        LabInterpretation interpretation = LabInterpreter.interpret(values);
+
+        assertEquals(1, interpretation.allValues(firstKey).size());
+        assertEquals(2, interpretation.allValues(firstValue).size());
+        for (LabValue labValue : interpretation.allValues(firstValue)) {
+            assertEquals(firstValue.code(), labValue.code());
+            assertEquals(firstValue.expectedUnit(), labValue.unit());
+        }
     }
 }

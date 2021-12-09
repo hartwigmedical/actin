@@ -7,11 +7,8 @@ import java.time.LocalDate;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class LabInterpretationTest {
@@ -32,15 +29,15 @@ public class LabInterpretationTest {
     @Test
     public void canInterpretLabValues() {
         Multimap<LabMeasurement, LabValue> measurements = ArrayListMultimap.create();
-        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(1)).build());
-        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(5)).build());
-        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(3)).build());
-        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(2)).build());
-        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(4)).build());
-        measurements.put(LabMeasurement.ALBUMIN, builder().date(TEST_DATE.minusDays(4)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(1)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(5)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(3)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(2)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(4)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(4)).build());
 
-        measurements.put(LabMeasurement.THROMBOCYTES_ABS, builder().date(TEST_DATE.minusDays(2)).build());
-        measurements.put(LabMeasurement.THROMBOCYTES_ABS, builder().date(TEST_DATE.minusDays(3)).build());
+        measurements.put(LabMeasurement.THROMBOCYTES_ABS, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(2)).build());
+        measurements.put(LabMeasurement.THROMBOCYTES_ABS, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(3)).build());
 
         LabInterpretation interpretation = LabInterpretation.fromMeasurements(measurements);
 
@@ -57,16 +54,5 @@ public class LabInterpretationTest {
         assertNull(interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS));
         assertNull(interpretation.secondMostRecentValue(LabMeasurement.LEUKOCYTES_ABS));
         assertNull(interpretation.allValues(LabMeasurement.LEUKOCYTES_ABS));
-    }
-
-    @NotNull
-    private static ImmutableLabValue.Builder builder() {
-        return ImmutableLabValue.builder()
-                .date(TEST_DATE)
-                .code(Strings.EMPTY)
-                .name(Strings.EMPTY)
-                .comparator(Strings.EMPTY)
-                .value(0D)
-                .unit(Strings.EMPTY);
     }
 }
