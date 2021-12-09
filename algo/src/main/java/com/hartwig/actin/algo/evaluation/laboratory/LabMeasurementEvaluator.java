@@ -27,12 +27,24 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
-        LabValue value = interpretation.mostRecentValue(measurement);
+        LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
-        if (!LabValueEvaluation.existsWithExpectedUnit(value, measurement.expectedUnit())) {
+        if (!LabValueEvaluation.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
-        return function.evaluate(value);
+        Evaluation evaluation = function.evaluate(mostRecent);
+
+        if (evaluation == Evaluation.FAIL) {
+            LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
+            if (LabValueEvaluation.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
+                Evaluation secondEvaluation = function.evaluate(secondMostRecent);
+                if (secondEvaluation == Evaluation.PASS) {
+                    return Evaluation.UNDETERMINED;
+                }
+            }
+        }
+
+        return evaluation;
     }
 }

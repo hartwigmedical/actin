@@ -23,22 +23,16 @@ final class LaboratoryTestUtil {
 
     @NotNull
     public static PatientRecord withLabValue(@NotNull LabValue labValue) {
-        return create(Lists.newArrayList(labValue));
+        return withLabValueList(Lists.newArrayList(labValue));
     }
 
     @NotNull
     public static PatientRecord withLabValues(@NotNull LabValue... labValues) {
-        return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .labValues(Lists.newArrayList(labValues))
-                        .build())
-                .build();
+        return withLabValueList(Lists.newArrayList(labValues));
     }
 
     @NotNull
-    private static PatientRecord create(@NotNull List<LabValue> labValues) {
+    public static PatientRecord withLabValueList(@NotNull List<LabValue> labValues) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
