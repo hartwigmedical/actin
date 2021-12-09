@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -36,14 +35,15 @@ public final class LaboratoryRuleMapping {
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
-        map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INR));
-        map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PT));
-        map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.APTT));
-        map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASAT));
-        map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALAT));
-        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALP));
-        map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, notImplementedCreator());
-        map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, notImplementedCreator());
+        map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO));
+        map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
+        map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X,
+                hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME));
+        map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
+        map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
+        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
+        map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasValueWithinRefCreator(LabMeasurement.POTASSIUM));
+        map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasValueWithinRefCreator(LabMeasurement.MAGNESIUM));
 
         return map;
     }
@@ -105,7 +105,7 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
+    private static FunctionCreator hasValueWithinRefCreator(@NotNull LabMeasurement measurement) {
+        return function -> new HasLabValueWithinRef(measurement);
     }
 }

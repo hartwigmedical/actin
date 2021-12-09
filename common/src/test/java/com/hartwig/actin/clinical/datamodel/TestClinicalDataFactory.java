@@ -212,7 +212,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
-                .code(LabMeasurement.ASAT.code())
+                .code(LabMeasurement.ASPARTATE_AMINOTRANSFERASE.code())
                 .name("Aspartate aminotransferase")
                 .comparator(Strings.EMPTY)
                 .value(36)
@@ -294,7 +294,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
-                .code(LabMeasurement.LDH.code())
+                .code(LabMeasurement.LACTIC_ACID_DEHYDROGENASE.code())
                 .name("Lactate dehydrogenase")
                 .comparator(Strings.EMPTY)
                 .value(240)

@@ -64,13 +64,13 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         addLabMeasurement(table, LabMeasurement.TOTAL_BILIRUBIN);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("ASAT"));
-        addLabMeasurement(table, LabMeasurement.ASAT);
+        addLabMeasurement(table, LabMeasurement.ASPARTATE_AMINOTRANSFERASE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("ALAT"));
-        addLabMeasurement(table, LabMeasurement.ALAT);
+        addLabMeasurement(table, LabMeasurement.ALANINE_AMINOTRANSFERASE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("ALP"));
-        addLabMeasurement(table, LabMeasurement.ALP);
+        addLabMeasurement(table, LabMeasurement.ALKALINE_PHOSPHATASE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Albumin"));
         addLabMeasurement(table, LabMeasurement.ALBUMIN);
@@ -90,7 +90,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         addLabMeasurement(table, LabMeasurement.THROMBOCYTES_ABS);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("LDH"));
-        addLabMeasurement(table, LabMeasurement.LDH);
+        addLabMeasurement(table, LabMeasurement.LACTIC_ACID_DEHYDROGENASE);
 
         return table;
     }

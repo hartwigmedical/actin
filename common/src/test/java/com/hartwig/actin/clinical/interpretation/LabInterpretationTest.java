@@ -24,17 +24,17 @@ public class LabInterpretationTest {
         LabInterpretation interpretation = new LabInterpretation(ArrayListMultimap.create());
 
         assertNull(interpretation.mostRecentRelevantDate());
-        assertNull(interpretation.mostRecentValue(LabMeasurement.ALAT));
+        assertNull(interpretation.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE));
     }
 
     @Test
     public void canInterpretLabValues() {
-        LabInterpretation interpretation = createTestLabInterpretation(LabMeasurement.ALAT);
+        LabInterpretation interpretation = createTestLabInterpretation(LabMeasurement.ALANINE_AMINOTRANSFERASE);
 
         assertEquals(TEST_DATE, interpretation.mostRecentRelevantDate());
-        LabValue value = interpretation.mostRecentValue(LabMeasurement.ALAT);
+        LabValue value = interpretation.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE);
         assertNotNull(value);
-        assertEquals(2, interpretation.allValues(LabMeasurement.ALAT).size());
+        assertEquals(2, interpretation.allValues(LabMeasurement.ALANINE_AMINOTRANSFERASE).size());
 
         assertNull(interpretation.mostRecentValue(LabMeasurement.ALBUMIN));
         assertNull(interpretation.allValues(LabMeasurement.ALBUMIN));
