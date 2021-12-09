@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.interpretation.LabInterpreter;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LabMeasurementEvaluator implements EvaluationFunction {
 
@@ -29,7 +30,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
-        if (!LaboratoryUtil.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
+        if (!existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
             return Evaluation.UNDETERMINED;
         }
 
@@ -37,7 +38,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         if (evaluation == Evaluation.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
-            if (LaboratoryUtil.existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
+            if (existsWithExpectedUnit(mostRecent, measurement.expectedUnit())) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation == Evaluation.PASS) {
                     return Evaluation.UNDETERMINED;
@@ -46,5 +47,9 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         }
 
         return evaluation;
+    }
+
+    private static boolean existsWithExpectedUnit(@Nullable LabValue value, @NotNull String expectedUnit) {
+        return value != null && value.unit().equals(expectedUnit);
     }
 }

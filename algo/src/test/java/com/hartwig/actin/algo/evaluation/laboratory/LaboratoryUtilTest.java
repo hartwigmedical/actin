@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -12,15 +10,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class LaboratoryUtilTest {
-
-    @Test
-    public void canDetermineWhetherLabValueIsAsExpected() {
-        assertFalse(LaboratoryUtil.existsWithExpectedUnit(null, "expected unit"));
-
-        LabValue value = LabTestFactory.builder().unit("expected unit").build();
-        assertFalse(LaboratoryUtil.existsWithExpectedUnit(value, "not expected unit"));
-        assertTrue(LaboratoryUtil.existsWithExpectedUnit(value, "expected unit"));
-    }
 
     @Test
     public void canEvaluateVersusMinULN() {

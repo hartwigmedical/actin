@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 final class LaboratoryUtil {
 
@@ -26,10 +25,6 @@ final class LaboratoryUtil {
     }
 
     private LaboratoryUtil() {
-    }
-
-    public static boolean existsWithExpectedUnit(@Nullable LabValue value, @NotNull String expectedUnit) {
-        return value != null && value.unit().equals(expectedUnit);
     }
 
     @NotNull
