@@ -169,7 +169,7 @@ public final class EligibilityParameterResolver {
                 CompositeInput requiredInputs = CompositeRules.inputsForCompositeRule(function.rule());
                 if (requiredInputs == CompositeInput.AT_LEAST_2) {
                     createAtLeastTwoCompositeParameters(function);
-                } else if (requiredInputs == CompositeInput.MAXIMUM_1) {
+                } else if (requiredInputs == CompositeInput.EXACTLY_1) {
                     createOneCompositeParameter(function);
                 } else {
                     throw new IllegalStateException(
@@ -307,15 +307,5 @@ public final class EligibilityParameterResolver {
             throw new IllegalArgumentException(
                     "Invalid number of inputs passed to '" + function.rule() + "': " + function.parameters().size());
         }
-    }
-
-    enum Inputs {
-        NONE,
-        ONE_INTEGER,
-        ONE_DOUBLE,
-        ONE_STRING,
-        TWO_STRINGS,
-        ONE_INTEGER_ONE_STRING,
-        ONE_INTEGER_MANY_STRINGS
     }
 }

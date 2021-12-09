@@ -55,7 +55,7 @@ public final class ServeRecordExtractor {
 
         if (CompositeRules.isComposite(function.rule())) {
             CompositeInput input = CompositeRules.inputsForCompositeRule(function.rule());
-            if (input == CompositeInput.MAXIMUM_1) {
+            if (input == CompositeInput.EXACTLY_1) {
                 EligibilityFunction subFunction = EligibilityParameterResolver.createOneCompositeParameter(function);
                 records.addAll(extractFromFunction(trialId, cohortId, subFunction));
             } else if (input == CompositeInput.AT_LEAST_2) {
