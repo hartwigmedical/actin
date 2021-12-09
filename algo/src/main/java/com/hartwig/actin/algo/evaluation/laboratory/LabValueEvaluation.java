@@ -1,8 +1,12 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import java.util.Map;
+
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +18,13 @@ final class LabValueEvaluation {
     @VisibleForTesting
     static final String SMALLER_THAN = "<";
 
+    @VisibleForTesting
+    static final Map<String, Double> REF_LIMIT_UP_OVERRIDES = Maps.newHashMap();
+
+    static {
+        REF_LIMIT_UP_OVERRIDES.put(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code(), 1.1);
+    }
+
     private LabValueEvaluation() {
     }
 
@@ -23,12 +34,12 @@ final class LabValueEvaluation {
 
     @NotNull
     public static Evaluation evaluateVersusMinULN(@NotNull LabValue labValue, double minULN) {
-        Double lowerLimit = labValue.refLimitLow();
-        if (lowerLimit == null) {
+        Double refLimitLow = labValue.refLimitLow();
+        if (refLimitLow == null) {
             return Evaluation.UNDETERMINED;
         }
 
-        double minValue = lowerLimit * minULN;
+        double minValue = refLimitLow * minULN;
         return evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
     }
 
@@ -43,12 +54,16 @@ final class LabValueEvaluation {
 
     @NotNull
     public static Evaluation evaluateVersusMaxULN(@NotNull LabValue labValue, double maxULN) {
-        Double upperLimit = labValue.refLimitUp();
-        if (upperLimit == null) {
+        Double refLimitUp = labValue.refLimitUp();
+        if (refLimitUp == null) {
+            refLimitUp = REF_LIMIT_UP_OVERRIDES.get(labValue.code());
+        }
+
+        if (refLimitUp == null) {
             return Evaluation.UNDETERMINED;
         }
 
-        double maxValue = upperLimit * maxULN;
+        double maxValue = refLimitUp * maxULN;
         return evaluateVersusMaxValue(labValue.value(), labValue.comparator(), maxValue);
     }
 

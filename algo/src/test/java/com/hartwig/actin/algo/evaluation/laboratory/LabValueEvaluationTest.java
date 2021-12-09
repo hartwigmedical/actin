@@ -55,6 +55,15 @@ public class LabValueEvaluationTest {
     }
 
     @Test
+    public void canUseOverridesForRefLimitUp() {
+        String firstCode = LabValueEvaluation.REF_LIMIT_UP_OVERRIDES.keySet().iterator().next();
+        double overrideRefLimitUp = LabValueEvaluation.REF_LIMIT_UP_OVERRIDES.get(firstCode);
+
+        LabValue value = LaboratoryTestUtil.builder().code(firstCode).value(1.8 * overrideRefLimitUp).build();
+        assertEquals(Evaluation.PASS, LabValueEvaluation.evaluateVersusMaxULN(value, 2D));
+    }
+
+    @Test
     public void canEvaluateVersusMaxValue() {
         assertEquals(Evaluation.PASS, LabValueEvaluation.evaluateVersusMaxValue(1D, Strings.EMPTY, 2D));
         assertEquals(Evaluation.FAIL, LabValueEvaluation.evaluateVersusMaxValue(4D, Strings.EMPTY, 2D));
