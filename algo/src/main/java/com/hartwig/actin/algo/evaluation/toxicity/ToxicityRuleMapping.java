@@ -3,9 +3,12 @@ package com.hartwig.actin.algo.evaluation.toxicity;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneStringInput;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,19 +22,34 @@ public final class ToxicityRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
-        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y, notImplementedCreator());
-        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, notImplementedCreator());
+        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y, hasToxicityWithGradeAndNameCreator());
+        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, hasToxicityWithGradeIgnoringNamesCreator());
 
         return map;
     }
 
     @NotNull
     private static FunctionCreator hasToxicityWithGradeCreator() {
-        return function -> new HasToxicityWithGrade();
+        return function -> {
+            int minGrade = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasToxicityWithGrade(minGrade, null, Sets.newHashSet());
+        };
     }
 
     @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
+    private static FunctionCreator hasToxicityWithGradeAndNameCreator() {
+        return function -> {
+            OneIntegerOneStringInput input = FunctionInputResolver.createOneIntegerOneStringInput(function);
+            return new HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet());
+        };
+
+    }
+
+    @NotNull
+    private static FunctionCreator hasToxicityWithGradeIgnoringNamesCreator() {
+        return function -> {
+            OneIntegerManyStringsInput input = FunctionInputResolver.createOneIntegerManyStringsInput(function);
+            return new HasToxicityWithGrade(input.integer(), null, Sets.newHashSet(input.strings()));
+        };
     }
 }
