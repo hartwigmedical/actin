@@ -8,14 +8,14 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PriorDoidEvaluationFunction implements EvaluationFunction {
+public class HasHadPriorCondition implements EvaluationFunction {
 
     @NotNull
     private final DoidModel doidModel;
     @NotNull
     private final String doidToFind;
 
-    PriorDoidEvaluationFunction(@NotNull final DoidModel doidModel, @NotNull final String doidToFind) {
+    HasHadPriorCondition(@NotNull final DoidModel doidModel, @NotNull final String doidToFind) {
         this.doidModel = doidModel;
         this.doidToFind = doidToFind;
     }

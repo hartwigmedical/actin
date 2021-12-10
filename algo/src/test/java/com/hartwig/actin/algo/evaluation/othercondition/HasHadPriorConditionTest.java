@@ -12,16 +12,16 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.junit.Test;
 
-public class PriorDoidEvaluationFunctionTest {
+public class HasHadPriorConditionTest {
 
     @Test
     public void canEvaluate() {
         String doidToFind = "parent";
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(doidToFind, "child");
-        PriorDoidEvaluationFunction function = new PriorDoidEvaluationFunction(doidModel, doidToFind);
+        HasHadPriorCondition function = new HasHadPriorCondition(doidModel, doidToFind);
 
-        List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
         // Test empty doid
+        List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
         assertEquals(Evaluation.FAIL, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with no DOIDs
