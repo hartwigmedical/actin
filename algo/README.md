@@ -71,7 +71,7 @@ The following rules are available:
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-IS_AT_LEAST_18_YEARS_OLD | Current year minus birth year > 18 | PASS_BUT_WARN in case of exactly 18
+IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | PASS_BUT_WARN in case of exactly X
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated

@@ -8,7 +8,7 @@ public enum EligibilityRule {
     WARN_ON_PASS,
 
     // Rules related to general patient characteristics
-    IS_AT_LEAST_18_YEARS_OLD,
+    IS_AT_LEAST_X_YEARS_OLD,
     HAS_WHO_STATUS_OF_AT_MOST_X,
     IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT,
     IS_INVOLVED_IN_STUDY_PROCEDURES,

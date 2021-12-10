@@ -19,7 +19,7 @@ public final class GeneralRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, isAtLeast18YearsOldCreator());
+        map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, isAtLeastXYearsOldCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
@@ -30,7 +30,7 @@ public final class GeneralRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator isAtLeast18YearsOldCreator() {
+    private static FunctionCreator isAtLeastXYearsOldCreator() {
         return function -> new IsAtLeastEighteenYearsOld(EvaluationConstants.REFERENCE_YEAR);
     }
 
