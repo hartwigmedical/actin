@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import java.time.LocalDate;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
@@ -17,10 +19,14 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     private final LabMeasurement measurement;
     @NotNull
     private final LabEvaluationFunction function;
+    @NotNull
+    private final LocalDate minValidDate;
 
-    LabMeasurementEvaluator(@NotNull final LabMeasurement measurement, @NotNull final LabEvaluationFunction function) {
+    LabMeasurementEvaluator(@NotNull final LabMeasurement measurement, @NotNull final LabEvaluationFunction function,
+            @NotNull final LocalDate minValidDate) {
         this.measurement = measurement;
         this.function = function;
+        this.minValidDate = minValidDate;
     }
 
     @NotNull
@@ -30,7 +36,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
-        if (!existsWithExpectedUnit(mostRecent, measurement)) {
+        if (!isValid(mostRecent, measurement)) {
             return Evaluation.UNDETERMINED;
         }
 
@@ -38,7 +44,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         if (evaluation == Evaluation.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
-            if (existsWithExpectedUnit(mostRecent, measurement)) {
+            if (isValid(mostRecent, measurement)) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation == Evaluation.PASS) {
                     return Evaluation.UNDETERMINED;
@@ -49,7 +55,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         return evaluation;
     }
 
-    private static boolean existsWithExpectedUnit(@Nullable LabValue value, @NotNull LabMeasurement measurement) {
-        return value != null && value.unit().equals(measurement.expectedUnit());
+    private boolean isValid(@Nullable LabValue value, @NotNull LabMeasurement measurement) {
+        return value != null && value.unit().equals(measurement.expectedUnit()) && !value.date().isBefore(minValidDate);
     }
 }

@@ -18,19 +18,29 @@ import org.junit.Test;
 public class LabMeasurementEvaluatorTest {
 
     private static final LocalDate TEST_DATE = LocalDate.of(2020, 4, 20);
+    private static final LocalDate ALWAYS_VALID_DATE = TEST_DATE.minusDays(2);
 
     @Test
     public void canEvaluate() {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
-        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> Evaluation.PASS);
+        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> Evaluation.PASS, ALWAYS_VALID_DATE);
 
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        LabValue wrongUnit = LabTestFactory.builder().code(measurement.code()).build();
+        LabValue labValue = LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build();
+        assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)));
+    }
+
+    @Test
+    public void canIgnoreOldDatesAndInvalidUnits() {
+        LabMeasurement measurement = LabMeasurement.ALBUMIN;
+        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> Evaluation.PASS, TEST_DATE);
+
+        LabValue wrongUnit = LabTestFactory.builder().code(measurement.code()).date(TEST_DATE).build();
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)));
 
-        LabValue correct = LabTestFactory.forMeasurement(measurement).build();
-        assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.withLabValue(correct)));
+        LabValue oldDate = LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build();
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)));
     }
 
     @Test
@@ -42,14 +52,16 @@ public class LabMeasurementEvaluatorTest {
         values.add(LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build());
         PatientRecord record = LabTestFactory.withLabValues(values);
 
-        LabMeasurementEvaluator functionPass = new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.PASS));
+        LabMeasurementEvaluator functionPass =
+                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.PASS), ALWAYS_VALID_DATE);
         assertEquals(Evaluation.UNDETERMINED, functionPass.evaluate(record));
 
-        LabMeasurementEvaluator functionFail = new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.FAIL));
+        LabMeasurementEvaluator functionFail =
+                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.FAIL), ALWAYS_VALID_DATE);
         assertEquals(Evaluation.FAIL, functionFail.evaluate(record));
 
         LabMeasurementEvaluator functionUndetermined =
-                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.UNDETERMINED));
+                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.UNDETERMINED), ALWAYS_VALID_DATE);
         assertEquals(Evaluation.FAIL, functionUndetermined.evaluate(record));
     }
 

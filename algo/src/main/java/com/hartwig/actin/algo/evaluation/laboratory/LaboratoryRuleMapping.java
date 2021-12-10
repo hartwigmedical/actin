@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -13,6 +15,8 @@ import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import org.jetbrains.annotations.NotNull;
 
 public final class LaboratoryRuleMapping {
+
+    private static final LocalDate MIN_VALID_LAB_DATE = LocalDate.now().minusDays(EvaluationConstants.MAX_LAB_VALUE_AGE_DAYS);
 
     private LaboratoryRuleMapping() {
     }
@@ -53,7 +57,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientLabValueCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double minValue = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValue(minValue));
+            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValue(minValue), MIN_VALID_LAB_DATE);
         };
     }
 
@@ -61,7 +65,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientLabValueLLNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double minLLN = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValueLLN(minLLN));
+            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValueLLN(minLLN), MIN_VALID_LAB_DATE);
         };
     }
 
@@ -69,7 +73,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientAlbuminCreator() {
         return function -> {
             double minAlbuminGPerDL = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(LabMeasurement.ALBUMIN, new HasSufficientAlbumin(minAlbuminGPerDL));
+            return new LabMeasurementEvaluator(LabMeasurement.ALBUMIN, new HasSufficientAlbumin(minAlbuminGPerDL), MIN_VALID_LAB_DATE);
         };
     }
 
@@ -77,7 +81,9 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientHemoglobinCreator(@NotNull LabUnit targetUnit) {
         return function -> {
             double minHemoglobin = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(LabMeasurement.HEMOGLOBIN, new HasSufficientHemoglobin(minHemoglobin, targetUnit));
+            return new LabMeasurementEvaluator(LabMeasurement.HEMOGLOBIN,
+                    new HasSufficientHemoglobin(minHemoglobin, targetUnit),
+                    MIN_VALID_LAB_DATE);
         };
     }
 
@@ -85,7 +91,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double maxULN = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
+            return new LabMeasurementEvaluator(measurement, new HasLimitedLabValueULN(maxULN), MIN_VALID_LAB_DATE);
         };
     }
 
@@ -93,11 +99,15 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
             double minCreatinineClearance = FunctionInputResolver.createOneDoubleInput(function);
-            return new Fallback(new LabMeasurementEvaluator(retrieveForMethod(method), new HasSufficientLabValue(minCreatinineClearance)),
-                    new LabMeasurementEvaluator(LabMeasurement.CREATININE,
-                            new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR,
-                                    method,
-                                    minCreatinineClearance)));
+            EvaluationFunction main = new LabMeasurementEvaluator(retrieveForMethod(method),
+                    new HasSufficientLabValue(minCreatinineClearance),
+                    MIN_VALID_LAB_DATE);
+
+            EvaluationFunction fallback = new LabMeasurementEvaluator(LabMeasurement.CREATININE,
+                    new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance),
+                    MIN_VALID_LAB_DATE);
+
+            return new Fallback(main, fallback);
         };
     }
 
@@ -118,6 +128,6 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasLabValueWithinRefCreator(@NotNull LabMeasurement measurement) {
-        return function -> new LabMeasurementEvaluator(measurement, new HasLabValueWithinRef());
+        return function -> new LabMeasurementEvaluator(measurement, new HasLabValueWithinRef(), MIN_VALID_LAB_DATE);
     }
 }
