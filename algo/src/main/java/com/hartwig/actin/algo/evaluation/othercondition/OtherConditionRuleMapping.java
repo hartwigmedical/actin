@@ -31,20 +31,20 @@ public final class OtherConditionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS, hasSignificantConcomitantIllnessCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionDOIDCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasPriorConditionDOIDCreator(doidModel, CARDIAC_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasSpecificPriorConditionCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasSpecificPriorConditionCreator(doidModel, CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
-                hasPriorConditionDOIDCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionDOIDCreator(doidModel, VASCULAR_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasPriorConditionDOIDCreator(doidModel, LUNG_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasPriorConditionDOIDCreator(doidModel, STROKE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasPriorConditionDOIDCreator(doidModel, TIA_DOID));
+                hasSpecificPriorConditionCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasSpecificPriorConditionCreator(doidModel, VASCULAR_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasSpecificPriorConditionCreator(doidModel, LUNG_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasSpecificPriorConditionCreator(doidModel, STROKE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasSpecificPriorConditionCreator(doidModel, TIA_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
-        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasPriorConditionDOIDCreator(doidModel, GILBERT_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_HYPERTENSION, hasPriorConditionDOIDCreator(doidModel, HYPERTENSION_DOID));
-        map.put(EligibilityRule.HAS_DIABETES, hasPriorConditionDOIDCreator(doidModel, DIABETES_DOID));
+        map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
+        map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
@@ -59,15 +59,15 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasPriorConditionDOIDCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
-        return function -> new HasHadPriorCondition(doidModel, doidToFind);
+    private static FunctionCreator hasSpecificPriorConditionCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
+        return function -> new HasHadSpecificPriorCondition(doidModel, doidToFind);
     }
 
     @NotNull
     private static FunctionCreator hasPriorConditionWithConfiguredDOIDCreator(@NotNull DoidModel doidModel) {
         return function -> {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
-            return new HasHadPriorCondition(doidModel, doidToFind);
+            return new HasHadSpecificPriorCondition(doidModel, doidToFind);
         };
     }
 

@@ -12,13 +12,13 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.junit.Test;
 
-public class HasHadPriorConditionTest {
+public class HasHadSpecificPriorConditionTest {
 
     @Test
     public void canEvaluate() {
         String doidToFind = "parent";
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(doidToFind, "child");
-        HasHadPriorCondition function = new HasHadPriorCondition(doidModel, doidToFind);
+        HasHadSpecificPriorCondition function = new HasHadSpecificPriorCondition(doidModel, doidToFind);
 
         // Test empty doid
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
