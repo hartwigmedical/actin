@@ -253,6 +253,7 @@ public final class ClinicalRecordJson {
                         .hormoneType(nullableString(object, "hormoneType"))
                         .stemCellTransType(nullableString(object, "stemCellTransType"))
                         .supportiveType(nullableString(object, "supportiveType"))
+                        .trialAcronym(nullableString(object, "trialAcronym"))
                         .build());
             }
             return priorTumorTreatmentList;

@@ -42,4 +42,7 @@ public abstract class PriorTumorTreatment {
     @Nullable
     public abstract String supportiveType();
 
+    @Nullable
+    public abstract String trialAcronym();
+
 }

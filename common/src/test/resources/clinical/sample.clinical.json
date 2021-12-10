@@ -62,7 +62,8 @@
       "targetedType": null,
       "hormoneType": null,
       "stemCellTransType": null,
-      "supportiveType": null
+      "supportiveType": null,
+      "trialAcronym": null
     }
   ],
   "priorSecondPrimaries": [

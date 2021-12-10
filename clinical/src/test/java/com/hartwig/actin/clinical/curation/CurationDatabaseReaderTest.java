@@ -99,6 +99,7 @@ public class CurationDatabaseReaderTest {
         assertNull(curated1.hormoneType());
         assertNull(curated1.stemCellTransType());
         assertNull(curated1.supportiveType());
+        assertNull(curated1.trialAcronym());
 
         OncologicalHistoryConfig config2 = find(configs, "Breast Jan-2018");
         assertFalse(config2.ignore());

@@ -187,7 +187,8 @@ class ClinicalDAO {
                     PRIORTUMORTREATMENT.TARGETEDTYPE,
                     PRIORTUMORTREATMENT.HORMONETYPE,
                     PRIORTUMORTREATMENT.STEMCELLTRANSTYPE,
-                    PRIORTUMORTREATMENT.SUPPORTIVETYPE)
+                    PRIORTUMORTREATMENT.SUPPORTIVETYPE,
+                    PRIORTUMORTREATMENT.TRIALACRONYM)
                     .values(sampleId,
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
@@ -199,7 +200,8 @@ class ClinicalDAO {
                             priorTumorTreatment.targetedType(),
                             priorTumorTreatment.hormoneType(),
                             priorTumorTreatment.stemCellTransType(),
-                            priorTumorTreatment.supportiveType())
+                            priorTumorTreatment.supportiveType(),
+                            priorTumorTreatment.trialAcronym())
                     .execute();
         }
     }
