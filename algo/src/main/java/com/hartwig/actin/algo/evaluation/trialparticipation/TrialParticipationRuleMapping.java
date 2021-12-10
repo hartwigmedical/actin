@@ -12,21 +12,19 @@ import org.jetbrains.annotations.NotNull;
 public final class TrialParticipationRuleMapping {
 
     private TrialParticipationRuleMapping() {
-
     }
 
-        @NotNull
-        public static Map<EligibilityRule, FunctionCreator> create() {
-            Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
+    @NotNull
+    public static Map<EligibilityRule, FunctionCreator> create() {
+        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-            map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, notImplementedCreator());
+        map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, notImplementedCreator());
 
-            return map;
+        return map;
     }
 
-        @NotNull
-        private static FunctionCreator notImplementedCreator() {
-            return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
-        }
-
+    @NotNull
+    private static FunctionCreator notImplementedCreator() {
+        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
+    }
 }

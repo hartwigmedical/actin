@@ -14,6 +14,6 @@ public class HasExhaustedSOCTreatments implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return Evaluation.UNDETERMINED;
+        return Evaluation.PASS_BUT_WARN;
     }
 }
