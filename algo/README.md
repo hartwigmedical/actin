@@ -167,9 +167,9 @@ HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN (is
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
 Note: for all lab values, the latest available lab value (up to 30 days) is evaluated. 
-If the latest lab value is out of the requested range, the second-last lab value is evaluated (if available and also within 30 days). 
-In case that the second-last lab value is available AND within requested range, the evaluation resolves to UNDETERMINED. In case no second-last value is available, 
-or that value is also out of requested range, the evaluation resolves to FAIL.
+If the latest lab value is out of the requested range, the second-last lab value is evaluated. 
+In case that a second-last lab value is available and within requested range as configured in the rule, the evaluation resolves to UNDETERMINED. In case no second-last value is applicable, 
+or that this value is also out of requested range, the evaluation resolves to FAIL.
 
 ##### Rules related to other conditions
 
@@ -203,7 +203,7 @@ HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid shoul
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
-ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE | > won't be evaluated. 
+ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated. 
 
 ##### Rules related to current medication
 
