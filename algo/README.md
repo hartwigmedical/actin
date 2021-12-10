@@ -121,6 +121,7 @@ IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tum
 Rule | When does a patient pass evaluation?
 ---|---
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
+MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results (later to be extended)
 ACTIVATION_OF_GENE_X | Driver is found in gene X
 INACTIVATION_OF_GENE_X | Driver is found in gene X
 ACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
@@ -230,6 +231,12 @@ Rule | When does a patient pass evaluation?
 IS_BREASTFEEDING | > won't be evaluated
 IS_PREGNANT | > won't be evaluated
 IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be evaluated
+
+##### Rules related to cancer related complication
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_COMPLICATION_X | Cancer related complication > name like %X%
 
 ##### Rules related to toxicity
 

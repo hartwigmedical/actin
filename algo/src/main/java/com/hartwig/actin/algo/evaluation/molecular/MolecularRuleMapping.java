@@ -19,6 +19,7 @@ public final class MolecularRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.ACTIVATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());

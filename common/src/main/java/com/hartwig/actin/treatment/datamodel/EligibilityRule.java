@@ -49,6 +49,7 @@ public enum EligibilityRule {
 
     // Rules related to molecular results
     MOLECULAR_RESULTS_MUST_BE_AVAILABLE,
+    MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X,
     ACTIVATION_OF_GENE_X,
     INACTIVATION_OF_GENE_X,
     ACTIVATING_MUTATION_IN_GENE_X,
@@ -136,6 +137,9 @@ public enum EligibilityRule {
     IS_BREASTFEEDING,
     IS_PREGNANT,
     IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION_IF_REQUIRED,
+
+    // Rules related to complications
+    HAS_COMPLICATION_X,
 
     // Rules related to toxicity
     HAS_TOXICITY_OF_AT_LEAST_GRADE_X,
