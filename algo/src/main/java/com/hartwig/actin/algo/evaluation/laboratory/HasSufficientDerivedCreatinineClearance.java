@@ -12,9 +12,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.interpretation.LabInterpretation;
-import com.hartwig.actin.clinical.interpretation.LabInterpreter;
-import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +22,8 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     private static final Logger LOGGER = LogManager.getLogger(HasSufficientDerivedCreatinineClearance.class);
 
-    private static final double MIN_EGFR_CKD_EPI_FALL_BACK_COCKCROFT_GAULT = 65D;
+    private static final double DEFAULT_MIN_WEIGHT_FEMALE = 50D;
+    private static final double DEFAULT_MIN_WEIGHT_MALE = 65D;
 
     private final int referenceYear;
     @NotNull
@@ -42,15 +40,13 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
-
         switch (method) {
             case EGFR_MDRD:
                 return evaluateMDRD(record, labValue);
             case EGFR_CKD_EPI:
                 return evaluateCKDEPI(record, labValue);
             case COCKCROFT_GAULT:
-                return evaluateCockcroftGault(record, labValue, interpretation.mostRecentValue(LabMeasurement.EGFR_CKD_EPI));
+                return evaluateCockcroftGault(record, labValue);
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
                 return Evaluation.NOT_IMPLEMENTED;
@@ -133,26 +129,34 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     }
 
     @NotNull
-    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine, @Nullable LabValue egfrCKDEPI) {
-        Double weight = determineWeight(record.clinical().bodyWeights());
-        if (weight == null) {
-            if (egfrCKDEPI == null) {
-                return Evaluation.UNDETERMINED;
-            }
+    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+        boolean isFemale = record.clinical().patient().gender() == Gender.FEMALE;
 
-            return egfrCKDEPI.value() > MIN_EGFR_CKD_EPI_FALL_BACK_COCKCROFT_GAULT ? Evaluation.PASS_BUT_WARN : Evaluation.UNDETERMINED;
+        Double weight = determineWeight(record.clinical().bodyWeights());
+        boolean weightIsKnown = weight != null;
+        if (!weightIsKnown) {
+            weight = isFemale ? DEFAULT_MIN_WEIGHT_FEMALE : DEFAULT_MIN_WEIGHT_MALE;
         }
 
         int age = referenceYear - record.clinical().patient().birthYear();
 
         double base = (140 - age) * weight / (0.81 * creatinine.value());
 
-        double adjusted = base;
-        if (record.clinical().patient().gender() == Gender.FEMALE) {
-            adjusted = base * 0.85;
-        }
+        double genderCorrected = isFemale ? base * 0.85 : base;
 
-        return LaboratoryUtil.evaluateVersusMinValue(adjusted, creatinine.comparator(), minCreatinineClearance);
+        Evaluation evaluation = LaboratoryUtil.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
+
+        if (weightIsKnown) {
+            return evaluation;
+        } else {
+            if (evaluation == Evaluation.FAIL) {
+                return Evaluation.UNDETERMINED;
+            } else if (evaluation == Evaluation.PASS) {
+                return Evaluation.PASS_BUT_WARN;
+            } else {
+                return evaluation;
+            }
+        }
     }
 
     @Nullable

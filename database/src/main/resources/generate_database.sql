@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS priorTumorTreatment;
 CREATE TABLE priorTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    name varchar(50) NOT NULL,
+    name varchar(100) NOT NULL,
     year int,
     month int,
     categories varchar(50) NOT NULL,

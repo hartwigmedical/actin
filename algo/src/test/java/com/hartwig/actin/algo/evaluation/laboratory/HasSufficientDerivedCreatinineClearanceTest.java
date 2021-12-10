@@ -101,20 +101,15 @@ public class HasSufficientDerivedCreatinineClearanceTest {
     @Test
     public void canEvaluateCockcroftGaultNoWeight() {
         HasSufficientDerivedCreatinineClearance function =
-                new HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100D);
+                new HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80);
 
         LabValue creatinine = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
-        LabValue ckdepiHigh = LabTestFactory.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(100D).build();
-        PatientRecord fallBack1 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine, ckdepiHigh), Lists.newArrayList());
+        PatientRecord fallBack1 = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         assertEquals(Evaluation.PASS_BUT_WARN, function.evaluate(fallBack1, creatinine));
 
-        LabValue ckdepiLow = LabTestFactory.builder().code(LabMeasurement.EGFR_CKD_EPI.code()).value(10D).build();
-        PatientRecord fallBack2 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine, ckdepiLow), Lists.newArrayList());
+        PatientRecord fallBack2 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         assertEquals(Evaluation.UNDETERMINED, function.evaluate(fallBack2, creatinine));
-
-        PatientRecord fallBack3 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), Lists.newArrayList());
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(fallBack3, creatinine));
     }
 
     @NotNull
