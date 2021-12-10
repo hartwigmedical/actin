@@ -58,10 +58,10 @@ public class HasToxicityWithGradeTest {
         HasToxicityWithGrade function = new HasToxicityWithGrade(2, null, Sets.newHashSet("ignore"));
 
         List<Toxicity> toxicities = Lists.newArrayList();
-        toxicities.add(builder().grade(2).name("ignore").build());
+        toxicities.add(builder().grade(2).name("ignore me please").build());
         assertEquals(Evaluation.FAIL, function.evaluate(withToxicities(toxicities)));
 
-        toxicities.add(builder().grade(2).name("do not ignore").build());
+        toxicities.add(builder().grade(2).name("keep me please").build());
         assertEquals(Evaluation.PASS, function.evaluate(withToxicities(toxicities)));
     }
 
@@ -70,10 +70,10 @@ public class HasToxicityWithGradeTest {
         HasToxicityWithGrade function = new HasToxicityWithGrade(2, "specific", Sets.newHashSet());
 
         List<Toxicity> toxicities = Lists.newArrayList();
-        toxicities.add(builder().grade(2).name("not specific").build());
+        toxicities.add(builder().grade(2).name("something random").build());
         assertEquals(Evaluation.FAIL, function.evaluate(withToxicities(toxicities)));
 
-        toxicities.add(builder().grade(2).name("specific").build());
+        toxicities.add(builder().grade(2).name("something specific").build());
         assertEquals(Evaluation.PASS, function.evaluate(withToxicities(toxicities)));
 
     }
