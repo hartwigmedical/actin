@@ -37,7 +37,7 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
     }
 
     private static boolean isOfType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category,
-            @NotNull String typeToMatch) {
+            @NotNull String termToFind) {
         String type = null;
         switch (category) {
             case CHEMOTHERAPY: {
@@ -62,6 +62,6 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
             }
         }
 
-        return typeToMatch.equals(type);
+        return type != null && type.contains(termToFind);
     }
 }

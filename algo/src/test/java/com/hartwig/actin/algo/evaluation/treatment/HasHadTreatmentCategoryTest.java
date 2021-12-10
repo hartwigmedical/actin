@@ -36,7 +36,7 @@ public class HasHadTreatmentCategoryTest {
 
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
-                .targetedType("Anti-EGFR")
+                .targetedType("Some Anti-EGFR Type")
                 .build());
         PatientRecord multiRecord2 = TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments);
         assertEquals(Evaluation.PASS, any.evaluate(multiRecord2));
