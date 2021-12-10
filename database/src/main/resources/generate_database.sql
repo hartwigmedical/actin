@@ -65,6 +65,7 @@ CREATE TABLE priorTumorTreatment
     hormoneType varchar(50),
     stemCellTransType varchar(50),
     supportiveType varchar(50),
+    trialAcronym varchar(50),
     PRIMARY KEY (id)
 );
 

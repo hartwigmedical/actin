@@ -79,6 +79,7 @@ targetedType | | Type of targeted therapy (if applicable)
 hormoneType | | Type of hormonal therapy (if applicable)
 stemCellTransType | | Type of stem cell transplantation therapy (if applicable)
 supportiveType | | Type of supportive treatment (if applicable)
+trialAcronym | | Acronym of trial (if applicable)
 
 N prior second primaries   
 
