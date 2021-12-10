@@ -101,8 +101,8 @@ HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC | Presence of WGS details (
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D 
-HAS_DECLINED_SOC_TREATMENTS | T.B.D
+HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D - currently resolves to PASS_BUT_WARN
+HAS_DECLINED_SOC_TREATMENTS | T.B.D - currently not evaluated
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
 HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
 HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
@@ -110,7 +110,7 @@ EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries i
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Chemoradiotherapy, Stem cell transplantation, Antiviral therapy
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type contains "Y" | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = stem cell transplantation
@@ -193,7 +193,7 @@ HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal 
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
-HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D.
+HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D. - currently resolves to PASS_BUT_WARN
 IS_IN_DIALYSIS | > won't be evaluated
 
 ##### Rules related to infections
@@ -219,9 +219,9 @@ CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoag
 CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotics"
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids"
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists"
-CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D.
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. | Cytochrome P450 enzymes
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. | P-glycoprotein
+CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to PASS_BUT_WARN
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
 HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
 
 ##### Rules related to pregnancy/anticonception
