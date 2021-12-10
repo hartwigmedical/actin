@@ -166,8 +166,8 @@ HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN (is
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
-Note: for all lab values, the latest available lab value is evaluated. 
-If the latest lab value is out of the requested range, the second-last lab value is evaluated (if available). 
+Note: for all lab values, the latest available lab value (up to 30 days) is evaluated. 
+If the latest lab value is out of the requested range, the second-last lab value is evaluated (if available and also within 30 days). 
 In case that the second-last lab value is available AND within requested range, the evaluation resolves to UNDETERMINED. In case no second-last value is available, 
 or that value is also out of requested range, the evaluation resolves to FAIL.
 
