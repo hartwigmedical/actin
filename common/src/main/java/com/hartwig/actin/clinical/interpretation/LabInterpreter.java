@@ -18,6 +18,7 @@ public final class LabInterpreter {
 
     static {
         MAPPINGS.put(LabMeasurement.NEUTROPHILS_ABS_EDA, LabMeasurement.NEUTROPHILS_ABS);
+        MAPPINGS.put(LabMeasurement.LYMPHOCYTES_ABS_EDM, LabMeasurement.LYMPHOCYTES_ABS_EDA);
     }
 
     private LabInterpreter() {
