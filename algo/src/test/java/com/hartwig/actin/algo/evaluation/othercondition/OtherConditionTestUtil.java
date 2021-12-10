@@ -2,10 +2,10 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -20,8 +20,8 @@ final class OtherConditionTestUtil {
     }
 
     @NotNull
-    public static DoidEvaluator createTestDoidEvaluator() {
-        return new DoidEvaluator(TestDoidModelFactory.createMinimalTestDoidModel());
+    public static PatientRecord withPriorOtherCondition(@NotNull PriorOtherCondition priorOtherCondition) {
+        return withPriorOtherConditions(Lists.newArrayList(priorOtherCondition));
     }
 
     @NotNull
