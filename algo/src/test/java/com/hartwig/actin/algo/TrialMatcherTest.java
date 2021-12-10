@@ -47,7 +47,7 @@ public class TrialMatcherTest {
     private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {
         assertEquals(1, trialEligibility.evaluations().size());
         assertEquals(Evaluation.PASS, trialEligibility.overallEvaluation());
-        assertEquals(Evaluation.PASS, findEvaluationForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD));
+        assertEquals(Evaluation.PASS, findEvaluationForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
 
         assertEquals(3, trialEligibility.cohorts().size());
 

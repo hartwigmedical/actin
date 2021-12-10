@@ -15,11 +15,11 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class IsAtLeastEighteenYearsOldTest {
+public class HasAtLeastCertainAgeTest {
 
     @Test
     public void canEvaluate() {
-        EvaluationFunction function = new IsAtLeastEighteenYearsOld(2020);
+        EvaluationFunction function = new HasAtLeastCertainAge(2020, 18);
 
         assertEquals(Evaluation.PASS, function.evaluate(patientWithBirthYear(1960)));
         assertEquals(Evaluation.FAIL, function.evaluate(patientWithBirthYear(2014)));

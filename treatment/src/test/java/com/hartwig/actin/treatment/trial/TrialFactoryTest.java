@@ -41,8 +41,8 @@ public class TrialFactoryTest {
 
         assertEquals(1, trial.generalEligibility().size());
 
-        EligibilityFunction generalFunction = findFunction(trial.generalEligibility(), EligibilityRule.IS_AT_LEAST_18_YEARS_OLD);
-        assertTrue(generalFunction.parameters().isEmpty());
+        EligibilityFunction generalFunction = findFunction(trial.generalEligibility(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD);
+        assertEquals(1, generalFunction.parameters().size());
 
         assertEquals(3, trial.cohorts().size());
 

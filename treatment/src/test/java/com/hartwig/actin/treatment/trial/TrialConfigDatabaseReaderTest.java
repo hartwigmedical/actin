@@ -70,7 +70,7 @@ public class TrialConfigDatabaseReaderTest {
         InclusionCriteriaConfig config = configs.get(0);
         assertEquals("ACTN 2021", config.trialId());
         assertTrue(config.appliesToCohorts().isEmpty());
-        assertEquals("AND(IS_AT_LEAST_18_YEARS_OLD, HAS_METASTATIC_CANCER)", config.inclusionRule());
+        assertEquals("AND(IS_AT_LEAST_X_YEARS_OLD[18], HAS_METASTATIC_CANCER)", config.inclusionRule());
     }
 
     private static void assertInclusionCriteriaReferenceConfigs(@NotNull List<InclusionCriteriaReferenceConfig> configs) {

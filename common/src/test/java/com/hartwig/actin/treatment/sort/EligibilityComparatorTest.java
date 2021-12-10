@@ -50,7 +50,7 @@ public class EligibilityComparatorTest {
     @NotNull
     private static Eligibility createWithoutReferences() {
         return ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
                 .build();
     }
 }

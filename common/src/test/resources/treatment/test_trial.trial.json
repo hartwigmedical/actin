@@ -13,8 +13,10 @@
         }
       ],
       "function": {
-        "rule": "IS_AT_LEAST_18_YEARS_OLD",
-        "parameters": []
+        "rule": "IS_AT_LEAST_X_YEARS_OLD",
+        "parameters": [
+          "18"
+        ]
       }
     }
   ],

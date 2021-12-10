@@ -56,7 +56,7 @@ Field | Example
 trialId | ACTN 2021
 referenceIds | I-01, I-02
 appliesToCohorts | all
-inclusionRule | AND(IS_AT_LEAST_18_YEARS_OLD, HAS_METASTATIC_CANCER)
+inclusionRule | AND(IS_AT_LEAST_X_YEARS_OLD[18], HAS_METASTATIC_CANCER)
 
 The following checks are done on the level of inclusion criteria:
  - Every trial ID referenced in an inclusion criterion must be defined in the trial definition file
@@ -90,7 +90,7 @@ Some examples:
 
 Human readable rule | How to configure as a inclusion rule
 ---|---
-Patient has to be an adult | IS_AT_LEAST_18_YEARS_OLD
+Patient has to be an adult | IS_AT_LEAST_X_YEARS_OLD[18]
 Has a maximum total bilirubin of 2.5 ULN, or 5.0 ULN in case patient has Gilbert's disease | OR(HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X[2.5], AND(HAS_GILBERT_DISEASE, HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X[5]))
 Patient has no active CNS metastases | NOT(HAS_ACTIVE_CNS_METASTASES)
 

@@ -56,14 +56,16 @@ public final class TestTreatmentMatchFactory {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
                 .build(), Evaluation.PASS);
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
                         .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES).build())
+                        .addParameters(ImmutableEligibilityFunction.builder()
+                                .rule(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES)
+                                .build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("E-01")
@@ -86,7 +88,9 @@ public final class TestTreatmentMatchFactory {
     private static List<CohortEligibility> createTestCohorts() {
         List<CohortEligibility> cohorts = Lists.newArrayList();
 
-        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("A")).overallEvaluation(Evaluation.FAIL)
+        cohorts.add(ImmutableCohortEligibility.builder()
+                .metadata(createTestMetadata("A"))
+                .overallEvaluation(Evaluation.FAIL)
                 .evaluations(createTestCohortEvaluations())
                 .build());
 

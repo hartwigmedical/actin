@@ -6,22 +6,23 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsAtLeastEighteenYearsOld implements EvaluationFunction {
+public class HasAtLeastCertainAge implements EvaluationFunction {
 
     private final int referenceYear;
+    private final int minAge;
 
-    IsAtLeastEighteenYearsOld(final int referenceYear) {
+    HasAtLeastCertainAge(final int referenceYear, final int minAge) {
         this.referenceYear = referenceYear;
+        this.minAge = minAge;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         int age = referenceYear - record.clinical().patient().birthYear();
-        if (age > 18) {
+        if (age > minAge) {
             return Evaluation.PASS;
-        } else if (age == 18) {
-            // Since we only know the birth year we cannot determine if someone with 18 yrs difference is actually 18 years old.
+        } else if (age == minAge) {
             return Evaluation.PASS_BUT_WARN;
         } else {
             return Evaluation.FAIL;

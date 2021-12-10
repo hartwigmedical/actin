@@ -17,8 +17,8 @@ public class EligibilityFunctionComparatorTest {
     public void canSortEligibilityFunctions() {
         List<EligibilityFunction> functions = Lists.newArrayList();
 
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build());
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build());
+        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build());
+        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build());
         functions.add(ImmutableEligibilityFunction.builder()
                 .rule(EligibilityRule.NOT)
                 .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
@@ -56,8 +56,8 @@ public class EligibilityFunctionComparatorTest {
         assertEquals(EligibilityRule.AND, functions.get(1).rule());
         assertEquals(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, functions.get(2).rule());
         assertEquals(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, functions.get(3).rule());
-        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, functions.get(4).rule());
-        assertEquals(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, functions.get(5).rule());
+        assertEquals(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, functions.get(4).rule());
+        assertEquals(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, functions.get(5).rule());
         assertEquals(EligibilityRule.NOT, functions.get(6).rule());
         assertEquals(EligibilityRule.NOT, functions.get(7).rule());
     }

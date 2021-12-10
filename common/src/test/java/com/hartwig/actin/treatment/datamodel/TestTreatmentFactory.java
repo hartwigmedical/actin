@@ -45,7 +45,7 @@ public final class TestTreatmentFactory {
         List<Eligibility> functions = Lists.newArrayList();
 
         functions.add(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD).build())
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).addParameters("18").build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
                 .build());
 

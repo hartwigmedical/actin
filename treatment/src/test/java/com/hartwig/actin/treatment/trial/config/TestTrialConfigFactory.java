@@ -64,8 +64,7 @@ public final class TestTrialConfigFactory {
 
         ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
 
-        configs.add(builder.referenceIds(Sets.newHashSet("I-01"))
-                .inclusionRule(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD.toString())
+        configs.add(builder.referenceIds(Sets.newHashSet("I-01")).inclusionRule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD + "[18]")
                 .build());
         configs.add(builder.referenceIds(Sets.newHashSet("I-02"))
                 .inclusionRule(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X + "[1]")

@@ -210,7 +210,7 @@ public class FunctionInputResolverTest {
 
     @NotNull
     private static EligibilityFunction createValidTestFunction() {
-        return create(EligibilityRule.IS_AT_LEAST_18_YEARS_OLD, Lists.newArrayList());
+        return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, Lists.newArrayList());
     }
 
     @NotNull
