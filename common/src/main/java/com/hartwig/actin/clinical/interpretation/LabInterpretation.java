@@ -59,7 +59,6 @@ public class LabInterpretation {
     public List<LabValue> allValues(@NotNull LabMeasurement measurement) {
         List<LabValue> values = measurements.get(measurement);
         if (values == null || values.isEmpty()) {
-            LOGGER.warn("Could not find any measurement for '{}'", measurement.code());
             return null;
         }
         return values;
