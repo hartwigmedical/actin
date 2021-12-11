@@ -10,14 +10,10 @@ import com.google.common.collect.Multimap;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class LabInterpretation {
-
-    private static final Logger LOGGER = LogManager.getLogger(LabInterpretation.class);
 
     @NotNull
     private final Map<LabMeasurement, List<LabValue>> measurements;
