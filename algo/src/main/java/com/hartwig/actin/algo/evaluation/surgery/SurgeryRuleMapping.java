@@ -1,10 +1,13 @@
 package com.hartwig.actin.algo.evaluation.surgery;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +27,10 @@ public final class SurgeryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadRecentSurgeryCreator() {
-        return function -> new HasHadRecentSurgery();
+        return function -> {
+            int maxAgeWeeks = FunctionInputResolver.createOneIntegerInput(function);
+            LocalDate minDate = EvaluationConstants.REFERENCE_DATE.minusWeeks(maxAgeWeeks);
+            return new HasHadRecentSurgery(minDate);
+        };
     }
 }

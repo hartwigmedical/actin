@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.components;
 
-import java.time.LocalDate;
-
+import com.hartwig.actin.report.pdf.util.Constants;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.itextpdf.kernel.font.PdfFont;
@@ -41,7 +40,7 @@ public class SidePanel {
         Canvas cv = new Canvas(canvas, page.getPageSize());
 
         cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", patientId));
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", Formats.date(LocalDate.now())));
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", Formats.date(Constants.REPORT_DATE)));
 
         canvas.release();
     }

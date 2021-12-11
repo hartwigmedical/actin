@@ -1,8 +1,12 @@
 package com.hartwig.actin.report.pdf.util;
 
+import java.time.LocalDate;
+
 import com.hartwig.actin.report.ReporterApplication;
 
 public final class Constants {
+
+    public static final LocalDate REPORT_DATE = LocalDate.now();
 
     public static final String METADATA_TITLE = "HMF ACTIN Report v" + ReporterApplication.VERSION;
     public static final String METADATA_AUTHOR = "Hartwig ACTIN System";

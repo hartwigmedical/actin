@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class LaboratoryRuleMapping {
 
-    private static final LocalDate MIN_VALID_LAB_DATE = LocalDate.now().minusDays(EvaluationConstants.MAX_LAB_VALUE_AGE_DAYS);
+    private static final LocalDate MIN_VALID_LAB_DATE =
+            EvaluationConstants.REFERENCE_DATE.minusDays(EvaluationConstants.MAX_LAB_VALUE_AGE_DAYS);
 
     private LaboratoryRuleMapping() {
     }

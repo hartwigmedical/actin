@@ -279,7 +279,7 @@ IS_PARTICIPATING_IN_ANOTHER_TRIAL | > Won't be evaluated
 
 Rule | When does a patient pass evaluation? 
 ---|---
-PATIENT_IS_TREATED_IN_HOSPITAL_X | Sample ID -> Hospital information > hospital should be hospital X
+PATIENT_IS_TREATED_IN_HOSPITAL_X | > Won't be evaluated
  
 ### Disease Ontology ID (DOID)
  
