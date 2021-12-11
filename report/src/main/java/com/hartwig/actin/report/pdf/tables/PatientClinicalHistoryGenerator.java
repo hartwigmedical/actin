@@ -98,7 +98,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
         String treatmentName = !priorTumorTreatment.name().isEmpty()
                 ? priorTumorTreatment.name()
-                : TreatmentCategoryResolver.toString(priorTumorTreatment.categories());
+                : TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories());
 
         return treatmentName + dateAddition;
     }

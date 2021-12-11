@@ -193,7 +193,7 @@ class ClinicalDAO {
                             priorTumorTreatment.name(),
                             priorTumorTreatment.year(),
                             priorTumorTreatment.month(),
-                            TreatmentCategoryResolver.toString(priorTumorTreatment.categories()),
+                            TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories()),
                             DataUtil.toByte(priorTumorTreatment.isSystemic()),
                             priorTumorTreatment.chemoType(),
                             priorTumorTreatment.immunoType(),

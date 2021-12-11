@@ -30,7 +30,7 @@ public final class TreatmentCategoryResolver {
     }
 
     @NotNull
-    public static String toString(@NotNull Set<TreatmentCategory> categories) {
+    public static String toStringList(@NotNull Set<TreatmentCategory> categories) {
         StringJoiner joiner = new StringJoiner(DELIMITER);
         for (TreatmentCategory category : categories) {
             joiner.add(toString(category));

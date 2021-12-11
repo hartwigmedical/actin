@@ -28,8 +28,8 @@ public class MolecularPrinter {
         printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
 
         MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
-        printer.print("Responsive mutations: " + concat(interpretation.ckbApplicableResponsiveEvents()));
-        printer.print("Resistance mutations: " + concat(interpretation.ckbApplicableResistanceEvents()));
+        printer.print("CKB-Responsive mutations: " + concat(interpretation.ckbApplicableResponsiveEvents()));
+        printer.print("CKB-Resistance mutations: " + concat(interpretation.ckbApplicableResistanceEvents()));
     }
 
     @NotNull
