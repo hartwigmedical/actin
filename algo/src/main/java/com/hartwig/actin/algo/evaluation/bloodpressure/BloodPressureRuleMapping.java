@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,19 +18,17 @@ public final class BloodPressureRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientSBPCreator());
-        map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientDBPCreator());
+        map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
+        map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientDBPCreator() {
-        return function -> new HasSufficientDBP();
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientSBPCreator() {
-        return function -> new HasSufficientSBP();
+    private static FunctionCreator hasSufficientBloodPressureCreator(@NotNull BloodPressureCategory category) {
+        return function -> {
+            double minAvgBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientBloodPressure(category, minAvgBloodPressure);
+        };
     }
 }
