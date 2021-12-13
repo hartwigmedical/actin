@@ -23,8 +23,10 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
+        map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, hasSufficientLifeExpectancyCreator());
+        map.put(EligibilityRule.PATIENT_IS_TREATED_IN_HOSPITAL_X, patientIsTreatedInHospitalCreator());
 
         return map;
     }
@@ -56,7 +58,17 @@ public final class GeneralRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator participatesInAnotherTrialCreator() {
+        return function -> new ParticipatesInAnotherTrial();
+    }
+
+    @NotNull
     private static FunctionCreator hasSufficientLifeExpectancyCreator() {
         return function -> new HasSufficientLifeExpectancy();
+    }
+
+    @NotNull
+    private static FunctionCreator patientIsTreatedInHospitalCreator() {
+        return function -> new PatientIsTreatedInHospital();
     }
 }

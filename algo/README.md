@@ -75,8 +75,10 @@ IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | PASS_BUT_WARN in c
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
+IS_PARTICIPATING_IN_ANOTHER_TRIAL | > Won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
+PATIENT_IS_TREATED_IN_HOSPITAL_X | > Won't be evaluated
 
 ##### Rules related to tumor and lesion locations
  
@@ -268,18 +270,6 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
-
-##### Rules related to other trials
-
-Rule | When does a patient pass evaluation? 
----|---
-IS_PARTICIPATING_IN_ANOTHER_TRIAL | > Won't be evaluated
- 
-##### Rules related to hospital
-
-Rule | When does a patient pass evaluation? 
----|---
-PATIENT_IS_TREATED_IN_HOSPITAL_X | > Won't be evaluated
  
 ### Disease Ontology ID (DOID)
  
