@@ -216,15 +216,15 @@ Rule | When does a patient pass evaluation?| Note
 HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
-CURRENTLY_GETS_MEDICATION | Medication > name is not empty
-CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoagulants"
-CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotics"
-CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids"
-CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists"
+CURRENTLY_GETS_MEDICATION | Medication > name is not empty and status is active
+CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoagulants" and status is active
+CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotics" and status is active
+CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids" and status is active
+CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to PASS_BUT_WARN
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
-HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of anticoagulants AND only 1 distinct dosage
+HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of "Anticoagulants" AND only 1 distinct dosage
 
 ##### Rules related to pregnancy/anticonception
 
