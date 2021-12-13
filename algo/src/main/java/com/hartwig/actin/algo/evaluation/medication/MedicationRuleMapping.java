@@ -19,8 +19,8 @@ public final class MedicationRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
-        map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, notImplementedCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, notImplementedCreator());
+        map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, canSwallowOralMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, notImplementedCreator());
@@ -37,6 +37,16 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator hasAllergyRelatedToStudyMedicationCreator() {
         return function -> new HasAllergyRelatedToStudyMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator canSwallowOralMedicationCreator() {
+        return function -> new CanSwallowOralMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getsAntiCancerMedicationCreator() {
+        return function -> new CurrentlyGetsAntiCancerMedication();
     }
 
     @NotNull
