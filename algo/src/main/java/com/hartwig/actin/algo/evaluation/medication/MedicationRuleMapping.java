@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.medication;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -11,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MedicationRuleMapping {
 
-    private static final String ANTICOAGULANTS_TYPE = "Anticoagulants";
-    private static final String ANTIBIOTICS_TYPE = "Antibiotics";
-    private static final String CORTICOSTEROIDS_TYPE = "Corticosteroids";
-    private static final String VITAMIN_K_ANTAGONISTS_TYPE = "Vitamin K Antagonists";
+    private static final String ANTICOAGULANTS = "Anticoagulants";
+    private static final String ANTIBIOTICS = "Antibiotics";
+    private static final String CORTICOSTEROIDS = "Corticosteroids";
+    private static final String VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists";
 
     private MedicationRuleMapping() {
     }
@@ -27,14 +26,13 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfTypeCreator(ANTIBIOTICS_TYPE));
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsActiveMedicationOfTypeCreator(ANTICOAGULANTS_TYPE));
-        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfTypeCreator(CORTICOSTEROIDS_TYPE));
-        map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION,
-                getsActiveMedicationOfTypeCreator(VITAMIN_K_ANTAGONISTS_TYPE));
-        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, currentlyGetsImmunoSuppressantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, notImplementedCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, notImplementedCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfTypeCreator(ANTIBIOTICS));
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsActiveMedicationOfTypeCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfTypeCreator(CORTICOSTEROIDS));
+        map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, getsActiveMedicationOfTypeCreator(VITAMIN_K_ANTAGONISTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, hasStableAnticoagulantDosingCreator());
 
         return map;
@@ -66,17 +64,23 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator currentlyGetsImmunoSuppressantMedicationCreator() {
+    private static FunctionCreator getsImmunoSuppressantMedicationCreator() {
         return function -> new CurrentlyGetsImmunoSuppressantMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getsPGPInhibitingMedicationCreator() {
+        return function -> new CurrentlyGetsPGPInhibitingMedication();
+
+    }
+
+    @NotNull
+    private static FunctionCreator getsCYPXInhibitingMedicationCreator() {
+        return function -> new CurrentlyGetsCYPXInhibitingMedication();
     }
 
     @NotNull
     private static FunctionCreator hasStableAnticoagulantDosingCreator() {
         return function -> new HasStableAnticoagulantDosing();
-    }
-
-    @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }
