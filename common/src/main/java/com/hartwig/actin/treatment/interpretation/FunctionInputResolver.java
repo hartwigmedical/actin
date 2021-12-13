@@ -71,7 +71,6 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, FunctionInput.ONE_INTEGER);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
 
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, FunctionInput.NONE);

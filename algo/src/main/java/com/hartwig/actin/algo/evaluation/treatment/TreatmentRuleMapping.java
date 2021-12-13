@@ -36,7 +36,6 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, hasHadTreatmentCategoryOfTypeCreator());
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
-        map.put(EligibilityRule.HAS_HAD_STEM_CELL_TRANSPLANTATION, hasHadStemCellTransplantationCreator());
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
 
         return map;
@@ -116,10 +115,6 @@ public final class TreatmentRuleMapping {
         return function -> new HasHadFluoropyrimidineTreatment();
     }
 
-    @NotNull
-    private static FunctionCreator hasHadStemCellTransplantationCreator() {
-        return function -> new HasHadTreatmentCategory(TreatmentCategory.STEM_CELL_TRANSPLANTATION, null);
-    }
 
     @NotNull
     private static FunctionCreator isEligibleForOnLabelDrugCreator() {
