@@ -1,7 +1,6 @@
 package com.hartwig.actin.serve;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -30,27 +29,16 @@ public class ServeRecordExtractorTest {
 
         List<ServeRecord> records = ServeRecordExtractor.extract(trials);
 
-        assertEquals(4, records.size());
+        assertEquals(3, records.size());
 
         ServeRecord first = find(records, EligibilityRule.ACTIVATING_FUSION_IN_GENE_X);
-        assertEquals("trial 1", first.trialId());
-        assertNull(first.cohortId());
         assertEquals(Lists.newArrayList("gene 1"), first.parameters());
 
-        ServeRecord second = find(records, EligibilityRule.TMB_OF_AT_LEAST_X);
-        assertEquals("trial 1", second.trialId());
-        assertNull(second.cohortId());
-        assertEquals(Lists.newArrayList("450"), second.parameters());
+        ServeRecord second = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
+        assertEquals(Lists.newArrayList("gene 2", "coding"), second.parameters());
 
-        ServeRecord third = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
-        assertEquals("trial 2", third.trialId());
-        assertNull(third.cohortId());
-        assertEquals(Lists.newArrayList("gene 2", "coding"), third.parameters());
-
-        ServeRecord fourth = find(records, EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X);
-        assertEquals("trial 2", fourth.trialId());
-        assertEquals("cohort 2", fourth.cohortId());
-        assertEquals(Lists.newArrayList("gene 3"), fourth.parameters());
+        ServeRecord third = find(records, EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X);
+        assertEquals(Lists.newArrayList("gene 3"), third.parameters());
     }
 
     @NotNull

@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.serve.datamodel.ImmutableServeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
-import com.hartwig.actin.serve.interpretation.MolecularRules;
+import com.hartwig.actin.serve.interpretation.ServeRules;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -65,13 +65,8 @@ public final class ServeRecordExtractor {
             } else {
                 throw new IllegalStateException("Could not interpret composite input '" + input + "'");
             }
-        } else if (MolecularRules.isMolecular(function.rule())) {
-            records.add(ImmutableServeRecord.builder()
-                    .trialId(trialId)
-                    .cohortId(cohortId)
-                    .rule(function.rule())
-                    .parameters(toStrings(function.parameters()))
-                    .build());
+        } else if (ServeRules.isMolecular(function.rule())) {
+            records.add(ImmutableServeRecord.builder().rule(function.rule()).parameters(toStrings(function.parameters())).build());
         }
 
         return records;

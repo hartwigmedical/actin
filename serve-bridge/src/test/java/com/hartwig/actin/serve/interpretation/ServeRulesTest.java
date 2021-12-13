@@ -7,12 +7,12 @@ import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.junit.Test;
 
-public class MolecularRulesTest {
+public class ServeRulesTest {
 
     @Test
     public void noMolecularRuleIsAlsoComposite() {
         for (EligibilityRule rule : EligibilityRule.values()) {
-            assertFalse(MolecularRules.isMolecular(rule) && CompositeRules.isComposite(rule));
+            assertFalse(ServeRules.isMolecular(rule) && CompositeRules.isComposite(rule));
         }
     }
 }

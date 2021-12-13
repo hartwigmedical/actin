@@ -7,7 +7,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class MolecularRules {
+public final class ServeRules {
 
     private static final Set<EligibilityRule> MOLECULAR_RULES = Sets.newHashSet();
 
@@ -21,16 +21,9 @@ public final class MolecularRules {
         MOLECULAR_RULES.add(EligibilityRule.DELETION_OF_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.SPECIFIC_FUSION_X);
-        MOLECULAR_RULES.add(EligibilityRule.OVEREXPRESSION_OF_GENE_X);
-        MOLECULAR_RULES.add(EligibilityRule.WILDTYPE_OF_GENE_X);
-        MOLECULAR_RULES.add(EligibilityRule.MSI_SIGNATURE);
-        MOLECULAR_RULES.add(EligibilityRule.HRD_SIGNATURE);
-        MOLECULAR_RULES.add(EligibilityRule.TMB_OF_AT_LEAST_X);
-        MOLECULAR_RULES.add(EligibilityRule.TML_OF_AT_LEAST_X);
-        MOLECULAR_RULES.add(EligibilityRule.TML_OF_AT_MOST_X);
     }
 
-    private MolecularRules() {
+    private ServeRules() {
     }
 
     public static boolean isMolecular(@NotNull EligibilityRule rule) {

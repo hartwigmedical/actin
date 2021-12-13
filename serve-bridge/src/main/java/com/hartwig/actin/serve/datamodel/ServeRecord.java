@@ -13,12 +13,6 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ServeRecord {
 
     @NotNull
-    public abstract String trialId();
-
-    @Nullable
-    public abstract String cohortId();
-
-    @NotNull
     public abstract EligibilityRule rule();
 
     @NotNull

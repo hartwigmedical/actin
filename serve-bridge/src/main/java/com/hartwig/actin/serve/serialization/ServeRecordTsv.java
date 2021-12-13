@@ -9,7 +9,6 @@ import java.util.StringJoiner;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class ServeRecordTsv {
@@ -32,7 +31,7 @@ public final class ServeRecordTsv {
 
     @NotNull
     private static String header() {
-        return new StringJoiner(FIELD_DELIMITER).add("trialId").add("cohortId").add("rule").add("parameters").toString();
+        return new StringJoiner(FIELD_DELIMITER).add("rule").add("parameters").toString();
     }
 
     @NotNull
@@ -41,12 +40,7 @@ public final class ServeRecordTsv {
         for (String param : record.parameters()) {
             params.add(param);
         }
-        String cohortId = record.cohortId() != null ? record.cohortId() : Strings.EMPTY;
 
-        return new StringJoiner(FIELD_DELIMITER).add(record.trialId())
-                .add(cohortId)
-                .add(record.rule().toString())
-                .add(params.toString())
-                .toString();
+        return new StringJoiner(FIELD_DELIMITER).add(record.rule().toString()).add(params.toString()).toString();
     }
 }
