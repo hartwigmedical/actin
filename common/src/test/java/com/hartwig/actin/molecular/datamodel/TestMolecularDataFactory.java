@@ -25,6 +25,8 @@ public final class TestMolecularDataFactory {
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(MolecularExperimentType.WGS)
                 .hasReliableQuality(true)
+                .tumorMutationalBurden(0D)
+                .tumorMutationalLoad(0)
                 .build();
     }
 
@@ -34,6 +36,10 @@ public final class TestMolecularDataFactory {
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
                 .configuredPrimaryTumorDoids(createTestConfiguredPrimaryTumorDoids())
+                .isMicrosatelliteUnstable(false)
+                .isHomologousRepairDeficient(false)
+                .tumorMutationalBurden(13.71)
+                .tumorMutationalLoad(189)
                 .evidences(createTestEvidences())
                 .build();
     }

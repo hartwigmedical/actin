@@ -2,7 +2,9 @@ package com.hartwig.actin.molecular.serialization;
 
 import static com.hartwig.actin.json.Json.array;
 import static com.hartwig.actin.json.Json.bool;
+import static com.hartwig.actin.json.Json.integer;
 import static com.hartwig.actin.json.Json.nullableDate;
+import static com.hartwig.actin.json.Json.number;
 import static com.hartwig.actin.json.Json.object;
 import static com.hartwig.actin.json.Json.string;
 import static com.hartwig.actin.json.Json.stringList;
@@ -32,9 +34,20 @@ import com.hartwig.actin.molecular.datamodel.MolecularExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class MolecularRecordJson {
+
+    private static final Logger LOGGER = LogManager.getLogger(MolecularRecordJson.class);
+
+    private static final String MICROSATELLITE_STABLE = "MSS";
+    private static final String MICROSATELLITE_UNSTABLE = "MSI";
+
+    private static final String HOMOLOGOUS_REPAIR_DEFICIENT = "HR_DEFICIENT";
+    private static final String HOMOLOGOUS_REPAIR_PROFICIENT = "HR_PROFICIENT";
 
     private MolecularRecordJson() {
     }
@@ -54,14 +67,24 @@ public final class MolecularRecordJson {
                 @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject record = jsonElement.getAsJsonObject();
 
+            // TODO Extract wildtype genes from WGS results.
+            // TODO Extract fusion genes & mutations from ACTIN protect results.
+
             JsonObject purple = object(record, "purple");
-            JsonObject purpleQc = object(purple, "qc");
+            JsonObject chord = object(record, "chord");
             return ImmutableMolecularRecord.builder()
                     .sampleId(string(record, "sampleId"))
                     .date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
                     .type(MolecularExperimentType.WGS)
                     .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
+                    .mutations(Lists.newArrayList())
+                    .wildtypeGenes(Sets.newHashSet())
+                    .fusionGenes(Sets.newHashSet())
+                    .isMicrosatelliteUnstable(isMSI(string(purple, "microsatelliteStatus")))
+                    .isHomologousRepairDeficient(isHRD(string(chord, "hrStatus")))
+                    .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
+                    .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
                     .evidences(toEvidences(array(record, "protect")))
                     .build();
         }
@@ -76,6 +99,30 @@ public final class MolecularRecordJson {
             return doids;
         }
 
+        @Nullable
+        private static Boolean isMSI(@NotNull String microsatelliteStatus) {
+            if (microsatelliteStatus.equals(MICROSATELLITE_UNSTABLE)) {
+                return true;
+            } else if (microsatelliteStatus.equals(MICROSATELLITE_STABLE)) {
+                return false;
+            }
+
+            LOGGER.warn("Cannot interpret microsatellite status '{}'", microsatelliteStatus);
+            return null;
+        }
+
+        @Nullable
+        private static Boolean isHRD(@NotNull String homologousRepairStatus) {
+            if (homologousRepairStatus.equals(HOMOLOGOUS_REPAIR_DEFICIENT)) {
+                return true;
+            } else if (homologousRepairStatus.equals(HOMOLOGOUS_REPAIR_PROFICIENT)) {
+                return false;
+            }
+
+            LOGGER.warn("Cannot interpret homologous repair status '{}'", homologousRepairStatus);
+            return null;
+        }
+
         @NotNull
         private static List<MolecularTreatmentEvidence> toEvidences(@NotNull JsonArray protectArray) {
             List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
@@ -83,8 +130,7 @@ public final class MolecularRecordJson {
                 JsonObject evidence = element.getAsJsonObject();
                 boolean reported = bool(evidence, "reported");
                 if (reported) {
-                    evidences.add(ImmutableMolecularTreatmentEvidence.builder()
-                            .genomicEvent(string(evidence, "genomicEvent"))
+                    evidences.add(ImmutableMolecularTreatmentEvidence.builder().genomicEvent(string(evidence, "genomicEvent"))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))
                             .level(EvidenceLevel.valueOf(string(evidence, "level")))

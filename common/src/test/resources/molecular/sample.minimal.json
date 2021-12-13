@@ -3,7 +3,13 @@
   "reportDate": null,
   "configuredPrimaryTumor": [],
   "purple": {
-    "hasReliableQuality": true
+    "hasReliableQuality": false,
+    "microsatelliteStatus": "MSS",
+    "tumorMutationalBurdenPerMb": 0,
+    "tumorMutationalLoad": 0
+  },
+  "chord": {
+    "hrStatus": "HR_PROFICIENT"
   },
   "protect": []
 }

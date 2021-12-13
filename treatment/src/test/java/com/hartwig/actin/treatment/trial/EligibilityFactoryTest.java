@@ -25,7 +25,7 @@ public class EligibilityFactoryTest {
 
         // Complex rule with multiple AND and OR.
         assertTrue(EligibilityFactory.isValidInclusionCriterion("OR(AND(OR(HAS_INR_ULN_OF_AT_MOST_X[1], HAS_PT_ULN_OF_AT_MOST_X[2]), "
-                + " HAS_APTT_ULN_OF_AT_MOST_X[3]), HAS_STABLE_ANTICOAGULANT_DOSING)"));
+                + "HAS_APTT_ULN_OF_AT_MOST_X[3]), HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING)"));
 
         // Rules with composite functions with more than 2 inputs.
         assertTrue(EligibilityFactory.isValidInclusionCriterion(

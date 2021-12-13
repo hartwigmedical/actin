@@ -27,5 +27,24 @@ public abstract class MolecularRecord {
     public abstract Set<String> configuredPrimaryTumorDoids();
 
     @NotNull
+    public abstract List<GeneMutation> mutations();
+
+    @NotNull
+    public abstract Set<String> wildtypeGenes();
+
+    @NotNull
+    public abstract Set<String> fusionGenes();
+
+    @Nullable
+    public abstract Boolean isMicrosatelliteUnstable();
+
+    @Nullable
+    public abstract Boolean isHomologousRepairDeficient();
+
+    public abstract double tumorMutationalBurden();
+
+    public abstract int tumorMutationalLoad();
+
+    @NotNull
     public abstract List<MolecularTreatmentEvidence> evidences();
 }
