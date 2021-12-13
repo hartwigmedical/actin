@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -31,9 +32,11 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfTypeCreator(CORTICOSTEROIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, getsActiveMedicationOfTypeCreator(VITAMIN_K_ANTAGONISTS));
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, getsActiveAndStableMedicationOfTypeCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfTypeCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, notImplementedCreator());
 
         return map;
     }
@@ -82,5 +85,12 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsActiveAndStableMedicationOfTypeCreator(@NotNull String type) {
         return function -> new CurrentlyGetsMedicationWithType(type, true);
+
+    }
+
+    @NotNull
+    private static FunctionCreator notImplementedCreator() {
+        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
+
     }
 }
