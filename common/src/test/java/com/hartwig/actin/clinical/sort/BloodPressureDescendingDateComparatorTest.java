@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,8 +25,9 @@ public class BloodPressureDescendingDateComparatorTest {
 
         bloodPressures.sort(new BloodPressureDescendingDateComparator());
 
-        // TODO Implement
-        assertTrue(true);
+        assertEquals(bloodPressure1, bloodPressures.get(0));
+        assertEquals(bloodPressure2, bloodPressures.get(1));
+        assertEquals(bloodPressure3, bloodPressures.get(2));
     }
 
     @NotNull

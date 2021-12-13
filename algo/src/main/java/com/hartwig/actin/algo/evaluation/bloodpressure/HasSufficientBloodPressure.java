@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.BloodPressure;
+import com.hartwig.actin.clinical.sort.BloodPressureDescendingDateComparator;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,20 +27,20 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        double sum = 0;
         List<BloodPressure> relevant = selectRelevant(record.clinical().bloodPressures());
 
         if (relevant.isEmpty()) {
             return Evaluation.UNDETERMINED;
         }
 
+        double sum = 0;
         for (BloodPressure bloodPressure : relevant) {
             sum += bloodPressure.value();
         }
 
         double avg = sum / relevant.size();
 
-        return Double.compare(minAvgBloodPressure, avg) >= 0 ? Evaluation.PASS : Evaluation.FAIL;
+        return Double.compare(avg, minAvgBloodPressure) >= 0 ? Evaluation.PASS : Evaluation.FAIL;
     }
 
     @NotNull
@@ -51,7 +52,8 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
             }
         }
 
-        // TODO Add max entries.
-        return filtered;
+        filtered.sort(new BloodPressureDescendingDateComparator());
+
+        return filtered.subList(0, Math.min(filtered.size(), MAX_BLOOD_PRESSURES_TO_USE));
     }
 }
