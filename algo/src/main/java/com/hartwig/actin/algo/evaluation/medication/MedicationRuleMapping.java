@@ -33,7 +33,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, hasStableAnticoagulantDosingCreator());
+        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_DOSING, getsActiveAndStableMedicationOfTypeCreator(ANTICOAGULANTS));
 
         return map;
     }
@@ -55,12 +55,12 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsActiveMedicationCreator() {
-        return function -> new CurrentlyGetsMedicationWithType(null);
+        return function -> new CurrentlyGetsMedicationWithType(null, false);
     }
 
     @NotNull
     private static FunctionCreator getsActiveMedicationOfTypeCreator(@NotNull String type) {
-        return function -> new CurrentlyGetsMedicationWithType(type);
+        return function -> new CurrentlyGetsMedicationWithType(type, false);
     }
 
     @NotNull
@@ -80,7 +80,7 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasStableAnticoagulantDosingCreator() {
-        return function -> new HasStableAnticoagulantDosing();
+    private static FunctionCreator getsActiveAndStableMedicationOfTypeCreator(@NotNull String type) {
+        return function -> new CurrentlyGetsMedicationWithType(type, true);
     }
 }
