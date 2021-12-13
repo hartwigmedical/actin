@@ -115,7 +115,6 @@ HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | 
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
-HAS_HAD_STEM_CELL_TRANSPLANTATION | Prior tumor treatments > category = stem cell transplantation
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 
 ##### Rules related to molecular results
@@ -165,6 +164,9 @@ HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*UL
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
+[To determine] HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X | Calcium (Ca) in mg/dL  <= X
+[To determine] HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X
+[To determine] HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X | Calcium corrected (Ca_C) <= X*ULN
 HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (isOutsideRef=0)
 HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN (isOutsideRef=0)
 
@@ -185,6 +187,7 @@ HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid sh
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
+HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
@@ -222,9 +225,11 @@ CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotic
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
+CURRENTLY_GETS_PAIN_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
-HAS_STABLE_ANTICOAGULANT_DOSING | Medication > type is type of "Anticoagulants" AND only 1 distinct dosage
+HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > type is type of "Anticoagulants" AND only 1 distinct dosage
+HAS_STABLE_PAIN_MEDICATION_DOSING | T.B.D. - Currently resolves to UNDETERMINED
 
 ##### Rules related to pregnancy/anticonception
 
