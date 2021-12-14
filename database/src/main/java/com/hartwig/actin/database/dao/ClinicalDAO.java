@@ -162,6 +162,8 @@ class ClinicalDAO {
                 CLINICALSTATUS.ACTIVEINFECTIONDESCRIPTION,
                 CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
                 CLINICALSTATUS.ECGABERRATIONDESCRIPTION,
+                CLINICALSTATUS.QTCFVALUE,
+                CLINICALSTATUS.QTCFUNIT,
                 CLINICALSTATUS.LVEF)
                 .values(sampleId,
                         clinicalStatus.who(),
@@ -169,6 +171,8 @@ class ClinicalDAO {
                         infectionStatus != null ? infectionStatus.description() : null,
                         DataUtil.toByte(ecgAberration != null ? ecgAberration.hasSigAberrationLatestECG() : null),
                         ecgAberration != null ? ecgAberration.description() : null,
+                        ecgAberration != null ? ecgAberration.qtcfValue() : null,
+                        ecgAberration != null ? ecgAberration.qtcfUnit() : null,
                         clinicalStatus.lvef())
                 .execute();
     }

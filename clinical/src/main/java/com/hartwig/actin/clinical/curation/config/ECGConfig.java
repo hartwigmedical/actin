@@ -13,10 +13,16 @@ public abstract class ECGConfig implements CurationConfig {
     public abstract String input();
 
     @Override
-    public boolean ignore() {
-        return false;
-    }
+    public abstract boolean ignore();
 
     @NotNull
     public abstract String interpretation();
+
+    public abstract boolean isQTCF();
+
+    @Nullable
+    public abstract Integer qtcfValue();
+
+    @Nullable
+    public abstract String qtcfUnit();
 }

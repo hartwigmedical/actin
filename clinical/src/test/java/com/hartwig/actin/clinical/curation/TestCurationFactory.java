@@ -162,8 +162,14 @@ public final class TestCurationFactory {
     private static List<ECGConfig> createTestECGConfigs() {
         List<ECGConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableECGConfig.builder().input("Weird aberration").interpretation("Cleaned aberration").build());
-        configs.add(ImmutableECGConfig.builder().input("No aberration").interpretation("NULL").build());
+        configs.add(ImmutableECGConfig.builder()
+                .input("Weird aberration")
+                .ignore(false)
+                .interpretation("Cleaned aberration")
+                .isQTCF(false)
+                .build());
+
+        configs.add(ImmutableECGConfig.builder().input("No aberration").ignore(true).interpretation(Strings.EMPTY).isQTCF(false).build());
 
         return configs;
     }

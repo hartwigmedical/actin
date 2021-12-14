@@ -12,4 +12,10 @@ public abstract class ECGAberration {
 
     @NotNull
     public abstract String description();
+
+    @Nullable
+    public abstract Integer qtcfValue();
+
+    @Nullable
+    public abstract String qtcfUnit();
 }

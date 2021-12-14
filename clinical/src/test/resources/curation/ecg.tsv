@@ -1,2 +1,4 @@
-input	interpretation
-Sinus Tachycardia	Sinus tachycardia
+input	interpretation	isQTCF	qtcfValue	qtcfUnit
+Sinus Tachycardia	Sinus tachycardia			
+qtcf	qtcf	1	470	ms
+weird	NULL			

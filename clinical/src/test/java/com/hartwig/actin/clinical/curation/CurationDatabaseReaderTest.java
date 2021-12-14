@@ -138,11 +138,23 @@ public class CurationDatabaseReaderTest {
     }
 
     private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {
-        assertEquals(1, configs.size());
+        assertEquals(3, configs.size());
 
-        ECGConfig config = configs.get(0);
-        assertEquals("Sinus Tachycardia", config.input());
-        assertEquals("Sinus tachycardia", config.interpretation());
+        ECGConfig sinus = find(configs, "Sinus Tachycardia");
+        assertEquals("Sinus tachycardia", sinus.interpretation());
+        assertFalse(sinus.ignore());
+        assertFalse(sinus.isQTCF());
+        assertNull(sinus.qtcfValue());
+        assertNull(sinus.qtcfUnit());
+
+        ECGConfig qtcf = find(configs, "qtcf");
+        assertTrue(qtcf.isQTCF());
+        assertFalse(qtcf.ignore());
+        assertEquals(470, (int) qtcf.qtcfValue());
+        assertEquals("ms", qtcf.qtcfUnit());
+
+        ECGConfig weird = find(configs, "weird");
+        assertTrue(weird.ignore());
     }
 
     private static void assertInfectionConfigs(@NotNull List<InfectionConfig> configs) {

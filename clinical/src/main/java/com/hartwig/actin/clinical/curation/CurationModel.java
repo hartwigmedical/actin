@@ -222,11 +222,15 @@ public class CurationModel {
 
         // Assume ECGs can also be pass-through.
         if (config != null) {
-            String interpretation = config.interpretation();
-            if (interpretation.equals("NULL")) {
+            if (config.ignore()) {
                 return null;
             } else {
-                return ImmutableECGAberration.builder().from(input).description(interpretation).build();
+                return ImmutableECGAberration.builder()
+                        .from(input)
+                        .description(config.interpretation())
+                        .qtcfValue(config.qtcfValue())
+                        .qtcfUnit(config.qtcfUnit())
+                        .build();
             }
         } else {
             return input;
