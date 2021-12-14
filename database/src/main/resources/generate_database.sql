@@ -200,7 +200,7 @@ CREATE TABLE medication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
-    type varchar(100),
+    categories varchar(100),
     dosageMin double precision,
     dosageMax double precision,
     dosageUnit varchar(50),

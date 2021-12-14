@@ -231,16 +231,16 @@ HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND cl
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
-CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > type is type of "Anticoagulants" and status is active
-CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > type is type of "Antibiotics" and status is active
-CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > type is type of "Corticosteroids" and status is active
-CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > type is type of "Vitamin K Antagonists" and status is active
+CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" and status is active
+CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > categories contains type of "Antibiotics" and status is active
+CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
+CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
-CURRENTLY_GETS_PAIN_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
+CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
-HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > type is type of "Anticoagulants" AND only 1 distinct dosage
-HAS_STABLE_PAIN_MEDICATION_DOSING | T.B.D. - Currently resolves to UNDETERMINED
+HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage
+HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% AND only 1 distinct dosage per name (T.B.E.)
 
 ##### Rules related to pregnancy/anticonception
 
