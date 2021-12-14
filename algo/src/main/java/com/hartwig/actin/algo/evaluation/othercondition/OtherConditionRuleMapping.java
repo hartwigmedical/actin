@@ -53,11 +53,6 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSevereConcomitantIllnessCreator() {
-        return function -> new HasSevereConcomitantIllness();
-    }
-
-    @NotNull
     private static FunctionCreator hasSpecificPriorConditionCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
         return function -> new HasHadSpecificPriorCondition(doidModel, doidToFind);
     }
@@ -83,5 +78,10 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator isInDialysisCreator() {
         return function -> new IsInDialysis();
+    }
+
+    @NotNull
+    private static FunctionCreator hasSevereConcomitantIllnessCreator() {
+        return function -> new HasSevereConcomitantIllness();
     }
 }
