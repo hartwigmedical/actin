@@ -15,7 +15,6 @@ import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class ServeRecordExtractor {
 
@@ -27,46 +26,48 @@ public final class ServeRecordExtractor {
         List<ServeRecord> records = Lists.newArrayList();
 
         for (Trial trial : trials) {
-            String trialId = trial.identification().trialId();
-            records.addAll(extractFromEligibility(trialId, null, trial.generalEligibility()));
+            String trialAcronym = trial.identification().acronym();
+            records.addAll(extractFromEligibility(trialAcronym, trial.generalEligibility()));
             for (Cohort cohort : trial.cohorts()) {
-                records.addAll(extractFromEligibility(trialId, cohort.metadata().cohortId(), cohort.eligibility()));
+                records.addAll(extractFromEligibility(trialAcronym, cohort.eligibility()));
             }
         }
         return records;
     }
 
     @NotNull
-    private static List<ServeRecord> extractFromEligibility(@NotNull String trialId, @Nullable String cohortId,
-            @NotNull List<Eligibility> eligibilities) {
+    private static List<ServeRecord> extractFromEligibility(@NotNull String trialAcronym, @NotNull List<Eligibility> eligibilities) {
         List<ServeRecord> records = Lists.newArrayList();
 
         for (Eligibility eligibility : eligibilities) {
-            records.addAll(extractFromFunction(trialId, cohortId, eligibility.function()));
+            records.addAll(extractFromFunction(trialAcronym, eligibility.function()));
         }
 
         return records;
     }
 
     @NotNull
-    private static List<ServeRecord> extractFromFunction(@NotNull String trialId, @Nullable String cohortId,
-            @NotNull EligibilityFunction function) {
+    private static List<ServeRecord> extractFromFunction(@NotNull String trialAcronym, @NotNull EligibilityFunction function) {
         List<ServeRecord> records = Lists.newArrayList();
 
         if (CompositeRules.isComposite(function.rule())) {
             CompositeInput input = CompositeRules.inputsForCompositeRule(function.rule());
             if (input == CompositeInput.EXACTLY_1) {
                 EligibilityFunction subFunction = FunctionInputResolver.createOneCompositeParameter(function);
-                records.addAll(extractFromFunction(trialId, cohortId, subFunction));
+                records.addAll(extractFromFunction(trialAcronym, subFunction));
             } else if (input == CompositeInput.AT_LEAST_2) {
                 for (EligibilityFunction subFunction : FunctionInputResolver.createAtLeastTwoCompositeParameters(function)) {
-                    records.addAll(extractFromFunction(trialId, cohortId, subFunction));
+                    records.addAll(extractFromFunction(trialAcronym, subFunction));
                 }
             } else {
                 throw new IllegalStateException("Could not interpret composite input '" + input + "'");
             }
         } else if (ServeRules.isMolecular(function.rule())) {
-            records.add(ImmutableServeRecord.builder().rule(function.rule()).parameters(toStrings(function.parameters())).build());
+            records.add(ImmutableServeRecord.builder()
+                    .trial(trialAcronym)
+                    .rule(function.rule())
+                    .parameters(toStrings(function.parameters()))
+                    .build());
         }
 
         return records;

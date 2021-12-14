@@ -31,7 +31,7 @@ public final class ServeRecordTsv {
 
     @NotNull
     private static String header() {
-        return new StringJoiner(FIELD_DELIMITER).add("rule").add("parameters").toString();
+        return new StringJoiner(FIELD_DELIMITER).add("trial").add("rule").add("parameters").toString();
     }
 
     @NotNull
@@ -41,6 +41,6 @@ public final class ServeRecordTsv {
             params.add(param);
         }
 
-        return new StringJoiner(FIELD_DELIMITER).add(record.rule().toString()).add(params.toString()).toString();
+        return new StringJoiner(FIELD_DELIMITER).add(record.trial()).add(record.rule().toString()).add(params.toString()).toString();
     }
 }

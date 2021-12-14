@@ -32,12 +32,15 @@ public class ServeRecordExtractorTest {
         assertEquals(3, records.size());
 
         ServeRecord first = find(records, EligibilityRule.ACTIVATING_FUSION_IN_GENE_X);
+        assertEquals("trial 1", first.trial());
         assertEquals(Lists.newArrayList("gene 1"), first.parameters());
 
         ServeRecord second = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
+        assertEquals("trial 2", second.trial());
         assertEquals(Lists.newArrayList("gene 2", "coding"), second.parameters());
 
         ServeRecord third = find(records, EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X);
+        assertEquals("trial 2", third.trial());
         assertEquals(Lists.newArrayList("gene 3"), third.parameters());
     }
 
@@ -55,8 +58,7 @@ public class ServeRecordExtractorTest {
     @NotNull
     private static List<Trial> createTestTrials() {
         List<Trial> trials = Lists.newArrayList();
-        trials.add(ImmutableTrial.builder()
-                .identification(withTrialId("trial 1"))
+        trials.add(ImmutableTrial.builder().identification(withTrialAcronym("trial 1"))
                 .addGeneralEligibility(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.AND)
@@ -72,8 +74,7 @@ public class ServeRecordExtractorTest {
                         .build())
                 .build());
 
-        trials.add(ImmutableTrial.builder()
-                .identification(withTrialId("trial 2"))
+        trials.add(ImmutableTrial.builder().identification(withTrialAcronym("trial 2"))
                 .addGeneralEligibility(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.NOT)
@@ -103,8 +104,8 @@ public class ServeRecordExtractorTest {
     }
 
     @NotNull
-    private static TrialIdentification withTrialId(@NotNull String trialId) {
-        return ImmutableTrialIdentification.builder().trialId(trialId).acronym(Strings.EMPTY).title(Strings.EMPTY).build();
+    private static TrialIdentification withTrialAcronym(@NotNull String trialAcronym) {
+        return ImmutableTrialIdentification.builder().trialId(Strings.EMPTY).acronym(trialAcronym).title(Strings.EMPTY).build();
     }
 
     @NotNull

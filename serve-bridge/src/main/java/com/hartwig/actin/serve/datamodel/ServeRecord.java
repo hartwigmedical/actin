@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ServeRecord {
 
     @NotNull
+    public abstract String trial();
+
+    @NotNull
     public abstract EligibilityRule rule();
 
     @NotNull
