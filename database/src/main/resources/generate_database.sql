@@ -46,6 +46,8 @@ CREATE TABLE clinicalStatus
     activeInfectionDescription varchar(50),
     hasSigAberrationLatestECG BOOLEAN,
     ecgAberrationDescription varchar(50),
+    qtcfIntervalValue int,
+    qtcfIntervalUnit varchar(50),
     lvef double precision,
     PRIMARY KEY (id)
 );

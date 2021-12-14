@@ -193,13 +193,19 @@ HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equa
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
-HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
-HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
-HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D. - currently resolves to PASS_BUT_WARN
 IS_IN_DIALYSIS | > won't be evaluated
+
+##### Rules related to cardiac function
+
+Rule | When does a patient pass evaluation?
+---|---
+HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
+HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
+HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
+HAS_BASELINE_CORRECTED_QTCF_INTERVAL_OF_AT_MOST_X | Clinical status > SigAberrationLatestEcg
 
 ##### Rules related to infections
 
