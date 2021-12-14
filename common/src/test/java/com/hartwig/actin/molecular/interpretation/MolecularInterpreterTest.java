@@ -10,10 +10,10 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.TreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -44,11 +44,10 @@ public class MolecularInterpreterTest {
     }
 
     @NotNull
-    private static List<MolecularTreatmentEvidence> createTestEvidences() {
-        List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
+    private static List<TreatmentEvidence> createTestEvidences() {
+        List<TreatmentEvidence> evidences = Lists.newArrayList();
 
-        ImmutableMolecularTreatmentEvidence.Builder ckbBuilder =
-                ImmutableMolecularTreatmentEvidence.builder().addSources(MolecularInterpreter.CKB_SOURCE);
+        ImmutableTreatmentEvidence.Builder ckbBuilder = ImmutableTreatmentEvidence.builder().addSources(MolecularInterpreter.CKB_SOURCE);
 
         // Should be included, all good.
         evidences.add(ckbBuilder.treatment("Treatment 1")
@@ -105,7 +104,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // Also have one iclusion
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
+        evidences.add(ImmutableTreatmentEvidence.builder()
                 .addSources(MolecularInterpreter.ICLUSION_SOURCE)
                 .treatment("Trial 1")
                 .direction(EvidenceDirection.RESPONSIVE)
@@ -115,7 +114,7 @@ public class MolecularInterpreterTest {
                 .build());
 
         // And 1 ACTIN
-        evidences.add(ImmutableMolecularTreatmentEvidence.builder()
+        evidences.add(ImmutableTreatmentEvidence.builder()
                 .addSources(MolecularInterpreter.ACTIN_SOURCE)
                 .treatment("Trial 2")
                 .direction(EvidenceDirection.RESPONSIVE)
@@ -128,7 +127,7 @@ public class MolecularInterpreterTest {
     }
 
     @NotNull
-    private static MolecularRecord recordWithEvidence(@NotNull List<MolecularTreatmentEvidence> evidences) {
+    private static MolecularRecord recordWithEvidence(@NotNull List<TreatmentEvidence> evidences) {
         return ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
                 .evidences(evidences)

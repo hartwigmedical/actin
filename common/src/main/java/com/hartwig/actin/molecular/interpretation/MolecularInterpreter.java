@@ -12,7 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.TreatmentEvidence;
 import com.hartwig.actin.molecular.util.GenomicEventFormatter;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +38,9 @@ public final class MolecularInterpreter {
 
     @NotNull
     public static MolecularInterpretation interpret(@NotNull MolecularRecord record) {
-        List<MolecularTreatmentEvidence> evidencesForTrials = filterEvidences(record, ACTIN_SOURCE);
-        List<MolecularTreatmentEvidence> iclusionEvidences = filterEvidences(record, ICLUSION_SOURCE);
-        List<MolecularTreatmentEvidence> ckbEvidences = filterEvidences(record, CKB_SOURCE);
+        List<TreatmentEvidence> evidencesForTrials = filterEvidences(record, ACTIN_SOURCE);
+        List<TreatmentEvidence> iclusionEvidences = filterEvidences(record, ICLUSION_SOURCE);
+        List<TreatmentEvidence> ckbEvidences = filterEvidences(record, CKB_SOURCE);
 
         return ImmutableMolecularInterpretation.builder()
                 .eventsWithTrialEligibility(applicableResponsiveEvents(evidencesForTrials))
@@ -51,9 +51,9 @@ public final class MolecularInterpreter {
     }
 
     @NotNull
-    private static List<MolecularTreatmentEvidence> filterEvidences(@NotNull MolecularRecord record, @NotNull String source) {
-        List<MolecularTreatmentEvidence> filtered = Lists.newArrayList();
-        for (MolecularTreatmentEvidence evidence : record.evidences()) {
+    private static List<TreatmentEvidence> filterEvidences(@NotNull MolecularRecord record, @NotNull String source) {
+        List<TreatmentEvidence> filtered = Lists.newArrayList();
+        for (TreatmentEvidence evidence : record.evidences()) {
             if (evidence.sources().contains(source)) {
                 filtered.add(evidence);
             }
@@ -62,9 +62,9 @@ public final class MolecularInterpreter {
     }
 
     @NotNull
-    private static Set<String> applicableResponsiveEvents(@NotNull List<MolecularTreatmentEvidence> evidences) {
+    private static Set<String> applicableResponsiveEvents(@NotNull List<TreatmentEvidence> evidences) {
         Set<String> events = Sets.newTreeSet();
-        for (MolecularTreatmentEvidence evidence : evidences) {
+        for (TreatmentEvidence evidence : evidences) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
 
@@ -76,9 +76,9 @@ public final class MolecularInterpreter {
     }
 
     @NotNull
-    private static Set<String> applicableResistanceEvents(@NotNull List<MolecularTreatmentEvidence> evidences) {
+    private static Set<String> applicableResistanceEvents(@NotNull List<TreatmentEvidence> evidences) {
         Multimap<String, String> treatmentsPerEvent = ArrayListMultimap.create();
-        for (MolecularTreatmentEvidence evidence : evidences) {
+        for (TreatmentEvidence evidence : evidences) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
             boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
@@ -100,9 +100,9 @@ public final class MolecularInterpreter {
         return events;
     }
 
-    private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<MolecularTreatmentEvidence> evidences,
-            @NotNull String treatment, @NotNull EvidenceLevel minLevel) {
-        for (MolecularTreatmentEvidence evidence : evidences) {
+    private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
+            @NotNull EvidenceLevel minLevel) {
+        for (TreatmentEvidence evidence : evidences) {
             if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
                     && minLevel.isBetterOrEqual(evidence.level())) {
                 return true;
@@ -111,7 +111,7 @@ public final class MolecularInterpreter {
         return false;
     }
 
-    private static boolean isPotentiallyApplicable(@NotNull MolecularTreatmentEvidence evidence) {
+    private static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
         if ((evidence.level() == EvidenceLevel.C || evidence.level() == EvidenceLevel.D) && !evidence.onLabel()) {
             return false;
         }

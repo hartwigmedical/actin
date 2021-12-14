@@ -16,7 +16,7 @@ public abstract class MolecularRecord {
     public abstract String sampleId();
 
     @NotNull
-    public abstract MolecularExperimentType type();
+    public abstract ExperimentType type();
 
     @Nullable
     public abstract LocalDate date();
@@ -30,10 +30,10 @@ public abstract class MolecularRecord {
     public abstract List<GeneMutation> mutations();
 
     @NotNull
-    public abstract Set<String> wildtypeGenes();
+    public abstract Set<FusionGene> fusions();
 
     @NotNull
-    public abstract Set<String> fusionGenes();
+    public abstract Set<String> wildtypeGenes();
 
     @Nullable
     public abstract Boolean isMicrosatelliteUnstable();
@@ -46,5 +46,5 @@ public abstract class MolecularRecord {
     public abstract int tumorMutationalLoad();
 
     @NotNull
-    public abstract List<MolecularTreatmentEvidence> evidences();
+    public abstract List<TreatmentEvidence> evidences();
 }

@@ -28,11 +28,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.datamodel.EvidenceLevel;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularTreatmentEvidence;
-import com.hartwig.actin.molecular.datamodel.MolecularExperimentType;
+import com.hartwig.actin.molecular.datamodel.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.TreatmentEvidence;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,11 +76,11 @@ public final class MolecularRecordJson {
                     .sampleId(string(record, "sampleId"))
                     .date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
-                    .type(MolecularExperimentType.WGS)
+                    .type(ExperimentType.WGS)
                     .configuredPrimaryTumorDoids(extractDoids(array(record, "configuredPrimaryTumor")))
                     .mutations(Lists.newArrayList())
+                    .fusions(Sets.newHashSet())
                     .wildtypeGenes(Sets.newHashSet())
-                    .fusionGenes(Sets.newHashSet())
                     .isMicrosatelliteUnstable(isMSI(string(purple, "microsatelliteStatus")))
                     .isHomologousRepairDeficient(isHRD(string(chord, "hrStatus")))
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
@@ -124,13 +124,14 @@ public final class MolecularRecordJson {
         }
 
         @NotNull
-        private static List<MolecularTreatmentEvidence> toEvidences(@NotNull JsonArray protectArray) {
-            List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
+        private static List<TreatmentEvidence> toEvidences(@NotNull JsonArray protectArray) {
+            List<TreatmentEvidence> evidences = Lists.newArrayList();
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
                 boolean reported = bool(evidence, "reported");
                 if (reported) {
-                    evidences.add(ImmutableMolecularTreatmentEvidence.builder().genomicEvent(string(evidence, "genomicEvent"))
+                    evidences.add(ImmutableTreatmentEvidence.builder()
+                            .genomicEvent(string(evidence, "genomicEvent"))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))
                             .level(EvidenceLevel.valueOf(string(evidence, "level")))

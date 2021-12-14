@@ -1,5 +1,5 @@
 package com.hartwig.actin.molecular.datamodel;
 
-public enum MolecularExperimentType {
+public enum ExperimentType {
     WGS
 }

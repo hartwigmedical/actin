@@ -21,9 +21,7 @@ public final class TestMolecularDataFactory {
 
     @NotNull
     public static MolecularRecord createMinimalTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder()
-                .sampleId(TestDataFactory.TEST_SAMPLE)
-                .type(MolecularExperimentType.WGS)
+        return ImmutableMolecularRecord.builder().sampleId(TestDataFactory.TEST_SAMPLE).type(ExperimentType.WGS)
                 .hasReliableQuality(true)
                 .tumorMutationalBurden(0D)
                 .tumorMutationalLoad(0)
@@ -50,10 +48,10 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularTreatmentEvidence> createTestEvidences() {
-        List<MolecularTreatmentEvidence> evidences = Lists.newArrayList();
+    private static List<TreatmentEvidence> createTestEvidences() {
+        List<TreatmentEvidence> evidences = Lists.newArrayList();
 
-        ImmutableMolecularTreatmentEvidence.Builder ckbBuilder = ImmutableMolecularTreatmentEvidence.builder().addSources("CKB");
+        ImmutableTreatmentEvidence.Builder ckbBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB");
 
         evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
                 .treatment("Vemurafenib")
