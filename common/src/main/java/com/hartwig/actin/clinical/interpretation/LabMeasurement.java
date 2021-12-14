@@ -25,6 +25,9 @@ public enum LabMeasurement {
     ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", "sec"),
     DIRECT_BILIRUBIN("DBIL", "umol/l"),
     TOTAL_BILIRUBIN("TBIL", "umol/l"),
+    CALCIUM("Ca", "mmol/l"),
+    IONIZED_CALCIUM("B_ICA", "mmol/l"),
+    CORRECTED_CALCIUM("Ca_C", "mmol/L"),
     POTASSIUM("K", "mmol/l"),
     MAGNESIUM("MG", "mmol/l");
 
