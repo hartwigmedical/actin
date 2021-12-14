@@ -72,6 +72,7 @@ The following rules are available:
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | PASS_BUT_WARN in case of exactly X
+IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
@@ -204,9 +205,11 @@ IS_IN_DIALYSIS | > won't be evaluated
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
+HAS_CARDIAC_ARRHYTHMIA_X | Clinical status > sigAberrationLatestEcg like %X%
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
-HAS_BASELINE_CORRECTED_QTCF_INTERVAL_OF_AT_MOST_X | Clinical status > qtcfIntervalValue in ms <= X
+HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
+HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
 HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | T.B.D.
 
 ##### Rules related to infections

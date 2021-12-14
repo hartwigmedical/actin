@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.general;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -20,6 +21,7 @@ public final class GeneralRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator());
+        map.put(EligibilityRule.IS_MALE, notImplementedCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
@@ -38,6 +40,8 @@ public final class GeneralRuleMapping {
             return new HasAtLeastCertainAge(EvaluationConstants.REFERENCE_YEAR, minAge);
         };
     }
+
+
 
     @NotNull
     private static FunctionCreator hasMaximumWHOStatusCreator() {
@@ -70,5 +74,10 @@ public final class GeneralRuleMapping {
     @NotNull
     private static FunctionCreator patientIsTreatedInHospitalCreator() {
         return function -> new PatientIsTreatedInHospital();
+    }
+
+    @NotNull
+    private static FunctionCreator notImplementedCreator() {
+        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }

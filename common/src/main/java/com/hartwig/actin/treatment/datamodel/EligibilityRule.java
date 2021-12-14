@@ -9,6 +9,7 @@ public enum EligibilityRule {
 
     // Rules related to general patient characteristics
     IS_AT_LEAST_X_YEARS_OLD,
+    IS_MALE,
     HAS_WHO_STATUS_OF_AT_MOST_X,
     IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT,
     IS_INVOLVED_IN_STUDY_PROCEDURES,
@@ -118,7 +119,8 @@ public enum EligibilityRule {
     HAS_CARDIAC_ARRHYTHMIA,
     HAS_LVEF_OF_AT_LEAST_X,
     HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN,
-    HAS_BASELINE_CORRECTED_QTCF_INTERVAL_OF_AT_MOST_X,
+    HAS_QTCF_OF_AT_MOST_X,
+    HAS_LONG_QT_SYNDROME,
     // HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
 
     // Rules related to infections
