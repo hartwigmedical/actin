@@ -62,6 +62,8 @@ hasActiveInfection | 0 | Patient has active infection?
 activeInfectionDescription | Lung abscess | Description of the active infection, inc ase hasActiveInfection = 1 
 hasSigAberrationLatestECG | 1 | Patient had significant aberration on latest ECG?
 ecgAberrationDescription | Atrial arrhythmia | Description of ECG aberration, in case hasSigAberrationLatestECG = 1
+qtcfValue | NULL | Value of QTcF (QT corrected for heart rate using Fridericia's formula), in case it was described in ECG aberration
+qtcfUnit | NULL | Unit of QTcF, in case it was described in ECG aberration
 lvef | NULL | Left ventricle ejection fraction (LVEF)
 
 N prior tumor treatments
