@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -11,7 +11,7 @@ public class HasSufficientLVEF implements EvaluationFunction {
     private final double minLVEF;
     private final boolean passIfUnknown;
 
-    public HasSufficientLVEF(final double minLVEF, final boolean passIfUnknown) {
+    HasSufficientLVEF(final double minLVEF, final boolean passIfUnknown) {
         this.minLVEF = minLVEF;
         this.passIfUnknown = passIfUnknown;
     }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
 import static org.junit.Assert.assertEquals;
 

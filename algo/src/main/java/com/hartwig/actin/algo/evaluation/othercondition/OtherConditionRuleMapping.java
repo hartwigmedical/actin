@@ -44,11 +44,8 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
-        map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
-        map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
 
@@ -79,21 +76,8 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasCardiacArrhythmiaCreator() {
-        return function -> new HasCardiacArrhythmia();
-    }
-
-    @NotNull
     private static FunctionCreator hasKnownMalabsorptionSyndromeCreator() {
         return function -> new HasKnownMalabsorptionSyndrome();
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientLVEFCreator(boolean passIfUnknown) {
-        return function -> {
-            double minLVEF = FunctionInputResolver.createOneDoubleInput(function);
-            return new HasSufficientLVEF(minLVEF, passIfUnknown);
-        };
     }
 
     @NotNull
