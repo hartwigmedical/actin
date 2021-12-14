@@ -1,3 +1,5 @@
 ﻿"subject"	"effectiveDateTime"	"code_code_original"	"code_display_original"	"issued"	"valueString"	"component_code_code"	"component_code_display"	"component_valueQuantity_code"	"component_valueQuantity_value"
 "ACTN-01-02-9999"	"28-4-2019 13:45"	"CS00000003"	"NIBP"	""	""	"8481-6"	"Systolic blood pressure"	"mm[Hg]"	"108"
-"ACTN-01-02-9999"	"28-5-2019 13:45"	"CODE"	"NIBP"	""	""	"8481-6"	"Invalid"	"mm[Hg]"	""
+"ACTN-01-02-9999
+
+"	"28-5-2019 13:45"	"CODE"	"NIBP"	""	""	"8481-6"	"Invalid"	"mm[Hg]"	""

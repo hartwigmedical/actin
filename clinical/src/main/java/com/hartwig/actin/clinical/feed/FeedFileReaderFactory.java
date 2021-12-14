@@ -33,7 +33,7 @@ public final class FeedFileReaderFactory {
 
     @NotNull
     public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader() {
-        // Questionnaires need to remove multiline delimiters since they could incorrect parsing downstream
+        // Questionnaires have line breaks in the free-text field
         return new FeedFileReader<>(new QuestionnaireEntryCreator(), true);
     }
 

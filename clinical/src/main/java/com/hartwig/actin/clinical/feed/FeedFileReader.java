@@ -18,16 +18,16 @@ class FeedFileReader<T extends FeedEntry> {
 
     @NotNull
     private final FeedEntryCreator<T> feedEntryCreator;
-    private final boolean removeMultilineDelimiters;
+    private final boolean expectLineBreaks;
 
     @NotNull
     public static <T extends FeedEntry> FeedFileReader<T> create(@NotNull FeedEntryCreator<T> feedEntryCreator) {
         return new FeedFileReader<>(feedEntryCreator, false);
     }
 
-    public FeedFileReader(@NotNull final FeedEntryCreator<T> feedEntryCreator, final boolean removeMultilineDelimiters) {
+    public FeedFileReader(@NotNull final FeedEntryCreator<T> feedEntryCreator, final boolean expectLineBreaks) {
         this.feedEntryCreator = feedEntryCreator;
-        this.removeMultilineDelimiters = removeMultilineDelimiters;
+        this.expectLineBreaks = expectLineBreaks;
     }
 
     @NotNull
@@ -40,9 +40,21 @@ class FeedFileReader<T extends FeedEntry> {
             StringBuilder curLine = new StringBuilder(lines.get(1));
             for (String line : lines.subList(2, lines.size())) {
                 // Entries appear on multiple lines in case they contain hard line breaks so append to the end.
-                if (splitFeedLine(line).length != fields.size()) {
-                    String lineToAppend = removeMultilineDelimiters ? line.replaceAll(DELIMITER, "") : line;
-                    curLine.append("\n").append(lineToAppend);
+                if (!hasExpectedFields(line, fields)) {
+                    String lineToAppend = expectLineBreaks ? line.replaceAll(DELIMITER, "") : line;
+                    if (expectLineBreaks) {
+                        curLine.append("\n").append(lineToAppend);
+                    } else if (hasExpectedFields(curLine.toString(), fields)) {
+                        // Apparently the new unfinished line is the start of a new entry.
+                        addToEntries(entries, fields, curLine.toString());
+                        curLine = new StringBuilder(lineToAppend);
+                    } else {
+                        // The unfinished new line is part of something that is building up towards a valid entry.
+                        curLine.append(lineToAppend);
+                    }
+                } else if (!hasExpectedFields(curLine.toString(), fields)) {
+                    // This should only happen in case an unexpected line break happened in the first column.
+                    curLine.append(line);
                 } else {
                     addToEntries(entries, fields, curLine.toString());
                     curLine = new StringBuilder(line);
@@ -53,6 +65,10 @@ class FeedFileReader<T extends FeedEntry> {
         }
 
         return entries;
+    }
+
+    private static boolean hasExpectedFields(@NotNull String line, @NotNull Map<String, Integer> fields) {
+        return splitFeedLine(line).length == fields.size();
     }
 
     @NotNull
