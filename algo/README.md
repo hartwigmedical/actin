@@ -183,7 +183,6 @@ or that this value is also out of requested range, the evaluation resolves to FA
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SIGNIFICANT_CONCOMITANT_ILLNESS | Prior other conditions > is not empty
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
@@ -198,7 +197,8 @@ HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equ
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D. - currently resolves to PASS_BUT_WARN
-IS_IN_DIALYSIS | > won't be evaluated
+IS_IN_DIALYSIS | > won't be evaluated, resolves to FAIL
+HAS_SEVERE_CONCOMITANT_CONDITION | > won't be evaluated, resolves to FAIL
 
 ##### Rules related to cardiac function
 

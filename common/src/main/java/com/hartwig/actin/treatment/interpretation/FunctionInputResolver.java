@@ -121,7 +121,6 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, FunctionInput.NONE);
 
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, FunctionInput.NONE);
@@ -137,6 +136,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_DIABETES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_IN_DIALYSIS, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);

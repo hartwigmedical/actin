@@ -14,6 +14,6 @@ public class IsInDialysis implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull final PatientRecord record) {
-        return Evaluation.NOT_EVALUATED;
+        return Evaluation.FAIL;
     }
 }

@@ -72,7 +72,7 @@ public final class TestTrialConfigFactory {
                 .build());
 
         String rule1 = EligibilityRule.HAS_ACTIVE_INFECTION.toString();
-        String rule2 = EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS.toString();
+        String rule2 = EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION.toString();
 
         configs.add(builder.referenceIds(Sets.newHashSet("I-03"))
                 .inclusionRule("NOT(OR(" + rule1 + ", " + rule2 + "))")

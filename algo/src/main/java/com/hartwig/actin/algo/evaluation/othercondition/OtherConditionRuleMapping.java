@@ -31,7 +31,6 @@ public final class OtherConditionRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_SIGNIFICANT_CONCOMITANT_ILLNESS, hasSignificantConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasSpecificPriorConditionCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasSpecificPriorConditionCreator(doidModel, CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
@@ -48,13 +47,14 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
+        map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator hasSignificantConcomitantIllnessCreator() {
-        return function -> new HasSignificantConcomitantIllness();
+    private static FunctionCreator hasSevereConcomitantIllnessCreator() {
+        return function -> new HasSevereConcomitantIllness();
     }
 
     @NotNull

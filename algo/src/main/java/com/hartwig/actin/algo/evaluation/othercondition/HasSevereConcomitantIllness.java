@@ -6,14 +6,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSignificantConcomitantIllness implements EvaluationFunction {
+public class HasSevereConcomitantIllness implements EvaluationFunction {
 
-    HasSignificantConcomitantIllness() {
+    HasSevereConcomitantIllness() {
     }
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return !record.clinical().priorOtherConditions().isEmpty() ? Evaluation.PASS : Evaluation.FAIL;
+    public Evaluation evaluate(@NotNull final PatientRecord record) {
+        return Evaluation.FAIL;
     }
 }
