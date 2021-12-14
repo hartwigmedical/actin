@@ -24,7 +24,8 @@ public class FunctionCreatorFactoryTest {
             EligibilityFunction function = TestParameterizedFunctionFactory.create(rule);
             if (!CompositeRules.isComposite(rule)) {
                 FunctionCreator creator = map.get(rule);
-                assertNotNull(creator.create(function));
+                assertNotNull(rule + " has no creator configured", creator);
+                assertNotNull(rule + " creator could not create function", creator.create(function));
             }
         }
     }

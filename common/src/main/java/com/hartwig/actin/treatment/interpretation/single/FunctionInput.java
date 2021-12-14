@@ -4,6 +4,7 @@ public enum FunctionInput {
     NONE,
     ONE_INTEGER,
     ONE_DOUBLE,
+    TWO_DOUBLE,
     ONE_TREATMENT_CATEGORY,
     ONE_TREATMENT_CATEGORY_ONE_STRING,
     ONE_STRING,

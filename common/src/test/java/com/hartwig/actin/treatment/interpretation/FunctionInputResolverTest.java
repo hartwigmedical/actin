@@ -18,6 +18,7 @@ import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStringsInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneStringInput;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubleInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStringInput;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
@@ -111,6 +112,20 @@ public class FunctionInputResolverTest {
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("3.1", "3.2"))));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a double"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithTwoDoubleParameters() {
+        EligibilityRule rule = firstOfType(FunctionInput.TWO_DOUBLE);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("3.1", "3.2"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+        assertEquals(ImmutableTwoDoubleInput.builder().double1(3.1).double2(3.2).build(),
+                FunctionInputResolver.createTwoDoubleInput(valid));
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("3.1"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("3.1", "not a double"))));
     }
 
     @Test

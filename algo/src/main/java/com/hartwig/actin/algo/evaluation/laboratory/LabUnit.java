@@ -6,7 +6,8 @@ import org.jetbrains.annotations.Nullable;
 enum LabUnit {
     G_PER_L("g/L"),
     G_PER_DL("g/dL"),
-    MMOL_PER_L("mmol/L");
+    MMOL_PER_L("mmol/L"),
+    MG_PER_DL("mg/dL");
 
     @Nullable
     public static LabUnit fromString(@NotNull String displayToMatch) {

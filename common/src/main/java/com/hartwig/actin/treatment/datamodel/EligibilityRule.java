@@ -121,7 +121,7 @@ public enum EligibilityRule {
     HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN,
     HAS_QTCF_OF_AT_MOST_X,
     HAS_LONG_QT_SYNDROME,
-    // HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
+    HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
 
     // Rules related to infections
     HAS_ACTIVE_INFECTION,

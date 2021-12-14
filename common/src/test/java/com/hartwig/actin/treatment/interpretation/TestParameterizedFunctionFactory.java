@@ -52,6 +52,9 @@ public final class TestParameterizedFunctionFactory {
             case ONE_DOUBLE: {
                 return Lists.newArrayList("1");
             }
+            case TWO_DOUBLE: {
+                return Lists.newArrayList("1", "2");
+            }
             case ONE_TREATMENT_CATEGORY: {
                 return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY));
             }

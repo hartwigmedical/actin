@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodpressure.BloodPressureRuleMapping;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
+import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapping;
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapping;
 import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapping;
@@ -37,6 +38,7 @@ final class FunctionCreatorFactory {
         map.putAll(MolecularRuleMapping.create());
         map.putAll(LaboratoryRuleMapping.create());
         map.putAll(OtherConditionRuleMapping.create(doidModel));
+        map.putAll(CardiacFunctionRuleMapping.create());
         map.putAll(InfectionRuleMapping.create(doidModel));
         map.putAll(MedicationRuleMapping.create());
         map.putAll(PregnancyRuleMapping.create());
