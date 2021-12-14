@@ -12,14 +12,14 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsMedicationWithType implements EvaluationFunction {
+public class CurrentlyGetsMedicationWithCategory implements EvaluationFunction {
 
     @Nullable
-    private final String type;
+    private final String category;
     private final boolean requireStableDosing;
 
-    CurrentlyGetsMedicationWithType(@Nullable final String type, final boolean requireStableDosing) {
-        this.type = type;
+    CurrentlyGetsMedicationWithCategory(@Nullable final String category, final boolean requireStableDosing) {
+        this.category = category;
         this.requireStableDosing = requireStableDosing;
     }
 
@@ -28,7 +28,7 @@ public class CurrentlyGetsMedicationWithType implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasActiveAndStableMedication = false;
         Medication referenceDosing = null;
-        for (Medication medication : filter(record.clinical().medications(), type)) {
+        for (Medication medication : filter(record.clinical().medications(), category)) {
             if (referenceDosing != null) {
                 if (requireStableDosing && !hasMatchingDosing(medication, referenceDosing)) {
                     hasActiveAndStableMedication = false;
@@ -47,7 +47,7 @@ public class CurrentlyGetsMedicationWithType implements EvaluationFunction {
         List<Medication> filtered = Lists.newArrayList();
         for (Medication medication : medications) {
             Boolean active = medication.active();
-            if (active != null && active && (type == null || medication.type().equals(type))) {
+            if (active != null && active && (type == null || medication.categories().contains(type))) {
                 filtered.add(medication);
             }
         }

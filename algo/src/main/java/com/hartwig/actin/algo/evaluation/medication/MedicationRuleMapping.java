@@ -27,15 +27,16 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfTypeCreator(ANTIBIOTICS));
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsActiveMedicationOfTypeCreator(ANTICOAGULANTS));
-        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfTypeCreator(CORTICOSTEROIDS));
-        map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, getsActiveMedicationOfTypeCreator(VITAMIN_K_ANTAGONISTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIBIOTICS));
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfCategoryCreator(CORTICOSTEROIDS));
+        map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION,
+                getsActiveMedicationOfCategoryCreator(VITAMIN_K_ANTAGONISTS));
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, notImplementedCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfTypeCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS));
         map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, notImplementedCreator());
 
         return map;
@@ -58,12 +59,12 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsActiveMedicationCreator() {
-        return function -> new CurrentlyGetsMedicationWithType(null, false);
+        return function -> new CurrentlyGetsMedicationWithCategory(null, false);
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationOfTypeCreator(@NotNull String type) {
-        return function -> new CurrentlyGetsMedicationWithType(type, false);
+    private static FunctionCreator getsActiveMedicationOfCategoryCreator(@NotNull String category) {
+        return function -> new CurrentlyGetsMedicationWithCategory(category, false);
     }
 
     @NotNull
@@ -83,14 +84,13 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsActiveAndStableMedicationOfTypeCreator(@NotNull String type) {
-        return function -> new CurrentlyGetsMedicationWithType(type, true);
+    private static FunctionCreator getsActiveAndStableMedicationOfCategoryCreator(@NotNull String category) {
+        return function -> new CurrentlyGetsMedicationWithCategory(category, true);
 
     }
 
     @NotNull
     private static FunctionCreator notImplementedCreator() {
         return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
-
     }
 }

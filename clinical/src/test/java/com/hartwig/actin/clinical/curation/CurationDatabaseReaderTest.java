@@ -15,8 +15,8 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
-import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -52,7 +52,7 @@ public class CurationDatabaseReaderTest {
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
-        assertMedicationTypeConfigs(database.medicationTypeConfigs());
+        assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
         assertAllergyTranslations(database.allergyTranslations());
@@ -192,12 +192,14 @@ public class CurationDatabaseReaderTest {
         assertNull(config2.ifNeeded());
     }
 
-    private static void assertMedicationTypeConfigs(@NotNull List<MedicationTypeConfig> configs) {
-        assertEquals(1, configs.size());
+    private static void assertMedicationCategoryConfigs(@NotNull List<MedicationCategoryConfig> configs) {
+        assertEquals(2, configs.size());
 
-        MedicationTypeConfig config = configs.get(0);
-        assertEquals("Paracetamol", config.input());
-        assertEquals("Acetanilide derivatives", config.type());
+        MedicationCategoryConfig paracetamol = find(configs, "Paracetamol");
+        assertEquals(Sets.newHashSet("Acetanilide derivatives"), paracetamol.categories());
+
+        MedicationCategoryConfig formoterol = find(configs, "Formoterol and budesonide");
+        assertEquals(Sets.newHashSet("Beta2 sympathomimetics", "Corticosteroids"), formoterol.categories());
     }
 
     @NotNull

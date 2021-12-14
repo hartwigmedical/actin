@@ -227,7 +227,8 @@
   "medications": [
     {
       "name": "Medication 1",
-      "type": "",
+      "categories": [
+      ],
       "dosageMin": 10,
       "dosageMax": 20,
       "dosageUnit": "mg",
@@ -248,7 +249,8 @@
     },
     {
       "name": "Medication 2",
-      "type": "",
+      "categories": [
+      ],
       "dosageMin": null,
       "dosageMax": null,
       "dosageUnit": null,

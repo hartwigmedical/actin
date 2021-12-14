@@ -406,9 +406,7 @@ public final class TestClinicalDataFactory {
     private static List<Medication> createTestMedications() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(ImmutableMedication.builder()
-                .name("Ibuprofen")
-                .type("NSAIDs")
+        medications.add(ImmutableMedication.builder().name("Ibuprofen").addCategories("NSAIDs")
                 .dosageMin(750D)
                 .dosageMax(1000D)
                 .dosageUnit("mg")

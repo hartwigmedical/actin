@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
@@ -236,15 +237,15 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canAnnotateWithMedicationType() {
+    public void canAnnotateWithMedicationCategory() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Medication proper = ImmutableMedication.builder().name("Paracetamol").type(Strings.EMPTY).build();
-        Medication annotatedProper = model.annotateWithMedicationType(proper);
-        assertEquals("Acetanilide derivatives", annotatedProper.type());
+        Medication proper = ImmutableMedication.builder().name("Paracetamol").build();
+        Medication annotatedProper = model.annotateWithMedicationCategory(proper);
+        assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories());
 
-        Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).type(Strings.EMPTY).build();
-        Medication annotatedEmpty = model.annotateWithMedicationType(empty);
+        Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).build();
+        Medication annotatedEmpty = model.annotateWithMedicationCategory(empty);
         assertEquals(empty, annotatedEmpty);
 
         model.evaluate();

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
@@ -184,7 +185,7 @@ public class ClinicalRecordsFactoryTest {
 
         Medication medication = medications.get(0);
         assertEquals("Paracetamol", medication.name());
-        assertEquals("Acetanilide derivatives", medication.type());
+        assertEquals(Sets.newHashSet("Acetanilide derivatives"), medication.categories());
         assertEquals(50, medication.dosageMin(), EPSILON);
         assertEquals(60, medication.dosageMax(), EPSILON);
         assertEquals("mg", medication.dosageUnit());

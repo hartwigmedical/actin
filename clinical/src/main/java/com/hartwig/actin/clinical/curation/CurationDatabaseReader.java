@@ -12,10 +12,10 @@ import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory;
+import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory;
-import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
-import com.hartwig.actin.clinical.curation.config.MedicationTypeConfigFactory;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -50,7 +50,7 @@ public final class CurationDatabaseReader {
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
-    private static final String MEDICATION_TYPE_TSV = "medication_type.tsv";
+    private static final String MEDICATION_CATEGORY_TSV = "medication_category.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
     private static final String ALLERGY_TRANSLATION_TSV = "allergy_translation.tsv";
@@ -75,7 +75,7 @@ public final class CurationDatabaseReader {
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
-                .medicationTypeConfigs(readMedicationTypeConfigs(basePath + MEDICATION_TYPE_TSV))
+                .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
                 .allergyTranslations(readAllergyTranslations(basePath + ALLERGY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
@@ -146,9 +146,9 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<MedicationTypeConfig> readMedicationTypeConfigs(@NotNull String tsv) throws IOException {
-        List<MedicationTypeConfig> configs = CurationConfigFile.read(tsv, new MedicationTypeConfigFactory());
-        LOGGER.info(" Read {} medication type configs from {}", configs.size(), tsv);
+    private static List<MedicationCategoryConfig> readMedicationCategoryConfigs(@NotNull String tsv) throws IOException {
+        List<MedicationCategoryConfig> configs = CurationConfigFile.read(tsv, new MedicationCategoryConfigFactory());
+        LOGGER.info(" Read {} medication category configs from {}", configs.size(), tsv);
         return configs;
     }
 

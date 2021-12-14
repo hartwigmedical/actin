@@ -1,12 +1,14 @@
 package com.hartwig.actin.clinical.curation.config;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class MedicationTypeConfig implements CurationConfig {
+public abstract class MedicationCategoryConfig implements CurationConfig {
 
     @NotNull
     @Override
@@ -18,5 +20,5 @@ public abstract class MedicationTypeConfig implements CurationConfig {
     }
 
     @NotNull
-    public abstract String type();
+    public abstract Set<String> categories();
 }

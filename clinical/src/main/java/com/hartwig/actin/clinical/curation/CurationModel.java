@@ -17,16 +17,16 @@ import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplica
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableMedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
-import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -312,7 +312,6 @@ public class CurationModel {
         } else {
             return ImmutableMedication.builder()
                     .name(Strings.EMPTY)
-                    .type(Strings.EMPTY)
                     .dosageMin(config.dosageMin())
                     .dosageMax(config.dosageMax())
                     .dosageUnit(config.dosageUnit())
@@ -324,14 +323,14 @@ public class CurationModel {
     }
 
     @NotNull
-    public Medication annotateWithMedicationType(@NotNull Medication medication) {
-        MedicationTypeConfig config = find(database.medicationTypeConfigs(), medication.name());
+    public Medication annotateWithMedicationCategory(@NotNull Medication medication) {
+        MedicationCategoryConfig config = find(database.medicationCategoryConfigs(), medication.name());
 
         if (config == null) {
-            LOGGER.warn(" Could not find medication type config for '{}'", medication.name());
+            LOGGER.warn(" Could not find medication category config for '{}'", medication.name());
             return medication;
         } else {
-            return ImmutableMedication.builder().from(medication).type(config.type()).build();
+            return ImmutableMedication.builder().from(medication).categories(config.categories()).build();
         }
     }
 
@@ -454,8 +453,8 @@ public class CurationModel {
             return database.toxicityConfigs();
         } else if (classToLookUp == ImmutableMedicationDosageConfig.class) {
             return database.medicationDosageConfigs();
-        } else if (classToLookUp == ImmutableMedicationTypeConfig.class) {
-            return database.medicationTypeConfigs();
+        } else if (classToLookUp == ImmutableMedicationCategoryConfig.class) {
+            return database.medicationCategoryConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);

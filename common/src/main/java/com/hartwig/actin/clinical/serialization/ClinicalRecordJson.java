@@ -437,9 +437,7 @@ public final class ClinicalRecordJson {
             List<Medication> medicationList = Lists.newArrayList();
             for (JsonElement element : medications) {
                 JsonObject object = element.getAsJsonObject();
-                medicationList.add(ImmutableMedication.builder()
-                        .name(string(object, "name"))
-                        .type(string(object, "type"))
+                medicationList.add(ImmutableMedication.builder().name(string(object, "name")).categories(stringList(object, "categories"))
                         .dosageMin(nullableNumber(object, "dosageMin"))
                         .dosageMax(nullableNumber(object, "dosageMax"))
                         .dosageUnit(nullableString(object, "dosageUnit"))

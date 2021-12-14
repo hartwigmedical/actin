@@ -9,16 +9,16 @@ import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplica
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableMedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
-import com.hartwig.actin.clinical.curation.config.MedicationTypeConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -64,7 +64,7 @@ public final class TestCurationFactory {
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
-                .medicationTypeConfigs(createTestMedicationTypeConfigs())
+                .medicationCategoryConfigs(createTestMedicationCategoryConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
                 .allergyTranslations(createTestAllergyTranslations())
                 .bloodTransfusionTranslations(createTestBloodTransfusionTranslations())
@@ -121,7 +121,8 @@ public final class TestCurationFactory {
                         .build())
                 .build());
 
-        configs.add(ImmutableOncologicalHistoryConfig.builder().input("Breast cancer Jan-2018")
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Breast cancer Jan-2018")
                 .ignore(false)
                 .curatedObject(ImmutablePriorSecondPrimary.builder()
                         .tumorLocation("Breast")
@@ -213,10 +214,10 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    private static List<MedicationTypeConfig> createTestMedicationTypeConfigs() {
-        List<MedicationTypeConfig> configs = Lists.newArrayList();
+    private static List<MedicationCategoryConfig> createTestMedicationCategoryConfigs() {
+        List<MedicationCategoryConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableMedicationTypeConfig.builder().input("Paracetamol").type("Acetanilide derivatives").build());
+        configs.add(ImmutableMedicationCategoryConfig.builder().input("Paracetamol").addCategories("Acetanilide derivatives").build());
 
         return configs;
     }

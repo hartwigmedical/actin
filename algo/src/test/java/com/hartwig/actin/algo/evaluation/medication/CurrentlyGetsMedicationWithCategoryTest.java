@@ -18,11 +18,11 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class CurrentlyGetsMedicationWithTypeTest {
+public class CurrentlyGetsMedicationWithCategoryTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsMedicationWithType function = new CurrentlyGetsMedicationWithType(null, false);
+        CurrentlyGetsMedicationWithCategory function = new CurrentlyGetsMedicationWithCategory(null, false);
 
         List<Medication> medications = Lists.newArrayList();
         assertEquals(Evaluation.FAIL, function.evaluate(withMedications(medications)));
@@ -39,19 +39,19 @@ public class CurrentlyGetsMedicationWithTypeTest {
 
     @Test
     public void canSpecifyType() {
-        CurrentlyGetsMedicationWithType function = new CurrentlyGetsMedicationWithType("type 1", false);
+        CurrentlyGetsMedicationWithCategory function = new CurrentlyGetsMedicationWithCategory("category 1", false);
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(builder().active(true).type("type 2").build());
+        medications.add(builder().active(true).addCategories("category 2").build());
         assertEquals(Evaluation.FAIL, function.evaluate(withMedications(medications)));
 
-        medications.add(builder().active(true).type("type 1").build());
+        medications.add(builder().active(true).addCategories("category 1").build());
         assertEquals(Evaluation.PASS, function.evaluate(withMedications(medications)));
     }
 
     @Test
     public void canCheckForStableDosing() {
-        CurrentlyGetsMedicationWithType function = new CurrentlyGetsMedicationWithType(null, true);
+        CurrentlyGetsMedicationWithCategory function = new CurrentlyGetsMedicationWithCategory(null, true);
 
         List<Medication> medications = Lists.newArrayList();
 
@@ -87,6 +87,6 @@ public class CurrentlyGetsMedicationWithTypeTest {
 
     @NotNull
     private static ImmutableMedication.Builder builder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).type(Strings.EMPTY);
+        return ImmutableMedication.builder().name(Strings.EMPTY);
     }
 }

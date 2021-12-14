@@ -372,7 +372,7 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                     MEDICATION.SAMPLEID,
                     MEDICATION.NAME,
-                    MEDICATION.TYPE,
+                    MEDICATION.CATEGORIES,
                     MEDICATION.DOSAGEMIN,
                     MEDICATION.DOSAGEMAX,
                     MEDICATION.DOSAGEUNIT,
@@ -384,7 +384,7 @@ class ClinicalDAO {
                     MEDICATION.ACTIVE)
                     .values(sampleId,
                             medication.name(),
-                            medication.type(),
+                            DataUtil.concat(medication.categories()),
                             medication.dosageMin(),
                             medication.dosageMax(),
                             medication.dosageUnit(),

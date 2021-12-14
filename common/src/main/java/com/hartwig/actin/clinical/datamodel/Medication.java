@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ public abstract class Medication {
     public abstract String name();
 
     @NotNull
-    public abstract String type();
+    public abstract Set<String> categories();
 
     @Nullable
     public abstract Double dosageMin();

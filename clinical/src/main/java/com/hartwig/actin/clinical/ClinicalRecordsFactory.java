@@ -52,7 +52,6 @@ import com.hartwig.actin.util.ResourceFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -343,13 +342,12 @@ public class ClinicalRecordsFactory {
             String name = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay());
             if (!name.isEmpty() && !name.equalsIgnoreCase("null")) {
                 Medication medication = builder.name(name)
-                        .type(Strings.EMPTY)
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
                         .active(entry.active())
                         .build();
 
-                medications.add(curation.annotateWithMedicationType(medication));
+                medications.add(curation.annotateWithMedicationCategory(medication));
             }
         }
 
