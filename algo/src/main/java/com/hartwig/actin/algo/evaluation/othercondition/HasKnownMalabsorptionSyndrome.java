@@ -14,6 +14,6 @@ public class HasKnownMalabsorptionSyndrome implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return Evaluation.PASS_BUT_WARN;
+        return Evaluation.FAIL;
     }
 }

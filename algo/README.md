@@ -196,7 +196,7 @@ HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ t
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
-HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D. - currently resolves to PASS_BUT_WARN
+HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D. - currently resolves to FAIL
 IS_IN_DIALYSIS | > won't be evaluated, resolves to FAIL
 HAS_SEVERE_CONCOMITANT_CONDITION | > won't be evaluated, resolves to FAIL
 
