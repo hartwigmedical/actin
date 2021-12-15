@@ -20,7 +20,7 @@ public final class CardiacFunctionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, notImplementedCreator());
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, notImplementedCreator());
