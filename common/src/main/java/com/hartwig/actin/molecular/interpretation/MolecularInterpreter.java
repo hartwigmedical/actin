@@ -112,7 +112,8 @@ public final class MolecularInterpreter {
     }
 
     private static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
-        if ((evidence.level() == EvidenceLevel.C || evidence.level() == EvidenceLevel.D) && !evidence.onLabel()) {
+        if ((evidence.level() == EvidenceLevel.C || evidence.level() == EvidenceLevel.D || (evidence.level() == EvidenceLevel.B
+                && evidence.direction().isPredicted())) && !evidence.onLabel()) {
             return false;
         }
 

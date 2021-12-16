@@ -13,4 +13,8 @@ public enum EvidenceDirection {
     public boolean isResistant() {
         return this == RESISTANT || this == PREDICTED_RESISTANT;
     }
+
+    public boolean isPredicted() {
+        return this == PREDICTED_RESPONSIVE || this == PREDICTED_RESISTANT;
+    }
 }
