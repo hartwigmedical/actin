@@ -52,6 +52,7 @@ public final class TestMolecularDataFactory {
         List<TreatmentEvidence> evidences = Lists.newArrayList();
 
         ImmutableTreatmentEvidence.Builder ckbBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB");
+        ImmutableTreatmentEvidence.Builder iclusionBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION");
 
         evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
                 .treatment("Vemurafenib")
@@ -79,6 +80,13 @@ public final class TestMolecularDataFactory {
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
+                .build());
+
+        evidences.add(iclusionBuilder.genomicEvent("BRAF p.Val600Glu")
+                .treatment("Trial X")
+                .onLabel(true)
+                .level(EvidenceLevel.B)
+                .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
         return evidences;
