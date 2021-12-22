@@ -113,7 +113,7 @@ public class CurationModelTest {
 
         assertEquals(2, cancerRelatedComplications.size());
         assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("curated").build()));
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("no curation").build()));
+        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("No curation").build()));
 
         assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
 

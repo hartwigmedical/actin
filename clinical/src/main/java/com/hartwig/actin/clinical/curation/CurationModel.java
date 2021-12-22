@@ -178,7 +178,7 @@ public class CurationModel {
         for (String input : inputs) {
             CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
             cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
-                    .name(config != null ? config.name() : input)
+                    .name(config != null ? config.name() : CurationUtil.capitalizeFirstLetterOnly(input))
                     .build());
         }
 
