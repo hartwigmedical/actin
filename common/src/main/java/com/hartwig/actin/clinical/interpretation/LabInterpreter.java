@@ -19,6 +19,8 @@ public final class LabInterpreter {
     static {
         MAPPINGS.put(LabMeasurement.NEUTROPHILS_ABS_EDA, LabMeasurement.NEUTROPHILS_ABS);
         MAPPINGS.put(LabMeasurement.LYMPHOCYTES_ABS_EDM, LabMeasurement.LYMPHOCYTES_ABS_EDA);
+        MAPPINGS.put(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT, LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO);
+        MAPPINGS.put(LabMeasurement.PROTHROMBIN_TIME_POCT, LabMeasurement.PROTHROMBIN_TIME);
     }
 
     private LabInterpreter() {
