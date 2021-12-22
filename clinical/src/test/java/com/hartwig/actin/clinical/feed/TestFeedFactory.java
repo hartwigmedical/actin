@@ -105,7 +105,6 @@ public final class TestFeedFactory {
                 .identifierSystem("URL")
                 .codeCodingCodeOriginal("code")
                 .codeCodingDisplayOriginal("diagnostics")
-                .presentedFormData(Strings.EMPTY)
                 .reason(Strings.EMPTY)
                 .accessionValue(Strings.EMPTY);
 

@@ -108,7 +108,6 @@ public class ClinicalFeedReaderTest {
         assertEquals("URL", entry.identifierSystem());
         assertEquals("code", entry.codeCodingCodeOriginal());
         assertEquals("diagnostics stomach", entry.codeCodingDisplayOriginal());
-        assertEquals(Strings.EMPTY, entry.presentedFormData());
         assertEquals(Strings.EMPTY, entry.reason());
         assertEquals(Strings.EMPTY, entry.accessionValue());
     }

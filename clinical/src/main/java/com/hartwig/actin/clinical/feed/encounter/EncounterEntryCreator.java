@@ -23,7 +23,6 @@ public class EncounterEntryCreator implements FeedEntryCreator<EncounterEntry> {
                 .identifierSystem(line.string("identifier_system"))
                 .codeCodingCodeOriginal(line.string("code_coding_code_original"))
                 .codeCodingDisplayOriginal(line.string("code_coding_display_original"))
-                .presentedFormData(line.string("presentedForm_data"))
                 .reason(line.string("reason"))
                 .accessionValue(line.string("accession_value"))
                 .build();
