@@ -24,7 +24,7 @@ public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
         for (Allergy allergy : record.clinical().allergies()) {
             if (allergy.category().equalsIgnoreCase(MEDICATION_CATEGORY) && allergy.clinicalStatus()
                     .equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
-                return Evaluation.PASS;
+                return Evaluation.UNDETERMINED;
             }
         }
 

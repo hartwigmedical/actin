@@ -36,7 +36,7 @@ public class HasAllergyRelatedToStudyMedicationTest {
         allergies.add(builder().category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY.toUpperCase())
                 .clinicalStatus(HasAllergyRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.toUpperCase())
                 .build());
-        assertEquals(Evaluation.PASS, function.evaluate(withAllergies(allergies)));
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(withAllergies(allergies)));
     }
 
     @NotNull

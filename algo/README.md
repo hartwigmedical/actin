@@ -227,7 +227,7 @@ ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated.
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Exact ingredients cannot yet be automatically evaluated
+HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Resolves to Undetermined, since exact ingredients cannot yet be automatically evaluated
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
