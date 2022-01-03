@@ -44,7 +44,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
         if (evaluation == Evaluation.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
-            if (isValid(mostRecent, measurement)) {
+            if (isValid(secondMostRecent, measurement)) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation == Evaluation.PASS) {
                     return Evaluation.UNDETERMINED;
