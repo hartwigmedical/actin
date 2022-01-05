@@ -29,6 +29,7 @@ public class FeedParseFunctionsTest {
     @Test
     public void canParseDates() {
         assertNull(FeedParseFunctions.parseOptionalDate(Strings.EMPTY));
+        assertNull(FeedParseFunctions.parseOptionalDate(FeedParseFunctions.NULL_STRING));
 
         LocalDate correct = LocalDate.of(2020, 10, 23);
         assertEquals(correct, FeedParseFunctions.parseOptionalDate("23-10-2020 13:10"));

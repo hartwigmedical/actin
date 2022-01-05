@@ -15,6 +15,8 @@ public final class FeedParseFunctions {
 
     private static final Set<DateTimeFormatter> DATE_FORMATS = Sets.newHashSet();
 
+    static final String NULL_STRING = "NULL";
+
     private FeedParseFunctions() {
     }
 
@@ -37,7 +39,7 @@ public final class FeedParseFunctions {
 
     @Nullable
     public static LocalDate parseOptionalDate(@NotNull String date) {
-        return !date.isEmpty() ? parseDate(date) : null;
+        return !date.isEmpty() && !date.equalsIgnoreCase(NULL_STRING) ? parseDate(date) : null;
     }
 
     @NotNull
