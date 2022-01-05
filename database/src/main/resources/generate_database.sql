@@ -101,7 +101,7 @@ DROP TABLE IF EXISTS cancerRelatedComplication;
 CREATE TABLE cancerRelatedComplication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    name varchar(50) NOT NULL,
+    name varchar(100) NOT NULL,
     PRIMARY KEY (id)
 );
 
