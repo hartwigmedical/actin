@@ -174,6 +174,7 @@ public final class TestFeedFactory {
                 .valueQuantityUnit("U/l")
                 .interpretationDisplayOriginal("ok")
                 .referenceRangeText("20 - 40")
+                .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB2")
@@ -183,6 +184,7 @@ public final class TestFeedFactory {
                 .valueQuantityUnit("mmol/L")
                 .interpretationDisplayOriginal("too low")
                 .referenceRangeText("> 30")
+                .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB3")
@@ -193,6 +195,7 @@ public final class TestFeedFactory {
                 .valueQuantityUnit("mL/min")
                 .interpretationDisplayOriginal("ok")
                 .referenceRangeText("> 50")
+                .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB4")
@@ -202,6 +205,7 @@ public final class TestFeedFactory {
                 .valueQuantityUnit("mL/min")
                 .interpretationDisplayOriginal("ok")
                 .referenceRangeText(Strings.EMPTY)
+                .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         return entries;

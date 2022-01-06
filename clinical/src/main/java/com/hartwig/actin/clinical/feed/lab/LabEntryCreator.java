@@ -25,6 +25,7 @@ public class LabEntryCreator implements FeedEntryCreator<LabEntry> {
                 .valueString(line.string("valueString"))
                 .codeCode(line.string("code_code"))
                 .referenceRangeText(line.string("referenceRange_text"))
+                .effectiveDateTime(line.date("effectiveDateTime"))
                 .build();
     }
 

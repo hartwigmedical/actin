@@ -158,6 +158,7 @@ public class ClinicalFeedReaderTest {
         assertEquals(Strings.EMPTY, entry1.valueString());
         assertEquals(Strings.EMPTY, entry1.codeCode());
         assertEquals("0.42 - 0.52", entry1.referenceRangeText());
+        assertEquals(LocalDate.of(2019, 6, 27), entry1.effectiveDateTime());
 
         LabEntry entry2 = findByCodeCodeOriginal(entries, "HB");
         assertEquals("ACTN-01-02-9999", entry2.subject());
@@ -170,6 +171,7 @@ public class ClinicalFeedReaderTest {
         assertEquals(Strings.EMPTY, entry2.valueString());
         assertEquals(Strings.EMPTY, entry2.codeCode());
         assertEquals("8.8 - 10.7", entry2.referenceRangeText());
+        assertEquals(LocalDate.of(2019, 5, 27), entry2.effectiveDateTime());
     }
 
     @NotNull

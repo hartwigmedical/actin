@@ -26,8 +26,7 @@ public final class LabExtraction {
             isOutsideRef = (limits.lower() != null && value < limits.lower()) || (limits.upper() != null && value > limits.upper());
         }
 
-        return ImmutableLabValue.builder()
-                .date(entry.issued())
+        return ImmutableLabValue.builder().date(entry.effectiveDateTime())
                 .code(entry.codeCodeOriginal())
                 .name(entry.codeDisplayOriginal())
                 .comparator(entry.valueQuantityComparator())

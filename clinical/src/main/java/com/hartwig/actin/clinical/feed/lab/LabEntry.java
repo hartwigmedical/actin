@@ -45,4 +45,7 @@ public abstract class LabEntry implements FeedEntry {
     @NotNull
     public abstract String referenceRangeText();
 
+    @NotNull
+    public abstract LocalDate effectiveDateTime();
+
 }
