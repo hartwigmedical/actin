@@ -62,7 +62,6 @@ public final class TestFeedFactory {
     @NotNull
     private static List<PatientEntry> createTestPatientEntries() {
         return Lists.newArrayList(ImmutablePatientEntry.builder()
-                .id("ID")
                 .subject(TEST_SUBJECT)
                 .birthYear(1960)
                 .gender(Gender.MALE)

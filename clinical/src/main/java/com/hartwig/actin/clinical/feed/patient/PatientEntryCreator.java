@@ -14,7 +14,6 @@ public class PatientEntryCreator implements FeedEntryCreator<PatientEntry> {
     @Override
     public PatientEntry fromLine(@NotNull final FeedLine line) {
         return ImmutablePatientEntry.builder()
-                .id(line.string("ID"))
                 .subject(line.string("subject"))
                 .birthYear(line.integer("birth_year"))
                 .gender(line.gender("gender"))

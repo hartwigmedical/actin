@@ -50,7 +50,6 @@ public class ClinicalFeedReaderTest {
 
         PatientEntry entry = entries.get(0);
 
-        assertEquals("CODE", entry.id());
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals(1953, entry.birthYear());
         assertEquals(Gender.MALE, entry.gender());

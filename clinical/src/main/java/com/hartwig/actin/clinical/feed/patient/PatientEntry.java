@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PatientEntry implements FeedEntry {
 
     @NotNull
-    public abstract String id();
-
-    @NotNull
     @Override
     public abstract String subject();
 

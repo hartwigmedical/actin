@@ -22,7 +22,9 @@ public class FeedLine {
 
     @NotNull
     public String string(@NotNull String column) {
-        assert fields.containsKey(column);
+        if (!fields.containsKey(column)) {
+            throw new IllegalArgumentException("No column found with header '" + column + "'");
+        }
         return parts[fields.get(column)];
     }
 
