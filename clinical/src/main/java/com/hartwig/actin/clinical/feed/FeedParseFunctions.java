@@ -22,6 +22,7 @@ public final class FeedParseFunctions {
 
     static {
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("d-M-yyyy HH:mm"));
     }
