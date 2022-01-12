@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Gender;
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
-import com.hartwig.actin.clinical.feed.bloodpressure.ImmutableBloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.ImmutableBodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
@@ -23,6 +21,8 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.ImmutableQuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory;
+import com.hartwig.actin.clinical.feed.vitalfunction.ImmutableVitalFunctionEntry;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public final class TestFeedFactory {
                 .encounterEntries(createTestEncounterEntries())
                 .medicationEntries(createTestMedicationEntries())
                 .labEntries(createTestLabEntries())
-                .bloodPressureEntries(createTestBloodPressureEntries())
+                .vitalFunctionEntries(createTestVitalFunctionEntries())
                 .complicationEntries(createTestComplicationEntries())
                 .intoleranceEntries(createTestIntoleranceEntries())
                 .bodyWeightEntries(createTestBodyWeightEntries())
@@ -212,10 +212,10 @@ public final class TestFeedFactory {
     }
 
     @NotNull
-    private static List<BloodPressureEntry> createTestBloodPressureEntries() {
-        List<BloodPressureEntry> entries = Lists.newArrayList();
+    private static List<VitalFunctionEntry> createTestVitalFunctionEntries() {
+        List<VitalFunctionEntry> entries = Lists.newArrayList();
 
-        entries.add(ImmutableBloodPressureEntry.builder()
+        entries.add(ImmutableVitalFunctionEntry.builder()
                 .subject(TEST_SUBJECT)
                 .effectiveDateTime(LocalDate.of(2021, 2, 27))
                 .codeCodeOriginal(Strings.EMPTY)

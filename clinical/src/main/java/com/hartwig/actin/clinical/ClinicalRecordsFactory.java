@@ -35,7 +35,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.feed.FeedModel;
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
@@ -46,6 +45,7 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator;
@@ -317,7 +317,7 @@ public class ClinicalRecordsFactory {
     @NotNull
     private List<VitalFunction> extractVitalFunctions(@NotNull String subject) {
         List<VitalFunction> vitalFunctions = Lists.newArrayList();
-        for (BloodPressureEntry entry : feed.bloodPressureEntries(subject)) {
+        for (VitalFunctionEntry entry : feed.vitalFunctionEntries(subject)) {
             vitalFunctions.add(ImmutableVitalFunction.builder()
                     .date(entry.effectiveDateTime())
                     .category(toCategory(entry.codeDisplayOriginal()))
@@ -331,13 +331,16 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private static VitalFunctionCategory toCategory(@NotNull String string) {
-        if (string.equals("NIBP")) {
-            return VitalFunctionCategory.BLOOD_PRESSURE;
-        } else if (string.equals("HR")) {
-            return VitalFunctionCategory.HEART_RATE;
+        switch (string) {
+            case "NIBP":
+                return VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
+            case "ABP":
+                return VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE;
+            case "HR":
+                return VitalFunctionCategory.HEART_RATE;
+            default:
+                throw new IllegalStateException("Could not resolve vital function category: " + string);
         }
-
-        throw new IllegalStateException("Could not resolve vital function category: " + string);
     }
 
     @NotNull

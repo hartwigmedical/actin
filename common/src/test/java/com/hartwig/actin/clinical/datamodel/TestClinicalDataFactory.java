@@ -382,7 +382,7 @@ public final class TestClinicalDataFactory {
 
         vitalFunctions.add(ImmutableVitalFunction.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
-                .category(VitalFunctionCategory.BLOOD_PRESSURE)
+                .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
                 .subcategory("Mean blood pressure")
                 .value(99)
                 .unit("mm[Hg]")

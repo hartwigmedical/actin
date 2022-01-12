@@ -74,9 +74,7 @@ public class HasSufficientBloodPressureTest {
 
     @NotNull
     private static ImmutableVitalFunction.Builder builder() {
-        return ImmutableVitalFunction.builder()
-                .date(LocalDate.of(2017, 7, 7))
-                .category(VitalFunctionCategory.BLOOD_PRESSURE)
+        return ImmutableVitalFunction.builder().date(LocalDate.of(2017, 7, 7)).category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
                 .subcategory(Strings.EMPTY)
                 .value(0D)
                 .unit(Strings.EMPTY);

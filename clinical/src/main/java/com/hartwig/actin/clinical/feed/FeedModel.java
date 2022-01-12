@@ -8,7 +8,6 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
@@ -17,6 +16,7 @@ import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,8 +111,8 @@ public class FeedModel {
     }
 
     @NotNull
-    public List<BloodPressureEntry> bloodPressureEntries(@NotNull String subject) {
-        return entriesForSubject(feed.bloodPressureEntries(), subject);
+    public List<VitalFunctionEntry> vitalFunctionEntries(@NotNull String subject) {
+        return entriesForSubject(feed.vitalFunctionEntries(), subject);
     }
 
     @NotNull

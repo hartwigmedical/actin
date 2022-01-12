@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.feed;
 
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntryCreator;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryCreator;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
@@ -18,6 +16,8 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntryCreator;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryCreator;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntryCreator;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,8 +53,8 @@ public final class FeedFileReaderFactory {
     }
 
     @NotNull
-    public static FeedFileReader<BloodPressureEntry> createBloodPressureReader() {
-        return FeedFileReader.create(new BloodPressureEntryCreator());
+    public static FeedFileReader<VitalFunctionEntry> createVitalFunctionReader() {
+        return FeedFileReader.create(new VitalFunctionEntryCreator());
     }
 
     @NotNull

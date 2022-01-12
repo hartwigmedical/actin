@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.feed;
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
@@ -12,6 +11,7 @@ import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 import com.hartwig.actin.util.Paths;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +27,7 @@ public final class ClinicalFeedReader {
     private static final String ENCOUNTER_TSV = "encounter.tsv";
     private static final String MEDICATION_TSV = "medication.tsv";
     private static final String LAB_TSV = "lab.tsv";
-    private static final String BLOOD_PRESSURE_TSV = "bloodpressure.tsv";
+    private static final String VITAL_FUNCTION_TSV = "vital_function.tsv";
     private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
     private static final String BODY_WEIGHT_TSV = "bodyweight.tsv";
@@ -46,7 +46,7 @@ public final class ClinicalFeedReader {
                 .encounterEntries(readEncounterEntries(basePath + ENCOUNTER_TSV))
                 .medicationEntries(readMedicationEntries(basePath + MEDICATION_TSV))
                 .labEntries(readLabEntries(basePath + LAB_TSV))
-                .bloodPressureEntries(readBloodPressureEntries(basePath + BLOOD_PRESSURE_TSV))
+                .vitalFunctionEntries(readVitalFunctionEntries(basePath + VITAL_FUNCTION_TSV))
                 .complicationEntries(readComplicationEntries(basePath + COMPLICATION_TSV))
                 .intoleranceEntries(readIntoleranceEntries(basePath + INTOLERANCE_TSV))
                 .bodyWeightEntries(readBodyWeightEntries(basePath + BODY_WEIGHT_TSV))
@@ -93,9 +93,9 @@ public final class ClinicalFeedReader {
     }
 
     @NotNull
-    private static List<BloodPressureEntry> readBloodPressureEntries(@NotNull String bloodPressureTsv) throws IOException {
-        List<BloodPressureEntry> entries = FeedFileReaderFactory.createBloodPressureReader().read(bloodPressureTsv);
-        LOGGER.info(" Read {} blood pressure entries from {}", entries.size(), bloodPressureTsv);
+    private static List<VitalFunctionEntry> readVitalFunctionEntries(@NotNull String vitalFunctionTsv) throws IOException {
+        List<VitalFunctionEntry> entries = FeedFileReaderFactory.createVitalFunctionReader().read(vitalFunctionTsv);
+        LOGGER.info(" Read {} vital function entries from {}", entries.size(), vitalFunctionTsv);
         return entries;
     }
 

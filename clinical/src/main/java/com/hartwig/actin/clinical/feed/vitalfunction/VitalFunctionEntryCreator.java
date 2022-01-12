@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.bloodpressure;
+package com.hartwig.actin.clinical.feed.vitalfunction;
 
 import com.hartwig.actin.clinical.feed.FeedEntryCreator;
 import com.hartwig.actin.clinical.feed.FeedLine;
@@ -7,17 +7,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class BloodPressureEntryCreator implements FeedEntryCreator<BloodPressureEntry> {
+public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunctionEntry> {
 
-    private static final Logger LOGGER = LogManager.getLogger(BloodPressureEntryCreator.class);
+    private static final Logger LOGGER = LogManager.getLogger(VitalFunctionEntryCreator.class);
 
-    public BloodPressureEntryCreator() {
+    public VitalFunctionEntryCreator() {
     }
 
     @NotNull
     @Override
-    public BloodPressureEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableBloodPressureEntry.builder()
+    public VitalFunctionEntry fromLine(@NotNull final FeedLine line) {
+        return ImmutableVitalFunctionEntry.builder()
                 .subject(line.string("subject"))
                 .effectiveDateTime(line.date("effectiveDateTime"))
                 .codeCodeOriginal(line.string("code_code_original"))
@@ -33,12 +33,12 @@ public class BloodPressureEntryCreator implements FeedEntryCreator<BloodPressure
 
     @Override
     public boolean isValid(@NotNull final FeedLine line) {
-        // In blood pressure data there can be entries with no value.
+        // In vital function data there can be entries with no or NULL value.
         // They likely should be filtered prior to being ingested in ACTIN.
         String value = line.string("quantity_value");
         boolean valid = !value.isEmpty() && !value.equals("NULL");
         if (!valid) {
-            LOGGER.warn("Invalid blood pressure line detected with component code display '{}'", line.string("component_code_display"));
+            LOGGER.warn("Invalid vital function line detected with component code display '{}'", line.string("component_code_display"));
         }
         return valid;
     }

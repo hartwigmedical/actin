@@ -176,7 +176,7 @@ public class ClinicalRecordsFactoryTest {
 
         VitalFunction vitalFunction = vitalFunctions.get(0);
         assertEquals(LocalDate.of(2021, 2, 27), vitalFunction.date());
-        assertEquals(VitalFunctionCategory.BLOOD_PRESSURE, vitalFunction.category());
+        assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, vitalFunction.category());
         assertEquals("systolic", vitalFunction.subcategory());
         assertEquals(120, vitalFunction.value(), EPSILON);
         assertEquals("mm[Hg]", vitalFunction.unit());

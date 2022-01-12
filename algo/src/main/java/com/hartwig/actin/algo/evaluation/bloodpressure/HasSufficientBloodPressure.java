@@ -48,8 +48,7 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
     private List<VitalFunction> selectRelevant(@NotNull List<VitalFunction> vitalFunctions) {
         List<VitalFunction> filtered = Lists.newArrayList();
         for (VitalFunction vitalFunction : vitalFunctions) {
-            if (vitalFunction.category() == VitalFunctionCategory.BLOOD_PRESSURE && vitalFunction.subcategory()
-                    .equals(category.display())) {
+            if (isBloodPressure(vitalFunction) && vitalFunction.subcategory().equals(category.display())) {
                 filtered.add(vitalFunction);
             }
         }
@@ -57,5 +56,10 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
         filtered.sort(new VitalFunctionDescendingDateComparator());
 
         return filtered.subList(0, Math.min(filtered.size(), MAX_BLOOD_PRESSURES_TO_USE));
+    }
+
+    private static boolean isBloodPressure(@NotNull VitalFunction vitalFunction) {
+        return vitalFunction.category() == VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
+                || vitalFunction.category() == VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
     }
 }

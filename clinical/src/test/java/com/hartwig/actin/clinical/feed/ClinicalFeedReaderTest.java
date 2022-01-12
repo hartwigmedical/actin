@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Gender;
-import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
@@ -19,6 +18,7 @@ import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class ClinicalFeedReaderTest {
         assertEncounters(feed.encounterEntries());
         assertMedication(feed.medicationEntries());
         assertLab(feed.labEntries());
-        assertBloodPressures(feed.bloodPressureEntries());
+        assertVitalFunctions(feed.vitalFunctionEntries());
         assertComplications(feed.complicationEntries());
         assertIntolerances(feed.intoleranceEntries());
         assertBodyWeights(feed.bodyWeightEntries());
@@ -185,10 +185,10 @@ public class ClinicalFeedReaderTest {
         throw new IllegalStateException("No lab entry found with codeCodeOriginal '" + codeCodeOriginal + "'");
     }
 
-    private static void assertBloodPressures(@NotNull List<BloodPressureEntry> entries) {
+    private static void assertVitalFunctions(@NotNull List<VitalFunctionEntry> entries) {
         assertEquals(1, entries.size());
 
-        BloodPressureEntry entry = entries.get(0);
+        VitalFunctionEntry entry = entries.get(0);
 
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals(LocalDate.of(2019, 4, 28), entry.effectiveDateTime());

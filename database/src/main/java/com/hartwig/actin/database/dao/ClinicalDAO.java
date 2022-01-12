@@ -90,7 +90,7 @@ class ClinicalDAO {
         writeAllergies(sampleId, record.allergies());
         writeSurgeries(sampleId, record.surgeries());
         writeBodyWeights(sampleId, record.bodyWeights());
-        writeBloodPressures(sampleId, record.vitalFunctions());
+        writeVitalFunctions(sampleId, record.vitalFunctions());
         writeBloodTransfusions(sampleId, record.bloodTransfusions());
         writeMedications(sampleId, record.medications());
     }
@@ -350,7 +350,7 @@ class ClinicalDAO {
         }
     }
 
-    private void writeBloodPressures(@NotNull String sampleId, @NotNull List<VitalFunction> vitalFunctions) {
+    private void writeVitalFunctions(@NotNull String sampleId, @NotNull List<VitalFunction> vitalFunctions) {
         for (VitalFunction vitalFunction : vitalFunctions) {
             context.insertInto(VITALFUNCTION,
                     VITALFUNCTION.SAMPLEID,
@@ -358,9 +358,7 @@ class ClinicalDAO {
                     VITALFUNCTION.CATEGORY,
                     VITALFUNCTION.SUBCATEGORY,
                     VITALFUNCTION.VALUE,
-                    VITALFUNCTION.UNIT)
-                    .values(sampleId,
-                            vitalFunction.date(),
+                    VITALFUNCTION.UNIT).values(sampleId, vitalFunction.date(),
                             vitalFunction.category().display(),
                             vitalFunction.subcategory(),
                             vitalFunction.value(),

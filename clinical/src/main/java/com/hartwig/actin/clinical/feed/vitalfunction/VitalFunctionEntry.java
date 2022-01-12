@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.bloodpressure;
+package com.hartwig.actin.clinical.feed.vitalfunction;
 
 import java.time.LocalDate;
 
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class BloodPressureEntry implements FeedEntry {
+public abstract class VitalFunctionEntry implements FeedEntry {
 
     @NotNull
     @Override

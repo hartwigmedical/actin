@@ -84,10 +84,10 @@ public class FeedModelTest {
     }
 
     @Test
-    public void canRetrieveBloodPressureEntries() {
+    public void canRetrieveVitalFunctionEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
-        assertNotNull(model.bloodPressureEntries(TestFeedFactory.TEST_SUBJECT));
+        assertNotNull(model.vitalFunctionEntries(TestFeedFactory.TEST_SUBJECT));
     }
 
     @Test
