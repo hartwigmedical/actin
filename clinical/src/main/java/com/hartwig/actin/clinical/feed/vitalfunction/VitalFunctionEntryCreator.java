@@ -35,11 +35,20 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
     public boolean isValid(@NotNull final FeedLine line) {
         // In vital function data there can be entries with no or NULL value.
         // They likely should be filtered prior to being ingested in ACTIN.
+        String category = line.string("code_display_original");
+
         String value = line.string("quantity_value");
-        boolean valid = !value.isEmpty() && !value.equals("NULL");
-        if (!valid) {
-            LOGGER.warn("Invalid vital function line detected with component code display '{}'", line.string("component_code_display"));
+        boolean validValue = !value.isEmpty() && !value.equals("NULL");
+        if (!validValue) {
+            LOGGER.warn("Invalid vital function value detected with category '{}': {}", category, value);
         }
-        return valid;
+
+        // TODO Support all categories properly.
+        boolean validCategory = category.equals("ABP") || category.equals("NIBP") || category.equals("HR");
+        if (!validCategory) {
+            LOGGER.warn("Invalid vital function category detected: '{}'", category);
+        }
+
+        return validValue && validCategory;
     }
 }

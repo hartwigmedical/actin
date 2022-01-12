@@ -54,7 +54,7 @@ public final class LabExtraction {
             int separatingHyphenIndex = findSeparatingHyphenIndex(referenceRangeText);
             lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(0, separatingHyphenIndex));
             upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(separatingHyphenIndex + 1));
-        } else if (!referenceRangeText.isEmpty()) {
+        } else if (!referenceRangeText.isEmpty() && !referenceRangeText.equals("NULL")) {
             LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText);
         }
 
