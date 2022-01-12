@@ -175,12 +175,13 @@ CREATE TABLE bodyWeight
      PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS bloodPressure;
-CREATE TABLE bloodPressure
+DROP TABLE IF EXISTS measurement;
+CREATE TABLE measurement
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     date DATE NOT NULL,
-    category varchar(150) NOT NULL,
+    category varchar(50) NOT NULL,
+    subcategory varchar(150) NOT NULL,
     value double precision NOT NULL,
     unit varchar(50) NOT NULL,
     PRIMARY KEY (id)
