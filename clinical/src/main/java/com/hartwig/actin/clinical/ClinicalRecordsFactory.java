@@ -8,13 +8,11 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
@@ -23,6 +21,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -33,6 +32,8 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.VitalFunction;
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.bloodpressure.BloodPressureEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
@@ -106,7 +107,7 @@ public class ClinicalRecordsFactory {
                     .allergies(extractAllergies(subject))
                     .surgeries(extractSurgeries(subject))
                     .bodyWeights(extractBodyWeights(subject))
-                    .bloodPressures(extractBloodPressures(subject))
+                    .vitalFunctions(extractVitalFunctions(subject))
                     .medications(extractMedications(subject))
                     .build());
         }
@@ -314,17 +315,29 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<BloodPressure> extractBloodPressures(@NotNull String subject) {
-        List<BloodPressure> bloodPressures = Lists.newArrayList();
+    private List<VitalFunction> extractVitalFunctions(@NotNull String subject) {
+        List<VitalFunction> vitalFunctions = Lists.newArrayList();
         for (BloodPressureEntry entry : feed.bloodPressureEntries(subject)) {
-            bloodPressures.add(ImmutableBloodPressure.builder()
+            vitalFunctions.add(ImmutableVitalFunction.builder()
                     .date(entry.effectiveDateTime())
-                    .category(entry.componentCodeDisplay())
-                    .value(entry.componentValueQuantityValue())
-                    .unit(entry.componentValueQuantityCode())
+                    .category(toCategory(entry.codeDisplayOriginal()))
+                    .subcategory(entry.componentCodeDisplay())
+                    .value(entry.quantityValue())
+                    .unit(entry.quantityUnit())
                     .build());
         }
-        return bloodPressures;
+        return vitalFunctions;
+    }
+
+    @NotNull
+    private static VitalFunctionCategory toCategory(@NotNull String string) {
+        if (string.equals("NIBP")) {
+            return VitalFunctionCategory.BLOOD_PRESSURE;
+        } else if (string.equals("HR")) {
+            return VitalFunctionCategory.HEART_RATE;
+        }
+
+        throw new IllegalStateException("Could not resolve vital function category: " + string);
     }
 
     @NotNull

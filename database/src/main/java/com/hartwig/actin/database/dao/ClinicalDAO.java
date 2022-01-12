@@ -1,26 +1,25 @@
 package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.ALLERGY;
-import static com.hartwig.actin.database.Tables.BLOODPRESSURE;
 import static com.hartwig.actin.database.Tables.BLOODTRANSFUSION;
 import static com.hartwig.actin.database.Tables.BODYWEIGHT;
 import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
+import static com.hartwig.actin.database.Tables.CLINICALSTATUS;
+import static com.hartwig.actin.database.Tables.LABVALUE;
 import static com.hartwig.actin.database.Tables.MEDICATION;
 import static com.hartwig.actin.database.Tables.OTHERCOMPLICATION;
+import static com.hartwig.actin.database.Tables.PATIENT;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.SURGERY;
 import static com.hartwig.actin.database.Tables.TOXICITY;
 import static com.hartwig.actin.database.Tables.TUMOR;
-import static com.hartwig.actin.database.tables.Clinicalstatus.CLINICALSTATUS;
-import static com.hartwig.actin.database.tables.Labvalue.LABVALUE;
-import static com.hartwig.actin.database.tables.Patient.PATIENT;
+import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
@@ -39,6 +38,7 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +68,7 @@ class ClinicalDAO {
         context.truncate(ALLERGY).execute();
         context.truncate(SURGERY).execute();
         context.truncate(BODYWEIGHT).execute();
-        context.truncate(BLOODPRESSURE).execute();
+        context.truncate(VITALFUNCTION).execute();
         context.truncate(BLOODTRANSFUSION).execute();
         context.truncate(MEDICATION).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
@@ -90,7 +90,7 @@ class ClinicalDAO {
         writeAllergies(sampleId, record.allergies());
         writeSurgeries(sampleId, record.surgeries());
         writeBodyWeights(sampleId, record.bodyWeights());
-        writeBloodPressures(sampleId, record.bloodPressures());
+        writeBloodPressures(sampleId, record.vitalFunctions());
         writeBloodTransfusions(sampleId, record.bloodTransfusions());
         writeMedications(sampleId, record.medications());
     }
@@ -350,15 +350,21 @@ class ClinicalDAO {
         }
     }
 
-    private void writeBloodPressures(@NotNull String sampleId, @NotNull List<BloodPressure> bloodPressures) {
-        for (BloodPressure bloodPressure : bloodPressures) {
-            context.insertInto(BLOODPRESSURE,
-                    BLOODPRESSURE.SAMPLEID,
-                    BLOODPRESSURE.DATE,
-                    BLOODPRESSURE.CATEGORY,
-                    BLOODPRESSURE.VALUE,
-                    BLOODPRESSURE.UNIT)
-                    .values(sampleId, bloodPressure.date(), bloodPressure.category(), bloodPressure.value(), bloodPressure.unit())
+    private void writeBloodPressures(@NotNull String sampleId, @NotNull List<VitalFunction> vitalFunctions) {
+        for (VitalFunction vitalFunction : vitalFunctions) {
+            context.insertInto(VITALFUNCTION,
+                    VITALFUNCTION.SAMPLEID,
+                    VITALFUNCTION.DATE,
+                    VITALFUNCTION.CATEGORY,
+                    VITALFUNCTION.SUBCATEGORY,
+                    VITALFUNCTION.VALUE,
+                    VITALFUNCTION.UNIT)
+                    .values(sampleId,
+                            vitalFunction.date(),
+                            vitalFunction.category().display(),
+                            vitalFunction.subcategory(),
+                            vitalFunction.value(),
+                            vitalFunction.unit())
                     .execute();
         }
     }

@@ -202,14 +202,15 @@
       "unit": "kilogram"
     }
   ],
-  "bloodPressures": [
+  "vitalFunctions": [
     {
       "date": {
         "year": 2020,
         "month": 6,
         "day": 15
       },
-      "category": "something",
+      "category": "HEART_RATE",
+      "subcategory": "",
       "value": 120,
       "unit": "per minute"
     }

@@ -38,8 +38,8 @@ public abstract class BloodPressureEntry implements FeedEntry {
     public abstract String componentCodeDisplay();
 
     @NotNull
-    public abstract String componentValueQuantityCode();
+    public abstract String quantityUnit();
 
-    public abstract double componentValueQuantityValue();
+    public abstract double quantityValue();
 
 }

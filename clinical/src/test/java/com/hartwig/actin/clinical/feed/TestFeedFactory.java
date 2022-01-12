@@ -219,13 +219,13 @@ public final class TestFeedFactory {
                 .subject(TEST_SUBJECT)
                 .effectiveDateTime(LocalDate.of(2021, 2, 27))
                 .codeCodeOriginal(Strings.EMPTY)
-                .codeDisplayOriginal(Strings.EMPTY)
+                .codeDisplayOriginal("NIBP")
                 .issued(LocalDate.of(2021, 2, 26))
                 .valueString(Strings.EMPTY)
                 .componentCodeCode(Strings.EMPTY)
                 .componentCodeDisplay("systolic")
-                .componentValueQuantityCode("mm[Hg]")
-                .componentValueQuantityValue(120D)
+                .quantityUnit("mm[Hg]")
+                .quantityValue(120D)
                 .build());
 
         return entries;

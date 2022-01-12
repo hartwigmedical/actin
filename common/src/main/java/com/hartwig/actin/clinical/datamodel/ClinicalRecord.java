@@ -53,7 +53,7 @@ public abstract class ClinicalRecord {
     public abstract List<BodyWeight> bodyWeights();
 
     @NotNull
-    public abstract List<BloodPressure> bloodPressures();
+    public abstract List<VitalFunction> vitalFunctions();
 
     @NotNull
     public abstract List<BloodTransfusion> bloodTransfusions();

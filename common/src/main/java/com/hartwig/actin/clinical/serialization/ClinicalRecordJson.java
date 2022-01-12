@@ -37,7 +37,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
@@ -47,7 +46,6 @@ import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECGAberration;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodPressure;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
@@ -65,6 +63,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -78,6 +77,8 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.VitalFunction;
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.util.Paths;
@@ -160,7 +161,7 @@ public final class ClinicalRecordJson {
                     .allergies(toAllergies(array(record, "allergies")))
                     .surgeries(toSurgeries(array(record, "surgeries")))
                     .bodyWeights(toBodyWeights(array(record, "bodyWeights")))
-                    .bloodPressures(toBloodPressures(array(record, "bloodPressures")))
+                    .vitalFunctions(toVitalFunctions(array(record, "vitalFunctions")))
                     .bloodTransfusions(toBloodTransfusions(array(record, "bloodTransfusions")))
                     .medications(toMedications(array(record, "medications")))
                     .build();
@@ -405,18 +406,19 @@ public final class ClinicalRecordJson {
         }
 
         @NotNull
-        private static List<BloodPressure> toBloodPressures(@NotNull JsonArray bloodPressures) {
-            List<BloodPressure> bloodPressureList = Lists.newArrayList();
-            for (JsonElement element : bloodPressures) {
+        private static List<VitalFunction> toVitalFunctions(@NotNull JsonArray vitalFunctions) {
+            List<VitalFunction> vitalFunctionList = Lists.newArrayList();
+            for (JsonElement element : vitalFunctions) {
                 JsonObject object = element.getAsJsonObject();
-                bloodPressureList.add(ImmutableBloodPressure.builder()
+                vitalFunctionList.add(ImmutableVitalFunction.builder()
                         .date(date(object, "date"))
-                        .category(string(object, "category"))
+                        .category(VitalFunctionCategory.valueOf(string(object, "category")))
+                        .subcategory(string(object, "subcategory"))
                         .value(number(object, "value"))
                         .unit(string(object, "unit"))
                         .build());
             }
-            return bloodPressureList;
+            return vitalFunctionList;
         }
 
         @NotNull

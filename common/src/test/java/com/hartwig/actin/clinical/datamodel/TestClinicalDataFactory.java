@@ -61,7 +61,7 @@ public final class TestClinicalDataFactory {
                 .allergies(createTestAllergies())
                 .surgeries(createTestSurgeries())
                 .bodyWeights(createTestBodyWeights())
-                .bloodPressures(createTestBloodPressures())
+                .vitalFunctions(createTestVitalFunctions())
                 .bloodTransfusions(createTestBloodTransfusions())
                 .medications(createTestMedications())
                 .build();
@@ -377,17 +377,18 @@ public final class TestClinicalDataFactory {
     }
 
     @NotNull
-    private static List<BloodPressure> createTestBloodPressures() {
-        List<BloodPressure> bloodPressures = Lists.newArrayList();
+    private static List<VitalFunction> createTestVitalFunctions() {
+        List<VitalFunction> vitalFunctions = Lists.newArrayList();
 
-        bloodPressures.add(ImmutableBloodPressure.builder()
+        vitalFunctions.add(ImmutableVitalFunction.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
-                .category("Mean blood pressure")
+                .category(VitalFunctionCategory.BLOOD_PRESSURE)
+                .subcategory("Mean blood pressure")
                 .value(99)
                 .unit("mm[Hg]")
                 .build());
 
-        return bloodPressures;
+        return vitalFunctions;
     }
 
     @NotNull

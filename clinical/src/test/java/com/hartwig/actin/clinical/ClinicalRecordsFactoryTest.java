@@ -14,7 +14,6 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.BloodPressure;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
@@ -28,6 +27,8 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.VitalFunction;
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +77,7 @@ public class ClinicalRecordsFactoryTest {
         assertAllergies(record.allergies());
         assertSurgeries(record.surgeries());
         assertBodyWeights(record.bodyWeights());
-        assertBloodPressures(record.bloodPressures());
+        assertVitalFunctions(record.vitalFunctions());
         assertMedications(record.medications());
     }
 
@@ -170,14 +171,15 @@ public class ClinicalRecordsFactoryTest {
         throw new IllegalStateException("Could not find body weight with date '" + dateToFind + "'");
     }
 
-    private static void assertBloodPressures(@NotNull List<BloodPressure> bloodPressures) {
-        assertEquals(1, bloodPressures.size());
+    private static void assertVitalFunctions(@NotNull List<VitalFunction> vitalFunctions) {
+        assertEquals(1, vitalFunctions.size());
 
-        BloodPressure bloodPressure = bloodPressures.get(0);
-        assertEquals(LocalDate.of(2021, 2, 27), bloodPressure.date());
-        assertEquals("systolic", bloodPressure.category());
-        assertEquals(120, bloodPressure.value(), EPSILON);
-        assertEquals("mm[Hg]", bloodPressure.unit());
+        VitalFunction vitalFunction = vitalFunctions.get(0);
+        assertEquals(LocalDate.of(2021, 2, 27), vitalFunction.date());
+        assertEquals(VitalFunctionCategory.BLOOD_PRESSURE, vitalFunction.category());
+        assertEquals("systolic", vitalFunction.subcategory());
+        assertEquals(120, vitalFunction.value(), EPSILON);
+        assertEquals("mm[Hg]", vitalFunction.unit());
     }
 
     private static void assertMedications(@NotNull List<Medication> medications) {

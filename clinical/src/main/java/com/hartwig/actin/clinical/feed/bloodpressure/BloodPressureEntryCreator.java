@@ -26,8 +26,8 @@ public class BloodPressureEntryCreator implements FeedEntryCreator<BloodPressure
                 .valueString(line.string("valueString"))
                 .componentCodeCode(line.string("component_code_code"))
                 .componentCodeDisplay(line.string("component_code_display"))
-                .componentValueQuantityCode(line.string("component_valueQuantity_code"))
-                .componentValueQuantityValue(line.number("component_valueQuantity_value"))
+                .quantityUnit(line.string("quantity_unit"))
+                .quantityValue(line.number("quantity_value"))
                 .build();
     }
 
@@ -35,7 +35,8 @@ public class BloodPressureEntryCreator implements FeedEntryCreator<BloodPressure
     public boolean isValid(@NotNull final FeedLine line) {
         // In blood pressure data there can be entries with no value.
         // They likely should be filtered prior to being ingested in ACTIN.
-        boolean valid = !line.string("component_valueQuantity_value").isEmpty();
+        String value = line.string("quantity_value");
+        boolean valid = !value.isEmpty() && !value.equals("NULL");
         if (!valid) {
             LOGGER.warn("Invalid blood pressure line detected with component code display '{}'", line.string("component_code_display"));
         }

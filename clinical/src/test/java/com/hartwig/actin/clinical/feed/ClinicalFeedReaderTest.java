@@ -198,8 +198,8 @@ public class ClinicalFeedReaderTest {
         assertTrue(entry.valueString().isEmpty());
         assertEquals("8481-6", entry.componentCodeCode());
         assertEquals("Systolic blood pressure", entry.componentCodeDisplay());
-        assertEquals("mm[Hg]", entry.componentValueQuantityCode());
-        assertEquals(108, entry.componentValueQuantityValue(), EPSILON);
+        assertEquals("mm[Hg]", entry.quantityUnit());
+        assertEquals(108, entry.quantityValue(), EPSILON);
     }
 
     private static void assertComplications(@NotNull List<ComplicationEntry> entries) {

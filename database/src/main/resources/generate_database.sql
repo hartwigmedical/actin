@@ -1,5 +1,9 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- TODO Remove per 220201
+DROP TABLE IF EXISTS bloodPressure;
+DROP TABLE IF EXISTS measurement;
+
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
 (   id int NOT NULL AUTO_INCREMENT,
@@ -175,8 +179,8 @@ CREATE TABLE bodyWeight
      PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS measurement;
-CREATE TABLE measurement
+DROP TABLE IF EXISTS vitalFunction;
+CREATE TABLE vitalFunction
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     date DATE NOT NULL,

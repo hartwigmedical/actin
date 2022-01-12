@@ -8,13 +8,16 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class BloodPressure {
+public abstract class VitalFunction {
 
     @NotNull
     public abstract LocalDate date();
 
     @NotNull
-    public abstract String category();
+    public abstract VitalFunctionCategory category();
+
+    @NotNull
+    public abstract String subcategory();
 
     public abstract double value();
 
