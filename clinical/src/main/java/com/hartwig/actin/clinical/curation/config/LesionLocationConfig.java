@@ -19,5 +19,6 @@ public abstract class LesionLocationConfig implements CurationConfig {
     @NotNull
     public abstract String location();
 
-    public abstract boolean ignoreWhenOtherLesion();
+    @Nullable
+    public abstract LesionLocationCategory category();
 }

@@ -92,15 +92,14 @@ public final class TestCurationFactory {
     private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
         List<LesionLocationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableLesionLocationConfig.builder().input("Lever").ignoreWhenOtherLesion(false).location("Liver").build());
+        configs.add(ImmutableLesionLocationConfig.builder().input("Lever").location("Liver").build());
 
         configs.add(ImmutableLesionLocationConfig.builder()
                 .input("Not a lesion")
-                .ignoreWhenOtherLesion(true)
                 .location(Strings.EMPTY)
                 .build());
 
-        configs.add(ImmutableLesionLocationConfig.builder().input("No").ignoreWhenOtherLesion(false).location(Strings.EMPTY).build());
+        configs.add(ImmutableLesionLocationConfig.builder().input("No").location(Strings.EMPTY).build());
 
         return configs;
     }

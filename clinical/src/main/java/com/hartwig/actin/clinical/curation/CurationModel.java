@@ -5,11 +5,13 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
@@ -24,6 +26,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
+import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
@@ -108,6 +111,44 @@ public class CurationModel {
                     .doids(primaryTumorConfig.doids())
                     .build();
         }
+    }
+
+    @NotNull
+    public TumorDetails evaluateKnownLesionLocations(@NotNull TumorDetails tumorDetails, @Nullable List<String> otherLesions) {
+        if (otherLesions == null) {
+            return tumorDetails;
+        }
+
+        Set<LesionLocationCategory> matches = Sets.newHashSet();
+        for (String lesion : otherLesions) {
+            String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
+            LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
+            if (config != null && config.category() != null) {
+                matches.add(config.category());
+            }
+        }
+
+        if (matches.isEmpty()) {
+            return tumorDetails;
+        }
+
+        ImmutableTumorDetails.Builder builder = ImmutableTumorDetails.builder().from(tumorDetails);
+        if (matches.contains(LesionLocationCategory.BONE)) {
+            builder.hasBoneLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.LIVER)) {
+            builder.hasLiverLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.BRAIN)) {
+            builder.hasBrainLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.CNS)) {
+            builder.hasCnsLesions(true);
+        }
+        return builder.build();
     }
 
     @NotNull
@@ -286,7 +327,8 @@ public class CurationModel {
             LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
             if (config == null) {
                 curatedOtherLesions.add(reformatted);
-            } else if (!config.ignoreWhenOtherLesion() && !config.location().isEmpty()) {
+            } else if (config.category() == null && !config.location().isEmpty()) {
+                // We only want to include lesions from the other lesions in actual other lesions if there is no category assigned.
                 curatedOtherLesions.add(config.location());
             }
         }
