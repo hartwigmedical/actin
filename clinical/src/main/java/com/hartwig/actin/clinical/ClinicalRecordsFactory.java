@@ -33,7 +33,6 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
@@ -46,6 +45,7 @@ import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator;
@@ -323,29 +323,13 @@ public class ClinicalRecordsFactory {
         for (VitalFunctionEntry entry : feed.vitalFunctionEntries(subject)) {
             vitalFunctions.add(ImmutableVitalFunction.builder()
                     .date(entry.effectiveDateTime())
-                    .category(toCategory(entry.codeDisplayOriginal()))
+                    .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal()))
                     .subcategory(entry.componentCodeDisplay())
                     .value(entry.quantityValue())
                     .unit(entry.quantityUnit())
                     .build());
         }
         return vitalFunctions;
-    }
-
-    @NotNull
-    private static VitalFunctionCategory toCategory(@NotNull String string) {
-        switch (string) {
-            case "NIBP":
-            case "NIBPLILI":
-            case "NIBPLIRE":
-                return VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
-            case "ABP":
-                return VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE;
-            case "HR":
-                return VitalFunctionCategory.HEART_RATE;
-            default:
-                throw new IllegalStateException("Could not resolve vital function category: " + string);
-        }
     }
 
     @NotNull

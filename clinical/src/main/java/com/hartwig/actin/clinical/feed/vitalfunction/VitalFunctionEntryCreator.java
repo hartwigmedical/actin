@@ -36,16 +36,22 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
         // They likely should be filtered prior to being ingested in ACTIN.
         String category = line.string("code_display_original");
 
-        String value = line.string("quantity_value");
-        boolean validValue = !value.isEmpty();
-        if (!validValue) {
-            LOGGER.warn("Empty vital function value detected with category '{}'", category);
+        boolean validCategory = true;
+        if (category.isEmpty()) {
+            validCategory = false;
+            LOGGER.warn("Empty vital function category detected.");
+        } else if (VitalFunctionExtraction.toCategory(category) == null) {
+            validCategory = false;
+            LOGGER.warn("Invalid vital function category detected: {}", category);
         }
 
-        // TODO Support all categories properly.
-        boolean validCategory = category.equals("ABP") || category.equals("NIBP") || category.equals("HR");
-        if (!validCategory && validValue) {
-            LOGGER.warn("Invalid vital function category detected: '{}'", category);
+        String value = line.string("quantity_value");
+        boolean validValue = true;
+        if (value.isEmpty()) {
+            validValue = false;
+            if (validCategory) {
+                LOGGER.warn("Empty vital function value detected with category '{}'", category);
+            }
         }
 
         return validValue && validCategory;
