@@ -333,6 +333,8 @@ public class ClinicalRecordsFactory {
     private static VitalFunctionCategory toCategory(@NotNull String string) {
         switch (string) {
             case "NIBP":
+            case "NIBPLILI":
+            case "NIBPLIRE":
                 return VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
             case "ABP":
                 return VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE;

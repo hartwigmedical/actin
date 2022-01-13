@@ -161,12 +161,13 @@ Field | Example Value | Details
 ---|---|---
 endDate | 2021-07-01 | Date on which surgery ended
 
-N blood pressures
+N vital functions
 
 Field | Example Value | Details
 ---|---|---
 date | 2021-07-01 | Date on which blood pressure value was measured
-category | Systolic blood pressure | Mean, systolic or diastolic blood pressure
+category | Non-invasive blood pressure | Category of the measurement 
+subcategory | Systolic blood pressure | Subcategory of the measurement
 value | 155 | 
 unit | mm[Hg] | Unit in which blood pressure was measured
 
