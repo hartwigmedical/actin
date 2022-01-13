@@ -15,8 +15,7 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
     @NotNull
     @Override
     public MedicationEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableMedicationEntry.builder()
-                .subject(line.string("subject"))
+        return ImmutableMedicationEntry.builder().subject(line.trimmed("subject"))
                 .medicationReferenceMedicationValue(line.string("medicationReference_Medication_value"))
                 .medicationReferenceMedicationSystem(line.string("medicationReference_Medication_system"))
                 .codeText(line.string("code_text"))

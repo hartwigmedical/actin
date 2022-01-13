@@ -13,8 +13,7 @@ public class LabEntryCreator implements FeedEntryCreator<LabEntry> {
     @NotNull
     @Override
     public LabEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableLabEntry.builder()
-                .subject(line.string("subject"))
+        return ImmutableLabEntry.builder().subject(line.trimmed("subject"))
                 .codeCodeOriginal(line.string("code_code_original"))
                 .codeDisplayOriginal(line.string("code_display_original"))
                 .issued(line.date("issued"))

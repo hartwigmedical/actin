@@ -13,8 +13,7 @@ public class BodyWeightEntryCreator implements FeedEntryCreator<BodyWeightEntry>
     @NotNull
     @Override
     public BodyWeightEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableBodyWeightEntry.builder()
-                .subject(line.string("subject"))
+        return ImmutableBodyWeightEntry.builder().subject(line.trimmed("subject"))
                 .valueQuantityValue(line.number("valueQuantity_value"))
                 .valueQuantityUnit(line.string("valueQuantity_unit"))
                 .effectiveDateTime(line.date("effectiveDateTime"))

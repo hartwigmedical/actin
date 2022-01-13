@@ -13,8 +13,7 @@ public class IntoleranceEntryCreator implements FeedEntryCreator<IntoleranceEntr
     @NotNull
     @Override
     public IntoleranceEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableIntoleranceEntry.builder()
-                .subject(line.string("subject"))
+        return ImmutableIntoleranceEntry.builder().subject(line.trimmed("subject"))
                 .assertedDate(line.date("assertedDate"))
                 .category(line.string("category"))
                 .categoryAllergyCategoryCode(line.string("category_allergyCategory_code"))

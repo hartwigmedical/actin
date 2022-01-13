@@ -13,8 +13,7 @@ public class ComplicationEntryCreator implements FeedEntryCreator<ComplicationEn
     @NotNull
     @Override
     public ComplicationEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableComplicationEntry.builder()
-                .subject(line.string("subject"))
+        return ImmutableComplicationEntry.builder().subject(line.trimmed("subject"))
                 .identifierSystem(line.string("identifier_system"))
                 .categoryCodeOriginal(line.string("category_code_original"))
                 .categoryDisplay(line.string("category_display"))

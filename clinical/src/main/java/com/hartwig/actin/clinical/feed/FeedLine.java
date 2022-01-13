@@ -34,6 +34,11 @@ public class FeedLine {
     }
 
     @NotNull
+    public String trimmed(@NotNull String column) {
+        return string(column).trim();
+    }
+
+    @NotNull
     public Gender gender(@NotNull String column) {
         return FeedParseFunctions.parseGender(string(column));
     }

@@ -17,8 +17,7 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
     @NotNull
     @Override
     public VitalFunctionEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableVitalFunctionEntry.builder()
-                .subject(line.string("subject"))
+        return ImmutableVitalFunctionEntry.builder().subject(line.trimmed("subject"))
                 .effectiveDateTime(line.date("effectiveDateTime"))
                 .codeCodeOriginal(line.string("code_code_original"))
                 .codeDisplayOriginal(line.string("code_display_original"))
@@ -45,7 +44,7 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
 
         // TODO Support all categories properly.
         boolean validCategory = category.equals("ABP") || category.equals("NIBP") || category.equals("HR");
-        if (!validCategory) {
+        if (!validCategory && validValue) {
             LOGGER.warn("Invalid vital function category detected: '{}'", category);
         }
 
