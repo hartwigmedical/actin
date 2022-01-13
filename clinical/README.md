@@ -161,23 +161,23 @@ Field | Example Value | Details
 ---|---|---
 endDate | 2021-07-01 | Date on which surgery ended
 
-N vital functions
+N vital function measurements
 
 Field | Example Value | Details
 ---|---|---
-date | 2021-07-01 | Date on which blood pressure value was measured
+date | 2021-07-01 | Date of measurement
 category | Non-invasive blood pressure | Category of the measurement 
 subcategory | Systolic blood pressure | Subcategory of the measurement
 value | 155 | 
-unit | mm[Hg] | Unit in which blood pressure was measured
+unit | mm[Hg] | Unit of measurement
 
 N body weight measurements
 
 Field | Example Value | Details
 ---|---|---
-date | 2021-07-01 | Date on which body weight was measured
+date | 2021-07-01 | Date of measurement
 value | 70 
-unit | kilogram | Unit in which body weight was measured
+unit | kilogram | Unit of measurement
 
 N blood transfusions (!! In development)
 
