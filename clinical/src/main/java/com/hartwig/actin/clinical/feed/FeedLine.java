@@ -5,10 +5,13 @@ import java.util.Map;
 
 import com.hartwig.actin.clinical.datamodel.Gender;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FeedLine {
+
+    static final String NULL_STRING = "NULL";
 
     @NotNull
     private final Map<String, Integer> fields;
@@ -25,7 +28,9 @@ public class FeedLine {
         if (!fields.containsKey(column)) {
             throw new IllegalArgumentException("No column found with header '" + column + "'");
         }
-        return parts[fields.get(column)];
+
+        String string = parts[fields.get(column)];
+        return !string.equals(NULL_STRING) ? string : Strings.EMPTY;
     }
 
     @NotNull

@@ -147,7 +147,7 @@ public final class TestFeedFactory {
                 .active(true)
                 .build());
 
-        entries.add(builder.code5ATCDisplay("NULL")
+        entries.add(builder.code5ATCDisplay(Strings.EMPTY)
                 .dosageInstructionText("Irrelevant")
                 .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
                 .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))

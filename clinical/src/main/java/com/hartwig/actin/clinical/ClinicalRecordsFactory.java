@@ -356,7 +356,7 @@ public class ClinicalRecordsFactory {
             }
 
             String name = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay());
-            if (!name.isEmpty() && !name.equalsIgnoreCase("null")) {
+            if (!name.isEmpty()) {
                 Medication medication = builder.name(name)
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())

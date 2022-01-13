@@ -38,9 +38,9 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
         String category = line.string("code_display_original");
 
         String value = line.string("quantity_value");
-        boolean validValue = !value.isEmpty() && !value.equals("NULL");
+        boolean validValue = !value.isEmpty();
         if (!validValue) {
-            LOGGER.warn("Invalid vital function value detected with category '{}': {}", category, value);
+            LOGGER.warn("Empty vital function value detected with category '{}'", category);
         }
 
         // TODO Support all categories properly.
