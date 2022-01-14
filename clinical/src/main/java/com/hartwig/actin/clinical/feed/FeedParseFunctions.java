@@ -67,7 +67,7 @@ public final class FeedParseFunctions {
     public static double parseDouble(@NotNull String number) {
         String formatted = number.replace(",", ".");
         if (formatted.indexOf(".") != formatted.lastIndexOf(".")) {
-            throw new IllegalArgumentException("Invalid number: " + number);
+            throw new IllegalArgumentException("Cannot convert feed value to number: " + number);
         }
         return Double.parseDouble(formatted);
     }

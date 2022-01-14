@@ -74,16 +74,11 @@ public final class LabExtraction {
             }
         }
 
-        throw new IllegalArgumentException("Could not separating hyphen index from " + referenceRangeText);
+        throw new IllegalArgumentException("Could not determine separating hyphen index from " + referenceRangeText);
     }
 
     private static boolean isDigit(char character) {
-        try {
-            Integer.valueOf(character);
-            return true;
-        } catch (NumberFormatException exception) {
-            return false;
-        }
+        return character >= '0' && character <= '9';
     }
 
     static class Limits {

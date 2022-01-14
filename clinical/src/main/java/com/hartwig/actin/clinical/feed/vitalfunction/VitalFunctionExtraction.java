@@ -14,7 +14,7 @@ public final class VitalFunctionExtraction {
     public static VitalFunctionCategory determineCategory(@NotNull String string) {
         VitalFunctionCategory category = toCategory(string);
         if (category == null) {
-            throw new IllegalStateException("Could not determine category for vital function: " + string);
+            throw new IllegalArgumentException("Could not determine category for vital function: " + string);
         }
         return category;
     }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.util.ResourceFile;
+import com.hartwig.actin.util.TabularFile;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public final class CurationConfigFile {
         List<String> lines = Files.readAllLines(new File(tsv).toPath());
 
         List<T> configs = Lists.newArrayList();
-        Map<String, Integer> fields = ResourceFile.createFields(lines.get(0).split(DELIMITER));
+        Map<String, Integer> fields = TabularFile.createFields(lines.get(0).split(DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             configs.add(factory.create(fields, line.split(DELIMITER, -1)));
         }

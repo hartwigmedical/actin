@@ -2,9 +2,6 @@ package com.hartwig.actin.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,17 +13,6 @@ public final class ResourceFile {
     private static final String UNKNOWN = "unknown";
 
     private ResourceFile() {
-    }
-
-    @NotNull
-    public static Map<String, Integer> createFields(@NotNull String[] header) {
-        Map<String, Integer> fields = Maps.newHashMap();
-
-        for (int i = 0; i < header.length; ++i) {
-            fields.put(header[i], i);
-        }
-
-        return fields;
     }
 
     @Nullable

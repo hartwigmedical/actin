@@ -107,7 +107,12 @@ public class LabExtractionTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void crashFindSeparatingHyphenOnOnInvalidReferenceRangeText() {
-        assertEquals(1, LabExtraction.findSeparatingHyphenIndex("-Nope"));
+    public void crashFindSeparatingHyphenOnHyphenStarting() {
+        LabExtraction.findSeparatingHyphenIndex("-Nope");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void crashFindSeparatingHyphenOnInvalidReferenceRangeText() {
+        LabExtraction.findSeparatingHyphenIndex("not a reference-range-text");
     }
 }

@@ -84,14 +84,14 @@ public class FeedModel {
     public List<EncounterEntry> uniqueEncounterEntries(@NotNull String subject) {
         List<EncounterEntry> entries = Lists.newArrayList();
         for (EncounterEntry entry : entriesForSubject(feed.encounterEntries(), subject)) {
-            if (isNewEncounter(entries, entry)) {
+            if (isEncounterOnNewDate(entries, entry)) {
                 entries.add(entry);
             }
         }
         return entries;
     }
 
-    private static boolean isNewEncounter(@NotNull List<EncounterEntry> entries, @NotNull EncounterEntry entryToEvaluate) {
+    private static boolean isEncounterOnNewDate(@NotNull List<EncounterEntry> entries, @NotNull EncounterEntry entryToEvaluate) {
         for (EncounterEntry entry : entries) {
             if (entry.periodStart().equals(entryToEvaluate.periodStart()) && entry.periodEnd().equals(entry.periodEnd())) {
                 return false;

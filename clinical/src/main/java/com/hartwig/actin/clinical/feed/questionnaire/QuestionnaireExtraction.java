@@ -20,7 +20,7 @@ public final class QuestionnaireExtraction {
 
     static final String KEY_VALUE_SEPARATOR = ":";
     static final String VALUE_LIST_SEPARATOR_1 = ",";
-    private static final String VALUE_LIST_SEPARATOR_2 = ";";
+    static final String VALUE_LIST_SEPARATOR_2 = ";";
 
     private static final String TOXICITY_DESCRIPTION = "ONC Kuuroverzicht";
     private static final String ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire";
@@ -47,26 +47,8 @@ public final class QuestionnaireExtraction {
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
 
-        Boolean hasBrainLesions = toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS)));
-        Boolean hasActiveBrainLesions = null;
-        Boolean hasSymptomaticBrainLesions = null;
-        if (hasBrainLesions != null) {
-            hasActiveBrainLesions =
-                    hasBrainLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), ACTIVE_LINE_OFFSET)) : false;
-            hasSymptomaticBrainLesions = hasBrainLesions
-                    ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS), SYMPTOMATIC_LINE_OFFSET))
-                    : false;
-        }
-
-        Boolean hasCnsLesions = toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS)));
-        Boolean hasActiveCnsLesions = null;
-        Boolean hasSymptomaticCnsLesions = null;
-        if (hasCnsLesions != null) {
-            hasActiveCnsLesions =
-                    hasCnsLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), ACTIVE_LINE_OFFSET)) : false;
-            hasSymptomaticCnsLesions =
-                    hasCnsLesions ? toOption(value(entry, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS), SYMPTOMATIC_LINE_OFFSET)) : false;
-        }
+        LesionData brainLesionData = LesionData.forKey(entry, mapping, (QuestionnaireKey.HAS_BRAIN_LESIONS));
+        LesionData cnsLesionData = LesionData.forKey(entry, mapping, (QuestionnaireKey.HAS_CNS_LESIONS));
 
         return ImmutableQuestionnaire.builder()
                 .date(entry.authoredDateTime())
@@ -78,12 +60,12 @@ public final class QuestionnaireExtraction {
                 .otherOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
                 .nonOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY))))
                 .hasMeasurableLesionRecist(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST))))
-                .hasBrainLesions(hasBrainLesions)
-                .hasActiveBrainLesions(hasActiveBrainLesions)
-                .hasSymptomaticBrainLesions(hasSymptomaticBrainLesions)
-                .hasCnsLesions(hasCnsLesions)
-                .hasActiveCnsLesions(hasActiveCnsLesions)
-                .hasSymptomaticCnsLesions(hasSymptomaticCnsLesions)
+                .hasBrainLesions(brainLesionData.present())
+                .hasActiveBrainLesions(brainLesionData.active())
+                .hasSymptomaticBrainLesions(brainLesionData.symptomatic())
+                .hasCnsLesions(cnsLesionData.present())
+                .hasActiveCnsLesions(cnsLesionData.active())
+                .hasSymptomaticCnsLesions(cnsLesionData.symptomatic())
                 .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
                 .otherLesions(otherLesions(entry, mapping))
@@ -222,6 +204,51 @@ public final class QuestionnaireExtraction {
         public LookupResult(@NotNull final String[] lines, final int lineIndex) {
             this.lines = lines;
             this.lineIndex = lineIndex;
+        }
+    }
+
+    private static class LesionData {
+
+        @Nullable
+        private final Boolean present;
+        @Nullable
+        private final Boolean active;
+        @Nullable
+        private final Boolean symptomatic;
+
+        public LesionData(@Nullable final Boolean present, @Nullable final Boolean active, @Nullable final Boolean symptomatic) {
+            this.present = present;
+            this.active = active;
+            this.symptomatic = symptomatic;
+        }
+
+        @NotNull
+        static LesionData forKey(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping,
+                @NotNull QuestionnaireKey key) {
+            Boolean present = toOption(value(entry, mapping.get(key)));
+            Boolean active = null;
+            Boolean symptomatic = null;
+            if (present != null) {
+                active = present ? toOption(value(entry, mapping.get(key), ACTIVE_LINE_OFFSET)) : false;
+                symptomatic = present ? toOption(value(entry, mapping.get(key), SYMPTOMATIC_LINE_OFFSET)) : false;
+            }
+
+            return new LesionData(present, active, symptomatic);
+        }
+
+        @Nullable
+        public Boolean present() {
+            return present;
+        }
+
+        @Nullable
+        public Boolean active() {
+            return active;
+        }
+
+        @Nullable
+        public Boolean symptomatic() {
+            return symptomatic;
         }
     }
 }

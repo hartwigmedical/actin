@@ -58,20 +58,6 @@ final class QuestionnaireCuration {
     }
 
     @Nullable
-    public static TumorStage toStage(@Nullable String stage) {
-        if (stage == null || stage.isEmpty()) {
-            return null;
-        }
-
-        if (!STAGE_MAPPING.containsKey(stage)) {
-            LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage);
-            return null;
-        }
-
-        return STAGE_MAPPING.get(stage);
-    }
-
-    @Nullable
     public static Boolean toOption(@Nullable String option) {
         if (option == null || option.isEmpty()) {
             return null;
@@ -85,8 +71,22 @@ final class QuestionnaireCuration {
         return OPTION_MAPPING.get(option);
     }
 
-    public static boolean isConfiguredOption(@Nullable String option) {
+    static boolean isConfiguredOption(@Nullable String option) {
         return OPTION_MAPPING.containsKey(option);
+    }
+
+    @Nullable
+    public static TumorStage toStage(@Nullable String stage) {
+        if (stage == null || stage.isEmpty()) {
+            return null;
+        }
+
+        if (!STAGE_MAPPING.containsKey(stage)) {
+            LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage);
+            return null;
+        }
+
+        return STAGE_MAPPING.get(stage);
     }
 
     @Nullable
