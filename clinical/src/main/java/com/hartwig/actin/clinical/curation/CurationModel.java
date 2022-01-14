@@ -353,7 +353,8 @@ public class CurationModel {
         MedicationDosageConfig config = find(database.medicationDosageConfigs(), input);
 
         if (config == null) {
-            LOGGER.warn(" Could not find medication dosage config for '{}'", input);
+            // TODO: Change to warn once the medications are more final.
+            LOGGER.debug(" Could not find medication dosage config for '{}'", input);
             return null;
         } else {
             return ImmutableMedication.builder()
