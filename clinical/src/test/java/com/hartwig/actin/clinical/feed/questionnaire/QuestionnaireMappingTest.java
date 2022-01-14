@@ -23,7 +23,7 @@ public class QuestionnaireMappingTest {
     @Test
     public void canRetrieveMappingForQuestionnaire() {
         assertEquals(QuestionnaireMapping.KEYS_V1_3,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
+                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())));
         assertEquals(QuestionnaireMapping.KEYS_V1_2,
                 QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
         assertEquals(QuestionnaireMapping.KEYS_V1_1,

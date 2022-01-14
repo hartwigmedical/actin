@@ -34,4 +34,16 @@ public class CurationUtilTest {
 
         assertTrue(CurationUtil.toDOIDs(Strings.EMPTY).isEmpty());
     }
+
+    @Test
+    public void canConvertToCategories() {
+        assertEquals(Sets.newHashSet("category1"), CurationUtil.toCategories("category1"));
+
+        Set<String> multiple = CurationUtil.toCategories("category1;category2");
+        assertEquals(2, multiple.size());
+        assertTrue(multiple.contains("category1"));
+        assertTrue(multiple.contains("category2"));
+
+        assertTrue(CurationUtil.toCategories(Strings.EMPTY).isEmpty());
+    }
 }

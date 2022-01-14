@@ -22,6 +22,7 @@ public class BodyWeightEntryCreator implements FeedEntryCreator<BodyWeightEntry>
 
     @Override
     public boolean isValid(@NotNull final FeedLine line) {
-        return true;
+        // A body weight of 0 can be assumed to be erroneous entry.
+        return line.number("valueQuantity_value") > 0;
     }
 }

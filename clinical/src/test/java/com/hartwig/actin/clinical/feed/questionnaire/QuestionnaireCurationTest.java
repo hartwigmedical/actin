@@ -13,18 +13,6 @@ import org.junit.Test;
 public class QuestionnaireCurationTest {
 
     @Test
-    public void canCurateStage() {
-        assertEquals(TumorStage.IIB, QuestionnaireCuration.toStage("IIb"));
-        assertEquals(TumorStage.II, QuestionnaireCuration.toStage("2"));
-        assertEquals(TumorStage.III, QuestionnaireCuration.toStage("3"));
-        assertEquals(TumorStage.IV, QuestionnaireCuration.toStage("4"));
-
-        assertNull(QuestionnaireCuration.toStage(null));
-        assertNull(QuestionnaireCuration.toStage(Strings.EMPTY));
-        assertNull(QuestionnaireCuration.toStage("not a stage"));
-    }
-
-    @Test
     public void canCurateOption() {
         assertTrue(QuestionnaireCuration.toOption("YES"));
         assertFalse(QuestionnaireCuration.toOption("no"));
@@ -34,6 +22,18 @@ public class QuestionnaireCurationTest {
         assertNull(QuestionnaireCuration.toOption("-"));
         assertNull(QuestionnaireCuration.toOption("nvt"));
         assertNull(QuestionnaireCuration.toOption("not an option"));
+    }
+
+    @Test
+    public void canCurateStage() {
+        assertEquals(TumorStage.IIB, QuestionnaireCuration.toStage("IIb"));
+        assertEquals(TumorStage.II, QuestionnaireCuration.toStage("2"));
+        assertEquals(TumorStage.III, QuestionnaireCuration.toStage("3"));
+        assertEquals(TumorStage.IV, QuestionnaireCuration.toStage("4"));
+
+        assertNull(QuestionnaireCuration.toStage(null));
+        assertNull(QuestionnaireCuration.toStage(Strings.EMPTY));
+        assertNull(QuestionnaireCuration.toStage("not a stage"));
     }
 
     @Test

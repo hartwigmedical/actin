@@ -49,7 +49,6 @@ import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator;
-import com.hartwig.actin.util.ResourceFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -135,7 +134,7 @@ public class ClinicalRecordsFactory {
         String adjusted = subject;
         // Subjects have been passed with unexpected subject IDs in the past (eg without ACTN prefix)
         if (subject.length() == 10 && !subject.startsWith("ACTN")) {
-            LOGGER.warn("Suspicious subject detected: {}", subject);
+            LOGGER.warn("Suspicious subject detected. Pre-fixing with 'ACTN': {}", subject);
             adjusted = "ACTN" + subject;
         }
 
@@ -181,7 +180,7 @@ public class ClinicalRecordsFactory {
                 .otherLesions(curatedOtherLesions)
                 .build();
 
-        return curation.evaluateKnownLesionLocations(tumorDetails, otherLesions);
+        return curation.overrideKnownLesionLocations(tumorDetails, otherLesions);
     }
 
     @NotNull
@@ -263,7 +262,7 @@ public class ClinicalRecordsFactory {
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
-            Integer grade = ResourceFile.optionalInteger(entry.itemAnswerValueValueString());
+            Integer grade = !entry.itemAnswerValueValueString().isEmpty() ? Integer.valueOf(entry.itemAnswerValueValueString()) : null;
             if (grade != null) {
                 toxicities.add(ImmutableToxicity.builder()
                         .name(entry.itemText())
@@ -304,15 +303,11 @@ public class ClinicalRecordsFactory {
     private List<BodyWeight> extractBodyWeights(@NotNull String subject) {
         List<BodyWeight> bodyWeights = Lists.newArrayList();
         for (BodyWeightEntry entry : feed.uniqueBodyWeightEntries(subject)) {
-            double value = entry.valueQuantityValue();
-            // A body weight of 0 can be assumed to be erroneous entry.
-            if (value > 0) {
-                bodyWeights.add(ImmutableBodyWeight.builder()
-                        .date(entry.effectiveDateTime())
-                        .value(value)
-                        .unit(entry.valueQuantityUnit())
-                        .build());
-            }
+            bodyWeights.add(ImmutableBodyWeight.builder()
+                    .date(entry.effectiveDateTime())
+                    .value(entry.valueQuantityValue())
+                    .unit(entry.valueQuantityUnit())
+                    .build());
         }
         return bodyWeights;
     }

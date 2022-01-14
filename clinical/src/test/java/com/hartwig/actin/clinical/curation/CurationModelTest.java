@@ -30,6 +30,7 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -58,6 +59,34 @@ public class CurationModelTest {
 
         TumorDetails missing = model.curateTumorDetails("Does not", "Exist");
         assertNull(missing.primaryTumorLocation());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canOverrideKnownLesionLocations() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        TumorDetails base = TestClinicalDataFactory.createMinimalTestClinicalRecord().tumor();
+
+        assertEquals(base, model.overrideKnownLesionLocations(base, null));
+        assertEquals(base, model.overrideKnownLesionLocations(base, Lists.newArrayList("some other lesion")));
+
+        TumorDetails liver = model.overrideKnownLesionLocations(base, Lists.newArrayList("Lever"));
+        assertNull(base.hasLiverLesions());
+        assertTrue(liver.hasLiverLesions());
+
+        TumorDetails cns = model.overrideKnownLesionLocations(base, Lists.newArrayList("cns"));
+        assertNull(base.hasCnsLesions());
+        assertTrue(cns.hasCnsLesions());
+
+        TumorDetails brain = model.overrideKnownLesionLocations(base, Lists.newArrayList("brain"));
+        assertNull(base.hasBrainLesions());
+        assertTrue(brain.hasBrainLesions());
+
+        TumorDetails bone = model.overrideKnownLesionLocations(base, Lists.newArrayList("Bone"));
+        assertNull(base.hasBoneLesions());
+        assertTrue(bone.hasBoneLesions());
 
         model.evaluate();
     }
@@ -201,7 +230,7 @@ public class CurationModelTest {
         List<String> noOtherLesions = Lists.newArrayList("No");
         assertTrue(model.curateOtherLesions(noOtherLesions).isEmpty());
 
-        List<String> otherLesions = Lists.newArrayList("lever", "not a lesion", "no curation needed");
+        List<String> otherLesions = Lists.newArrayList("lymph node", "not a lesion", "no curation needed");
         assertEquals(2, model.curateOtherLesions(otherLesions).size());
 
         model.evaluate();

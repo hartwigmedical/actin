@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
+import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
@@ -92,12 +93,25 @@ public final class TestCurationFactory {
     private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
         List<LesionLocationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableLesionLocationConfig.builder().input("Lever").location("Liver").build());
+        configs.add(ImmutableLesionLocationConfig.builder()
+                .input("Lever")
+                .location("Liver")
+                .category(LesionLocationCategory.LIVER)
+                .build());
+
+        configs.add(ImmutableLesionLocationConfig.builder().input("Cns").location("CNS").category(LesionLocationCategory.CNS).build());
 
         configs.add(ImmutableLesionLocationConfig.builder()
-                .input("Not a lesion")
-                .location(Strings.EMPTY)
+                .input("Brain")
+                .location("Brain")
+                .category(LesionLocationCategory.BRAIN)
                 .build());
+
+        configs.add(ImmutableLesionLocationConfig.builder().input("Bone").location("Bone").category(LesionLocationCategory.BONE).build());
+
+        configs.add(ImmutableLesionLocationConfig.builder().input("Lymph node").location("Lymph node").build());
+
+        configs.add(ImmutableLesionLocationConfig.builder().input("Not a lesion").location(Strings.EMPTY).build());
 
         configs.add(ImmutableLesionLocationConfig.builder().input("No").location(Strings.EMPTY).build());
 

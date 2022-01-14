@@ -114,7 +114,7 @@ public class CurationModel {
     }
 
     @NotNull
-    public TumorDetails evaluateKnownLesionLocations(@NotNull TumorDetails tumorDetails, @Nullable List<String> otherLesions) {
+    public TumorDetails overrideKnownLesionLocations(@NotNull TumorDetails tumorDetails, @Nullable List<String> otherLesions) {
         if (otherLesions == null) {
             return tumorDetails;
         }
