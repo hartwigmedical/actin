@@ -192,7 +192,7 @@ public class ClinicalRecordsFactory {
         return ImmutableClinicalStatus.builder()
                 .who(questionnaire.whoStatus())
                 .infectionStatus(curation.curateInfectionStatus(questionnaire.infectionStatus()))
-                .ecgAberration(curation.curateECGAberration(questionnaire.ecgAberration()))
+                .ecg(curation.curateECG(questionnaire.ecg()))
                 .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory()))
                 .build();
     }

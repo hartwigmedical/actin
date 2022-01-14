@@ -8,7 +8,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.apache.logging.log4j.util.Strings;
@@ -23,20 +23,20 @@ public class HasCardiacArrhythmiaTest {
 
         assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEquals(Evaluation.PASS, function.evaluate(withEcgAberration(true)));
-        assertEquals(Evaluation.FAIL, function.evaluate(withEcgAberration(false)));
+        assertEquals(Evaluation.PASS, function.evaluate(withHasSignificantECGAberration(true)));
+        assertEquals(Evaluation.FAIL, function.evaluate(withHasSignificantECGAberration(false)));
     }
 
     @NotNull
-    private static PatientRecord withEcgAberration(boolean hasSignificantEcgAberration) {
+    private static PatientRecord withHasSignificantECGAberration(boolean hasSignificantECGAberration) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
                         .clinicalStatus(ImmutableClinicalStatus.builder()
-                                .ecgAberration(ImmutableECGAberration.builder()
-                                        .hasSigAberrationLatestECG(hasSignificantEcgAberration)
-                                        .description(Strings.EMPTY)
+                                .ecg(ImmutableECG.builder()
+                                        .hasSigAberrationLatestECG(hasSignificantECGAberration)
+                                        .aberrationDescription(Strings.EMPTY)
                                         .build())
                                 .build())
                         .build())

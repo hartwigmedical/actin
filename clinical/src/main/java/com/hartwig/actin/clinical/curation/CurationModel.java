@@ -41,11 +41,11 @@ import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
@@ -254,21 +254,21 @@ public class CurationModel {
     }
 
     @Nullable
-    public ECGAberration curateECGAberration(@Nullable ECGAberration input) {
+    public ECG curateECG(@Nullable ECG input) {
         if (input == null) {
             return null;
         }
 
-        ECGConfig config = find(database.ecgConfigs(), input.description());
+        ECGConfig config = find(database.ecgConfigs(), input.aberrationDescription());
 
         // Assume ECGs can also be pass-through.
         if (config != null) {
             if (config.ignore()) {
                 return null;
             } else {
-                return ImmutableECGAberration.builder()
+                return ImmutableECG.builder()
                         .from(input)
-                        .description(config.interpretation())
+                        .aberrationDescription(config.interpretation())
                         .qtcfValue(config.qtcfValue())
                         .qtcfUnit(config.qtcfUnit())
                         .build();

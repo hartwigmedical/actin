@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -76,10 +76,10 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECGAberration ecgAberration = questionnaire.ecgAberration();
-        assertNotNull(ecgAberration);
-        assertTrue(ecgAberration.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecgAberration.description());
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -132,10 +132,10 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECGAberration ecgAberration = questionnaire.ecgAberration();
-        assertNotNull(ecgAberration);
-        assertTrue(ecgAberration.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecgAberration.description());
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -188,10 +188,10 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECGAberration ecgAberration = questionnaire.ecgAberration();
-        assertNotNull(ecgAberration);
-        assertTrue(ecgAberration.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecgAberration.description());
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -248,10 +248,10 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECGAberration ecgAberration = questionnaire.ecgAberration();
-        assertNotNull(ecgAberration);
-        assertFalse(ecgAberration.hasSigAberrationLatestECG());
-        assertEquals("NA", ecgAberration.description());
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertFalse(ecg.hasSigAberrationLatestECG());
+        assertEquals("NA", ecg.aberrationDescription());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -301,7 +301,7 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        assertNull(questionnaire.ecgAberration());
+        assertNull(questionnaire.ecg());
 
         List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
         assertEquals(1, cancerRelatedComplications.size());
@@ -351,10 +351,10 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECGAberration ecgAberration = questionnaire.ecgAberration();
-        assertNotNull(ecgAberration);
-        assertFalse(ecgAberration.hasSigAberrationLatestECG());
-        assertEquals("No", ecgAberration.description());
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertFalse(ecg.hasSigAberrationLatestECG());
+        assertEquals("No", ecg.aberrationDescription());
 
         assertTrue(questionnaire.cancerRelatedComplications().isEmpty());
     }

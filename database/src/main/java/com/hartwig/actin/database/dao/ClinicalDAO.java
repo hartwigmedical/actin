@@ -26,7 +26,7 @@ import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -153,7 +153,7 @@ class ClinicalDAO {
 
     private void writeClinicalStatus(@NotNull String sampleId, @NotNull ClinicalStatus clinicalStatus) {
         InfectionStatus infectionStatus = clinicalStatus.infectionStatus();
-        ECGAberration ecgAberration = clinicalStatus.ecgAberration();
+        ECG ecg = clinicalStatus.ecg();
 
         context.insertInto(CLINICALSTATUS,
                 CLINICALSTATUS.SAMPLEID,
@@ -169,10 +169,10 @@ class ClinicalDAO {
                         clinicalStatus.who(),
                         DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
                         infectionStatus != null ? infectionStatus.description() : null,
-                        DataUtil.toByte(ecgAberration != null ? ecgAberration.hasSigAberrationLatestECG() : null),
-                        ecgAberration != null ? ecgAberration.description() : null,
-                        ecgAberration != null ? ecgAberration.qtcfValue() : null,
-                        ecgAberration != null ? ecgAberration.qtcfUnit() : null,
+                        DataUtil.toByte(ecg != null ? ecg.hasSigAberrationLatestECG() : null),
+                        ecg != null ? ecg.aberrationDescription() : null,
+                        ecg != null ? ecg.qtcfValue() : null,
+                        ecg != null ? ecg.qtcfUnit() : null,
                         clinicalStatus.lvef())
                 .execute();
     }

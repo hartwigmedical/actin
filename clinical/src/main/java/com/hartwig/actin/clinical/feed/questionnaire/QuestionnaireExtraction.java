@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
-import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 
@@ -71,14 +71,14 @@ public final class QuestionnaireExtraction {
                 .otherLesions(otherLesions(entry, mapping))
                 .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
                 .unresolvedToxicities(toList(value(entry, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
-                .infectionStatus(infectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
-                .ecgAberration(ecgAberration(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
+                .infectionStatus(toInfectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
+                .ecg(toECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .cancerRelatedComplications(toList(value(entry, mapping.get(QuestionnaireKey.CANCER_RELATED_COMPLICATIONS))))
                 .build();
     }
 
     @Nullable
-    private static InfectionStatus infectionStatus(@Nullable String significantCurrentInfection) {
+    private static InfectionStatus toInfectionStatus(@Nullable String significantCurrentInfection) {
         Boolean hasActiveInfection = null;
         if (QuestionnaireCuration.isConfiguredOption(significantCurrentInfection)) {
             hasActiveInfection = toOption(significantCurrentInfection);
@@ -94,7 +94,7 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    private static ECGAberration ecgAberration(@Nullable String significantAberrationLatestECG) {
+    private static ECG toECG(@Nullable String significantAberrationLatestECG) {
         Boolean hasSignificantAberrationLatestECG = null;
         if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
             hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
@@ -106,9 +106,9 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        return ImmutableECGAberration.builder()
+        return ImmutableECG.builder()
                 .hasSigAberrationLatestECG(hasSignificantAberrationLatestECG)
-                .description(significantAberrationLatestECG)
+                .aberrationDescription(significantAberrationLatestECG)
                 .build();
     }
 

@@ -15,7 +15,7 @@ public abstract class ClinicalStatus {
     public abstract InfectionStatus infectionStatus();
 
     @Nullable
-    public abstract ECGAberration ecgAberration();
+    public abstract ECG ecg();
 
     @Nullable
     public abstract Double lvef();

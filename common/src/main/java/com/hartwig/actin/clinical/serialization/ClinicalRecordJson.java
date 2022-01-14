@@ -43,7 +43,7 @@ import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
@@ -52,7 +52,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
@@ -209,7 +209,8 @@ public final class ClinicalRecordJson {
             return ImmutableClinicalStatus.builder()
                     .who(nullableInteger(clinicalStatus, "who"))
                     .infectionStatus(toInfectionStatus(nullableObject(clinicalStatus, "infectionStatus")))
-                    .ecgAberration(toECGAberration(nullableObject(clinicalStatus, "ecgAberration")))
+                    .ecg(toECG(nullableObject(clinicalStatus, "ecg")))
+                    .lvef(nullableNumber(clinicalStatus, "lvef"))
                     .build();
         }
 
@@ -226,14 +227,16 @@ public final class ClinicalRecordJson {
         }
 
         @Nullable
-        private static ECGAberration toECGAberration(@Nullable JsonObject object) {
+        private static ECG toECG(@Nullable JsonObject object) {
             if (object == null) {
                 return null;
             }
 
-            return ImmutableECGAberration.builder()
+            return ImmutableECG.builder()
                     .hasSigAberrationLatestECG(bool(object, "hasSigAberrationLatestECG"))
-                    .description(string(object, "description"))
+                    .aberrationDescription(string(object, "aberrationDescription"))
+                    .qtcfValue(nullableInteger(object, "qtcfValue"))
+                    .qtcfUnit(nullableString(object, "qtcfUnit"))
                     .build();
         }
 

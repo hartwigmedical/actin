@@ -16,11 +16,11 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutableECGAberration;
+import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
@@ -172,20 +172,20 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canCurateECGAberrations() {
+    public void canCurateECGs() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        assertEquals("Cleaned aberration", model.curateECGAberration(toAberration("Weird aberration")).description());
-        assertEquals("No curation needed", model.curateECGAberration(toAberration("No curation needed")).description());
-        assertNull(model.curateECGAberration(toAberration("No aberration")));
-        assertNull(model.curateECGAberration(null));
+        assertEquals("Cleaned aberration", model.curateECG(toECG("Weird aberration")).aberrationDescription());
+        assertEquals("No curation needed", model.curateECG(toECG("No curation needed")).aberrationDescription());
+        assertNull(model.curateECG(toECG("No aberration")));
+        assertNull(model.curateECG(null));
 
         model.evaluate();
     }
 
     @NotNull
-    private static ECGAberration toAberration(@NotNull String description) {
-        return ImmutableECGAberration.builder().hasSigAberrationLatestECG(true).description(description).build();
+    private static ECG toECG(@NotNull String aberrationDescription) {
+        return ImmutableECG.builder().hasSigAberrationLatestECG(true).aberrationDescription(aberrationDescription).build();
     }
 
     @Test

@@ -105,12 +105,11 @@ public final class TestClinicalDataFactory {
 
     @NotNull
     private static ClinicalStatus createTestClinicalStatus() {
-        ECGAberration ecgAberration =
-                ImmutableECGAberration.builder().hasSigAberrationLatestECG(true).description("Atrial arrhythmia").build();
+        ECG ecg = ImmutableECG.builder().hasSigAberrationLatestECG(true).aberrationDescription("Atrial arrhythmia").build();
 
         InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).description(Strings.EMPTY).build();
 
-        return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecgAberration(ecgAberration).build();
+        return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecg(ecg).build();
     }
 
     @NotNull
@@ -407,7 +406,9 @@ public final class TestClinicalDataFactory {
     private static List<Medication> createTestMedications() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(ImmutableMedication.builder().name("Ibuprofen").addCategories("NSAIDs")
+        medications.add(ImmutableMedication.builder()
+                .name("Ibuprofen")
+                .addCategories("NSAIDs")
                 .dosageMin(750D)
                 .dosageMax(1000D)
                 .dosageUnit("mg")

@@ -43,10 +43,13 @@
       "hasActiveInfection": false,
       "description": ""
     },
-    "ecgAberration": {
+    "ecg": {
       "hasSigAberrationLatestECG": false,
-      "description": ""
-    }
+      "aberrationDescription": "",
+      "qtcfValue": null,
+      "qtcfUnit": null
+    },
+    "lvef": null
   },
   "priorTumorTreatments": [
     {

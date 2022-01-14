@@ -204,8 +204,8 @@ HAS_SEVERE_CONCOMITANT_CONDITION | > won't be evaluated, resolves to FAIL
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestEcg = 1
-HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X | Clinical status > sigAberrationLatestEcg like %X%
+HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestECG = 1
+HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X | Clinical status > sigAberrationLatestECG like %X%
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X

@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ECGAberration;
+import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -117,10 +117,10 @@ public class ClinicalRecordsFactoryTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECGAberration ecgAberration = clinicalStatus.ecgAberration();
-        assertNotNull(ecgAberration);
-        assertTrue(ecgAberration.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecgAberration.description());
+        ECG ecg = clinicalStatus.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
     }
 
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
