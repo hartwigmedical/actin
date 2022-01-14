@@ -19,12 +19,8 @@ public final class FeedParseFunctions {
     }
 
     static {
-        DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSS"));
-        DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        DATE_FORMATS.add(DateTimeFormatter.ofPattern("d-M-yyyy HH:mm"));
     }
 
     @NotNull
@@ -45,17 +41,13 @@ public final class FeedParseFunctions {
 
     @NotNull
     public static LocalDate parseDate(@NotNull String date) {
-        // One of the date formats ends with trailing milliseconds along with another 4 digits.
-        String transformedDate = date.endsWith(".0000000") ? date.substring(0, date.length() - 8) : date;
-
         for (DateTimeFormatter format : DATE_FORMATS) {
-            if (canBeInterpretedWithFormat(transformedDate, format)) {
-                return LocalDate.parse(transformedDate, format);
+            if (canBeInterpretedWithFormat(date, format)) {
+                return LocalDate.parse(date, format);
             }
         }
 
-        // If nothing works, just try with raw date on first format and probably trigger an exception.
-        return LocalDate.parse(date, DATE_FORMATS.iterator().next());
+        throw new IllegalArgumentException("Cannot transform string to date using any of the configured date formats: " + date);
     }
 
     private static boolean canBeInterpretedWithFormat(@NotNull String date, @NotNull DateTimeFormatter format) {

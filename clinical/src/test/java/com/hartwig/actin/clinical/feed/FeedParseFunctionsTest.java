@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 import com.hartwig.actin.clinical.datamodel.Gender;
 
@@ -31,13 +30,11 @@ public class FeedParseFunctionsTest {
         assertNull(FeedParseFunctions.parseOptionalDate(Strings.EMPTY));
 
         LocalDate correct = LocalDate.of(2020, 10, 23);
-        assertEquals(correct, FeedParseFunctions.parseOptionalDate("23-10-2020 13:10"));
         assertEquals(correct, FeedParseFunctions.parseOptionalDate("2020-10-23 13:10:55.0000000"));
-        assertEquals(correct, FeedParseFunctions.parseOptionalDate("2020-10-23 13:10:55"));
-        assertEquals(correct, FeedParseFunctions.parseOptionalDate("2020-10-23"));
+        assertEquals(correct, FeedParseFunctions.parseOptionalDate("2020-10-23 13:10:55.000"));
     }
 
-    @Test(expected = DateTimeParseException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void crashOnInvalidDate() {
         FeedParseFunctions.parseDate("2020-23-10");
     }

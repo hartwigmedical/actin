@@ -26,7 +26,7 @@ public class FeedLineTest {
         fields.put("number", 5);
         fields.put("integer", 6);
 
-        String[] parts = new String[] { "string ", "", FeedLine.NULL_STRING, "Male", "2019-01-01", "1", "2" };
+        String[] parts = new String[] { "string ", "", FeedLine.NULL_STRING, "Male", "2019-01-01 00:00:00.000", "1", "2" };
         FeedLine line = new FeedLine(fields, parts);
 
         assertEquals(Strings.EMPTY, line.string("stringEmpty"));
