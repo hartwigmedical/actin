@@ -17,6 +17,9 @@ public abstract class LabEntry implements FeedEntry {
     public abstract String subject();
 
     @NotNull
+    public abstract String identifierValue();
+
+    @NotNull
     public abstract String codeCodeOriginal();
 
     @NotNull

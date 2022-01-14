@@ -161,8 +161,7 @@ public final class TestFeedFactory {
     public static List<LabEntry> createTestLabEntries() {
         List<LabEntry> entries = Lists.newArrayList();
 
-        ImmutableLabEntry.Builder baseBuilder = ImmutableLabEntry.builder()
-                .subject(TEST_SUBJECT)
+        ImmutableLabEntry.Builder baseBuilder = ImmutableLabEntry.builder().subject(TEST_SUBJECT).identifierValue(Strings.EMPTY)
                 .valueQuantityComparator(Strings.EMPTY)
                 .valueString(Strings.EMPTY)
                 .codeCode(Strings.EMPTY);
