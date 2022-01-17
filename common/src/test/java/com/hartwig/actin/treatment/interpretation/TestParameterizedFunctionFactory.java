@@ -61,6 +61,9 @@ public final class TestParameterizedFunctionFactory {
             case ONE_TREATMENT_CATEGORY_ONE_STRING: {
                 return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string");
             }
+            case ONE_TREATMENT_CATEGORY_ONE_INTEGER: {
+                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "1");
+            }
             case ONE_STRING: {
                 return Lists.newArrayList("string");
             }

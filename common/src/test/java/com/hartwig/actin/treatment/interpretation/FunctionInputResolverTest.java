@@ -21,6 +21,7 @@ import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneS
 import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubleInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStringInput;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 
 import org.jetbrains.annotations.NotNull;
@@ -152,6 +153,22 @@ public class FunctionInputResolverTest {
         OneTreatmentCategoryOneString params = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(valid);
         assertEquals(TreatmentCategory.IMMUNOTHERAPY, params.treatmentCategory());
         assertEquals("string", params.string());
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneTreatmentCategoryOneIntegerParameter() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
+
+        String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, "1"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+
+        OneTreatmentCategoryOneInteger params = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, params.treatmentCategory());
+        assertEquals(1, (int) params.integer());
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
