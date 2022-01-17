@@ -23,6 +23,7 @@ public final class MedicationRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, notImplementedCreator());
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());

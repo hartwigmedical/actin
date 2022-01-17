@@ -33,6 +33,7 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS));
         map.put(EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS_EDA));
         map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientAlbuminCreator());
+        map.put(EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
         map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.CREATININE));
@@ -50,6 +51,7 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
+        map.put(EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE));
         map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MG_PER_DL));
         map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MMOL_PER_L));
         map.put(EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.IONIZED_CALCIUM));

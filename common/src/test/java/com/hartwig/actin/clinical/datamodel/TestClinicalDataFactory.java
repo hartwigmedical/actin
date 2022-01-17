@@ -293,7 +293,7 @@ public final class TestClinicalDataFactory {
 
         labValues.add(ImmutableLabValue.builder()
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
-                .code(LabMeasurement.LACTIC_ACID_DEHYDROGENASE.code())
+                .code(LabMeasurement.LACTATE_DEHYDROGENASE.code())
                 .name("Lactate dehydrogenase")
                 .comparator(Strings.EMPTY)
                 .value(240)

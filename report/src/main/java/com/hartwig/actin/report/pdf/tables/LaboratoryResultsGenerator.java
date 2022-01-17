@@ -90,7 +90,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
         addLabMeasurement(table, LabMeasurement.THROMBOCYTES_ABS);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("LDH"));
-        addLabMeasurement(table, LabMeasurement.LACTIC_ACID_DEHYDROGENASE);
+        addLabMeasurement(table, LabMeasurement.LACTATE_DEHYDROGENASE);
 
         return table;
     }

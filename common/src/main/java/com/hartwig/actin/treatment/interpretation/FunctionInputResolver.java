@@ -19,6 +19,7 @@ import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubleInput
 import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStringInput;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneStringInput;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.TwoDoubleInput;
 import com.hartwig.actin.treatment.interpretation.single.TwoStringInput;
@@ -71,6 +72,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT_CATEGORY);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
@@ -102,6 +104,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
@@ -114,6 +117,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
@@ -153,6 +157,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, FunctionInput.NONE);
 
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, FunctionInput.NONE);
@@ -247,6 +252,10 @@ public final class FunctionInputResolver {
                     createOneTreatmentCategoryOneStringInput(function);
                     return true;
                 }
+                case ONE_TREATMENT_CATEGORY_ONE_INTEGER: {
+                    creatOneTreatmentCategoryOneIntegerInput(function);
+                    return true;
+                }
                 case ONE_STRING: {
                     createOneStringInput(function);
                     return true;
@@ -309,6 +318,16 @@ public final class FunctionInputResolver {
         return ImmutableOneTreatmentCategoryOneString.builder()
                 .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
                 .string((String) function.parameters().get(1))
+                .build();
+    }
+
+    @NotNull
+    public static OneTreatmentCategoryOneInteger createOneTreatmentCategoryOneIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER, 2);
+
+        return ImmutableOneTreatmentCategoryOneInteger.builder()
+                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .integer(Integer.parseInt((String) function.parameters().get(1)))
                 .build();
     }
 

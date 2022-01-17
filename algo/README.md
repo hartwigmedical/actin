@@ -112,8 +112,9 @@ HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Prese
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
-HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Chemoradiotherapy, Stem cell transplantation, Antiviral therapy
+HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Chemoradiotherapy, Stem cell transplantation, Antiviral therapy, Vaccine
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines < Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Chemoradiotherapy, Stem cell transplantation, Antiviral therapy, Vaccine
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
@@ -151,6 +152,7 @@ HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS
 HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X 
 HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X | Lymphocytes absolute (LYMPHO-ABS-eDA/LYMPHO-ABS-eDM) in 10*9/L => X
 HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
+HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
 HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
@@ -165,6 +167,7 @@ HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*UL
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
+HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
 HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X | Calcium (Ca) in mg/dL <= X | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495
 HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Calcium (Ca) in mmol/L <= X | In case calcium is measured in mg/dL, the value is converted to mmol/L using Ca[mmol/L]=Ca=[mg/dL]*0.2495
 HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X
@@ -223,10 +226,11 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated. 
 
-##### Rules related to current medication
+##### Rules related to allergies / current medication
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
+HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
 HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Resolves to Undetermined, since exact ingredients cannot yet be automatically evaluated
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
@@ -242,7 +246,7 @@ CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resol
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage
 HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% AND only 1 distinct dosage per name (T.B.E.)
 
-##### Rules related to pregnancy/anticonception
+##### Rules related to pregnancy / anticonception
 
 Rule | When does a patient pass evaluation?
 ---|---
