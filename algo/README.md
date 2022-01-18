@@ -125,13 +125,12 @@ Rule | When does a patient pass evaluation?
 ---|---
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results (later to be extended)
-ACTIVATION_OF_GENE_X | Driver is found in gene X
-INACTIVATION_OF_GENE_X | Driver is found in gene X
-ACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
-MUTATION_IN_GENE_X_OF_TYPE_Y | Driver mutation Y is found in gene X
-INACTIVATING_MUTATION_IN_GENE_X | Driver mutation is found in gene X
+ACTIVATION_OR_AMPLIFICATION_OF_GENE_X | Activating mutation or amplification is found in gene X
+INACTIVATION_OF_GENE_X | Inactivating mutation is found in gene X
+ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
+MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
-DELETION_OF_GENE_X | Deletion/Homozygous disruption is found in gene X
+DELETION_OF_GENE_X | Deletion is found in gene X
 ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
 SPECIFIC_FUSION_X | Driver fusion with 2 specified fusion partner genes is found
 OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 

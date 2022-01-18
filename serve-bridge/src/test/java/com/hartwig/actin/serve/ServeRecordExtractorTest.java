@@ -42,7 +42,7 @@ public class ServeRecordExtractorTest {
         assertEquals("gene 2", second.gene());
         assertEquals("coding", second.mutation());
 
-        ServeRecord third = find(records, EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X);
+        ServeRecord third = find(records, EligibilityRule.INACTIVATION_OF_GENE_X);
         assertEquals("trial 2", third.trial());
         assertEquals("gene 3", third.gene());
         assertNull(third.mutation());
@@ -96,8 +96,7 @@ public class ServeRecordExtractorTest {
                 .addCohorts(ImmutableCohort.builder()
                         .metadata(withCohortId("cohort 2"))
                         .addEligibility(ImmutableEligibility.builder()
-                                .function(ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X)
+                                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.INACTIVATION_OF_GENE_X)
                                         .addParameters("gene 3")
                                         .build())
                                 .build())

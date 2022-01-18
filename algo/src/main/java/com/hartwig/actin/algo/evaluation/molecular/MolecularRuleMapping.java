@@ -20,11 +20,10 @@ public final class MolecularRuleMapping {
 
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableCreator());
-        map.put(EligibilityRule.ACTIVATION_OF_GENE_X, notImplementedCreator());
+        map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, notImplementedCreator());
-        map.put(EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.DELETION_OF_GENE_X, notImplementedCreator());
         map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, notImplementedCreator());
