@@ -9,13 +9,12 @@ import java.util.StringJoiner;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class ServeRecordTsv {
 
     private static final String FIELD_DELIMITER = "\t";
-
-    private static final String PARAM_DELIMITER = ", ";
 
     private ServeRecordTsv() {
     }
@@ -31,16 +30,20 @@ public final class ServeRecordTsv {
 
     @NotNull
     private static String header() {
-        return new StringJoiner(FIELD_DELIMITER).add("trial").add("rule").add("parameters").toString();
+        return new StringJoiner(FIELD_DELIMITER).add("trial").add("rule").add("gene").add("mutation").toString();
     }
 
     @NotNull
     private static String toLine(@NotNull ServeRecord record) {
-        StringJoiner params = new StringJoiner(PARAM_DELIMITER);
-        for (String param : record.parameters()) {
-            params.add(param);
-        }
+        return new StringJoiner(FIELD_DELIMITER).add(record.trial())
+                .add(record.rule().toString())
+                .add(record.gene())
+                .add(nullToEmpty(record.mutation()))
+                .toString();
+    }
 
-        return new StringJoiner(FIELD_DELIMITER).add(record.trial()).add(record.rule().toString()).add(params.toString()).toString();
+    @NotNull
+    private static String nullToEmpty(@NotNull String string) {
+        return string != null ? string : Strings.EMPTY;
     }
 }

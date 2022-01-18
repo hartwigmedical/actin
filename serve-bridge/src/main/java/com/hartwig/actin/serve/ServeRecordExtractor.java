@@ -63,22 +63,24 @@ public final class ServeRecordExtractor {
                 throw new IllegalStateException("Could not interpret composite input '" + input + "'");
             }
         } else if (ServeRules.isMolecular(function.rule())) {
-            records.add(ImmutableServeRecord.builder()
-                    .trial(trialAcronym)
-                    .rule(function.rule())
-                    .parameters(toStrings(function.parameters()))
-                    .build());
+            records.add(toServeRecord(trialAcronym, function));
         }
 
         return records;
     }
 
     @NotNull
-    private static List<String> toStrings(@NotNull List<Object> objects) {
-        List<String> strings = Lists.newArrayList();
-        for (Object object : objects) {
-            strings.add((String) object);
+    private static ServeRecord toServeRecord(@NotNull String trialAcronym, @NotNull EligibilityFunction function) {
+        String gene;
+        String mutation = null;
+        if (function.parameters().isEmpty()) {
+            throw new IllegalStateException("Cannot convert function without parameters: " + function.rule());
+        } else {
+            gene = (String) function.parameters().get(0);
+            if (function.parameters().size() > 1) {
+                mutation = (String) function.parameters().get(1);
+            }
         }
-        return strings;
+        return ImmutableServeRecord.builder().trial(trialAcronym).rule(function.rule()).gene(gene).mutation(mutation).build();
     }
 }

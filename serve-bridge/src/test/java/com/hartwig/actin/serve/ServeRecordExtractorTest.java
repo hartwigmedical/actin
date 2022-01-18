@@ -1,6 +1,7 @@
 package com.hartwig.actin.serve;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -33,15 +34,18 @@ public class ServeRecordExtractorTest {
 
         ServeRecord first = find(records, EligibilityRule.ACTIVATING_FUSION_IN_GENE_X);
         assertEquals("trial 1", first.trial());
-        assertEquals(Lists.newArrayList("gene 1"), first.parameters());
+        assertEquals("gene 1", first.gene());
+        assertNull(first.mutation());
 
         ServeRecord second = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
         assertEquals("trial 2", second.trial());
-        assertEquals(Lists.newArrayList("gene 2", "coding"), second.parameters());
+        assertEquals("gene 2", second.gene());
+        assertEquals("coding", second.mutation());
 
         ServeRecord third = find(records, EligibilityRule.INACTIVATING_MUTATION_IN_GENE_X);
         assertEquals("trial 2", third.trial());
-        assertEquals(Lists.newArrayList("gene 3"), third.parameters());
+        assertEquals("gene 3", third.gene());
+        assertNull(third.mutation());
     }
 
     @NotNull

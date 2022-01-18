@@ -1,7 +1,5 @@
 package com.hartwig.actin.serve.datamodel;
 
-import java.util.List;
-
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.immutables.value.Value;
@@ -19,5 +17,8 @@ public abstract class ServeRecord {
     public abstract EligibilityRule rule();
 
     @NotNull
-    public abstract List<String> parameters();
+    public abstract String gene();
+
+    @Nullable
+    public abstract String mutation();
 }
