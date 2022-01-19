@@ -30,6 +30,7 @@ public enum LabMeasurement {
     CALCIUM("Ca", "mmol/l"),
     IONIZED_CALCIUM("B_ICA", "mmol/l"),
     CORRECTED_CALCIUM("Ca_C", "mmol/L"),
+    NT_PRO_BNP("BNP", "pmol/l"),
     POTASSIUM("K", "mmol/l"),
     MAGNESIUM("MG", "mmol/l");
 
