@@ -29,14 +29,12 @@ public final class TrialConfigDatabaseValidator {
 
     public static boolean isValid(@NotNull TrialConfigDatabase database) {
         Set<String> trialIds = extractTrialIds(database.trialDefinitionConfigs());
-
         boolean validTrials = validateTrials(database.trialDefinitionConfigs());
 
         boolean validCohorts = validateCohorts(trialIds, database.cohortDefinitionConfigs());
-
         Multimap<String, String> cohortIdsPerTrial = extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs());
 
-        boolean validInclusionCriteria = validateInclusionCriteria(cohortIdsPerTrial, database.inclusionCriteriaConfigs());
+        boolean validInclusionCriteria = validateInclusionCriteria(trialIds, cohortIdsPerTrial, database.inclusionCriteriaConfigs());
 
         boolean validInclusionCriteriaReferences = validateInclusionCriteriaReferences(trialIds,
                 database.inclusionCriteriaConfigs(),
@@ -121,10 +119,9 @@ public final class TrialConfigDatabaseValidator {
         return cohortIds;
     }
 
-    private static boolean validateInclusionCriteria(@NotNull Multimap<String, String> cohortIdsPerTrial,
+    private static boolean validateInclusionCriteria(@NotNull Set<String> trialIds, @NotNull Multimap<String, String> cohortIdsPerTrial,
             @NotNull List<InclusionCriteriaConfig> inclusionCriteria) {
         boolean valid = true;
-        Set<String> trialIds = cohortIdsPerTrial.keySet();
         for (InclusionCriteriaConfig criterion : inclusionCriteria) {
             if (!trialIds.contains(criterion.trialId())) {
                 LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: '{}'", criterion.inclusionRule(), criterion.trialId());

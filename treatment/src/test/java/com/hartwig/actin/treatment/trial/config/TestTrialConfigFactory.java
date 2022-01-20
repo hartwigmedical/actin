@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TestTrialConfigFactory {
 
-    public static final String TEST_TRIAL_ID = "TEST";
+    public static final String TEST_TRIAL_ID_1 = "TEST-1";
+    public static final String TEST_TRIAL_ID_2 = "TEST-2";
 
     private TestTrialConfigFactory() {
     }
@@ -37,9 +38,15 @@ public final class TestTrialConfigFactory {
         List<TrialDefinitionConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableTrialDefinitionConfig.builder()
-                .trialId(TEST_TRIAL_ID)
-                .acronym("Acronym-" + TEST_TRIAL_ID)
-                .title("Title for " + TEST_TRIAL_ID)
+                .trialId(TEST_TRIAL_ID_1)
+                .acronym("Acronym-" + TEST_TRIAL_ID_1)
+                .title("Title for " + TEST_TRIAL_ID_1)
+                .build());
+
+        configs.add(ImmutableTrialDefinitionConfig.builder()
+                .trialId(TEST_TRIAL_ID_2)
+                .acronym("Acronym-" + TEST_TRIAL_ID_2)
+                .title("Title for " + TEST_TRIAL_ID_2)
                 .build());
 
         return configs;
@@ -49,7 +56,7 @@ public final class TestTrialConfigFactory {
     private static List<CohortDefinitionConfig> createTestCohortDefinitionConfigs() {
         List<CohortDefinitionConfig> configs = Lists.newArrayList();
 
-        ImmutableCohortDefinitionConfig.Builder builder = ImmutableCohortDefinitionConfig.builder().trialId(TEST_TRIAL_ID);
+        ImmutableCohortDefinitionConfig.Builder builder = ImmutableCohortDefinitionConfig.builder().trialId(TEST_TRIAL_ID_1);
 
         configs.add(builder.cohortId("A").open(true).description("Cohort A").build());
         configs.add(builder.cohortId("B").open(true).description("Cohort B").build());
@@ -62,10 +69,18 @@ public final class TestTrialConfigFactory {
     private static List<InclusionCriteriaConfig> createTestInclusionCriteriaConfigs() {
         List<InclusionCriteriaConfig> configs = Lists.newArrayList();
 
-        ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID);
+        configs.addAll(createTestInclusionCriteriaForTestTrial1());
+        configs.addAll(createTestInclusionCriteriaForTestTrial2());
 
-        configs.add(builder.referenceIds(Sets.newHashSet("I-01")).inclusionRule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD + "[18]")
-                .build());
+        return configs;
+    }
+
+    private static List<InclusionCriteriaConfig> createTestInclusionCriteriaForTestTrial1() {
+        List<InclusionCriteriaConfig> configs = Lists.newArrayList();
+
+        ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID_1);
+
+        configs.add(builder.referenceIds(Sets.newHashSet("I-01")).inclusionRule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD + "[18]").build());
         configs.add(builder.referenceIds(Sets.newHashSet("I-02"))
                 .inclusionRule(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X + "[1]")
                 .addAppliesToCohorts("A")
@@ -82,16 +97,48 @@ public final class TestTrialConfigFactory {
         return configs;
     }
 
+    private static List<InclusionCriteriaConfig> createTestInclusionCriteriaForTestTrial2() {
+        List<InclusionCriteriaConfig> configs = Lists.newArrayList();
+
+        ImmutableInclusionCriteriaConfig.Builder builder = ImmutableInclusionCriteriaConfig.builder().trialId(TEST_TRIAL_ID_2);
+
+        configs.add(builder.referenceIds(Sets.newHashSet("I-01")).inclusionRule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD + "[18]").build());
+
+        return configs;
+    }
+
     @NotNull
     private static List<InclusionCriteriaReferenceConfig> createTestInclusionCriteriaReferenceConfigs() {
         List<InclusionCriteriaReferenceConfig> configs = Lists.newArrayList();
 
+        configs.addAll(createTestInclusionCriteriaReferenceConfigsForTestTrial1());
+        configs.addAll(createTestInclusionCriteriaReferenceConfigsForTestTrial2());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<InclusionCriteriaReferenceConfig> createTestInclusionCriteriaReferenceConfigsForTestTrial1() {
+        List<InclusionCriteriaReferenceConfig> configs = Lists.newArrayList();
+
         ImmutableInclusionCriteriaReferenceConfig.Builder builder =
-                ImmutableInclusionCriteriaReferenceConfig.builder().trialId(TEST_TRIAL_ID);
+                ImmutableInclusionCriteriaReferenceConfig.builder().trialId(TEST_TRIAL_ID_1);
 
         configs.add(builder.referenceId("I-01").referenceText("Should be an adult").build());
         configs.add(builder.referenceId("I-02").referenceText("Should be tested in the lab").build());
         configs.add(builder.referenceId("I-03").referenceText("Should not have any serious other conditions").build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<InclusionCriteriaReferenceConfig> createTestInclusionCriteriaReferenceConfigsForTestTrial2() {
+        List<InclusionCriteriaReferenceConfig> configs = Lists.newArrayList();
+
+        ImmutableInclusionCriteriaReferenceConfig.Builder builder =
+                ImmutableInclusionCriteriaReferenceConfig.builder().trialId(TEST_TRIAL_ID_2);
+
+        configs.add(builder.referenceId("I-01").referenceText("Should be an adult").build());
 
         return configs;
     }

@@ -32,12 +32,11 @@ public class TrialFactoryTest {
         TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
         List<Trial> trials = factory.create();
 
-        assertEquals(1, trials.size());
+        assertEquals(2, trials.size());
 
-        Trial trial = trials.get(0);
-        assertEquals("TEST", trial.identification().trialId());
-        assertEquals("Acronym-TEST", trial.identification().acronym());
-        assertEquals("Title for TEST", trial.identification().title());
+        Trial trial = findTrial(trials, "TEST-1");
+        assertEquals("Acronym-TEST-1", trial.identification().acronym());
+        assertEquals("Title for TEST-1", trial.identification().title());
 
         assertEquals(1, trial.generalEligibility().size());
 
@@ -67,6 +66,17 @@ public class TrialFactoryTest {
         Cohort cohortC = findCohort(trial.cohorts(), "C");
         assertEquals("Cohort C", cohortC.metadata().description());
         assertTrue(cohortC.eligibility().isEmpty());
+    }
+
+    @NotNull
+    private static Trial findTrial(@NotNull List<Trial> trials, @NotNull String trialId) {
+        for (Trial trial : trials) {
+            if (trial.identification().trialId().equals(trialId)) {
+                return trial;
+            }
+        }
+
+        throw new IllegalStateException("Could not find trial with ID: " + trialId);
     }
 
     @NotNull
