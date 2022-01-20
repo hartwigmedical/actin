@@ -39,6 +39,8 @@ public final class FunctionInputResolver {
     static final Map<EligibilityRule, FunctionInput> RULE_INPUT_MAP = Maps.newHashMap();
 
     static {
+        RULE_INPUT_MAP.put(EligibilityRule.WARN_ALWAYS, FunctionInput.NONE);
+
         RULE_INPUT_MAP.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.IS_MALE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);

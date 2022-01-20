@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodpressure.BloodPressureRuleMapping;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
@@ -31,6 +32,8 @@ final class FunctionCreatorFactory {
     @NotNull
     public static Map<EligibilityRule, FunctionCreator> createFunctionCreatorMap(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
+
+        map.put(EligibilityRule.WARN_ALWAYS, function -> record -> Evaluation.PASS_BUT_WARN);
 
         map.putAll(GeneralRuleMapping.create());
         map.putAll(TumorRuleMapping.create(doidModel));

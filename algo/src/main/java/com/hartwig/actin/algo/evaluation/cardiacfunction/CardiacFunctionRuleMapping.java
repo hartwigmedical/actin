@@ -20,12 +20,12 @@ public final class CardiacFunctionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
-        map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, notImplementedCreator());
-        map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, notImplementedCreator());
-        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, notImplementedCreator());
+        map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }
@@ -41,10 +41,5 @@ public final class CardiacFunctionRuleMapping {
             double minLVEF = FunctionInputResolver.createOneDoubleInput(function);
             return new HasSufficientLVEF(minLVEF, passIfUnknown);
         };
-    }
-
-    @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }

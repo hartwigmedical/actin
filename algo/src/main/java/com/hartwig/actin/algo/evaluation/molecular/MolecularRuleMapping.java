@@ -20,21 +20,21 @@ public final class MolecularRuleMapping {
 
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableCreator());
-        map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.INACTIVATION_OF_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, notImplementedCreator());
-        map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.DELETION_OF_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.SPECIFIC_FUSION_X, notImplementedCreator());
+        map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.INACTIVATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.DELETION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.SPECIFIC_FUSION_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
-        map.put(EligibilityRule.WILDTYPE_OF_GENE_X, notImplementedCreator());
-        map.put(EligibilityRule.MSI_SIGNATURE, notImplementedCreator());
-        map.put(EligibilityRule.HRD_SIGNATURE, notImplementedCreator());
-        map.put(EligibilityRule.TMB_OF_AT_LEAST_X, notImplementedCreator());
-        map.put(EligibilityRule.TML_OF_AT_LEAST_X, notImplementedCreator());
-        map.put(EligibilityRule.TML_OF_AT_MOST_X, notImplementedCreator());
+        map.put(EligibilityRule.WILDTYPE_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.MSI_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HRD_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.TMB_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.TML_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.TML_OF_AT_MOST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }
@@ -47,10 +47,5 @@ public final class MolecularRuleMapping {
     @NotNull
     private static FunctionCreator geneIsOverexpressedCreator() {
         return function -> new GeneIsOverexpressed();
-    }
-
-    @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }

@@ -67,6 +67,11 @@ won't be evaluated.
 
 The following rules are available:
 
+##### General utility rules
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+WARN_ALWAYS | Always returns PASS_BUT_WARN | This is meant to be used for rules that are mandatory to be evaluated by a human.
+
 ##### Rules related to general patient characteristics
 
 Rule | When does a patient pass evaluation? | Note

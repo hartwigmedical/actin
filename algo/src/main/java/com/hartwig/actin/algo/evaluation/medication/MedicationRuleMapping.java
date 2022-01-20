@@ -25,7 +25,7 @@ public final class MedicationRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, notImplementedCreator());
+        map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());
@@ -37,11 +37,11 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION,
                 getsActiveMedicationOfCategoryCreator(VITAMIN_K_ANTAGONISTS));
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, notImplementedCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS));
-        map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, notImplementedCreator());
+        map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }
@@ -79,7 +79,6 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsPGPInhibitingMedicationCreator() {
         return function -> new CurrentlyGetsPGPInhibitingMedication();
-
     }
 
     @NotNull
@@ -90,11 +89,5 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsActiveAndStableMedicationOfCategoryCreator(@NotNull String category) {
         return function -> new CurrentlyGetsMedicationWithCategory(category, true);
-
-    }
-
-    @NotNull
-    private static FunctionCreator notImplementedCreator() {
-        return function -> evaluation -> Evaluation.NOT_IMPLEMENTED;
     }
 }

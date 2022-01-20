@@ -7,6 +7,9 @@ public enum EligibilityRule {
     NOT,
     WARN_ON_PASS,
 
+    // General rules that take no input
+    WARN_ALWAYS,
+
     // Rules related to general patient characteristics
     IS_AT_LEAST_X_YEARS_OLD,
     IS_MALE,
