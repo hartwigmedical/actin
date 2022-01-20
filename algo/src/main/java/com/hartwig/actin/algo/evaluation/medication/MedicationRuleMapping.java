@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ public final class MedicationRuleMapping {
 
     private static final String ANTICOAGULANTS = "Anticoagulants";
     private static final String ANTIBIOTICS = "Antibiotics";
+    private static final String ANTIEPILEPTICS = "Antiepileptics";
     private static final String CORTICOSTEROIDS = "Corticosteroids";
     private static final String VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists";
 
@@ -30,6 +32,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIBIOTICS));
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIEPILEPTICS));
         map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfCategoryCreator(CORTICOSTEROIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION,
                 getsActiveMedicationOfCategoryCreator(VITAMIN_K_ANTAGONISTS));

@@ -74,7 +74,7 @@ Rule | When does a patient pass evaluation? | Note
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | PASS_BUT_WARN in case of exactly X
 IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
-IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
+IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_ INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
@@ -99,7 +99,7 @@ HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesi
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
-HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
+HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
 
 ##### Rules related to previous cancer treatments or previous primary tumors
 
@@ -127,7 +127,7 @@ Rule | When does a patient pass evaluation?
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results (later to be extended)
 ACTIVATION_OR_AMPLIFICATION_OF_GENE_X | Activating mutation or amplification is found in gene X
-INACTIVATION_OF_GENE_X | Inactivating mutation is found in gene X
+INACTIVATION_OF_GENE_X | Inactivating mutation or deletion/disruption is found in gene X
 ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
 MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
@@ -155,6 +155,7 @@ HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. | In case ALB i
 HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
 HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
+HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X | Glucose /PL (GL_P) in mmol/L <= X
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
@@ -173,11 +174,11 @@ HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Calcium (Ca) in mmol/L <= X | In case calc
 HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X
 HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X | Calcium corrected (Ca_C) <= X*ULN
 HAS_BNP_ULN_OF_AT_MOST_X | NT-pro-BNP (BNP) <= X*ULN
-HAS_TROPONIN_IT_ULN_OF_AT_MOST_X | <...> <= X*ULN
+HAS_TROPONIN_IT_ULN_OF_AT_MOST_X | High-sensitivity Troponin T (HSTNT) <= X*ULN
 HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (isOutsideRef=0)
 HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN (isOutsideRef=0)
-HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.I.
-HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Calcium corrected (Ca_C) LLN<X<ULN (isOutsideRef=0)
+HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Phosphate (P) LLN<X<ULN (isOutsideRef=0)
+HAS_CORRECTED_CALCIUM_WITHIN_ INSTITUTIONAL_NORMAL_LIMITS | Calcium corrected (Ca_C) LLN<X<ULN (isOutsideRef=0)
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
@@ -242,6 +243,7 @@ CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" and status is active
 CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > categories contains type of "Antibiotics" and status is active
+CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION | Medication > categories contains type of "Antiepileptics" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED

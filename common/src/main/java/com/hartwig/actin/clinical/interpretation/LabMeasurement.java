@@ -31,8 +31,10 @@ public enum LabMeasurement {
     IONIZED_CALCIUM("B_ICA", "mmol/l"),
     CORRECTED_CALCIUM("Ca_C", "mmol/L"),
     NT_PRO_BNP("BNP", "pmol/l"),
+    TROPONIN_IT("HSTNT", "ng/L"),
     POTASSIUM("K", "mmol/l"),
-    MAGNESIUM("MG", "mmol/l");
+    MAGNESIUM("MG", "mmol/l"),
+    PHOSPHORUS("P", "mmol/l");
 
     @NotNull
     private final String code;
