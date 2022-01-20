@@ -11,7 +11,16 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TreatmentEvidence {
 
     @NotNull
-    public abstract String genomicEvent();
+    @Value.Derived
+    public String genomicEvent() {
+        return gene() != null ? gene() + " " + event() : event();
+    }
+
+    @Nullable
+    public abstract String gene();
+
+    @NotNull
+    public abstract String event();
 
     @NotNull
     public abstract String treatment();

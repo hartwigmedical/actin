@@ -54,7 +54,8 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
-                .genomicEvent("Event 1")
+                .gene(null)
+                .event("Event 1")
                 .build());
 
         // Should be filtered out since it is C-level off-label evidence.
@@ -62,7 +63,8 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.C)
                 .onLabel(false)
-                .genomicEvent("Event 2")
+                .gene(null)
+                .event("Event 2")
                 .build());
 
         // Should be filtered out as it starts with CDKN2A.
@@ -70,7 +72,8 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
-                .genomicEvent("CDKN2A loss")
+                .gene("CDKN2A")
+                .event("full loss")
                 .build());
 
         // Should be filtered out as it is VEGFA amp.
@@ -78,7 +81,8 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.A)
                 .onLabel(true)
-                .genomicEvent("VEGFA full gain")
+                .gene("VEGFA")
+                .event("full gain")
                 .build());
 
         // Should be filtered since there is no responsive evidence for treatment 3
@@ -86,21 +90,26 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESISTANT)
                 .level(EvidenceLevel.B)
                 .onLabel(false)
-                .genomicEvent("Event 3")
+                .gene(null)
+                .event("Event 3")
                 .build());
 
         // Should be included, all good.
         evidences.add(ckbBuilder.treatment("Treatment 1")
                 .direction(EvidenceDirection.RESISTANT)
                 .level(EvidenceLevel.A)
-                .onLabel(false).genomicEvent("Event 4").build());
+                .onLabel(false)
+                .gene(null)
+                .event("Event 4")
+                .build());
 
         // Should be filtered since evidence level is not high enough
         evidences.add(ckbBuilder.treatment("Treatment 1")
                 .direction(EvidenceDirection.RESISTANT)
                 .level(EvidenceLevel.B)
                 .onLabel(false)
-                .genomicEvent("Event 5")
+                .gene(null)
+                .event("Event 5")
                 .build());
 
         // Also have one iclusion
@@ -110,7 +119,8 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.B)
                 .onLabel(true)
-                .genomicEvent("Event 12")
+                .gene(null)
+                .event("Event 12")
                 .build());
 
         // And 1 ACTIN
@@ -120,7 +130,8 @@ public class MolecularInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .level(EvidenceLevel.B)
                 .onLabel(true)
-                .genomicEvent("Event 20")
+                .gene(null)
+                .event("Event 20")
                 .build());
 
         return evidences;

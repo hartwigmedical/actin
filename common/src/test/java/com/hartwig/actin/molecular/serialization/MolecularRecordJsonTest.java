@@ -30,8 +30,8 @@ public class MolecularRecordJsonTest {
         assertFalse(record.isMicrosatelliteUnstable());
         assertFalse(record.isHomologousRepairDeficient());
         assertEquals(13.71, record.tumorMutationalBurden(), EPSILON);
-        assertEquals(189, record.tumorMutationalLoad());
-        assertEquals(25, record.evidences().size());
+        assertEquals(185, record.tumorMutationalLoad());
+        assertEquals(24, record.evidences().size());
     }
 
     @Test

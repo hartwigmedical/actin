@@ -21,7 +21,9 @@ public final class TestMolecularDataFactory {
 
     @NotNull
     public static MolecularRecord createMinimalTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder().sampleId(TestDataFactory.TEST_SAMPLE).type(ExperimentType.WGS)
+        return ImmutableMolecularRecord.builder()
+                .sampleId(TestDataFactory.TEST_SAMPLE)
+                .type(ExperimentType.WGS)
                 .hasReliableQuality(true)
                 .tumorMutationalBurden(0D)
                 .tumorMutationalLoad(0)
@@ -54,35 +56,40 @@ public final class TestMolecularDataFactory {
         ImmutableTreatmentEvidence.Builder ckbBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB");
         ImmutableTreatmentEvidence.Builder iclusionBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION");
 
-        evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
+        evidences.add(ckbBuilder.gene("BRAF")
+                .event("p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
+        evidences.add(ckbBuilder.event("BRAF")
+                .event("p.Val600Glu")
                 .treatment("Dabrafenib")
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        evidences.add(ckbBuilder.genomicEvent("BRAF p.Val600Glu")
+        evidences.add(ckbBuilder.gene("BRAF")
+                .event("p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        evidences.add(ckbBuilder.genomicEvent("PTEN partial loss")
+        evidences.add(ckbBuilder.gene("PTEN")
+                .event("partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        evidences.add(iclusionBuilder.genomicEvent("BRAF p.Val600Glu")
+        evidences.add(iclusionBuilder.gene("BRAF")
+                .event("p.Val600Glu")
                 .treatment("Trial X")
                 .onLabel(true)
                 .level(EvidenceLevel.B)

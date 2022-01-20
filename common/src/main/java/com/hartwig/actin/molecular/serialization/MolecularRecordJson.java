@@ -4,6 +4,7 @@ import static com.hartwig.actin.json.Json.array;
 import static com.hartwig.actin.json.Json.bool;
 import static com.hartwig.actin.json.Json.integer;
 import static com.hartwig.actin.json.Json.nullableDate;
+import static com.hartwig.actin.json.Json.nullableString;
 import static com.hartwig.actin.json.Json.number;
 import static com.hartwig.actin.json.Json.object;
 import static com.hartwig.actin.json.Json.string;
@@ -131,7 +132,8 @@ public final class MolecularRecordJson {
                 boolean reported = bool(evidence, "reported");
                 if (reported) {
                     evidences.add(ImmutableTreatmentEvidence.builder()
-                            .genomicEvent(string(evidence, "genomicEvent"))
+                            .gene(nullableString(evidence, "gene"))
+                            .event(string(evidence, "event"))
                             .treatment(string(evidence, "treatment"))
                             .onLabel(bool(evidence, "onLabel"))
                             .level(EvidenceLevel.valueOf(string(evidence, "level")))
