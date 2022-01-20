@@ -36,6 +36,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfCategoryCreator(CORTICOSTEROIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION,
                 getsActiveMedicationOfCategoryCreator(VITAMIN_K_ANTAGONISTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());

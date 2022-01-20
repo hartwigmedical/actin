@@ -178,6 +178,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, FunctionInput.NONE);
