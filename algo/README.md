@@ -70,7 +70,7 @@ The following rules are available:
 ##### General utility rules
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-WARN_ALWAYS | Always returns PASS_BUT_WARN | This is meant to be used for rules that are mandatory to be evaluated by a human.
+WARN_ALWAYS | Never, always returns PASS_BUT_WARN | This rule is meant to be used for criteria that currently always need to be manually evaluated
 
 ##### Rules related to general patient characteristics
 
@@ -251,6 +251,7 @@ CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > categories contains type of
 CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION | Medication > categories contains type of "Antiepileptics" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
+CURRENTLY_GETS_GONADORELIN_MEDICATION | T.B.D.
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
