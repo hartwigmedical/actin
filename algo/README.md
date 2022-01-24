@@ -82,6 +82,7 @@ HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_ INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
+HAS_RAPIDLY_PROGRESSIVE_DISEASE | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
 PATIENT_IS_TREATED_IN_HOSPITAL_X | > won't be evaluated
@@ -143,6 +144,7 @@ ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found
 SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
 OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 
 EXPRESSION_OF_GENE_X_BY_IHC | > Currently set to UNDETERMINED
+EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | > Currently set to UNDETERMINED
 EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | > Currently set to UNDETERMINED
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
@@ -165,6 +167,7 @@ HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
 HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
 HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X | Glucose /PL (GL_P) in mmol/L <= X
+HAS_SERUM_TESTOSTERONE_NG_PER_DL_ OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
