@@ -6,19 +6,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GeneIsWildtype implements EvaluationFunction {
+public class IsHomologousRepairDeficient implements EvaluationFunction {
 
-    @NotNull
-    private final String gene;
-
-    GeneIsWildtype(@NotNull final String gene) {
-        this.gene = gene;
+    IsHomologousRepairDeficient() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().wildtypeGenes().contains(gene)) {
+        Boolean isHomologousRepairDeficient = record.molecular().isHomologousRepairDeficient();
+
+        if (isHomologousRepairDeficient == null) {
+            return Evaluation.UNDETERMINED;
+        } else if (isHomologousRepairDeficient) {
             return Evaluation.PASS;
         }
 

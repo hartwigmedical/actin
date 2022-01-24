@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -34,11 +33,11 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildtypeCreator());
-        map.put(EligibilityRule.MSI_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HRD_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.TMB_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.TML_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.TML_OF_AT_MOST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.MSI_SIGNATURE, isMicrosatelliteUnstableCreator());
+        map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
+        map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
+        map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
+        map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
 
         return map;
     }
@@ -127,6 +126,40 @@ public final class MolecularRuleMapping {
         return function -> {
             String gene = FunctionInputResolver.createOneStringInput(function);
             return new GeneIsWildtype(gene);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator isMicrosatelliteUnstableCreator() {
+        return function -> new IsMicrosatelliteUnstable();
+    }
+
+    @NotNull
+    private static FunctionCreator isHomologousRepairDeficientCreator() {
+        return function -> new IsHomologousRepairDeficient();
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientTumorMutationalBurdenCreator() {
+        return function -> {
+            double minTumorMutationalBurden = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientTumorMutationalBurden(minTumorMutationalBurden);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientTumorMutationalLoadCreator() {
+        return function -> {
+            int minTumorMutationalLoad = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasSufficientTumorMutationalLoad(minTumorMutationalLoad);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedTumorMutationalLoadCreator() {
+        return function -> {
+            int maxTumorMutationalLoad = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasLimitedTumorMutationalLoad(maxTumorMutationalLoad);
         };
     }
 }

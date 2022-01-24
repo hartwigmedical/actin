@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class MolecularTestFactory {
 
@@ -61,8 +62,7 @@ final class MolecularTestFactory {
     public static PatientRecord withWildtypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .wildtypeGenes(Lists.newArrayList(gene))
-                .build());
+                .wildtypeGenes(Lists.newArrayList(gene)).build());
     }
 
     @NotNull
@@ -70,6 +70,38 @@ final class MolecularTestFactory {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
                 .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene(fiveGene).threeGene(threeGene).build()))
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withMicrosatelliteInstability(@Nullable Boolean isMicrosatelliteUnstable) {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withHomologousRepairDeficiency(@Nullable Boolean isHomologousRepairDeficient) {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .isHomologousRepairDeficient(isHomologousRepairDeficient)
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withTumorMutationalBurden(double tumorMutationalBurden) {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .tumorMutationalBurden(tumorMutationalBurden)
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withTumorMutationalLoad(int tumorMutationalLoad) {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .tumorMutationalLoad(tumorMutationalLoad)
                 .build());
     }
 

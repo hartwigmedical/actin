@@ -6,19 +6,18 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GeneIsWildtype implements EvaluationFunction {
+public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
 
-    @NotNull
-    private final String gene;
+    private final int minTumorMutationalLoad;
 
-    GeneIsWildtype(@NotNull final String gene) {
-        this.gene = gene;
+    public HasSufficientTumorMutationalLoad(final int minTumorMutationalLoad) {
+        this.minTumorMutationalLoad = minTumorMutationalLoad;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().wildtypeGenes().contains(gene)) {
+        if (record.molecular().tumorMutationalLoad() >= minTumorMutationalLoad) {
             return Evaluation.PASS;
         }
 

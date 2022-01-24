@@ -6,19 +6,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GeneIsWildtype implements EvaluationFunction {
+public class IsMicrosatelliteUnstable implements EvaluationFunction {
 
-    @NotNull
-    private final String gene;
-
-    GeneIsWildtype(@NotNull final String gene) {
-        this.gene = gene;
+    IsMicrosatelliteUnstable() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().wildtypeGenes().contains(gene)) {
+        Boolean isMicrosatelliteUnstable = record.molecular().isMicrosatelliteUnstable();
+
+        if (isMicrosatelliteUnstable == null) {
+            return Evaluation.UNDETERMINED;
+        } else if (isMicrosatelliteUnstable) {
             return Evaluation.PASS;
         }
 

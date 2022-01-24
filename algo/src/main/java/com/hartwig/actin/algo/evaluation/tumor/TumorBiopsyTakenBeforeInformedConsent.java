@@ -13,7 +13,7 @@ public class TumorBiopsyTakenBeforeInformedConsent implements EvaluationFunction
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         // Should only be pass when WGS is available, but this is currently mandatory in ACTIN.
         return Evaluation.PASS;
     }

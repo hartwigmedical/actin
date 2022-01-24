@@ -13,7 +13,7 @@ public class ParticipatesInAnotherTrial implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         return Evaluation.NOT_EVALUATED;
     }
 }
