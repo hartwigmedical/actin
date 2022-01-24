@@ -30,10 +30,19 @@ public abstract class MolecularRecord {
     public abstract List<GeneMutation> mutations();
 
     @NotNull
-    public abstract Set<FusionGene> fusions();
+    public abstract Set<String> activatedGenes();
+
+    @NotNull
+    public abstract Set<String> inactivatedGenes();
+
+    @NotNull
+    public abstract Set<String> amplifiedGenes();
 
     @NotNull
     public abstract Set<String> wildtypeGenes();
+
+    @NotNull
+    public abstract Set<FusionGene> fusions();
 
     @Nullable
     public abstract Boolean isMicrosatelliteUnstable();

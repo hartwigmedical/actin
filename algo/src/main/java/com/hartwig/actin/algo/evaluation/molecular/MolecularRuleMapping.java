@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public final class MolecularRuleMapping {
 
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableCreator());
-        map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, geneIsActivatedOrAmplifiedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
@@ -45,6 +45,14 @@ public final class MolecularRuleMapping {
     @NotNull
     private static FunctionCreator molecularResultsAreAvailableCreator() {
         return function -> new MolecularResultsAreAvailable();
+    }
+
+    @NotNull
+    private static FunctionCreator geneIsActivatedOrAmplifiedCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new GeneIsActivatedOrAmplified(gene);
+        };
     }
 
     @NotNull
