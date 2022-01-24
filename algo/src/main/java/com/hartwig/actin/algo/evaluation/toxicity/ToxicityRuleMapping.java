@@ -7,8 +7,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneStringInput;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public final class ToxicityRuleMapping {
     @NotNull
     private static FunctionCreator hasToxicityWithGradeAndNameCreator() {
         return function -> {
-            OneIntegerOneStringInput input = FunctionInputResolver.createOneIntegerOneStringInput(function);
+            OneIntegerOneString input = FunctionInputResolver.createOneIntegerOneStringInput(function);
             return new HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet());
         };
 
@@ -48,7 +48,7 @@ public final class ToxicityRuleMapping {
     @NotNull
     private static FunctionCreator hasToxicityWithGradeIgnoringNamesCreator() {
         return function -> {
-            OneIntegerManyStringsInput input = FunctionInputResolver.createOneIntegerManyStringsInput(function);
+            OneIntegerManyStrings input = FunctionInputResolver.createOneIntegerManyStringsInput(function);
             return new HasToxicityWithGrade(input.integer(), null, Sets.newHashSet(input.strings()));
         };
     }

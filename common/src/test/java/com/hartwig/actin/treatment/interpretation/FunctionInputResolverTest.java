@@ -16,13 +16,15 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStringsInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneStringInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubleInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStringInput;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneString;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubles;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -32,7 +34,7 @@ public class FunctionInputResolverTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void everyRuleHasConfiguredExpectedInputs() {
+    public void everyRuleHasInputsConfigured() {
         for (EligibilityRule rule : EligibilityRule.values()) {
             if (!CompositeRules.isComposite(rule)) {
                 assertTrue(FunctionInputResolver.RULE_INPUT_MAP.containsKey(rule));
@@ -41,20 +43,20 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canDetermineParameterValidityForEveryRule() {
+    public void canDetermineInputValidityForEveryRule() {
         for (EligibilityRule rule : EligibilityRule.values()) {
             assertNotNull(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         }
     }
 
     @Test
-    public void canResolveCompositeParameters() {
+    public void canResolveCompositeInputs() {
         List<Object> inputs = Lists.newArrayList();
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.AND, inputs)));
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_ON_PASS, inputs)));
 
-        // Add first param
+        // Add first input
         inputs.add(createValidTestFunction());
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.AND, inputs)));
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.OR, inputs)));
@@ -64,24 +66,25 @@ public class FunctionInputResolverTest {
         assertNotNull(FunctionInputResolver.createOneCompositeParameter(valid1));
         assertTrue(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_ON_PASS, inputs)));
 
-        // Add 2nd param
+        // Add 2nd input
         inputs.add(createValidTestFunction());
         EligibilityFunction valid2 = create(EligibilityRule.OR, inputs);
         assertTrue(FunctionInputResolver.hasValidInputs(valid2));
         assertNotNull(FunctionInputResolver.createAtLeastTwoCompositeParameters(valid2));
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.NOT, inputs)));
 
-        // Add 3rd param
+        // Add 3rd input
         inputs.add(createValidTestFunction());
         assertTrue(FunctionInputResolver.hasValidInputs(create(EligibilityRule.OR, inputs)));
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_ON_PASS, inputs)));
 
+        // Make sure that the check fails when number of inputs is correct but datamodel is not.
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.AND,
                 Lists.newArrayList("not a function", "not a function either"))));
     }
 
     @Test
-    public void canResolveFunctionsWithoutParameters() {
+    public void canResolveFunctionsWithoutInputs() {
         EligibilityRule rule = firstOfType(FunctionInput.NONE);
 
         assertTrue(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
@@ -90,7 +93,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerParameter() {
+    public void canResolveFunctionsWithOneIntegerInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_INTEGER);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2"));
@@ -103,7 +106,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneDoubleParameter() {
+    public void canResolveFunctionsWithOneDoubleInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_DOUBLE);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("3.1"));
@@ -116,13 +119,12 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithTwoDoubleParameters() {
+    public void canResolveFunctionsWithTwoDoubleInputs() {
         EligibilityRule rule = firstOfType(FunctionInput.TWO_DOUBLE);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("3.1", "3.2"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        assertEquals(ImmutableTwoDoubleInput.builder().double1(3.1).double2(3.2).build(),
-                FunctionInputResolver.createTwoDoubleInput(valid));
+        assertEquals(ImmutableTwoDoubles.builder().double1(3.1).double2(3.2).build(), FunctionInputResolver.createTwoDoubleInput(valid));
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("3.1"))));
@@ -130,7 +132,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentCategoryParameter() {
+    public void canResolveFunctionsWithOneTreatmentCategoryInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY);
 
         String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
@@ -143,39 +145,56 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentCategoryOneStringParameter() {
+    public void canResolveFunctionsWithOneTreatmentCategoryOneStringInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
 
         String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
         EligibilityFunction valid = create(rule, Lists.newArrayList(category, "string"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTreatmentCategoryOneString params = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(valid);
-        assertEquals(TreatmentCategory.IMMUNOTHERAPY, params.treatmentCategory());
-        assertEquals("string", params.string());
+        OneTreatmentCategoryOneString inputs = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.treatmentCategory());
+        assertEquals("string", inputs.string());
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentCategoryOneIntegerParameter() {
+    public void canResolveFunctionsWithOneTreatmentCategoryOneIntegerInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
 
         String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
         EligibilityFunction valid = create(rule, Lists.newArrayList(category, "1"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTreatmentCategoryOneInteger params = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(valid);
-        assertEquals(TreatmentCategory.IMMUNOTHERAPY, params.treatmentCategory());
-        assertEquals(1, (int) params.integer());
+        OneTreatmentCategoryOneInteger inputs = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.treatmentCategory());
+        assertEquals(1, inputs.integer());
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
     }
 
     @Test
-    public void canResolveFunctionsWithOneStringParameter() {
+    public void canResolveFunctionsWithOneTreatmentCategoryOneStringOneIntegerInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER);
+
+        String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, "hello", "1"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+
+        OneTreatmentCategoryOneStringOneInteger inputs = FunctionInputResolver.createOneTreatmentCategoryOneStringOneIntegerInput(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.treatmentCategory());
+        assertEquals("hello", inputs.string());
+        assertEquals(1, inputs.integer());
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList(category, "1", "hello"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneStringInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("0045"));
@@ -187,12 +206,26 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithTwoStringParameters() {
+    public void canResolveFunctionsWithOneStringOneIntegerInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_ONE_INTEGER);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("doid", "1"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+        OneIntegerOneString inputs = FunctionInputResolver.createOneStringOneIntegerInput(valid);
+        assertEquals("doid", inputs.string());
+        assertEquals(1, inputs.integer());
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("1", "doid"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithTwoStringInputs() {
         EligibilityRule rule = firstOfType(FunctionInput.TWO_STRINGS);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF", "V600E"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        assertEquals(ImmutableTwoStringInput.builder().string1("BRAF").string2("V600E").build(),
+        assertEquals(ImmutableTwoStrings.builder().string1("BRAF").string2("V600E").build(),
                 FunctionInputResolver.createTwoStringInput(valid));
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
@@ -200,12 +233,12 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerOneStringParameter() {
+    public void canResolveFunctionsWithOneIntegerOneStringInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_STRING);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        assertEquals(ImmutableOneIntegerOneStringInput.builder().integer(2).string("test").build(),
+        assertEquals(ImmutableOneIntegerOneString.builder().integer(2).string("test").build(),
                 FunctionInputResolver.createOneIntegerOneStringInput(valid));
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
@@ -214,13 +247,13 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerManyStringsParameter() {
+    public void canResolveFunctionsWithOneIntegerManyStringsInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_INTEGER_MANY_STRINGS);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2", "test1;test2;test3"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        OneIntegerManyStringsInput expected =
-                ImmutableOneIntegerManyStringsInput.builder().integer(2).strings(Lists.newArrayList("test1", "test2", "test3")).build();
+        OneIntegerManyStrings expected =
+                ImmutableOneIntegerManyStrings.builder().integer(2).strings(Lists.newArrayList("test1", "test2", "test3")).build();
 
         assertEquals(expected, FunctionInputResolver.createOneIntegerManyStringsInput(valid));
 
@@ -242,7 +275,7 @@ public class FunctionInputResolverTest {
 
     @NotNull
     private static EligibilityFunction createValidTestFunction() {
-        return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, Lists.newArrayList());
+        return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, Lists.newArrayList("18"));
     }
 
     @NotNull

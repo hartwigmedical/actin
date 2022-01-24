@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TwoDoubleInput {
+public abstract class OneIntegerOneString {
 
-    public abstract double double1();
+    public abstract int integer();
 
-    public abstract double double2();
-
+    @NotNull
+    public abstract String string();
 }

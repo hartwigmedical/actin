@@ -7,24 +7,25 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStringsInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneStringInput;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneString;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubleInput;
-import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStringInput;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStringsInput;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneStringInput;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneStringOneInteger;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubles;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
-import com.hartwig.actin.treatment.interpretation.single.TwoDoubleInput;
-import com.hartwig.actin.treatment.interpretation.single.TwoStringInput;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
+import com.hartwig.actin.treatment.interpretation.single.TwoDoubles;
+import com.hartwig.actin.treatment.interpretation.single.TwoStrings;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -210,7 +211,6 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
-
     }
 
     private FunctionInputResolver() {
@@ -273,8 +273,16 @@ public final class FunctionInputResolver {
                     createOneTreatmentCategoryOneIntegerInput(function);
                     return true;
                 }
+                case ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER: {
+                    createOneTreatmentCategoryOneStringOneIntegerInput(function);
+                    return true;
+                }
                 case ONE_STRING: {
                     createOneStringInput(function);
+                    return true;
+                }
+                case ONE_STRING_ONE_INTEGER: {
+                    createOneStringOneIntegerInput(function);
                     return true;
                 }
                 case TWO_STRINGS: {
@@ -312,10 +320,10 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TwoDoubleInput createTwoDoubleInput(@NotNull EligibilityFunction function) {
+    public static TwoDoubles createTwoDoubleInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_DOUBLE, 2);
 
-        return ImmutableTwoDoubleInput.builder()
+        return ImmutableTwoDoubles.builder()
                 .double1(Double.parseDouble((String) function.parameters().get(0)))
                 .double2(Double.parseDouble((String) function.parameters().get(1)))
                 .build();
@@ -349,6 +357,18 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
+    public static OneTreatmentCategoryOneStringOneInteger createOneTreatmentCategoryOneStringOneIntegerInput(
+            @NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER, 3);
+
+        return ImmutableOneTreatmentCategoryOneStringOneInteger.builder()
+                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .string((String) function.parameters().get(1))
+                .integer(Integer.parseInt((String) function.parameters().get(2)))
+                .build();
+    }
+
+    @NotNull
     public static String createOneStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_STRING, 1);
 
@@ -356,34 +376,45 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TwoStringInput createTwoStringInput(@NotNull EligibilityFunction function) {
+    public static OneIntegerOneString createOneStringOneIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_STRING_ONE_INTEGER, 2);
+
+        return ImmutableOneIntegerOneString.builder()
+                .string((String) function.parameters().get(0))
+                .integer(Integer.parseInt((String) function.parameters().get(1)))
+                .build();
+    }
+
+    @NotNull
+    public static TwoStrings createTwoStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2);
 
-        return ImmutableTwoStringInput.builder()
+        return ImmutableTwoStrings.builder()
                 .string1((String) function.parameters().get(0))
                 .string2((String) function.parameters().get(1))
                 .build();
     }
 
     @NotNull
-    public static OneIntegerOneStringInput createOneIntegerOneStringInput(@NotNull EligibilityFunction function) {
+    public static OneIntegerOneString createOneIntegerOneStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2);
 
-        return ImmutableOneIntegerOneStringInput.builder()
+        return ImmutableOneIntegerOneString.builder()
                 .integer(Integer.parseInt((String) function.parameters().get(0)))
                 .string((String) function.parameters().get(1))
                 .build();
     }
 
     @NotNull
-    public static OneIntegerManyStringsInput createOneIntegerManyStringsInput(@NotNull EligibilityFunction function) {
+    public static OneIntegerManyStrings createOneIntegerManyStringsInput(@NotNull EligibilityFunction function) {
         assertParamType(function, FunctionInput.ONE_INTEGER_MANY_STRINGS);
 
         List<String> strings = Lists.newArrayList();
         for (String input : ((String) function.parameters().get(1)).split(MANY_STRING_SEPARATOR)) {
             strings.add(input.trim());
         }
-        return ImmutableOneIntegerManyStringsInput.builder()
+
+        return ImmutableOneIntegerManyStrings.builder()
                 .integer(Integer.parseInt((String) function.parameters().get(0)))
                 .strings(strings)
                 .build();

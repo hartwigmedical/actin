@@ -13,7 +13,5 @@ public abstract class OneTreatmentCategoryOneInteger {
     @NotNull
     public abstract TreatmentCategory treatmentCategory();
 
-    @NotNull
-    public abstract Integer integer();
-
+    public abstract int integer();
 }
