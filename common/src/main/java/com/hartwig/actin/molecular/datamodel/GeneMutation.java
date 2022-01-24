@@ -11,7 +11,7 @@ public abstract class GeneMutation {
     @NotNull
     public abstract String gene();
 
-    @Nullable
+    @NotNull
     public abstract String mutation();
 
 }

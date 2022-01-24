@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.single.TwoStrings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,17 +23,17 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableCreator());
         map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, geneIsActivatedOrAmplifiedCreator());
-        map.put(EligibilityRule.INACTIVATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.DELETION_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.SPECIFIC_FUSION_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.INACTIVATION_OF_GENE_X, geneIsInactivatedCreator());
+        map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, geneHasActivatingMutationCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, geneHasSpecificMutationCreator());
+        map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
+        map.put(EligibilityRule.DELETION_OF_GENE_X, geneIsDeletedCreator());
+        map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
+        map.put(EligibilityRule.SPECIFIC_FUSION_X, hasSpecificFusionCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.WILDTYPE_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneIsExpressedByIHCCreator());
+        map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildtypeCreator());
         map.put(EligibilityRule.MSI_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HRD_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
@@ -56,6 +57,63 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator geneIsInactivatedCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new GeneIsInactivated(gene);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator geneHasActivatingMutationCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new GeneHasActivatingMutation(gene);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator geneHasSpecificMutationCreator() {
+        return function -> {
+            TwoStrings inputs = FunctionInputResolver.createTwoStringInput(function);
+            return new GeneHasSpecificMutation(inputs.string1(), inputs.string2());
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator geneIsAmplifiedCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new GeneIsAmplified(gene);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator geneIsDeletedCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new GeneIsDeleted(gene);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasActivatingFusionInGeneCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new HasActivatingFusionWithGene(gene);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSpecificFusionCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            // TODO Properly pass both five-gene and three-gene
+            return new HasSpecificFusionGene(gene, gene);
+        };
+    }
+
+    @NotNull
     private static FunctionCreator geneIsOverexpressedCreator() {
         return function -> new GeneIsOverexpressed();
     }
@@ -65,4 +123,11 @@ public final class MolecularRuleMapping {
         return function -> new GeneIsExpressedByIHC();
     }
 
+    @NotNull
+    private static FunctionCreator geneIsWildtypeCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new GeneIsWildtype(gene);
+        };
+    }
 }
