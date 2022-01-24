@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
@@ -74,12 +75,15 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
                 FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT_CATEGORY);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES,
+                FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
@@ -96,6 +100,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.SPECIFIC_FUSION_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, FunctionInput.ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.WILDTYPE_OF_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.MSI_SIGNATURE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HRD_SIGNATURE, FunctionInput.NONE);

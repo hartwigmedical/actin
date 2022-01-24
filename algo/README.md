@@ -116,11 +116,13 @@ HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
 HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
 HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
+HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D.
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Chemoradiotherapy, Stem cell transplantation, Antiviral therapy, Vaccine
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
 HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines < Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Chemoradiotherapy, Stem cell transplantation, Antiviral therapy, Vaccine
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines < Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
@@ -141,6 +143,7 @@ ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found
 SPECIFIC_FUSION_X | Driver fusion with 2 specified fusion partner genes is found
 OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 
 EXPRESSION_OF_GENE_X_BY_IHC | > Currently set to UNDETERMINED
+EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | > Currently set to UNDETERMINED
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
