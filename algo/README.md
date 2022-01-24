@@ -140,7 +140,7 @@ MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion is found in gene X
 ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
-SPECIFIC_FUSION_X | Driver fusion with 2 specified fusion partner genes is found
+SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
 OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 
 EXPRESSION_OF_GENE_X_BY_IHC | > Currently set to UNDETERMINED
 EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | > Currently set to UNDETERMINED

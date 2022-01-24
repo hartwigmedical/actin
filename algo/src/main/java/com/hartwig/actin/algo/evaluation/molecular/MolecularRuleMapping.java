@@ -29,7 +29,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.DELETION_OF_GENE_X, geneIsDeletedCreator());
         map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
-        map.put(EligibilityRule.SPECIFIC_FUSION_X, hasSpecificFusionCreator());
+        map.put(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, hasSpecificFusionCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneIsExpressedByIHCCreator());
@@ -107,9 +107,8 @@ public final class MolecularRuleMapping {
     @NotNull
     private static FunctionCreator hasSpecificFusionCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
-            // TODO Properly pass both five-gene and three-gene
-            return new HasSpecificFusionGene(gene, gene);
+            TwoStrings genes = FunctionInputResolver.createTwoStringInput(function);
+            return new HasSpecificFusionGene(genes.string1(), genes.string2());
         };
     }
 

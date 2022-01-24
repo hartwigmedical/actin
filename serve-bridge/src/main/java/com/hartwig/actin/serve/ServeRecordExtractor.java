@@ -9,6 +9,7 @@ import com.hartwig.actin.serve.interpretation.ServeRules;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
@@ -17,6 +18,8 @@ import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 import org.jetbrains.annotations.NotNull;
 
 public final class ServeRecordExtractor {
+
+    private static final String FUSION_GENE_SEPARATOR = "-";
 
     private ServeRecordExtractor() {
     }
@@ -77,8 +80,15 @@ public final class ServeRecordExtractor {
             throw new IllegalStateException("Cannot convert function without parameters: " + function.rule());
         } else {
             gene = (String) function.parameters().get(0);
+
             if (function.parameters().size() > 1) {
-                mutation = (String) function.parameters().get(1);
+                if (function.rule() == EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y) {
+                    gene = gene + FUSION_GENE_SEPARATOR + function.parameters().get(1);
+                } else if (function.rule() == EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y) {
+                    mutation = (String) function.parameters().get(1);
+                } else {
+                    throw new IllegalStateException("Did not expect more than 1 param for " + function);
+                }
             }
         }
         return ImmutableServeRecord.builder().trial(trialAcronym).rule(function.rule()).gene(gene).mutation(mutation).build();

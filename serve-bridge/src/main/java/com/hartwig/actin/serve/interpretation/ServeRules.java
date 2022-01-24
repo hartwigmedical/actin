@@ -17,7 +17,7 @@ public final class ServeRules {
         MOLECULAR_RULES.add(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.INACTIVATION_OF_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
-        MOLECULAR_RULES.add(EligibilityRule.SPECIFIC_FUSION_X);
+        MOLECULAR_RULES.add(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y);
         MOLECULAR_RULES.add(EligibilityRule.AMPLIFICATION_OF_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.DELETION_OF_GENE_X);
     }
