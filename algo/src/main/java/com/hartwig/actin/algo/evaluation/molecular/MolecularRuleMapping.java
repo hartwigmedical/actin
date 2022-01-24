@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.SPECIFIC_FUSION_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.MSI_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HRD_SIGNATURE, function -> record -> Evaluation.NOT_IMPLEMENTED);
@@ -48,4 +50,10 @@ public final class MolecularRuleMapping {
     private static FunctionCreator geneIsOverexpressedCreator() {
         return function -> new GeneIsOverexpressed();
     }
+
+    @NotNull
+    private static FunctionCreator geneIsExpressedByIHCCreator() {
+        return function -> new GeneIsExpressedByIHC();
+    }
+
 }
