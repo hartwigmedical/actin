@@ -46,7 +46,7 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(concat(eventsWithActinEvidence)));
 
         Set<String> eventsWithGeneralTrialEvidence = evidence.generalTrialEvidence().keySet();
-        Set<String> additionalTrialEvents = subtract(eventsWithActinEvidence, eventsWithGeneralTrialEvidence);
+        Set<String> additionalTrialEvents = subtract(eventsWithGeneralTrialEvidence, eventsWithActinEvidence);
         if (!additionalTrialEvents.isEmpty()) {
             table.addCell(Cells.createKey("Additional events with applicable trial evidence"));
             table.addCell(Cells.createValue(concat(additionalTrialEvents)));
