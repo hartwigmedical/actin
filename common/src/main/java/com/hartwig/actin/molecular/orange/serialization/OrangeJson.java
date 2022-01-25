@@ -15,10 +15,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -62,23 +60,12 @@ public final class OrangeJson {
                     .sampleId(string(record, "sampleId"))
                     .date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
-                    .doids(extractDoids(array(record, "configuredPrimaryTumor")))
                     .microsatelliteStabilityStatus(string(purple, "microsatelliteStatus"))
                     .homologousRepairStatus(string(chord, "hrStatus"))
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
                     .evidences(toEvidences(array(record, "protect")))
                     .build();
-        }
-
-        @NotNull
-        private static Set<String> extractDoids(@NotNull JsonArray configuredPrimaryTumorArray) {
-            Set<String> doids = Sets.newHashSet();
-            for (JsonElement element : configuredPrimaryTumorArray) {
-                JsonObject doidNode = element.getAsJsonObject();
-                doids.add(string(doidNode, "doid"));
-            }
-            return doids;
         }
 
         @NotNull

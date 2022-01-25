@@ -16,9 +16,6 @@ public abstract class MolecularRecord {
     public abstract String sampleId();
 
     @NotNull
-    public abstract Set<String> doids();
-
-    @NotNull
     public abstract ExperimentType type();
 
     @Nullable

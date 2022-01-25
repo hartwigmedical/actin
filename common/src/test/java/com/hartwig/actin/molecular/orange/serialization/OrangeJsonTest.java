@@ -26,7 +26,6 @@ public class OrangeJsonTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertTrue(record.hasReliableQuality());
 
-        assertEquals(1, record.doids().size());
         assertEquals("MSS", record.microsatelliteStabilityStatus());
         assertEquals("HR_PROFICIENT", record.homologousRepairStatus());
         assertEquals(13.71, record.tumorMutationalBurden(), EPSILON);
@@ -41,7 +40,6 @@ public class OrangeJsonTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertFalse(record.hasReliableQuality());
 
-        assertTrue(record.doids().isEmpty());
         assertEquals("MSS", record.microsatelliteStabilityStatus());
         assertEquals("HR_PROFICIENT", record.homologousRepairStatus());
 

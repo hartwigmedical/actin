@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +13,6 @@ public abstract class OrangeRecord {
 
     @NotNull
     public abstract String sampleId();
-
-    @NotNull
-    public abstract Set<String> doids();
 
     @Nullable
     public abstract LocalDate date();

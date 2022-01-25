@@ -1,9 +1,7 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,16 +32,10 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
-                .doids(createTestDoids())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
                 .tumorMutationalLoad(185)
                 .build();
-    }
-
-    @NotNull
-    private static Set<String> createTestDoids() {
-        return Sets.newHashSet("8923");
     }
 }

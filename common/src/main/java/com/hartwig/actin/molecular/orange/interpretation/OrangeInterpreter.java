@@ -27,7 +27,6 @@ public final class OrangeInterpreter {
     public static MolecularRecord interpret(@NotNull OrangeRecord record) {
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
-                .doids(record.doids())
                 .type(ExperimentType.WGS)
                 .date(record.date())
                 .hasReliableQuality(record.hasReliableQuality())
