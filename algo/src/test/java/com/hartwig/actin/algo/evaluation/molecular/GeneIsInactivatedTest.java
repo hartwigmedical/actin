@@ -15,7 +15,9 @@ public class GeneIsInactivatedTest {
 
         assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2")));
-        assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1")));
+        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2", true)));
+        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2", false)));
+        assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1", true)));
+        assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1", false)));
     }
 }

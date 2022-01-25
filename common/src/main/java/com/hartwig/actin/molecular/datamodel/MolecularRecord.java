@@ -35,13 +35,10 @@ public abstract class MolecularRecord {
     public abstract Set<String> activatedGenes();
 
     @NotNull
-    public abstract Set<String> inactivatedGenes();
+    public abstract Set<InactivatedGene> inactivatedGenes();
 
     @NotNull
     public abstract Set<String> amplifiedGenes();
-
-    @NotNull
-    public abstract Set<String> deletedGenes();
 
     @NotNull
     public abstract Set<String> wildtypeGenes();

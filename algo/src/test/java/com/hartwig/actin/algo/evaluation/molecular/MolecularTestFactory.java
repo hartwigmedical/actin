@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
+import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
@@ -35,10 +36,10 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withInactivatedGene(@NotNull String gene) {
+    public static PatientRecord withInactivatedGene(@NotNull String gene, boolean hasBeenDeleted) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .inactivatedGenes(Lists.newArrayList(gene))
+                .inactivatedGenes(Lists.newArrayList(ImmutableInactivatedGene.builder().gene(gene).hasBeenDeleted(hasBeenDeleted).build()))
                 .build());
     }
 
@@ -51,18 +52,11 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withDeletedGene(@NotNull String gene) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .deletedGenes(Lists.newArrayList(gene))
-                .build());
-    }
-
-    @NotNull
     public static PatientRecord withWildtypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .wildtypeGenes(Lists.newArrayList(gene)).build());
+                .wildtypeGenes(Lists.newArrayList(gene))
+                .build());
     }
 
     @NotNull

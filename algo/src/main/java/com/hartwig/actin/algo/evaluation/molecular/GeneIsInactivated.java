@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -18,8 +19,10 @@ public class GeneIsInactivated implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().inactivatedGenes().contains(gene)) {
-            return Evaluation.PASS;
+        for (InactivatedGene inactivatedGene : record.molecular().inactivatedGenes()) {
+            if (inactivatedGene.gene().equals(gene)) {
+                return Evaluation.PASS;
+            }
         }
 
         return MolecularUtil.noMatchFound(record.molecular());
