@@ -21,5 +21,4 @@ public abstract class MolecularEvidence {
 
     @NotNull
     public abstract Multimap<String, String> generalResistanceEvidence();
-
 }

@@ -39,7 +39,7 @@ public abstract class MolecularRecord {
     public abstract Set<String> wildtypeGenes();
 
     @NotNull
-    public abstract Set<FusionGene> fusions();
+    public abstract List<FusionGene> fusions();
 
     @Nullable
     public abstract Boolean isMicrosatelliteUnstable();

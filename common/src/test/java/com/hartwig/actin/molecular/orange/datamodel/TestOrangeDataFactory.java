@@ -6,13 +6,10 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestOrangeDataFactory {
-
-    private static final LocalDate TODAY = LocalDate.now();
-
-    private static final int DAYS_SINCE_ORANGE_ANALYSIS = 5;
 
     private TestOrangeDataFactory() {
     }
@@ -21,11 +18,11 @@ public final class TestOrangeDataFactory {
     public static OrangeRecord createMinimalTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
-                .hasReliableQuality(true)
-                .microsatelliteStabilityStatus("MSS")
-                .homologousRepairStatus("HR_PROFICIENT")
-                .tumorMutationalBurden(0D)
-                .tumorMutationalLoad(0)
+                .hasReliableQuality(false)
+                .microsatelliteStabilityStatus(Strings.EMPTY)
+                .homologousRepairStatus(Strings.EMPTY)
+                .tumorMutationalBurden(8D)
+                .tumorMutationalLoad(100)
                 .build();
     }
 
@@ -33,9 +30,10 @@ public final class TestOrangeDataFactory {
     public static OrangeRecord createProperTestMolecularRecord() {
         return ImmutableOrangeRecord.builder()
                 .from(createMinimalTestOrangeRecord())
-                .date(TODAY.minusDays(DAYS_SINCE_ORANGE_ANALYSIS))
-                .tumorMutationalBurden(13.71)
-                .tumorMutationalLoad(185)
+                .date(LocalDate.of(2022, 1, 20))
+                .hasReliableQuality(true)
+                .microsatelliteStabilityStatus("MSS")
+                .homologousRepairStatus("HR_PROFICIENT")
                 .evidences(createTestEvidences())
                 .build();
     }
@@ -44,10 +42,8 @@ public final class TestOrangeDataFactory {
     private static List<TreatmentEvidence> createTestEvidences() {
         List<TreatmentEvidence> evidences = Lists.newArrayList();
 
-        ImmutableTreatmentEvidence.Builder ckbBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB");
-        ImmutableTreatmentEvidence.Builder iclusionBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION");
-
-        evidences.add(ckbBuilder.gene("BRAF")
+        ImmutableTreatmentEvidence.Builder generalEvidenceBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB").reported(true);
+        evidences.add(generalEvidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
@@ -55,15 +51,7 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        evidences.add(ckbBuilder.event("BRAF")
-                .event("p.Val600Glu")
-                .treatment("Dabrafenib")
-                .onLabel(true)
-                .level(EvidenceLevel.A)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build());
-
-        evidences.add(ckbBuilder.gene("BRAF")
+        evidences.add(generalEvidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
@@ -71,7 +59,7 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        evidences.add(ckbBuilder.gene("PTEN")
+        evidences.add(generalEvidenceBuilder.gene("PTEN")
                 .event("partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
@@ -79,11 +67,21 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        evidences.add(iclusionBuilder.gene("BRAF")
+        ImmutableTreatmentEvidence.Builder generalTrialBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION").reported(true);
+        evidences.add(generalTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial X")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
+                .direction(EvidenceDirection.RESPONSIVE)
+                .build());
+
+        ImmutableTreatmentEvidence.Builder actinTrialBuilder = ImmutableTreatmentEvidence.builder().addSources("ACTIN").reported(true);
+        evidences.add(actinTrialBuilder.gene("BRAF")
+                .event("p.Val600Glu")
+                .treatment("Trial Y")
+                .onLabel(true)
+                .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 

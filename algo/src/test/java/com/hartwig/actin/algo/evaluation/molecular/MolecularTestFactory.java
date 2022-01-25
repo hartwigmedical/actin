@@ -95,12 +95,14 @@ final class MolecularTestFactory {
     public static PatientRecord withTumorMutationalLoad(int tumorMutationalLoad) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .hasReliableQuality(true)
                 .tumorMutationalLoad(tumorMutationalLoad)
                 .build());
     }
 
     @NotNull
     private static PatientRecord withMolecularRecord(@NotNull MolecularRecord molecular) {
-        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).molecular(molecular).build();
+        MolecularRecord reliable = ImmutableMolecularRecord.builder().from(molecular).hasReliableQuality(true).build();
+        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).molecular(reliable).build();
     }
 }

@@ -19,11 +19,11 @@ import org.jetbrains.annotations.NotNull;
 final class OrangeEvidenceFactory {
 
     static final String ACTIN_SOURCE = "ACTIN";
-    static final String ICLUSION_SOURCE = "ICLUSION";
-    static final String CKB_SOURCE = "CKB";
+    static final String GENERAL_TRIAL_SOURCE = "ICLUSION";
+    static final String GENERAL_EVIDENCE_SOURCE = "CKB";
 
-    private static final Set<String> NON_APPLICABLE_GENES = Sets.newHashSet();
-    private static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
+    static final Set<String> NON_APPLICABLE_GENES = Sets.newHashSet();
+    static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
 
     static {
         NON_APPLICABLE_GENES.add("CDKN2A");
@@ -60,7 +60,7 @@ final class OrangeEvidenceFactory {
     private static Multimap<String, String> createGeneralTrialEligibility(@NotNull List<TreatmentEvidence> evidences) {
         Multimap<String, String> generalTrialEligibility = ArrayListMultimap.create();
 
-        for (TreatmentEvidence evidence : filter(evidences, ICLUSION_SOURCE)) {
+        for (TreatmentEvidence evidence : filter(evidences, GENERAL_TRIAL_SOURCE)) {
             if (evidence.reported() && isPotentiallyApplicable(evidence)) {
                 generalTrialEligibility.put(toEvent(evidence), evidence.treatment());
             }
@@ -71,7 +71,7 @@ final class OrangeEvidenceFactory {
     @NotNull
     private static Multimap<String, String> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         Multimap<String, String> generalResponsiveEvidence = ArrayListMultimap.create();
-        for (TreatmentEvidence evidence : filter(evidences, CKB_SOURCE)) {
+        for (TreatmentEvidence evidence : filter(evidences, GENERAL_EVIDENCE_SOURCE)) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
@@ -87,7 +87,7 @@ final class OrangeEvidenceFactory {
     private static Multimap<String, String> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
         Multimap<String, String> generalResistanceEvidence = ArrayListMultimap.create();
 
-        for (TreatmentEvidence evidence : filter(evidences, CKB_SOURCE)) {
+        for (TreatmentEvidence evidence : filter(evidences, GENERAL_EVIDENCE_SOURCE)) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
@@ -111,13 +111,6 @@ final class OrangeEvidenceFactory {
             }
         }
         return filtered;
-    }
-
-    @NotNull
-    private static String toEvent(@NotNull TreatmentEvidence evidence) {
-        String gene = evidence.gene();
-        String event = GenomicEventFormatter.format(evidence.event());
-        return gene != null ? gene + " " + event : event;
     }
 
     private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
@@ -152,5 +145,12 @@ final class OrangeEvidenceFactory {
         }
 
         return true;
+    }
+
+    @NotNull
+    private static String toEvent(@NotNull TreatmentEvidence evidence) {
+        String gene = evidence.gene();
+        String event = GenomicEventFormatter.format(evidence.event());
+        return gene != null ? gene + " " + event : event;
     }
 }
