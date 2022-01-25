@@ -25,6 +25,7 @@ public final class TestMolecularDataFactory {
                 .hasReliableQuality(true)
                 .tumorMutationalBurden(0D)
                 .tumorMutationalLoad(0)
+                .evidence(ImmutableMolecularEvidence.builder().build())
                 .build();
     }
 

@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Multimap;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,15 +55,6 @@ public abstract class MolecularRecord {
     public abstract int tumorMutationalLoad();
 
     @NotNull
-    public abstract Multimap<String, String> actinTrialEligibility();
-
-    @NotNull
-    public abstract Multimap<String, String> generalTrialEligibility();
-
-    @NotNull
-    public abstract Multimap<String, String> generalResponsiveEvidence();
-
-    @NotNull
-    public abstract Multimap<String, String> generalResistanceEvidence();
+    public abstract MolecularEvidence evidence();
 
 }

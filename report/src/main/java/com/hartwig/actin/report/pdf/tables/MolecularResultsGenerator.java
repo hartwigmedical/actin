@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -39,11 +40,12 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        Set<String> eventsWithActinEvidence = record.actinTrialEligibility().keySet();
+        MolecularEvidence evidence = record.evidence();
+        Set<String> eventsWithActinEvidence = evidence.actinTrialEvidence().keySet();
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
         table.addCell(Cells.createValue(concat(eventsWithActinEvidence)));
 
-        Set<String> eventsWithGeneralTrialEvidence = record.generalTrialEligibility().keySet();
+        Set<String> eventsWithGeneralTrialEvidence = evidence.generalTrialEvidence().keySet();
         Set<String> additionalTrialEvents = subtract(eventsWithActinEvidence, eventsWithGeneralTrialEvidence);
         if (!additionalTrialEvents.isEmpty()) {
             table.addCell(Cells.createKey("Additional events with applicable trial evidence"));
@@ -51,9 +53,9 @@ public class MolecularResultsGenerator implements TableGenerator {
         }
 
         table.addCell(Cells.createKey("Events with responsive evidence in CKB"));
-        table.addCell(Cells.createValue(concat(record.generalResponsiveEvidence().keySet())));
+        table.addCell(Cells.createValue(concat(evidence.generalResponsiveEvidence().keySet())));
 
-        Set<String> eventsWithResistanceEvidence = record.generalResistanceEvidence().keySet();
+        Set<String> eventsWithResistanceEvidence = evidence.generalResistanceEvidence().keySet();
         if (!eventsWithResistanceEvidence.isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in CKB"));
             table.addCell(Cells.createValue(concat(eventsWithResistanceEvidence)));

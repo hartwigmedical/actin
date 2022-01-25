@@ -1,9 +1,13 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.google.common.collect.Multimap;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
@@ -15,29 +19,29 @@ import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class OrangeInterpreterTest {
+public class OrangeEvidenceFactoryTest {
 
     @Test
-    public void canInterpretMolecularRecord() {
+    public void canCreateMolecularEvidence() {
         OrangeRecord record = recordWithEvidence(createTestEvidences());
 
-        MolecularRecord interpretation = OrangeInterpreter.interpret(record);
+        MolecularEvidence evidence = OrangeEvidenceFactory.create(record);
 
-        //        Set<String> eventsWithTrialEligibility = interpretation.eventsWithTrialEligibility();
-        //        assertEquals(1, eventsWithTrialEligibility.size());
-        //        assertTrue(eventsWithTrialEligibility.contains("Event 20"));
-        //
-        //        Set<String> iclusionApplicableEvent = interpretation.iclusionApplicableEvents();
-        //        assertEquals(1, iclusionApplicableEvent.size());
-        //        assertTrue(iclusionApplicableEvent.contains("Event 12"));
-        //
-        //        Set<String> ckbResponsiveEvents = interpretation.ckbApplicableResponsiveEvents();
-        //        assertEquals(1, ckbResponsiveEvents.size());
-        //        assertTrue(ckbResponsiveEvents.contains("Event 1"));
-        //
-        //        Set<String> ckbResistanceEvents = interpretation.ckbApplicableResistanceEvents();
-        //        assertEquals(1, ckbResistanceEvents.size());
-        //        assertTrue(ckbResistanceEvents.contains("Event 4 (Treatment 1)"));
+        Multimap<String, String> actinTrialEvidence = evidence.actinTrialEvidence();
+        assertEquals(1, actinTrialEvidence.size());
+        assertTrue(actinTrialEvidence.keySet().contains("Event 20"));
+
+        Multimap<String, String> generalTrialEvidence = evidence.generalTrialEvidence();
+        assertEquals(1, generalTrialEvidence.size());
+        assertTrue(generalTrialEvidence.keySet().contains("Event 12"));
+
+        Multimap<String, String> generalResponsiveEvidence = evidence.generalResponsiveEvidence();
+        assertEquals(1, generalResponsiveEvidence.size());
+        assertTrue(generalResponsiveEvidence.keySet().contains("Event 1"));
+
+        //        Multimap<String, String> generalResistanceEvidence = evidence.generalResistanceEvidence();
+        //        assertEquals(1, generalResistanceEvidence.size());
+        //        assertTrue(generalResistanceEvidence.keySet().contains("Event 4 (Treatment 1)"));
     }
 
     @NotNull
@@ -45,7 +49,7 @@ public class OrangeInterpreterTest {
         List<TreatmentEvidence> evidences = Lists.newArrayList();
 
         ImmutableTreatmentEvidence.Builder ckbBuilder =
-                ImmutableTreatmentEvidence.builder().reported(true).addSources(OrangeInterpreter.CKB_SOURCE);
+                ImmutableTreatmentEvidence.builder().reported(true).addSources(OrangeEvidenceFactory.CKB_SOURCE);
 
         // Should be included, all good.
         evidences.add(ckbBuilder.gene(null)
@@ -65,7 +69,7 @@ public class OrangeInterpreterTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        // Should be filtered out as it starts with CDKN2A.
+        // Should be filtered out as it affects CDKN2A.
         evidences.add(ckbBuilder.gene("CDKN2A")
                 .event("full loss")
                 .treatment("Treatment 4")
@@ -119,7 +123,7 @@ public class OrangeInterpreterTest {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(OrangeInterpreter.ICLUSION_SOURCE)
+                .addSources(OrangeEvidenceFactory.ICLUSION_SOURCE)
                 .build());
 
         // And 1 ACTIN
@@ -131,7 +135,7 @@ public class OrangeInterpreterTest {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(OrangeInterpreter.ACTIN_SOURCE)
+                .addSources(OrangeEvidenceFactory.ACTIN_SOURCE)
                 .build());
 
         return evidences;
