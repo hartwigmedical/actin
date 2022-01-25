@@ -15,7 +15,8 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
+import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
+import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
@@ -65,7 +66,7 @@ public class TreatmentMatcherApplication {
         ClinicalPrinter.printRecord(clinical);
 
         LOGGER.info("Loading molecular record from {}", config.molecularJson());
-        MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
+        MolecularRecord molecular = OrangeInterpreter.interpret(OrangeJson.read(config.molecularJson()));
         MolecularPrinter.printRecord(molecular);
 
         PatientRecord patient = PatientRecordFactory.fromInputs(clinical, molecular);

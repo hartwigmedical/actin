@@ -27,10 +27,10 @@ public final class PatientRecordFactory {
         }
 
         Set<String> clinicalDoids = clinical.tumor().doids();
-        if (clinicalDoids != null && !clinicalDoids.equals(molecular.configuredPrimaryTumorDoids())) {
+        if (clinicalDoids != null && !clinicalDoids.equals(molecular.doids())) {
             LOGGER.warn("Clinical primary tumor DOIDs '{}' not the same as molecular primary tumor DOIDs '{}'!",
                     concat(clinical.tumor().doids()),
-                    concat(molecular.configuredPrimaryTumorDoids()));
+                    concat(molecular.doids()));
         }
 
         return ImmutablePatientRecord.builder().sampleId(clinical.sampleId()).clinical(clinical).molecular(molecular).build();

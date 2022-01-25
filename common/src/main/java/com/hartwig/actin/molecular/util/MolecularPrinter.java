@@ -4,8 +4,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.interpretation.MolecularInterpretation;
-import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +25,8 @@ public class MolecularPrinter {
         printer.print("Sample: " + record.sampleId());
         printer.print("Has reliable quality: " + (record.hasReliableQuality() ? "Yes" : "No"));
 
-        MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
-        printer.print("CKB-Responsive mutations: " + concat(interpretation.ckbApplicableResponsiveEvents()));
-        printer.print("CKB-Resistance mutations: " + concat(interpretation.ckbApplicableResistanceEvents()));
+        //        printer.print("CKB-Responsive mutations: " + concat(interpretation.ckbApplicableResponsiveEvents()));
+        //        printer.print("CKB-Resistance mutations: " + concat(interpretation.ckbApplicableResistanceEvents()));
     }
 
     @NotNull

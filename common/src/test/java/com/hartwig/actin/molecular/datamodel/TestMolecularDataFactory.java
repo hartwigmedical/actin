@@ -1,10 +1,8 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 
@@ -35,67 +33,16 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
-                .configuredPrimaryTumorDoids(createTestConfiguredPrimaryTumorDoids())
+                .doids(createTestDoids())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
-                .tumorMutationalLoad(189)
-                .evidences(createTestEvidences())
+                .tumorMutationalLoad(185)
                 .build();
     }
 
     @NotNull
-    private static Set<String> createTestConfiguredPrimaryTumorDoids() {
+    private static Set<String> createTestDoids() {
         return Sets.newHashSet("8923");
-    }
-
-    @NotNull
-    private static List<TreatmentEvidence> createTestEvidences() {
-        List<TreatmentEvidence> evidences = Lists.newArrayList();
-
-        ImmutableTreatmentEvidence.Builder ckbBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB");
-        ImmutableTreatmentEvidence.Builder iclusionBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION");
-
-        evidences.add(ckbBuilder.gene("BRAF")
-                .event("p.Val600Glu")
-                .treatment("Vemurafenib")
-                .onLabel(true)
-                .level(EvidenceLevel.A)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build());
-
-        evidences.add(ckbBuilder.event("BRAF")
-                .event("p.Val600Glu")
-                .treatment("Dabrafenib")
-                .onLabel(true)
-                .level(EvidenceLevel.A)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build());
-
-        evidences.add(ckbBuilder.gene("BRAF")
-                .event("p.Val600Glu")
-                .treatment("Cetuximab")
-                .onLabel(false)
-                .level(EvidenceLevel.B)
-                .direction(EvidenceDirection.RESISTANT)
-                .build());
-
-        evidences.add(ckbBuilder.gene("PTEN")
-                .event("partial loss")
-                .treatment("Everolimus")
-                .onLabel(false)
-                .level(EvidenceLevel.B)
-                .direction(EvidenceDirection.RESISTANT)
-                .build());
-
-        evidences.add(iclusionBuilder.gene("BRAF")
-                .event("p.Val600Glu")
-                .treatment("Trial X")
-                .onLabel(true)
-                .level(EvidenceLevel.B)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build());
-
-        return evidences;
     }
 }

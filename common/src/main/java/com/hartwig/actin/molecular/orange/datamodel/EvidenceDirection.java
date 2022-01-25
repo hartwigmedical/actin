@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.orange.datamodel;
 
 public enum EvidenceDirection {
     RESPONSIVE,

@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular.datamodel;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
+
 import org.junit.Test;
 
 public class EvidenceLevelTest {

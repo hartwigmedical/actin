@@ -4,8 +4,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.interpretation.MolecularInterpretation;
-import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -40,21 +38,20 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        MolecularInterpretation interpretation = MolecularInterpreter.interpret(record);
-        table.addCell(Cells.createKey("Events with applicable evidence in local trial database"));
-        table.addCell(Cells.createValue(Formats.VALUE_COMING_SOON));
-        //table.addCell(Cells.createValue(concat(interpretation.eventsWithTrialEligibility())));
-
-        table.addCell(Cells.createKey("Events with applicable evidence in iClusion"));
-        table.addCell(Cells.createValue(concat(interpretation.iclusionApplicableEvents())));
-
-        table.addCell(Cells.createKey("Events with applicable responsive evidence in CKB"));
-        table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResponsiveEvents())));
-
-        if (!interpretation.ckbApplicableResistanceEvents().isEmpty()) {
-            table.addCell(Cells.createKey("Events with applicable resistance evidence in CKB"));
-            table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResistanceEvents())));
-        }
+        //        table.addCell(Cells.createKey("Events with applicable evidence in local trial database"));
+        //        table.addCell(Cells.createValue(Formats.VALUE_COMING_SOON));
+        //        //table.addCell(Cells.createValue(concat(interpretation.eventsWithTrialEligibility())));
+        //
+        //        table.addCell(Cells.createKey("Events with applicable evidence in iClusion"));
+        //        table.addCell(Cells.createValue(concat(interpretation.iclusionApplicableEvents())));
+        //
+        //        table.addCell(Cells.createKey("Events with applicable responsive evidence in CKB"));
+        //        table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResponsiveEvents())));
+        //
+        //        if (!interpretation.ckbApplicableResistanceEvents().isEmpty()) {
+        //            table.addCell(Cells.createKey("Events with applicable resistance evidence in CKB"));
+        //            table.addCell(Cells.createValue(concat(interpretation.ckbApplicableResistanceEvents())));
+        //        }
 
         return table;
     }

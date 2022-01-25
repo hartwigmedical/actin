@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.util.Set;
 
@@ -15,6 +15,8 @@ public abstract class TreatmentEvidence {
     public String genomicEvent() {
         return gene() != null ? gene() + " " + event() : event();
     }
+
+    public abstract boolean reported();
 
     @Nullable
     public abstract String gene();
