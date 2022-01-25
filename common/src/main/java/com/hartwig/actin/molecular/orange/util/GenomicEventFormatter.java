@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.util;
+package com.hartwig.actin.molecular.orange.util;
 
 import java.util.Map;
 
@@ -28,15 +28,15 @@ public final class GenomicEventFormatter {
     }
 
     @NotNull
-    public static String format(@NotNull String genomicEvent) {
-        String event = genomicEvent;
-        if (genomicEvent.contains("p.")) {
-            event = AminoAcid.forceSingleLetterAminoAcids(genomicEvent);
+    public static String format(@NotNull String event) {
+        String formattedEvent = event;
+        if (event.contains("p.")) {
+            formattedEvent = AminoAcid.forceSingleLetterAminoAcids(event);
         }
 
         for (Map.Entry<String, String> replacement : EVENT_REPLACEMENTS.entrySet()) {
-            event = event.replaceAll(replacement.getKey(), replacement.getValue());
+            formattedEvent = formattedEvent.replaceAll(replacement.getKey(), replacement.getValue());
         }
-        return event;
+        return formattedEvent;
     }
 }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.util;
+package com.hartwig.actin.molecular.orange.util;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class AminoAcid {
+final class AminoAcid {
 
     private static final Map<String, String> TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER = Maps.newHashMap();
 
@@ -40,11 +40,11 @@ public final class AminoAcid {
     }
 
     @NotNull
-    public static String forceSingleLetterAminoAcids(@NotNull String genomicEvent) {
-        String convertedGenomicEvent = genomicEvent;
+    public static String forceSingleLetterAminoAcids(@NotNull String event) {
+        String convertedEvent = event;
         for (Map.Entry<String, String> mapping : TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER.entrySet()) {
-            convertedGenomicEvent = convertedGenomicEvent.replaceAll(mapping.getKey(), mapping.getValue());
+            convertedEvent = convertedEvent.replaceAll(mapping.getKey(), mapping.getValue());
         }
-        return convertedGenomicEvent;
+        return convertedEvent;
     }
 }
