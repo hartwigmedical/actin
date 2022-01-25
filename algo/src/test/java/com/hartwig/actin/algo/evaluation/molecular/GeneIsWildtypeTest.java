@@ -13,9 +13,11 @@ public class GeneIsWildtypeTest {
     public void canEvaluate() {
         GeneIsWildtype function = new GeneIsWildtype("gene 1");
 
-        assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(Evaluation.NOT_IMPLEMENTED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 2")));
-        assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 1")));
+        //        assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        //
+        //        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 2")));
+        //        assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 1")));
     }
 }

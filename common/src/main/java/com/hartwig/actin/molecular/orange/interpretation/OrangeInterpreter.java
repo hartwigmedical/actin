@@ -52,7 +52,7 @@ public final class OrangeInterpreter {
 
     @NotNull
     public static MolecularRecord interpret(@NotNull OrangeRecord record) {
-        List<TreatmentEvidence> evidencesForTrials = filterEvidences(record.evidences(), ACTIN_SOURCE);
+        List<TreatmentEvidence> actinEvidences = filterEvidences(record.evidences(), ACTIN_SOURCE);
         List<TreatmentEvidence> iclusionEvidences = filterEvidences(record.evidences(), ICLUSION_SOURCE);
         List<TreatmentEvidence> ckbEvidences = filterEvidences(record.evidences(), CKB_SOURCE);
 
@@ -66,11 +66,22 @@ public final class OrangeInterpreter {
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())
                 .tumorMutationalLoad(record.tumorMutationalLoad())
-                //                .actinTrialEligibility(applicableResponsiveEvents(evidencesForTrials))
+                .actinTrialEligibility(createActinTrialEligibility(actinEvidences))
                 //                .iclusionApplicableEvents(applicableResponsiveEvents(iclusionEvidences))
                 //                .ckbApplicableResponsiveEvents(applicableResponsiveEvents(ckbEvidences))
                 //                .ckbApplicableResistanceEvents(applicableResistanceEvents(ckbEvidences))
                 .build();
+    }
+
+    @NotNull
+    private static List<TreatmentEvidence> filterEvidences(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
+        List<TreatmentEvidence> filtered = Lists.newArrayList();
+        for (TreatmentEvidence evidence : evidences) {
+            if (evidence.sources().contains(source)) {
+                filtered.add(evidence);
+            }
+        }
+        return filtered;
     }
 
     @Nullable
@@ -98,14 +109,21 @@ public final class OrangeInterpreter {
     }
 
     @NotNull
-    private static List<TreatmentEvidence> filterEvidences(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
-        List<TreatmentEvidence> filtered = Lists.newArrayList();
+    private static Multimap<String, String> createActinTrialEligibility(@NotNull List<TreatmentEvidence> evidences) {
+        Multimap<String, String> trialEligibility = ArrayListMultimap.create();
+
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.sources().contains(source)) {
-                filtered.add(evidence);
+            if (evidence.reported()) {
+                trialEligibility.put(toEvent(evidence), evidence.treatment());
             }
         }
-        return filtered;
+        return trialEligibility;
+    }
+
+    @NotNull
+    private static String toEvent(@NotNull TreatmentEvidence evidence) {
+        String gene = evidence.gene();
+        return gene != null ? gene + " " + evidence.event() : evidence.event();
     }
 
     @NotNull
@@ -116,7 +134,7 @@ public final class OrangeInterpreter {
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
 
             if (isPotentiallyApplicable && isResponsiveEvidence) {
-                events.add(GenomicEventFormatter.format(evidence.genomicEvent()));
+                events.add(GenomicEventFormatter.format(toEvent(evidence)));
             }
         }
         return events;
@@ -128,10 +146,11 @@ public final class OrangeInterpreter {
         for (TreatmentEvidence evidence : evidences) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
-            boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher = hasOnLabelResponsiveEvidenceWithMinLevel(evidences, evidence.treatment(), evidence.level());
+            boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
+                    hasOnLabelResponsiveEvidenceWithMinLevel(evidences, evidence.treatment(), evidence.level());
 
             if (isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
-                treatmentsPerEvent.put(GenomicEventFormatter.format(evidence.genomicEvent()), evidence.treatment());
+                treatmentsPerEvent.put(GenomicEventFormatter.format(toEvent(evidence)), evidence.treatment());
             }
         }
 
@@ -146,9 +165,11 @@ public final class OrangeInterpreter {
         return events;
     }
 
-    private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment, @NotNull EvidenceLevel minLevel) {
+    private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
+            @NotNull EvidenceLevel minLevel) {
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel() && minLevel.isBetterOrEqual(evidence.level())) {
+            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
+                    && minLevel.isBetterOrEqual(evidence.level())) {
                 return true;
             }
         }
@@ -156,18 +177,19 @@ public final class OrangeInterpreter {
     }
 
     private static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
-        if ((evidence.level() == EvidenceLevel.C || evidence.level() == EvidenceLevel.D || (evidence.level() == EvidenceLevel.B && evidence.direction().isPredicted())) && !evidence.onLabel()) {
+        if ((evidence.level() == EvidenceLevel.C || evidence.level() == EvidenceLevel.D || (evidence.level() == EvidenceLevel.B
+                && evidence.direction().isPredicted())) && !evidence.onLabel()) {
             return false;
         }
 
         for (String nonApplicableStartKeyword : NON_APPLICABLE_START_KEYWORDS) {
-            if (evidence.genomicEvent().startsWith(nonApplicableStartKeyword)) {
+            if (toEvent(evidence).startsWith(nonApplicableStartKeyword)) {
                 return false;
             }
         }
 
         for (String nonApplicableEvent : NON_APPLICABLE_EVENTS) {
-            if (evidence.genomicEvent().equals(nonApplicableEvent)) {
+            if (toEvent(evidence).equals(nonApplicableEvent)) {
                 return false;
             }
         }

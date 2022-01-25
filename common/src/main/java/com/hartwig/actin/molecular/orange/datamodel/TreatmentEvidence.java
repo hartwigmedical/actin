@@ -10,12 +10,6 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class TreatmentEvidence {
 
-    @NotNull
-    @Value.Derived
-    public String genomicEvent() {
-        return gene() != null ? gene() + " " + event() : event();
-    }
-
     public abstract boolean reported();
 
     @Nullable

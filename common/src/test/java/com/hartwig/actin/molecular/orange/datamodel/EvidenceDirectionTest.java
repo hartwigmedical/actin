@@ -1,9 +1,7 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.orange.datamodel;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
 
 import org.junit.Test;
 

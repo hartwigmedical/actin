@@ -18,10 +18,12 @@ public class GeneIsWildtype implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().wildtypeGenes().contains(gene)) {
-            return Evaluation.PASS;
-        }
-
-        return MolecularUtil.noMatchFound(record.molecular());
+        // TODO First determine all wildtype genes properly.
+        return Evaluation.NOT_IMPLEMENTED;
+        //        if (record.molecular().wildtypeGenes().contains(gene)) {
+        //            return Evaluation.PASS;
+        //        }
+        //
+        //        return MolecularUtil.noMatchFound(record.molecular());
     }
 }
