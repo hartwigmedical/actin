@@ -93,8 +93,10 @@ PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X | > currently set to Netherlands (T.B
 Rule | When does a patient pass evaluation?
 ---|---
 PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Configured DOID should be equal or be a child of DOID X
+HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
+HAS_PRESENCE_OF_LESIONS | Tumor details > hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions not empty
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
@@ -171,6 +173,7 @@ HAS_SERUM_TESTOSTERONE_NG_PER_DL_ OF_AT_MOST_X | Serum testosterone (T.B.D.) in 
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
+HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X | Creatinine (CREA) in mg/dL <= X | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42
 HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN 
 HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN 
 HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
@@ -264,6 +267,8 @@ CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UND
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_OATP_X | T.B.D. - Currently resolves to UNDETERMINED | Organic-anion-transporting polypeptides
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D. - Currently resolves to UNDETERMINED | 
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage
 HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% AND only 1 distinct dosage per name (T.B.E.)
 
@@ -311,6 +316,12 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
+ 
+##### Rules related to smoking
+ 
+Rule | When does a patient pass evaluation?
+---|---
+HAS_SMOKED_WITHIN_X_MONTHS | Always resolves to PASS_BUT_WARN
  
 ### Disease Ontology ID (DOID)
  

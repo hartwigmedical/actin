@@ -56,8 +56,10 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X, FunctionInput.ONE_STRING);
 
         RULE_INPUT_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_STAGE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ADVANCED_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_METASTATIC_CANCER, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_PRESENCE_OF_LESIONS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIVER_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, FunctionInput.NONE);
@@ -122,6 +124,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
@@ -194,6 +197,8 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, FunctionInput.NONE);
@@ -215,6 +220,8 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
+
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SMOKED_WITHIN_X_MONTHS, FunctionInput.ONE_INTEGER);
     }
 
     private FunctionInputResolver() {

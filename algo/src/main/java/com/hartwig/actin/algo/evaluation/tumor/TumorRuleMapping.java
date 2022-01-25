@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -20,8 +21,10 @@ public final class TumorRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_STAGE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
+        map.put(EligibilityRule.HAS_PRESENCE_OF_LESIONS, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());

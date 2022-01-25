@@ -40,7 +40,9 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS));
         map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
