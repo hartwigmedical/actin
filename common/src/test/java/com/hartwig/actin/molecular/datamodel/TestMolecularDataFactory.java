@@ -78,11 +78,11 @@ public final class TestMolecularDataFactory {
         builder.putActinTrialEvidence("BRAF V600E", "Trial 1");
         builder.putActinTrialEvidence("High TML", "Trial 1");
 
-        builder.generalTrialSource("TRIAL");
+        builder.generalTrialSource("CKB");
         builder.putGeneralTrialEvidence("BRAF V600E", "Trial 1");
         builder.putGeneralTrialEvidence("High TML", "Trial 1");
 
-        builder.generalEvidenceSource("EVIDENCE");
+        builder.generalEvidenceSource("CKB");
         builder.putGeneralResponsiveEvidence("BRAF V600E", "Vemurafenib");
         builder.putGeneralResponsiveEvidence("BRAF V600E", "Dabrafenib");
         builder.putGeneralResponsiveEvidence("High TML", "Nivolumab");
