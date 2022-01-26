@@ -46,9 +46,11 @@ public abstract class MolecularRecord {
     @Nullable
     public abstract Boolean isHomologousRepairDeficient();
 
-    public abstract double tumorMutationalBurden();
+    @Nullable
+    public abstract Double tumorMutationalBurden();
 
-    public abstract int tumorMutationalLoad();
+    @Nullable
+    public abstract Integer tumorMutationalLoad();
 
     @NotNull
     public abstract MolecularEvidence evidence();

@@ -12,6 +12,7 @@ public class HasSufficientTumorMutationalLoadTest {
     public void canEvaluate() {
         HasSufficientTumorMutationalLoad function = new HasSufficientTumorMutationalLoad(140);
 
+        assertEquals(Evaluation.UNDETERMINED, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(null)));
         assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(200)));
         assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(140)));
         assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(10)));

@@ -84,7 +84,7 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withTumorMutationalBurden(double tumorMutationalBurden) {
+    public static PatientRecord withTumorMutationalBurden(@Nullable Double tumorMutationalBurden) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
                 .tumorMutationalBurden(tumorMutationalBurden)
@@ -92,7 +92,7 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withTumorMutationalLoad(int tumorMutationalLoad) {
+    public static PatientRecord withTumorMutationalLoad(@Nullable Integer tumorMutationalLoad) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
                 .hasReliableQuality(true)

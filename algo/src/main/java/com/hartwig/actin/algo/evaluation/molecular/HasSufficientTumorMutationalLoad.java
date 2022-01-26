@@ -17,7 +17,10 @@ public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().tumorMutationalLoad() >= minTumorMutationalLoad) {
+        Integer tumorMutationalLoad = record.molecular().tumorMutationalLoad();
+        if (tumorMutationalLoad == null) {
+            return Evaluation.UNDETERMINED;
+        } else if (tumorMutationalLoad >= minTumorMutationalLoad) {
             return Evaluation.PASS;
         }
 

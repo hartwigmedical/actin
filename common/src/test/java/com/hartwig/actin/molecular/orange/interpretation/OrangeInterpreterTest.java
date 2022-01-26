@@ -33,7 +33,7 @@ public class OrangeInterpreterTest {
         assertFalse(record.isMicrosatelliteUnstable());
         assertFalse(record.isHomologousRepairDeficient());
         assertEquals(8D, record.tumorMutationalBurden(), EPSILON);
-        assertEquals(100, record.tumorMutationalLoad());
+        assertEquals(100, (int) record.tumorMutationalLoad());
 
         MolecularEvidence evidence = record.evidence();
 

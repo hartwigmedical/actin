@@ -20,9 +20,10 @@ public final class TestMolecularDataFactory {
 
     @NotNull
     public static MolecularRecord createMinimalTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder().sampleId(TestDataFactory.TEST_SAMPLE).type(ExperimentType.WGS).hasReliableQuality(false)
-                .tumorMutationalBurden(0D)
-                .tumorMutationalLoad(0)
+        return ImmutableMolecularRecord.builder()
+                .sampleId(TestDataFactory.TEST_SAMPLE)
+                .type(ExperimentType.WGS)
+                .hasReliableQuality(false)
                 .evidence(ImmutableMolecularEvidence.builder().build())
                 .build();
     }
