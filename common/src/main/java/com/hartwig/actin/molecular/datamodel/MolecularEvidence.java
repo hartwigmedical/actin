@@ -14,7 +14,13 @@ public abstract class MolecularEvidence {
     public abstract Multimap<String, String> actinTrialEvidence();
 
     @NotNull
+    public abstract String generalTrialSource();
+
+    @NotNull
     public abstract Multimap<String, String> generalTrialEvidence();
+
+    @NotNull
+    public abstract String generalEvidenceSource();
 
     @NotNull
     public abstract Multimap<String, String> generalResponsiveEvidence();

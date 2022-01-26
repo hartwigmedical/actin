@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestMolecularDataFactory {
@@ -24,7 +25,10 @@ public final class TestMolecularDataFactory {
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
                 .hasReliableQuality(false)
-                .evidence(ImmutableMolecularEvidence.builder().build())
+                .evidence(ImmutableMolecularEvidence.builder()
+                        .generalTrialSource(Strings.EMPTY)
+                        .generalEvidenceSource(Strings.EMPTY)
+                        .build())
                 .build();
     }
 
@@ -74,9 +78,11 @@ public final class TestMolecularDataFactory {
         builder.putActinTrialEvidence("BRAF V600E", "Trial 1");
         builder.putActinTrialEvidence("High TML", "Trial 1");
 
+        builder.generalTrialSource("TRIAL");
         builder.putGeneralTrialEvidence("BRAF V600E", "Trial 1");
         builder.putGeneralTrialEvidence("High TML", "Trial 1");
 
+        builder.generalEvidenceSource("EVIDENCE");
         builder.putGeneralResponsiveEvidence("BRAF V600E", "Vemurafenib");
         builder.putGeneralResponsiveEvidence("BRAF V600E", "Dabrafenib");
         builder.putGeneralResponsiveEvidence("High TML", "Nivolumab");

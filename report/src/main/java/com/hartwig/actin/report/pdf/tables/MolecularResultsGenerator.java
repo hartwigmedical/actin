@@ -1,8 +1,10 @@
 package com.hartwig.actin.report.pdf.tables;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -48,20 +50,29 @@ public class MolecularResultsGenerator implements TableGenerator {
         Set<String> eventsWithGeneralTrialEvidence = evidence.generalTrialEvidence().keySet();
         Set<String> additionalTrialEvents = subtract(eventsWithGeneralTrialEvidence, eventsWithActinEvidence);
         if (!additionalTrialEvents.isEmpty()) {
-            table.addCell(Cells.createKey("Additional events with applicable trial evidence"));
+            table.addCell(Cells.createKey("Additional events with trial evidence in " + evidence.generalTrialSource()));
             table.addCell(Cells.createValue(concat(additionalTrialEvents)));
         }
 
-        table.addCell(Cells.createKey("Events with responsive evidence in CKB"));
+        table.addCell(Cells.createKey("Events with responsive evidence in " + evidence.generalEvidenceSource()));
         table.addCell(Cells.createValue(concat(evidence.generalResponsiveEvidence().keySet())));
 
-        Set<String> eventsWithResistanceEvidence = evidence.generalResistanceEvidence().keySet();
-        if (!eventsWithResistanceEvidence.isEmpty()) {
-            table.addCell(Cells.createKey("Events with resistance evidence in CKB"));
-            table.addCell(Cells.createValue(concat(eventsWithResistanceEvidence)));
+        Multimap<String, String> resistanceEvidence = evidence.generalResistanceEvidence();
+        if (!resistanceEvidence.isEmpty()) {
+            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.generalEvidenceSource()));
+            table.addCell(Cells.createValue(toResistanceString(resistanceEvidence)));
         }
 
         return table;
+    }
+
+    @NotNull
+    private static String toResistanceString(@NotNull Multimap<String, String> resistanceEvidence) {
+        Set<String> resistanceEvents = Sets.newHashSet();
+        for (Map.Entry<String, String> entry : resistanceEvidence.entries()) {
+            resistanceEvents.add(entry.getKey() + " - " + entry.getValue());
+        }
+        return concat(resistanceEvents);
     }
 
     @NotNull

@@ -53,7 +53,7 @@ public class OrangeEvidenceFactoryTest {
         ImmutableTreatmentEvidence.Builder generalEvidenceBuilder = ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
                 .reported(true)
-                .addSources(OrangeEvidenceFactory.GENERAL_EVIDENCE_SOURCE);
+                .addSources(OrangeEvidenceFactory.CKB_SOURCE);
 
         String treatmentWithResponsiveEvidenceA = "treatment";
         // Should be included, all good.
@@ -127,7 +127,7 @@ public class OrangeEvidenceFactoryTest {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(OrangeEvidenceFactory.GENERAL_TRIAL_SOURCE)
+                .addSources(OrangeEvidenceFactory.ICLUSION_SOURCE)
                 .build());
 
         // And 1 ACTIN that should be included.
