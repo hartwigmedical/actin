@@ -1,12 +1,17 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +32,16 @@ public final class OrangeInterpreter {
     public static MolecularRecord interpret(@NotNull OrangeRecord record) {
         OrangeEventExtraction extraction = OrangeEventExtractor.extract(record);
 
+        Boolean isMSI = isMSI(record.microsatelliteStabilityStatus());
+        Boolean isHRD = isHRD(record.homologousRepairStatus());
+
+        // TODO This should flow from ACTIN evidence.
+        MolecularEvidence evidence = overwriteWithSignatures(OrangeEvidenceFactory.create(record),
+                isMSI,
+                isHRD,
+                record.tumorMutationalBurden(),
+                record.tumorMutationalLoad());
+
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
@@ -38,12 +53,37 @@ public final class OrangeInterpreter {
                 .amplifiedGenes(extraction.amplifiedGenes())
                 .wildtypeGenes(extraction.wildtypeGenes())
                 .fusions(extraction.fusions())
-                .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
-                .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
+                .isMicrosatelliteUnstable(isMSI)
+                .isHomologousRepairDeficient(isHRD)
                 .tumorMutationalBurden(record.tumorMutationalBurden())
                 .tumorMutationalLoad(record.tumorMutationalLoad())
-                .evidence(OrangeEvidenceFactory.create(record))
+                .evidence(evidence)
                 .build();
+    }
+
+    @NotNull
+    private static MolecularEvidence overwriteWithSignatures(@NotNull MolecularEvidence evidence, @Nullable Boolean isMSI,
+            @Nullable Boolean isHRD, double tumorMutationalBurden, int tumorMutationalLoad) {
+        Multimap<String, String> actinTrialEvidence = ArrayListMultimap.create();
+        actinTrialEvidence.putAll(evidence.actinTrialEvidence());
+
+        if (isMSI != null && isMSI) {
+            actinTrialEvidence.put("MSI", Strings.EMPTY);
+        }
+
+        if (isHRD != null && isHRD) {
+            actinTrialEvidence.put("HR deficiency", Strings.EMPTY);
+        }
+
+        if (tumorMutationalBurden >= 10D) {
+            actinTrialEvidence.put("High TMB", Strings.EMPTY);
+        }
+
+        if (tumorMutationalLoad >= 140) {
+            actinTrialEvidence.put("High TML", Strings.EMPTY);
+        }
+
+        return ImmutableMolecularEvidence.builder().from(evidence).actinTrialEvidence(actinTrialEvidence).build();
     }
 
     @Nullable
