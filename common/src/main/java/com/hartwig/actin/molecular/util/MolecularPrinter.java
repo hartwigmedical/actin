@@ -103,7 +103,7 @@ public class MolecularPrinter {
 
     @NotNull
     private static String toEvents(@NotNull Multimap<String, String> evidence) {
-        return concat(evidence.keySet());
+        return concat(Sets.newTreeSet(evidence.keySet()));
     }
 
     @NotNull

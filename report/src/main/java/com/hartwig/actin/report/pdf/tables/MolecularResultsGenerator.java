@@ -45,29 +45,34 @@ public class MolecularResultsGenerator implements TableGenerator {
         MolecularEvidence evidence = record.evidence();
         Set<String> eventsWithActinEvidence = evidence.actinTrialEvidence().keySet();
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
-        table.addCell(Cells.createValue(concat(eventsWithActinEvidence)));
+        table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
 
         Set<String> eventsWithGeneralTrialEvidence = evidence.generalTrialEvidence().keySet();
         Set<String> additionalTrialEvents = subtract(eventsWithGeneralTrialEvidence, eventsWithActinEvidence);
         if (!additionalTrialEvents.isEmpty()) {
             table.addCell(Cells.createKey("Additional events with trial evidence in " + evidence.generalTrialSource()));
-            table.addCell(Cells.createValue(concat(additionalTrialEvents)));
+            table.addCell(Cells.createValue(formatEvents(additionalTrialEvents)));
         }
 
         table.addCell(Cells.createKey("Events with responsive evidence in " + evidence.generalEvidenceSource()));
-        table.addCell(Cells.createValue(concat(evidence.generalResponsiveEvidence().keySet())));
+        table.addCell(Cells.createValue(formatEvents(evidence.generalResponsiveEvidence().keySet())));
 
         Multimap<String, String> resistanceEvidence = evidence.generalResistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.generalEvidenceSource()));
-            table.addCell(Cells.createValue(toResistanceString(resistanceEvidence)));
+            table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));
         }
 
         return table;
     }
 
     @NotNull
-    private static String toResistanceString(@NotNull Multimap<String, String> resistanceEvidence) {
+    private static String formatEvents(@NotNull Set<String> events) {
+        return concat(Sets.newTreeSet(events));
+    }
+
+    @NotNull
+    private static String formatResistanceEvidence(@NotNull Multimap<String, String> resistanceEvidence) {
         Set<String> resistanceEvents = Sets.newHashSet();
         for (Map.Entry<String, String> entry : resistanceEvidence.entries()) {
             resistanceEvents.add(entry.getKey() + " - " + entry.getValue());

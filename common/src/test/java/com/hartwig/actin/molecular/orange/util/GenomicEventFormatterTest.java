@@ -13,6 +13,6 @@ public class GenomicEventFormatterTest {
 
         assertEquals("del", GenomicEventFormatter.format("partial loss"));
 
-        assertEquals("p", GenomicEventFormatter.format("p.c.p.c.p"));
+        assertEquals("p", GenomicEventFormatter.format("p.p.p"));
     }
 }
