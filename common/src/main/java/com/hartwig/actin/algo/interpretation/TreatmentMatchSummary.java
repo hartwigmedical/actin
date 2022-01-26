@@ -12,16 +12,13 @@ public abstract class TreatmentMatchSummary {
 
     public abstract int trialCount();
 
-    public abstract int eligibleTrialCount();
-
     @NotNull
     public abstract Set<String> eligibleTrials();
 
     public abstract int cohortCount();
 
-    public abstract int eligibleCohortCount();
-
-    public abstract int eligibleOpenCohortCount();
+    @NotNull
+    public abstract Set<String> eligibleCohorts();
 
     @NotNull
     public abstract Set<String> eligibleOpenCohorts();

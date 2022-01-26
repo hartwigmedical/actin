@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.util;
 
 import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
@@ -31,11 +33,11 @@ public class TreatmentMatchPrinter {
         printer.print("Sample: " + treatmentMatch.sampleId());
 
         TreatmentMatchSummary matchSummary = TreatmentMatchSummarizer.summarize(treatmentMatch);
-        printer.print("Trial count: " + matchSummary.trialCount());
-        printer.print("Eligible trial count: " + matchSummary.eligibleTrialCount());
-        printer.print("Cohort count: " + matchSummary.cohortCount());
-        printer.print("Eligible cohort count: " + matchSummary.eligibleCohortCount());
-        printer.print("Eligible and open cohort count: " + matchSummary.eligibleOpenCohortCount());
+        printer.print("Trials: " + matchSummary.trialCount());
+        printer.print("Eligible trials: " + eligibleString(matchSummary.eligibleTrials()));
+        printer.print("Cohorts: " + matchSummary.cohortCount());
+        printer.print("Eligible cohorts: " + eligibleString(matchSummary.eligibleCohorts()));
+        printer.print("Eligible and open cohorts: " + eligibleString(matchSummary.eligibleOpenCohorts()));
 
         List<EvaluationSummary> summaries = Lists.newArrayList();
         for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
@@ -54,4 +56,18 @@ public class TreatmentMatchPrinter {
         printer.print("# Rules which have not been evaluated: " + evaluationSummary.notEvaluatedCount());
         printer.print("# Rules which have not been implemented: " + evaluationSummary.nonImplementedCount());
     }
+
+    @NotNull
+    private static String eligibleString(@NotNull Set<String> eligible) {
+        if (eligible.isEmpty()) {
+            return "0";
+        }
+
+        StringJoiner joiner = new StringJoiner(", ");
+        for (String string : eligible) {
+            joiner.add(string);
+        }
+        return eligible.size() + " (" + joiner + ")";
+    }
+
 }

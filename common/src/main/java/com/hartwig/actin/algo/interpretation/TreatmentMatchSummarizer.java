@@ -17,12 +17,10 @@ public final class TreatmentMatchSummarizer {
 
     @NotNull
     public static TreatmentMatchSummary summarize(@NotNull TreatmentMatch treatmentMatch) {
-        int eligibleTrialCount = 0;
         int cohortCount = 0;
-        int eligibleCohortCount = 0;
-        int eligibleOpenCohortCount = 0;
 
         Set<String> eligibleTrials = Sets.newHashSet();
+        Set<String> eligibleCohorts = Sets.newHashSet();
         Set<String> eligibleOpenCohorts = Sets.newHashSet();
         for (TrialEligibility trial : treatmentMatch.trialMatches()) {
             // A trial without cohorts is considered a cohort on its own.
@@ -33,22 +31,21 @@ public final class TreatmentMatchSummarizer {
                 boolean hasNoCohortOrAtLeastOneEligible = !hasCohorts;
                 for (CohortEligibility cohort : trial.cohorts()) {
                     if (cohort.overallEvaluation().isPass()) {
-                        eligibleCohortCount += 1;
+                        eligibleCohorts.add(EligibilityDisplay.cohortName(trial, cohort));
                         hasNoCohortOrAtLeastOneEligible = true;
                         if (cohort.metadata().open()) {
-                            eligibleOpenCohortCount += 1;
                             eligibleOpenCohorts.add(EligibilityDisplay.cohortName(trial, cohort));
                         }
                     }
                 }
 
                 if (hasNoCohortOrAtLeastOneEligible) {
-                    eligibleTrialCount += 1;
                     eligibleTrials.add(EligibilityDisplay.trialName(trial));
 
                     // Assume trials without specific cohorts are always open (or they should otherwise not exist
                     if (!hasCohorts) {
-                        eligibleOpenCohortCount += 1;
+                        eligibleCohorts.add(EligibilityDisplay.trialName(trial));
+                        eligibleOpenCohorts.add(EligibilityDisplay.trialName(trial));
                     }
                 }
             }
@@ -56,10 +53,10 @@ public final class TreatmentMatchSummarizer {
 
         return ImmutableTreatmentMatchSummary.builder()
                 .trialCount(treatmentMatch.trialMatches().size())
-                .eligibleTrialCount(eligibleTrialCount)
+                .eligibleTrials(eligibleTrials)
                 .cohortCount(cohortCount)
-                .eligibleCohortCount(eligibleCohortCount)
-                .eligibleOpenCohortCount(eligibleOpenCohortCount)
+                .eligibleCohorts(eligibleCohorts)
+                .eligibleOpenCohorts(eligibleOpenCohorts)
                 .build();
     }
 }

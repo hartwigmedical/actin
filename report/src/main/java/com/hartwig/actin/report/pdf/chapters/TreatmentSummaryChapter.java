@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
@@ -64,51 +65,35 @@ public class TreatmentSummaryChapter implements ReportChapter {
     private Table createTreatmentSummaryTable(@NotNull TreatmentMatchSummary summary) {
         Table table = Tables.createFixedWidthCols(new float[] { 200, contentWidth() - 210 });
 
-        table.addCell(Cells.createKey("Trials evaluated"));
+        table.addCell(Cells.createKey("# Trials evaluated"));
         table.addCell(Cells.createValue(String.valueOf(summary.trialCount())));
 
         table.addCell(Cells.createKey("Trials considered potentially eligible"));
-        table.addCell(Cells.createValue(eligibleTrialString(summary)));
+        table.addCell(Cells.createValue(eligibleString(summary.eligibleTrials())));
 
-        table.addCell(Cells.createKey("Cohorts evaluated"));
+        table.addCell(Cells.createKey("# Cohorts evaluated"));
         table.addCell(Cells.createValue(String.valueOf(summary.cohortCount())));
 
         table.addCell(Cells.createKey("Cohorts considered potentially eligible"));
-        table.addCell(Cells.createValue(String.valueOf(summary.eligibleCohortCount())));
+        table.addCell(Cells.createValue(eligibleString(summary.eligibleCohorts())));
 
         table.addCell(Cells.createKey("Open cohorts considered potentially eligible"));
-        table.addCell(Cells.createValue(eligibleOpenCohortString(summary)));
+        table.addCell(Cells.createValue(eligibleString(summary.eligibleOpenCohorts())));
 
         return table;
     }
 
     @NotNull
-    private static String eligibleTrialString(@NotNull TreatmentMatchSummary summary) {
-        String trials = concat(summary.eligibleTrials());
-        String eligibleTrialString = String.valueOf(summary.eligibleTrialCount());
-        if (!trials.isEmpty()) {
-            eligibleTrialString += " (" + trials + ")";
+    private static String eligibleString(@NotNull Set<String> eligible) {
+        if (eligible.isEmpty()) {
+            return "None";
         }
-        return eligibleTrialString;
-    }
 
-    @NotNull
-    private static String eligibleOpenCohortString(@NotNull TreatmentMatchSummary summary) {
-        String cohorts = concat(summary.eligibleOpenCohorts());
-        String eligibleOpenCohorts = String.valueOf(summary.eligibleOpenCohortCount());
-        if (!cohorts.isEmpty()) {
-            eligibleOpenCohorts += " (" + cohorts + ")";
-        }
-        return eligibleOpenCohorts;
-    }
-
-    @NotNull
-    private static String concat(@NotNull Iterable<String> strings) {
         StringJoiner joiner = new StringJoiner(", ");
-        for (String string : strings) {
+        for (String string : eligible) {
             joiner.add(string);
         }
-        return joiner.toString();
+        return eligible.size() + " (" + joiner + ")";
     }
 
     private void addTreatmentDetailsTable(@NotNull Document document) {
