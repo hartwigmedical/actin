@@ -75,7 +75,7 @@ public class MolecularResultsGenerator implements TableGenerator {
     private static String formatResistanceEvidence(@NotNull Multimap<String, String> resistanceEvidence) {
         Set<String> resistanceEvents = Sets.newHashSet();
         for (Map.Entry<String, String> entry : resistanceEvidence.entries()) {
-            resistanceEvents.add(entry.getKey() + " - " + entry.getValue());
+            resistanceEvents.add(entry.getKey() + ": " + entry.getValue());
         }
         return concat(resistanceEvents);
     }

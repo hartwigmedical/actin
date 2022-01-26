@@ -82,7 +82,7 @@ public final class OrangeEventExtractor {
             if (INACTIVATION_TYPES.contains(evidence.type())) {
                 String event = GenomicEventFormatter.format(evidence.event());
 
-                boolean hasBeenDeleted = event.endsWith(" del");
+                boolean hasBeenDeleted = event.equals("del");
 
                 inactivatedGenes.add(ImmutableInactivatedGene.builder().gene(evidence.gene()).hasBeenDeleted(hasBeenDeleted).build());
             }
