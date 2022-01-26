@@ -11,7 +11,6 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -40,7 +39,6 @@ public class ClinicalFeedReaderTest {
         assertMedication(feed.medicationEntries());
         assertLab(feed.labEntries());
         assertVitalFunctions(feed.vitalFunctionEntries());
-        assertComplications(feed.complicationEntries());
         assertIntolerances(feed.intoleranceEntries());
         assertBodyWeights(feed.bodyWeightEntries());
     }
@@ -211,31 +209,6 @@ public class ClinicalFeedReaderTest {
         assertEquals("Systolic blood pressure", entry.componentCodeDisplay());
         assertEquals("mm[Hg]", entry.quantityUnit());
         assertEquals(108, entry.quantityValue(), EPSILON);
-    }
-
-    private static void assertComplications(@NotNull List<ComplicationEntry> entries) {
-        assertEquals(1, entries.size());
-
-        ComplicationEntry entry = entries.get(0);
-
-        assertEquals("ACTN-01-02-9999", entry.subject());
-        assertEquals("EPD", entry.identifierSystem());
-        assertEquals("D", entry.categoryCodeOriginal());
-        assertEquals("Diagnosis", entry.categoryDisplay());
-        assertEquals("Diagnose", entry.categoryDisplayOriginal());
-        assertEquals("active", entry.clinicalStatus());
-        assertEquals("0000001543", entry.codeCodeOriginal());
-        assertEquals("CUP", entry.codeDisplayOriginal());
-        assertEquals("C80.0", entry.codeCode());
-        assertEquals("CUP", entry.codeDisplay());
-        assertNull(entry.onsetPeriodEnd());
-        assertEquals(LocalDate.of(2019, 8, 13), entry.onsetPeriodStart());
-        assertTrue(entry.severityCode().isEmpty());
-        assertTrue(entry.severityDisplay().isEmpty());
-        assertTrue(entry.severityDisplayNl().isEmpty());
-        assertEquals("ONC", entry.specialtyCodeOriginal());
-        assertEquals("Oncologie", entry.specialtyDisplayOriginal());
-        assertTrue(entry.verificationStatusCode().isEmpty());
     }
 
     private static void assertIntolerances(@NotNull List<IntoleranceEntry> entries) {

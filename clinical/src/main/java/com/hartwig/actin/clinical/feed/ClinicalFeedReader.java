@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -28,7 +27,6 @@ public final class ClinicalFeedReader {
     private static final String MEDICATION_TSV = "medication.tsv";
     private static final String LAB_TSV = "lab.tsv";
     private static final String VITAL_FUNCTION_TSV = "vital_function.tsv";
-    private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
     private static final String BODY_WEIGHT_TSV = "bodyweight.tsv";
 
@@ -47,7 +45,6 @@ public final class ClinicalFeedReader {
                 .medicationEntries(readMedicationEntries(basePath + MEDICATION_TSV))
                 .labEntries(readLabEntries(basePath + LAB_TSV))
                 .vitalFunctionEntries(readVitalFunctionEntries(basePath + VITAL_FUNCTION_TSV))
-                .complicationEntries(readComplicationEntries(basePath + COMPLICATION_TSV))
                 .intoleranceEntries(readIntoleranceEntries(basePath + INTOLERANCE_TSV))
                 .bodyWeightEntries(readBodyWeightEntries(basePath + BODY_WEIGHT_TSV))
                 .build();
@@ -96,13 +93,6 @@ public final class ClinicalFeedReader {
     private static List<VitalFunctionEntry> readVitalFunctionEntries(@NotNull String vitalFunctionTsv) throws IOException {
         List<VitalFunctionEntry> entries = FeedFileReaderFactory.createVitalFunctionReader().read(vitalFunctionTsv);
         LOGGER.info(" Read {} vital function entries from {}", entries.size(), vitalFunctionTsv);
-        return entries;
-    }
-
-    @NotNull
-    private static List<ComplicationEntry> readComplicationEntries(@NotNull String complicationTsv) throws IOException {
-        List<ComplicationEntry> entries = FeedFileReaderFactory.createComplicationReader().read(complicationTsv);
-        LOGGER.info(" Read {} complication entries from {}", entries.size(), complicationTsv);
         return entries;
     }
 

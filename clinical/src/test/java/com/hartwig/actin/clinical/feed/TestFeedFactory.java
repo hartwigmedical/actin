@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.ImmutableBodyWeightEntry;
-import com.hartwig.actin.clinical.feed.complication.ComplicationEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.encounter.ImmutableEncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.ImmutableIntoleranceEntry;
@@ -53,7 +52,6 @@ public final class TestFeedFactory {
                 .medicationEntries(createTestMedicationEntries())
                 .labEntries(createTestLabEntries())
                 .vitalFunctionEntries(createTestVitalFunctionEntries())
-                .complicationEntries(createTestComplicationEntries())
                 .intoleranceEntries(createTestIntoleranceEntries())
                 .bodyWeightEntries(createTestBodyWeightEntries())
                 .build();
@@ -228,11 +226,6 @@ public final class TestFeedFactory {
                 .build());
 
         return entries;
-    }
-
-    @NotNull
-    private static List<ComplicationEntry> createTestComplicationEntries() {
-        return Lists.newArrayList();
     }
 
     @NotNull
