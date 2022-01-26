@@ -67,6 +67,11 @@ class FeedFileReader<T extends FeedEntry> {
         return entries;
     }
 
+    @NotNull
+    private static String toStringWithFixedLineBreaks(@NotNull StringBuilder string) {
+        return string.toString().replaceAll("\\n", "\n");
+    }
+
     private static boolean hasExpectedFields(@NotNull String line, @NotNull Map<String, Integer> fields) {
         return splitFeedLine(line).length == fields.size();
     }
@@ -102,13 +107,28 @@ class FeedFileReader<T extends FeedEntry> {
     }
 
     private void addToEntries(@NotNull List<T> entries, @NotNull Map<String, Integer> fields, @NotNull String line) {
-        String[] parts = splitFeedLine(line);
+        String reformatted = fixLineBreaks(line);
+        String[] parts = splitFeedLine(reformatted);
         if (!allEmpty(parts)) {
             FeedLine feedLine = new FeedLine(fields, parts);
             if (feedEntryCreator.isValid(feedLine)) {
                 entries.add(feedEntryCreator.fromLine(feedLine));
             }
         }
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static String fixLineBreaks(@NotNull String input) {
+        String reformatted = input;
+        while (reformatted.contains("\\n\\n")) {
+            reformatted = reformatted.replace("\\n\\n", "\\n");
+        }
+
+        while (reformatted.contains("\\n")) {
+            reformatted = reformatted.replace("\\n", "\n");
+        }
+        return reformatted;
     }
 
     private static boolean allEmpty(@NotNull String[] array) {

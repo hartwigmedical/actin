@@ -51,7 +51,7 @@ public final class QuestionnaireExtraction {
         LesionData cnsLesionData = LesionData.forKey(entry, mapping, (QuestionnaireKey.HAS_CNS_LESIONS));
 
         return ImmutableQuestionnaire.builder()
-                .date(entry.authoredDateTime())
+                .date(entry.authored())
                 .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
                 .tumorType(tumorType(entry, mapping))
                 .biopsyLocation(value(entry, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))

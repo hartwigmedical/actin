@@ -58,11 +58,11 @@ public class ClinicalFeedReaderTest {
     }
 
     private static void assertQuestionnaires(@NotNull List<QuestionnaireEntry> entries) {
-        assertEquals(2, entries.size());
+        assertEquals(3, entries.size());
 
         QuestionnaireEntry entry1 = findByParentIdentifierValue(entries, "XX");
         assertEquals("ACTN-01-02-9999", entry1.subject());
-        assertEquals(LocalDate.of(2020, 8, 28), entry1.authoredDateTime());
+        assertEquals(LocalDate.of(2020, 8, 28), entry1.authored());
         assertEquals("A", entry1.questionnaireQuestionnaireValue());
         assertEquals("INT Consult", entry1.description());
         assertEquals("Beloop", entry1.itemText());
@@ -74,11 +74,22 @@ public class ClinicalFeedReaderTest {
 
         QuestionnaireEntry entry2 = findByParentIdentifierValue(entries, "YY");
         assertEquals("ACTN-01-02-9999", entry2.subject());
-        assertEquals(LocalDate.of(2021, 6, 6), entry2.authoredDateTime());
+        assertEquals(LocalDate.of(2021, 6, 6), entry2.authored());
         assertEquals("B", entry2.questionnaireQuestionnaireValue());
         assertEquals("ONC Kuuroverzicht", entry2.description());
         assertEquals("Nausea", entry2.itemText());
         assertEquals("0", entry2.itemAnswerValueValueString());
+
+        QuestionnaireEntry entry3 = findByParentIdentifierValue(entries, "ZZ");
+        assertEquals("ACTN-01-02-9999", entry3.subject());
+        assertEquals(LocalDate.of(2021, 8, 16), entry3.authored());
+        assertEquals("A", entry3.questionnaireQuestionnaireValue());
+        assertEquals("INT Consult", entry3.description());
+        assertEquals("Beloop", entry3.itemText());
+        assertEquals(24, entry3.itemAnswerValueValueString().split("\n").length);
+        assertTrue(entry3.itemAnswerValueValueString().startsWith("ACTIN Questionnaire"));
+        assertTrue(entry3.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
+        assertTrue(entry3.itemAnswerValueValueString().contains("Other (e.g. Osteoporosis, Pleural effusion)"));
     }
 
     @NotNull

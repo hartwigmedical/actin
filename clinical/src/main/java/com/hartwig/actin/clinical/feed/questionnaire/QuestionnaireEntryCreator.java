@@ -14,8 +14,8 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
     @Override
     public QuestionnaireEntry fromLine(@NotNull final FeedLine line) {
         return ImmutableQuestionnaireEntry.builder().subject(line.trimmed("subject"))
+                .authored(line.date("authored"))
                 .parentIdentifierValue(line.string("parent_identifier_value"))
-                .authoredDateTime(line.date("authored_datetime"))
                 .questionnaireQuestionnaireValue(line.string("questionnaire_Questionnaire_value"))
                 .description(line.string("description"))
                 .itemText(line.string("item_text"))

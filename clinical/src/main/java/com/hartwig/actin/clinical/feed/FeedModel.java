@@ -72,8 +72,8 @@ public class FeedModel {
         List<QuestionnaireEntry> questionnaires = entriesForSubject(feed.questionnaireEntries(), subject);
         QuestionnaireEntry latest = null;
         for (QuestionnaireEntry questionnaire : questionnaires) {
-            if (QuestionnaireExtraction.isActualQuestionnaire(questionnaire) && (latest == null || questionnaire.authoredDateTime()
-                    .isAfter(latest.authoredDateTime()))) {
+            if (QuestionnaireExtraction.isActualQuestionnaire(questionnaire) && (latest == null || questionnaire.authored()
+                    .isAfter(latest.authored()))) {
                 latest = questionnaire;
             }
         }

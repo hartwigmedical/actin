@@ -13,8 +13,8 @@ public final class TestQuestionnaireFactory {
     public static QuestionnaireEntry createTestQuestionnaireEntry() {
         return ImmutableQuestionnaireEntry.builder()
                 .subject("TEST-01-01-0001")
+                .authored(LocalDate.of(2020, 8, 28))
                 .parentIdentifierValue("XX")
-                .authoredDateTime(LocalDate.of(2020, 8, 28))
                 .questionnaireQuestionnaireValue("A")
                 .description("Description")
                 .itemText("ItemText")

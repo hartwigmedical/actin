@@ -266,7 +266,7 @@ public class ClinicalRecordsFactory {
             if (grade != null) {
                 toxicities.add(ImmutableToxicity.builder()
                         .name(entry.itemText())
-                        .evaluatedDate(entry.authoredDateTime())
+                        .evaluatedDate(entry.authored())
                         .source(ToxicitySource.EHR)
                         .grade(grade)
                         .build());

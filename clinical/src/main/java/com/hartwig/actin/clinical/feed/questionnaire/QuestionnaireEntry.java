@@ -17,10 +17,10 @@ public abstract class QuestionnaireEntry implements FeedEntry {
     public abstract String subject();
 
     @NotNull
-    public abstract String parentIdentifierValue();
+    public abstract LocalDate authored();
 
     @NotNull
-    public abstract LocalDate authoredDateTime();
+    public abstract String parentIdentifierValue();
 
     @NotNull
     public abstract String questionnaireQuestionnaireValue();

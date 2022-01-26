@@ -76,13 +76,13 @@ public final class TestFeedFactory {
                 ImmutableQuestionnaireEntry.builder().from(TestQuestionnaireFactory.createTestQuestionnaireEntry());
 
         List<QuestionnaireEntry> entries = Lists.newArrayList();
-        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 7, 1)).build());
-        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authoredDateTime(LocalDate.of(2021, 8, 1)).build());
+        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authored(LocalDate.of(2021, 7, 1)).build());
+        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authored(LocalDate.of(2021, 8, 1)).build());
 
         ImmutableQuestionnaireEntry.Builder toxicityBuilder = ImmutableQuestionnaireEntry.builder()
                 .subject(TEST_SUBJECT)
+                .authored(LocalDate.of(2020, 6, 6))
                 .parentIdentifierValue(Strings.EMPTY)
-                .authoredDateTime(LocalDate.of(2020, 6, 6))
                 .questionnaireQuestionnaireValue(Strings.EMPTY)
                 .description("ONC Kuuroverzicht");
 
