@@ -58,12 +58,12 @@ public final class OrangeMutationMapper {
                 return EXON_MAPPINGS.get(key);
             }
             default: {
-                throw new IllegalStateException("Should never have to map mutation for this evidence: " + evidence);
+                throw new IllegalArgumentException("Should never have to map mutation for this evidence: " + evidence);
             }
         }
     }
 
-    private static class RangeKey {
+    static class RangeKey {
 
         @NotNull
         private final String gene;
@@ -72,6 +72,15 @@ public final class OrangeMutationMapper {
         public RangeKey(@NotNull final String gene, final int rank) {
             this.gene = gene;
             this.rank = rank;
+        }
+
+        @NotNull
+        public String gene() {
+            return gene;
+        }
+
+        public int rank() {
+            return rank;
         }
 
         @Override

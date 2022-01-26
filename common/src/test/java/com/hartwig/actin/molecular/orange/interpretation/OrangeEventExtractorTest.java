@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.molecular.datamodel.FusionGene;
+import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
@@ -20,6 +22,65 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class OrangeEventExtractorTest {
+
+    @Test
+    public void canExtractHotspotMutations() {
+        List<TreatmentEvidence> hotspotEvidence =
+                Lists.newArrayList(createTestBuilder().type(EvidenceType.HOTSPOT_MUTATION).gene("gene").event("hotspot").build());
+        OrangeEventExtraction hotspotExtraction = OrangeEventExtractor.extract(withEvidences(hotspotEvidence));
+
+        assertEquals(1, hotspotExtraction.mutations().size());
+        GeneMutation geneMutation = hotspotExtraction.mutations().iterator().next();
+        assertEquals("gene", geneMutation.gene());
+        assertEquals("hotspot", geneMutation.mutation());
+    }
+
+    @Test
+    public void canExtractCodonMutations() {
+        OrangeMutationMapper.RangeKey firstCodon = OrangeMutationMapper.CODON_MAPPINGS.keySet().iterator().next();
+        List<TreatmentEvidence> codonEvidence = Lists.newArrayList(createTestBuilder().type(EvidenceType.CODON_MUTATION)
+                .gene(firstCodon.gene())
+                .rangeRank(firstCodon.rank())
+                .build());
+        OrangeEventExtraction codonExtraction = OrangeEventExtractor.extract(withEvidences(codonEvidence));
+
+        assertEquals(1, codonExtraction.mutations().size());
+        GeneMutation geneMutation = codonExtraction.mutations().iterator().next();
+        assertEquals(firstCodon.gene(), geneMutation.gene());
+        assertEquals(OrangeMutationMapper.CODON_MAPPINGS.get(firstCodon), geneMutation.mutation());
+    }
+
+    @Test
+    public void canExtractExonMutations() {
+        OrangeMutationMapper.RangeKey firstExon = OrangeMutationMapper.EXON_MAPPINGS.keySet().iterator().next();
+        List<TreatmentEvidence> exonEvidence = Lists.newArrayList(createTestBuilder().type(EvidenceType.EXON_MUTATION)
+                .gene(firstExon.gene())
+                .rangeRank(firstExon.rank())
+                .build());
+        OrangeEventExtraction exonExtraction = OrangeEventExtractor.extract(withEvidences(exonEvidence));
+
+        assertEquals(1, exonExtraction.mutations().size());
+        GeneMutation geneMutation = exonExtraction.mutations().iterator().next();
+        assertEquals(firstExon.gene(), geneMutation.gene());
+        assertEquals(OrangeMutationMapper.EXON_MAPPINGS.get(firstExon), geneMutation.mutation());
+    }
+
+    @Test
+    public void canExtractActivatedGenes() {
+        List<TreatmentEvidence> activationEvidence =
+                Lists.newArrayList(createTestBuilder().type(EvidenceType.ACTIVATION).gene("gene").build());
+        OrangeEventExtraction activationExtraction = OrangeEventExtractor.extract(withEvidences(activationEvidence));
+
+        assertEquals(1, activationExtraction.activatedGenes().size());
+        assertEquals("gene", activationExtraction.activatedGenes().iterator().next());
+
+        List<TreatmentEvidence> fusionEvidence =
+                Lists.newArrayList(createTestBuilder().type(EvidenceType.PROMISCUOUS_FUSION).gene("gene").build());
+        OrangeEventExtraction fusionExtraction = OrangeEventExtractor.extract(withEvidences(fusionEvidence));
+
+        assertEquals(1, fusionExtraction.activatedGenes().size());
+        assertEquals("gene", fusionExtraction.activatedGenes().iterator().next());
+    }
 
     @Test
     public void canExtractInactivatedGenes() {
@@ -48,6 +109,28 @@ public class OrangeEventExtractorTest {
         OrangeEventExtraction noExtraction = OrangeEventExtractor.extract(withEvidences(noEvidence));
 
         assertEquals(0, noExtraction.inactivatedGenes().size());
+    }
+
+    @Test
+    public void canExtractAmplifiedGenes() {
+        List<TreatmentEvidence> amplificationEvidence =
+                Lists.newArrayList(createTestBuilder().type(EvidenceType.AMPLIFICATION).gene("gene").build());
+        OrangeEventExtraction amplificationExtraction = OrangeEventExtractor.extract(withEvidences(amplificationEvidence));
+
+        assertEquals(1, amplificationExtraction.amplifiedGenes().size());
+        assertEquals("gene", amplificationExtraction.amplifiedGenes().iterator().next());
+    }
+
+    @Test
+    public void canExtractFusionGenes() {
+        List<TreatmentEvidence> fusionEvidence =
+                Lists.newArrayList(createTestBuilder().type(EvidenceType.FUSION_PAIR).event("gene1 - gene2 fusion").build());
+        OrangeEventExtraction fusionExtraction = OrangeEventExtractor.extract(withEvidences(fusionEvidence));
+
+        assertEquals(1, fusionExtraction.fusions().size());
+        FusionGene fusionGene = fusionExtraction.fusions().iterator().next();
+        assertEquals("gene1", fusionGene.fiveGene());
+        assertEquals("gene2", fusionGene.threeGene());
     }
 
     @NotNull
