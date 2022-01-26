@@ -25,11 +25,19 @@ public final class OrangeInterpreter {
 
     @NotNull
     public static MolecularRecord interpret(@NotNull OrangeRecord record) {
+        OrangeEventExtraction extraction = OrangeEventExtractor.extract(record);
+
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
                 .date(record.date())
                 .hasReliableQuality(record.hasReliableQuality())
+                .mutations(extraction.mutations())
+                .activatedGenes(extraction.activatedGenes())
+                .inactivatedGenes(extraction.inactivatedGenes())
+                .amplifiedGenes(extraction.amplifiedGenes())
+                .wildtypeGenes(extraction.wildtypeGenes())
+                .fusions(extraction.fusions())
                 .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())
