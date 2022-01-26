@@ -217,8 +217,6 @@ public final class TestFeedFactory {
                 .effectiveDateTime(LocalDate.of(2021, 2, 27))
                 .codeCodeOriginal(Strings.EMPTY)
                 .codeDisplayOriginal("NIBP")
-                .issued(LocalDate.of(2021, 2, 26))
-                .valueString(Strings.EMPTY)
                 .componentCodeCode(Strings.EMPTY)
                 .componentCodeDisplay("systolic")
                 .quantityUnit("mm[Hg]")

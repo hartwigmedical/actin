@@ -203,8 +203,6 @@ public class ClinicalFeedReaderTest {
         assertEquals(LocalDate.of(2019, 4, 28), entry.effectiveDateTime());
         assertEquals("CS00000003", entry.codeCodeOriginal());
         assertEquals("NIBP", entry.codeDisplayOriginal());
-        assertNull(entry.issued());
-        assertTrue(entry.valueString().isEmpty());
         assertEquals("8481-6", entry.componentCodeCode());
         assertEquals("Systolic blood pressure", entry.componentCodeDisplay());
         assertEquals("mm[Hg]", entry.quantityUnit());

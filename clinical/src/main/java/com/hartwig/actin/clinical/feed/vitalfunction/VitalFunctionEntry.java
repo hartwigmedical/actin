@@ -25,12 +25,6 @@ public abstract class VitalFunctionEntry implements FeedEntry {
     @NotNull
     public abstract String codeDisplayOriginal();
 
-    @Nullable
-    public abstract LocalDate issued();
-
-    @NotNull
-    public abstract String valueString();
-
     @NotNull
     public abstract String componentCodeCode();
 

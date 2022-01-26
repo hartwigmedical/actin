@@ -21,8 +21,6 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
                 .effectiveDateTime(line.date("effectiveDateTime"))
                 .codeCodeOriginal(line.string("code_code_original"))
                 .codeDisplayOriginal(line.string("code_display_original"))
-                .issued(line.optionalDate("issued"))
-                .valueString(line.string("valueString"))
                 .componentCodeCode(line.string("component_code_code"))
                 .componentCodeDisplay(line.string("component_code_display"))
                 .quantityUnit(line.string("quantity_unit"))
