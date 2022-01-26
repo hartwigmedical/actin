@@ -25,7 +25,10 @@ public final class OrangeInterpreter {
 
     @NotNull
     public static MolecularRecord interpret(@NotNull OrangeRecord record) {
-        return ImmutableMolecularRecord.builder().sampleId(record.sampleId()).type(ExperimentType.WGS).date(record.date())
+        return ImmutableMolecularRecord.builder()
+                .sampleId(record.sampleId())
+                .type(ExperimentType.WGS)
+                .date(record.date())
                 .hasReliableQuality(record.hasReliableQuality())
                 .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))

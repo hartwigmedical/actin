@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -48,8 +48,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<GeneMutation> createTestMutations() {
-        List<GeneMutation> mutations = Lists.newArrayList();
+    private static Set<GeneMutation> createTestMutations() {
+        Set<GeneMutation> mutations = Sets.newHashSet();
 
         mutations.add(ImmutableGeneMutation.builder().gene("BRAF").mutation("V600E").build());
 
@@ -57,8 +57,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<InactivatedGene> createTestInactivatedGenes() {
-        List<InactivatedGene> inactivatedGenes = Lists.newArrayList();
+    private static Set<InactivatedGene> createTestInactivatedGenes() {
+        Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
 
         inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("PTEN").hasBeenDeleted(false).build());
         inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("CDKN2A").hasBeenDeleted(false).build());

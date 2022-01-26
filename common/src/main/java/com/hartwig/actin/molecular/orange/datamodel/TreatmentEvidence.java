@@ -18,10 +18,16 @@ public abstract class TreatmentEvidence {
     @NotNull
     public abstract String event();
 
+    @Nullable
+    public abstract Integer rangeRank();
+
     @NotNull
     public abstract String treatment();
 
     public abstract boolean onLabel();
+
+    @NotNull
+    public abstract EvidenceType type();
 
     @NotNull
     public abstract EvidenceLevel level();

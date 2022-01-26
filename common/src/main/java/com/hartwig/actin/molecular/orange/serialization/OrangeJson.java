@@ -4,6 +4,7 @@ import static com.hartwig.actin.json.Json.array;
 import static com.hartwig.actin.json.Json.bool;
 import static com.hartwig.actin.json.Json.integer;
 import static com.hartwig.actin.json.Json.nullableDate;
+import static com.hartwig.actin.json.Json.nullableInteger;
 import static com.hartwig.actin.json.Json.nullableString;
 import static com.hartwig.actin.json.Json.number;
 import static com.hartwig.actin.json.Json.object;
@@ -27,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -77,8 +79,10 @@ public final class OrangeJson {
                         .reported(bool(evidence, "reported"))
                         .gene(nullableString(evidence, "gene"))
                         .event(string(evidence, "event"))
+                        .rangeRank(nullableInteger(evidence, "rangeRank"))
                         .treatment(string(evidence, "treatment"))
                         .onLabel(bool(evidence, "onLabel"))
+                        .type(EvidenceType.valueOf(string(evidence, "evidenceType")))
                         .level(EvidenceLevel.valueOf(string(evidence, "level")))
                         .direction(EvidenceDirection.valueOf(string(evidence, "direction")))
                         .sources(stringList(evidence, "sources"))

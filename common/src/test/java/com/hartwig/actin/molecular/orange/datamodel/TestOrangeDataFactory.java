@@ -47,6 +47,7 @@ public final class TestOrangeDataFactory {
                 .event("p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
+                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
@@ -55,6 +56,7 @@ public final class TestOrangeDataFactory {
                 .event("p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
+                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
@@ -63,6 +65,7 @@ public final class TestOrangeDataFactory {
                 .event("partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
+                .type(EvidenceType.INACTIVATION)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
@@ -72,6 +75,7 @@ public final class TestOrangeDataFactory {
                 .event("p.Val600Glu")
                 .treatment("Trial X")
                 .onLabel(true)
+                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
@@ -81,6 +85,7 @@ public final class TestOrangeDataFactory {
                 .event("p.Val600Glu")
                 .treatment("Trial Y")
                 .onLabel(true)
+                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());

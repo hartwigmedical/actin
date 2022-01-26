@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -23,7 +23,7 @@ final class MolecularTestFactory {
     public static PatientRecord withGeneMutation(@NotNull String gene, @NotNull String mutation) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mutations(Lists.newArrayList(ImmutableGeneMutation.builder().gene(gene).mutation(mutation).build()))
+                .mutations(Sets.newHashSet(ImmutableGeneMutation.builder().gene(gene).mutation(mutation).build()))
                 .build());
     }
 
@@ -31,7 +31,7 @@ final class MolecularTestFactory {
     public static PatientRecord withActivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .activatedGenes(Lists.newArrayList(gene))
+                .activatedGenes(Sets.newHashSet(gene))
                 .build());
     }
 
@@ -39,7 +39,7 @@ final class MolecularTestFactory {
     public static PatientRecord withInactivatedGene(@NotNull String gene, boolean hasBeenDeleted) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .inactivatedGenes(Lists.newArrayList(ImmutableInactivatedGene.builder().gene(gene).hasBeenDeleted(hasBeenDeleted).build()))
+                .inactivatedGenes(Sets.newHashSet(ImmutableInactivatedGene.builder().gene(gene).hasBeenDeleted(hasBeenDeleted).build()))
                 .build());
     }
 
@@ -47,7 +47,7 @@ final class MolecularTestFactory {
     public static PatientRecord withAmplifiedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .amplifiedGenes(Lists.newArrayList(gene))
+                .amplifiedGenes(Sets.newHashSet(gene))
                 .build());
     }
 
@@ -55,7 +55,7 @@ final class MolecularTestFactory {
     public static PatientRecord withWildtypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .wildtypeGenes(Lists.newArrayList(gene))
+                .wildtypeGenes(Sets.newHashSet(gene))
                 .build());
     }
 
@@ -63,7 +63,7 @@ final class MolecularTestFactory {
     public static PatientRecord withFusionGene(@NotNull String fiveGene, @NotNull String threeGene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene(fiveGene).threeGene(threeGene).build()))
+                .fusions(Sets.newHashSet(ImmutableFusionGene.builder().fiveGene(fiveGene).threeGene(threeGene).build()))
                 .build());
     }
 

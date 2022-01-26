@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -24,7 +23,7 @@ public abstract class MolecularRecord {
     public abstract boolean hasReliableQuality();
 
     @NotNull
-    public abstract List<GeneMutation> mutations();
+    public abstract Set<GeneMutation> mutations();
 
     @NotNull
     public abstract Set<String> activatedGenes();
@@ -39,7 +38,7 @@ public abstract class MolecularRecord {
     public abstract Set<String> wildtypeGenes();
 
     @NotNull
-    public abstract List<FusionGene> fusions();
+    public abstract Set<FusionGene> fusions();
 
     @Nullable
     public abstract Boolean isMicrosatelliteUnstable();

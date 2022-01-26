@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -45,7 +44,8 @@ public class MolecularPrinter {
         printer.print("Activated genes: " + concat(record.activatedGenes()));
         printer.print("Inactivated genes: " + inactivatedGeneString(record.inactivatedGenes()));
         printer.print("Amplified genes: " + concat(record.amplifiedGenes()));
-        printer.print("Wildtype genes: " + concat(record.wildtypeGenes()));
+        // TODO Enable when wildtype genes are supported.
+        //        printer.print("Wildtype genes: " + concat(record.wildtypeGenes()));
         printer.print("Fusions: " + fusionString(record.fusions()));
         printer.print("Microsatellite unstable?: " + toYesNo(record.isMicrosatelliteUnstable()));
         printer.print("Homologous repair deficient?: " + toYesNo(record.isHomologousRepairDeficient()));
@@ -65,7 +65,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String mutationString(@NotNull List<GeneMutation> mutations) {
+    private static String mutationString(@NotNull Iterable<GeneMutation> mutations) {
         Set<String> strings = Sets.newHashSet();
         for (GeneMutation mutation : mutations) {
             strings.add(mutation.gene() + " " + mutation.mutation());
@@ -74,7 +74,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String inactivatedGeneString(@NotNull Set<InactivatedGene> inactivatedGenes) {
+    private static String inactivatedGeneString(@NotNull Iterable<InactivatedGene> inactivatedGenes) {
         Set<String> strings = Sets.newHashSet();
         for (InactivatedGene inactivatedGene : inactivatedGenes) {
             strings.add(inactivatedGene.gene() + " (" + (inactivatedGene.hasBeenDeleted() ? "deleted" : "not deleted") + ")");
@@ -83,7 +83,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String fusionString(@NotNull List<FusionGene> fusions) {
+    private static String fusionString(@NotNull Iterable<FusionGene> fusions) {
         Set<String> strings = Sets.newHashSet();
         for (FusionGene fusion : fusions) {
             strings.add(fusion.fiveGene() + "-" + fusion.threeGene());
@@ -106,7 +106,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String concat(@NotNull Set<String> strings) {
+    private static String concat(@NotNull Iterable<String> strings) {
         StringJoiner joiner = new StringJoiner(", ");
         for (String string : strings) {
             joiner.add(string);
