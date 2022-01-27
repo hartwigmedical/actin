@@ -36,13 +36,15 @@ final class OrangeEvidenceFactory {
 
     @NotNull
     public static MolecularEvidence create(@NotNull OrangeRecord record) {
+        List<TreatmentEvidence> ckbEvidence = filter(record.evidences(), CKB_SOURCE);
+
         return ImmutableMolecularEvidence.builder()
                 .actinTrialEvidence(createActinTrialEligibility(record.evidences()))
                 .generalTrialSource("iClusion")
                 .generalTrialEvidence(createGeneralTrialEligibility(record.evidences()))
                 .generalEvidenceSource("CKB")
-                .generalResponsiveEvidence(createGeneralResponsiveEvidence(record.evidences()))
-                .generalResistanceEvidence(createGeneralResistanceEvidence(record.evidences()))
+                .generalResponsiveEvidence(createGeneralResponsiveEvidence(ckbEvidence))
+                .generalResistanceEvidence(createGeneralResistanceEvidence(ckbEvidence))
                 .build();
     }
 
@@ -71,9 +73,9 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private static Multimap<String, String> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+    private static Multimap<String, String> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> ckbEvidences) {
         Multimap<String, String> generalResponsiveEvidence = ArrayListMultimap.create();
-        for (TreatmentEvidence evidence : filter(evidences, CKB_SOURCE)) {
+        for (TreatmentEvidence evidence : ckbEvidences) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
@@ -86,16 +88,15 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private static Multimap<String, String> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
+    private static Multimap<String, String> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> ckbEvidences) {
         Multimap<String, String> generalResistanceEvidence = ArrayListMultimap.create();
 
-        List<TreatmentEvidence> filtered = filter(evidences, CKB_SOURCE);
-        for (TreatmentEvidence evidence : filtered) {
+        for (TreatmentEvidence evidence : ckbEvidences) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
             boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
-                    hasOnLabelResponsiveEvidenceWithMaxLeve(filtered, evidence.treatment(), evidence.level());
+                    hasOnLabelResponsiveEvidenceWithMaxLeve(ckbEvidences, evidence.treatment(), evidence.level());
 
             if (isReported && isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
                 generalResistanceEvidence.put(toEvent(evidence), evidence.treatment());
