@@ -89,12 +89,13 @@ final class OrangeEvidenceFactory {
     private static Multimap<String, String> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
         Multimap<String, String> generalResistanceEvidence = ArrayListMultimap.create();
 
-        for (TreatmentEvidence evidence : filter(evidences, CKB_SOURCE)) {
+        List<TreatmentEvidence> filtered = filter(evidences, CKB_SOURCE);
+        for (TreatmentEvidence evidence : filtered) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
             boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
-                    hasOnLabelResponsiveEvidenceWithMinLevel(evidences, evidence.treatment(), evidence.level());
+                    hasOnLabelResponsiveEvidenceWithMaxLeve(filtered, evidence.treatment(), evidence.level());
 
             if (isReported && isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
                 generalResistanceEvidence.put(toEvent(evidence), evidence.treatment());
@@ -115,11 +116,11 @@ final class OrangeEvidenceFactory {
         return filtered;
     }
 
-    private static boolean hasOnLabelResponsiveEvidenceWithMinLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
-            @NotNull EvidenceLevel minLevel) {
+    private static boolean hasOnLabelResponsiveEvidenceWithMaxLeve(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
+            @NotNull EvidenceLevel maxLevel) {
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
-                    && minLevel.isBetterOrEqual(evidence.level())) {
+            if (evidence.reported() && evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
+                    && maxLevel.isBetterOrEqual(evidence.level())) {
                 return true;
             }
         }
