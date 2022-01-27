@@ -87,6 +87,8 @@ HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
 PATIENT_IS_TREATED_IN_HOSPITAL_X | > won't be evaluated
 PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X | > currently set to Netherlands (T.B.D.)
+PATIENT_IS_LEGALLY_INSTITUTIONALIZED | > won't be evaluated
+IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | > will resolve to PASS_BUT_WARN
 
 ##### Rules related to tumor and lesion locations
  
@@ -243,6 +245,7 @@ HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | T.B.D.
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_ACTIVE_INFECTION | Clinical status > hasActiveInfection = 1
+HAS_KNOWN_HEPATITIS_A_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 12549
 HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 2043
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526

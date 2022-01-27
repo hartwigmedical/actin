@@ -31,6 +31,8 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, hasSufficientLifeExpectancyCreator());
         map.put(EligibilityRule.PATIENT_IS_TREATED_IN_HOSPITAL_X, patientIsTreatedInHospitalCreator());
         map.put(EligibilityRule.PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.PATIENT_IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
+        map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, isWillingToNotUseContactLensesCreator());
 
         return map;
     }
@@ -76,5 +78,15 @@ public final class GeneralRuleMapping {
     @NotNull
     private static FunctionCreator patientIsTreatedInHospitalCreator() {
         return function -> new PatientIsTreatedInHospital();
+    }
+
+    @NotNull
+    private static FunctionCreator isLegallyInstitutionalizedCreator() {
+        return function -> new IsLegallyInstitutionalized();
+    }
+
+    @NotNull
+    private static FunctionCreator isWillingToNotUseContactLensesCreator() {
+        return function -> new IsWillingToNotUseContactLenses();
     }
 }
