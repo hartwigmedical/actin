@@ -32,7 +32,7 @@ public class ServeRecordExtractorTest {
 
         assertEquals(3, records.size());
 
-        ServeRecord first = find(records, EligibilityRule.ACTIVATING_FUSION_IN_GENE_X);
+        ServeRecord first = find(records, EligibilityRule.FUSION_IN_GENE_X);
         assertEquals("trial 1", first.trial());
         assertEquals("gene 1", first.gene());
         assertNull(first.mutation());
@@ -67,7 +67,7 @@ public class ServeRecordExtractorTest {
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.AND)
                                 .addParameters(ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X)
+                                        .rule(EligibilityRule.FUSION_IN_GENE_X)
                                         .addParameters("gene 1")
                                         .build())
                                 .addParameters(ImmutableEligibilityFunction.builder()

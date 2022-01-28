@@ -145,7 +145,7 @@ ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
 MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion is found in gene X
-ACTIVATING_FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
+FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
 SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
 OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 
 EXPRESSION_OF_GENE_X_BY_IHC | > Currently set to UNDETERMINED
@@ -187,6 +187,7 @@ HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
 HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
+HAS_PHOSPHORUS_ULN_OF_AT_MOST_X | Phosphate (P) <= X*ULN
 HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X | Calcium (Ca) in mg/dL <= X | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495
 HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Calcium (Ca) in mmol/L <= X | In case calcium is measured in mg/dL, the value is converted to mmol/L using Ca[mmol/L]=Ca=[mg/dL]*0.2495
 HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X

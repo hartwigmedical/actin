@@ -27,7 +27,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, geneHasSpecificMutationCreator());
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.DELETION_OF_GENE_X, geneIsDeletedCreator());
-        map.put(EligibilityRule.ACTIVATING_FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
+        map.put(EligibilityRule.FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
         map.put(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, hasSpecificFusionCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
