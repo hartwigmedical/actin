@@ -30,15 +30,16 @@ public final class ServeRecordTsv {
 
     @NotNull
     private static String header() {
-        return new StringJoiner(FIELD_DELIMITER).add("trial").add("rule").add("gene").add("mutation").toString();
+        return new StringJoiner(FIELD_DELIMITER).add("trial").add("rule").add("gene").add("mutation").add("isUsedAsInclusion").toString();
     }
 
     @NotNull
     private static String toLine(@NotNull ServeRecord record) {
         return new StringJoiner(FIELD_DELIMITER).add(record.trial())
                 .add(record.rule().toString())
-                .add(record.gene())
+                .add(nullToEmpty(record.gene()))
                 .add(nullToEmpty(record.mutation()))
+                .add(String.valueOf(record.isUsedAsInclusion()))
                 .toString();
     }
 

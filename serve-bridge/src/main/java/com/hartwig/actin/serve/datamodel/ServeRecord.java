@@ -16,9 +16,11 @@ public abstract class ServeRecord {
     @NotNull
     public abstract EligibilityRule rule();
 
-    @NotNull
+    @Nullable
     public abstract String gene();
 
     @Nullable
     public abstract String mutation();
+
+    public abstract boolean isUsedAsInclusion();
 }

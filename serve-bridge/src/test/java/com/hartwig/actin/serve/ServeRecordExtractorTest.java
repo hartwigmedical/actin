@@ -1,7 +1,9 @@
 package com.hartwig.actin.serve;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -30,22 +32,31 @@ public class ServeRecordExtractorTest {
 
         List<ServeRecord> records = ServeRecordExtractor.extract(trials);
 
-        assertEquals(3, records.size());
+        assertEquals(4, records.size());
 
         ServeRecord first = find(records, EligibilityRule.FUSION_IN_GENE_X);
         assertEquals("trial 1", first.trial());
         assertEquals("gene 1", first.gene());
         assertNull(first.mutation());
+        assertTrue(first.isUsedAsInclusion());
 
         ServeRecord second = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
         assertEquals("trial 2", second.trial());
         assertEquals("gene 2", second.gene());
         assertEquals("coding", second.mutation());
+        assertFalse(second.isUsedAsInclusion());
 
         ServeRecord third = find(records, EligibilityRule.INACTIVATION_OF_GENE_X);
         assertEquals("trial 2", third.trial());
         assertEquals("gene 3", third.gene());
         assertNull(third.mutation());
+        assertTrue(third.isUsedAsInclusion());
+
+        ServeRecord fourth = find(records, EligibilityRule.TMB_OF_AT_LEAST_X);
+        assertEquals("trial 1", fourth.trial());
+        assertNull(fourth.gene());
+        assertEquals("TMB high", fourth.mutation());
+        assertTrue(fourth.isUsedAsInclusion());
     }
 
     @NotNull
