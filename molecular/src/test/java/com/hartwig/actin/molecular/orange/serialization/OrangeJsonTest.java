@@ -14,8 +14,8 @@ import org.junit.Test;
 
 public class OrangeJsonTest {
 
-    private static final String PROPER_ORANGE_JSON = Resources.getResource("molecular/sample.orange.json").getPath();
-    private static final String MINIMAL_ORANGE_JSON = Resources.getResource("molecular/sample.minimal.json").getPath();
+    private static final String PROPER_ORANGE_JSON = Resources.getResource("orange/proper.orange.json").getPath();
+    private static final String MINIMAL_ORANGE_JSON = Resources.getResource("orange/minimal.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 

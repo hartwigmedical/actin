@@ -10,8 +10,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
-import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
+import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.datamodel.ReportFactory;
@@ -82,7 +81,7 @@ public class ReporterApplication {
     @NotNull
     private static MolecularRecord loadMolecularRecord(@NotNull String molecularJson) throws IOException {
         LOGGER.info("Loading molecular record from {}", molecularJson);
-        MolecularRecord molecular = OrangeInterpreter.interpret(OrangeJson.read(molecularJson));
+        MolecularRecord molecular = MolecularRecordJson.read(molecularJson);
         MolecularPrinter.printRecord(molecular);
 
         return molecular;
