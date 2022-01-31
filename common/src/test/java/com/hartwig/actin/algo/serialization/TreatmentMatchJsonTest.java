@@ -10,7 +10,6 @@ import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class TreatmentMatchJsonTest {
@@ -33,10 +32,8 @@ public class TreatmentMatchJsonTest {
 
     @Test
     public void canReadTreatmentMatchJson() throws IOException {
-        assertTreatmentMatch(TreatmentMatchJson.read(TREATMENT_MATCH_JSON));
-    }
+        TreatmentMatch match = TreatmentMatchJson.read(TREATMENT_MATCH_JSON);
 
-    private static void assertTreatmentMatch(@NotNull TreatmentMatch match) {
         assertEquals("ACTN01029999T", match.sampleId());
         assertEquals(1, match.trialMatches().size());
 

@@ -7,8 +7,15 @@
     "day": 23
   },
   "hasReliableQuality": true,
-  "mutations": [],
-  "activatedGenes": [],
+  "mutations": [
+    {
+      "gene": "TP53",
+      "mutation": "exon 1"
+    }
+  ],
+  "activatedGenes": [
+    "ACT"
+  ],
   "inactivatedGenes": [
     {
       "gene": "NF1",
@@ -19,19 +26,53 @@
       "hasBeenDeleted": true
     }
   ],
-  "amplifiedGenes": [],
-  "wildtypeGenes": [],
-  "fusions": [],
+  "amplifiedGenes": [
+    "AMP"
+  ],
+  "wildtypeGenes": [
+    "WILD"
+  ],
+  "fusions": [
+    {
+      "fiveGene": "five",
+      "threeGene": "three"
+    }
+  ],
   "isMicrosatelliteUnstable": false,
   "isHomologousRepairDeficient": true,
   "tumorMutationalBurden": 4.32,
   "tumorMutationalLoad": 243,
-  "evidence": {
-    "actinTrialEvidence": {},
-    "generalTrialSource": "trials",
-    "generalTrialEvidence": {},
-    "generalEvidenceSource": "evidence",
-    "generalResponsiveEvidence": {},
-    "generalResistanceEvidence": {}
-  }
+  "actinTrialEvidence": [
+    {
+      "event": "High TML",
+      "treatment": "Trial 1"
+    },
+    {
+      "event": "HR deficiency",
+      "treatment": "Trial 2"
+    },
+    {
+      "event": "NF1 disruption",
+      "treatment": "Trial 3"
+    }
+  ],
+  "generalTrialSource": "trials",
+  "generalTrialEvidence": [
+    {
+      "event": "High TML",
+      "treatment": "Trial 1"
+    }
+  ],
+  "generalEvidenceSource": "evidence",
+  "generalResponsiveEvidence": [
+    {
+      "event": "High TML",
+      "treatment": "Pembrolizumab"
+    },
+    {
+      "event": "High TML",
+      "treatment": "Nivolumab"
+    }
+  ],
+  "generalResistanceEvidence": []
 }
