@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -35,12 +34,10 @@ public class OrangeInterpreterTest {
         assertEquals(8D, record.tumorMutationalBurden(), EPSILON);
         assertEquals(100, (int) record.tumorMutationalLoad());
 
-        MolecularEvidence evidence = record.evidence();
-
-        assertEquals(1, evidence.actinTrialEvidence().size());
-        assertEquals(1, evidence.generalTrialEvidence().size());
-        assertEquals(1, evidence.generalResponsiveEvidence().size());
-        assertEquals(0, evidence.generalResistanceEvidence().size());
+        assertEquals(1, record.actinTrialEvidence().size());
+        assertEquals(1, record.generalTrialEvidence().size());
+        assertEquals(1, record.generalResponsiveEvidence().size());
+        assertEquals(0, record.generalResistanceEvidence().size());
     }
 
     @Test

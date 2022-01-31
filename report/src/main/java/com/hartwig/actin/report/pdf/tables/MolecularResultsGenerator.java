@@ -1,10 +1,9 @@
 package com.hartwig.actin.report.pdf.tables;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -42,28 +41,37 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        MolecularEvidence evidence = record.evidence();
-        Set<String> eventsWithActinEvidence = evidence.actinTrialEvidence().keySet();
+        Set<String> eventsWithActinEvidence = extractEvents(record.actinTrialEvidence());
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
         table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
 
-        Set<String> eventsWithGeneralTrialEvidence = evidence.generalTrialEvidence().keySet();
+        Set<String> eventsWithGeneralTrialEvidence = extractEvents(record.generalTrialEvidence());
         Set<String> additionalTrialEvents = subtract(eventsWithGeneralTrialEvidence, eventsWithActinEvidence);
         if (!additionalTrialEvents.isEmpty()) {
-            table.addCell(Cells.createKey("Additional events with trial evidence in " + evidence.generalTrialSource()));
+            table.addCell(Cells.createKey("Additional events with trial evidence in " + record.generalTrialSource()));
             table.addCell(Cells.createValue(formatEvents(additionalTrialEvents)));
         }
 
-        table.addCell(Cells.createKey("Events with responsive evidence in " + evidence.generalEvidenceSource()));
-        table.addCell(Cells.createValue(formatEvents(evidence.generalResponsiveEvidence().keySet())));
+        Set<String> eventsWithGeneralResponsiveEvidence = extractEvents(record.generalResponsiveEvidence());
+        table.addCell(Cells.createKey("Events with responsive evidence in " + record.generalEvidenceSource()));
+        table.addCell(Cells.createValue(formatEvents(eventsWithGeneralResponsiveEvidence)));
 
-        Multimap<String, String> resistanceEvidence = evidence.generalResistanceEvidence();
+        List<MolecularEvidence> resistanceEvidence = record.generalResistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
-            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.generalEvidenceSource()));
+            table.addCell(Cells.createKey("Events with resistance evidence in " + record.generalEvidenceSource()));
             table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));
         }
 
         return table;
+    }
+
+    @NotNull
+    private static Set<String> extractEvents(@NotNull List<MolecularEvidence> evidences) {
+        Set<String> events = Sets.newHashSet();
+        for (MolecularEvidence evidence : evidences) {
+            events.add(evidence.event());
+        }
+        return events;
     }
 
     @NotNull
@@ -72,12 +80,12 @@ public class MolecularResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String formatResistanceEvidence(@NotNull Multimap<String, String> resistanceEvidence) {
-        Set<String> resistanceEvents = Sets.newHashSet();
-        for (Map.Entry<String, String> entry : resistanceEvidence.entries()) {
-            resistanceEvents.add(entry.getKey() + ": " + entry.getValue());
+    private static String formatResistanceEvidence(@NotNull List<MolecularEvidence> resistanceEvidences) {
+        Set<String> resistanceEvidenceStrings = Sets.newHashSet();
+        for (MolecularEvidence evidence : resistanceEvidences) {
+            resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());
         }
-        return concat(resistanceEvents);
+        return concat(resistanceEvidenceStrings);
     }
 
     @NotNull

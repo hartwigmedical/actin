@@ -1,19 +1,14 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestTreatmentEvidenceFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 
@@ -25,25 +20,23 @@ public class OrangeEvidenceFactoryTest {
 
     @Test
     public void canCreateMolecularEvidence() {
-        OrangeRecord record = recordWithEvidence(createTestEvidences());
+        List<TreatmentEvidence> evidences =createTestEvidences();
 
-        MolecularEvidence evidence = OrangeEvidenceFactory.create(record);
-
-        Multimap<String, String> actinTrialEvidence = evidence.actinTrialEvidence();
+       List<MolecularEvidence> actinTrialEvidence = OrangeEvidenceFactory.createActinTrialEvidence(evidences);
         assertEquals(1, actinTrialEvidence.size());
-        assertTrue(actinTrialEvidence.keySet().contains("B responsive actin event"));
+        assertEquals("B responsive actin event", actinTrialEvidence.get(0).event());
 
-        Multimap<String, String> generalTrialEvidence = evidence.generalTrialEvidence();
+        List<MolecularEvidence> generalTrialEvidence = OrangeEvidenceFactory.createGeneralTrialEvidence(evidences);
         assertEquals(1, generalTrialEvidence.size());
-        assertTrue(generalTrialEvidence.keySet().contains("B responsive trial event"));
+        assertEquals("B responsive trial event", generalTrialEvidence.get(0).event());
 
-        Multimap<String, String> generalResponsiveEvidence = evidence.generalResponsiveEvidence();
+        List<MolecularEvidence> generalResponsiveEvidence = OrangeEvidenceFactory.createGeneralResponsiveEvidence(evidences);
         assertEquals(1, generalResponsiveEvidence.size());
-        assertTrue(generalResponsiveEvidence.keySet().contains("A responsive event"));
+        assertEquals("A responsive event", generalResponsiveEvidence.get(0).event());
 
-        Multimap<String, String> generalResistanceEvidence = evidence.generalResistanceEvidence();
+        List<MolecularEvidence> generalResistanceEvidence =OrangeEvidenceFactory.createGeneralResistanceEvidence(evidences);
         assertEquals(1, generalResistanceEvidence.size());
-        assertTrue(generalResistanceEvidence.keySet().contains("A resistant event"));
+        assertEquals("A resistant event", generalResistanceEvidence.get(0).event());
     }
 
     @NotNull
@@ -141,10 +134,5 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         return evidences;
-    }
-
-    @NotNull
-    private static OrangeRecord recordWithEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        return ImmutableOrangeRecord.builder().from(TestOrangeDataFactory.createMinimalTestOrangeRecord()).evidences(evidences).build();
     }
 }

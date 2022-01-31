@@ -42,7 +42,12 @@ public final class OrangeInterpreter {
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())
                 .tumorMutationalLoad(record.tumorMutationalLoad())
-                .evidence(OrangeEvidenceFactory.create(record))
+                .actinTrialEvidence(OrangeEvidenceFactory.createActinTrialEvidence(record.evidences()))
+                .generalTrialSource("iClusion")
+                .generalTrialEvidence(OrangeEvidenceFactory.createGeneralTrialEvidence(record.evidences()))
+                .generalEvidenceSource("CKB")
+                .generalResponsiveEvidence(OrangeEvidenceFactory.createGeneralResponsiveEvidence(record.evidences()))
+                .generalResistanceEvidence(OrangeEvidenceFactory.createGeneralResistanceEvidence(record.evidences()))
                 .build();
     }
 

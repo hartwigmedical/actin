@@ -4,11 +4,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
@@ -52,11 +52,10 @@ public class MolecularPrinter {
         printer.print("Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
         printer.print("Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
 
-        MolecularEvidence evidence = record.evidence();
-        printer.print("ACTIN actionable events: " + toEvents(evidence.actinTrialEvidence()));
-        printer.print("General trial actionable events: " + toEvents(evidence.generalTrialEvidence()));
-        printer.print("General responsive evidence: " + toEvents(evidence.generalResponsiveEvidence()));
-        printer.print("General resistance evidence: " + toEvents(evidence.generalResistanceEvidence()));
+        printer.print("ACTIN actionable events: " + toEvents(record.actinTrialEvidence()));
+        printer.print("General trial actionable events: " + toEvents(record.generalTrialEvidence()));
+        printer.print("General responsive evidence: " + toEvents(record.generalResponsiveEvidence()));
+        printer.print("General resistance evidence: " + toEvents(record.generalResistanceEvidence()));
     }
 
     @NotNull
@@ -102,8 +101,12 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String toEvents(@NotNull Multimap<String, String> evidence) {
-        return concat(Sets.newTreeSet(evidence.keySet()));
+    private static String toEvents(@NotNull List<MolecularEvidence> evidences) {
+        Set<String> events = Sets.newHashSet();
+        for (MolecularEvidence evidence : evidences) {
+            events.add(evidence.event());
+        }
+        return concat(events);
     }
 
     @NotNull

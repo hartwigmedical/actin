@@ -3,14 +3,11 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import com.hartwig.actin.molecular.orange.util.GenomicEventFormatter;
 
@@ -35,62 +32,58 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static MolecularEvidence create(@NotNull OrangeRecord record) {
-        List<TreatmentEvidence> ckbEvidence = filter(record.evidences(), CKB_SOURCE);
-
-        return ImmutableMolecularEvidence.builder()
-                .actinTrialEvidence(createActinTrialEligibility(record.evidences()))
-                .generalTrialSource("iClusion")
-                .generalTrialEvidence(createGeneralTrialEligibility(record.evidences()))
-                .generalEvidenceSource("CKB")
-                .generalResponsiveEvidence(createGeneralResponsiveEvidence(ckbEvidence))
-                .generalResistanceEvidence(createGeneralResistanceEvidence(ckbEvidence))
-                .build();
-    }
-
-    @NotNull
-    private static Multimap<String, String> createActinTrialEligibility(@NotNull List<TreatmentEvidence> evidences) {
-        Multimap<String, String> actinTrialEligibility = ArrayListMultimap.create();
+    public static List<MolecularEvidence> createActinTrialEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> actinTrialEvidences = Lists.newArrayList();
 
         for (TreatmentEvidence evidence : filter(evidences, ACTIN_SOURCE)) {
             if (evidence.reported()) {
-                actinTrialEligibility.put(toEvent(evidence), evidence.treatment());
+                actinTrialEvidences.add(ImmutableMolecularEvidence.builder()
+                        .event(toEvent(evidence))
+                        .treatment(evidence.treatment())
+                        .build());
             }
         }
-        return actinTrialEligibility;
+        return actinTrialEvidences;
     }
 
     @NotNull
-    private static Multimap<String, String> createGeneralTrialEligibility(@NotNull List<TreatmentEvidence> evidences) {
-        Multimap<String, String> generalTrialEligibility = ArrayListMultimap.create();
+    public static List<MolecularEvidence> createGeneralTrialEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> generalTrialEvidence = Lists.newArrayList();
 
         for (TreatmentEvidence evidence : filter(evidences, ICLUSION_SOURCE)) {
             if (evidence.reported() && isPotentiallyApplicable(evidence)) {
-                generalTrialEligibility.put(toEvent(evidence), evidence.treatment());
+                generalTrialEvidence.add(ImmutableMolecularEvidence.builder()
+                        .event(toEvent(evidence))
+                        .treatment(evidence.treatment())
+                        .build());
             }
         }
-        return generalTrialEligibility;
+        return generalTrialEvidence;
     }
 
     @NotNull
-    private static Multimap<String, String> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> ckbEvidences) {
-        Multimap<String, String> generalResponsiveEvidence = ArrayListMultimap.create();
-        for (TreatmentEvidence evidence : ckbEvidences) {
+    public static List<MolecularEvidence> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> generalResponsiveEvidence = Lists.newArrayList();
+        for (TreatmentEvidence evidence : filter(evidences, CKB_SOURCE)) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
 
             if (isReported && isPotentiallyApplicable && isResponsiveEvidence) {
-                generalResponsiveEvidence.put(toEvent(evidence), evidence.treatment());
+                generalResponsiveEvidence.add(ImmutableMolecularEvidence.builder()
+                        .event(toEvent(evidence))
+                        .treatment(evidence.treatment())
+                        .build());
             }
         }
         return generalResponsiveEvidence;
     }
 
     @NotNull
-    private static Multimap<String, String> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> ckbEvidences) {
-        Multimap<String, String> generalResistanceEvidence = ArrayListMultimap.create();
+    public static List<MolecularEvidence> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> generalResistanceEvidence = Lists.newArrayList();
 
+        List<TreatmentEvidence> ckbEvidences = filter(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : ckbEvidences) {
             boolean isReported = evidence.reported();
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
@@ -99,7 +92,10 @@ final class OrangeEvidenceFactory {
                     hasOnLabelResponsiveEvidenceWithMaxLeve(ckbEvidences, evidence.treatment(), evidence.level());
 
             if (isReported && isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
-                generalResistanceEvidence.put(toEvent(evidence), evidence.treatment());
+                generalResistanceEvidence.add(ImmutableMolecularEvidence.builder()
+                        .event(toEvent(evidence))
+                        .treatment(evidence.treatment())
+                        .build());
             }
         }
 

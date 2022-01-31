@@ -1,0 +1,37 @@
+{
+  "sampleId": "ACTN01029999T",
+  "type": "WGS",
+  "date": {
+    "year": 2021,
+    "month": 2,
+    "day": 23
+  },
+  "hasReliableQuality": true,
+  "mutations": [],
+  "activatedGenes": [],
+  "inactivatedGenes": [
+    {
+      "gene": "NF1",
+      "hasBeenDeleted": false
+    },
+    {
+      "gene": "RB1",
+      "hasBeenDeleted": true
+    }
+  ],
+  "amplifiedGenes": [],
+  "wildtypeGenes": [],
+  "fusions": [],
+  "isMicrosatelliteUnstable": false,
+  "isHomologousRepairDeficient": true,
+  "tumorMutationalBurden": 4.32,
+  "tumorMutationalLoad": 243,
+  "evidence": {
+    "actinTrialEvidence": {},
+    "generalTrialSource": "trials",
+    "generalTrialEvidence": {},
+    "generalEvidenceSource": "evidence",
+    "generalResponsiveEvidence": {},
+    "generalResistanceEvidence": {}
+  }
+}

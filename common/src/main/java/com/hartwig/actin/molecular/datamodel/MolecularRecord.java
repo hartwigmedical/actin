@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -53,6 +54,21 @@ public abstract class MolecularRecord {
     public abstract Integer tumorMutationalLoad();
 
     @NotNull
-    public abstract MolecularEvidence evidence();
+    public abstract List<MolecularEvidence> actinTrialEvidence();
+
+    @NotNull
+    public abstract String generalTrialSource();
+
+    @NotNull
+    public abstract List<MolecularEvidence> generalTrialEvidence();
+
+    @NotNull
+    public abstract String generalEvidenceSource();
+
+    @NotNull
+    public abstract List<MolecularEvidence> generalResponsiveEvidence();
+
+    @NotNull
+    public abstract List<MolecularEvidence> generalResistanceEvidence();
 
 }

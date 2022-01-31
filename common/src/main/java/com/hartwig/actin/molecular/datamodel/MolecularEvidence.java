@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.datamodel;
 
-import com.google.common.collect.Multimap;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,20 +9,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class MolecularEvidence {
 
     @NotNull
-    public abstract Multimap<String, String> actinTrialEvidence();
+    public abstract String event();
 
     @NotNull
-    public abstract String generalTrialSource();
-
-    @NotNull
-    public abstract Multimap<String, String> generalTrialEvidence();
-
-    @NotNull
-    public abstract String generalEvidenceSource();
-
-    @NotNull
-    public abstract Multimap<String, String> generalResponsiveEvidence();
-
-    @NotNull
-    public abstract Multimap<String, String> generalResistanceEvidence();
+    public abstract String treatment();
 }
