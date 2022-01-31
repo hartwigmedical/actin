@@ -35,13 +35,11 @@ final class OrangeEvidenceFactory {
     public static List<MolecularEvidence> createActinTreatmentEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> actinTreatmentEvidences = Lists.newArrayList();
 
-        for (TreatmentEvidence evidence : filter(evidences, ACTIN_SOURCE)) {
-            if (evidence.reported()) {
-                actinTreatmentEvidences.add(ImmutableMolecularEvidence.builder()
-                        .event(toEvent(evidence))
-                        .treatment(evidence.treatment())
-                        .build());
-            }
+        for (TreatmentEvidence evidence : reportedForSource(evidences, ACTIN_SOURCE)) {
+            actinTreatmentEvidences.add(ImmutableMolecularEvidence.builder()
+                    .event(toEvent(evidence))
+                    .treatment(evidence.treatment())
+                    .build());
         }
         return actinTreatmentEvidences;
     }
@@ -50,8 +48,8 @@ final class OrangeEvidenceFactory {
     public static List<MolecularEvidence> createGeneralTrialEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> generalTrialEvidence = Lists.newArrayList();
 
-        for (TreatmentEvidence evidence : filter(evidences, ICLUSION_SOURCE)) {
-            if (evidence.reported() && isPotentiallyApplicable(evidence)) {
+        for (TreatmentEvidence evidence : reportedForSource(evidences, ICLUSION_SOURCE)) {
+            if (isPotentiallyApplicable(evidence)) {
                 generalTrialEvidence.add(ImmutableMolecularEvidence.builder()
                         .event(toEvent(evidence))
                         .treatment(evidence.treatment())
@@ -64,12 +62,11 @@ final class OrangeEvidenceFactory {
     @NotNull
     public static List<MolecularEvidence> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> generalResponsiveEvidence = Lists.newArrayList();
-        for (TreatmentEvidence evidence : filter(evidences, CKB_SOURCE)) {
-            boolean isReported = evidence.reported();
+        for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResponsiveEvidence = evidence.direction().isResponsive();
 
-            if (isReported && isPotentiallyApplicable && isResponsiveEvidence) {
+            if (isPotentiallyApplicable && isResponsiveEvidence) {
                 generalResponsiveEvidence.add(ImmutableMolecularEvidence.builder()
                         .event(toEvent(evidence))
                         .treatment(evidence.treatment())
@@ -83,15 +80,14 @@ final class OrangeEvidenceFactory {
     public static List<MolecularEvidence> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> generalResistanceEvidence = Lists.newArrayList();
 
-        List<TreatmentEvidence> ckbEvidences = filter(evidences, CKB_SOURCE);
-        for (TreatmentEvidence evidence : ckbEvidences) {
-            boolean isReported = evidence.reported();
+        List<TreatmentEvidence> reportedCkbEvidences = reportedForSource(evidences, CKB_SOURCE);
+        for (TreatmentEvidence evidence : reportedCkbEvidences) {
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
             boolean isResistanceEvidence = evidence.direction().isResistant();
             boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
-                    hasOnLabelResponsiveEvidenceWithMaxLeve(ckbEvidences, evidence.treatment(), evidence.level());
+                    hasOnLabelResponsiveEvidenceWithMaxLevel(reportedCkbEvidences, evidence.treatment(), evidence.level());
 
-            if (isReported && isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
+            if (isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
                 generalResistanceEvidence.add(ImmutableMolecularEvidence.builder()
                         .event(toEvent(evidence))
                         .treatment(evidence.treatment())
@@ -103,20 +99,20 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private static List<TreatmentEvidence> filter(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
+    private static List<TreatmentEvidence> reportedForSource(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
         List<TreatmentEvidence> filtered = Lists.newArrayList();
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.sources().contains(source)) {
+            if (evidence.reported() && evidence.sources().contains(source)) {
                 filtered.add(evidence);
             }
         }
         return filtered;
     }
 
-    private static boolean hasOnLabelResponsiveEvidenceWithMaxLeve(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
+    private static boolean hasOnLabelResponsiveEvidenceWithMaxLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
             @NotNull EvidenceLevel maxLevel) {
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.reported() && evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
+            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
                     && maxLevel.isBetterOrEqual(evidence.level())) {
                 return true;
             }

@@ -55,5 +55,37 @@ generalResistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along wi
 
 ### Interpretation of ORANGE results
 
+The mapping of general molecular fields is done as follows:
+
+Field | Mapping
+---|---
+sampleId | The ORANGE sampleId
+type | WGS 
+date | The ORANGE date
+hasReliabilityQuality | The PURPLE field `hasReliableQuality` 
+
+The events that are used for ACTIN treatment matching are extracted from the PROTECT part of the ORANGE datamodel. It is assumed that PROTECT
+has been run on a SERVE database that includes an ACTIN source generated from the ACTIN treatment database using [serve-bridge](../serve-bridge).
+This setup allows PROTECT to determine classification for each of the relevant genes and mutations in the ACTIN treatment database.
+
+The following classifications are made from the ACTIN-sourced evidence in PROTECT:
+ - mutations: Any reported evidence of type `HOTSPOT_MUTATION`, `CODON_MUTATION` and `EXON_MUTATION` is included in the list of mutations.
+ A mapping is performed from the PROTECT evidence to a mutation string that matches with the input mutation string in the ACTIN treatment 
+ database. 
+ - activated genes: Includes any gene with reported evidence of type `ACTIVATION` or `PROMISCUOUS_FUSION`.
+ - inactivated genes: Includes any gene with reported evidence of type `INACTIVATION`. Based on the actual PROTECT event it is 
+ determined whether the gene has been deleted or not.
+ - amplified genes: Includes any gene with reported evidence of type `AMPLIFICATION`
+ - wildtype genes: Not implemented yet
+ - fusions: Include any fusion with reported evidence of type `FUSION_PAIR` 
+ 
+The evidence is extracted from the PROTECT part of ORANGE as follows:
+ - actin treatment evidence: All reported evidence from the ACTIN source.
+ - generalTrialEvidence: All reported evidence from the iClusion source, filtered for applicability
+ - generalResponsiveEvidence: All reported responsive evidence from the CKB source, filtered for applicability and if off-label: 
+ only added in case the evidence is A-level or B-level non-predicted.
+ - generalResistanceEvidence: Reported resistance evidence from the CKB source in case reported responsive evidence is found for the same 
+ treatment with lower (or equal) evidence level.    
+
 ### Version History and Download Links
  - Upcoming (first release) 

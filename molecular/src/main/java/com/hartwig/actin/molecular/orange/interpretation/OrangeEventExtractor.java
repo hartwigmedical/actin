@@ -14,7 +14,6 @@ import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
-import com.hartwig.actin.molecular.orange.util.GenomicEventFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -80,9 +79,7 @@ public final class OrangeEventExtractor {
         Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
         for (TreatmentEvidence evidence : evidences) {
             if (INACTIVATION_TYPES.contains(evidence.type())) {
-                String event = GenomicEventFormatter.format(evidence.event());
-
-                boolean hasBeenDeleted = event.equals("del");
+                boolean hasBeenDeleted = evidence.event().equals("full loss") || evidence.event().equals("partial loss");
 
                 inactivatedGenes.add(ImmutableInactivatedGene.builder().gene(evidence.gene()).hasBeenDeleted(hasBeenDeleted).build());
             }
