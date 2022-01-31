@@ -106,7 +106,7 @@ public class MolecularRecordJson {
                     .isHomologousRepairDeficient(nullableBool(record, "isHomologousRepairDeficient"))
                     .tumorMutationalBurden(nullableNumber(record, "tumorMutationalBurden"))
                     .tumorMutationalLoad(nullableInteger(record, "tumorMutationalLoad"))
-                    .actinTrialEvidence(toEvidences(array(record, "actinTrialEvidence")))
+                    .actinTreatmentEvidence(toEvidences(array(record, "actinTreatmentEvidence")))
                     .generalTrialSource(string(record, "generalTrialSource"))
                     .generalTrialEvidence(toEvidences(array(record, "generalTrialEvidence")))
                     .generalEvidenceSource(string(record, "generalEvidenceSource"))

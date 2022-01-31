@@ -11,6 +11,7 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
    -curation_directory /path/to/curation
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
+
 ### Disease Ontology ID
 
 For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, 

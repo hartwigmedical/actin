@@ -41,7 +41,7 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        Set<String> eventsWithActinEvidence = extractEvents(record.actinTrialEvidence());
+        Set<String> eventsWithActinEvidence = extractEvents(record.actinTreatmentEvidence());
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
         table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
 

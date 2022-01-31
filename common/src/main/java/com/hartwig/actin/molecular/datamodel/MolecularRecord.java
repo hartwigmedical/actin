@@ -54,7 +54,7 @@ public abstract class MolecularRecord {
     public abstract Integer tumorMutationalLoad();
 
     @NotNull
-    public abstract List<MolecularEvidence> actinTrialEvidence();
+    public abstract List<MolecularEvidence> actinTreatmentEvidence();
 
     @NotNull
     public abstract String generalTrialSource();

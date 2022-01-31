@@ -47,7 +47,7 @@ public final class TestMolecularDataFactory {
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
                 .tumorMutationalLoad(185)
-                .actinTrialEvidence(createTestActinTrialEvidence())
+                .actinTreatmentEvidence(createTestActinTreatmentEvidence())
                 .generalTrialSource("CKB")
                 .generalTrialEvidence(createTestGeneralTrialEvidence())
                 .generalEvidenceSource("CKB")
@@ -75,7 +75,7 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestActinTrialEvidence() {
+    private static List<MolecularEvidence> createTestActinTreatmentEvidence() {
         List<MolecularEvidence> evidences = Lists.newArrayList();
 
         evidences.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());

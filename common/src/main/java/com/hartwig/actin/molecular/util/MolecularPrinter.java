@@ -52,7 +52,7 @@ public class MolecularPrinter {
         printer.print("Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
         printer.print("Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
 
-        printer.print("ACTIN actionable events: " + toEvents(record.actinTrialEvidence()));
+        printer.print("ACTIN actionable events: " + toEvents(record.actinTreatmentEvidence()));
         printer.print("General trial actionable events: " + toEvents(record.generalTrialEvidence()));
         printer.print("General responsive evidence: " + toEvents(record.generalResponsiveEvidence()));
         printer.print("General resistance evidence: " + toEvents(record.generalResistanceEvidence()));

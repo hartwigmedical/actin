@@ -79,12 +79,12 @@ public class MolecularRecordJsonTest {
         assertEquals(4.32, molecular.tumorMutationalBurden(), EPSILON);
         assertEquals(243, (int) molecular.tumorMutationalLoad());
 
-        assertEquals(3, molecular.actinTrialEvidence().size());
-        MolecularEvidence actinEvidence1 = findByEvent(molecular.actinTrialEvidence(), "High TML");
+        assertEquals(3, molecular.actinTreatmentEvidence().size());
+        MolecularEvidence actinEvidence1 = findByEvent(molecular.actinTreatmentEvidence(), "High TML");
         assertEquals("Trial 1", actinEvidence1.treatment());
-        MolecularEvidence actinEvidence2 = findByEvent(molecular.actinTrialEvidence(), "HR deficiency");
+        MolecularEvidence actinEvidence2 = findByEvent(molecular.actinTreatmentEvidence(), "HR deficiency");
         assertEquals("Trial 2", actinEvidence2.treatment());
-        MolecularEvidence actinEvidence3 = findByEvent(molecular.actinTrialEvidence(), "NF1 disruption");
+        MolecularEvidence actinEvidence3 = findByEvent(molecular.actinTreatmentEvidence(), "NF1 disruption");
         assertEquals("Trial 3", actinEvidence3.treatment());
 
         assertEquals("trials", molecular.generalTrialSource());

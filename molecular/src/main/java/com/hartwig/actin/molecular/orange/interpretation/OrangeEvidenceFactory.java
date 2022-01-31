@@ -32,18 +32,18 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static List<MolecularEvidence> createActinTrialEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> actinTrialEvidences = Lists.newArrayList();
+    public static List<MolecularEvidence> createActinTreatmentEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> actinTreatmentEvidences = Lists.newArrayList();
 
         for (TreatmentEvidence evidence : filter(evidences, ACTIN_SOURCE)) {
             if (evidence.reported()) {
-                actinTrialEvidences.add(ImmutableMolecularEvidence.builder()
+                actinTreatmentEvidences.add(ImmutableMolecularEvidence.builder()
                         .event(toEvent(evidence))
                         .treatment(evidence.treatment())
                         .build());
             }
         }
-        return actinTrialEvidences;
+        return actinTreatmentEvidences;
     }
 
     @NotNull

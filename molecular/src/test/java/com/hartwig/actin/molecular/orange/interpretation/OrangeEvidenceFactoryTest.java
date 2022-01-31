@@ -20,11 +20,11 @@ public class OrangeEvidenceFactoryTest {
 
     @Test
     public void canCreateMolecularEvidence() {
-        List<TreatmentEvidence> evidences =createTestEvidences();
+        List<TreatmentEvidence> evidences = createTestEvidences();
 
-       List<MolecularEvidence> actinTrialEvidence = OrangeEvidenceFactory.createActinTrialEvidence(evidences);
-        assertEquals(1, actinTrialEvidence.size());
-        assertEquals("B responsive actin event", actinTrialEvidence.get(0).event());
+        List<MolecularEvidence> actinTreatmentEvidence = OrangeEvidenceFactory.createActinTreatmentEvidence(evidences);
+        assertEquals(1, actinTreatmentEvidence.size());
+        assertEquals("B responsive actin event", actinTreatmentEvidence.get(0).event());
 
         List<MolecularEvidence> generalTrialEvidence = OrangeEvidenceFactory.createGeneralTrialEvidence(evidences);
         assertEquals(1, generalTrialEvidence.size());
@@ -34,7 +34,7 @@ public class OrangeEvidenceFactoryTest {
         assertEquals(1, generalResponsiveEvidence.size());
         assertEquals("A responsive event", generalResponsiveEvidence.get(0).event());
 
-        List<MolecularEvidence> generalResistanceEvidence =OrangeEvidenceFactory.createGeneralResistanceEvidence(evidences);
+        List<MolecularEvidence> generalResistanceEvidence = OrangeEvidenceFactory.createGeneralResistanceEvidence(evidences);
         assertEquals(1, generalResistanceEvidence.size());
         assertEquals("A resistant event", generalResistanceEvidence.get(0).event());
     }
@@ -124,7 +124,8 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // And 1 ACTIN that should be included.
-        evidences.add(ImmutableTreatmentEvidence.builder().from(TestTreatmentEvidenceFactory.create())
+        evidences.add(ImmutableTreatmentEvidence.builder()
+                .from(TestTreatmentEvidenceFactory.create())
                 .reported(true)
                 .event("B responsive actin event")
                 .onLabel(true)
