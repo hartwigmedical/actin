@@ -73,13 +73,6 @@ public class OrangeEventExtractorTest {
 
         assertEquals(1, activationExtraction.activatedGenes().size());
         assertEquals("gene", activationExtraction.activatedGenes().iterator().next());
-
-        List<TreatmentEvidence> fusionEvidence =
-                Lists.newArrayList(createTestBuilder().type(EvidenceType.PROMISCUOUS_FUSION).gene("gene").build());
-        OrangeEventExtraction fusionExtraction = OrangeEventExtractor.extract(withEvidences(fusionEvidence));
-
-        assertEquals(1, fusionExtraction.activatedGenes().size());
-        assertEquals("gene", fusionExtraction.activatedGenes().iterator().next());
     }
 
     @Test
@@ -131,6 +124,15 @@ public class OrangeEventExtractorTest {
         FusionGene fusionGene = fusionExtraction.fusions().iterator().next();
         assertEquals("gene1", fusionGene.fiveGene());
         assertEquals("gene2", fusionGene.threeGene());
+
+        List<TreatmentEvidence> promiscuousEvidence =
+                Lists.newArrayList(createTestBuilder().type(EvidenceType.PROMISCUOUS_FUSION).event("gene1 - gene2 fusion").build());
+        OrangeEventExtraction promiscuousExtraction = OrangeEventExtractor.extract(withEvidences(promiscuousEvidence));
+
+        assertEquals(1, promiscuousExtraction.fusions().size());
+        FusionGene promiscuous = promiscuousExtraction.fusions().iterator().next();
+        assertEquals("gene1", promiscuous.fiveGene());
+        assertEquals("gene2", promiscuous.threeGene());
     }
 
     @NotNull
