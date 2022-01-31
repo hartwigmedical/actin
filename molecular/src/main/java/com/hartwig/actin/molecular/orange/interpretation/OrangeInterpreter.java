@@ -19,6 +19,7 @@ public final class OrangeInterpreter {
 
     static final String HOMOLOGOUS_REPAIR_DEFICIENT = "HR_DEFICIENT";
     static final String HOMOLOGOUS_REPAIR_PROFICIENT = "HR_PROFICIENT";
+    static final String HOMOLOGOUS_REPAIR_UNKNOWN = "CANNOT_BE_DETERMINED";
 
     private OrangeInterpreter() {
     }
@@ -65,10 +66,13 @@ public final class OrangeInterpreter {
 
     @Nullable
     private static Boolean isHRD(@NotNull String homologousRepairStatus) {
-        if (homologousRepairStatus.equals(HOMOLOGOUS_REPAIR_DEFICIENT)) {
-            return true;
-        } else if (homologousRepairStatus.equals(HOMOLOGOUS_REPAIR_PROFICIENT)) {
-            return false;
+        switch (homologousRepairStatus) {
+            case HOMOLOGOUS_REPAIR_DEFICIENT:
+                return true;
+            case HOMOLOGOUS_REPAIR_PROFICIENT:
+                return false;
+            case HOMOLOGOUS_REPAIR_UNKNOWN:
+                return null;
         }
 
         LOGGER.warn("Cannot interpret homologous repair status '{}'", homologousRepairStatus);

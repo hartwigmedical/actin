@@ -27,7 +27,7 @@ public final class TestOrangeDataFactory {
     }
 
     @NotNull
-    public static OrangeRecord createProperTestMolecularRecord() {
+    public static OrangeRecord createProperTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .from(createMinimalTestOrangeRecord())
                 .date(LocalDate.of(2022, 1, 20))

@@ -23,7 +23,7 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canInterpretOrangeRecord() {
-        MolecularRecord record = OrangeInterpreter.interpret(TestOrangeDataFactory.createProperTestMolecularRecord());
+        MolecularRecord record = OrangeInterpreter.interpret(TestOrangeDataFactory.createProperTestOrangeRecord());
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
@@ -48,6 +48,10 @@ public class OrangeInterpreterTest {
         MolecularRecord proficient =
                 OrangeInterpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_PROFICIENT));
         assertFalse(proficient.isHomologousRepairDeficient());
+
+        MolecularRecord unknown =
+                OrangeInterpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_UNKNOWN));
+        assertNull(unknown.isHomologousRepairDeficient());
 
         MolecularRecord weird = OrangeInterpreter.interpret(withHomologousRepairStatus("not a valid status"));
         assertNull(weird.isHomologousRepairDeficient());

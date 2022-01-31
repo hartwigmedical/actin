@@ -39,23 +39,22 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print("Experiment type '" + record.type() + "' on " + formatDate(record.date()));
-        printer.print("Has reliable quality?: " + toYesNo(record.hasReliableQuality()));
+        printer.print("Has reliable quality?: " + toYesNoUnknown(record.hasReliableQuality()));
         printer.print("Mutations: " + mutationString(record.mutations()));
         printer.print("Activated genes: " + concat(record.activatedGenes()));
         printer.print("Inactivated genes: " + inactivatedGeneString(record.inactivatedGenes()));
         printer.print("Amplified genes: " + concat(record.amplifiedGenes()));
-        // TODO Enable when wildtype genes are supported:
-        //        printer.print("Wildtype genes: " + concat(record.wildtypeGenes()));
+        printer.print("Wildtype genes: " + concat(record.wildtypeGenes()));
         printer.print("Fusions: " + fusionString(record.fusions()));
-        printer.print("Microsatellite unstable?: " + toYesNo(record.isMicrosatelliteUnstable()));
-        printer.print("Homologous repair deficient?: " + toYesNo(record.isHomologousRepairDeficient()));
+        printer.print("Microsatellite unstable?: " + toYesNoUnknown(record.isMicrosatelliteUnstable()));
+        printer.print("Homologous repair deficient?: " + toYesNoUnknown(record.isHomologousRepairDeficient()));
         printer.print("Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
         printer.print("Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
 
         printer.print("ACTIN actionable events: " + toEvents(record.actinTreatmentEvidence()));
         printer.print("General trial actionable events: " + toEvents(record.generalTrialEvidence()));
-        printer.print("General responsive evidence: " + toEvents(record.generalResponsiveEvidence()));
-        printer.print("General resistance evidence: " + toEvents(record.generalResistanceEvidence()));
+        printer.print("General responsive events: " + toEvents(record.generalResponsiveEvidence()));
+        printer.print("General resistance events: " + toEvents(record.generalResistanceEvidence()));
     }
 
     @NotNull
@@ -110,7 +109,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String toYesNo(@Nullable Boolean bool) {
+    private static String toYesNoUnknown(@Nullable Boolean bool) {
         if (bool == null) {
             return "Unknown";
         }

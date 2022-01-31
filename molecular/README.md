@@ -13,35 +13,36 @@ java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplicati
 ```
 ## Molecular Datamodel
 
-The following general fields about a molecular experiment can be ingested per sample
+The following general fields about a molecular experiment can be populated per sample
 
 Field | Example Value | Details
 ---|---|---
 sampleId | ACTN01029999T | Unique identifier for the sample / biopsy.
 type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
 date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
-hasReliabilityQuality | 1 | Indicates whether the molecular results can be trusted or need to be interpreted with caution.
+hasReliabilityQuality | 1 | Indicates whether the molecular results can be trusted or need to be interpreted with caution. 
  
-The following data is used for matching against treatment eligibility criteria.
+The following data is used for matching against ACTIN's treatment eligibility criteria.
 Do note that ACTIN itself does not make assumptions about the exact definition of the terms below. 
-These decisions are all up to the algorithm interpreting the molecular data and converting it to the standard datamodel.
+These decisions are all up to the algorithm interpreting the molecular data and converting this interpretation to the datamodel 
+that is described here.
 
 Field | Example Value | Details
 ---|---|---
-mutations | BRAF V600E, EGFR exon 19 deletion | A list of gene-specific mutations found.
-activatedGenes | KRAS, NRAS | A list of genes that are considered to be activated.
-inactivatedGenes | TP53, RB1 | A list of genes that are considered to be inactivated (along with a boolean whether they have been deleted completely).
-amplifiedGenes | MYC | A list of genes that are considered to be amplified.
+mutations | BRAF V600E, EGFR exon 19 deletion | A list of gene-specific mutations.
+activatedGenes | KRAS, NRAS | A list of genes considered to be activated.
+inactivatedGenes | TP53, RB1 | A list of genes considered to be inactivated (along with a boolean whether they have been deleted completely).
+amplifiedGenes | MYC | A list of genes considered to be amplified.
 wildtypeGenes | BRAF | A list of genes considered to be wildtype. 
-fusions | EML4-ALK | A list of fusion genes found.
-isMicrosatelliteUnstable | 0 | If true, sample is considered microsatellite unstable
-isHomologousRepairDeficient | 0 | If true, sample is considered homologous repair deficient.
+fusions | EML4-ALK | A list of genes considered to be fused together. 
+isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable
+isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient.
 tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb.
 tumorMutationalLoad | 115 | Number of missense mutations across the genome.
 
-The following data is not used in actual trial mapping but can be used to provide additional context in the ACTIN report with respect to 
-molecular findings. Along with evidence against the internal ACTIN treatment database, users can annotate with additional trial and general 
-evidence sources.
+The following data is not used in ACTIN's treatment matching but can be used to provide additional context in the ACTIN report. 
+Along with evidence matched against the ACTIN treatment database, the datamodel can hold additional trial and general evidence from 
+external sources.
 
 Field | Example Value | Details
 ---|---|---
