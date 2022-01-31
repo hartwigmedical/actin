@@ -1,4 +1,4 @@
-package com.hartwig.actin.json;
+package com.hartwig.actin.util.json;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

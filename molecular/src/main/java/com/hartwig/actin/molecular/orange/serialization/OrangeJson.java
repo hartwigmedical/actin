@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.orange.serialization;
 
-import static com.hartwig.actin.json.Json.array;
-import static com.hartwig.actin.json.Json.bool;
-import static com.hartwig.actin.json.Json.integer;
-import static com.hartwig.actin.json.Json.nullableDate;
-import static com.hartwig.actin.json.Json.nullableInteger;
-import static com.hartwig.actin.json.Json.nullableString;
-import static com.hartwig.actin.json.Json.number;
-import static com.hartwig.actin.json.Json.object;
-import static com.hartwig.actin.json.Json.string;
-import static com.hartwig.actin.json.Json.stringList;
+import static com.hartwig.actin.util.json.Json.array;
+import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.nullableDate;
+import static com.hartwig.actin.util.json.Json.nullableInteger;
+import static com.hartwig.actin.util.json.Json.nullableString;
+import static com.hartwig.actin.util.json.Json.number;
+import static com.hartwig.actin.util.json.Json.object;
+import static com.hartwig.actin.util.json.Json.string;
+import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.File;
 import java.io.IOException;

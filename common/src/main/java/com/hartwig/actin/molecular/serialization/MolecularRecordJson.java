@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.serialization;
 
-import static com.hartwig.actin.json.Json.array;
-import static com.hartwig.actin.json.Json.bool;
-import static com.hartwig.actin.json.Json.nullableBool;
-import static com.hartwig.actin.json.Json.nullableDate;
-import static com.hartwig.actin.json.Json.nullableInteger;
-import static com.hartwig.actin.json.Json.nullableNumber;
-import static com.hartwig.actin.json.Json.string;
-import static com.hartwig.actin.json.Json.stringList;
+import static com.hartwig.actin.util.json.Json.array;
+import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.nullableBool;
+import static com.hartwig.actin.util.json.Json.nullableDate;
+import static com.hartwig.actin.util.json.Json.nullableInteger;
+import static com.hartwig.actin.util.json.Json.nullableNumber;
+import static com.hartwig.actin.util.json.Json.string;
+import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,7 +29,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
@@ -42,6 +41,7 @@ import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.util.Paths;
+import com.hartwig.actin.util.json.GsonSerializer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

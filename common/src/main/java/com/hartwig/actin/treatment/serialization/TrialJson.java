@@ -1,9 +1,9 @@
 package com.hartwig.actin.treatment.serialization;
 
-import static com.hartwig.actin.json.Json.array;
-import static com.hartwig.actin.json.Json.bool;
-import static com.hartwig.actin.json.Json.object;
-import static com.hartwig.actin.json.Json.string;
+import static com.hartwig.actin.util.json.Json.array;
+import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.object;
+import static com.hartwig.actin.util.json.Json.string;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,7 +25,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
@@ -43,6 +42,7 @@ import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.hartwig.actin.util.Paths;
+import com.hartwig.actin.util.json.GsonSerializer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

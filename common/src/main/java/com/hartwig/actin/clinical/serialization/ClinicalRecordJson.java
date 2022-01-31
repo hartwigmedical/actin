@@ -1,20 +1,20 @@
 package com.hartwig.actin.clinical.serialization;
 
-import static com.hartwig.actin.json.Json.array;
-import static com.hartwig.actin.json.Json.bool;
-import static com.hartwig.actin.json.Json.date;
-import static com.hartwig.actin.json.Json.integer;
-import static com.hartwig.actin.json.Json.nullableBool;
-import static com.hartwig.actin.json.Json.nullableDate;
-import static com.hartwig.actin.json.Json.nullableInteger;
-import static com.hartwig.actin.json.Json.nullableNumber;
-import static com.hartwig.actin.json.Json.nullableObject;
-import static com.hartwig.actin.json.Json.nullableString;
-import static com.hartwig.actin.json.Json.nullableStringList;
-import static com.hartwig.actin.json.Json.number;
-import static com.hartwig.actin.json.Json.object;
-import static com.hartwig.actin.json.Json.string;
-import static com.hartwig.actin.json.Json.stringList;
+import static com.hartwig.actin.util.json.Json.array;
+import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.date;
+import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.nullableBool;
+import static com.hartwig.actin.util.json.Json.nullableDate;
+import static com.hartwig.actin.util.json.Json.nullableInteger;
+import static com.hartwig.actin.util.json.Json.nullableNumber;
+import static com.hartwig.actin.util.json.Json.nullableObject;
+import static com.hartwig.actin.util.json.Json.nullableString;
+import static com.hartwig.actin.util.json.Json.nullableStringList;
+import static com.hartwig.actin.util.json.Json.number;
+import static com.hartwig.actin.util.json.Json.object;
+import static com.hartwig.actin.util.json.Json.string;
+import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -80,8 +80,8 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
-import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.util.Paths;
+import com.hartwig.actin.util.json.GsonSerializer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.doid.serialization;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.json.JsonDatamodelChecker;
+import com.hartwig.actin.util.json.JsonDatamodelChecker;
 
 import org.jetbrains.annotations.NotNull;
 

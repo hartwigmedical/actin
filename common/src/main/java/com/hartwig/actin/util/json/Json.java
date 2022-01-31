@@ -1,4 +1,4 @@
-package com.hartwig.actin.json;
+package com.hartwig.actin.util.json;
 
 import java.time.LocalDate;
 import java.util.List;

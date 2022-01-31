@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.doid.serialization;
 
-import static com.hartwig.actin.json.Json.array;
-import static com.hartwig.actin.json.Json.object;
-import static com.hartwig.actin.json.Json.optionalArray;
-import static com.hartwig.actin.json.Json.optionalObject;
-import static com.hartwig.actin.json.Json.optionalString;
-import static com.hartwig.actin.json.Json.optionalStringList;
-import static com.hartwig.actin.json.Json.string;
-import static com.hartwig.actin.json.Json.stringList;
+import static com.hartwig.actin.util.json.Json.array;
+import static com.hartwig.actin.util.json.Json.object;
+import static com.hartwig.actin.util.json.Json.optionalArray;
+import static com.hartwig.actin.util.json.Json.optionalObject;
+import static com.hartwig.actin.util.json.Json.optionalString;
+import static com.hartwig.actin.util.json.Json.optionalStringList;
+import static com.hartwig.actin.util.json.Json.string;
+import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -43,7 +43,7 @@ import com.hartwig.actin.algo.doid.datamodel.Node;
 import com.hartwig.actin.algo.doid.datamodel.Restriction;
 import com.hartwig.actin.algo.doid.datamodel.Synonym;
 import com.hartwig.actin.algo.doid.datamodel.Xref;
-import com.hartwig.actin.json.JsonDatamodelChecker;
+import com.hartwig.actin.util.json.JsonDatamodelChecker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

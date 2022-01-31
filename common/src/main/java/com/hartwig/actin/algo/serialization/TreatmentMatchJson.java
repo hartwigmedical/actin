@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.serialization;
 
-import static com.hartwig.actin.json.Json.array;
-import static com.hartwig.actin.json.Json.bool;
-import static com.hartwig.actin.json.Json.object;
-import static com.hartwig.actin.json.Json.string;
+import static com.hartwig.actin.util.json.Json.array;
+import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.object;
+import static com.hartwig.actin.util.json.Json.string;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +34,6 @@ import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
-import com.hartwig.actin.json.GsonSerializer;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
@@ -49,6 +48,7 @@ import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.hartwig.actin.treatment.sort.EligibilityComparator;
 import com.hartwig.actin.util.Paths;
+import com.hartwig.actin.util.json.GsonSerializer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
