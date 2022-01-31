@@ -12,6 +12,7 @@
         <module>common</module>
         <module>database</module>
         <module>clinical</module>
+        <module>molecular</module>
         <module>treatment</module>
         <module>algo</module>
         <module>report</module>
@@ -82,6 +83,11 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>clinical</artifactId>
+                <version>${actin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>molecular</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
