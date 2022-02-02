@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,34 +43,30 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        List<Set<String>> filterList = Lists.newArrayList();
-
         Set<String> eventsWithApprovedEvidence = extractEvents(record.approvedResponsiveEvidence());
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + record.evidenceSource()));
         table.addCell(Cells.createValue(formatEvents(eventsWithApprovedEvidence)));
-        filterList.add(eventsWithApprovedEvidence);
 
         Set<String> eventsWithActinEvidence = extractEvents(record.actinTrials());
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
         table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
-        filterList.add(eventsWithActinEvidence);
 
         Set<String> eventsWithExternalTrialEvidence = extractEvents(record.externalTrials());
-        Set<String> additionalTrialEvents = subtract(eventsWithExternalTrialEvidence, filterList);
+        Set<String> additionalTrialEvents =
+                subtract(eventsWithExternalTrialEvidence, Lists.newArrayList(eventsWithApprovedEvidence, eventsWithActinEvidence));
         if (!additionalTrialEvents.isEmpty()) {
-            table.addCell(Cells.createKey("Additional events with trial eligibility in " + record.externalTrialSource())
-                    .setPaddingLeft(10));
+            table.addCell(addIndent(Cells.createKey("Additional events with trial eligibility in " + record.externalTrialSource())));
             table.addCell(Cells.createValue(formatEvents(additionalTrialEvents)));
         }
 
         Set<String> eventsWithExperimentalEvidence = extractEvents(record.experimentalResponsiveEvidence());
-        Set<String> additionalExperimentalEvents = subtract(eventsWithExperimentalEvidence, filterList);
-        table.addCell(Cells.createKey("Additional events with experimental evidence in " + record.evidenceSource()).setPaddingLeft(10));
+        Set<String> additionalExperimentalEvents = subtract(eventsWithExperimentalEvidence, eventsWithApprovedEvidence);
+        table.addCell(addIndent(Cells.createKey("Events with experimental evidence in " + record.evidenceSource())));
         table.addCell(Cells.createValue(formatEvents(additionalExperimentalEvents)));
-        filterList.add(eventsWithExperimentalEvidence);
 
         Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());
-        Set<String> additionalOtherEvents = subtract(eventsWithOtherEvidence, filterList);
+        Set<String> additionalOtherEvents =
+                subtract(eventsWithOtherEvidence, Lists.newArrayList(eventsWithApprovedEvidence, eventsWithExperimentalEvidence));
         table.addCell(Cells.createKey("Other events with responsive evidence in " + record.evidenceSource()));
         table.addCell(Cells.createValue(formatEvents(additionalOtherEvents)));
 
@@ -80,6 +77,11 @@ public class MolecularResultsGenerator implements TableGenerator {
         }
 
         return table;
+    }
+
+    @NotNull
+    private static Cell addIndent(@NotNull Cell cell) {
+        return cell.setPaddingLeft(10);
     }
 
     @NotNull
@@ -103,6 +105,13 @@ public class MolecularResultsGenerator implements TableGenerator {
             resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());
         }
         return concat(resistanceEvidenceStrings);
+    }
+
+    @NotNull
+    private static Set<String> subtract(@NotNull Set<String> mainSet, @NotNull Set<String> setToRemove) {
+        List<Set<String>> list = Lists.newArrayList();
+        list.add(setToRemove);
+        return subtract(mainSet, list);
     }
 
     @NotNull

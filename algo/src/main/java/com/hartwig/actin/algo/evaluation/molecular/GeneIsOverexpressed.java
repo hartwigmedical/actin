@@ -15,6 +15,6 @@ public class GeneIsOverexpressed implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         // Currently assume we only have WGS data available.
-        return Evaluation.UNDETERMINED;
+        return Evaluation.FAIL;
     }
 }
