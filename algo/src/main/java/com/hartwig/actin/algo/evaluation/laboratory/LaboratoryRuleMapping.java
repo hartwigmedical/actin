@@ -46,6 +46,7 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
+        map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
         map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO));
         map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
@@ -56,6 +57,9 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
         map.put(EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE));
         map.put(EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PHOSPHORUS));
+        map.put(EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MG_PER_DL));
         map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MMOL_PER_L));
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));

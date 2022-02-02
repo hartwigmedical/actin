@@ -109,6 +109,7 @@ HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
+HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 
 ##### Rules related to previous cancer treatments or previous primary tumors
 
@@ -125,10 +126,12 @@ HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lin
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
 HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines => Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine
 HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines <= Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines < Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
+HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 
@@ -177,7 +180,8 @@ HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measur
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X | Creatinine (CREA) in mg/dL <= X | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42
 HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN 
-HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN 
+HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN
+HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X | Total Bilirubin (TBIL) in umol/L <= X
 HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
 HAS_INR_ULN_OF_AT_MOST_X | International normalized ratio (INR/POCT_INR) <= X*ULN 
 HAS_PT_ULN_OF_AT_MOST_X | Prothrombin time (PT/POCT_PT) <= X*ULN 
@@ -187,6 +191,9 @@ HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
 HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
 HAS_PHOSPHORUS_ULN_OF_AT_MOST_X | Phosphate (P) <= X*ULN
+HAS_AFP_ULN_OF_AT_LEAST_X | Alpha fetoprotein (AFP) <= X*ULN
+HAS_CA125_ULN_OF_AT_LEAST_X | CA 125 (C125) <= X*ULN
+HAS_HCG_ULN_OF_AT_LEAST_X | HCG + beta HCG (HCG) <= X*ULN
 HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X | Calcium (Ca) in mg/dL <= X | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495
 HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Calcium (Ca) in mmol/L <= X | In case calcium is measured in mg/dL, the value is converted to mmol/L using Ca[mmol/L]=Ca=[mg/dL]*0.2495
 HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X
@@ -213,6 +220,7 @@ HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
 HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 77
+HAS_HISTORY_OF_IMMUNE_SYSYEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
@@ -250,6 +258,7 @@ HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid shoul
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
+HAS_CURRENT_COVID_19_INFECTION | T.B.D.
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated. 
 
 ##### Rules related to allergies / current medication
@@ -269,6 +278,7 @@ CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
+CURRENTLY_GETS_COLONY_STIMULATING_FACTORS | Medication > categories contains type of "Colony stimulating factors" and status is active
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_OATP_X | T.B.D. - Currently resolves to UNDETERMINED | Organic-anion-transporting polypeptides

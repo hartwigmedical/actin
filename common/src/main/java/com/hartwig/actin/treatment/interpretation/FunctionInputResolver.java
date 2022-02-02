@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
@@ -56,6 +57,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.PATIENT_IS_LEGALLY_INSTITUTIONALIZED, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_STAGE_X, FunctionInput.ONE_STRING);
@@ -86,6 +88,8 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT_CATEGORY);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y,
+                FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
@@ -93,6 +97,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
 
@@ -134,6 +139,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
@@ -143,6 +149,9 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
@@ -158,6 +167,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSYEM_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, FunctionInput.NONE);
@@ -187,6 +197,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CURRENT_COVID_19_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, FunctionInput.ONE_STRING);
@@ -202,6 +213,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, FunctionInput.NONE);

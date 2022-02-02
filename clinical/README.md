@@ -103,6 +103,7 @@ N prior other conditions
 Field | Example Value | Details
 ---|---|---
 name | Pancreatitis | Other condition considered relevant for treatment decision making
+year | 2020 | Year in which other condition was diagnosed
 doids | 4989 | Separated by ";"
 category | Pancreas disease | Assigned category of considered condition, based on DOIDs
 

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.infection;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -30,6 +31,7 @@ public final class InfectionRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasSpecificInfectionCreator(doidModel, HEPATITIS_C_DOID));
         map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasSpecificInfectionCreator(doidModel, HIV_DOID));
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(doidModel, CYTOMEGALOVIRUS_DOID));
+        map.put(EligibilityRule.HAS_CURRENT_COVID_19_INFECTION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToVaccineUseCreator());
 
         return map;
