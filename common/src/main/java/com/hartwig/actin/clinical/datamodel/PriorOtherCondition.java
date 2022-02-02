@@ -13,6 +13,9 @@ public abstract class PriorOtherCondition {
     @NotNull
     public abstract String name();
 
+    @Nullable
+    public abstract Integer year();
+
     @NotNull
     public abstract Set<String> doids();
 

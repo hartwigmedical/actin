@@ -242,10 +242,12 @@ class ClinicalDAO {
             context.insertInto(PRIOROTHERCONDITION,
                     PRIOROTHERCONDITION.SAMPLEID,
                     PRIOROTHERCONDITION.NAME,
+                    PRIOROTHERCONDITION.YEAR,
                     PRIOROTHERCONDITION.DOIDS,
                     PRIOROTHERCONDITION.CATEGORY)
                     .values(sampleId,
                             priorOtherCondition.name(),
+                            priorOtherCondition.year(),
                             DataUtil.concat(priorOtherCondition.doids()),
                             priorOtherCondition.category())
                     .execute();

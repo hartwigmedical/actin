@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
+import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,7 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
         } else {
             return ImmutablePriorOtherCondition.builder()
                     .name(parts[fields.get("name")])
+                    .year(ResourceFile.optionalInteger(parts[fields.get("year")]))
                     .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
                     .category(parts[fields.get("category")])
                     .build();

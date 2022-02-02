@@ -123,6 +123,7 @@ public class CurationDatabaseReaderTest {
 
         PriorOtherCondition curated1 = (PriorOtherCondition) config1.curated();
         assertEquals("Liver cirrhosis and sarcoidosis", curated1.name());
+        assertEquals(2019, (int) curated1.year());
         assertEquals("Liver disease", curated1.category());
         assertEquals(2, curated1.doids().size());
         assertTrue(curated1.doids().contains("5082"));

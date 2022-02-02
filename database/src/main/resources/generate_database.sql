@@ -96,6 +96,7 @@ CREATE TABLE priorOtherCondition
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(500) NOT NULL,
+    year int,
     doids varchar(50) NOT NULL,
     category varchar(50) NOT NULL,
     PRIMARY KEY (id)
@@ -204,7 +205,7 @@ DROP TABLE IF EXISTS medication;
 CREATE TABLE medication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    name varchar(50) NOT NULL,
+    name varchar(100) NOT NULL,
     categories varchar(100),
     dosageMin double precision,
     dosageMax double precision,
