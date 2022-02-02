@@ -59,7 +59,7 @@ public class OrangeEvidenceFactoryTest {
                 .reported(true)
                 .addSources(OrangeEvidenceFactory.CKB_SOURCE);
 
-        String treatmentWithResponsiveEvidenceA = "treatment";
+        String treatmentWithResponsiveEvidenceA = "treatment A on-label";
         // Should be approved treatment
         evidences.add(evidenceBuilder.gene(null)
                 .event("A on-label responsive event")
@@ -72,7 +72,7 @@ public class OrangeEvidenceFactoryTest {
         // Should be experimental
         evidences.add(evidenceBuilder.gene(null)
                 .event("A off-label responsive event")
-                .treatment(Strings.EMPTY)
+                .treatment("treatment A off-label")
                 .onLabel(false)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
@@ -81,7 +81,7 @@ public class OrangeEvidenceFactoryTest {
         // Should be other
         evidences.add(evidenceBuilder.gene(null)
                 .event("B off-label responsive event")
-                .treatment(Strings.EMPTY)
+                .treatment("treatment B off-label")
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
@@ -90,7 +90,7 @@ public class OrangeEvidenceFactoryTest {
         // Should be filtered out since it is C-level off-label evidence.
         evidences.add(evidenceBuilder.gene(null)
                 .event("C responsive event")
-                .treatment(Strings.EMPTY)
+                .treatment("treatment C off-label")
                 .onLabel(false)
                 .level(EvidenceLevel.C)
                 .direction(EvidenceDirection.RESPONSIVE)

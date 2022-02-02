@@ -34,7 +34,7 @@ final class OrangeEvidenceFactory {
     @NotNull
     public static List<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
-        for (TreatmentEvidence evidence : reportedForSource(evidences, ACTIN_SOURCE)) {
+        for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             result.add(toMolecularEvidence(evidence));
         }
         return result;
@@ -43,10 +43,8 @@ final class OrangeEvidenceFactory {
     @NotNull
     public static List<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
-        for (TreatmentEvidence evidence : reportedForSource(evidences, ICLUSION_SOURCE)) {
-            if (isPotentiallyApplicable(evidence)) {
-                result.add(toMolecularEvidence(evidence));
-            }
+        for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ICLUSION_SOURCE)) {
+            result.add(toMolecularEvidence(evidence));
         }
         return result;
     }
@@ -54,12 +52,8 @@ final class OrangeEvidenceFactory {
     @NotNull
     public static List<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
-        for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
-            boolean isApproved = isApproved(evidence);
-            boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
-            boolean isResponsive = evidence.direction().isResponsive();
-
-            if (isApproved && isPotentiallyApplicable && isResponsive) {
+        for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, CKB_SOURCE)) {
+            if (evidence.direction().isResponsive() && isApproved(evidence)) {
                 result.add(toMolecularEvidence(evidence));
             }
         }
@@ -69,12 +63,10 @@ final class OrangeEvidenceFactory {
     @NotNull
     public static List<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
-        for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
-            boolean isExperimental = isExperimental(evidence);
-            boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
-            boolean isResponsive = evidence.direction().isResponsive();
 
-            if (isExperimental && isPotentiallyApplicable && isResponsive) {
+        List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
+        for (TreatmentEvidence evidence : ckbEvidences) {
+            if (evidence.direction().isResponsive() && isExperimental(evidence)) {
                 result.add(toMolecularEvidence(evidence));
             }
         }
@@ -84,12 +76,10 @@ final class OrangeEvidenceFactory {
     @NotNull
     public static List<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
-        for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
-            boolean isOther = isOther(evidence);
-            boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
-            boolean isResponsive = evidence.direction().isResponsive();
 
-            if (isOther && isPotentiallyApplicable && isResponsive) {
+        List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
+        for (TreatmentEvidence evidence : ckbEvidences) {
+            if (evidence.direction().isResponsive() && isOther(evidence)) {
                 result.add(toMolecularEvidence(evidence));
             }
         }
@@ -100,13 +90,11 @@ final class OrangeEvidenceFactory {
     public static List<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
 
-        List<TreatmentEvidence> reportedCkbEvidences = reportedForSource(evidences, CKB_SOURCE);
+        List<TreatmentEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : reportedCkbEvidences) {
             boolean hasEqualOrWorseResponsive = hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level());
-            boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
-            boolean isResistance = evidence.direction().isResistant();
 
-            if (hasEqualOrWorseResponsive && isPotentiallyApplicable && isResistance) {
+            if (evidence.direction().isResistant() && hasEqualOrWorseResponsive) {
                 result.add(toMolecularEvidence(evidence));
             }
         }
@@ -114,42 +102,28 @@ final class OrangeEvidenceFactory {
         return result;
     }
 
-    @NotNull
-    private static List<TreatmentEvidence> reportedForSource(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
-        List<TreatmentEvidence> filtered = Lists.newArrayList();
-        for (TreatmentEvidence evidence : evidences) {
-            if (evidence.reported() && evidence.sources().contains(source)) {
-                filtered.add(evidence);
-            }
-        }
-        return filtered;
-    }
-
-    private static boolean isApproved(@NotNull TreatmentEvidence evidence) {
-        return evidence.onLabel() && evidence.level() == EvidenceLevel.A;
-    }
-
-    private static boolean isExperimental(@NotNull TreatmentEvidence evidence) {
-        return (evidence.onLabel() && evidence.level() == EvidenceLevel.B) || (!evidence.onLabel() && evidence.level() == EvidenceLevel.A);
-    }
-
-    private static boolean isOther(@NotNull TreatmentEvidence evidence) {
-        if (isApproved(evidence) || isExperimental(evidence)) {
-            return false;
-        }
-
-        return evidence.level() != EvidenceLevel.D && evidence.level() != EvidenceLevel.C;
-    }
-
     private static boolean hasEqualOrWorseResponsive(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
             @NotNull EvidenceLevel resistanceLevel) {
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
+            boolean isRelevant = isApproved(evidence) || isExperimental(evidence) || isOther(evidence);
+
+            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && isRelevant
                     && resistanceLevel.isBetterOrEqual(evidence.level())) {
                 return true;
             }
         }
         return false;
+    }
+
+    @NotNull
+    private static List<TreatmentEvidence> reportedApplicableForSource(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
+        List<TreatmentEvidence> filtered = Lists.newArrayList();
+        for (TreatmentEvidence evidence : evidences) {
+            if (evidence.reported() && evidence.sources().contains(source) && isPotentiallyApplicable(evidence)) {
+                filtered.add(evidence);
+            }
+        }
+        return filtered;
     }
 
     private static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
@@ -168,6 +142,22 @@ final class OrangeEvidenceFactory {
         }
 
         return true;
+    }
+
+    private static boolean isApproved(@NotNull TreatmentEvidence evidence) {
+        return evidence.onLabel() && evidence.level() == EvidenceLevel.A;
+    }
+
+    private static boolean isExperimental(@NotNull TreatmentEvidence evidence) {
+        return (evidence.onLabel() && evidence.level() == EvidenceLevel.B) || (!evidence.onLabel() && evidence.level() == EvidenceLevel.A);
+    }
+
+    private static boolean isOther(@NotNull TreatmentEvidence evidence) {
+        if (isApproved(evidence) || isExperimental(evidence)) {
+            return false;
+        }
+
+        return evidence.level() != EvidenceLevel.D && evidence.level() != EvidenceLevel.C;
     }
 
     @NotNull

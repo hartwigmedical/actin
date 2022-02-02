@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -41,16 +42,20 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        Set<String> eventsWithApprovedResponsiveEvidence = extractEvents(record.approvedResponsiveEvidence());
+        List<Set<String>> filterList = Lists.newArrayList();
+
+        Set<String> eventsWithApprovedEvidence = extractEvents(record.approvedResponsiveEvidence());
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + record.evidenceSource()));
-        table.addCell(Cells.createValue(formatEvents(eventsWithApprovedResponsiveEvidence)));
+        table.addCell(Cells.createValue(formatEvents(eventsWithApprovedEvidence)));
+        filterList.add(eventsWithApprovedEvidence);
 
         Set<String> eventsWithActinEvidence = extractEvents(record.actinTrials());
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
         table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
+        filterList.add(eventsWithActinEvidence);
 
         Set<String> eventsWithExternalTrialEvidence = extractEvents(record.externalTrials());
-        Set<String> additionalTrialEvents = subtract(eventsWithExternalTrialEvidence, eventsWithActinEvidence);
+        Set<String> additionalTrialEvents = subtract(eventsWithExternalTrialEvidence, filterList);
         if (!additionalTrialEvents.isEmpty()) {
             table.addCell(Cells.createKey("Additional events with trial eligibility in " + record.externalTrialSource())
                     .setPaddingLeft(10));
@@ -58,13 +63,15 @@ public class MolecularResultsGenerator implements TableGenerator {
         }
 
         Set<String> eventsWithExperimentalEvidence = extractEvents(record.experimentalResponsiveEvidence());
-        Set<String> additionalExperimentalEvents = subtract(eventsWithExperimentalEvidence, eventsWithActinEvidence);
+        Set<String> additionalExperimentalEvents = subtract(eventsWithExperimentalEvidence, filterList);
         table.addCell(Cells.createKey("Additional events with experimental evidence in " + record.evidenceSource()).setPaddingLeft(10));
         table.addCell(Cells.createValue(formatEvents(additionalExperimentalEvents)));
+        filterList.add(eventsWithExperimentalEvidence);
 
         Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());
+        Set<String> additionalOtherEvents = subtract(eventsWithOtherEvidence, filterList);
         table.addCell(Cells.createKey("Other events with responsive evidence in " + record.evidenceSource()));
-        table.addCell(Cells.createValue(formatEvents(eventsWithOtherEvidence)));
+        table.addCell(Cells.createValue(formatEvents(additionalOtherEvents)));
 
         List<MolecularEvidence> resistanceEvidence = record.resistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
@@ -99,10 +106,18 @@ public class MolecularResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<String> subtract(@NotNull Set<String> mainSet, @NotNull Set<String> setToRemove) {
+    private static Set<String> subtract(@NotNull Set<String> mainSet, @NotNull List<Set<String>> setsToRemove) {
         Set<String> filtered = Sets.newHashSet();
         for (String entry : mainSet) {
-            if (!setToRemove.contains(entry)) {
+            boolean retain = true;
+            for (Set<String> set : setsToRemove) {
+                if (set.contains(entry)) {
+                    retain = false;
+                    break;
+                }
+            }
+
+            if (retain) {
                 filtered.add(entry);
             }
         }
