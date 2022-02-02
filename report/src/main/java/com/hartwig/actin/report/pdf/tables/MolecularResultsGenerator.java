@@ -45,31 +45,31 @@ public class MolecularResultsGenerator implements TableGenerator {
 
         Set<String> eventsWithApprovedEvidence = extractEvents(record.approvedResponsiveEvidence());
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + record.evidenceSource()));
-        table.addCell(Cells.createValue(formatEvents(eventsWithApprovedEvidence)));
+        table.addCell(Cells.createValue(concat(eventsWithApprovedEvidence)));
 
         Set<String> eventsWithActinEvidence = extractEvents(record.actinTrials());
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
-        table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
+        table.addCell(Cells.createValue(concat(eventsWithActinEvidence)));
 
         Set<String> eventsWithExternalTrialEvidence = extractEvents(record.externalTrials());
         Set<String> additionalTrialEvents =
                 subtract(eventsWithExternalTrialEvidence, Lists.newArrayList(eventsWithApprovedEvidence, eventsWithActinEvidence));
         if (!additionalTrialEvents.isEmpty()) {
             table.addCell(addIndent(Cells.createKey("Additional events with trial eligibility in " + record.externalTrialSource())));
-            table.addCell(Cells.createValue(formatEvents(additionalTrialEvents)));
+            table.addCell(Cells.createValue(concat(additionalTrialEvents)));
         }
 
         Set<String> eventsWithExperimentalEvidence = extractEvents(record.experimentalResponsiveEvidence());
         Set<String> additionalExperimentalEvents =
                 subtract(eventsWithExperimentalEvidence, Lists.newArrayList(eventsWithApprovedEvidence, eventsWithActinEvidence));
         table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence in " + record.evidenceSource())));
-        table.addCell(Cells.createValue(formatEvents(additionalExperimentalEvents)));
+        table.addCell(Cells.createValue(concat(additionalExperimentalEvents)));
 
         Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());
         Set<String> additionalOtherEvents = subtract(eventsWithOtherEvidence,
                 Lists.newArrayList(eventsWithApprovedEvidence, eventsWithActinEvidence, eventsWithExperimentalEvidence));
         table.addCell(Cells.createKey("Additional events with other responsive evidence in " + record.evidenceSource()));
-        table.addCell(Cells.createValue(formatEvents(additionalOtherEvents)));
+        table.addCell(Cells.createValue(concat(additionalOtherEvents)));
 
         List<MolecularEvidence> resistanceEvidence = record.resistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
@@ -87,21 +87,17 @@ public class MolecularResultsGenerator implements TableGenerator {
 
     @NotNull
     private static Set<String> extractEvents(@NotNull List<MolecularEvidence> evidences) {
-        Set<String> events = Sets.newHashSet();
+        Set<String> events = Sets.newTreeSet();
         for (MolecularEvidence evidence : evidences) {
             events.add(evidence.event());
         }
         return events;
     }
 
-    @NotNull
-    private static String formatEvents(@NotNull Set<String> events) {
-        return concat(Sets.newTreeSet(events));
-    }
 
     @NotNull
     private static String formatResistanceEvidence(@NotNull List<MolecularEvidence> resistanceEvidences) {
-        Set<String> resistanceEvidenceStrings = Sets.newHashSet();
+        Set<String> resistanceEvidenceStrings = Sets.newTreeSet();
         for (MolecularEvidence evidence : resistanceEvidences) {
             resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());
         }
@@ -109,15 +105,8 @@ public class MolecularResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<String> subtract(@NotNull Set<String> mainSet, @NotNull Set<String> setToRemove) {
-        List<Set<String>> list = Lists.newArrayList();
-        list.add(setToRemove);
-        return subtract(mainSet, list);
-    }
-
-    @NotNull
     private static Set<String> subtract(@NotNull Set<String> mainSet, @NotNull List<Set<String>> setsToRemove) {
-        Set<String> filtered = Sets.newHashSet();
+        Set<String> filtered = Sets.newTreeSet();
         for (String entry : mainSet) {
             boolean retain = true;
             for (Set<String> set : setsToRemove) {
