@@ -299,6 +299,7 @@ public final class ClinicalRecordJson {
                 JsonObject object = element.getAsJsonObject();
                 priorOtherConditionList.add(ImmutablePriorOtherCondition.builder()
                         .name(string(object, "name"))
+                        .year(nullableInteger(object, "year"))
                         .doids(stringList(object, "doids"))
                         .category(string(object, "category"))
                         .build());

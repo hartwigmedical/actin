@@ -87,6 +87,7 @@
   "priorOtherConditions": [
     {
       "name": "Liver cirrhosis",
+      "year": null,
       "doids": [
         "11335",
         "5082"
