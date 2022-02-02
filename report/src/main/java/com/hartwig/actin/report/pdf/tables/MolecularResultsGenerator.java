@@ -68,7 +68,7 @@ public class MolecularResultsGenerator implements TableGenerator {
         Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());
         Set<String> additionalOtherEvents = subtract(eventsWithOtherEvidence,
                 Lists.newArrayList(eventsWithApprovedEvidence, eventsWithActinEvidence, eventsWithExperimentalEvidence));
-        table.addCell(Cells.createKey("Events with other responsive evidence in " + record.evidenceSource()));
+        table.addCell(Cells.createKey("Additional events with other responsive evidence in " + record.evidenceSource()));
         table.addCell(Cells.createValue(formatEvents(additionalOtherEvents)));
 
         List<MolecularEvidence> resistanceEvidence = record.resistanceEvidence();
