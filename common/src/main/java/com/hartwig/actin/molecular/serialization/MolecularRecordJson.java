@@ -106,12 +106,14 @@ public class MolecularRecordJson {
                     .isHomologousRepairDeficient(nullableBool(record, "isHomologousRepairDeficient"))
                     .tumorMutationalBurden(nullableNumber(record, "tumorMutationalBurden"))
                     .tumorMutationalLoad(nullableInteger(record, "tumorMutationalLoad"))
-                    .actinTreatmentEvidence(toEvidences(array(record, "actinTreatmentEvidence")))
-                    .generalTrialSource(string(record, "generalTrialSource"))
-                    .generalTrialEvidence(toEvidences(array(record, "generalTrialEvidence")))
-                    .generalEvidenceSource(string(record, "generalEvidenceSource"))
-                    .generalResponsiveEvidence(toEvidences(array(record, "generalResponsiveEvidence")))
-                    .generalResistanceEvidence(toEvidences(array(record, "generalResistanceEvidence")))
+                    .actinTrials(toEvidences(array(record, "actinTrials")))
+                    .externalTrialSource(string(record, "externalTrialSource"))
+                    .externalTrials(toEvidences(array(record, "externalTrials")))
+                    .evidenceSource(string(record, "evidenceSource"))
+                    .approvedResponsiveEvidence(toEvidences(array(record, "approvedResponsiveEvidence")))
+                    .experimentalResponsiveEvidence(toEvidences(array(record, "experimentalResponsiveEvidence")))
+                    .otherResponsiveEvidence(toEvidences(array(record, "otherResponsiveEvidence")))
+                    .resistanceEvidence(toEvidences(array(record, "resistanceEvidence")))
                     .build();
         }
 

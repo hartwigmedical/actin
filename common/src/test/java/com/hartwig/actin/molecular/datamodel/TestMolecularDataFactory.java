@@ -26,8 +26,8 @@ public final class TestMolecularDataFactory {
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
                 .hasReliableQuality(false)
-                .generalTrialSource(Strings.EMPTY)
-                .generalEvidenceSource(Strings.EMPTY)
+                .externalTrialSource(Strings.EMPTY)
+                .evidenceSource(Strings.EMPTY)
                 .build();
     }
 
@@ -47,11 +47,11 @@ public final class TestMolecularDataFactory {
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
                 .tumorMutationalLoad(185)
-                .actinTreatmentEvidence(createTestActinTreatmentEvidence())
-                .generalTrialSource("CKB")
-                .generalTrialEvidence(createTestGeneralTrialEvidence())
-                .generalEvidenceSource("CKB")
-                .generalResponsiveEvidence(createTestGeneralResponsiveEvidence())
+                .actinTrials(createTestActinTrials())
+                .externalTrialSource("CKB")
+                .externalTrials(createTestExternalTrials())
+                .evidenceSource("CKB")
+                .approvedResponsiveEvidence(createTestApprovedResponsiveEvidence())
                 .build();
     }
 
@@ -75,33 +75,33 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestActinTreatmentEvidence() {
-        List<MolecularEvidence> evidences = Lists.newArrayList();
+    private static List<MolecularEvidence> createTestActinTrials() {
+        List<MolecularEvidence> result = Lists.newArrayList();
 
-        evidences.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
-        evidences.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
+        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
+        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
 
-        return evidences;
+        return result;
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestGeneralTrialEvidence() {
-        List<MolecularEvidence> evidences = Lists.newArrayList();
+    private static List<MolecularEvidence> createTestExternalTrials() {
+        List<MolecularEvidence> result = Lists.newArrayList();
 
-        evidences.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
-        evidences.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
+        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
+        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
 
-        return evidences;
+        return result;
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestGeneralResponsiveEvidence() {
-        List<MolecularEvidence> evidences = Lists.newArrayList();
+    private static List<MolecularEvidence> createTestApprovedResponsiveEvidence() {
+        List<MolecularEvidence> result = Lists.newArrayList();
 
-        evidences.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
-        evidences.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Dabrafenib").build());
-        evidences.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Nivolumab").build());
+        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
+        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Dabrafenib").build());
+        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Nivolumab").build());
 
-        return evidences;
+        return result;
     }
 }

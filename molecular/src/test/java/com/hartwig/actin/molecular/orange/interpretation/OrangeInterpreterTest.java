@@ -34,10 +34,10 @@ public class OrangeInterpreterTest {
         assertEquals(8D, record.tumorMutationalBurden(), EPSILON);
         assertEquals(100, (int) record.tumorMutationalLoad());
 
-        assertEquals(1, record.actinTreatmentEvidence().size());
-        assertEquals(1, record.generalTrialEvidence().size());
-        assertEquals(1, record.generalResponsiveEvidence().size());
-        assertEquals(0, record.generalResistanceEvidence().size());
+        assertEquals(1, record.actinTrials().size());
+        assertEquals(1, record.externalTrials().size());
+        assertEquals(1, record.approvedResponsiveEvidence().size());
+        assertEquals(0, record.resistanceEvidence().size());
     }
 
     @Test

@@ -41,17 +41,19 @@ tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb.
 tumorMutationalLoad | 115 | Number of missense mutations across the genome.
 
 The following data is not used in ACTIN's treatment matching but can be used to provide additional context in the ACTIN report. 
-Along with evidence matched against the ACTIN treatment database, the datamodel can hold additional trial and general evidence from 
-external sources.
+Along with evidence matched against the ACTIN treatment database, the datamodel can hold additional external trials and 
+general evidence from an additional source.
 
 Field | Example Value | Details
 ---|---|---
-actinTreatmentEvidence | BRAF V600E -> Trial A | A list of mutations along with the treatment they are associated with within the ACTIN treatment database.
-generalTrialSource | CKB | The name of the source that has been used for general trial evidence
-generalTrialEvidence | High TMB -> Trial B | A list of mutations along with the trial they are associated with.
-generalEvidenceSource | CKB | The name of the source used for general evidence
-generalResponsiveEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with responsive evidence for treatment.
-generalResistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with resistance evidence for treatment.  
+actinTrials | BRAF V600E -> Trial A | A list of mutations along with the trial they are associated with within the ACTIN treatment database.
+externalTrialSource | CKB | The name of the source that has been used for external trials
+externalTrials | High TMB -> Trial B | A list of mutations along with the trial they are associated with.
+evidenceSource | CKB | The name of the source used for general evidence
+approvedResponsiveEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with approved responsive evidence for treatment.
+experimentalResponsiveEvidence | - | A list of mutations along with experimental responsive evidence for treatment
+otherResponsiveEvidence | - | A list of mutations with responsive evidence that is "below experimental" in terms of evidence level.
+resistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with resistance evidence for treatment.  
 
 ### Interpretation of ORANGE results
 
@@ -80,11 +82,12 @@ The following classifications are extracted from the ACTIN-sourced evidence in P
  - fusions: Include any fusion with reported evidence of type `FUSION_PAIR` or `PROMISCUOUS_FUSION`
  
 The evidence is extracted from the PROTECT part of ORANGE as follows:
- - actin treatment evidence: All reported evidence from the ACTIN source.
- - generalTrialEvidence: All reported evidence from the iClusion source, filtered for applicability
- - generalResponsiveEvidence: All reported responsive evidence from the CKB source, filtered for applicability and if off-label: 
- only added in case the evidence is A-level or B-level non-predicted.
- - generalResistanceEvidence: Reported resistance evidence from the CKB source in case reported responsive evidence is found for the same 
+ - actinTrials: All reported evidence from the ACTIN source.
+ - externalTrials: All reported evidence from the iClusion source, filtered for applicability
+ - approvedResponsiveEvidence: All reported A-level on-label responsive evidence from the CKB source, filtered for applicability.
+ - experimentalResponsiveEvidence: All reported A-level off-label and B-level on-label responsive evidence from the CKB source, filtered for applicability.
+ - otherResponsiveEvidence: All reported B-level off-label responsive evidence from the CKB source, filtered for applicability.
+ - resistanceEvidence: Reported resistance evidence from the CKB source in case reported responsive evidence is found for the same 
  treatment with lower (or equal) evidence level.    
 
 ### Version History and Download Links

@@ -32,70 +32,86 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static List<MolecularEvidence> createActinTreatmentEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> actinTreatmentEvidences = Lists.newArrayList();
-
+    public static List<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> result = Lists.newArrayList();
         for (TreatmentEvidence evidence : reportedForSource(evidences, ACTIN_SOURCE)) {
-            actinTreatmentEvidences.add(ImmutableMolecularEvidence.builder()
-                    .event(toEvent(evidence))
-                    .treatment(evidence.treatment())
-                    .build());
+            result.add(toMolecularEvidence(evidence));
         }
-        return actinTreatmentEvidences;
+        return result;
     }
 
     @NotNull
-    public static List<MolecularEvidence> createGeneralTrialEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> generalTrialEvidence = Lists.newArrayList();
-
+    public static List<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> result = Lists.newArrayList();
         for (TreatmentEvidence evidence : reportedForSource(evidences, ICLUSION_SOURCE)) {
             if (isPotentiallyApplicable(evidence)) {
-                generalTrialEvidence.add(ImmutableMolecularEvidence.builder()
-                        .event(toEvent(evidence))
-                        .treatment(evidence.treatment())
-                        .build());
+                result.add(toMolecularEvidence(evidence));
             }
         }
-        return generalTrialEvidence;
+        return result;
     }
 
     @NotNull
-    public static List<MolecularEvidence> createGeneralResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> generalResponsiveEvidence = Lists.newArrayList();
+    public static List<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> result = Lists.newArrayList();
         for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
+            boolean isApproved = isApproved(evidence);
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
-            boolean isResponsiveEvidence = evidence.direction().isResponsive();
+            boolean isResponsive = evidence.direction().isResponsive();
 
-            if (isPotentiallyApplicable && isResponsiveEvidence) {
-                generalResponsiveEvidence.add(ImmutableMolecularEvidence.builder()
-                        .event(toEvent(evidence))
-                        .treatment(evidence.treatment())
-                        .build());
+            if (isApproved && isPotentiallyApplicable && isResponsive) {
+                result.add(toMolecularEvidence(evidence));
             }
         }
-        return generalResponsiveEvidence;
+        return result;
     }
 
     @NotNull
-    public static List<MolecularEvidence> createGeneralResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> generalResistanceEvidence = Lists.newArrayList();
+    public static List<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> result = Lists.newArrayList();
+        for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
+            boolean isExperimental = isExperimental(evidence);
+            boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
+            boolean isResponsive = evidence.direction().isResponsive();
+
+            if (isExperimental && isPotentiallyApplicable && isResponsive) {
+                result.add(toMolecularEvidence(evidence));
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    public static List<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> result = Lists.newArrayList();
+        for (TreatmentEvidence evidence : reportedForSource(evidences, CKB_SOURCE)) {
+            boolean isOther = isOther(evidence);
+            boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
+            boolean isResponsive = evidence.direction().isResponsive();
+
+            if (isOther && isPotentiallyApplicable && isResponsive) {
+                result.add(toMolecularEvidence(evidence));
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    public static List<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        List<MolecularEvidence> result = Lists.newArrayList();
 
         List<TreatmentEvidence> reportedCkbEvidences = reportedForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : reportedCkbEvidences) {
+            boolean hasEqualOrWorseResponsive = hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level());
             boolean isPotentiallyApplicable = isPotentiallyApplicable(evidence);
-            boolean isResistanceEvidence = evidence.direction().isResistant();
-            boolean hasOnLabelResponsiveEvidenceOfSameLevelOrHigher =
-                    hasOnLabelResponsiveEvidenceWithMaxLevel(reportedCkbEvidences, evidence.treatment(), evidence.level());
+            boolean isResistance = evidence.direction().isResistant();
 
-            if (isPotentiallyApplicable && isResistanceEvidence && hasOnLabelResponsiveEvidenceOfSameLevelOrHigher) {
-                generalResistanceEvidence.add(ImmutableMolecularEvidence.builder()
-                        .event(toEvent(evidence))
-                        .treatment(evidence.treatment())
-                        .build());
+            if (hasEqualOrWorseResponsive && isPotentiallyApplicable && isResistance) {
+                result.add(toMolecularEvidence(evidence));
             }
         }
 
-        return generalResistanceEvidence;
+        return result;
     }
 
     @NotNull
@@ -109,11 +125,27 @@ final class OrangeEvidenceFactory {
         return filtered;
     }
 
-    private static boolean hasOnLabelResponsiveEvidenceWithMaxLevel(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
-            @NotNull EvidenceLevel maxLevel) {
+    private static boolean isApproved(@NotNull TreatmentEvidence evidence) {
+        return evidence.onLabel() && evidence.level() == EvidenceLevel.A;
+    }
+
+    private static boolean isExperimental(@NotNull TreatmentEvidence evidence) {
+        return (evidence.onLabel() && evidence.level() == EvidenceLevel.B) || (!evidence.onLabel() && evidence.level() == EvidenceLevel.A);
+    }
+
+    private static boolean isOther(@NotNull TreatmentEvidence evidence) {
+        if (isApproved(evidence) || isExperimental(evidence)) {
+            return false;
+        }
+
+        return evidence.level() != EvidenceLevel.D && evidence.level() != EvidenceLevel.C;
+    }
+
+    private static boolean hasEqualOrWorseResponsive(@NotNull List<TreatmentEvidence> evidences, @NotNull String treatment,
+            @NotNull EvidenceLevel resistanceLevel) {
         for (TreatmentEvidence evidence : evidences) {
             if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && evidence.onLabel()
-                    && maxLevel.isBetterOrEqual(evidence.level())) {
+                    && resistanceLevel.isBetterOrEqual(evidence.level())) {
                 return true;
             }
         }
@@ -121,11 +153,6 @@ final class OrangeEvidenceFactory {
     }
 
     private static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
-        if ((evidence.level() == EvidenceLevel.C || evidence.level() == EvidenceLevel.D || (evidence.level() == EvidenceLevel.B
-                && evidence.direction().isPredicted())) && !evidence.onLabel()) {
-            return false;
-        }
-
         String gene = evidence.gene();
         for (String nonApplicableGene : NON_APPLICABLE_GENES) {
             if (gene != null && gene.equals(nonApplicableGene)) {
@@ -141,6 +168,11 @@ final class OrangeEvidenceFactory {
         }
 
         return true;
+    }
+
+    @NotNull
+    private static MolecularEvidence toMolecularEvidence(@NotNull TreatmentEvidence evidence) {
+        return ImmutableMolecularEvidence.builder().event(toEvent(evidence)).treatment(evidence.treatment()).build();
     }
 
     @NotNull

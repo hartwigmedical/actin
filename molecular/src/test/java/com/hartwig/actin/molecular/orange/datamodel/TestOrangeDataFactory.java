@@ -42,8 +42,8 @@ public final class TestOrangeDataFactory {
     private static List<TreatmentEvidence> createTestEvidences() {
         List<TreatmentEvidence> evidences = Lists.newArrayList();
 
-        ImmutableTreatmentEvidence.Builder generalEvidenceBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB").reported(true);
-        evidences.add(generalEvidenceBuilder.gene("BRAF")
+        ImmutableTreatmentEvidence.Builder evidenceBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB").reported(true);
+        evidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
@@ -52,7 +52,7 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        evidences.add(generalEvidenceBuilder.gene("BRAF")
+        evidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
@@ -61,7 +61,7 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        evidences.add(generalEvidenceBuilder.gene("PTEN")
+        evidences.add(evidenceBuilder.gene("PTEN")
                 .event("partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
@@ -70,8 +70,8 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        ImmutableTreatmentEvidence.Builder generalTrialBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION").reported(true);
-        evidences.add(generalTrialBuilder.gene("BRAF")
+        ImmutableTreatmentEvidence.Builder externalTrialBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION").reported(true);
+        evidences.add(externalTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial X")
                 .onLabel(true)

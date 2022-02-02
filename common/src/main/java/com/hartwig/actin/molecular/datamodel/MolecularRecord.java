@@ -54,21 +54,27 @@ public abstract class MolecularRecord {
     public abstract Integer tumorMutationalLoad();
 
     @NotNull
-    public abstract List<MolecularEvidence> actinTreatmentEvidence();
+    public abstract List<MolecularEvidence> actinTrials();
 
     @NotNull
-    public abstract String generalTrialSource();
+    public abstract String externalTrialSource();
 
     @NotNull
-    public abstract List<MolecularEvidence> generalTrialEvidence();
+    public abstract List<MolecularEvidence> externalTrials();
 
     @NotNull
-    public abstract String generalEvidenceSource();
+    public abstract String evidenceSource();
 
     @NotNull
-    public abstract List<MolecularEvidence> generalResponsiveEvidence();
+    public abstract List<MolecularEvidence> approvedResponsiveEvidence();
 
     @NotNull
-    public abstract List<MolecularEvidence> generalResistanceEvidence();
+    public abstract List<MolecularEvidence> experimentalResponsiveEvidence();
+
+    @NotNull
+    public abstract List<MolecularEvidence> otherResponsiveEvidence();
+
+    @NotNull
+    public abstract List<MolecularEvidence> resistanceEvidence();
 
 }

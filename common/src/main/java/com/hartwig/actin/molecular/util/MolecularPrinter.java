@@ -38,23 +38,25 @@ public class MolecularPrinter {
 
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
-        printer.print("Experiment type '" + record.type() + "' on " + formatDate(record.date()));
-        printer.print("Has reliable quality?: " + toYesNoUnknown(record.hasReliableQuality()));
-        printer.print("Mutations: " + mutationString(record.mutations()));
-        printer.print("Activated genes: " + concat(record.activatedGenes()));
-        printer.print("Inactivated genes: " + inactivatedGeneString(record.inactivatedGenes()));
-        printer.print("Amplified genes: " + concat(record.amplifiedGenes()));
-        printer.print("Wildtype genes: " + concat(record.wildtypeGenes()));
-        printer.print("Fusions: " + fusionString(record.fusions()));
-        printer.print("Microsatellite unstable?: " + toYesNoUnknown(record.isMicrosatelliteUnstable()));
-        printer.print("Homologous repair deficient?: " + toYesNoUnknown(record.isHomologousRepairDeficient()));
-        printer.print("Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
-        printer.print("Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
+        printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
+        printer.print(" Has reliable quality?: " + toYesNoUnknown(record.hasReliableQuality()));
+        printer.print(" Mutations: " + mutationString(record.mutations()));
+        printer.print(" Activated genes: " + concat(record.activatedGenes()));
+        printer.print(" Inactivated genes: " + inactivatedGeneString(record.inactivatedGenes()));
+        printer.print(" Amplified genes: " + concat(record.amplifiedGenes()));
+        printer.print(" Wildtype genes: " + concat(record.wildtypeGenes()));
+        printer.print(" Fusions: " + fusionString(record.fusions()));
+        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.isMicrosatelliteUnstable()));
+        printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.isHomologousRepairDeficient()));
+        printer.print(" Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
+        printer.print(" Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
 
-        printer.print("ACTIN actionable events: " + toEvents(record.actinTreatmentEvidence()));
-        printer.print("General trial actionable events: " + toEvents(record.generalTrialEvidence()));
-        printer.print("General responsive events: " + toEvents(record.generalResponsiveEvidence()));
-        printer.print("General resistance events: " + toEvents(record.generalResistanceEvidence()));
+        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(record.actinTrials()));
+        printer.print("Events associated with external trials: " + toEvents(record.externalTrials()));
+        printer.print("Events with approved evidence: " + toEvents(record.approvedResponsiveEvidence()));
+        printer.print("Events with experimental evidence: " + toEvents(record.experimentalResponsiveEvidence()));
+        printer.print("Other events with evidence: " + toEvents(record.otherResponsiveEvidence()));
+        printer.print("Events with resistance evidence: " + toEvents(record.resistanceEvidence()));
     }
 
     @NotNull
@@ -85,7 +87,7 @@ public class MolecularPrinter {
     private static String inactivatedGeneString(@NotNull Iterable<InactivatedGene> inactivatedGenes) {
         Set<String> strings = Sets.newHashSet();
         for (InactivatedGene inactivatedGene : inactivatedGenes) {
-            strings.add(inactivatedGene.gene() + " (" + (inactivatedGene.hasBeenDeleted() ? "deleted" : "not deleted") + ")");
+            strings.add(inactivatedGene.gene());
         }
         return concat(strings);
     }
@@ -101,7 +103,7 @@ public class MolecularPrinter {
 
     @NotNull
     private static String toEvents(@NotNull List<MolecularEvidence> evidences) {
-        Set<String> events = Sets.newHashSet();
+        Set<String> events = Sets.newTreeSet();
         for (MolecularEvidence evidence : evidences) {
             events.add(evidence.event());
         }

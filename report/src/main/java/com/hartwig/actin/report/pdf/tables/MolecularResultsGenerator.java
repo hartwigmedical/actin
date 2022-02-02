@@ -41,24 +41,33 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Molecular results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
-        Set<String> eventsWithActinEvidence = extractEvents(record.actinTreatmentEvidence());
+        Set<String> eventsWithApprovedResponsiveEvidence = extractEvents(record.approvedResponsiveEvidence());
+        table.addCell(Cells.createKey("Events with approved treatment evidence in " + record.evidenceSource()));
+        table.addCell(Cells.createValue(formatEvents(eventsWithApprovedResponsiveEvidence)));
+
+        Set<String> eventsWithActinEvidence = extractEvents(record.actinTrials());
         table.addCell(Cells.createKey("Events with trial eligibility in ACTIN database"));
         table.addCell(Cells.createValue(formatEvents(eventsWithActinEvidence)));
 
-        Set<String> eventsWithGeneralTrialEvidence = extractEvents(record.generalTrialEvidence());
-        Set<String> additionalTrialEvents = subtract(eventsWithGeneralTrialEvidence, eventsWithActinEvidence);
+        Set<String> eventsWithExternalTrialEvidence = extractEvents(record.externalTrials());
+        Set<String> additionalTrialEvents = subtract(eventsWithExternalTrialEvidence, eventsWithActinEvidence);
         if (!additionalTrialEvents.isEmpty()) {
-            table.addCell(Cells.createKey("Additional events with trial evidence in " + record.generalTrialSource()));
+            table.addCell(Cells.createKey("       Additional events with trial eligibility in " + record.externalTrialSource()));
             table.addCell(Cells.createValue(formatEvents(additionalTrialEvents)));
         }
 
-        Set<String> eventsWithGeneralResponsiveEvidence = extractEvents(record.generalResponsiveEvidence());
-        table.addCell(Cells.createKey("Events with responsive evidence in " + record.generalEvidenceSource()));
-        table.addCell(Cells.createValue(formatEvents(eventsWithGeneralResponsiveEvidence)));
+        Set<String> eventsWithExperimentalEvidence = extractEvents(record.experimentalResponsiveEvidence());
+        Set<String> additionalExperimentalEvents = subtract(eventsWithExperimentalEvidence, eventsWithActinEvidence);
+        table.addCell(Cells.createKey("       Additional events with experimental treatment evidence in " + record.evidenceSource()));
+        table.addCell(Cells.createValue(formatEvents(additionalExperimentalEvents)));
 
-        List<MolecularEvidence> resistanceEvidence = record.generalResistanceEvidence();
+        Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());
+        table.addCell(Cells.createKey("Other events with responsive evidence in " + record.evidenceSource()));
+        table.addCell(Cells.createValue(formatEvents(eventsWithOtherEvidence)));
+
+        List<MolecularEvidence> resistanceEvidence = record.resistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
-            table.addCell(Cells.createKey("Events with resistance evidence in " + record.generalEvidenceSource()));
+            table.addCell(Cells.createKey("Events with resistance evidence in " + record.evidenceSource()));
             table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));
         }
 

@@ -22,19 +22,30 @@ public class OrangeEvidenceFactoryTest {
     public void canCreateMolecularEvidence() {
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> actinTreatmentEvidence = OrangeEvidenceFactory.createActinTreatmentEvidence(evidences);
-        assertEquals(1, actinTreatmentEvidence.size());
-        assertEquals("B responsive actin event", actinTreatmentEvidence.get(0).event());
+        List<MolecularEvidence> actinTrials = OrangeEvidenceFactory.createActinTrials(evidences);
+        assertEquals(1, actinTrials.size());
+        assertEquals("B responsive actin event", actinTrials.get(0).event());
 
-        List<MolecularEvidence> generalTrialEvidence = OrangeEvidenceFactory.createGeneralTrialEvidence(evidences);
-        assertEquals(1, generalTrialEvidence.size());
-        assertEquals("B responsive trial event", generalTrialEvidence.get(0).event());
+        List<MolecularEvidence> externalTrials = OrangeEvidenceFactory.createExternalTrials(evidences);
+        assertEquals(1, externalTrials.size());
+        assertEquals("B responsive trial event", externalTrials.get(0).event());
 
-        List<MolecularEvidence> generalResponsiveEvidence = OrangeEvidenceFactory.createGeneralResponsiveEvidence(evidences);
-        assertEquals(1, generalResponsiveEvidence.size());
-        assertEquals("A responsive event", generalResponsiveEvidence.get(0).event());
+        List<MolecularEvidence> approvedResponsiveEvidence =
+                OrangeEvidenceFactory.createApprovedResponsiveEvidence(evidences);
+        assertEquals(1, approvedResponsiveEvidence.size());
+        assertEquals("A on-label responsive event", approvedResponsiveEvidence.get(0).event());
 
-        List<MolecularEvidence> generalResistanceEvidence = OrangeEvidenceFactory.createGeneralResistanceEvidence(evidences);
+        List<MolecularEvidence> generalExperimentalResponsiveEvidence =
+                OrangeEvidenceFactory.createExperimentalResponsiveEvidence(evidences);
+        assertEquals(1, generalExperimentalResponsiveEvidence.size());
+        assertEquals("A off-label responsive event", generalExperimentalResponsiveEvidence.get(0).event());
+
+        List<MolecularEvidence> generalOtherResponsiveEvidence =
+                OrangeEvidenceFactory.createOtherResponsiveEvidence(evidences);
+        assertEquals(1, generalOtherResponsiveEvidence.size());
+        assertEquals("B off-label responsive event", generalOtherResponsiveEvidence.get(0).event());
+
+        List<MolecularEvidence> generalResistanceEvidence = OrangeEvidenceFactory.createResistanceEvidence(evidences);
         assertEquals(1, generalResistanceEvidence.size());
         assertEquals("A resistant event", generalResistanceEvidence.get(0).event());
     }
@@ -43,23 +54,41 @@ public class OrangeEvidenceFactoryTest {
     private static List<TreatmentEvidence> createTestEvidences() {
         List<TreatmentEvidence> evidences = Lists.newArrayList();
 
-        ImmutableTreatmentEvidence.Builder generalEvidenceBuilder = ImmutableTreatmentEvidence.builder()
+        ImmutableTreatmentEvidence.Builder evidenceBuilder = ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
                 .reported(true)
                 .addSources(OrangeEvidenceFactory.CKB_SOURCE);
 
         String treatmentWithResponsiveEvidenceA = "treatment";
-        // Should be included, all good.
-        evidences.add(generalEvidenceBuilder.gene(null)
-                .event("A responsive event")
+        // Should be approved treatment
+        evidences.add(evidenceBuilder.gene(null)
+                .event("A on-label responsive event")
                 .treatment(treatmentWithResponsiveEvidenceA)
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
+        // Should be experimental
+        evidences.add(evidenceBuilder.gene(null)
+                .event("A off-label responsive event")
+                .treatment(Strings.EMPTY)
+                .onLabel(false)
+                .level(EvidenceLevel.A)
+                .direction(EvidenceDirection.RESPONSIVE)
+                .build());
+
+        // Should be other
+        evidences.add(evidenceBuilder.gene(null)
+                .event("B off-label responsive event")
+                .treatment(Strings.EMPTY)
+                .onLabel(false)
+                .level(EvidenceLevel.B)
+                .direction(EvidenceDirection.RESPONSIVE)
+                .build());
+
         // Should be filtered out since it is C-level off-label evidence.
-        evidences.add(generalEvidenceBuilder.gene(null)
+        evidences.add(evidenceBuilder.gene(null)
                 .event("C responsive event")
                 .treatment(Strings.EMPTY)
                 .onLabel(false)
@@ -68,7 +97,7 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // Should be filtered out as it affects a non-applicable gene.
-        evidences.add(generalEvidenceBuilder.gene(OrangeEvidenceFactory.NON_APPLICABLE_GENES.iterator().next())
+        evidences.add(evidenceBuilder.gene(OrangeEvidenceFactory.NON_APPLICABLE_GENES.iterator().next())
                 .event("irrelevant")
                 .treatment(Strings.EMPTY)
                 .onLabel(true)
@@ -77,7 +106,7 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // Should be filtered out as it is a non-applicable event.
-        evidences.add(generalEvidenceBuilder.gene(null)
+        evidences.add(evidenceBuilder.gene(null)
                 .event(OrangeEvidenceFactory.NON_APPLICABLE_EVENTS.iterator().next())
                 .treatment(Strings.EMPTY)
                 .onLabel(true)
@@ -85,8 +114,8 @@ public class OrangeEvidenceFactoryTest {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        // Should be filtered since there is no responsive evidence for treatment
-        evidences.add(generalEvidenceBuilder.gene(null)
+        // Should be filtered since there is no responsive evidence for resistance event
+        evidences.add(evidenceBuilder.gene(null)
                 .event("B resistant event")
                 .treatment("Treatment without responsive evidence")
                 .onLabel(false)
@@ -94,8 +123,8 @@ public class OrangeEvidenceFactoryTest {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        // Should be included, all good.
-        evidences.add(generalEvidenceBuilder.gene(null)
+        // Should be included in resistance evidence, all good.
+        evidences.add(evidenceBuilder.gene(null)
                 .event("A resistant event")
                 .treatment(treatmentWithResponsiveEvidenceA)
                 .onLabel(false)
@@ -104,7 +133,7 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // Should be filtered since evidence level is not as high as the responsive evidence
-        evidences.add(generalEvidenceBuilder.gene(null)
+        evidences.add(evidenceBuilder.gene(null)
                 .event("B resistant event")
                 .treatment(treatmentWithResponsiveEvidenceA)
                 .onLabel(false)
@@ -123,7 +152,7 @@ public class OrangeEvidenceFactoryTest {
                 .addSources(OrangeEvidenceFactory.ICLUSION_SOURCE)
                 .build());
 
-        // And 1 ACTIN that should be included.
+        // And one ACTIN trial that should be included.
         evidences.add(ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
                 .reported(true)

@@ -42,7 +42,7 @@
   "isHomologousRepairDeficient": true,
   "tumorMutationalBurden": 4.32,
   "tumorMutationalLoad": 243,
-  "actinTreatmentEvidence": [
+  "actinTrials": [
     {
       "event": "High TML",
       "treatment": "Trial 1"
@@ -56,15 +56,15 @@
       "treatment": "Trial 3"
     }
   ],
-  "generalTrialSource": "trials",
-  "generalTrialEvidence": [
+  "externalTrialSource": "trials",
+  "externalTrials": [
     {
       "event": "High TML",
       "treatment": "Trial 1"
     }
   ],
-  "generalEvidenceSource": "evidence",
-  "generalResponsiveEvidence": [
+  "evidenceSource": "evidence",
+  "approvedResponsiveEvidence": [
     {
       "event": "High TML",
       "treatment": "Pembrolizumab"
@@ -74,5 +74,7 @@
       "treatment": "Nivolumab"
     }
   ],
-  "generalResistanceEvidence": []
+  "experimentalResponsiveEvidence": [],
+  "otherResponsiveEvidence": [],
+  "resistanceEvidence": []
 }
