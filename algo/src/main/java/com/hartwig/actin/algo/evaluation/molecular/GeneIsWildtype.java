@@ -19,7 +19,7 @@ public class GeneIsWildtype implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         // TODO First determine all wildtype genes properly.
-        return Evaluation.NOT_IMPLEMENTED;
+        return Evaluation.UNDETERMINED;
         //        if (record.molecular().wildtypeGenes().contains(gene)) {
         //            return Evaluation.PASS;
         //        }

@@ -52,13 +52,14 @@ public class MolecularResultsGenerator implements TableGenerator {
         Set<String> eventsWithExternalTrialEvidence = extractEvents(record.externalTrials());
         Set<String> additionalTrialEvents = subtract(eventsWithExternalTrialEvidence, eventsWithActinEvidence);
         if (!additionalTrialEvents.isEmpty()) {
-            table.addCell(Cells.createKey("       Additional events with trial eligibility in " + record.externalTrialSource()));
+            table.addCell(Cells.createKey("Additional events with trial eligibility in " + record.externalTrialSource())
+                    .setPaddingLeft(10));
             table.addCell(Cells.createValue(formatEvents(additionalTrialEvents)));
         }
 
         Set<String> eventsWithExperimentalEvidence = extractEvents(record.experimentalResponsiveEvidence());
         Set<String> additionalExperimentalEvents = subtract(eventsWithExperimentalEvidence, eventsWithActinEvidence);
-        table.addCell(Cells.createKey("       Additional events with experimental treatment evidence in " + record.evidenceSource()));
+        table.addCell(Cells.createKey("Additional events with experimental evidence in " + record.evidenceSource()).setPaddingLeft(10));
         table.addCell(Cells.createValue(formatEvents(additionalExperimentalEvents)));
 
         Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());
