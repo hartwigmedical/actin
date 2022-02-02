@@ -1,9 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Remove per 220201
-DROP TABLE IF EXISTS bloodPressure;
-DROP TABLE IF EXISTS measurement;
-
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
 (   id int NOT NULL AUTO_INCREMENT,
