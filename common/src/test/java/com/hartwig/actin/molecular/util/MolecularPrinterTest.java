@@ -8,6 +8,7 @@ public class MolecularPrinterTest {
 
     @Test
     public void canPrintMolecularRecords() {
+        MolecularPrinter.printRecord(TestMolecularDataFactory.createExhaustiveTestMolecularRecord());
         MolecularPrinter.printRecord(TestMolecularDataFactory.createProperTestMolecularRecord());
         MolecularPrinter.printRecord(TestMolecularDataFactory.createMinimalTestMolecularRecord());
     }

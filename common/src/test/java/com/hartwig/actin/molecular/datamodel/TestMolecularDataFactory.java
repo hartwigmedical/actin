@@ -52,6 +52,19 @@ public final class TestMolecularDataFactory {
                 .externalTrials(createTestExternalTrials())
                 .evidenceSource("CKB")
                 .approvedResponsiveEvidence(createTestApprovedResponsiveEvidence())
+                .experimentalResponsiveEvidence(createTestExperimentalResponsiveEvidence())
+                .otherResponsiveEvidence(createTestOtherResponsiveEvidence())
+                .resistanceEvidence(createTestResistanceEvidence())
+                .build();
+    }
+
+    @NotNull
+    public static MolecularRecord createExhaustiveTestMolecularRecord() {
+        return ImmutableMolecularRecord.builder()
+                .from(createProperTestMolecularRecord())
+                .amplifiedGenes(Sets.newHashSet("AMP"))
+                .wildtypeGenes(Sets.newHashSet("WILD"))
+                .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene("FIVE").threeGene("THREE").build()))
                 .build();
     }
 
@@ -104,4 +117,32 @@ public final class TestMolecularDataFactory {
 
         return result;
     }
+
+    @NotNull
+    private static List<MolecularEvidence> createTestExperimentalResponsiveEvidence() {
+        List<MolecularEvidence> result = Lists.newArrayList();
+
+        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Pembrolizumab").build());
+
+        return result;
+    }
+
+    @NotNull
+    private static List<? extends MolecularEvidence> createTestOtherResponsiveEvidence() {
+        List<MolecularEvidence> result = Lists.newArrayList();
+
+        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trametinib").build());
+
+        return result;
+    }
+
+    @NotNull
+    private static List<? extends MolecularEvidence> createTestResistanceEvidence() {
+        List<MolecularEvidence> result = Lists.newArrayList();
+
+        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Erlotinib").build());
+
+        return result;
+    }
+
 }

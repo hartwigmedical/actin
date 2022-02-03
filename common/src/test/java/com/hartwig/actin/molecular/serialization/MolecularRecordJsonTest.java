@@ -38,6 +38,11 @@ public class MolecularRecordJsonTest {
         MolecularRecord convertedProper = MolecularRecordJson.fromJson(MolecularRecordJson.toJson(proper));
 
         assertEquals(proper, convertedProper);
+
+        MolecularRecord exhaustive = TestMolecularDataFactory.createExhaustiveTestMolecularRecord();
+        MolecularRecord convertedExhaustive = MolecularRecordJson.fromJson(MolecularRecordJson.toJson(exhaustive));
+
+        assertEquals(exhaustive, convertedExhaustive);
     }
 
     @Test
