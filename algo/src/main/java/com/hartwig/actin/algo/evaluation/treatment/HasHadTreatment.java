@@ -20,7 +20,7 @@ public class HasHadTreatment implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.name().equals(name)) {
+            if (treatment.name().contains(name)) {
                 return Evaluation.PASS;
             }
         }
