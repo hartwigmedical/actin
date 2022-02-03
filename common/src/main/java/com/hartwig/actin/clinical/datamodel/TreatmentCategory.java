@@ -12,5 +12,6 @@ public enum TreatmentCategory {
     SURGERY,
     STEM_CELL_TRANSPLANTATION,
     TRIAL,
-    VACCINE
+    VACCINE,
+    CAR_T
 }

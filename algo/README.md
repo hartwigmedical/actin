@@ -124,12 +124,12 @@ EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries i
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D.
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
-HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
-HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
-HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines => Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine
-HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines <= Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines < Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine, Car T
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation, Car T (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation, Car T (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines => Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine, Car T
+HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines <= Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine, Car T
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines < Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation, Car T (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
@@ -186,6 +186,7 @@ HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN
 HAS_INR_ULN_OF_AT_MOST_X | International normalized ratio (INR/POCT_INR) <= X*ULN 
 HAS_PT_ULN_OF_AT_MOST_X | Prothrombin time (PT/POCT_PT) <= X*ULN 
 HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN 
+HAS_PTT_ULN_OF_AT_MOST_X | T.B.D. 
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
