@@ -24,7 +24,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_STAGE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
-        map.put(EligibilityRule.HAS_PRESENCE_OF_LESIONS, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_METASTASES, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());
@@ -33,6 +33,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, hasKnownActiveBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES, hasKnownSymptomaticBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
+        map.put(EligibilityRule.HAS_LUNG_METASTASES, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());

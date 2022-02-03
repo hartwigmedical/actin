@@ -97,7 +97,7 @@ PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Configured DOID should be equal or b
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
-HAS_PRESENCE_OF_LESIONS | Tumor details > hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions not empty
+HAS_METASTASES | Tumor details > hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions not empty
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
@@ -106,6 +106,7 @@ HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
+HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
@@ -122,6 +123,7 @@ HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second
 HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
 EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D.
+HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Stem cell transplantation, Antiviral therapy, Vaccine, Car T
@@ -259,6 +261,7 @@ HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid shoul
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
+HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
 HAS_CURRENT_COVID_19_INFECTION | T.B.D.
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated. 
 

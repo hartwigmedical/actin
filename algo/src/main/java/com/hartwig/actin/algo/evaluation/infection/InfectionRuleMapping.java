@@ -17,6 +17,7 @@ public final class InfectionRuleMapping {
     private static final String HEPATITIS_C_DOID = "1883";
     private static final String HIV_DOID = "526";
     private static final String CYTOMEGALOVIRUS_DOID = "0080827";
+    private static final String TUBERCOLOSIS_DOID = "399";
 
     private InfectionRuleMapping() {
     }
@@ -31,6 +32,7 @@ public final class InfectionRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasSpecificInfectionCreator(doidModel, HEPATITIS_C_DOID));
         map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasSpecificInfectionCreator(doidModel, HIV_DOID));
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(doidModel, CYTOMEGALOVIRUS_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_TUBERCOLOSIS_INFECTION, hasSpecificInfectionCreator(doidModel, TUBERCOLOSIS_DOID));
         map.put(EligibilityRule.HAS_CURRENT_COVID_19_INFECTION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToVaccineUseCreator());
 
