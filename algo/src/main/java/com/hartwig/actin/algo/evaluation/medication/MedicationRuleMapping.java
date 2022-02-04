@@ -39,6 +39,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
