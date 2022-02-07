@@ -60,7 +60,7 @@ public class OrangeInterpreterApplication {
         LOGGER.info(" Loaded {} records", records.size());
 
         LOGGER.info("Interpreting ORANGE record");
-        MolecularRecord molecular = OrangeInterpreter.interpret(orange);
+        MolecularRecord molecular = OrangeInterpreter.fromServeRecords(records).interpret(orange);
         MolecularPrinter.printRecord(molecular);
 
         MolecularRecordJson.write(molecular, config.outputDirectory());

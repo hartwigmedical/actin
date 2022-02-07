@@ -28,14 +28,12 @@ public final class GenomicEventFormatter {
 
     @NotNull
     public static String format(@NotNull String event) {
-        String formattedEvent = event;
-        if (event.contains("p.")) {
-            formattedEvent = AminoAcid.forceSingleLetterAminoAcids(event);
-        }
+        String formattedEvent = AminoAcid.forceSingleLetterAminoAcids(event);
 
         for (Map.Entry<String, String> replacement : EVENT_REPLACEMENTS.entrySet()) {
             formattedEvent = formattedEvent.replaceAll(replacement.getKey(), replacement.getValue());
         }
+
         return formattedEvent;
     }
 }

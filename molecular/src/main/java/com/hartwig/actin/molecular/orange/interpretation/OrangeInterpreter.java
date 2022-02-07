@@ -1,16 +1,20 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.List;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class OrangeInterpreter {
+public class OrangeInterpreter {
 
     private static final Logger LOGGER = LogManager.getLogger(OrangeInterpreter.class);
 
@@ -21,12 +25,22 @@ public final class OrangeInterpreter {
     static final String HOMOLOGOUS_REPAIR_PROFICIENT = "HR_PROFICIENT";
     static final String HOMOLOGOUS_REPAIR_UNKNOWN = "CANNOT_BE_DETERMINED";
 
-    private OrangeInterpreter() {
+    @NotNull
+    private final OrangeEventExtractor eventExtractor;
+
+    @NotNull
+    public static OrangeInterpreter fromServeRecords(@NotNull List<ServeRecord> records) {
+        return new OrangeInterpreter(OrangeEventExtractor.fromServeRecords(records));
+    }
+
+    @VisibleForTesting
+    OrangeInterpreter(@NotNull final OrangeEventExtractor eventExtractor) {
+        this.eventExtractor = eventExtractor;
     }
 
     @NotNull
-    public static MolecularRecord interpret(@NotNull OrangeRecord record) {
-        OrangeEventExtraction extraction = OrangeEventExtractor.extract(record);
+    public MolecularRecord interpret(@NotNull OrangeRecord record) {
+        OrangeEventExtraction extraction = eventExtractor.extract(record);
 
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())

@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canInterpretOrangeRecord() {
-        MolecularRecord record = OrangeInterpreter.interpret(TestOrangeDataFactory.createProperTestOrangeRecord());
+        MolecularRecord record = createTestInterpreter().interpret(TestOrangeDataFactory.createProperTestOrangeRecord());
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
@@ -42,18 +43,17 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canInterpretAllHomologousRepairStates() {
-        MolecularRecord deficient = OrangeInterpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_DEFICIENT));
+        OrangeInterpreter interpreter = createTestInterpreter();
+        MolecularRecord deficient = interpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_DEFICIENT));
         assertTrue(deficient.isHomologousRepairDeficient());
 
-        MolecularRecord proficient =
-                OrangeInterpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_PROFICIENT));
+        MolecularRecord proficient = interpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_PROFICIENT));
         assertFalse(proficient.isHomologousRepairDeficient());
 
-        MolecularRecord unknown =
-                OrangeInterpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_UNKNOWN));
+        MolecularRecord unknown = interpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_UNKNOWN));
         assertNull(unknown.isHomologousRepairDeficient());
 
-        MolecularRecord weird = OrangeInterpreter.interpret(withHomologousRepairStatus("not a valid status"));
+        MolecularRecord weird = interpreter.interpret(withHomologousRepairStatus("not a valid status"));
         assertNull(weird.isHomologousRepairDeficient());
     }
 
@@ -67,13 +67,14 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canInterpretAllMicrosatelliteInstabilityStates() {
-        MolecularRecord unstable = OrangeInterpreter.interpret(withMicrosatelliteStatus(OrangeInterpreter.MICROSATELLITE_UNSTABLE));
+        OrangeInterpreter interpreter = createTestInterpreter();
+        MolecularRecord unstable = interpreter.interpret(withMicrosatelliteStatus(OrangeInterpreter.MICROSATELLITE_UNSTABLE));
         assertTrue(unstable.isMicrosatelliteUnstable());
 
-        MolecularRecord stable = OrangeInterpreter.interpret(withMicrosatelliteStatus(OrangeInterpreter.MICROSATELLITE_STABLE));
+        MolecularRecord stable = interpreter.interpret(withMicrosatelliteStatus(OrangeInterpreter.MICROSATELLITE_STABLE));
         assertFalse(stable.isMicrosatelliteUnstable());
 
-        MolecularRecord weird = OrangeInterpreter.interpret(withMicrosatelliteStatus("not a valid status"));
+        MolecularRecord weird = interpreter.interpret(withMicrosatelliteStatus("not a valid status"));
         assertNull(weird.isMicrosatelliteUnstable());
     }
 
@@ -83,5 +84,11 @@ public class OrangeInterpreterTest {
                 .from(TestOrangeDataFactory.createMinimalTestOrangeRecord())
                 .microsatelliteStabilityStatus(microsatelliteStatus)
                 .build();
+    }
+
+    @NotNull
+    private static OrangeInterpreter createTestInterpreter() {
+        OrangeEventExtractor testExtractor = new OrangeEventExtractor(TreatmentEvidence::event);
+        return new OrangeInterpreter(testExtractor);
     }
 }

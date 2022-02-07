@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
@@ -14,10 +15,11 @@ import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class OrangeEventExtractor {
+public class OrangeEventExtractor {
 
     private static final Set<EvidenceType> MUTATION_TYPES =
             Sets.newHashSet(EvidenceType.HOTSPOT_MUTATION, EvidenceType.CODON_MUTATION, EvidenceType.EXON_MUTATION);
@@ -29,15 +31,25 @@ public final class OrangeEventExtractor {
 
     static final String ACTIN_SOURCE = "ACTIN";
 
-    private OrangeEventExtractor() {
+    @NotNull
+    private final MutationMapper mutationMapper;
+
+    @NotNull
+    public static OrangeEventExtractor fromServeRecords(@NotNull List<ServeRecord> records) {
+        return new OrangeEventExtractor(OrangeMutationMapper.fromServeRecords(records));
+    }
+
+    @VisibleForTesting
+    OrangeEventExtractor(@NotNull final MutationMapper mutationMapper) {
+        this.mutationMapper = mutationMapper;
     }
 
     @NotNull
-    public static OrangeEventExtraction extract(@NotNull OrangeRecord record) {
-        List<TreatmentEvidence> evidences = filter(record.evidences());
+    public OrangeEventExtraction extract(@NotNull OrangeRecord record) {
+        List<TreatmentEvidence> evidences = reportedFromActinSource(record.evidences());
 
         return ImmutableOrangeEventExtraction.builder()
-                .mutations(extractMutations(evidences))
+                .mutations(extractMutations(evidences, mutationMapper))
                 .activatedGenes(extractActivatedGenes(evidences))
                 .inactivatedGenes(extractInactivatedGenes(evidences))
                 .amplifiedGenes(extractAmplifiedGenes(evidences))
@@ -47,15 +59,12 @@ public final class OrangeEventExtractor {
     }
 
     @NotNull
-    private static Set<GeneMutation> extractMutations(@NotNull List<TreatmentEvidence> evidences) {
+    private static Set<GeneMutation> extractMutations(@NotNull List<TreatmentEvidence> evidences, @NotNull MutationMapper mutationMapper) {
         Set<GeneMutation> geneMutations = Sets.newHashSet();
 
         for (TreatmentEvidence evidence : evidences) {
             if (MUTATION_TYPES.contains(evidence.type())) {
-                geneMutations.add(ImmutableGeneMutation.builder()
-                        .gene(evidence.gene())
-                        .mutation(OrangeMutationMapper.map(evidence))
-                        .build());
+                geneMutations.add(ImmutableGeneMutation.builder().gene(evidence.gene()).mutation(mutationMapper.map(evidence)).build());
             }
         }
 
@@ -124,7 +133,7 @@ public final class OrangeEventExtractor {
     }
 
     @NotNull
-    private static List<TreatmentEvidence> filter(@NotNull List<TreatmentEvidence> evidences) {
+    private static List<TreatmentEvidence> reportedFromActinSource(@NotNull List<TreatmentEvidence> evidences) {
         List<TreatmentEvidence> filtered = Lists.newArrayList();
         for (TreatmentEvidence evidence : evidences) {
             if (evidence.sources().contains(ACTIN_SOURCE) && evidence.reported()) {

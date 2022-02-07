@@ -1,61 +1,47 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.List;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import com.hartwig.actin.molecular.orange.util.GenomicEventFormatter;
+import com.hartwig.actin.serve.datamodel.ServeRecord;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class OrangeMutationMapper {
-
-    static final Map<String, String> HOTSPOT_MAPPINGS = Maps.newHashMap();
-    static final Map<RangeKey, String> CODON_MAPPINGS = Maps.newHashMap();
-    static final Map<RangeKey, String> EXON_MAPPINGS = Maps.newHashMap();
-
-    private OrangeMutationMapper() {
-    }
-
-    static {
-        HOTSPOT_MAPPINGS.put("R678E", "Arg678Glu");
-
-        CODON_MAPPINGS.put(new RangeKey("BRAF", 600), "V600X");
-        CODON_MAPPINGS.put(new RangeKey("CDK4", 24), "R24X");
-
-        EXON_MAPPINGS.put(new RangeKey("EGFR", 20), "EXON 20 INSERTION");
-        EXON_MAPPINGS.put(new RangeKey("ERBB2", 20), "EXON 20 INSERTION");
-
-        EXON_MAPPINGS.put(new RangeKey("NRAS", 2), "exon 2-4");
-        EXON_MAPPINGS.put(new RangeKey("NRAS", 3), "exon 2-4");
-        EXON_MAPPINGS.put(new RangeKey("NRAS", 4), "exon 2-4");
-
-        EXON_MAPPINGS.put(new RangeKey("KRAS", 2), "exon 2-4");
-        EXON_MAPPINGS.put(new RangeKey("KRAS", 3), "exon 2-4");
-        EXON_MAPPINGS.put(new RangeKey("KRAS", 4), "exon 2-4");
-    }
+public class OrangeMutationMapper implements MutationMapper {
 
     @NotNull
-    public static String map(@NotNull TreatmentEvidence evidence) {
+    private final List<ServeRecord> mutations;
+
+    @NotNull
+    public static OrangeMutationMapper fromServeRecords(@NotNull List<ServeRecord> records) {
+        List<ServeRecord> mutations = Lists.newArrayList();
+        for (ServeRecord record : records) {
+            if (record.rule() == EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y) {
+                mutations.add(record);
+            }
+        }
+        return new OrangeMutationMapper(mutations);
+    }
+
+    private OrangeMutationMapper(@NotNull final List<ServeRecord> mutations) {
+        this.mutations = mutations;
+    }
+
+    @Override
+    @NotNull
+    public String map(@NotNull TreatmentEvidence evidence) {
         switch (evidence.type()) {
             case HOTSPOT_MUTATION: {
-                String event = GenomicEventFormatter.format(evidence.event());
-                return HOTSPOT_MAPPINGS.getOrDefault(event, event);
+                return mapForHotspotMutation(mutations, evidence.gene(), evidence.event());
             }
             case CODON_MUTATION: {
-                RangeKey key = new RangeKey(evidence.gene(), evidence.rangeRank());
-                if (!CODON_MAPPINGS.containsKey(key)) {
-                    throw new IllegalStateException("Cannot convert codon evidence to ACTIN evidence: " + evidence);
-                }
-                return CODON_MAPPINGS.get(key);
+                return mapForCodonMutation(mutations, evidence.gene(), evidence.rangeRank());
             }
             case EXON_MUTATION: {
-                RangeKey key = new RangeKey(evidence.gene(), evidence.rangeRank());
-                if (!EXON_MAPPINGS.containsKey(key)) {
-                    throw new IllegalStateException("Cannot convert exon evidence to ACTIN evidence: " + evidence);
-                }
-                return EXON_MAPPINGS.get(key);
+                return mapForExonMutation(mutations, evidence.gene(), evidence.rangeRank());
             }
             default: {
                 throw new IllegalArgumentException("Should never have to map mutation for this evidence: " + evidence);
@@ -63,41 +49,47 @@ public final class OrangeMutationMapper {
         }
     }
 
-    static class RangeKey {
-
-        @NotNull
-        private final String gene;
-        private final int rank;
-
-        public RangeKey(@NotNull final String gene, final int rank) {
-            this.gene = gene;
-            this.rank = rank;
-        }
-
-        @NotNull
-        public String gene() {
-            return gene;
-        }
-
-        public int rank() {
-            return rank;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
+    @NotNull
+    private static String mapForHotspotMutation(@NotNull List<ServeRecord> records, @NotNull String gene, @NotNull String event) {
+        String formattedEvent = GenomicEventFormatter.format(event);
+        for (ServeRecord record : records) {
+            String formattedMutation = GenomicEventFormatter.format(record.mutation());
+            if (gene.equals(record.gene()) && formattedEvent.equals(formattedMutation)) {
+                return record.mutation();
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            final RangeKey rangeKey = (RangeKey) o;
-            return rank == rangeKey.rank && gene.equals(rangeKey.gene);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(gene, rank);
+        throw new IllegalStateException("Could not find SERVE record for hotspot mapping of mutation: " + event);
+    }
+
+    @NotNull
+    private static String mapForCodonMutation(@NotNull List<ServeRecord> records, @NotNull String gene, int codon) {
+        for (ServeRecord record : records) {
+            if (gene.equals(record.gene()) && record.mutation().endsWith(codon + "X")) {
+                return record.mutation();
+            }
         }
+
+        throw new IllegalStateException("Could not find SERVE record for codon mapping of mutation: " + gene + " (" + codon + ")");
+    }
+
+    @NotNull
+    private static String mapForExonMutation(@NotNull List<ServeRecord> records, @NotNull String gene, int exon) {
+        for (ServeRecord record : records) {
+            if (gene.equals(record.gene()) && record.mutation().toLowerCase().startsWith("exon")) {
+                // Assume format "exon x-y <something>"
+                String exonRange = record.mutation().split(" ")[1];
+                if (exonRange.contains("-")) {
+                    String[] range = exonRange.split("-");
+                    if (exon >= Integer.parseInt(range[0]) && exon <= Integer.parseInt(range[1])) {
+                        return record.mutation();
+                    }
+                } else if (Integer.parseInt(exonRange) == exon) {
+                    return record.mutation();
+                }
+            }
+        }
+
+        throw new IllegalStateException("Could not find SERVE record for exon mapping of mutation: " + gene + " (" + exon + ")");
     }
 }
