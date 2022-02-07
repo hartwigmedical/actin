@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -8,6 +9,8 @@ import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
+import com.hartwig.actin.treatment.datamodel.Trial;
+import com.hartwig.actin.treatment.serialization.TrialJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -51,6 +54,10 @@ public class OrangeInterpreterApplication {
 
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
+
+        LOGGER.info("Loading trials from {}", config.treatmentDatabaseDirectory());
+        List<Trial> trials = TrialJson.readFromDir(config.treatmentDatabaseDirectory());
+        LOGGER.info(" Loaded {} trials", trials.size());
 
         LOGGER.info("Interpreting ORANGE record");
         MolecularRecord molecular = OrangeInterpreter.interpret(orange);

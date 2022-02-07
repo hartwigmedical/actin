@@ -51,10 +51,10 @@ public class MolecularPrinter {
         printer.print(" Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
         printer.print(" Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
 
+        printer.print("Events with evidence for approved treatment: " + toEvents(record.approvedResponsiveEvidence()));
         printer.print("Events associated with ACTIN trial eligibility: " + toEvents(record.actinTrials()));
         printer.print("Events associated with external trials: " + toEvents(record.externalTrials()));
-        printer.print("Events with approved evidence: " + toEvents(record.approvedResponsiveEvidence()));
-        printer.print("Events with experimental evidence: " + toEvents(record.experimentalResponsiveEvidence()));
+        printer.print("Events with evidence for experimental treatment: " + toEvents(record.experimentalResponsiveEvidence()));
         printer.print("Other events with evidence: " + toEvents(record.otherResponsiveEvidence()));
         printer.print("Events with resistance evidence: " + toEvents(record.resistanceEvidence()));
     }
