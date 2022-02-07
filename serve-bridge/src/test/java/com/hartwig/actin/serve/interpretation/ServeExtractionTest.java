@@ -60,14 +60,17 @@ public class ServeExtractionTest {
         EligibilityFunction hrdFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.HRD_SIGNATURE).build();
         assertEquals("HRD pos", ServeExtraction.mutation(hrdFunction));
 
-        EligibilityFunction tmbHighFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.TMB_OF_AT_LEAST_X).build();
-        assertEquals("TMB high", ServeExtraction.mutation(tmbHighFunction));
+        EligibilityFunction tmbHighFunction =
+                ImmutableEligibilityFunction.builder().rule(EligibilityRule.TMB_OF_AT_LEAST_X).addParameters("20").build();
+        assertEquals("TMB >= 20", ServeExtraction.mutation(tmbHighFunction));
 
-        EligibilityFunction tmlHighFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.TML_OF_AT_LEAST_X).build();
-        assertEquals("TML high", ServeExtraction.mutation(tmlHighFunction));
+        EligibilityFunction tmlHighFunction =
+                ImmutableEligibilityFunction.builder().rule(EligibilityRule.TML_OF_AT_LEAST_X).addParameters("400").build();
+        assertEquals("TML >= 400", ServeExtraction.mutation(tmlHighFunction));
 
-        EligibilityFunction tmlLowFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.TML_OF_AT_MOST_X).build();
-        assertEquals("TML low", ServeExtraction.mutation(tmlLowFunction));
+        EligibilityFunction tmlLowFunction =
+                ImmutableEligibilityFunction.builder().rule(EligibilityRule.TML_OF_AT_MOST_X).addParameters("200").build();
+        assertEquals("TML <= 200", ServeExtraction.mutation(tmlLowFunction));
 
         EligibilityFunction otherFunction =
                 ImmutableEligibilityFunction.builder().rule(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X).build();

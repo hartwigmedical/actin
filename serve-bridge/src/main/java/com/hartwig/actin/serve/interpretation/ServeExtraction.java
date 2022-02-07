@@ -70,11 +70,20 @@ public final class ServeExtraction {
             } case HRD_SIGNATURE: {
                 return "HRD pos";
             } case TMB_OF_AT_LEAST_X: {
-                return "TMB high";
+                if (function.parameters().size() != 1) {
+                    throw new IllegalStateException("Cannot determine TMB cutoff for rule: " + function);
+                }
+                return "TMB >= " + function.parameters().get(0);
             } case TML_OF_AT_LEAST_X: {
-                return "TML high";
+                if (function.parameters().size() != 1) {
+                    throw new IllegalStateException("Cannot determine TML cutoff for rule: " + function);
+                }
+                return "TML >= " + function.parameters().get(0);
             } case TML_OF_AT_MOST_X: {
-                return "TML low";
+                if (function.parameters().size() != 1) {
+                    throw new IllegalStateException("Cannot determine TML cutoff for rule: " + function);
+                }
+                return "TML <= " + function.parameters().get(0);
             } default: {
                 return null;
             }

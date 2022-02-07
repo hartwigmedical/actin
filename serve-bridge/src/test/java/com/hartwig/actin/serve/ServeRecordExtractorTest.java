@@ -55,7 +55,7 @@ public class ServeRecordExtractorTest {
         ServeRecord fourth = find(records, EligibilityRule.TMB_OF_AT_LEAST_X);
         assertEquals("trial 1", fourth.trial());
         assertNull(fourth.gene());
-        assertEquals("TMB high", fourth.mutation());
+        assertEquals("TMB >= 10", fourth.mutation());
         assertTrue(fourth.isUsedAsInclusion());
     }
 
@@ -83,7 +83,7 @@ public class ServeRecordExtractorTest {
                                         .build())
                                 .addParameters(ImmutableEligibilityFunction.builder()
                                         .rule(EligibilityRule.TMB_OF_AT_LEAST_X)
-                                        .addParameters("450")
+                                        .addParameters("10")
                                         .build())
                                 .build())
                         .build())
