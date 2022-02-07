@@ -1,0 +1,4 @@
+trial	rule	gene	mutation	isUsedAsInclusion
+TRIAL 1	AMPLIFICATION_OF_GENE_X	X		true
+TRIAL 1	MUTATION_IN_GENE_X_OF_TYPE_Y	Y	some mutation	false
+TRIAL 2	TMB_OF_AT_LEAST_X		TMB >= 8	true

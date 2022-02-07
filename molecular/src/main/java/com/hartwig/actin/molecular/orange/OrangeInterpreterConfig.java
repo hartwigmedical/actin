@@ -20,7 +20,7 @@ public interface OrangeInterpreterConfig {
     Logger LOGGER = LogManager.getLogger(OrangeInterpreterConfig.class);
 
     String ORANGE_JSON = "orange_json";
-    String TREATMENT_DATABASE_DIRECTORY = "treatment_database_directory";
+    String SERVE_BRIDGE_TSV = "serve_bridge_tsv";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -31,7 +31,7 @@ public interface OrangeInterpreterConfig {
         Options options = new Options();
 
         options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted");
-        options.addOption(TREATMENT_DATABASE_DIRECTORY, true, "Directory containing all available treatments");
+        options.addOption(SERVE_BRIDGE_TSV, true, "The output of SERVE-bridge");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
 
@@ -44,7 +44,7 @@ public interface OrangeInterpreterConfig {
     String orangeJson();
 
     @NotNull
-    String treatmentDatabaseDirectory();
+    String serveBridgeTsv();
 
     @NotNull
     String outputDirectory();
@@ -58,7 +58,7 @@ public interface OrangeInterpreterConfig {
 
         return ImmutableOrangeInterpreterConfig.builder()
                 .orangeJson(ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON))
-                .treatmentDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DATABASE_DIRECTORY))
+                .serveBridgeTsv(ApplicationConfig.nonOptionalFile(cmd, SERVE_BRIDGE_TSV))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }
