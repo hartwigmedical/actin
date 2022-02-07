@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
@@ -10,10 +11,11 @@ import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import com.hartwig.actin.molecular.orange.util.GenomicEventFormatter;
+import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.jetbrains.annotations.NotNull;
 
-final class OrangeEvidenceFactory {
+class OrangeEvidenceFactory {
 
     static final String ACTIN_SOURCE = "ACTIN";
     static final String ICLUSION_SOURCE = "ICLUSION";
@@ -28,20 +30,32 @@ final class OrangeEvidenceFactory {
         NON_APPLICABLE_EVENTS.add("VEGFA amp");
     }
 
-    private OrangeEvidenceFactory() {
+    @NotNull
+    private final EvidenceEvaluator evidenceEvaluator;
+
+    @NotNull
+    public static OrangeEvidenceFactory fromServeRecords(@NotNull List<ServeRecord> records) {
+        return new OrangeEvidenceFactory(OrangeEvidenceEvaluator.fromServeRecords(records));
+    }
+
+    @VisibleForTesting
+    OrangeEvidenceFactory(@NotNull final EvidenceEvaluator evidenceEvaluator) {
+        this.evidenceEvaluator = evidenceEvaluator;
     }
 
     @NotNull
-    public static List<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
+    public List<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
-            result.add(toMolecularEvidence(evidence));
+            if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
+                result.add(toMolecularEvidence(evidence));
+            }
         }
         return result;
     }
 
     @NotNull
-    public static List<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
+    public List<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ICLUSION_SOURCE)) {
             result.add(toMolecularEvidence(evidence));
@@ -50,7 +64,7 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static List<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+    public List<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, CKB_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
@@ -61,7 +75,7 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static List<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+    public List<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
 
         List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
@@ -74,7 +88,7 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static List<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+    public List<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
 
         List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
@@ -87,7 +101,7 @@ final class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public static List<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
+    public List<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
         List<MolecularEvidence> result = Lists.newArrayList();
 
         List<TreatmentEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);

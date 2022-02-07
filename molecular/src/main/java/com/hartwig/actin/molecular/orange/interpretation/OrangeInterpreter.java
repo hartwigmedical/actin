@@ -27,15 +27,18 @@ public class OrangeInterpreter {
 
     @NotNull
     private final OrangeEventExtractor eventExtractor;
+    @NotNull
+    private final OrangeEvidenceFactory evidenceFactory;
 
     @NotNull
     public static OrangeInterpreter fromServeRecords(@NotNull List<ServeRecord> records) {
-        return new OrangeInterpreter(OrangeEventExtractor.fromServeRecords(records));
+        return new OrangeInterpreter(OrangeEventExtractor.fromServeRecords(records), OrangeEvidenceFactory.fromServeRecords(records));
     }
 
     @VisibleForTesting
-    OrangeInterpreter(@NotNull final OrangeEventExtractor eventExtractor) {
+    OrangeInterpreter(@NotNull final OrangeEventExtractor eventExtractor, @NotNull final OrangeEvidenceFactory evidenceFactory) {
         this.eventExtractor = eventExtractor;
+        this.evidenceFactory = evidenceFactory;
     }
 
     @NotNull
@@ -57,14 +60,14 @@ public class OrangeInterpreter {
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())
                 .tumorMutationalLoad(record.tumorMutationalLoad())
-                .actinTrials(OrangeEvidenceFactory.createActinTrials(record.evidences()))
+                .actinTrials(evidenceFactory.createActinTrials(record.evidences()))
                 .externalTrialSource("iClusion")
-                .externalTrials(OrangeEvidenceFactory.createExternalTrials(record.evidences()))
+                .externalTrials(evidenceFactory.createExternalTrials(record.evidences()))
                 .evidenceSource("CKB")
-                .approvedResponsiveEvidence(OrangeEvidenceFactory.createApprovedResponsiveEvidence(record.evidences()))
-                .experimentalResponsiveEvidence(OrangeEvidenceFactory.createExperimentalResponsiveEvidence(record.evidences()))
-                .otherResponsiveEvidence(OrangeEvidenceFactory.createOtherResponsiveEvidence(record.evidences()))
-                .resistanceEvidence(OrangeEvidenceFactory.createResistanceEvidence(record.evidences()))
+                .approvedResponsiveEvidence(evidenceFactory.createApprovedResponsiveEvidence(record.evidences()))
+                .experimentalResponsiveEvidence(evidenceFactory.createExperimentalResponsiveEvidence(record.evidences()))
+                .otherResponsiveEvidence(evidenceFactory.createOtherResponsiveEvidence(record.evidences()))
+                .resistanceEvidence(evidenceFactory.createResistanceEvidence(record.evidences()))
                 .build();
     }
 

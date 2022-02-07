@@ -88,7 +88,8 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        OrangeEventExtractor testExtractor = new OrangeEventExtractor(TreatmentEvidence::event);
-        return new OrangeInterpreter(testExtractor);
+        OrangeEventExtractor testEventExtractor = new OrangeEventExtractor(TreatmentEvidence::event);
+        OrangeEvidenceFactory testEvidenceFactory = new OrangeEvidenceFactory(evidence -> true);
+        return new OrangeInterpreter(testEventExtractor, testEvidenceFactory);
     }
 }

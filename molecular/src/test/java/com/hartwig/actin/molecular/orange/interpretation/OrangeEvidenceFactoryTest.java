@@ -20,32 +20,30 @@ public class OrangeEvidenceFactoryTest {
 
     @Test
     public void canCreateMolecularEvidence() {
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> true);
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> actinTrials = OrangeEvidenceFactory.createActinTrials(evidences);
+        List<MolecularEvidence> actinTrials = factory.createActinTrials(evidences);
         assertEquals(1, actinTrials.size());
         assertEquals("B responsive actin event", actinTrials.get(0).event());
 
-        List<MolecularEvidence> externalTrials = OrangeEvidenceFactory.createExternalTrials(evidences);
+        List<MolecularEvidence> externalTrials = factory.createExternalTrials(evidences);
         assertEquals(1, externalTrials.size());
         assertEquals("B responsive trial event", externalTrials.get(0).event());
 
-        List<MolecularEvidence> approvedResponsiveEvidence =
-                OrangeEvidenceFactory.createApprovedResponsiveEvidence(evidences);
+        List<MolecularEvidence> approvedResponsiveEvidence = factory.createApprovedResponsiveEvidence(evidences);
         assertEquals(1, approvedResponsiveEvidence.size());
         assertEquals("A on-label responsive event", approvedResponsiveEvidence.get(0).event());
 
-        List<MolecularEvidence> generalExperimentalResponsiveEvidence =
-                OrangeEvidenceFactory.createExperimentalResponsiveEvidence(evidences);
+        List<MolecularEvidence> generalExperimentalResponsiveEvidence = factory.createExperimentalResponsiveEvidence(evidences);
         assertEquals(1, generalExperimentalResponsiveEvidence.size());
         assertEquals("A off-label responsive event", generalExperimentalResponsiveEvidence.get(0).event());
 
-        List<MolecularEvidence> generalOtherResponsiveEvidence =
-                OrangeEvidenceFactory.createOtherResponsiveEvidence(evidences);
+        List<MolecularEvidence> generalOtherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
         assertEquals(1, generalOtherResponsiveEvidence.size());
         assertEquals("B off-label responsive event", generalOtherResponsiveEvidence.get(0).event());
 
-        List<MolecularEvidence> generalResistanceEvidence = OrangeEvidenceFactory.createResistanceEvidence(evidences);
+        List<MolecularEvidence> generalResistanceEvidence = factory.createResistanceEvidence(evidences);
         assertEquals(1, generalResistanceEvidence.size());
         assertEquals("A resistant event", generalResistanceEvidence.get(0).event());
     }

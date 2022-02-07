@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
-// All values are required for deserialization of ORANGE json
 public enum EvidenceType {
     VIRAL_PRESENCE,
     SIGNATURE,
