@@ -37,7 +37,8 @@ public enum LabMeasurement {
     TROPONIN_IT("HSTNT", "ng/L"),
     POTASSIUM("K", "mmol/l"),
     MAGNESIUM("MG", "mmol/l"),
-    PHOSPHORUS("P", "mmol/l");
+    PHOSPHORUS("P", "mmol/l"),
+    TOTAL_PROTEIN_URINE("TE_U", "g/l");
 
     @NotNull
     private final String code;
