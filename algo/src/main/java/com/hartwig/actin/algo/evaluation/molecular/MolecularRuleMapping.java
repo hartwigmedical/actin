@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -39,6 +40,8 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
         map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
         map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
+        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }
