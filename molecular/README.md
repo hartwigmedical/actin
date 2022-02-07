@@ -8,9 +8,15 @@ The ORANGE interpreter application requires Java 11+ and can be run as follows:
 
 ```
 java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplication \
-   -orange_json /path/to/orange.json
+   -orange_json /path/to/orange.json \
+   -treatment_database_directory /path/to/potential_treatment_options \
    -output_directory /path/to/where/molecular_json_file_is_written
 ```
+
+The following assumptions are made about the inputs:
+ - The ORANGE json is the json output from [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange)
+ - The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
+
 ## Molecular Datamodel
 
 The following general fields about a molecular experiment can be populated per sample
