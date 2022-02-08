@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class GenomicEventFormatter {
+public final class EventFormatter {
 
     private static final Map<String, String> EVENT_REPLACEMENTS = Maps.newHashMap();
 
@@ -23,7 +23,7 @@ public final class GenomicEventFormatter {
         EVENT_REPLACEMENTS.put("p\\.", Strings.EMPTY);
     }
 
-    private GenomicEventFormatter() {
+    private EventFormatter() {
     }
 
     @NotNull

@@ -3,9 +3,12 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.util.FusionParser;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -16,6 +19,10 @@ import org.jetbrains.annotations.NotNull;
 class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     private static final Logger LOGGER = LogManager.getLogger(OrangeEvidenceEvaluator.class);
+
+    static final String ORANGE_HIGH_TMB = "High tumor mutation load";
+    static final String ORANGE_MSI = "Microsatellite unstable";
+    static final String ORANGE_HRD = "HR deficiency";
 
     @NotNull
     private final List<ServeRecord> inclusionRecords;
@@ -33,7 +40,8 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         return new OrangeEvidenceEvaluator(inclusionRecords, OrangeMutationMapper.fromServeRecords(records));
     }
 
-    private OrangeEvidenceEvaluator(@NotNull final List<ServeRecord> inclusionRecords, @NotNull final MutationMapper mutationMapper) {
+    @VisibleForTesting
+    OrangeEvidenceEvaluator(@NotNull final List<ServeRecord> inclusionRecords, @NotNull final MutationMapper mutationMapper) {
         this.inclusionRecords = inclusionRecords;
         this.mutationMapper = mutationMapper;
     }
@@ -82,13 +90,13 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     private static boolean hasInclusiveSignatureRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
         switch (event) {
-            case "High tumor mutation load": {
+            case ORANGE_HIGH_TMB: {
                 return hasInclusiveTumorLoadRecord(inclusionRecords);
             }
-            case "Microsatellite unstable": {
+            case ORANGE_MSI: {
                 return hasInclusiveMicrosatelliteRecord(inclusionRecords);
             }
-            case "HR deficiency": {
+            case ORANGE_HRD: {
                 return hasInclusiveHRDeficiencyRecord(inclusionRecords);
             }
             default: {
@@ -129,20 +137,18 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
     }
 
     private static boolean hasInclusiveFusionRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
-        // Expected format "geneA - geneB fusion"
-        String[] parts = event.split(" ");
+        FusionGene fusion = FusionParser.fromEvidenceEvent(event);
 
-        String fiveGene = parts[0];
-        String threeGene = parts[2];
-        String fusionGene = fiveGene + "-" + threeGene;
-        boolean hasExactFusion = containsRecordWithMutationAndRule(inclusionRecords, fusionGene, EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y);
-        boolean hasPromiscuousFive = containsRecordWithGeneAndRule(inclusionRecords, fiveGene, EligibilityRule.FUSION_IN_GENE_X);
-        boolean hasPromiscuousThree = containsRecordWithGeneAndRule(inclusionRecords, threeGene, EligibilityRule.FUSION_IN_GENE_X);
+        String exactFusion = fusion.fiveGene() + "-" + fusion.threeGene();
+        boolean hasExact = containsRecordWithMutationAndRule(inclusionRecords, exactFusion, EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y);
+        boolean hasPromiscuousFive = containsRecordWithGeneAndRule(inclusionRecords, fusion.fiveGene(), EligibilityRule.FUSION_IN_GENE_X);
+        boolean hasPromiscuousThree = containsRecordWithGeneAndRule(inclusionRecords, fusion.threeGene(), EligibilityRule.FUSION_IN_GENE_X);
 
-        return hasExactFusion || hasPromiscuousFive || hasPromiscuousThree;
+        return hasExact || hasPromiscuousFive || hasPromiscuousThree;
     }
 
     private static boolean hasInclusiveMutationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull Set<String> mappedMutations) {
+        // TODO add gene.
         for (String mappedMutation : mappedMutations) {
             if (containsRecordWithMutationAndRule(inclusionRecords, mappedMutation, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)) {
                 return true;

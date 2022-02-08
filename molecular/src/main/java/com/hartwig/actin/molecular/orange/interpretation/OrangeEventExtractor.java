@@ -8,13 +8,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
 import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.util.FusionParser;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.jetbrains.annotations.NotNull;
@@ -124,10 +124,7 @@ class OrangeEventExtractor {
 
         for (TreatmentEvidence evidence : evidences) {
             if (FUSION_TYPES.contains(evidence.type())) {
-                String event = evidence.event().substring(0, evidence.event().indexOf(" fusion"));
-                String[] genes = event.split(" - ");
-
-                fusionGenes.add(ImmutableFusionGene.builder().fiveGene(genes[0]).threeGene(genes[1]).build());
+                fusionGenes.add(FusionParser.fromEvidenceEvent(evidence.event()));
             }
         }
 

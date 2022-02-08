@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
-import com.hartwig.actin.molecular.orange.util.GenomicEventFormatter;
+import com.hartwig.actin.molecular.orange.util.EventFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
@@ -198,7 +198,7 @@ class OrangeEvidenceFactory {
     @NotNull
     private static String toEvent(@NotNull TreatmentEvidence evidence) {
         String gene = evidence.gene();
-        String event = GenomicEventFormatter.format(evidence.event());
+        String event = EventFormatter.format(evidence.event());
         // Promiscuous fusions have the gene embedded in the event.
         return gene != null && evidence.type() != EvidenceType.PROMISCUOUS_FUSION ? gene + " " + event : event;
     }

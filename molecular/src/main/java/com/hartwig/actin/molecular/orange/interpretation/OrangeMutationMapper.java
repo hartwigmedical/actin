@@ -6,7 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
-import com.hartwig.actin.molecular.orange.util.GenomicEventFormatter;
+import com.hartwig.actin.molecular.orange.util.EventFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -55,9 +55,9 @@ class OrangeMutationMapper implements MutationMapper {
     private static Set<String> mapForHotspotMutation(@NotNull List<ServeRecord> records, @NotNull String gene, @NotNull String event) {
         Set<String> results = Sets.newHashSet();
 
-        String formattedEvent = GenomicEventFormatter.format(event);
+        String formattedEvent = EventFormatter.format(event);
         for (ServeRecord record : records) {
-            String formattedMutation = GenomicEventFormatter.format(record.mutation());
+            String formattedMutation = EventFormatter.format(record.mutation());
             if (gene.equals(record.gene()) && formattedEvent.equals(formattedMutation)) {
                 results.add(record.mutation());
             }
