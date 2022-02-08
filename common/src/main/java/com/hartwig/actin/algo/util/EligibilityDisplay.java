@@ -12,11 +12,11 @@ public final class EligibilityDisplay {
 
     @NotNull
     public static String trialName(@NotNull TrialEligibility trial) {
-        return trial.identification().trialId();
+        return trial.identification().trialId() + " (" + trial.identification().acronym() + ")";
     }
 
     @NotNull
     public static String cohortName(@NotNull TrialEligibility trial, @NotNull CohortEligibility cohort) {
-        return trialName(trial) + " - " + cohort.metadata().description();
+        return trial.identification().trialId() + " - " + cohort.metadata().description();
     }
 }

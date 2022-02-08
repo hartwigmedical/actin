@@ -15,7 +15,7 @@ public class TreatmentMatchSummarizerTest {
 
         assertEquals(1, summary.trialCount());
         assertEquals(1, summary.eligibleTrials().size());
-        assertTrue(summary.eligibleTrials().contains("Test Trial"));
+        assertTrue(summary.eligibleTrials().contains("Test Trial (TEST-TRIAL)"));
 
         assertEquals(3, summary.cohortCount());
         assertEquals(2, summary.eligibleCohorts().size());

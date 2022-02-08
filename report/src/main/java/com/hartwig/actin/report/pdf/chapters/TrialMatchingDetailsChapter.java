@@ -58,16 +58,17 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
+        boolean displayFailOnly = !trial.overallEvaluation().isPass();
         document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
         document.add(blankLine());
-        document.add(Tables.makeWrapping(createEvaluationTable(trial.evaluations())));
+        document.add(Tables.makeWrapping(createEvaluationTable(trial.evaluations(), displayFailOnly)));
 
         for (CohortEligibility cohort : trial.cohorts()) {
             document.add(blankLine());
             document.add(createCohortIdentificationTable(trial.identification().trialId(), cohort.metadata(), cohort.overallEvaluation()));
             if (!cohort.evaluations().isEmpty()) {
                 document.add(blankLine());
-                document.add(Tables.makeWrapping(createEvaluationTable(cohort.evaluations())));
+                document.add(Tables.makeWrapping(createEvaluationTable(cohort.evaluations(), displayFailOnly)));
             }
         }
     }
@@ -116,7 +117,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     @NotNull
-    private Table createEvaluationTable(@NotNull Map<Eligibility, Evaluation> evaluations) {
+    private Table createEvaluationTable(@NotNull Map<Eligibility, Evaluation> evaluations, boolean displayFailOnly) {
         Table table = Tables.createFixedWidthCols(new float[] { 1, 4, 1 }).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Rule"));
@@ -124,22 +125,24 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("Evaluation"));
 
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
-            boolean hasAddedEvaluation = false;
-            Evaluation evaluation = entry.getValue();
-            Set<CriterionReference> references = entry.getKey().references();
-            if (references.isEmpty()) {
-                table.addCell(Cells.createContent(Strings.EMPTY));
-                table.addCell(Cells.createContent(Strings.EMPTY));
-                table.addCell(Cells.createContent(evaluation));
-            } else {
-                for (CriterionReference reference : entry.getKey().references()) {
-                    table.addCell(Cells.createContent(reference.id()));
-                    table.addCell(Cells.createContent(reference.text()));
-                    if (!hasAddedEvaluation) {
-                        table.addCell(Cells.createContent(evaluation));
-                        hasAddedEvaluation = true;
-                    } else {
-                        table.addCell(Cells.createContent(Strings.EMPTY));
+            if (!entry.getValue().isPass() || !displayFailOnly) {
+                boolean hasAddedEvaluation = false;
+                Evaluation evaluation = entry.getValue();
+                Set<CriterionReference> references = entry.getKey().references();
+                if (references.isEmpty()) {
+                    table.addCell(Cells.createContent(Strings.EMPTY));
+                    table.addCell(Cells.createContent(Strings.EMPTY));
+                    table.addCell(Cells.createContent(evaluation));
+                } else {
+                    for (CriterionReference reference : entry.getKey().references()) {
+                        table.addCell(Cells.createContent(reference.id()));
+                        table.addCell(Cells.createContent(reference.text()));
+                        if (!hasAddedEvaluation) {
+                            table.addCell(Cells.createContent(evaluation));
+                            hasAddedEvaluation = true;
+                        } else {
+                            table.addCell(Cells.createContent(Strings.EMPTY));
+                        }
                     }
                 }
             }
