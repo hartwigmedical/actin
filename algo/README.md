@@ -111,6 +111,7 @@ HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or 
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
+HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 
@@ -237,6 +238,7 @@ HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid shou
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
+HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
@@ -281,13 +283,13 @@ HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND cl
 IS_ABLE_TO_SWALLOW_ORAL_MEDICATION | > won't be evaluated
 CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
-CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" and status is active
+CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
 CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > categories contains type of "Antibiotics" and status is active
 CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION | Medication > categories contains type of "Antiepileptics" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
-CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
+CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other"
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
 CURRENTLY_GETS_COLONY_STIMULATING_FACTORS | Medication > categories contains type of "Colony stimulating factors" and status is active
@@ -310,7 +312,7 @@ IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be eva
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_COMPLICATION_X | Cancer related complication > name like %X%
+HAS_COMPLICATION_X | Cancer related complication > name like %X%. Resolves to 'Undetermined' in case UNKNOWN.
 
 ##### Rules related to toxicity
 
@@ -319,16 +321,18 @@ Rule | When does a patient pass evaluation? | Note
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X. 
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. | Multiple names can be specified within 1 rule, separated by ";"
+HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | T.B.D. 
 
-Note for all toxicity rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
+Note for all TOXICITY rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
 
-##### Rules related to blood pressure measurements
+##### Rules related to vital function measurements
 
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SBP_MMHG_OF_AT_LEAST_X | Blood pressures > category = Up to 5 most recent systolic blood pressure AND average value => X
-HAS_DBP_MMHG_OF_AT_LEAST_X | Blood pressures > category = Up to 5 most recent diastolic blood pressure AND average value => X
+HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent systolic blood pressure AND average value => X
+HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent diastolic blood pressure AND average value => X
+HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | in %. Currently resolves to UNDETERMINED
 
 ##### Rules related to blood transfusions
 

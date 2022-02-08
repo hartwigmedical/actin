@@ -34,7 +34,6 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.PATIENT_IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
         map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, isWillingToNotUseContactLensesCreator());
-        map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.bloodpressure;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -20,6 +21,7 @@ public final class BloodPressureRuleMapping {
 
         map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
         map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
+        map.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }
