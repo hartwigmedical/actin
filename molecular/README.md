@@ -88,7 +88,7 @@ The following classifications are extracted from the ACTIN-sourced evidence in P
  - fusions: Include any fusion with reported evidence of type `FUSION_PAIR` or `PROMISCUOUS_FUSION`
  
 The evidence is extracted from the PROTECT part of ORANGE as follows:
- - actinTrials: All reported evidence from the ACTIN source.
+ - actinTrials: All reported evidence from the ACTIN source that is defined as an inclusion criterion for at least one trial. 
  - externalTrials: All reported evidence from the iClusion source, filtered for applicability
  - approvedResponsiveEvidence: All reported A-level on-label responsive evidence from the CKB source, filtered for applicability.
  - experimentalResponsiveEvidence: All reported A-level off-label and B-level on-label responsive evidence from the CKB source, filtered for applicability.
