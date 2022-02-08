@@ -76,7 +76,7 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
             case CODON_MUTATION:
             case EXON_MUTATION: {
                 Set<String> mappedMutations = mutationMapper.map(evidence);
-                return hasInclusiveMutationRecord(inclusionRecords, mappedMutations);
+                return hasInclusiveMutationRecord(inclusionRecords, evidence.gene(), mappedMutations);
             }
             case ANY_MUTATION: {
                 LOGGER.warn("No trial inclusion evaluation is implemented for any mutation: {}", evidence);
@@ -147,10 +147,25 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         return hasExact || hasPromiscuousFive || hasPromiscuousThree;
     }
 
-    private static boolean hasInclusiveMutationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull Set<String> mappedMutations) {
-        // TODO add gene.
+    private static boolean hasInclusiveMutationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene,
+            @NotNull Set<String> mappedMutations) {
         for (String mappedMutation : mappedMutations) {
-            if (containsRecordWithMutationAndRule(inclusionRecords, mappedMutation, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)) {
+            if (containsRecordWithMutationOnGeneAndRule(inclusionRecords,
+                    gene,
+                    mappedMutation,
+                    EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean containsRecordWithMutationOnGeneAndRule(@NotNull List<ServeRecord> records, @NotNull String gene,
+            @NotNull String mutation, @NotNull EligibilityRule... rules) {
+        Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);
+        for (ServeRecord record : records) {
+            if (gene.equals(record.gene()) && mutation.equals(record.mutation()) && ruleSet.contains(record.rule())) {
                 return true;
             }
         }

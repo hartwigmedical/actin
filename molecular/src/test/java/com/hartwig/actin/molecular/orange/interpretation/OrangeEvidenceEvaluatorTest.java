@@ -22,6 +22,31 @@ import org.junit.Test;
 public class OrangeEvidenceEvaluatorTest {
 
     @Test
+    public void ignoreExclusionRecords() {
+        ServeRecord inclusion = ImmutableServeRecord.builder()
+                .trial(Strings.EMPTY)
+                .rule(EligibilityRule.AMPLIFICATION_OF_GENE_X)
+                .gene("Y")
+                .isUsedAsInclusion(true)
+                .build();
+
+        ServeRecord exclusion = ImmutableServeRecord.builder()
+                .trial(Strings.EMPTY)
+                .rule(EligibilityRule.AMPLIFICATION_OF_GENE_X)
+                .gene("X")
+                .isUsedAsInclusion(false)
+                .build();
+
+        OrangeEvidenceEvaluator evaluator = OrangeEvidenceEvaluator.fromServeRecords(Lists.newArrayList(inclusion, exclusion));
+
+        TreatmentEvidence amplificationY = createTestBuilder().type(EvidenceType.AMPLIFICATION).gene("Y").build();
+        assertTrue(evaluator.isPotentiallyForTrialInclusion(amplificationY));
+
+        TreatmentEvidence amplificationX = createTestBuilder().type(EvidenceType.AMPLIFICATION).gene("X").build();
+        assertFalse(evaluator.isPotentiallyForTrialInclusion(amplificationX));
+    }
+
+    @Test
     public void canDetermineInclusionForSignatures() {
         EvidenceEvaluator evaluator = withRecord(withRule(EligibilityRule.TML_OF_AT_LEAST_X));
 
@@ -100,8 +125,20 @@ public class OrangeEvidenceEvaluatorTest {
 
     @Test
     public void canDetermineInclusionForMutations() {
-        // TODO implement
-        assertTrue(true);
+        EvidenceEvaluator mutationEvaluator =
+                withRecord(withRuleAndGeneAndMutation(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, "X", "Y"));
+
+        TreatmentEvidence hotspotCorrect = createTestBuilder().type(EvidenceType.HOTSPOT_MUTATION).gene("X").event("Y").build();
+        assertTrue(mutationEvaluator.isPotentiallyForTrialInclusion(hotspotCorrect));
+
+        TreatmentEvidence hotspotWrong = createTestBuilder().type(EvidenceType.HOTSPOT_MUTATION).gene("X").event("Z").build();
+        assertFalse(mutationEvaluator.isPotentiallyForTrialInclusion(hotspotWrong));
+
+        TreatmentEvidence codon = createTestBuilder().type(EvidenceType.CODON_MUTATION).gene("X").event("Y").build();
+        assertTrue(mutationEvaluator.isPotentiallyForTrialInclusion(codon));
+
+        TreatmentEvidence exon = createTestBuilder().type(EvidenceType.EXON_MUTATION).gene("X").event("Y").build();
+        assertTrue(mutationEvaluator.isPotentiallyForTrialInclusion(exon));
     }
 
     @NotNull
@@ -113,7 +150,6 @@ public class OrangeEvidenceEvaluatorTest {
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE);
-
     }
 
     @NotNull
@@ -121,19 +157,23 @@ public class OrangeEvidenceEvaluatorTest {
         return new OrangeEvidenceEvaluator(Lists.newArrayList(record), evidence -> Sets.newHashSet(evidence.event()));
     }
 
-
     @NotNull
     private static ServeRecord withRule(@NotNull EligibilityRule rule) {
-        return withRuleOnGene(rule, null);
+        return withRuleAndGeneAndMutation(rule, null, null);
     }
 
     @NotNull
     private static ServeRecord withRuleOnGene(@NotNull EligibilityRule rule, @Nullable String gene) {
-        return ImmutableServeRecord.builder().trial(Strings.EMPTY).rule(rule).isUsedAsInclusion(true).gene(gene).build();
+        return withRuleAndGeneAndMutation(rule, gene, null);
     }
 
     @NotNull
     private static ServeRecord withRuleAndMutation(@NotNull EligibilityRule rule, @Nullable String mutation) {
-        return ImmutableServeRecord.builder().trial(Strings.EMPTY).rule(rule).isUsedAsInclusion(true).mutation(mutation).build();
+        return withRuleAndGeneAndMutation(rule, null, mutation);
     }
+
+    private static ServeRecord withRuleAndGeneAndMutation(@NotNull EligibilityRule rule, @Nullable String gene, @Nullable String mutation) {
+        return ImmutableServeRecord.builder().trial(Strings.EMPTY).rule(rule).gene(gene).mutation(mutation).isUsedAsInclusion(true).build();
+    }
+
 }
