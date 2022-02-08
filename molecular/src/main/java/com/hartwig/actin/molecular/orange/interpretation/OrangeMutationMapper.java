@@ -12,10 +12,10 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public class OrangeMutationMapper implements MutationMapper {
+class OrangeMutationMapper implements MutationMapper {
 
     @NotNull
-    private final List<ServeRecord> mutations;
+    private final List<ServeRecord> mutationRecords;
 
     @NotNull
     public static OrangeMutationMapper fromServeRecords(@NotNull List<ServeRecord> records) {
@@ -28,8 +28,8 @@ public class OrangeMutationMapper implements MutationMapper {
         return new OrangeMutationMapper(mutations);
     }
 
-    private OrangeMutationMapper(@NotNull final List<ServeRecord> mutations) {
-        this.mutations = mutations;
+    private OrangeMutationMapper(@NotNull final List<ServeRecord> mutationRecords) {
+        this.mutationRecords = mutationRecords;
     }
 
     @Override
@@ -37,13 +37,13 @@ public class OrangeMutationMapper implements MutationMapper {
     public Set<String> map(@NotNull TreatmentEvidence evidence) {
         switch (evidence.type()) {
             case HOTSPOT_MUTATION: {
-                return mapForHotspotMutation(mutations, evidence.gene(), evidence.event());
+                return mapForHotspotMutation(mutationRecords, evidence.gene(), evidence.event());
             }
             case CODON_MUTATION: {
-                return mapForCodonMutation(mutations, evidence.gene(), evidence.rangeRank());
+                return mapForCodonMutation(mutationRecords, evidence.gene(), evidence.rangeRank());
             }
             case EXON_MUTATION: {
-                return mapForExonMutation(mutations, evidence.gene(), evidence.rangeRank());
+                return mapForExonMutation(mutationRecords, evidence.gene(), evidence.rangeRank());
             }
             default: {
                 throw new IllegalArgumentException("Should never have to map mutation for this evidence: " + evidence);

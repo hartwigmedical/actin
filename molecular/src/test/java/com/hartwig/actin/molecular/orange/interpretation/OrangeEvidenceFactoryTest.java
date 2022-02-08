@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class OrangeEvidenceFactoryTest {
         List<MolecularEvidence> generalResistanceEvidence = factory.createResistanceEvidence(evidences);
         assertEquals(1, generalResistanceEvidence.size());
         assertEquals("A resistant event", generalResistanceEvidence.get(0).event());
+    }
+
+    @Test
+    public void filterActinTrialsWithoutInclusion() {
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> false);
+        List<TreatmentEvidence> evidences = createTestEvidences();
+
+        assertTrue(factory.createActinTrials(evidences).isEmpty());
     }
 
     @NotNull

@@ -19,7 +19,7 @@ import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.jetbrains.annotations.NotNull;
 
-public class OrangeEventExtractor {
+class OrangeEventExtractor {
 
     private static final Set<EvidenceType> MUTATION_TYPES =
             Sets.newHashSet(EvidenceType.HOTSPOT_MUTATION, EvidenceType.CODON_MUTATION, EvidenceType.EXON_MUTATION);
