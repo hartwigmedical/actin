@@ -125,7 +125,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("Evaluation"));
 
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
-            if (!entry.getValue().isPass() || !displayFailOnly) {
+            if (entry.getValue() == Evaluation.FAIL || !displayFailOnly) {
                 boolean hasAddedEvaluation = false;
                 Evaluation evaluation = entry.getValue();
                 Set<CriterionReference> references = entry.getKey().references();
