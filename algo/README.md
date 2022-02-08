@@ -81,6 +81,7 @@ HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 IS_ABLE_AND_WILLING_TO_GIVE_ADEQUATE_ INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
+HAS_PARTICIPATED_IN_CURRENT_TRIAL | T.B.D.
 HAS_RAPIDLY_PROGRESSIVE_DISEASE | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
@@ -109,6 +110,7 @@ HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
+HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 
