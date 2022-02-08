@@ -64,7 +64,9 @@ public class OrangeEventExtractor {
 
         for (TreatmentEvidence evidence : evidences) {
             if (MUTATION_TYPES.contains(evidence.type())) {
-                geneMutations.add(ImmutableGeneMutation.builder().gene(evidence.gene()).mutation(mutationMapper.map(evidence)).build());
+                for (String mutation : mutationMapper.map(evidence)) {
+                    geneMutations.add(ImmutableGeneMutation.builder().gene(evidence.gene()).mutation(mutation).build());
+                }
             }
         }
 

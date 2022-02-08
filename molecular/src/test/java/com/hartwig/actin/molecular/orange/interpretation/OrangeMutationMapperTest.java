@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
@@ -21,7 +23,7 @@ public class OrangeMutationMapperTest {
 
     @Test
     public void canMapHotspotMutations() {
-        OrangeMutationMapper mapper = withMutation("X", "Val600Glu");
+        OrangeMutationMapper mapper = withMutations("X", "Val600Glu", "X", "V600E");
 
         TreatmentEvidence hotspotEvidence1 = ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
@@ -30,7 +32,10 @@ public class OrangeMutationMapperTest {
                 .event("Val600Glu")
                 .build();
 
-        assertEquals("Val600Glu", mapper.map(hotspotEvidence1));
+        Set<String> mutations1 = mapper.map(hotspotEvidence1);
+        assertEquals(2, mutations1.size());
+        assertTrue(mutations1.contains("Val600Glu"));
+        assertTrue(mutations1.contains("V600E"));
 
         TreatmentEvidence hotspotEvidence2 = ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
@@ -39,7 +44,10 @@ public class OrangeMutationMapperTest {
                 .event("V600E")
                 .build();
 
-        assertEquals("Val600Glu", mapper.map(hotspotEvidence2));
+        Set<String> mutations2 = mapper.map(hotspotEvidence2);
+        assertEquals(2, mutations2.size());
+        assertTrue(mutations2.contains("Val600Glu"));
+        assertTrue(mutations2.contains("V600E"));
     }
 
     @Test
@@ -53,7 +61,9 @@ public class OrangeMutationMapperTest {
                 .rangeRank(30)
                 .build();
 
-        assertEquals("R30X", mapper.map(codonEvidence));
+        Set<String> mutations = mapper.map(codonEvidence);
+        assertEquals(1, mutations.size());
+        assertTrue(mutations.contains("R30X"));
     }
 
     @Test
@@ -66,23 +76,25 @@ public class OrangeMutationMapperTest {
                 .rangeRank(20)
                 .build();
 
-        assertEquals("EXON 20 INSERTION", mapperExact.map(exonEvidence20));
+        Set<String> exactMutations = mapperExact.map(exonEvidence20);
+        assertEquals(1, exactMutations.size());
+        assertTrue(exactMutations.contains("EXON 20 INSERTION"));
 
         OrangeMutationMapper mapperRange = withMutation("X", "exon 2-4");
-        TreatmentEvidence exonEvidence2 = ImmutableTreatmentEvidence.builder()
+        TreatmentEvidence base = ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
                 .type(EvidenceType.EXON_MUTATION)
                 .gene("X")
-                .rangeRank(2)
                 .build();
 
-        assertEquals("exon 2-4", mapperRange.map(exonEvidence2));
+        TreatmentEvidence exonEvidence2 = ImmutableTreatmentEvidence.builder().from(base).rangeRank(2).build();
+        assertTrue(mapperRange.map(exonEvidence2).contains("exon 2-4"));
 
-        TreatmentEvidence exonEvidence3 = ImmutableTreatmentEvidence.builder().from(exonEvidence20).rangeRank(3).build();
-        assertEquals("exon 2-4", mapperRange.map(exonEvidence3));
+        TreatmentEvidence exonEvidence3 = ImmutableTreatmentEvidence.builder().from(base).rangeRank(3).build();
+        assertTrue(mapperRange.map(exonEvidence3).contains("exon 2-4"));
 
-        TreatmentEvidence exonEvidence4 = ImmutableTreatmentEvidence.builder().from(exonEvidence20).rangeRank(4).build();
-        assertEquals("exon 2-4", mapperRange.map(exonEvidence4));
+        TreatmentEvidence exonEvidence4 = ImmutableTreatmentEvidence.builder().from(base).rangeRank(4).build();
+        assertTrue(mapperRange.map(exonEvidence4).contains("exon 2-4"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -137,13 +149,28 @@ public class OrangeMutationMapperTest {
     private static OrangeMutationMapper withMutation(@NotNull String gene, @NotNull String mutation) {
         List<ServeRecord> records = Lists.newArrayList();
 
-        records.add(ImmutableServeRecord.builder()
+        ImmutableServeRecord.Builder builder = ImmutableServeRecord.builder()
                 .trial(Strings.EMPTY)
                 .rule(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)
-                .gene(gene)
-                .mutation(mutation)
-                .isUsedAsInclusion(true)
-                .build());
+                .isUsedAsInclusion(true);
+
+        records.add(builder.gene(gene).mutation(mutation).build());
+
+        return OrangeMutationMapper.fromServeRecords(records);
+    }
+
+    @NotNull
+    private static OrangeMutationMapper withMutations(@NotNull String gene1, @NotNull String mutation1, @NotNull String gene2,
+            @NotNull String mutation2) {
+        List<ServeRecord> records = Lists.newArrayList();
+
+        ImmutableServeRecord.Builder builder = ImmutableServeRecord.builder()
+                .trial(Strings.EMPTY)
+                .rule(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)
+                .isUsedAsInclusion(true);
+
+        records.add(builder.gene(gene1).mutation(mutation1).build());
+        records.add(builder.gene(gene2).mutation(mutation2).build());
 
         return OrangeMutationMapper.fromServeRecords(records);
     }

@@ -2,18 +2,20 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -21,6 +23,11 @@ import org.junit.Test;
 public class OrangeInterpreterTest {
 
     private static final double EPSILON = 1.0E-10;
+
+    @Test
+    public void canCreateInterpreterFromEmptyServeRecords() {
+        assertNotNull(OrangeInterpreter.fromServeRecords(Lists.newArrayList()));
+    }
 
     @Test
     public void canInterpretOrangeRecord() {
@@ -88,7 +95,7 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        OrangeEventExtractor testEventExtractor = new OrangeEventExtractor(TreatmentEvidence::event);
+        OrangeEventExtractor testEventExtractor = new OrangeEventExtractor(evidence -> Sets.newHashSet(evidence.event()));
         OrangeEvidenceFactory testEvidenceFactory = new OrangeEvidenceFactory(evidence -> true);
         return new OrangeInterpreter(testEventExtractor, testEvidenceFactory);
     }

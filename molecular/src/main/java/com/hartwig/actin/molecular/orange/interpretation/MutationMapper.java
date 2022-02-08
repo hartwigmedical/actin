@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Set;
+
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
 
 public interface MutationMapper {
 
-    // TODO: Change to a set of strings and map everything.
-
     @NotNull
-    String map(@NotNull TreatmentEvidence evidence);
+    Set<String> map(@NotNull TreatmentEvidence evidence);
 }
