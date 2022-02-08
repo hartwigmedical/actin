@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
 import com.hartwig.actin.molecular.orange.util.FusionParser;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -50,7 +51,7 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
     public boolean isPotentiallyForTrialInclusion(@NotNull TreatmentEvidence evidence) {
         switch (evidence.type()) {
             case VIRAL_PRESENCE: {
-                LOGGER.warn("No trial inclusion evaluation is implemented for viral presence: {}", evidence);
+                LOGGER.warn("No trial inclusion evaluation is implemented for viral presence: {}", EvidenceFormatter.format(evidence));
                 return false;
             }
             case SIGNATURE: {
@@ -79,7 +80,7 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
                 return hasInclusiveMutationRecord(inclusionRecords, evidence.gene(), mappedMutations);
             }
             case ANY_MUTATION: {
-                LOGGER.warn("No trial inclusion evaluation is implemented for any mutation: {}", evidence);
+                LOGGER.warn("No trial inclusion evaluation is implemented for any mutation: {}", EvidenceFormatter.format(evidence));
                 return false;
             }
             default: {

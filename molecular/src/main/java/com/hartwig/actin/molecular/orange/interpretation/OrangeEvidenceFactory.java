@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
+import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
@@ -55,19 +56,11 @@ class OrangeEvidenceFactory {
             if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
                 result.add(toMolecularEvidence(evidence));
             } else {
-                String evidenceString = evidenceString(evidence);
+                String evidenceString = EvidenceFormatter.format(evidence);
                 LOGGER.debug("Filtered evidence from ACTIN trials because it is not used as inclusion criteria: {}", evidenceString);
             }
         }
         return result;
-    }
-
-    @NotNull
-    private static String evidenceString(@NotNull TreatmentEvidence evidence) {
-        String gene = evidence.gene();
-        String event = gene != null ? gene + " " + evidence.event() : evidence.event();
-
-        return event + ": " + evidence.treatment() + " (" + evidence.type() + ")";
     }
 
     @NotNull
