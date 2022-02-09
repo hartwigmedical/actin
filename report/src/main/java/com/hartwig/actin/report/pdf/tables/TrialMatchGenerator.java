@@ -79,13 +79,13 @@ public class TrialMatchGenerator implements TableGenerator {
             List<CohortMetadata> eligibleCohorts = entry.getValue();
             if (eligibleCohorts.isEmpty()) {
                 table.addCell(Cells.createContent(trialId));
-                table.addCell(Cells.createContent(trialId));
+                table.addCell(Cells.createContent(acronym));
                 table.addCell(Cells.createEmpty());
                 table.addCell(Cells.createContentYesNo("Yes"));
             } else {
                 for (CohortMetadata cohort : eligibleCohorts) {
                     table.addCell(Cells.createContent(trialId));
-                    table.addCell(Cells.createContent(trialId));
+                    table.addCell(Cells.createContent(acronym));
                     table.addCell(Cells.createContent(cohort.description()));
                     table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(cohort.open())));
                 }
