@@ -146,7 +146,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         float keyWidth = 70;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
 
-        Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth()).setKeepTogether(true);
 
         table.addCell(Cells.createSpanningTitle(identification.trialId(), table));
 
@@ -172,7 +172,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         float keyWidth = 210;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
 
-        Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth()).setKeepTogether(true);
 
         table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.description(), table));
 
