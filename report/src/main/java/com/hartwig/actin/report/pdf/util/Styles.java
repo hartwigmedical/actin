@@ -24,6 +24,10 @@ public final class Styles {
     public static final DeviceRgb PALETTE_EVALUATION_FAILED = new DeviceRgb(231, 85, 85);
     public static final DeviceRgb PALETTE_EVALUATION_UNCLEAR = new DeviceRgb(85, 85, 85);
 
+    public static final DeviceRgb PALETTE_YES_OR_NO_YES = new DeviceRgb(0, 150, 0);
+    public static final DeviceRgb PALETTE_YES_OR_NO_NO = new DeviceRgb(231, 85, 85);
+    public static final DeviceRgb PALETTE_YES_OR_NO_UNCLEAR = new DeviceRgb(85, 85, 85);
+
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
 

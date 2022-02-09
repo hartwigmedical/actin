@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.util;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
@@ -12,6 +12,8 @@ import com.hartwig.actin.algo.interpretation.EvaluationSummarizer;
 import com.hartwig.actin.algo.interpretation.EvaluationSummary;
 import com.hartwig.actin.algo.interpretation.TreatmentMatchSummarizer;
 import com.hartwig.actin.algo.interpretation.TreatmentMatchSummary;
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
+import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,10 +36,10 @@ public class TreatmentMatchPrinter {
 
         TreatmentMatchSummary matchSummary = TreatmentMatchSummarizer.summarize(treatmentMatch);
         printer.print("Trials: " + matchSummary.trialCount());
-        printer.print("Eligible trials: " + eligibleString(matchSummary.eligibleTrials()));
+        printer.print("Eligible trials: " + trialString(matchSummary.eligibleTrialMap()));
         printer.print("Cohorts: " + matchSummary.cohortCount());
-        printer.print("Eligible cohorts: " + eligibleString(matchSummary.eligibleCohorts()));
-        printer.print("Eligible and open cohorts: " + eligibleString(matchSummary.eligibleOpenCohorts()));
+        printer.print("Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap()));
+        printer.print("Eligible and open cohorts: " + openCohortString(matchSummary.eligibleTrialMap()));
 
         List<EvaluationSummary> summaries = Lists.newArrayList();
         for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
@@ -58,16 +60,45 @@ public class TreatmentMatchPrinter {
     }
 
     @NotNull
-    private static String eligibleString(@NotNull Set<String> eligible) {
-        if (eligible.isEmpty()) {
-            return "0";
+    private static String trialString(@NotNull Map<TrialIdentification, List<CohortMetadata>> eligibleTrialMap) {
+        if (eligibleTrialMap.isEmpty()) {
+            return "None";
         }
 
         StringJoiner joiner = new StringJoiner(", ");
-        for (String string : eligible) {
-            joiner.add(string);
+        for (TrialIdentification trial : eligibleTrialMap.keySet()) {
+            joiner.add(EligibilityDisplay.trialName(trial));
         }
-        return eligible.size() + " (" + joiner + ")";
+        return eligibleTrialMap.keySet().size() + " (" + joiner + ")";
     }
 
+    @NotNull
+    private String cohortString(@NotNull Map<TrialIdentification, List<CohortMetadata>> eligibleTrialMap) {
+        int cohortCount = 0;
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Map.Entry<TrialIdentification, List<CohortMetadata>> entry : eligibleTrialMap.entrySet()) {
+            for (CohortMetadata cohort : entry.getValue()) {
+                cohortCount++;
+                joiner.add(EligibilityDisplay.cohortName(entry.getKey(), cohort));
+            }
+        }
+
+        return cohortCount > 0 ? cohortCount + " (" + joiner + ")" : "None";
+    }
+
+    @NotNull
+    private static String openCohortString(@NotNull Map<TrialIdentification, List<CohortMetadata>> eligibleTrialMap) {
+        int openCohortCount = 0;
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Map.Entry<TrialIdentification, List<CohortMetadata>> entry : eligibleTrialMap.entrySet()) {
+            for (CohortMetadata cohort : entry.getValue()) {
+                if (cohort.open()) {
+                    openCohortCount++;
+                    joiner.add(EligibilityDisplay.cohortName(entry.getKey(), cohort));
+                }
+            }
+        }
+
+        return openCohortCount > 0 ? openCohortCount + " (" + joiner + ")" : "None";
+    }
 }

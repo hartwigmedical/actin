@@ -1,14 +1,9 @@
 package com.hartwig.actin.report.pdf.chapters;
 
-import java.util.Set;
-import java.util.StringJoiner;
-
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer;
 import com.hartwig.actin.algo.interpretation.EvaluationSummary;
-import com.hartwig.actin.algo.interpretation.TreatmentMatchSummarizer;
-import com.hartwig.actin.algo.interpretation.TreatmentMatchSummary;
 import com.hartwig.actin.algo.util.EligibilityDisplay;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -21,19 +16,19 @@ import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TreatmentSummaryChapter implements ReportChapter {
+public class TrialMatchingSummaryChapter implements ReportChapter {
 
     @NotNull
     private final Report report;
 
-    public TreatmentSummaryChapter(@NotNull final Report report) {
+    public TrialMatchingSummaryChapter(@NotNull final Report report) {
         this.report = report;
     }
 
     @NotNull
     @Override
     public String name() {
-        return "Treatment Options";
+        return "Trial Matching Summary";
     }
 
     @NotNull
@@ -45,55 +40,11 @@ public class TreatmentSummaryChapter implements ReportChapter {
     @Override
     public void render(@NotNull final Document document) {
         addChapterTitle(document);
-        addTreatmentSummaryTable(document);
         addTreatmentDetailsTable(document);
     }
 
     private void addChapterTitle(@NotNull Document document) {
         document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
-    }
-
-    private void addTreatmentSummaryTable(@NotNull Document document) {
-        Table table = Tables.createSingleColWithWidth(contentWidth());
-        table.addCell(Cells.createTitle("Trial Eligibility Summary"));
-        table.addCell(Cells.create(createTreatmentSummaryTable(TreatmentMatchSummarizer.summarize(report.treatmentMatch()))));
-
-        document.add(table);
-    }
-
-    @NotNull
-    private Table createTreatmentSummaryTable(@NotNull TreatmentMatchSummary summary) {
-        Table table = Tables.createFixedWidthCols(new float[] { 200, contentWidth() - 210 });
-
-        table.addCell(Cells.createKey("# Trials evaluated"));
-        table.addCell(Cells.createValue(String.valueOf(summary.trialCount())));
-
-        table.addCell(Cells.createKey("Trials considered potentially eligible"));
-        table.addCell(Cells.createValue(eligibleString(summary.eligibleTrials())));
-
-        table.addCell(Cells.createKey("# Cohorts evaluated"));
-        table.addCell(Cells.createValue(String.valueOf(summary.cohortCount())));
-
-        table.addCell(Cells.createKey("Cohorts considered potentially eligible"));
-        table.addCell(Cells.createValue(eligibleString(summary.eligibleCohorts())));
-
-        table.addCell(Cells.createKey("Open cohorts considered potentially eligible"));
-        table.addCell(Cells.createValue(eligibleString(summary.eligibleOpenCohorts())));
-
-        return table;
-    }
-
-    @NotNull
-    private static String eligibleString(@NotNull Set<String> eligible) {
-        if (eligible.isEmpty()) {
-            return "None";
-        }
-
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String string : eligible) {
-            joiner.add(string);
-        }
-        return eligible.size() + " (" + joiner + ")";
     }
 
     private void addTreatmentDetailsTable(@NotNull Document document) {
@@ -109,10 +60,10 @@ public class TreatmentSummaryChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("# Non-implemented"));
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
-            table.addCell(Cells.createContent(EligibilityDisplay.trialName(trial)));
+            table.addCell(Cells.createContent(EligibilityDisplay.trialName(trial.identification())));
             addSummaryToTable(table, EvaluationSummarizer.summarize(trial.evaluations().values()));
             for (CohortEligibility cohort : trial.cohorts()) {
-                table.addCell(Cells.createContent(EligibilityDisplay.cohortName(trial, cohort)));
+                table.addCell(Cells.createContent(EligibilityDisplay.cohortName(trial.identification(), cohort.metadata())));
                 addSummaryToTable(table, EvaluationSummarizer.summarize(cohort.evaluations().values()));
             }
         }

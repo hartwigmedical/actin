@@ -84,6 +84,13 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createContentYesNo(@NotNull String yesNo) {
+        Cell cell = createContent(yesNo);
+        cell.setFontColor(Formats.fontColorForYesNo(yesNo));
+        return cell;
+    }
+
+    @NotNull
     public static Cell createKey(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableKeyStyle());

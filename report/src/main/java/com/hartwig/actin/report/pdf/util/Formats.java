@@ -74,4 +74,16 @@ public final class Formats {
                 return Styles.PALETTE_EVALUATION_UNCLEAR;
         }
     }
+
+    @NotNull
+    public static DeviceRgb fontColorForYesNo(@NotNull String yesNo) {
+        switch (yesNo) {
+            case "Yes":
+                return Styles.PALETTE_YES_OR_NO_YES;
+            case "No":
+                return Styles.PALETTE_YES_OR_NO_NO;
+            default:
+                return Styles.PALETTE_YES_OR_NO_UNCLEAR;
+        }
+    }
 }

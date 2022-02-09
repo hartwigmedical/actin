@@ -1,6 +1,10 @@
 package com.hartwig.actin.algo.interpretation;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
+
+import com.hartwig.actin.treatment.datamodel.CohortMetadata;
+import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -12,14 +16,8 @@ public abstract class TreatmentMatchSummary {
 
     public abstract int trialCount();
 
-    @NotNull
-    public abstract Set<String> eligibleTrials();
-
     public abstract int cohortCount();
 
     @NotNull
-    public abstract Set<String> eligibleCohorts();
-
-    @NotNull
-    public abstract Set<String> eligibleOpenCohorts();
+    public abstract Map<TrialIdentification, List<CohortMetadata>> eligibleTrialMap();
 }
