@@ -169,7 +169,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
             @NotNull Evaluation overallEvaluation) {
         float indentWidth = 10;
-        float keyWidth = 210;
+        float keyWidth = 70;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
 
         Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth()).setKeepTogether(true);
