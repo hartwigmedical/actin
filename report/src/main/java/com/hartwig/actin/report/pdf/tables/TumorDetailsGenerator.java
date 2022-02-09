@@ -36,7 +36,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
+        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
         table.addCell(Cells.createKey("Biopsy location"));
         table.addCell(Cells.createValue(biopsyLocation(record.tumor())));

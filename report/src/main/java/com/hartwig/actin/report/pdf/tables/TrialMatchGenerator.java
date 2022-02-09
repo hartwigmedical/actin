@@ -65,8 +65,7 @@ public class TrialMatchGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { trialIdColWidth, trialAcronymColWidth, cohortDescriptionColWidth,
-                cohortOpenColWidth });
+        Table table = Tables.createFixedWidthCols(trialIdColWidth, trialAcronymColWidth, cohortDescriptionColWidth, cohortOpenColWidth);
 
         table.addHeaderCell(Cells.createHeader("Trial ID"));
         table.addHeaderCell(Cells.createHeader("Acronym"));

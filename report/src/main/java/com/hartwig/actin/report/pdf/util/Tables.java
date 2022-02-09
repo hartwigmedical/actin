@@ -12,7 +12,7 @@ public final class Tables {
     }
 
     @NotNull
-    public static Table createFixedWidthCols(@NotNull float[] widths) {
+    public static Table createFixedWidthCols(@NotNull float... widths) {
         return new Table(UnitValue.createPointArray(widths));
     }
 

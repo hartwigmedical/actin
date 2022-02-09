@@ -57,7 +57,7 @@ public class LaboratoryResultsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { key1Width, key2Width, key3Width, valueWidth });
+        Table table = Tables.createFixedWidthCols(key1Width, key2Width, key3Width, valueWidth);
 
         table.addCell(Cells.createKey("Liver function"));
         table.addCell(Cells.createKey("Total bilirubin"));

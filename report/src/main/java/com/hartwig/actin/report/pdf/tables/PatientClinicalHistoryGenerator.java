@@ -38,7 +38,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
+        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
         table.addCell(Cells.createKey("Relevant systemic treatment history"));
         table.addCell(Cells.createValue(relevantSystemicPreTreatmentHistory(record)));

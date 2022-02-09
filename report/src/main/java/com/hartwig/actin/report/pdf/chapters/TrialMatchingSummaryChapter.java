@@ -38,17 +38,22 @@ public class TrialMatchingSummaryChapter implements ReportChapter {
     }
 
     @Override
-    public void render(@NotNull final Document document) {
+    public void render(@NotNull Document document) {
         addChapterTitle(document);
-        addTreatmentDetailsTable(document);
+        addTrialMatchingOverview(document);
+        addTrialMatchingSummaryTable(document);
     }
 
     private void addChapterTitle(@NotNull Document document) {
         document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
     }
 
-    private void addTreatmentDetailsTable(@NotNull Document document) {
-        Table table = Tables.createFixedWidthCols(new float[] { 3, 1, 1, 1, 1, 1, 1, 1 }).setWidth(contentWidth());
+    private void addTrialMatchingOverview(@NotNull Document document) {
+
+    }
+
+    private void addTrialMatchingSummaryTable(@NotNull Document document) {
+        Table table = Tables.createFixedWidthCols(3, 1, 1, 1, 1, 1, 1, 1).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Trial / Cohort"));
         table.addHeaderCell(Cells.createHeader("# Criteria"));

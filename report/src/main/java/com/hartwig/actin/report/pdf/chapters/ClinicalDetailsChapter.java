@@ -39,7 +39,7 @@ public class ClinicalDetailsChapter implements ReportChapter {
     }
 
     @Override
-    public void render(@NotNull final Document document) {
+    public void render(@NotNull Document document) {
         addChapterTitle(document);
         addClinicalDetails(document);
     }

@@ -44,7 +44,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     @Override
-    public void render(@NotNull final Document document) {
+    public void render(@NotNull Document document) {
         addChapterTitle(document);
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
@@ -75,7 +75,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull Evaluation overallEvaluation) {
-        Table table = Tables.createFixedWidthCols(new float[] { 1, 2, 3 });
+        Table table = Tables.createFixedWidthCols(1, 2, 3);
 
         table.addCell(Cells.createSpanningTitle(identification.trialId(), table));
 
@@ -97,7 +97,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     @NotNull
     private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
             @NotNull Evaluation overallEvaluation) {
-        Table table = Tables.createFixedWidthCols(new float[] { 1, 3, 3 });
+        Table table = Tables.createFixedWidthCols(1, 3, 3);
 
         table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.description(), table));
 
@@ -118,7 +118,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createEvaluationTable(@NotNull Map<Eligibility, Evaluation> evaluations, boolean displayFailOnly) {
-        Table table = Tables.createFixedWidthCols(new float[] { 1, 4, 1 }).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(1, 4, 1).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Rule"));
         table.addHeaderCell(Cells.createHeader("Reference"));

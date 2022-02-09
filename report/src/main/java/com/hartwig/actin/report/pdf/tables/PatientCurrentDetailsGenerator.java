@@ -38,7 +38,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { keyWidth, valueWidth });
+        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
         table.addCell(Cells.createKey("Unresolved toxicities grade => 2"));
         table.addCell(Cells.createValue(unresolvedToxicities(record)));
