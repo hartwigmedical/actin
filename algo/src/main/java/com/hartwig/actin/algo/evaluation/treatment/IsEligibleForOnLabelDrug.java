@@ -15,6 +15,6 @@ public class IsEligibleForOnLabelDrug implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         // Specific drug should be in the SOC treatment database for that tumor type (to be implemented).
-        return Evaluation.NOT_EVALUATED;
+        return Evaluation.UNDETERMINED;
     }
 }
