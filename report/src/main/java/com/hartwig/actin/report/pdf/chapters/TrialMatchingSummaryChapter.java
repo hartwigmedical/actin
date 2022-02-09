@@ -4,6 +4,8 @@ import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer;
 import com.hartwig.actin.algo.interpretation.EvaluationSummary;
+import com.hartwig.actin.algo.interpretation.TreatmentMatchSummarizer;
+import com.hartwig.actin.algo.interpretation.TreatmentMatchSummary;
 import com.hartwig.actin.algo.util.EligibilityDisplay;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -49,20 +51,32 @@ public class TrialMatchingSummaryChapter implements ReportChapter {
     }
 
     private void addTrialMatchingOverview(@NotNull Document document) {
+        TreatmentMatchSummary summary = TreatmentMatchSummarizer.summarize(report.treatmentMatch());
 
+        float keyWidth = 210;
+        float valueWidth = contentWidth() - keyWidth - 10;
+        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
+
+        table.addCell(Cells.createKey("Trials evaluated"));
+        table.addCell(Cells.createValue(String.valueOf(summary.trialCount())));
+
+        table.addCell(Cells.createKey("Cohorts evaluated"));
+        table.addCell(Cells.createValue(String.valueOf(summary.cohortCount())));
+
+        document.add(Tables.makeWrapping(table, "Trial counts"));
     }
 
     private void addTrialMatchingSummaryTable(@NotNull Document document) {
-        Table table = Tables.createFixedWidthCols(3, 1, 1, 1, 1, 1, 1, 1).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(4, 1, 1, 1, 1, 1, 1, 1).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Trial / Cohort"));
         table.addHeaderCell(Cells.createHeader("# Criteria"));
-        table.addHeaderCell(Cells.createHeader("# Passed"));
-        table.addHeaderCell(Cells.createHeader("# Warnings"));
-        table.addHeaderCell(Cells.createHeader("# Failed"));
-        table.addHeaderCell(Cells.createHeader("# Undetermined"));
-        table.addHeaderCell(Cells.createHeader("# Not evaluated"));
-        table.addHeaderCell(Cells.createHeader("# Non-implemented"));
+        table.addHeaderCell(Cells.createHeader("# Pass"));
+        table.addHeaderCell(Cells.createHeader("# Warn"));
+        table.addHeaderCell(Cells.createHeader("# Fail"));
+        table.addHeaderCell(Cells.createHeader("# Undet."));
+        table.addHeaderCell(Cells.createHeader("# No eval"));
+        table.addHeaderCell(Cells.createHeader("# No imp"));
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
             table.addCell(Cells.createContent(EligibilityDisplay.trialName(trial.identification())));
@@ -73,7 +87,7 @@ public class TrialMatchingSummaryChapter implements ReportChapter {
             }
         }
 
-        document.add(Tables.makeWrapping(table, "Trial Matching Summary"));
+        document.add(Tables.makeWrapping(table, "Evaluation results per trial & cohort"));
     }
 
     private static void addSummaryToTable(@NotNull Table table, @NotNull EvaluationSummary summary) {
