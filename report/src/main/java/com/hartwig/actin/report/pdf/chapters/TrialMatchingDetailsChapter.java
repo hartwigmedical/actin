@@ -53,17 +53,23 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         addChapterTitle(document);
 
         List<TrialEligibility> eligible = Lists.newArrayList();
-        List<TrialEligibility> notEligible = Lists.newArrayList();
+        List<TrialEligibility> nonEligible = Lists.newArrayList();
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
             if (isEligible(trial)) {
                 eligible.add(trial);
             } else {
-                notEligible.add(trial);
+                nonEligible.add(trial);
             }
         }
 
-        addTrialMatches(document, eligible, "Potentially eligible trials & cohorts", true);
-        addTrialMatches(document, notEligible, "Other trials & cohorts", false);
+        if (!eligible.isEmpty()) {
+            addTrialMatches(document, eligible, "Potentially eligible trials & cohorts", true);
+            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+        }
+
+        if (!nonEligible.isEmpty()) {
+            addTrialMatches(document, nonEligible, "Other trials & cohorts", false);
+        }
     }
 
     private static boolean isEligible(@NotNull TrialEligibility trial) {
@@ -136,7 +142,11 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull Evaluation overallEvaluation) {
-        Table table = Tables.createFixedWidthCols(1, 2, 3);
+        float indentWidth = 10;
+        float keyWidth = 70;
+        float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
+
+        Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth());
 
         table.addCell(Cells.createSpanningTitle(identification.trialId(), table));
 
@@ -158,7 +168,11 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     @NotNull
     private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
             @NotNull Evaluation overallEvaluation) {
-        Table table = Tables.createFixedWidthCols(1, 3, 3);
+        float indentWidth = 10;
+        float keyWidth = 210;
+        float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
+
+        Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth());
 
         table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.description(), table));
 
@@ -179,7 +193,10 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createEvaluationTable(@NotNull Map<Eligibility, Evaluation> evaluations, boolean displayFailOnly) {
-        Table table = Tables.createFixedWidthCols(1, 4, 1).setWidth(contentWidth());
+        float ruleWidth = 30;
+        float evaluationWidth = 100;
+        float referenceWidth = contentWidth() - (ruleWidth + evaluationWidth + 10);
+        Table table = Tables.createFixedWidthCols(ruleWidth, referenceWidth, evaluationWidth).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Rule"));
         table.addHeaderCell(Cells.createHeader("Reference"));
