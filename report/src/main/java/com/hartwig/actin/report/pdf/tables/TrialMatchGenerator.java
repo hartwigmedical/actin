@@ -19,28 +19,32 @@ public class TrialMatchGenerator implements TableGenerator {
 
     @NotNull
     private final TreatmentMatchSummary treatmentMatchSummary;
-    private final float col1Width;
-    private final float col2Width;
-    private final float col3Width;
-    private final float col4Width;
+    private final float trialIdColWidth;
+    private final float trialAcronymColWidth;
+    private final float cohortDescriptionColWidth;
+    private final float cohortOpenColWidth;
 
     @NotNull
     public static TrialMatchGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, float contentWidth) {
-        float col1Width = contentWidth / 4;
-        float col2Width = contentWidth / 4;
-        float col3Width = contentWidth / 4;
-        float col4Width = contentWidth - (col1Width + col2Width + col3Width);
+        float trialIdColWidth = contentWidth / 6;
+        float trialAcronymColWidth = contentWidth / 6;
+        float cohortOpenColWidth = contentWidth / 8;
+        float cohortDescriptionColWidth = contentWidth - (trialIdColWidth + trialAcronymColWidth + cohortOpenColWidth);
 
-        return new TrialMatchGenerator(TreatmentMatchSummarizer.summarize(treatmentMatch), col1Width, col2Width, col3Width, col4Width);
+        return new TrialMatchGenerator(TreatmentMatchSummarizer.summarize(treatmentMatch),
+                trialIdColWidth,
+                trialAcronymColWidth,
+                cohortDescriptionColWidth,
+                cohortOpenColWidth);
     }
 
-    private TrialMatchGenerator(@NotNull final TreatmentMatchSummary treatmentMatchSummary, final float col1Width, final float col2Width,
-            final float col3Width, final float col4Width) {
+    private TrialMatchGenerator(@NotNull final TreatmentMatchSummary treatmentMatchSummary, final float trialIdColWidth,
+            final float trialAcronymColWidth, final float cohortDescriptionColWidth, final float cohortOpenColWidth) {
         this.treatmentMatchSummary = treatmentMatchSummary;
-        this.col1Width = col1Width;
-        this.col2Width = col2Width;
-        this.col3Width = col3Width;
-        this.col4Width = col4Width;
+        this.trialIdColWidth = trialIdColWidth;
+        this.trialAcronymColWidth = trialAcronymColWidth;
+        this.cohortDescriptionColWidth = cohortDescriptionColWidth;
+        this.cohortOpenColWidth = cohortOpenColWidth;
     }
 
     @NotNull
@@ -61,7 +65,8 @@ public class TrialMatchGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(new float[] { col1Width, col2Width, col3Width, col4Width });
+        Table table = Tables.createFixedWidthCols(new float[] { trialIdColWidth, trialAcronymColWidth, cohortDescriptionColWidth,
+                cohortOpenColWidth });
 
         table.addHeaderCell(Cells.createHeader("Trial ID"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
