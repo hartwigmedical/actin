@@ -15,6 +15,6 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         // Currently assume we do not have IHC results available
-        return Evaluation.UNDETERMINED;
+        return Evaluation.FAIL;
     }
 }
