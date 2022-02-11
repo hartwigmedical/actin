@@ -67,7 +67,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
         if (!eligible.isEmpty()) {
             addTrialMatches(document, eligible, "Potentially eligible trials & cohorts", true);
-            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+            document.add(pageBreak());
         }
 
         if (!nonEligible.isEmpty()) {
@@ -87,7 +87,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         for (TrialEligibility trial : trials) {
             if (addBlank) {
                 if (trialsAreEligible) {
-                    document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+                    document.add(pageBreak());
                 } else {
                     document.add(blankLine());
                 }
@@ -251,5 +251,10 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     @NotNull
     private static Paragraph blankLine() {
         return new Paragraph(" ");
+    }
+
+    @NotNull
+    private static AreaBreak pageBreak() {
+        return new AreaBreak(AreaBreakType.NEXT_PAGE);
     }
 }
