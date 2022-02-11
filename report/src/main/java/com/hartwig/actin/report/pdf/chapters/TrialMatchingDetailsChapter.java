@@ -2,9 +2,11 @@ package com.hartwig.actin.report.pdf.chapters;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
@@ -18,6 +20,7 @@ import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
+import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
@@ -25,7 +28,6 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.AreaBreakType;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class TrialMatchingDetailsChapter implements ReportChapter {
@@ -99,29 +101,56 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         boolean displayFailOnly = !EligibilityEvaluator.isEligibleTrial(trial);
         document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
         document.add(blankLine());
-        Map<Eligibility, Evaluation> trialEvaluations = removeEligibilityWithoutReference(trial.evaluations());
-        document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluations, displayFailOnly)));
+        Map<CriterionReference, Evaluation> trialEvaluationPerCriterion = toWorstEvaluationPerReference(trial.evaluations());
+        document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)));
 
         for (CohortEligibility cohort : trial.cohorts()) {
             document.add(blankLine());
             document.add(createCohortIdentificationTable(trial.identification().trialId(), cohort.metadata(), cohort.overallEvaluation()));
-            Map<Eligibility, Evaluation> cohortEvaluations = removeEligibilityWithoutReference(cohort.evaluations());
-            if (!cohortEvaluations.isEmpty()) {
+
+            Map<CriterionReference, Evaluation> cohortEvaluationPerCriterion = toWorstEvaluationPerReference(cohort.evaluations());
+            if (!cohortEvaluationPerCriterion.isEmpty()) {
                 document.add(blankLine());
-                document.add(Tables.makeWrapping(createEvaluationTable(cohortEvaluations, displayFailOnly)));
+                document.add(Tables.makeWrapping(createEvaluationTable(cohortEvaluationPerCriterion, displayFailOnly)));
             }
         }
     }
 
     @NotNull
-    private static Map<Eligibility, Evaluation> removeEligibilityWithoutReference(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        Map<Eligibility, Evaluation> filtered = Maps.newHashMap();
+    private static Map<CriterionReference, Evaluation> toWorstEvaluationPerReference(@NotNull Map<Eligibility, Evaluation> evaluations) {
+        Map<CriterionReference, Evaluation> worstEvaluationPerCriterion = Maps.newHashMap();
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
-            if (!entry.getKey().references().isEmpty()) {
-                filtered.put(entry.getKey(), entry.getValue());
+            for (CriterionReference reference : entry.getKey().references()) {
+                Evaluation currentEval = worstEvaluationPerCriterion.get(reference);
+                Evaluation newEval = entry.getValue();
+                if (currentEval != null) {
+                    worstEvaluationPerCriterion.put(reference, worst(currentEval, newEval));
+                } else {
+                    worstEvaluationPerCriterion.put(reference, newEval);
+                }
             }
         }
-        return filtered;
+        return worstEvaluationPerCriterion;
+    }
+
+    @NotNull
+    private static Evaluation worst(@NotNull Evaluation evaluation1, @NotNull Evaluation evaluation2) {
+        Set<Evaluation> evaluations = Sets.newHashSet(evaluation1, evaluation2);
+        if (evaluations.contains(Evaluation.FAIL)) {
+            return Evaluation.FAIL;
+        } else if (evaluations.contains(Evaluation.UNDETERMINED)) {
+            return Evaluation.UNDETERMINED;
+        } else if (evaluations.contains(Evaluation.NOT_IMPLEMENTED)) {
+            return Evaluation.NOT_IMPLEMENTED;
+        } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {
+            return Evaluation.PASS_BUT_WARN;
+        } else if (evaluations.contains(Evaluation.PASS)) {
+            return Evaluation.PASS;
+        } else if (evaluations.contains(Evaluation.NOT_EVALUATED)) {
+            return Evaluation.NOT_EVALUATED;
+        }
+
+        throw new IllegalStateException("Could not determine worst from " + evaluations);
     }
 
     @NotNull
@@ -182,7 +211,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     @NotNull
-    private Table createEvaluationTable(@NotNull Map<Eligibility, Evaluation> evaluations, boolean displayFailOnly) {
+    private Table createEvaluationTable(@NotNull Map<CriterionReference, Evaluation> evaluations, boolean displayFailOnly) {
         float ruleWidth = 30;
         float evaluationWidth = 100;
         float referenceWidth = contentWidth() - (ruleWidth + evaluationWidth + 10);
@@ -192,34 +221,29 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("Reference"));
         table.addHeaderCell(Cells.createHeader("Evaluation"));
 
-        addEvaluationsOfType(table, evaluations, Evaluation.FAIL);
+        Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
+        references.addAll(evaluations.keySet());
+
+        addEvaluationsOfType(table, references, evaluations, Evaluation.FAIL);
         if (!displayFailOnly) {
-            addEvaluationsOfType(table, evaluations, Evaluation.UNDETERMINED);
-            addEvaluationsOfType(table, evaluations, Evaluation.NOT_IMPLEMENTED);
-            addEvaluationsOfType(table, evaluations, Evaluation.PASS_BUT_WARN);
-            addEvaluationsOfType(table, evaluations, Evaluation.NOT_EVALUATED);
-            addEvaluationsOfType(table, evaluations, Evaluation.PASS);
+            addEvaluationsOfType(table, references, evaluations, Evaluation.UNDETERMINED);
+            addEvaluationsOfType(table, references, evaluations, Evaluation.NOT_IMPLEMENTED);
+            addEvaluationsOfType(table, references, evaluations, Evaluation.PASS_BUT_WARN);
+            addEvaluationsOfType(table, references, evaluations, Evaluation.PASS);
+            addEvaluationsOfType(table, references, evaluations, Evaluation.NOT_EVALUATED);
         }
 
         return table;
     }
 
-    private static void addEvaluationsOfType(@NotNull Table table, @NotNull Map<Eligibility, Evaluation> evaluations,
-            @NotNull Evaluation evaluationToRender) {
-        for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
-            Evaluation evaluation = entry.getValue();
+    private static void addEvaluationsOfType(@NotNull Table table, Set<CriterionReference> references,
+            @NotNull Map<CriterionReference, Evaluation> evaluations, @NotNull Evaluation evaluationToRender) {
+        for (CriterionReference reference : references) {
+            Evaluation evaluation = evaluations.get(reference);
             if (evaluation == evaluationToRender) {
-                boolean hasAddedEvaluation = false;
-                for (CriterionReference reference : entry.getKey().references()) {
-                    table.addCell(Cells.createContent(reference.id()));
-                    table.addCell(Cells.createContent(reference.text()));
-                    if (!hasAddedEvaluation) {
-                        table.addCell(Cells.createContent(evaluation));
-                        hasAddedEvaluation = true;
-                    } else {
-                        table.addCell(Cells.createContent(Strings.EMPTY));
-                    }
-                }
+                table.addCell(Cells.createContent(reference.id()));
+                table.addCell(Cells.createContent(reference.text()).setKeepTogether(true));
+                table.addCell(Cells.createContent(evaluation));
             }
         }
     }
