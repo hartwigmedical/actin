@@ -32,6 +32,7 @@
           "metadata": {
             "cohortId": "A",
             "open": true,
+            "blacklist": false,
             "description": "Cohort A"
           },
           "overallEvaluation": "UNDETERMINED",
@@ -62,6 +63,7 @@
           "metadata": {
             "cohortId": "B",
             "open": true,
+            "blacklist": false,
             "description": "Cohort B"
           },
           "overallEvaluation": "PASS",
@@ -71,6 +73,7 @@
           "metadata": {
             "cohortId": "C",
             "open": true,
+            "blacklist": false,
             "description": "Cohort C"
           },
           "overallEvaluation": "PASS",

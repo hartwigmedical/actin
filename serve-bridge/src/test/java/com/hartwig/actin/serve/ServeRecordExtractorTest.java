@@ -124,6 +124,6 @@ public class ServeRecordExtractorTest {
 
     @NotNull
     private static CohortMetadata withCohortId(@NotNull String cohortId) {
-        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(false).description(Strings.EMPTY).build();
+        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(false).blacklist(false).description(Strings.EMPTY).build();
     }
 }

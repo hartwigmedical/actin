@@ -93,6 +93,7 @@ public class TrialFactory {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortConfig.cohortId())
                 .open(cohortConfig.open())
+                .blacklist(cohortConfig.blacklist())
                 .description(cohortConfig.description())
                 .build();
     }

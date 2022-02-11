@@ -25,6 +25,7 @@
       "metadata": {
         "cohortId": "A",
         "open": true,
+        "blacklist": false,
         "description": "Cohort A"
       },
       "eligibility": [
@@ -51,6 +52,7 @@
       "metadata": {
         "cohortId": "B",
         "open": true,
+        "blacklist": false,
         "description": "Cohort B"
       },
       "eligibility": []
@@ -59,6 +61,7 @@
       "metadata": {
         "cohortId": "C",
         "open": false,
+        "blacklist": false,
         "description": "Cohort C"
       },
       "eligibility": [

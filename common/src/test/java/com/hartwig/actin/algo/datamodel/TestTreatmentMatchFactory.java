@@ -102,7 +102,7 @@ public final class TestTreatmentMatchFactory {
 
     @NotNull
     private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
-        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(true).description("Cohort " + cohortId).build();
+        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(true).blacklist(false).description("Cohort " + cohortId).build();
     }
 
     @NotNull

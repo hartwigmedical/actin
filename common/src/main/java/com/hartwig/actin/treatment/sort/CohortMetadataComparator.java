@@ -21,7 +21,11 @@ public class CohortMetadataComparator implements Comparator<CohortMetadata> {
         }
 
         if (metadata1.open() == metadata2.open()) {
-            return 0;
+            if (metadata1.blacklist() == metadata2.blacklist()) {
+                return 0;
+            } else {
+                return metadata1.blacklist() ? 1 : -1;
+            }
         } else {
             return metadata1.open() ? -1 : 1;
         }

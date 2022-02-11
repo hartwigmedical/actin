@@ -31,7 +31,7 @@ public class CohortEligibilityComparatorTest {
     @NotNull
     private static CohortEligibility withId(@NotNull String id) {
         return ImmutableCohortEligibility.builder()
-                .metadata(ImmutableCohortMetadata.builder().cohortId(id).open(true).description(Strings.EMPTY).build())
+                .metadata(ImmutableCohortMetadata.builder().cohortId(id).open(true).blacklist(false).description(Strings.EMPTY).build())
                 .overallEvaluation(Evaluation.PASS)
                 .build();
     }
