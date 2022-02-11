@@ -23,14 +23,9 @@ public final class TreatmentRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator(doidModel, null, false));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
-                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, false));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
-                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, true));
-        map.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignanciesHaveBeenCuredRecentlyCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
@@ -44,11 +39,22 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
 
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator(doidModel, null, false));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
+                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, false));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
+                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, true));
+        map.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignanciesHaveBeenCuredRecentlyCreator());
+
         return map;
     }
+
+    @NotNull
+    private static FunctionCreator isEligibleForCurativeTreatmentCreator() { return function -> new IsEligibleForCurativeTreatment(); }
 
     @NotNull
     private static FunctionCreator hasExhaustedSOCTreatmentsCreator() {

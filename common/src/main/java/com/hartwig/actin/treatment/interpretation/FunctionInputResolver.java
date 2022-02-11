@@ -2,6 +2,7 @@ package com.hartwig.actin.treatment.interpretation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -79,13 +80,9 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
 
+        RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
-                FunctionInput.ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, FunctionInput.ONE_INTEGER);
@@ -104,8 +101,15 @@ public final class FunctionInputResolver {
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
+
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
+                FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, FunctionInput.ONE_INTEGER);
 
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, FunctionInput.ONE_STRING);

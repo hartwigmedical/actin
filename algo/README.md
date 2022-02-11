@@ -115,16 +115,13 @@ HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 
-##### Rules related to previous cancer treatments or previous primary tumors
+##### Rules related to previous cancer treatments
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
+IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | T.B.D. - currently not evaluated
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D - currently resolves to PASS_BUT_WARN
 HAS_DECLINED_SOC_TREATMENTS | T.B.D - currently not evaluated
-HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
-HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
-HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
-EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D.
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
@@ -138,8 +135,18 @@ HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_LEAST_Z_LINES | categories contai
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines <= Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Stem cell transplantation, Car T (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
+HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT | T.B.D
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
+
+##### Rules related to previous primary tumors
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
+HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
+EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
 
 ##### Rules related to molecular results
 
