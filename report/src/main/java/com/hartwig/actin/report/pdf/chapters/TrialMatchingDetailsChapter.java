@@ -127,7 +127,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     @NotNull
     private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull Evaluation overallEvaluation) {
         float indentWidth = 10;
-        float keyWidth = 70;
+        float keyWidth = 90;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
 
         Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth()).setKeepTogether(true);
@@ -153,7 +153,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
             @NotNull Evaluation overallEvaluation) {
         float indentWidth = 10;
-        float keyWidth = 70;
+        float keyWidth = 90;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
 
         Table table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth()).setKeepTogether(true);
@@ -172,9 +172,11 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addCell(Cells.createKey("Open for inclusion?"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.open())));
 
-        table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createKey("Blacklisted for eligibility?"));
-        table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.blacklist())));
+        if (metadata.blacklist()) {
+            table.addCell(Cells.createEmpty());
+            table.addCell(Cells.createKey("Blacklisted for eligibility?"));
+            table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.blacklist())));
+        }
 
         return table;
     }
