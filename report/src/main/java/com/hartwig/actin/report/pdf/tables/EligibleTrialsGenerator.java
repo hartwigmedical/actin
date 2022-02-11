@@ -15,7 +15,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TrialMatchGenerator implements TableGenerator {
+public class EligibleTrialsGenerator implements TableGenerator {
 
     @NotNull
     private final TreatmentMatchSummary treatmentMatchSummary;
@@ -25,20 +25,20 @@ public class TrialMatchGenerator implements TableGenerator {
     private final float cohortOpenColWidth;
 
     @NotNull
-    public static TrialMatchGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, float contentWidth) {
+    public static EligibleTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, float contentWidth) {
         float trialIdColWidth = contentWidth / 6;
         float trialAcronymColWidth = contentWidth / 6;
         float cohortOpenColWidth = contentWidth / 8;
         float cohortDescriptionColWidth = contentWidth - (trialIdColWidth + trialAcronymColWidth + cohortOpenColWidth);
 
-        return new TrialMatchGenerator(TreatmentMatchSummarizer.summarize(treatmentMatch),
+        return new EligibleTrialsGenerator(TreatmentMatchSummarizer.summarize(treatmentMatch),
                 trialIdColWidth,
                 trialAcronymColWidth,
                 cohortDescriptionColWidth,
                 cohortOpenColWidth);
     }
 
-    private TrialMatchGenerator(@NotNull final TreatmentMatchSummary treatmentMatchSummary, final float trialIdColWidth,
+    private EligibleTrialsGenerator(@NotNull final TreatmentMatchSummary treatmentMatchSummary, final float trialIdColWidth,
             final float trialAcronymColWidth, final float cohortDescriptionColWidth, final float cohortOpenColWidth) {
         this.treatmentMatchSummary = treatmentMatchSummary;
         this.trialIdColWidth = trialIdColWidth;

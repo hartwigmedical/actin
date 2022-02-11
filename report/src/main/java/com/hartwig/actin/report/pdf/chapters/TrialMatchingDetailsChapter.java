@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.interpretation.EligibilityEvaluator;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -55,7 +56,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         List<TrialEligibility> eligible = Lists.newArrayList();
         List<TrialEligibility> nonEligible = Lists.newArrayList();
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
-            if (isEligible(trial)) {
+            if (EligibilityEvaluator.isEligibleTrial(trial)) {
                 eligible.add(trial);
             } else {
                 nonEligible.add(trial);
@@ -70,23 +71,6 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         if (!nonEligible.isEmpty()) {
             addTrialMatches(document, nonEligible, "Other trials & cohorts", false);
         }
-    }
-
-    private static boolean isEligible(@NotNull TrialEligibility trial) {
-        if (trial.overallEvaluation().isPass()) {
-            // Either a trial has no cohorts, or at least one cohort has to pass.
-            if (trial.cohorts().isEmpty()) {
-                return true;
-            } else {
-                for (CohortEligibility cohort : trial.cohorts()) {
-                    if (cohort.overallEvaluation().isPass()) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     private void addChapterTitle(@NotNull Document document) {
@@ -112,7 +96,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
-        boolean displayFailOnly = !isEligible(trial);
+        boolean displayFailOnly = !EligibilityEvaluator.isEligibleTrial(trial);
         document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
         document.add(blankLine());
         Map<Eligibility, Evaluation> trialEvaluations = removeEligibilityWithoutReference(trial.evaluations());
@@ -187,6 +171,10 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Open for inclusion?"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.open())));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Blacklisted for eligibility?"));
+        table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.blacklist())));
 
         return table;
     }

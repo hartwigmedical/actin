@@ -89,20 +89,30 @@ public final class TestTreatmentMatchFactory {
         List<CohortEligibility> cohorts = Lists.newArrayList();
 
         cohorts.add(ImmutableCohortEligibility.builder()
-                .metadata(createTestMetadata("A"))
+                .metadata(createTestMetadata("A", true, false))
                 .overallEvaluation(Evaluation.FAIL)
                 .evaluations(createTestCohortEvaluations())
                 .build());
-
-        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("B")).overallEvaluation(Evaluation.PASS).build());
-        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("C")).overallEvaluation(Evaluation.PASS).build());
+        cohorts.add(ImmutableCohortEligibility.builder()
+                .metadata(createTestMetadata("B", true, false))
+                .overallEvaluation(Evaluation.PASS)
+                .build());
+        cohorts.add(ImmutableCohortEligibility.builder()
+                .metadata(createTestMetadata("C", true, true))
+                .overallEvaluation(Evaluation.PASS)
+                .build());
 
         return cohorts;
     }
 
     @NotNull
-    private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
-        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(true).blacklist(false).description("Cohort " + cohortId).build();
+    private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean open, boolean blacklist) {
+        return ImmutableCohortMetadata.builder()
+                .cohortId(cohortId)
+                .open(open)
+                .blacklist(blacklist)
+                .description("Cohort " + cohortId)
+                .build();
     }
 
     @NotNull

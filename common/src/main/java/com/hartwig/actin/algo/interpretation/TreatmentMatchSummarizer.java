@@ -30,17 +30,15 @@ public final class TreatmentMatchSummarizer {
             boolean hasCohorts = !trial.cohorts().isEmpty();
             cohortCount += hasCohorts ? trial.cohorts().size() : 1;
 
-            if (trial.overallEvaluation().isPass()) {
+            if (EligibilityEvaluator.isEligibleTrial(trial)) {
                 List<CohortMetadata> eligibleCohorts = Lists.newArrayList();
                 for (CohortEligibility cohort : trial.cohorts()) {
-                    if (cohort.overallEvaluation().isPass()) {
+                    if (EligibilityEvaluator.isEligibleCohort(cohort)) {
                         eligibleCohorts.add(cohort.metadata());
                     }
                 }
 
-                if (!hasCohorts || !eligibleCohorts.isEmpty()) {
-                    eligibleTrialMap.put(trial.identification(), eligibleCohorts);
-                }
+                eligibleTrialMap.put(trial.identification(), eligibleCohorts);
             }
         }
 
