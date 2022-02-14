@@ -183,8 +183,8 @@ public class CurationModel {
             if (config == null) {
                 LOGGER.warn(" Could not find oncological history config for input '{}'", input);
             } else if (!config.ignore()) {
-                if (config.curatedObject() instanceof PriorTumorTreatment) {
-                    priorTumorTreatments.add((PriorTumorTreatment) config.curatedObject());
+                if (config.curated() instanceof PriorTumorTreatment) {
+                    priorTumorTreatments.add((PriorTumorTreatment) config.curated());
                 }
             }
         }
@@ -203,8 +203,8 @@ public class CurationModel {
             if (config == null) {
                 LOGGER.warn(" Could not find oncological history config for input '{}'", input);
             } else if (!config.ignore()) {
-                if (config.curatedObject() instanceof PriorSecondPrimary) {
-                    priorSecondPrimaries.add((PriorSecondPrimary) config.curatedObject());
+                if (config.curated() instanceof PriorSecondPrimary) {
+                    priorSecondPrimaries.add((PriorSecondPrimary) config.curated());
                 }
             }
         }

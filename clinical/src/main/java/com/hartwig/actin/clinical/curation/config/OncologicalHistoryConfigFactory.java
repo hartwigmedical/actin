@@ -12,16 +12,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class OncologicalHistoryConfigFactory implements CurationConfigFactory<OncologicalHistoryConfig> {
 
-    private static final String CATEGORY_DELIMITER = ",";
-
     private static final String SECOND_PRIMARY_STRING = "second primary";
 
     @NotNull
     @Override
     public OncologicalHistoryConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         boolean ignore = CurationUtil.isIgnoreString(parts[fields.get("name")]);
-        return ImmutableOncologicalHistoryConfig.builder().input(parts[fields.get("input")]).ignore(ignore)
-                .curatedObject(!ignore ? curateObject(fields, parts) : null)
+        return ImmutableOncologicalHistoryConfig.builder()
+                .input(parts[fields.get("input")])
+                .ignore(ignore)
+                .curated(!ignore ? curateObject(fields, parts) : null)
                 .build();
 
     }

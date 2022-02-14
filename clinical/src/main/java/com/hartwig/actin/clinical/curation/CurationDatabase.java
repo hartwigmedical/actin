@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -47,6 +48,9 @@ public abstract class CurationDatabase {
 
     @NotNull
     public abstract List<ToxicityConfig> toxicityConfigs();
+
+    @NotNull
+    public abstract List<MolecularTestConfig> molecularTestConfigs();
 
     @NotNull
     public abstract List<MedicationDosageConfig> medicationDosageConfigs();

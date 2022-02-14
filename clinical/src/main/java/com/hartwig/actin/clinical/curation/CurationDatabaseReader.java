@@ -16,6 +16,8 @@ import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory;
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -49,6 +51,7 @@ public final class CurationDatabaseReader {
     private static final String INFECTION_TSV = "infection.tsv";
     private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
+    private static final String MOLECULAR_TEST_TSV = "molecular_test.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
     private static final String MEDICATION_CATEGORY_TSV = "medication_category.tsv";
 
@@ -74,6 +77,7 @@ public final class CurationDatabaseReader {
                 .infectionConfigs(readInfectionConfigs(basePath + INFECTION_TSV))
                 .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
+                .molecularTestConfigs(readMolecularTestConfigs(basePath + MOLECULAR_TEST_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
                 .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
@@ -135,6 +139,13 @@ public final class CurationDatabaseReader {
     private static List<ToxicityConfig> readToxicityConfigs(@NotNull String tsv) throws IOException {
         List<ToxicityConfig> configs = CurationConfigFile.read(tsv, new ToxicityConfigFactory());
         LOGGER.info(" Read {} toxicity configs from {}", configs.size(), tsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<MolecularTestConfig> readMolecularTestConfigs(@NotNull  String tsv) throws IOException {
+        List<MolecularTestConfig> configs = CurationConfigFile.read(tsv, new MolecularTestConfigFactory());
+        LOGGER.info(" Read {} molecular test configs from {}", configs.size(), tsv);
         return configs;
     }
 

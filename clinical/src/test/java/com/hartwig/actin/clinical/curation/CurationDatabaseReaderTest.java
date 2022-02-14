@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -24,6 +25,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -51,6 +53,7 @@ public class CurationDatabaseReaderTest {
         assertInfectionConfigs(database.infectionConfigs());
         assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
+        assertMolecularTestConfigs(database.molecularTestConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
         assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
 
@@ -87,7 +90,7 @@ public class CurationDatabaseReaderTest {
         OncologicalHistoryConfig config1 = find(configs, "Capecitabine/Oxaliplatin 2020");
         assertFalse(config1.ignore());
 
-        PriorTumorTreatment curated1 = (PriorTumorTreatment) config1.curatedObject();
+        PriorTumorTreatment curated1 = (PriorTumorTreatment) config1.curated();
         assertEquals("Capecitabine+Oxaliplatin", curated1.name());
         assertEquals(2020, (int) curated1.year());
         assertNull(curated1.month());
@@ -104,7 +107,7 @@ public class CurationDatabaseReaderTest {
         OncologicalHistoryConfig config2 = find(configs, "Breast Jan-2018");
         assertFalse(config2.ignore());
 
-        PriorSecondPrimary curated2 = (PriorSecondPrimary) config2.curatedObject();
+        PriorSecondPrimary curated2 = (PriorSecondPrimary) config2.curated();
         assertEquals("Breast", curated2.tumorLocation());
         assertEquals(Strings.EMPTY, curated2.tumorSubLocation());
         assertEquals("Carcinoma", curated2.tumorType());
@@ -183,6 +186,15 @@ public class CurationDatabaseReaderTest {
         assertEquals("Neuropathy GR3", config.input());
         assertEquals("Neuropathy", config.name());
         assertEquals(3, (int) config.grade());
+    }
+
+    private static void assertMolecularTestConfigs(@NotNull List<MolecularTestConfig> configs) {
+        assertEquals(1, configs.size());
+
+        MolecularTestConfig config = configs.get(0);
+        assertEquals("IHC ERBB2 3+", config.input());
+        assertEquals(ImmutablePriorMolecularTest.builder().test("IHC").item("ERBB2").measure(null).score(3).unit("+").build(),
+                config.curated());
     }
 
     private static void assertMedicationDosageConfigs(@NotNull List<MedicationDosageConfig> configs) {

@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
@@ -20,6 +21,7 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -30,6 +32,7 @@ import com.hartwig.actin.clinical.curation.translation.ImmutableAllergyTranslati
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
@@ -64,6 +67,7 @@ public final class TestCurationFactory {
                 .infectionConfigs(createTestInfectionConfigs())
                 .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
+                .molecularTestConfigs(createTestMolecularTestConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
                 .medicationCategoryConfigs(createTestMedicationCategoryConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
@@ -125,7 +129,7 @@ public final class TestCurationFactory {
         configs.add(ImmutableOncologicalHistoryConfig.builder()
                 .input("Cis 2020")
                 .ignore(false)
-                .curatedObject(ImmutablePriorTumorTreatment.builder()
+                .curated(ImmutablePriorTumorTreatment.builder()
                         .name("Cisplatin")
                         .year(2020)
                         .addCategories(TreatmentCategory.CHEMOTHERAPY)
@@ -137,7 +141,7 @@ public final class TestCurationFactory {
         configs.add(ImmutableOncologicalHistoryConfig.builder()
                 .input("Breast cancer Jan-2018")
                 .ignore(false)
-                .curatedObject(ImmutablePriorSecondPrimary.builder()
+                .curated(ImmutablePriorSecondPrimary.builder()
                         .tumorLocation("Breast")
                         .tumorSubLocation(Strings.EMPTY)
                         .tumorType("Carcinoma")
@@ -211,6 +215,19 @@ public final class TestCurationFactory {
         List<ToxicityConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableToxicityConfig.builder().ignore(false).input("neuropathy gr3").name("neuropathy").grade(3).build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<MolecularTestConfig> createTestMolecularTestConfigs() {
+        List<MolecularTestConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableMolecularTestConfig.builder()
+                .input("IHC ERBB2 3+")
+                .ignore(false)
+                .curated(ImmutablePriorMolecularTest.builder().test("IHC").item("ERBB2").measure(null).score(3).unit("+").build())
+                .build());
 
         return configs;
     }
