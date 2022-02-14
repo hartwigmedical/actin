@@ -5,7 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.evaluation.bloodpressure.BloodPressureRuleMapping;
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapping;
@@ -48,7 +48,7 @@ final class FunctionCreatorFactory {
         map.putAll(PregnancyRuleMapping.create());
         map.putAll(ComplicationRuleMapping.create());
         map.putAll(ToxicityRuleMapping.create());
-        map.putAll(BloodPressureRuleMapping.create());
+        map.putAll(VitalFunctionRuleMapping.create());
         map.putAll(BloodTransfusionRuleMapping.create());
         map.putAll(SurgeryRuleMapping.create());
         map.putAll(SmokingRuleMapping.create());

@@ -228,6 +228,7 @@ public enum EligibilityRule {
     HAS_SBP_MMHG_OF_AT_LEAST_X,
     HAS_DBP_MMHG_OF_AT_LEAST_X,
     HAS_PULSE_OXYMETRY_OF_AT_LEAST_X,
+    HAS_BODY_WEIGHT_OF_AT_LEAST_X,
 
     // Rules related to blood transfusions
     HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS,

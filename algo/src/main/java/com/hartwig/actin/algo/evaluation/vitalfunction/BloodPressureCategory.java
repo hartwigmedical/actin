@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.bloodpressure;
+package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import org.jetbrains.annotations.NotNull;
 

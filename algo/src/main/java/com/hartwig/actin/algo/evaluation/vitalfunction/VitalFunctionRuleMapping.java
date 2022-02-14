@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.bloodpressure;
+package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import java.util.Map;
 
@@ -10,9 +10,9 @@ import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class BloodPressureRuleMapping {
+public final class VitalFunctionRuleMapping {
 
-    private BloodPressureRuleMapping() {
+    private VitalFunctionRuleMapping() {
     }
 
     @NotNull
@@ -22,6 +22,7 @@ public final class BloodPressureRuleMapping {
         map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
         map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
         map.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
 
         return map;
     }

@@ -334,13 +334,14 @@ HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | T.B.D.
 Note for all TOXICITY rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
 
-##### Rules related to vital function measurements
+##### Rules related to vital function / body weight measurements
 
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent systolic blood pressure AND average value => X
 HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent diastolic blood pressure AND average value => X
 HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | in %. Currently resolves to UNDETERMINED
+HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 
 ##### Rules related to blood transfusions
 
