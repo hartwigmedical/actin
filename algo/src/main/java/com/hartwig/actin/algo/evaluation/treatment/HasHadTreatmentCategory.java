@@ -56,7 +56,7 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
                 type = treatment.hormoneType();
                 break;
             }
-            case STEM_CELL_TRANSPLANTATION: {
+            case TRANSPLANTATION: {
                 type = treatment.stemCellTransType();
                 break;
             }
