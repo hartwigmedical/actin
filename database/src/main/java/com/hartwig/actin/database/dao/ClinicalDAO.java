@@ -8,6 +8,7 @@ import static com.hartwig.actin.database.Tables.CLINICALSTATUS;
 import static com.hartwig.actin.database.Tables.LABVALUE;
 import static com.hartwig.actin.database.Tables.MEDICATION;
 import static com.hartwig.actin.database.Tables.PATIENT;
+import static com.hartwig.actin.database.Tables.PRIORMOLECULARTEST;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
@@ -29,6 +30,7 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -59,6 +61,7 @@ class ClinicalDAO {
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
+        context.truncate(PRIORMOLECULARTEST).execute();
         context.truncate(CANCERRELATEDCOMPLICATION).execute();
         context.truncate(LABVALUE).execute();
         context.truncate(TOXICITY).execute();
@@ -80,6 +83,7 @@ class ClinicalDAO {
         writePriorTumorTreatments(sampleId, record.priorTumorTreatments());
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
         writePriorOtherConditions(sampleId, record.priorOtherConditions());
+        writePriorMolecularTests(sampleId, record.priorMolecularTests());
         writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
         writeLabValues(sampleId, record.labValues());
         writeToxicities(sampleId, record.toxicities());
@@ -144,7 +148,8 @@ class ClinicalDAO {
                         DataUtil.toByte(tumor.hasLiverLesions()),
                         DataUtil.toByte(tumor.hasOtherLesions()),
                         DataUtil.concat(tumor.otherLesions()),
-                        tumor.biopsyLocation()).execute();
+                        tumor.biopsyLocation())
+                .execute();
     }
 
     private void writeClinicalStatus(@NotNull String sampleId, @NotNull ClinicalStatus clinicalStatus) {
@@ -250,6 +255,25 @@ class ClinicalDAO {
         }
     }
 
+    private void writePriorMolecularTests(@NotNull String sampleId, @NotNull List<PriorMolecularTest> priorMolecularTests) {
+        for (PriorMolecularTest priorMolecularTest : priorMolecularTests) {
+            context.insertInto(PRIORMOLECULARTEST,
+                    PRIORMOLECULARTEST.SAMPLEID,
+                    PRIORMOLECULARTEST.TEST,
+                    PRIORMOLECULARTEST.ITEM,
+                    PRIORMOLECULARTEST.MEASURE,
+                    PRIORMOLECULARTEST.SCORE,
+                    PRIORMOLECULARTEST.UNIT)
+                    .values(sampleId,
+                            priorMolecularTest.test(),
+                            priorMolecularTest.item(),
+                            priorMolecularTest.measure(),
+                            priorMolecularTest.score(),
+                            priorMolecularTest.unit())
+                    .execute();
+        }
+    }
+
     private void writeCancerRelatedComplications(@NotNull String sampleId,
             @NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
         for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
@@ -335,7 +359,9 @@ class ClinicalDAO {
                     VITALFUNCTION.CATEGORY,
                     VITALFUNCTION.SUBCATEGORY,
                     VITALFUNCTION.VALUE,
-                    VITALFUNCTION.UNIT).values(sampleId, vitalFunction.date(),
+                    VITALFUNCTION.UNIT)
+                    .values(sampleId,
+                            vitalFunction.date(),
                             vitalFunction.category().display(),
                             vitalFunction.subcategory(),
                             vitalFunction.value(),

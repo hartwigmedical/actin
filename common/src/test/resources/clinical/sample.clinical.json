@@ -95,6 +95,15 @@
       "category": "Liver disease"
     }
   ],
+  "priorMolecularTests": [
+    {
+      "test": "IHC",
+      "item": "ERBB2",
+      "measure": null,
+      "score": 3,
+      "unit": "+"
+    }
+  ],
   "cancerRelatedComplications": [
     {
       "name": "Nausea"

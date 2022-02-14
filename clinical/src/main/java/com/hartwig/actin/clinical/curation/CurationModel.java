@@ -142,28 +142,28 @@ public class CurationModel {
         ImmutableTumorDetails.Builder builder = ImmutableTumorDetails.builder().from(tumorDetails);
         if (matches.contains(LesionLocationCategory.BONE)) {
             if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
-                LOGGER.info(" Overriding presence of bone lesions");
+                LOGGER.debug("  Overriding presence of bone lesions");
             }
             builder.hasBoneLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.LIVER)) {
             if (tumorDetails.hasLiverLesions() != null && !tumorDetails.hasLiverLesions()) {
-                LOGGER.info(" Overriding presence of liver lesions");
+                LOGGER.debug("  Overriding presence of liver lesions");
             }
             builder.hasLiverLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.BRAIN)) {
             if (tumorDetails.hasBrainLesions() != null && !tumorDetails.hasBrainLesions()) {
-                LOGGER.info(" Overriding presence of brain lesions");
+                LOGGER.debug("  Overriding presence of brain lesions");
             }
             builder.hasBrainLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.CNS)) {
             if (tumorDetails.hasCnsLesions() != null && !tumorDetails.hasCnsLesions()) {
-                LOGGER.info(" Overriding presence of CNS lesions");
+                LOGGER.debug("  Overriding presence of CNS lesions");
             }
             builder.hasCnsLesions(true);
         }

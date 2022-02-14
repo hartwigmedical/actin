@@ -2,6 +2,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- TODO Can be removed per 1st of march 2022
 DROP TABLE IF EXISTS otherComplication;
+DROP TABLE IF EXISTS molecularTest;
 
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -101,11 +102,11 @@ CREATE TABLE priorOtherCondition
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS molecularTest;
-CREATE TABLE molecularTest
+DROP TABLE IF EXISTS priorMolecularTest;
+CREATE TABLE priorMolecularTest
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    test varchar(50),
+    test varchar(50) NOT NULL,
     item varchar(50) NOT NULL,
     measure varchar(50),
     score double precision NOT NULL,

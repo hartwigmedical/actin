@@ -55,6 +55,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
@@ -66,6 +67,7 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -152,6 +154,7 @@ public final class ClinicalRecordJson {
                     .priorTumorTreatments(toPriorTumorTreatments(array(record, "priorTumorTreatments")))
                     .priorSecondPrimaries(toPriorSecondPrimaries(array(record, "priorSecondPrimaries")))
                     .priorOtherConditions(toPriorOtherConditions(array(record, "priorOtherConditions")))
+                    .priorMolecularTests(toPriorMolecularTests(array(record, "priorMolecularTests")))
                     .cancerRelatedComplications(toCancerRelatedComplications(array(record, "cancerRelatedComplications")))
                     .labValues(toLabValues(array(record, "labValues")))
                     .toxicities(toToxicities(array(record, "toxicities")))
@@ -305,6 +308,22 @@ public final class ClinicalRecordJson {
         }
 
         @NotNull
+        private static List<PriorMolecularTest> toPriorMolecularTests(@NotNull JsonArray priorMolecularTests) {
+            List<PriorMolecularTest> priorMolecularTestList = Lists.newArrayList();
+            for (JsonElement element : priorMolecularTests) {
+                JsonObject object = element.getAsJsonObject();
+                priorMolecularTestList.add(ImmutablePriorMolecularTest.builder()
+                        .test(string(object, "test"))
+                        .item(string(object, "item"))
+                        .measure(nullableString(object, "measure"))
+                        .score(number(object, "score"))
+                        .unit(nullableString(object, "unit"))
+                        .build());
+            }
+            return priorMolecularTestList;
+        }
+
+        @NotNull
         private static List<CancerRelatedComplication> toCancerRelatedComplications(@NotNull JsonArray cancerRelatedComplications) {
             List<CancerRelatedComplication> cancerRelatedComplicationList = Lists.newArrayList();
             for (JsonElement element : cancerRelatedComplications) {
@@ -423,7 +442,9 @@ public final class ClinicalRecordJson {
             List<Medication> medicationList = Lists.newArrayList();
             for (JsonElement element : medications) {
                 JsonObject object = element.getAsJsonObject();
-                medicationList.add(ImmutableMedication.builder().name(string(object, "name")).categories(stringList(object, "categories"))
+                medicationList.add(ImmutableMedication.builder()
+                        .name(string(object, "name"))
+                        .categories(stringList(object, "categories"))
                         .dosageMin(nullableNumber(object, "dosageMin"))
                         .dosageMax(nullableNumber(object, "dosageMax"))
                         .dosageUnit(nullableString(object, "dosageUnit"))

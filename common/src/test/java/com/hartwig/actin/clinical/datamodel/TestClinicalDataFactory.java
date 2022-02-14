@@ -54,6 +54,7 @@ public final class TestClinicalDataFactory {
                 .priorTumorTreatments(createTestPriorTumorTreatments())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
+                .priorMolecularTests(createTestPriorMolecularTests())
                 .cancerRelatedComplications(createTestCancerRelatedComplications())
                 .labValues(createTestLabValues())
                 .toxicities(createTestToxicities())
@@ -178,6 +179,15 @@ public final class TestClinicalDataFactory {
                 .build());
 
         return priorOtherConditions;
+    }
+
+    @NotNull
+    private static List<PriorMolecularTest> createTestPriorMolecularTests() {
+        List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
+
+        priorMolecularTests.add(ImmutablePriorMolecularTest.builder().test("IHC").item("ERBB2").measure(null).score(3).unit("+").build());
+
+        return priorMolecularTests;
     }
 
     @NotNull
