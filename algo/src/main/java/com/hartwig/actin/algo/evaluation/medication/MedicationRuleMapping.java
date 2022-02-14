@@ -17,6 +17,7 @@ public final class MedicationRuleMapping {
     private static final String ANTIEPILEPTICS = "Antiepileptics";
     private static final String CORTICOSTEROIDS = "Corticosteroids";
     private static final String VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists";
+    private static final String NSAIDS = "NSAIDs";
 
     private MedicationRuleMapping() {
     }
@@ -38,6 +39,7 @@ public final class MedicationRuleMapping {
                 getsActiveMedicationOfCategoryCreator(VITAMIN_K_ANTAGONISTS));
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_NSAIDS_MEDICATION, getsActiveMedicationOfCategoryCreator(NSAIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, function -> record -> Evaluation.NOT_IMPLEMENTED);
         map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS, function -> record -> Evaluation.NOT_IMPLEMENTED);
