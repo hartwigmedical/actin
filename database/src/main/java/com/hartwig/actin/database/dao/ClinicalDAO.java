@@ -7,7 +7,6 @@ import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
 import static com.hartwig.actin.database.Tables.CLINICALSTATUS;
 import static com.hartwig.actin.database.Tables.LABVALUE;
 import static com.hartwig.actin.database.Tables.MEDICATION;
-import static com.hartwig.actin.database.Tables.OTHERCOMPLICATION;
 import static com.hartwig.actin.database.Tables.PATIENT;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
@@ -25,7 +24,6 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -62,7 +60,6 @@ class ClinicalDAO {
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
         context.truncate(CANCERRELATEDCOMPLICATION).execute();
-        context.truncate(OTHERCOMPLICATION).execute();
         context.truncate(LABVALUE).execute();
         context.truncate(TOXICITY).execute();
         context.truncate(ALLERGY).execute();
@@ -84,7 +81,6 @@ class ClinicalDAO {
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
         writePriorOtherConditions(sampleId, record.priorOtherConditions());
         writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
-        writeOtherComplications(sampleId, record.otherComplications());
         writeLabValues(sampleId, record.labValues());
         writeToxicities(sampleId, record.toxicities());
         writeAllergies(sampleId, record.allergies());
@@ -259,27 +255,6 @@ class ClinicalDAO {
         for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
             context.insertInto(CANCERRELATEDCOMPLICATION, CANCERRELATEDCOMPLICATION.SAMPLEID, CANCERRELATEDCOMPLICATION.NAME)
                     .values(sampleId, cancerRelatedComplication.name())
-                    .execute();
-        }
-    }
-
-    private void writeOtherComplications(@NotNull String sampleId, @NotNull List<Complication> complications) {
-        for (Complication complication : complications) {
-            context.insertInto(OTHERCOMPLICATION,
-                    OTHERCOMPLICATION.SAMPLEID,
-                    OTHERCOMPLICATION.NAME,
-                    OTHERCOMPLICATION.DOIDS,
-                    OTHERCOMPLICATION.SPECIALTY,
-                    OTHERCOMPLICATION.ONSETDATE,
-                    OTHERCOMPLICATION.CATEGORY,
-                    OTHERCOMPLICATION.STATUS)
-                    .values(sampleId,
-                            complication.name(),
-                            DataUtil.concat(complication.doids()),
-                            complication.specialty(),
-                            complication.onsetDate(),
-                            complication.category(),
-                            complication.status())
                     .execute();
         }
     }

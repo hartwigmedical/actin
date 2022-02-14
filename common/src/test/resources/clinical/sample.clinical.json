@@ -100,22 +100,6 @@
       "name": "Nausea"
     }
   ],
-  "otherComplications": [
-    {
-      "name": "complicated",
-      "doids": [
-        "123"
-      ],
-      "specialty": "special",
-      "onsetDate": {
-        "year": 2018,
-        "month": 1,
-        "day": 1
-      },
-      "category": "category",
-      "status": "active"
-    }
-  ],
   "labValues": [
     {
       "date": {

@@ -55,7 +55,6 @@ public final class TestClinicalDataFactory {
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .cancerRelatedComplications(createTestCancerRelatedComplications())
-                .otherComplications(createTestOtherComplications())
                 .labValues(createTestLabValues())
                 .toxicities(createTestToxicities())
                 .allergies(createTestAllergies())
@@ -188,21 +187,6 @@ public final class TestClinicalDataFactory {
         cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("Ascites").build());
 
         return cancerRelatedComplications;
-    }
-
-    @NotNull
-    private static List<Complication> createTestOtherComplications() {
-        List<Complication> otherComplications = Lists.newArrayList();
-
-        otherComplications.add(ImmutableComplication.builder()
-                .name(Strings.EMPTY)
-                .specialty(Strings.EMPTY)
-                .onsetDate(TODAY.minusDays(36))
-                .category(Strings.EMPTY)
-                .status(Strings.EMPTY)
-                .build());
-
-        return otherComplications;
     }
 
     @NotNull

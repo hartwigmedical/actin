@@ -55,7 +55,6 @@ public class ClinicalRecordJsonTest {
         assertEquals(1, record.priorSecondPrimaries().size());
         assertEquals(1, record.priorOtherConditions().size());
         assertEquals(1, record.cancerRelatedComplications().size());
-        assertEquals(1, record.otherComplications().size());
         assertEquals(2, record.labValues().size());
         assertEquals(2, record.toxicities().size());
         assertEquals(2, record.allergies().size());

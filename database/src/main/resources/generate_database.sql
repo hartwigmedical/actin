@@ -1,5 +1,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- TODO Can be removed per 1st of march 2022
+DROP TABLE IF EXISTS otherComplication;
+
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
 (   id int NOT NULL AUTO_INCREMENT,

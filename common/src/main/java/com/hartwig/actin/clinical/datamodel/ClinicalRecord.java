@@ -35,9 +35,6 @@ public abstract class ClinicalRecord {
     public abstract List<CancerRelatedComplication> cancerRelatedComplications();
 
     @NotNull
-    public abstract List<Complication> otherComplications();
-
-    @NotNull
     public abstract List<LabValue> labValues();
 
     @NotNull
