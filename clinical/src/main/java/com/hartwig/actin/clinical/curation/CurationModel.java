@@ -21,6 +21,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
@@ -30,6 +31,7 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
@@ -54,6 +56,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -227,6 +230,24 @@ public class CurationModel {
             }
         }
         return priorOtherConditions;
+    }
+
+    @NotNull
+    public List<PriorMolecularTest> curatePriorMolecularTests(@Nullable List<String> inputs) {
+        if (inputs == null) {
+            return Lists.newArrayList();
+        }
+
+        List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
+        for (String input : inputs) {
+            MolecularTestConfig config = find(database.molecularTestConfigs(), input);
+            if (config == null) {
+                LOGGER.warn(" Could not find molecular test config for input '{}'", input);
+            } else if (!config.ignore()) {
+                priorMolecularTests.add(config.curated());
+            }
+        }
+        return priorMolecularTests;
     }
 
     @NotNull
@@ -518,6 +539,8 @@ public class CurationModel {
             return database.infectionConfigs();
         } else if (classToLookUp == ImmutableToxicityConfig.class) {
             return database.toxicityConfigs();
+        } else if (classToLookUp == ImmutableMolecularTestConfig.class) {
+            return database.molecularTestConfigs();
         } else if (classToLookUp == ImmutableMedicationDosageConfig.class) {
             return database.medicationDosageConfigs();
         } else if (classToLookUp == ImmutableMedicationCategoryConfig.class) {

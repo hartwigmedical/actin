@@ -27,6 +27,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -134,6 +135,20 @@ public class CurationModelTest {
         assertEquals("sick", priorOtherConditions.get(0).name());
 
         assertTrue(model.curatePriorOtherConditions(null).isEmpty());
+        model.evaluate();
+    }
+
+    @Test
+    public void canCuratePriorMolecularTests() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        List<PriorMolecularTest> priorMolecularTests =
+                model.curatePriorMolecularTests(Lists.newArrayList("IHC ERBB2 3+", "not a molecular test"));
+
+        assertEquals(1, priorMolecularTests.size());
+        assertEquals("IHC", priorMolecularTests.get(0).test());
+
+        assertTrue(model.curatePriorTumorTreatments(null).isEmpty());
         model.evaluate();
     }
 

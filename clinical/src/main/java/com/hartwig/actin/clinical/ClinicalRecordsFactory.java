@@ -25,6 +25,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -100,6 +101,7 @@ public class ClinicalRecordsFactory {
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                    .priorMolecularTests(extractPriorMolecularTests(questionnaire))
                     .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
                     .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(subject, questionnaire))
@@ -200,35 +202,49 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        if (questionnaire != null) {
-            List<String> treatmentHistories = questionnaire.treatmentHistoryCurrentTumor();
-            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistories));
-
-            List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
-            priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologicalHistories));
+        if (questionnaire == null) {
+            return Lists.newArrayList();
         }
+
+        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
+
+        List<String> treatmentHistories = questionnaire.treatmentHistoryCurrentTumor();
+        priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistories));
+
+        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
+        priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologicalHistories));
+
         return priorTumorTreatments;
     }
 
     @NotNull
     private List<PriorSecondPrimary> extractPriorSecondPrimaries(@Nullable Questionnaire questionnaire) {
-        if (questionnaire != null) {
-            List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
-            return curation.curatePriorSecondPrimaries(otherOncologicalHistories);
-        } else {
+        if (questionnaire == null) {
             return Lists.newArrayList();
         }
+
+        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
+        return curation.curatePriorSecondPrimaries(otherOncologicalHistories);
     }
 
     @NotNull
     private List<PriorOtherCondition> extractPriorOtherConditions(@Nullable Questionnaire questionnaire) {
-        if (questionnaire != null) {
-            List<String> nonOncologicalHistories = questionnaire.nonOncologicalHistory();
-            return curation.curatePriorOtherConditions(nonOncologicalHistories);
-        } else {
+        if (questionnaire == null) {
             return Lists.newArrayList();
         }
+
+        List<String> nonOncologicalHistories = questionnaire.nonOncologicalHistory();
+        return curation.curatePriorOtherConditions(nonOncologicalHistories);
+    }
+
+    @NotNull
+    private List<PriorMolecularTest> extractPriorMolecularTests(@Nullable Questionnaire questionnaire) {
+        if (questionnaire == null) {
+            return Lists.newArrayList();
+        }
+
+        List<String> molecularTests = questionnaire.molecularTests();
+        return curation.curatePriorMolecularTests(molecularTests);
     }
 
     @NotNull
