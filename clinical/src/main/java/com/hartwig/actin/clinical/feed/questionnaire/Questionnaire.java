@@ -40,6 +40,9 @@ public abstract class Questionnaire {
     public abstract List<String> nonOncologicalHistory();
 
     @Nullable
+    public abstract List<String> molecularTests();
+
+    @Nullable
     public abstract Boolean hasMeasurableLesionRecist();
 
     @Nullable

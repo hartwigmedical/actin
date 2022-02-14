@@ -8,7 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 enum QuestionnaireVersion {
-    V1_3("CNS lesions:", null),
+    V1_4("ACTIN Questionnaire V1.4", null),
+    V1_3("CNS lesions:", "ACTIN Questionnaire V1.4"),
     V1_2("-Active:", "CNS lesions:"),
     V1_1("- Active:", null),
     V1_0("\\li0\\ri0", null),

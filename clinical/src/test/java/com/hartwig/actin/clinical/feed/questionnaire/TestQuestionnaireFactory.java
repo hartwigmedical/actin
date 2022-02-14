@@ -18,8 +18,46 @@ public final class TestQuestionnaireFactory {
                 .questionnaireQuestionnaireValue("A")
                 .description("Description")
                 .itemText("ItemText")
-                .itemAnswerValueValueString(createTestQuestionnaireValueV1_3())
+                .itemAnswerValueValueString(createTestQuestionnaireValueV1_4())
                 .build();
+    }
+
+    @NotNull
+    static String createTestQuestionnaireValueV1_4() {
+        // @formatter:off
+        return "ACTIN Questionnaire V1.4"
+                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+                + "Please make sure that these fields never contain non-anonymized data!\n"
+                + "\n"
+                + "Relevant patient history\n"
+                + "Treatment history current tumor: cisplatin; nivolumab\n"
+                + "Other oncological history (e.g. radiotherapy, second primary): surgery\n"
+                + "Non-oncological history: diabetes\n"
+                + "\n"
+                + "Tumor details\n"
+                + "Primary tumor location: ovary\n"
+                + "Primary tumor type: serous\n"
+                + "Biopsy location: Lymph node\n"
+                + "Stage: 3\n"
+                + "CNS lesions:\n"
+                + "-Active:\n"
+                + "-Symptomatic:\n"
+                + "Brain lesions:\n"
+                + "-Active:\n"
+                + "-Symptomatic:\n"
+                + "Bone lesions: NO\n"
+                + "Liver lesions: NO\n"
+                + "Other lesions (e.g. lymph node, pulmonal): pulmonal\n"
+                + "Measurable disease (RECIST): YES\n"
+                + "Previous Molecular tests: IHC ERBB2 3+\n"
+                + "\n"
+                + "Clinical details\n"
+                + "WHO status: 0\n"
+                + "Unresolved toxicities grade => 2:\n"
+                + "Significant current infection: No\n"
+                + "Significant aberration on latest ECG: Sinus\n"
+                + "Cancer-related complications (e.g. pleural effusion): nausea";
+        // @formatter:on
     }
 
     @NotNull
