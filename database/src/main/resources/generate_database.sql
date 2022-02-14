@@ -98,24 +98,23 @@ CREATE TABLE priorOtherCondition
     PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS molecularTest;
+CREATE TABLE molecularTest
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    test varchar(50),
+    item varchar(50) NOT NULL,
+    measure varchar(50),
+    score double precision NOT NULL,
+    unit varchar(50),
+    PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS cancerRelatedComplication;
 CREATE TABLE cancerRelatedComplication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(150) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS otherComplication;
-CREATE TABLE otherComplication
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
-    name varchar(50) NOT NULL,
-    doids varchar(50) NOT NULL,
-    specialty varchar(50) NOT NULL,
-    onsetDate DATE  NOT NULL,
-    category varchar(50) NOT NULL,
-    status varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 

@@ -107,22 +107,21 @@ year | 2020 | Year in which other condition was diagnosed
 doids | 4989 | Separated by ";"
 category | Pancreas disease | Assigned category of considered condition, based on DOIDs
 
+N prior (non-WGS) molecular tests
+
+Field | Example Value | Details
+---|---|---
+test | IHC | Type of test
+item | PD-L1 | Item measured
+measure | CPS | Measure of test (if applicable)
+score | 10 | Test score
+unit | | Corresponding unit (if applicable)
+
 N cancer related complications
 
 Field | Example Value | Details
 ---|---|---
 name | Ascites | Cancer related complication considered relevant for treatment decision making
-
-N other complications (!! in-development)
-
-Field | Example Value | Details
----|---|---
-name |
-doids |
-specialty |
-onsetDate |
-category |
-status |
 
 N lab values
 
