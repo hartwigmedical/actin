@@ -114,13 +114,20 @@ public class CurationModel {
     }
 
     @NotNull
-    public TumorDetails overrideKnownLesionLocations(@NotNull TumorDetails tumorDetails, @Nullable List<String> otherLesions) {
-        if (otherLesions == null) {
-            return tumorDetails;
+    public TumorDetails overrideKnownLesionLocations(@NotNull TumorDetails tumorDetails, @Nullable String biopsyLocation,
+            @Nullable List<String> otherLesions) {
+        Set<LesionLocationCategory> matches = Sets.newHashSet();
+        List<String> lesionsToCheck = Lists.newArrayList();
+
+        if (otherLesions != null) {
+            lesionsToCheck.addAll(otherLesions);
         }
 
-        Set<LesionLocationCategory> matches = Sets.newHashSet();
-        for (String lesion : otherLesions) {
+        if (biopsyLocation != null) {
+            lesionsToCheck.add(biopsyLocation);
+        }
+
+        for (String lesion : lesionsToCheck) {
             String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
             LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
             if (config != null && config.category() != null) {
@@ -134,20 +141,33 @@ public class CurationModel {
 
         ImmutableTumorDetails.Builder builder = ImmutableTumorDetails.builder().from(tumorDetails);
         if (matches.contains(LesionLocationCategory.BONE)) {
+            if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
+                LOGGER.info(" Overriding presence of bone lesions");
+            }
             builder.hasBoneLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.LIVER)) {
+            if (tumorDetails.hasLiverLesions() != null && !tumorDetails.hasLiverLesions()) {
+                LOGGER.info(" Overriding presence of liver lesions");
+            }
             builder.hasLiverLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.BRAIN)) {
+            if (tumorDetails.hasBrainLesions() != null && !tumorDetails.hasBrainLesions()) {
+                LOGGER.info(" Overriding presence of brain lesions");
+            }
             builder.hasBrainLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.CNS)) {
+            if (tumorDetails.hasCnsLesions() != null && !tumorDetails.hasCnsLesions()) {
+                LOGGER.info(" Overriding presence of CNS lesions");
+            }
             builder.hasCnsLesions(true);
         }
+
         return builder.build();
     }
 

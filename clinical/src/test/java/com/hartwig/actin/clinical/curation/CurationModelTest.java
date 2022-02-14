@@ -69,22 +69,26 @@ public class CurationModelTest {
 
         TumorDetails base = TestClinicalDataFactory.createMinimalTestClinicalRecord().tumor();
 
-        assertEquals(base, model.overrideKnownLesionLocations(base, null));
-        assertEquals(base, model.overrideKnownLesionLocations(base, Lists.newArrayList("some other lesion")));
+        assertEquals(base, model.overrideKnownLesionLocations(base, null, null));
+        assertEquals(base, model.overrideKnownLesionLocations(base, "biopsy location", Lists.newArrayList("some other lesion")));
 
-        TumorDetails liver = model.overrideKnownLesionLocations(base, Lists.newArrayList("Lever"));
+        TumorDetails liverOther = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Lever"));
         assertNull(base.hasLiverLesions());
-        assertTrue(liver.hasLiverLesions());
+        assertTrue(liverOther.hasLiverLesions());
 
-        TumorDetails cns = model.overrideKnownLesionLocations(base, Lists.newArrayList("cns"));
+        TumorDetails liverBiopsy = model.overrideKnownLesionLocations(base, "lever", null);
+        assertNull(base.hasLiverLesions());
+        assertTrue(liverBiopsy.hasLiverLesions());
+
+        TumorDetails cns = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("cns"));
         assertNull(base.hasCnsLesions());
         assertTrue(cns.hasCnsLesions());
 
-        TumorDetails brain = model.overrideKnownLesionLocations(base, Lists.newArrayList("brain"));
+        TumorDetails brain = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("brain"));
         assertNull(base.hasBrainLesions());
         assertTrue(brain.hasBrainLesions());
 
-        TumorDetails bone = model.overrideKnownLesionLocations(base, Lists.newArrayList("Bone"));
+        TumorDetails bone = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Bone"));
         assertNull(base.hasBoneLesions());
         assertTrue(bone.hasBoneLesions());
 

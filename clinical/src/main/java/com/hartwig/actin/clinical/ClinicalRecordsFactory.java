@@ -160,12 +160,13 @@ public class ClinicalRecordsFactory {
             return ImmutableTumorDetails.builder().build();
         }
 
+        String biopsyLocation = questionnaire.biopsyLocation();
         List<String> otherLesions = questionnaire.otherLesions();
         List<String> curatedOtherLesions = curation.curateOtherLesions(otherLesions);
 
         TumorDetails tumorDetails = ImmutableTumorDetails.builder()
                 .from(curation.curateTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
-                .biopsyLocation(curation.curateBiopsyLocation(questionnaire.biopsyLocation()))
+                .biopsyLocation(curation.curateBiopsyLocation(biopsyLocation))
                 .stage(questionnaire.stage())
                 .hasMeasurableLesionRecist(questionnaire.hasMeasurableLesionRecist())
                 .hasBrainLesions(questionnaire.hasBrainLesions())
@@ -180,7 +181,7 @@ public class ClinicalRecordsFactory {
                 .otherLesions(curatedOtherLesions)
                 .build();
 
-        return curation.overrideKnownLesionLocations(tumorDetails, otherLesions);
+        return curation.overrideKnownLesionLocations(tumorDetails, biopsyLocation, otherLesions);
     }
 
     @NotNull
