@@ -8,7 +8,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -39,7 +41,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         switch (method) {
             case EGFR_MDRD:
                 return evaluateMDRD(record, labValue);
@@ -49,30 +51,31 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
                 return evaluateCockcroftGault(record, labValue);
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
-                return EvaluationResult.NOT_IMPLEMENTED;
+                return EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED);
             }
         }
     }
 
     @NotNull
-    private EvaluationResult evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+    private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
         return evaluateValues(toMDRD(record, creatinine), creatinine.comparator());
     }
 
     @NotNull
-    private EvaluationResult evaluateValues(@NotNull List<Double> values, @NotNull String comparator) {
+    private Evaluation evaluateValues(@NotNull List<Double> values, @NotNull String comparator) {
         Set<EvaluationResult> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
+            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(value, comparator, minCreatinineClearance).result());
         }
 
         if (evaluations.contains(EvaluationResult.FAIL)) {
-            return evaluations.contains(EvaluationResult.PASS) ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+            EvaluationResult result = evaluations.contains(EvaluationResult.PASS) ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+            return EvaluationFactory.create(result);
         } else if (evaluations.contains(EvaluationResult.UNDETERMINED)) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         } else {
             // Every value should be pass.
-            return EvaluationResult.PASS;
+            return EvaluationFactory.create(EvaluationResult.PASS);
         }
     }
 
@@ -97,7 +100,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     }
 
     @NotNull
-    private EvaluationResult evaluateCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+    private Evaluation evaluateCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
         return evaluateValues(toCKDEPI(record, creatinine), creatinine.comparator());
     }
 
@@ -129,7 +132,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     }
 
     @NotNull
-    private EvaluationResult evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
+    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
         boolean isFemale = record.clinical().patient().gender() == Gender.FEMALE;
 
         Double weight = determineWeight(record.clinical().bodyWeights());
@@ -144,15 +147,15 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
         double genderCorrected = isFemale ? base * 0.85 : base;
 
-        EvaluationResult evaluation = LaboratoryUtil.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
+        Evaluation evaluation = LaboratoryUtil.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
 
         if (weightIsKnown) {
             return evaluation;
         } else {
-            if (evaluation == EvaluationResult.FAIL) {
-                return EvaluationResult.UNDETERMINED;
-            } else if (evaluation == EvaluationResult.PASS) {
-                return EvaluationResult.PASS_BUT_WARN;
+            if (evaluation.result() == EvaluationResult.FAIL) {
+                return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            } else if (evaluation.result() == EvaluationResult.PASS) {
+                return EvaluationFactory.create(EvaluationResult.PASS_BUT_WARN);
             } else {
                 return evaluation;
             }

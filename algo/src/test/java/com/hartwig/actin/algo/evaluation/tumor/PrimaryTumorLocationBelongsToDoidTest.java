@@ -23,19 +23,19 @@ public class PrimaryTumorLocationBelongsToDoidTest {
 
         PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100");
 
-        assertEquals(EvaluationResult.PASS, function100.evaluate(patientWithDoids("100")));
-        assertEquals(EvaluationResult.PASS, function100.evaluate(patientWithDoids("200")));
-        assertEquals(EvaluationResult.PASS, function100.evaluate(patientWithDoids("10", "100")));
-        assertEquals(EvaluationResult.FAIL, function100.evaluate(patientWithDoids("50", "250")));
-        assertEquals(EvaluationResult.UNDETERMINED, function100.evaluate(patientWithDoids((List<String>) null)));
+        assertEquals(EvaluationResult.PASS, function100.evaluate(patientWithDoids("100")).result());
+        assertEquals(EvaluationResult.PASS, function100.evaluate(patientWithDoids("200")).result());
+        assertEquals(EvaluationResult.PASS, function100.evaluate(patientWithDoids("10", "100")).result());
+        assertEquals(EvaluationResult.FAIL, function100.evaluate(patientWithDoids("50", "250")).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function100.evaluate(patientWithDoids((List<String>) null)).result());
 
         PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200");
 
-        assertEquals(EvaluationResult.FAIL, function200.evaluate(patientWithDoids("100")));
-        assertEquals(EvaluationResult.PASS, function200.evaluate(patientWithDoids("200")));
-        assertEquals(EvaluationResult.FAIL, function200.evaluate(patientWithDoids("10", "100")));
-        assertEquals(EvaluationResult.FAIL, function200.evaluate(patientWithDoids("50", "250")));
-        assertEquals(EvaluationResult.UNDETERMINED, function200.evaluate(patientWithDoids(Lists.newArrayList())));
+        assertEquals(EvaluationResult.FAIL, function200.evaluate(patientWithDoids("100")).result());
+        assertEquals(EvaluationResult.PASS, function200.evaluate(patientWithDoids("200")).result());
+        assertEquals(EvaluationResult.FAIL, function200.evaluate(patientWithDoids("10", "100")).result());
+        assertEquals(EvaluationResult.FAIL, function200.evaluate(patientWithDoids("50", "250")).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function200.evaluate(patientWithDoids(Lists.newArrayList())).result());
     }
 
     @NotNull

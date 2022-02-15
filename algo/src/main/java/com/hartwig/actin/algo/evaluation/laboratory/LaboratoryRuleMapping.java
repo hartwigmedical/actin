@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationConstants;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
@@ -36,9 +37,12 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.G_PER_DL));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MMOL_PER_L));
-        map.put(EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.CREATININE));
         map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CKD_EPI));
@@ -52,15 +56,18 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
         map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X,
                 hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME));
-        map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
         map.put(EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE));
         map.put(EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PHOSPHORUS));
-        map.put(EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MG_PER_DL));
         map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MMOL_PER_L));
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));
@@ -70,9 +77,11 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.POTASSIUM));
         map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.MAGNESIUM));
         map.put(EligibilityRule.HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.PHOSPHORUS));
-        map.put(EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.CORRECTED_CALCIUM));
+        map.put(EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
+                hasLabValueWithinRefCreator(LabMeasurement.CORRECTED_CALCIUM));
         map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.TOTAL_PROTEIN_URINE));
-        map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
 
         return map;
     }
@@ -153,13 +162,13 @@ public final class LaboratoryRuleMapping {
     @NotNull
     private static FunctionCreator hasLimitedCalciumCreator(@NotNull LabUnit unit) {
         // TODO
-        return function -> evaluation -> EvaluationResult.NOT_IMPLEMENTED;
+        return function -> evaluation -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED);
     }
 
     @NotNull
     private static FunctionCreator hasLimitedLabValueCreator(@NotNull LabMeasurement measurement) {
         // TODO
-        return function -> evaluation -> EvaluationResult.NOT_IMPLEMENTED;
+        return function -> evaluation -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED);
     }
 
     @NotNull

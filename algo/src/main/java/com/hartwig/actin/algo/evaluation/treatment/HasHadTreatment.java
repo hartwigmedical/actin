@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
@@ -18,13 +20,13 @@ public class HasHadTreatment implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.name().contains(name)) {
-                return EvaluationResult.PASS;
+                return EvaluationFactory.create(EvaluationResult.PASS);
             }
         }
 
-        return EvaluationResult.FAIL;
+        return EvaluationFactory.create(EvaluationResult.FAIL);
     }
 }

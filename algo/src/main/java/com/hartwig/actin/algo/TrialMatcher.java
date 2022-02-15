@@ -13,7 +13,6 @@ import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
@@ -50,19 +49,19 @@ public class TrialMatcher {
         for (Trial trial : trials) {
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
-                Map<Eligibility, EvaluationResult> evaluations = evaluateEligibility(patient, cohort.eligibility());
+                Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, cohort.eligibility());
                 cohortMatching.add(ImmutableCohortEligibility.builder()
                         .metadata(cohort.metadata())
                         .overallEvaluation(determineOverallEvaluation(evaluations))
-                        .evaluations(convert(evaluations))
+                        .evaluations(evaluations)
                         .build());
             }
 
-            Map<Eligibility, EvaluationResult> evaluations = evaluateEligibility(patient, trial.generalEligibility());
+            Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, trial.generalEligibility());
             trialMatches.add(ImmutableTrialEligibility.builder()
                     .identification(trial.identification())
                     .overallEvaluation(determineOverallEvaluation(evaluations))
-                    .evaluations(convert(evaluations))
+                    .evaluations(evaluations)
                     .cohorts(cohortMatching)
                     .build());
         }
@@ -72,19 +71,9 @@ public class TrialMatcher {
         return ImmutableTreatmentMatch.builder().sampleId(patient.sampleId()).trialMatches(trialMatches).build();
     }
 
-    // TODO Remove / temp code.
     @NotNull
-    private static Map<Eligibility, Evaluation> convert(@NotNull Map<Eligibility, EvaluationResult> evaluations) {
-        Map<Eligibility, Evaluation> converted = Maps.newTreeMap(new EligibilityComparator());
-        for (Map.Entry<Eligibility, EvaluationResult> entry : evaluations.entrySet()) {
-            converted.put(entry.getKey(), ImmutableEvaluation.builder().result(entry.getValue()).build());
-        }
-        return converted;
-    }
-
-    @NotNull
-    private Map<Eligibility, EvaluationResult> evaluateEligibility(@NotNull PatientRecord patient, @NotNull List<Eligibility> eligibility) {
-        Map<Eligibility, EvaluationResult> evaluations = Maps.newTreeMap(new EligibilityComparator());
+    private Map<Eligibility, Evaluation> evaluateEligibility(@NotNull PatientRecord patient, @NotNull List<Eligibility> eligibility) {
+        Map<Eligibility, Evaluation> evaluations = Maps.newTreeMap(new EligibilityComparator());
         for (Eligibility entry : eligibility) {
             EvaluationFunction evaluator = evaluationFunctionFactory.create(entry.function());
             evaluations.put(entry, evaluator.evaluate(patient));
@@ -93,14 +82,17 @@ public class TrialMatcher {
     }
 
     @NotNull
-    private static EvaluationResult determineOverallEvaluation(@NotNull Map<Eligibility, EvaluationResult> evaluations) {
-        Set<EvaluationResult> unique = Sets.newHashSet(evaluations.values());
+    private static EvaluationResult determineOverallEvaluation(@NotNull Map<Eligibility, Evaluation> evaluations) {
+        Set<EvaluationResult> results = Sets.newHashSet();
+        for (Evaluation evaluation : evaluations.values()) {
+            results.add(evaluation.result());
+        }
 
-        if (unique.contains(EvaluationResult.FAIL)) {
+        if (results.contains(EvaluationResult.FAIL)) {
             return EvaluationResult.FAIL;
-        } else if (unique.contains(EvaluationResult.NOT_IMPLEMENTED)) {
+        } else if (results.contains(EvaluationResult.NOT_IMPLEMENTED)) {
             return EvaluationResult.UNDETERMINED;
-        } else if (unique.contains(EvaluationResult.UNDETERMINED) || unique.contains(EvaluationResult.PASS_BUT_WARN)) {
+        } else if (results.contains(EvaluationResult.UNDETERMINED) || results.contains(EvaluationResult.PASS_BUT_WARN)) {
             return EvaluationResult.PASS_BUT_WARN;
         } else {
             return EvaluationResult.PASS;

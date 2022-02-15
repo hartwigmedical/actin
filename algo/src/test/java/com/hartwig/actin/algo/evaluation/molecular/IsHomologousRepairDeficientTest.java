@@ -12,8 +12,8 @@ public class IsHomologousRepairDeficientTest {
     public void canEvaluate() {
         IsHomologousRepairDeficient function = new IsHomologousRepairDeficient();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(null)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(false)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(null)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(false)).result());
     }
 }

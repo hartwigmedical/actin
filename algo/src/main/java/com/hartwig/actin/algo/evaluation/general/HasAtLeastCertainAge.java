@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.general;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +20,14 @@ public class HasAtLeastCertainAge implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         int age = referenceYear - record.clinical().patient().birthYear();
         if (age > minAge) {
-            return EvaluationResult.PASS;
+            return EvaluationFactory.create(EvaluationResult.PASS);
         } else if (age == minAge) {
-            return EvaluationResult.PASS_BUT_WARN;
+            return EvaluationFactory.create(EvaluationResult.PASS_BUT_WARN);
         } else {
-            return EvaluationResult.FAIL;
+            return EvaluationFactory.create(EvaluationResult.FAIL);
         }
     }
 }

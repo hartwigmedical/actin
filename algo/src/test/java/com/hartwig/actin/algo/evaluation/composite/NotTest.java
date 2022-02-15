@@ -15,11 +15,11 @@ public class NotTest {
     public void canNegateEvaluation() {
         PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
 
-        assertEquals(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.pass()).evaluate(patient));
-        assertEquals(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));
-        assertEquals(EvaluationResult.PASS, new Not(TestEvaluationFunctionFactory.fail()).evaluate(patient));
-        assertEquals(EvaluationResult.UNDETERMINED, new Not(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
-        assertEquals(EvaluationResult.NOT_IMPLEMENTED, new Not(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient));
-        assertEquals(EvaluationResult.NOT_EVALUATED, new Not(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient));
+        assertEquals(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.pass()).evaluate(patient).result());
+        assertEquals(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient).result());
+        assertEquals(EvaluationResult.PASS, new Not(TestEvaluationFunctionFactory.fail()).evaluate(patient).result());
+        assertEquals(EvaluationResult.UNDETERMINED, new Not(TestEvaluationFunctionFactory.undetermined()).evaluate(patient).result());
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED, new Not(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient).result());
+        assertEquals(EvaluationResult.NOT_EVALUATED, new Not(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient).result());
     }
 }

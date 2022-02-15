@@ -19,7 +19,8 @@ public class SecondMalignanciesHaveBeenCuredRecentlyTest {
         SecondMalignanciesHaveBeenCuredRecently function = new SecondMalignanciesHaveBeenCuredRecently();
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)).result());
 
         PriorSecondPrimary secondPrimaryInactive = ImmutablePriorSecondPrimary.builder()
                 .tumorLocation(Strings.EMPTY)
@@ -31,11 +32,13 @@ public class SecondMalignanciesHaveBeenCuredRecentlyTest {
                 .build();
 
         priorSecondPrimaries.add(secondPrimaryInactive);
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)).result());
 
         PriorSecondPrimary secondPrimaryActive = ImmutablePriorSecondPrimary.builder().from(secondPrimaryInactive).isActive(true).build();
         priorSecondPrimaries.add(secondPrimaryActive);
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries)).result());
     }
 }

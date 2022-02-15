@@ -15,8 +15,9 @@ public class HasLabValueWithinRefTest {
         HasLabValueWithinRef function = new HasLabValueWithinRef();
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(record, LabTestFactory.builder().isOutsideRef(null).build()));
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().isOutsideRef(false).build()));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().isOutsideRef(true).build()));
+        assertEquals(EvaluationResult.UNDETERMINED,
+                function.evaluate(record, LabTestFactory.builder().isOutsideRef(null).build()).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().isOutsideRef(false).build()).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().isOutsideRef(true).build()).result());
     }
 }

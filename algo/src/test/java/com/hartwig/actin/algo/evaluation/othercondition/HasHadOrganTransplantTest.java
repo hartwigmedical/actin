@@ -17,12 +17,15 @@ public class HasHadOrganTransplantTest {
         HasHadOrganTransplant function = new HasHadOrganTransplant();
 
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
 
         priorOtherConditions.add(OtherConditionTestUtil.builder().build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
 
         priorOtherConditions.add(OtherConditionTestUtil.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
     }
 }

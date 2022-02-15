@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
@@ -20,8 +21,8 @@ public class Fallback implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
-        EvaluationResult primaryEvaluation = primary.evaluate(record);
-        return primaryEvaluation != EvaluationResult.UNDETERMINED ? primaryEvaluation : secondary.evaluate(record);
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        Evaluation primaryEvaluation = primary.evaluate(record);
+        return primaryEvaluation.result() != EvaluationResult.UNDETERMINED ? primaryEvaluation : secondary.evaluate(record);
     }
 }

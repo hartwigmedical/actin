@@ -19,31 +19,36 @@ public class HasHadLimitedAntiPDL1OrPD1ImmunotherapiesTest {
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add one immunotherapy with null type
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add one immunotherapy with another type
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder()
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .immunoType("Anti-CTLA-4")
                 .build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add one immunotherapy with PD1 type
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder()
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .immunoType(HasHadLimitedAntiPDL1OrPD1Immunotherapies.PD1_TYPE)
                 .build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add one immunotherapy with PDL1 type
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder()
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .immunoType(HasHadLimitedAntiPDL1OrPD1Immunotherapies.PDL1_TYPE)
                 .build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
     }
 }

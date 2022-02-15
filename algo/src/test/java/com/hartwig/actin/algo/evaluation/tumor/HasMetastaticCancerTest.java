@@ -17,9 +17,9 @@ public class HasMetastaticCancerTest {
     public void canEvaluate() {
         HasMetastaticCancer function = new HasMetastaticCancer();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithTumorStage(TumorStage.IV)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithTumorStage(TumorStage.IIIC)));
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithTumorStage(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithTumorStage(TumorStage.IV)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithTumorStage(TumorStage.IIIC)).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithTumorStage(null)).result());
     }
 
     @NotNull

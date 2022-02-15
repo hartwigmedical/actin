@@ -15,7 +15,9 @@ public class HasLimitedLabValueULNTest {
         HasLimitedLabValueULN function = new HasLimitedLabValueULN(1.2);
 
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().refLimitUp(75D).value(80D).build()));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().refLimitUp(75D).value(100D).build()));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(record, LabTestFactory.builder().refLimitUp(75D).value(80D).build()).result());
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(record, LabTestFactory.builder().refLimitUp(75D).value(100D).build()).result());
     }
 }

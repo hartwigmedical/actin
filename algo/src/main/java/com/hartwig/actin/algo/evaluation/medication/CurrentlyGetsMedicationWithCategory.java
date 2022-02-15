@@ -6,7 +6,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
@@ -25,7 +27,7 @@ public class CurrentlyGetsMedicationWithCategory implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasActiveAndStableMedication = false;
         Medication referenceDosing = null;
         for (Medication medication : filter(record.clinical().medications(), category)) {
@@ -39,7 +41,8 @@ public class CurrentlyGetsMedicationWithCategory implements EvaluationFunction {
             }
         }
 
-        return hasActiveAndStableMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasActiveAndStableMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        return EvaluationFactory.create(result);
     }
 
     @NotNull

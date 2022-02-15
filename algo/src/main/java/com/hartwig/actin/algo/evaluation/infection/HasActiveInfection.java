@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.infection;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 
@@ -14,13 +16,14 @@ public class HasActiveInfection implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         InfectionStatus infection = record.clinical().clinicalStatus().infectionStatus();
 
         if (infection == null) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
-        return infection.hasActiveInfection() ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = infection.hasActiveInfection() ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        return EvaluationFactory.create(result);
     }
 }

@@ -21,10 +21,10 @@ public class HasCardiacArrhythmiaTest {
     public void canEvaluate() {
         HasCardiacArrhythmia function = new HasCardiacArrhythmia();
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(withHasSignificantECGAberration(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withHasSignificantECGAberration(false)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withHasSignificantECGAberration(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withHasSignificantECGAberration(false)).result());
     }
 
     @NotNull

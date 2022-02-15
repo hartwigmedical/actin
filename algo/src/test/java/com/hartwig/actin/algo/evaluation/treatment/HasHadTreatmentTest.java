@@ -18,14 +18,17 @@ public class HasHadTreatmentTest {
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add wrong treatment
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().name("treatment 2").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add correct treatment
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().name("treatment 1").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
     }
 }

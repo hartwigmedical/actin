@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 
@@ -21,10 +23,10 @@ public class HasSpecificFusionGene implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (FusionGene fusion : record.molecular().fusions()) {
             if (fusion.fiveGene().equals(fiveGene) || fusion.threeGene().equals(threeGene)) {
-                return EvaluationResult.PASS;
+                return EvaluationFactory.create(EvaluationResult.PASS);
             }
         }
 

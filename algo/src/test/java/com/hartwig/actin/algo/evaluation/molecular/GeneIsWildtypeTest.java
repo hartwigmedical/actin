@@ -13,7 +13,7 @@ public class GeneIsWildtypeTest {
     public void canEvaluate() {
         GeneIsWildtype function = new GeneIsWildtype("gene 1");
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
 
         //        assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
         //

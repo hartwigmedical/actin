@@ -12,9 +12,9 @@ public class GeneIsInactivatedTest {
     public void canEvaluate() {
         GeneIsInactivated function = new GeneIsInactivated("gene 1");
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2", true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2", false)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1", true)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1", false)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2", true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2", false)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1", true)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1", false)).result());
     }
 }

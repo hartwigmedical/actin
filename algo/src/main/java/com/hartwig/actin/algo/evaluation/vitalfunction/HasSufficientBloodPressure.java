@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
@@ -27,11 +29,11 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         List<VitalFunction> relevant = selectRelevant(record.clinical().vitalFunctions());
 
         if (relevant.isEmpty()) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
         double sum = 0;
@@ -41,7 +43,8 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
         double avg = sum / relevant.size();
 
-        return Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        return EvaluationFactory.create(result);
     }
 
     @NotNull

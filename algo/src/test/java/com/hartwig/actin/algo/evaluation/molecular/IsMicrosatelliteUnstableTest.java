@@ -12,8 +12,8 @@ public class IsMicrosatelliteUnstableTest {
     public void canEvaluate() {
         IsMicrosatelliteUnstable function = new IsMicrosatelliteUnstable();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(null)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(false)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(null)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(false)).result());
     }
 }

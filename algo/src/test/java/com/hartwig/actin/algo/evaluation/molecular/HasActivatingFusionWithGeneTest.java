@@ -12,8 +12,8 @@ public class HasActivatingFusionWithGeneTest {
     public void canEvaluate() {
         HasActivatingFusionWithGene function = new HasActivatingFusionWithGene("gene 1");
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 3")));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 1", "gene 2")));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 1")));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 3")).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 1", "gene 2")).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 1")).result());
     }
 }

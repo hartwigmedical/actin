@@ -21,14 +21,14 @@ public class HasSufficientLVEFTest {
         HasSufficientLVEF function = new HasSufficientLVEF(0.71, false);
 
         // No LVEF known
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)).result());
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)).result());
 
         HasSufficientLVEF functionWithPass = new HasSufficientLVEF(0.71, true);
-        assertEquals(EvaluationResult.PASS, functionWithPass.evaluate(withLVEF(null)));
+        assertEquals(EvaluationResult.PASS, functionWithPass.evaluate(withLVEF(null)).result());
     }
 
     @NotNull

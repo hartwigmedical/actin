@@ -20,19 +20,25 @@ public class HasSufficientHemoglobinTest {
         ImmutableLabValue.Builder hemoglobin = LabTestFactory.forMeasurement(LabMeasurement.HEMOGLOBIN);
 
         // Standard
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(8.5).build()));
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(7.5).build()));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(6.5).build()));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(8.5).build()).result());
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(7.5).build()).result());
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(6.5).build()).result());
 
         // Different unit
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, hemoglobin.unit(LabUnit.G_PER_DL.display()).value(12.2).build()));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, hemoglobin.unit(LabUnit.G_PER_DL.display()).value(8.2).build()));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(record, hemoglobin.unit(LabUnit.G_PER_DL.display()).value(12.2).build()).result());
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(record, hemoglobin.unit(LabUnit.G_PER_DL.display()).value(8.2).build()).result());
 
         // No recognized unit
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(record, hemoglobin.unit("not a unit").value(4.2).build()));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(record, hemoglobin.unit("not a unit").value(4.2).build()).result());
 
         // Works with other unit as target unit as well.
         HasSufficientHemoglobin function2 = new HasSufficientHemoglobin(7.5, LabUnit.G_PER_DL);
-        assertEquals(EvaluationResult.PASS, function2.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(6.5).build()));
+        assertEquals(EvaluationResult.PASS,
+                function2.evaluate(record, hemoglobin.unit(LabUnit.MMOL_PER_L.display()).value(6.5).build()).result());
     }
 }

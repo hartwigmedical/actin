@@ -13,6 +13,6 @@ public class IsInvolvedInStudyProceduresTest {
     public void canEvaluate() {
         IsInvolvedInStudyProcedures function = new IsInvolvedInStudyProcedures();
 
-        assertEquals(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
     }
 }

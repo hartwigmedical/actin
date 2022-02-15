@@ -6,7 +6,9 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
@@ -33,7 +35,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasUnresolvableQuestionnaireToxicities = false;
 
         for (Toxicity toxicity : removeIgnored(record.clinical().toxicities())) {
@@ -48,11 +50,12 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             boolean gradeMatch = grade != null && grade >= minGrade;
             boolean nameMatch = nameFilter == null || toxicity.name().contains(nameFilter);
             if (gradeMatch && nameMatch) {
-                return EvaluationResult.PASS;
+                return EvaluationFactory.create(EvaluationResult.PASS);
             }
         }
 
-        return hasUnresolvableQuestionnaireToxicities ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+        EvaluationResult result = hasUnresolvableQuestionnaireToxicities ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+        return EvaluationFactory.create(result);
     }
 
     @NotNull

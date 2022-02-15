@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.surgery;
 import java.time.LocalDate;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 
@@ -20,13 +22,13 @@ public class HasHadRecentSurgery implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (Surgery surgery : record.clinical().surgeries()) {
             if (minDate.isBefore(surgery.endDate())) {
-                return EvaluationResult.PASS;
+                return EvaluationFactory.create(EvaluationResult.PASS);
             }
         }
 
-        return EvaluationResult.FAIL;
+        return EvaluationFactory.create(EvaluationResult.FAIL);
     }
 }

@@ -19,8 +19,9 @@ public class HasSufficientAlbuminTest {
 
         ImmutableLabValue.Builder albumin = LabTestFactory.forMeasurement(LabMeasurement.ALBUMIN);
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, albumin.value(20D).unit(LabUnit.G_PER_L.display()).build()));
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, albumin.value(20D).unit(LabUnit.G_PER_DL.display()).build()));
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, albumin.value(40D).unit(LabUnit.G_PER_L.display()).build()));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(record, albumin.value(20D).unit(LabUnit.G_PER_L.display()).build()).result());
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(record, albumin.value(20D).unit(LabUnit.G_PER_DL.display()).build()).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(record, albumin.value(40D).unit(LabUnit.G_PER_L.display()).build()).result());
     }
 }

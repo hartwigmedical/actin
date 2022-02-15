@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -22,15 +24,15 @@ public class HasHadSpecificPriorCondition implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
-                    return EvaluationResult.PASS;
+                    return EvaluationFactory.create(EvaluationResult.PASS);
                 }
             }
         }
 
-        return EvaluationResult.FAIL;
+        return EvaluationFactory.create(EvaluationResult.FAIL);
     }
 }

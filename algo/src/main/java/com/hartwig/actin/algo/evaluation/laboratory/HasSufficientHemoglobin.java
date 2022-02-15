@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,17 +28,17 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
         if (measuredUnit == null) {
             LOGGER.warn("Could not determine lab unit for '{}'", labValue);
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
         Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
         if (value == null) {
             LOGGER.warn("Could not convert value from '{}' to '{}'", measuredUnit, targetUnit);
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
         return LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);

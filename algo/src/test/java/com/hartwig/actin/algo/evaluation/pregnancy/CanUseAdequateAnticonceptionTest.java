@@ -13,6 +13,6 @@ public class CanUseAdequateAnticonceptionTest {
     public void canEvaluate() {
         CanUseAdequateAnticonception function = new CanUseAdequateAnticonception();
 
-        assertEquals(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
     }
 }

@@ -16,9 +16,9 @@ public class HasKnownActiveCnsMetastasesTest {
     public void canEvaluate() {
         HasKnownActiveCnsMetastases function = new HasKnownActiveCnsMetastases();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithActiveCnsLesions(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithActiveCnsLesions(false)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithActiveCnsLesions(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithActiveCnsLesions(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithActiveCnsLesions(false)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithActiveCnsLesions(null)).result());
     }
 
     @NotNull

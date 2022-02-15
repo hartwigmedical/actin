@@ -2,7 +2,9 @@ package com.hartwig.actin.algo.evaluation.medication;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 
@@ -20,14 +22,14 @@ public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (Allergy allergy : record.clinical().allergies()) {
             if (allergy.category().equalsIgnoreCase(MEDICATION_CATEGORY) && allergy.clinicalStatus()
                     .equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
-                return EvaluationResult.UNDETERMINED;
+                return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
             }
         }
 
-        return EvaluationResult.FAIL;
+        return EvaluationFactory.create(EvaluationResult.FAIL);
     }
 }

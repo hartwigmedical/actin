@@ -17,9 +17,9 @@ public class HasAdvancedCancerTest {
     public void canEvaluate() {
         HasAdvancedCancer function = new HasAdvancedCancer();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithTumorStage(TumorStage.IIIB)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithTumorStage(TumorStage.II)));
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithTumorStage(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithTumorStage(TumorStage.IIIB)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithTumorStage(TumorStage.II)).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithTumorStage(null)).result());
     }
 
     @NotNull

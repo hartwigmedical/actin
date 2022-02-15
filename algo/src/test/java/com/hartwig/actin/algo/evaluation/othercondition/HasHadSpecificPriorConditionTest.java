@@ -22,22 +22,26 @@ public class HasHadSpecificPriorConditionTest {
 
         // Test empty doid
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
 
         // Add a condition with no DOIDs
         priorOtherConditions.add(OtherConditionTestUtil.builder().build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
 
         // Add a condition with not the correct DOID
         priorOtherConditions.add(OtherConditionTestUtil.builder().addDoids("not the correct doid").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
 
         // Add a condition with child DOID
         priorOtherConditions.add(OtherConditionTestUtil.builder().addDoids("child", "some other doid").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.PASS,
+                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
 
         // Also pass on the exact DOID
         PriorOtherCondition exact = OtherConditionTestUtil.builder().addDoids(doidToFind).build();
-        assertEquals(EvaluationResult.PASS, function.evaluate(OtherConditionTestUtil.withPriorOtherCondition(exact)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(OtherConditionTestUtil.withPriorOtherCondition(exact)).result());
     }
 }

@@ -3,8 +3,10 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
@@ -27,7 +29,7 @@ public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasMatch = false;
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
             boolean doidMatch = doidToMatch == null || isDoidMatch(priorSecondPrimary.doids(), doidToMatch);
@@ -37,7 +39,8 @@ public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
             }
         }
 
-        return hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        return EvaluationFactory.create(result);
     }
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {

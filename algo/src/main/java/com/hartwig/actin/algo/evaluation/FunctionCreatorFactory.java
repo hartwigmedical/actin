@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
@@ -34,10 +35,8 @@ final class FunctionCreatorFactory {
     public static Map<EligibilityRule, FunctionCreator> createFunctionCreatorMap(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.WARN_ALWAYS, function -> record -> EvaluationResult.PASS_BUT_WARN);
-
-        //        map.put(EligibilityRule.WARN_ALWAYS,
-        //                function -> record -> ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN).build());
+        map.put(EligibilityRule.WARN_ALWAYS,
+                function -> record -> ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN).build());
 
         map.putAll(GeneralRuleMapping.create());
         map.putAll(TumorRuleMapping.create(doidModel));

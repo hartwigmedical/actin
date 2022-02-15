@@ -4,7 +4,9 @@ import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
@@ -28,10 +30,10 @@ final class LaboratoryUtil {
     }
 
     @NotNull
-    public static EvaluationResult evaluateVersusMinULN(@NotNull LabValue labValue, double minULN) {
+    public static Evaluation evaluateVersusMinULN(@NotNull LabValue labValue, double minULN) {
         Double refLimitLow = labValue.refLimitLow();
         if (refLimitLow == null) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
         double minValue = refLimitLow * minULN;
@@ -39,23 +41,24 @@ final class LaboratoryUtil {
     }
 
     @NotNull
-    public static EvaluationResult evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
+    public static Evaluation evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
         if (cannotBeDetermined(value, comparator, minValue)) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         } else {
-            return Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+            EvaluationResult result = Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+            return EvaluationFactory.create(result);
         }
     }
 
     @NotNull
-    public static EvaluationResult evaluateVersusMaxULN(@NotNull LabValue labValue, double maxULN) {
+    public static Evaluation evaluateVersusMaxULN(@NotNull LabValue labValue, double maxULN) {
         Double refLimitUp = labValue.refLimitUp();
         if (refLimitUp == null) {
             refLimitUp = REF_LIMIT_UP_OVERRIDES.get(labValue.code());
         }
 
         if (refLimitUp == null) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
         double maxValue = refLimitUp * maxULN;
@@ -63,11 +66,12 @@ final class LaboratoryUtil {
     }
 
     @NotNull
-    public static EvaluationResult evaluateVersusMaxValue(double value, @NotNull String comparator, double maxValue) {
+    public static Evaluation evaluateVersusMaxValue(double value, @NotNull String comparator, double maxValue) {
         if (cannotBeDetermined(value, comparator, maxValue)) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         } else {
-            return Double.compare(value, maxValue) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+            EvaluationResult result = Double.compare(value, maxValue) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+            return EvaluationFactory.create(result);
         }
     }
 

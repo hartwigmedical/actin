@@ -15,11 +15,15 @@ public class WarnOnPassTest {
     public void canWarnOnPass() {
         PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
 
-        assertEquals(EvaluationResult.PASS_BUT_WARN, new WarnOnPass(TestEvaluationFunctionFactory.pass()).evaluate(patient));
-        assertEquals(EvaluationResult.PASS_BUT_WARN, new WarnOnPass(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));
-        assertEquals(EvaluationResult.PASS, new WarnOnPass(TestEvaluationFunctionFactory.fail()).evaluate(patient));
-        assertEquals(EvaluationResult.UNDETERMINED, new WarnOnPass(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
-        assertEquals(EvaluationResult.NOT_IMPLEMENTED, new WarnOnPass(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient));
-        assertEquals(EvaluationResult.NOT_EVALUATED, new WarnOnPass(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, new WarnOnPass(TestEvaluationFunctionFactory.pass()).evaluate(patient).result());
+        assertEquals(EvaluationResult.PASS_BUT_WARN,
+                new WarnOnPass(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient).result());
+        assertEquals(EvaluationResult.PASS, new WarnOnPass(TestEvaluationFunctionFactory.fail()).evaluate(patient).result());
+        assertEquals(EvaluationResult.UNDETERMINED,
+                new WarnOnPass(TestEvaluationFunctionFactory.undetermined()).evaluate(patient).result());
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED,
+                new WarnOnPass(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient).result());
+        assertEquals(EvaluationResult.NOT_EVALUATED,
+                new WarnOnPass(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient).result());
     }
 }

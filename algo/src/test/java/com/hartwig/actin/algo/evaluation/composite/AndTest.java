@@ -98,6 +98,6 @@ public class AndTest {
 
     @NotNull
     private static EvaluationResult evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
-        return new And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);
+        return new And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT).result();
     }
 }

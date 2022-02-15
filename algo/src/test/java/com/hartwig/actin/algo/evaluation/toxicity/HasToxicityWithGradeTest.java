@@ -28,13 +28,13 @@ public class HasToxicityWithGradeTest {
         HasToxicityWithGrade function = new HasToxicityWithGrade(2, null, Sets.newHashSet());
 
         List<Toxicity> toxicities = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)).result());
 
         toxicities.add(builder().grade(1).build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)).result());
 
         toxicities.add(builder().grade(2).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withToxicities(toxicities)).result());
     }
 
     @Test
@@ -43,14 +43,14 @@ public class HasToxicityWithGradeTest {
         toxicities.add(builder().source(ToxicitySource.QUESTIONNAIRE).build());
 
         HasToxicityWithGrade match = new HasToxicityWithGrade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE, null, Sets.newHashSet());
-        assertEquals(EvaluationResult.PASS, match.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.PASS, match.evaluate(withToxicities(toxicities)).result());
 
         HasToxicityWithGrade noMatch =
                 new HasToxicityWithGrade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 1, null, Sets.newHashSet());
-        assertEquals(EvaluationResult.UNDETERMINED, noMatch.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.UNDETERMINED, noMatch.evaluate(withToxicities(toxicities)).result());
 
         toxicities.add(builder().grade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 2).build());
-        assertEquals(EvaluationResult.PASS, noMatch.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.PASS, noMatch.evaluate(withToxicities(toxicities)).result());
     }
 
     @Test
@@ -59,10 +59,10 @@ public class HasToxicityWithGradeTest {
 
         List<Toxicity> toxicities = Lists.newArrayList();
         toxicities.add(builder().grade(2).name("ignore me please").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)).result());
 
         toxicities.add(builder().grade(2).name("keep me please").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withToxicities(toxicities)).result());
     }
 
     @Test
@@ -71,10 +71,10 @@ public class HasToxicityWithGradeTest {
 
         List<Toxicity> toxicities = Lists.newArrayList();
         toxicities.add(builder().grade(2).name("something random").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withToxicities(toxicities)).result());
 
         toxicities.add(builder().grade(2).name("something specific").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withToxicities(toxicities)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withToxicities(toxicities)).result());
 
     }
 

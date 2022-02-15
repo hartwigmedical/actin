@@ -12,7 +12,7 @@ public class HasSpecificFusionGeneTest {
     public void canEvaluate() {
         HasSpecificFusionGene function = new HasSpecificFusionGene("gene 1", "gene 2");
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 1")));
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 1", "gene 2")));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 1")).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 1", "gene 2")).result());
     }
 }

@@ -13,6 +13,6 @@ public class HasBiopsyAmenableLesionTest {
     public void canEvaluate() {
         HasBiopsyAmenableLesion function = new HasBiopsyAmenableLesion();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
     }
 }

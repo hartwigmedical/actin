@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion;
 import java.time.LocalDate;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 
@@ -23,13 +25,13 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         for (BloodTransfusion transfusion : record.clinical().bloodTransfusions()) {
             if (transfusion.product().equals(product.display()) && minDate.isBefore(transfusion.date())) {
-                return EvaluationResult.PASS;
+                return EvaluationFactory.create(EvaluationResult.PASS);
             }
         }
 
-        return EvaluationResult.FAIL;
+        return EvaluationFactory.create(EvaluationResult.FAIL);
     }
 }

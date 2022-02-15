@@ -20,9 +20,9 @@ public class HasMaximumWHOStatusTest {
     public void canEvaluate() {
         HasMaximumWHOStatus function = new HasMaximumWHOStatus(2);
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithWHO(0)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithWHO(4)));
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithWHO(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithWHO(0)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithWHO(4)).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithWHO(null)).result());
     }
 
     @NotNull

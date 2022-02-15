@@ -27,13 +27,13 @@ public class HasHadRecentSurgeryTest {
         HasHadRecentSurgery function = new HasHadRecentSurgery(REFERENCE_DATE.minusWeeks(4));
 
         List<Surgery> surgeries = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)).result());
 
         surgeries.add(ImmutableSurgery.builder().endDate(REFERENCE_DATE.minusWeeks(8)).build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)).result());
 
         surgeries.add(ImmutableSurgery.builder().endDate(REFERENCE_DATE.minusWeeks(2)).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withSurgeries(surgeries)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withSurgeries(surgeries)).result());
     }
 
     @NotNull

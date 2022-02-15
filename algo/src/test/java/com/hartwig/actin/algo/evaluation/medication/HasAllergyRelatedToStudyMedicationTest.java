@@ -25,18 +25,18 @@ public class HasAllergyRelatedToStudyMedicationTest {
         HasAllergyRelatedToStudyMedication function = new HasAllergyRelatedToStudyMedication();
 
         List<Allergy> allergies = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)).result());
 
         allergies.add(builder().category("some category").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)).result());
 
         allergies.add(builder().category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY).build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)).result());
 
         allergies.add(builder().category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY.toUpperCase())
                 .clinicalStatus(HasAllergyRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.toUpperCase())
                 .build());
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withAllergies(allergies)).result());
     }
 
     @NotNull

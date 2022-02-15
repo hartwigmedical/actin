@@ -21,9 +21,9 @@ public class HasAtLeastCertainAgeTest {
     public void canEvaluate() {
         EvaluationFunction function = new HasAtLeastCertainAge(2020, 18);
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithBirthYear(1960)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithBirthYear(2014)));
-        assertEquals(EvaluationResult.PASS_BUT_WARN, function.evaluate(patientWithBirthYear(2002)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithBirthYear(1960)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithBirthYear(2014)).result());
+        assertEquals(EvaluationResult.PASS_BUT_WARN, function.evaluate(patientWithBirthYear(2002)).result());
     }
 
     @NotNull

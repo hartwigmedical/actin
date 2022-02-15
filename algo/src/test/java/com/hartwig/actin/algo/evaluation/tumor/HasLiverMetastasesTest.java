@@ -16,9 +16,9 @@ public class HasLiverMetastasesTest {
     public void canEvaluate() {
         HasLiverMetastases function = new HasLiverMetastases();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithLiverLesions(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithLiverLesions(false)));
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithLiverLesions(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithLiverLesions(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithLiverLesions(false)).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithLiverLesions(null)).result());
     }
 
     @NotNull

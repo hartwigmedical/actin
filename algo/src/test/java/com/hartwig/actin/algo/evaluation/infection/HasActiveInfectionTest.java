@@ -24,9 +24,9 @@ public class HasActiveInfectionTest {
     public void canEvaluate() {
         HasActiveInfection function = new HasActiveInfection();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)));
-        assertEquals(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)).result());
+        assertEquals(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)).result());
     }
 
     @NotNull

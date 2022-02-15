@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import java.time.LocalDate;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -31,23 +33,23 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            return EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
-        EvaluationResult evaluation = function.evaluate(record, mostRecent);
+        Evaluation evaluation = function.evaluate(record, mostRecent);
 
-        if (evaluation == EvaluationResult.FAIL) {
+        if (evaluation.result() == EvaluationResult.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
             if (isValid(secondMostRecent, measurement)) {
-                EvaluationResult secondEvaluation = function.evaluate(record, secondMostRecent);
-                if (secondEvaluation == EvaluationResult.PASS) {
-                    return EvaluationResult.UNDETERMINED;
+                Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
+                if (secondEvaluation.result() == EvaluationResult.PASS) {
+                    return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
                 }
             }
         }

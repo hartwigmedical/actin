@@ -16,9 +16,9 @@ public class HasBoneMetastasesTest {
     public void canEvaluate() {
         HasBoneMetastases function = new HasBoneMetastases();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithBoneLesions(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithBoneLesions(false)));
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithBoneLesions(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithBoneLesions(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithBoneLesions(false)).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithBoneLesions(null)).result());
     }
 
     @NotNull

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ public class HasSufficientLabValueLLN implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public EvaluationResult evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         return LaboratoryUtil.evaluateVersusMinULN(labValue, minLLN);
     }
 }

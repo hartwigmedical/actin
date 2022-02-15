@@ -16,9 +16,9 @@ public class HasMeasurableDiseaseRecistTest {
     public void canEvaluate() {
         HasMeasurableDiseaseRecist function = new HasMeasurableDiseaseRecist();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithMeasurableLesionRecist(true)));
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithMeasurableLesionRecist(false)));
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithMeasurableLesionRecist(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithMeasurableLesionRecist(true)).result());
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithMeasurableLesionRecist(false)).result());
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithMeasurableLesionRecist(null)).result());
     }
 
     @NotNull

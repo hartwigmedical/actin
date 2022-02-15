@@ -98,6 +98,6 @@ public class OrTest {
 
     @NotNull
     private static EvaluationResult evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
-        return new Or(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);
+        return new Or(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT).result();
     }
 }

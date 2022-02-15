@@ -21,25 +21,25 @@ public class HasHadTreatmentCategoryTest {
 
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         PatientRecord noPriorTreatmentRecord = TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.FAIL, any.evaluate(noPriorTreatmentRecord));
-        assertEquals(EvaluationResult.FAIL, specific.evaluate(noPriorTreatmentRecord));
+        assertEquals(EvaluationResult.FAIL, any.evaluate(noPriorTreatmentRecord).result());
+        assertEquals(EvaluationResult.FAIL, specific.evaluate(noPriorTreatmentRecord).result());
 
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
         PatientRecord immunoRecord = TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.FAIL, any.evaluate(immunoRecord));
-        assertEquals(EvaluationResult.FAIL, specific.evaluate(immunoRecord));
+        assertEquals(EvaluationResult.FAIL, any.evaluate(immunoRecord).result());
+        assertEquals(EvaluationResult.FAIL, specific.evaluate(immunoRecord).result());
 
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
         PatientRecord multiRecord1 = TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.PASS, any.evaluate(multiRecord1));
-        assertEquals(EvaluationResult.FAIL, specific.evaluate(multiRecord1));
+        assertEquals(EvaluationResult.PASS, any.evaluate(multiRecord1).result());
+        assertEquals(EvaluationResult.FAIL, specific.evaluate(multiRecord1).result());
 
         priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some Anti-EGFR Type")
                 .build());
         PatientRecord multiRecord2 = TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.PASS, any.evaluate(multiRecord2));
-        assertEquals(EvaluationResult.PASS, specific.evaluate(multiRecord2));
+        assertEquals(EvaluationResult.PASS, any.evaluate(multiRecord2).result());
+        assertEquals(EvaluationResult.PASS, specific.evaluate(multiRecord2).result());
     }
 }

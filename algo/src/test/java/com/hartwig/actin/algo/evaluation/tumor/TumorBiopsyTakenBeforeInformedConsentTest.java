@@ -13,6 +13,6 @@ public class TumorBiopsyTakenBeforeInformedConsentTest {
     public void canEvaluate() {
         TumorBiopsyTakenBeforeInformedConsent function = new TumorBiopsyTakenBeforeInformedConsent();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
     }
 }

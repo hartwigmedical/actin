@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
@@ -85,7 +86,6 @@ public class EvaluationFunctionFactory {
 
     @NotNull
     private static FunctionCreator cannotBeDeterminedCreator() {
-//        return function -> evaluation -> ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED).build();
-        return function -> evaluation -> EvaluationResult.UNDETERMINED;
+        return function -> evaluation -> ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED).build();
     }
 }

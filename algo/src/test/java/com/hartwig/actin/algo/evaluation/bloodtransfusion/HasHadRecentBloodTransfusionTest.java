@@ -28,25 +28,25 @@ public class HasHadRecentBloodTransfusionTest {
                 new HasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE, REFERENCE_DATE.minusWeeks(4));
 
         List<BloodTransfusion> transfusions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)).result());
 
         transfusions.add(ImmutableBloodTransfusion.builder()
                 .product(TransfusionProduct.THROMBOCYTE.display())
                 .date(REFERENCE_DATE.minusWeeks(8))
                 .build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)).result());
 
         transfusions.add(ImmutableBloodTransfusion.builder()
                 .product(TransfusionProduct.ERYTHROCYTE.display())
                 .date(REFERENCE_DATE.minusWeeks(2))
                 .build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)).result());
 
         transfusions.add(ImmutableBloodTransfusion.builder()
                 .product(TransfusionProduct.THROMBOCYTE.display())
                 .date(REFERENCE_DATE.minusWeeks(2))
                 .build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withBloodTransfusions(transfusions)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withBloodTransfusions(transfusions)).result());
     }
 
     @NotNull
