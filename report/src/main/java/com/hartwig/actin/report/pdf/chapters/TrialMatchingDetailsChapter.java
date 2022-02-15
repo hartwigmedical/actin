@@ -24,7 +24,6 @@ import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -225,9 +224,9 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             Evaluation evaluation = evaluations.get(reference);
             if (evaluation.result() == resultToRender) {
                 table.addCell(Cells.createContent(reference.id()));
-                table.addCell(Cells.createContent(reference.text()).setKeepTogether(true));
-                Table evalTable = Tables.createSingleColWithWidth(145).setKeepTogether(true);
-                evalTable.addCell(Cells.createContent(evaluation.result()).setBorderBottom(Border.NO_BORDER));
+                table.addCell(Cells.createContent(reference.text()));
+                Table evalTable = Tables.createSingleColWithWidth(145);
+                evalTable.addCell(Cells.createEvaluation(evaluation.result()));
                 for (String message : evaluation.messages()) {
                     evalTable.addCell(Cells.create(new Paragraph(message)));
                 }

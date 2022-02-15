@@ -85,13 +85,6 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createContent(@NotNull EvaluationResult evaluation) {
-        Cell cell = createContent(evaluation.toString());
-        cell.setFontColor(Formats.fontColorForEvaluation(evaluation));
-        return cell;
-    }
-
-    @NotNull
     public static Cell createContentYesNo(@NotNull String yesNo) {
         Cell cell = createContent(yesNo);
         cell.setFontColor(Formats.fontColorForYesNo(yesNo));
@@ -115,6 +108,13 @@ public final class Cells {
     @NotNull
     public static Cell createValue(@NotNull EvaluationResult evaluation) {
         Cell cell = createValue(evaluation.toString());
+        cell.setFontColor(Formats.fontColorForEvaluation(evaluation));
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createEvaluation(@NotNull EvaluationResult evaluation) {
+        Cell cell = create(new Paragraph(evaluation.toString()));
         cell.setFontColor(Formats.fontColorForEvaluation(evaluation));
         return cell;
     }
