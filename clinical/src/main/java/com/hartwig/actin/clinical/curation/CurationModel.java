@@ -96,24 +96,29 @@ public class CurationModel {
         PrimaryTumorConfig primaryTumorConfig = null;
         if (inputTumorLocation != null && inputTumorType != null) {
             String inputPrimaryTumor = inputTumorLocation + " | " + inputTumorType;
-            primaryTumorConfig = find(database.primaryTumorConfigs(), inputPrimaryTumor);
-            if (primaryTumorConfig == null) {
+
+            Set<PrimaryTumorConfig> configs = find(database.primaryTumorConfigs(), inputPrimaryTumor);
+            if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find primary tumor config for input '{}'", inputPrimaryTumor);
+            } else if (configs.size() > 1) {
+                LOGGER.warn(" Primary tumor '{}' matched to multiple configs!", inputPrimaryTumor);
+            } else {
+                primaryTumorConfig = configs.iterator().next();
             }
         }
 
         if (primaryTumorConfig == null) {
             return ImmutableTumorDetails.builder().build();
-        } else {
-            return ImmutableTumorDetails.builder()
-                    .primaryTumorLocation(primaryTumorConfig.primaryTumorLocation())
-                    .primaryTumorSubLocation(primaryTumorConfig.primaryTumorSubLocation())
-                    .primaryTumorType(primaryTumorConfig.primaryTumorType())
-                    .primaryTumorSubType(primaryTumorConfig.primaryTumorSubType())
-                    .primaryTumorExtraDetails(primaryTumorConfig.primaryTumorExtraDetails())
-                    .doids(primaryTumorConfig.doids())
-                    .build();
         }
+
+        return ImmutableTumorDetails.builder()
+                .primaryTumorLocation(primaryTumorConfig.primaryTumorLocation())
+                .primaryTumorSubLocation(primaryTumorConfig.primaryTumorSubLocation())
+                .primaryTumorType(primaryTumorConfig.primaryTumorType())
+                .primaryTumorSubType(primaryTumorConfig.primaryTumorSubType())
+                .primaryTumorExtraDetails(primaryTumorConfig.primaryTumorExtraDetails())
+                .doids(primaryTumorConfig.doids())
+                .build();
     }
 
     @NotNull
@@ -132,9 +137,11 @@ public class CurationModel {
 
         for (String lesion : lesionsToCheck) {
             String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
-            LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
-            if (config != null && config.category() != null) {
-                matches.add(config.category());
+            Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), reformatted);
+            for (LesionLocationConfig config : configs) {
+                if (config.category() != null) {
+                    matches.add(config.category());
+                }
             }
         }
 
@@ -182,15 +189,18 @@ public class CurationModel {
 
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         for (String input : inputs) {
-            OncologicalHistoryConfig config = find(database.oncologicalHistoryConfigs(), input);
-            if (config == null) {
+            Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), input);
+            if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find oncological history config for input '{}'", input);
-            } else if (!config.ignore()) {
-                if (config.curated() instanceof PriorTumorTreatment) {
-                    priorTumorTreatments.add((PriorTumorTreatment) config.curated());
+            } else {
+                for (OncologicalHistoryConfig config : configs) {
+                    if (!config.ignore() && config.curated() instanceof PriorTumorTreatment) {
+                        priorTumorTreatments.add((PriorTumorTreatment) config.curated());
+                    }
                 }
             }
         }
+
         return priorTumorTreatments;
     }
 
@@ -202,15 +212,18 @@ public class CurationModel {
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         for (String input : inputs) {
-            OncologicalHistoryConfig config = find(database.oncologicalHistoryConfigs(), input);
-            if (config == null) {
+            Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), input);
+            if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find oncological history config for input '{}'", input);
-            } else if (!config.ignore()) {
-                if (config.curated() instanceof PriorSecondPrimary) {
+            }
+
+            for (OncologicalHistoryConfig config : configs) {
+                if (!config.ignore() && config.curated() instanceof PriorSecondPrimary) {
                     priorSecondPrimaries.add((PriorSecondPrimary) config.curated());
                 }
             }
         }
+
         return priorSecondPrimaries;
     }
 
@@ -222,13 +235,18 @@ public class CurationModel {
 
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
         for (String input : inputs) {
-            NonOncologicalHistoryConfig config = find(database.nonOncologicalHistoryConfigs(), input);
-            if (config == null) {
+            Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), input);
+            if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find non-oncological history config for input '{}'", input);
-            } else if (!config.ignore() && config.curated() instanceof PriorOtherCondition) {
-                priorOtherConditions.add((PriorOtherCondition) config.curated());
+            }
+
+            for (NonOncologicalHistoryConfig config : configs) {
+                if (!config.ignore() && config.curated() instanceof PriorOtherCondition) {
+                    priorOtherConditions.add((PriorOtherCondition) config.curated());
+                }
             }
         }
+
         return priorOtherConditions;
     }
 
@@ -240,13 +258,18 @@ public class CurationModel {
 
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
         for (String input : inputs) {
-            MolecularTestConfig config = find(database.molecularTestConfigs(), input);
-            if (config == null) {
+            Set<MolecularTestConfig> configs = find(database.molecularTestConfigs(), input);
+            if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find molecular test config for input '{}'", input);
-            } else if (!config.ignore()) {
-                priorMolecularTests.add(config.curated());
+            }
+
+            for (MolecularTestConfig config : configs) {
+                if (!config.ignore()) {
+                    priorMolecularTests.add(config.curated());
+                }
             }
         }
+
         return priorMolecularTests;
     }
 
@@ -259,16 +282,22 @@ public class CurationModel {
         List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
         for (String input : inputs) {
             String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
-            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), reformatted);
-            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
-                    .name(config != null ? config.name() : reformatted)
-                    .build());
+            Set<CancerRelatedComplicationConfig> configs = find(database.cancerRelatedComplicationConfigs(), reformatted);
+
+            if (configs.isEmpty()) {
+                cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name(reformatted).build());
+            }
+
+            for (CancerRelatedComplicationConfig config : configs) {
+                cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name(config.name()).build());
+            }
         }
 
         // Add an entry if there is nothing known about cancer related complications.
         if (cancerRelatedComplications.isEmpty()) {
             cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("Unknown").build());
         }
+
         return cancerRelatedComplications;
     }
 
@@ -280,18 +309,23 @@ public class CurationModel {
 
         List<Toxicity> toxicities = Lists.newArrayList();
         for (String input : inputs) {
-            ToxicityConfig config = find(database.toxicityConfigs(), input);
-            if (config == null) {
+            Set<ToxicityConfig> configs = find(database.toxicityConfigs(), input);
+            if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find toxicity config for input '{}'", input);
-            } else if (!config.ignore()) {
-                toxicities.add(ImmutableToxicity.builder()
-                        .name(config.name())
-                        .evaluatedDate(date)
-                        .source(ToxicitySource.QUESTIONNAIRE)
-                        .grade(config.grade())
-                        .build());
+            }
+
+            for (ToxicityConfig config : configs) {
+                if (!config.ignore()) {
+                    toxicities.add(ImmutableToxicity.builder()
+                            .name(config.name())
+                            .evaluatedDate(date)
+                            .source(ToxicitySource.QUESTIONNAIRE)
+                            .grade(config.grade())
+                            .build());
+                }
             }
         }
+
         return toxicities;
     }
 
@@ -301,22 +335,26 @@ public class CurationModel {
             return null;
         }
 
-        ECGConfig config = find(database.ecgConfigs(), input.aberrationDescription());
+        Set<ECGConfig> configs = find(database.ecgConfigs(), input.aberrationDescription());
 
         // Assume ECGs can also be pass-through.
-        if (config != null) {
-            if (config.ignore()) {
-                return null;
-            } else {
-                return ImmutableECG.builder()
-                        .from(input)
-                        .aberrationDescription(config.interpretation())
-                        .qtcfValue(config.qtcfValue())
-                        .qtcfUnit(config.qtcfUnit())
-                        .build();
-            }
-        } else {
+        if (configs.isEmpty()) {
             return input;
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple ECG configs matched to '{}'", input.aberrationDescription());
+            return null;
+        }
+
+        ECGConfig config = configs.iterator().next();
+        if (config.ignore()) {
+            return null;
+        } else {
+            return ImmutableECG.builder()
+                    .from(input)
+                    .aberrationDescription(config.interpretation())
+                    .qtcfValue(config.qtcfValue())
+                    .qtcfUnit(config.qtcfUnit())
+                    .build();
         }
     }
 
@@ -326,19 +364,18 @@ public class CurationModel {
             return null;
         }
 
-        InfectionConfig config = find(database.infectionConfigs(), input.description());
+        Set<InfectionConfig> configs = find(database.infectionConfigs(), input.description());
 
         // Assume infections can also be pass-through.
-        if (config != null) {
-            String interpretation = config.interpretation();
-            if (interpretation.equals("NULL")) {
-                return null;
-            } else {
-                return ImmutableInfectionStatus.builder().from(input).description(interpretation).build();
-            }
-        } else {
+        if (configs.isEmpty()) {
             return input;
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple infection configs matched to '{}'", input.description());
+            return null;
         }
+
+        InfectionConfig config = configs.iterator().next();
+        return ImmutableInfectionStatus.builder().from(input).description(config.interpretation()).build();
     }
 
     @Nullable
@@ -348,9 +385,11 @@ public class CurationModel {
         }
 
         for (String input : inputs) {
-            NonOncologicalHistoryConfig config = find(database.nonOncologicalHistoryConfigs(), input);
-            if (config != null && !config.ignore() && config.curated() instanceof Double) {
-                return (Double) config.curated();
+            Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), input);
+            for (NonOncologicalHistoryConfig config : configs) {
+                if (!config.ignore() && config.curated() instanceof Double) {
+                    return (Double) config.curated();
+                }
             }
         }
 
@@ -366,12 +405,16 @@ public class CurationModel {
         List<String> curatedOtherLesions = Lists.newArrayList();
         for (String lesion : otherLesions) {
             String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
-            LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
-            if (config == null) {
+            Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), reformatted);
+            if (configs.isEmpty()) {
                 curatedOtherLesions.add(reformatted);
-            } else if (config.category() == null && !config.location().isEmpty()) {
-                // We only want to include lesions from the other lesions in actual other lesions if there is no category assigned.
-                curatedOtherLesions.add(config.location());
+            }
+
+            for (LesionLocationConfig config : configs) {
+                if (config.category() == null && !config.location().isEmpty()) {
+                    // We only want to include lesions from the other lesions in actual other lesions if there is no category assigned.
+                    curatedOtherLesions.add(config.location());
+                }
             }
         }
 
@@ -386,41 +429,56 @@ public class CurationModel {
 
         String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
 
-        LesionLocationConfig config = find(database.lesionLocationConfigs(), reformatted);
-        return config != null ? config.location() : reformatted;
+        Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), reformatted);
+        if (configs.isEmpty()) {
+            return reformatted;
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple lesion location configs matched for biopsy location '{}'", reformatted);
+            return null;
+        }
+
+        return configs.iterator().next().location();
     }
 
     @Nullable
     public Medication curateMedicationDosage(@NotNull String input) {
-        MedicationDosageConfig config = find(database.medicationDosageConfigs(), input);
+        Set<MedicationDosageConfig> configs = find(database.medicationDosageConfigs(), input);
 
-        if (config == null) {
+        if (configs.isEmpty()) {
             // TODO: Change to warn once the medications are more final.
             LOGGER.debug(" Could not find medication dosage config for '{}'", input);
             return null;
-        } else {
-            return ImmutableMedication.builder()
-                    .name(Strings.EMPTY)
-                    .dosageMin(config.dosageMin())
-                    .dosageMax(config.dosageMax())
-                    .dosageUnit(config.dosageUnit())
-                    .frequency(config.frequency())
-                    .frequencyUnit(config.frequencyUnit())
-                    .ifNeeded(config.ifNeeded())
-                    .build();
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple medication dosage configs matched to '{}'", input);
+            return null;
         }
+
+        MedicationDosageConfig config = configs.iterator().next();
+        return ImmutableMedication.builder()
+                .name(Strings.EMPTY)
+                .dosageMin(config.dosageMin())
+                .dosageMax(config.dosageMax())
+                .dosageUnit(config.dosageUnit())
+                .frequency(config.frequency())
+                .frequencyUnit(config.frequencyUnit())
+                .ifNeeded(config.ifNeeded())
+                .build();
     }
 
     @NotNull
     public Medication annotateWithMedicationCategory(@NotNull Medication medication) {
-        MedicationCategoryConfig config = find(database.medicationCategoryConfigs(), medication.name());
+        Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), medication.name());
 
-        if (config == null) {
+        if (configs.isEmpty()) {
             LOGGER.warn(" Could not find medication category config for '{}'", medication.name());
             return medication;
-        } else {
-            return ImmutableMedication.builder().from(medication).categories(config.categories()).build();
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple category configs found for medication with name '{}'", medication.name());
+            return medication;
         }
+
+        MedicationCategoryConfig config = configs.iterator().next();
+        return ImmutableMedication.builder().from(medication).categories(config.categories()).build();
     }
 
     @NotNull
@@ -564,16 +622,17 @@ public class CurationModel {
         throw new IllegalStateException("Class not found in curation database: " + classToLookup);
     }
 
-    @Nullable
-    private <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
+    @NotNull
+    private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
+        Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
             evaluatedCurationInputs.put(configs.get(0).getClass(), input);
             for (T config : configs) {
                 if (config.input().equals(input)) {
-                    return config;
+                    results.add(config);
                 }
             }
         }
-        return null;
+        return results;
     }
 }

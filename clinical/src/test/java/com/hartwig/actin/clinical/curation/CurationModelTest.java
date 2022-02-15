@@ -101,13 +101,25 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         List<PriorTumorTreatment> priorTreatments =
-                model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020", "no systemic treatment", "cannot curate"));
+                model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"));
 
-        assertEquals(1, priorTreatments.size());
-        assertEquals("platinum", priorTreatments.get(0).chemoType());
+        assertEquals(2, priorTreatments.size());
+        assertNotNull(findByYear(priorTreatments, 2020));
+        assertNotNull(findByYear(priorTreatments, 2021));
 
         assertTrue(model.curatePriorTumorTreatments(null).isEmpty());
         model.evaluate();
+    }
+
+    @NotNull
+    private static PriorTumorTreatment findByYear(@NotNull List<PriorTumorTreatment> priorTumorTreatments, int year) {
+        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
+            if (priorTumorTreatment.year() == year) {
+                return priorTumorTreatment;
+            }
+        }
+
+        throw new IllegalStateException("Could not find prior tumor treatment with year: " + year);
     }
 
     @Test
@@ -213,7 +225,6 @@ public class CurationModelTest {
 
         assertEquals("Cleaned infection", model.curateInfectionStatus(toInfection("Weird infection")).description());
         assertEquals("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")).description());
-        assertNull(model.curateInfectionStatus(toInfection("No infection")));
         assertNull(model.curateInfectionStatus(null));
 
         model.evaluate();

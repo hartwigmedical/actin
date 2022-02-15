@@ -127,11 +127,23 @@ public final class TestCurationFactory {
         List<OncologicalHistoryConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Cis 2020")
+                .input("Cis 2020 2021")
                 .ignore(false)
                 .curated(ImmutablePriorTumorTreatment.builder()
                         .name("Cisplatin")
                         .year(2020)
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                        .isSystemic(true)
+                        .chemoType("platinum")
+                        .build())
+                .build());
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Cis 2020 2021")
+                .ignore(false)
+                .curated(ImmutablePriorTumorTreatment.builder()
+                        .name("Cisplatin")
+                        .year(2021)
                         .addCategories(TreatmentCategory.CHEMOTHERAPY)
                         .isSystemic(true)
                         .chemoType("platinum")
@@ -196,7 +208,6 @@ public final class TestCurationFactory {
         List<InfectionConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableInfectionConfig.builder().input("Weird infection").interpretation("Cleaned infection").build());
-        configs.add(ImmutableInfectionConfig.builder().input("No infection").interpretation("NULL").build());
 
         return configs;
     }
