@@ -69,6 +69,14 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createContent(@NotNull IBlockElement element) {
+        Cell cell = create(element);
+        cell.addStyle(Styles.tableContentStyle());
+        cell.setBorderBottom(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
+        return cell;
+    }
+
+    @NotNull
     public static Cell createContent(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableContentStyle());

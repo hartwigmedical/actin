@@ -5,6 +5,7 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
@@ -33,7 +34,11 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         }
 
         EvaluationResult result = isDoidMatch(doids, doidToMatch) ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addMessages("Failed on primary tumor location");
+        }
+        return builder.build();
     }
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {

@@ -24,6 +24,7 @@ import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -122,13 +123,13 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         Map<CriterionReference, Evaluation> worstEvaluationPerCriterion = Maps.newHashMap();
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
             for (CriterionReference reference : entry.getKey().references()) {
-                Evaluation current = worstEvaluationPerCriterion.get(reference);
-                Evaluation newEval = entry.getValue();
-                if (current != null) {
-                    Evaluation worst = current.result().isWorseThan(newEval.result()) ? current : newEval;
-                    worstEvaluationPerCriterion.put(reference, worst);
+                Evaluation currentWorst = worstEvaluationPerCriterion.get(reference);
+                Evaluation evaluation = entry.getValue();
+                if (currentWorst != null) {
+                    Evaluation newWorst = currentWorst.result().isWorseThan(evaluation.result()) ? currentWorst : evaluation;
+                    worstEvaluationPerCriterion.put(reference, newWorst);
                 } else {
-                    worstEvaluationPerCriterion.put(reference, newEval);
+                    worstEvaluationPerCriterion.put(reference, evaluation);
                 }
             }
         }
@@ -195,7 +196,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     @NotNull
     private Table createEvaluationTable(@NotNull Map<CriterionReference, Evaluation> evaluations, boolean displayFailOnly) {
         float ruleWidth = 30;
-        float evaluationWidth = 100;
+        float evaluationWidth = 150;
         float referenceWidth = contentWidth() - (ruleWidth + evaluationWidth + 10);
         Table table = Tables.createFixedWidthCols(ruleWidth, referenceWidth, evaluationWidth).setWidth(contentWidth());
 
@@ -225,7 +226,12 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             if (evaluation.result() == resultToRender) {
                 table.addCell(Cells.createContent(reference.id()));
                 table.addCell(Cells.createContent(reference.text()).setKeepTogether(true));
-                table.addCell(Cells.createContent(evaluation.result()));
+                Table evalTable = Tables.createSingleColWithWidth(145).setKeepTogether(true);
+                evalTable.addCell(Cells.createContent(evaluation.result()).setBorderBottom(Border.NO_BORDER));
+                for (String message : evaluation.messages()) {
+                    evalTable.addCell(Cells.create(new Paragraph(message)));
+                }
+                table.addCell(Cells.createContent(evalTable));
             }
         }
     }
