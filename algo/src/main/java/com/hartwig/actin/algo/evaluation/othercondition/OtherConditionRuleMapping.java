@@ -39,7 +39,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
                 hasSpecificPriorConditionCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE, hasSpecificPriorConditionCreator(doidModel, GASTROINTESTINAL_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSYEM_DISEASE, hasSpecificPriorConditionCreator(doidModel, IMMUNE_SYSTEM_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE, hasSpecificPriorConditionCreator(doidModel, IMMUNE_SYSTEM_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasSpecificPriorConditionCreator(doidModel, VASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasSpecificPriorConditionCreator(doidModel, LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasSpecificPriorConditionCreator(doidModel, LIVER_DISEASE_DOID));
