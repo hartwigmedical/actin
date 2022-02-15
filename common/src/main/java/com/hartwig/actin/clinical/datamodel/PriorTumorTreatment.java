@@ -37,7 +37,7 @@ public abstract class PriorTumorTreatment {
     public abstract String hormoneType();
 
     @Nullable
-    public abstract String stemCellTransType();
+    public abstract String transplantType();
 
     @Nullable
     public abstract String supportiveType();

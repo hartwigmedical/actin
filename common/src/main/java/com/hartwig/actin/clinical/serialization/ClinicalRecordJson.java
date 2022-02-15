@@ -255,7 +255,7 @@ public final class ClinicalRecordJson {
                         .immunoType(nullableString(object, "immunoType"))
                         .targetedType(nullableString(object, "targetedType"))
                         .hormoneType(nullableString(object, "hormoneType"))
-                        .stemCellTransType(nullableString(object, "stemCellTransType"))
+                        .transplantType(nullableString(object, "transplantType"))
                         .supportiveType(nullableString(object, "supportiveType"))
                         .trialAcronym(nullableString(object, "trialAcronym"))
                         .build());

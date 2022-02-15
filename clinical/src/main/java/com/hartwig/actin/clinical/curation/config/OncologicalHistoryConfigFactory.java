@@ -51,7 +51,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .immunoType(ResourceFile.optionalString(parts[fields.get("immunoType")]))
                     .targetedType(ResourceFile.optionalString(parts[fields.get("targetedType")]))
                     .hormoneType(ResourceFile.optionalString(parts[fields.get("hormoneType")]))
-                    .stemCellTransType(ResourceFile.optionalString(parts[fields.get("stemCellTransplantType")]))
+                    .transplantType(ResourceFile.optionalString(parts[fields.get("transplantType")]))
                     .supportiveType(ResourceFile.optionalString(parts[fields.get("supportiveType")]))
                     .trialAcronym(ResourceFile.optionalString(parts[fields.get("trialAcronym")]))
                     .build();
