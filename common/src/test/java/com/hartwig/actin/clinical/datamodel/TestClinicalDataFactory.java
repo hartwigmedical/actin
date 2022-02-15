@@ -185,7 +185,14 @@ public final class TestClinicalDataFactory {
     private static List<PriorMolecularTest> createTestPriorMolecularTests() {
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
 
-        priorMolecularTests.add(ImmutablePriorMolecularTest.builder().test("IHC").item("ERBB2").measure(null).score(3).unit("+").build());
+        priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
+                .test("IHC")
+                .item("ERBB2")
+                .measure(null)
+                .scoreText(null)
+                .scoreValue(3D)
+                .unit("+")
+                .build());
 
         return priorMolecularTests;
     }

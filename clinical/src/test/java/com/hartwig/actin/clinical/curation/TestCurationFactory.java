@@ -237,7 +237,14 @@ public final class TestCurationFactory {
         configs.add(ImmutableMolecularTestConfig.builder()
                 .input("IHC ERBB2 3+")
                 .ignore(false)
-                .curated(ImmutablePriorMolecularTest.builder().test("IHC").item("ERBB2").measure(null).score(3).unit("+").build())
+                .curated(ImmutablePriorMolecularTest.builder()
+                        .test("IHC")
+                        .item("ERBB2")
+                        .measure(null)
+                        .scoreText(null)
+                        .scoreValue(3D)
+                        .unit("+")
+                        .build())
                 .build());
 
         return configs;

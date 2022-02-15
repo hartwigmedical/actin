@@ -100,7 +100,8 @@
       "test": "IHC",
       "item": "ERBB2",
       "measure": null,
-      "score": 3,
+      "scoreText": null,
+      "scoreValue": 3,
       "unit": "+"
     }
   ],

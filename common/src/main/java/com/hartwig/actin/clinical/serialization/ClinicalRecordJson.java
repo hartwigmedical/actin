@@ -316,7 +316,8 @@ public final class ClinicalRecordJson {
                         .test(string(object, "test"))
                         .item(string(object, "item"))
                         .measure(nullableString(object, "measure"))
-                        .score(number(object, "score"))
+                        .scoreText(nullableString(object, "scoreText"))
+                        .scoreValue(nullableNumber(object, "scoreValue"))
                         .unit(nullableString(object, "unit"))
                         .build());
             }

@@ -193,8 +193,14 @@ public class CurationDatabaseReaderTest {
 
         MolecularTestConfig config = configs.get(0);
         assertEquals("IHC ERBB2 3+", config.input());
-        assertEquals(ImmutablePriorMolecularTest.builder().test("IHC").item("ERBB2").measure(null).score(3).unit("+").build(),
-                config.curated());
+        assertEquals(ImmutablePriorMolecularTest.builder()
+                .test("IHC")
+                .item("ERBB2")
+                .measure(null)
+                .scoreText(null)
+                .scoreValue(3D)
+                .unit("+")
+                .build(), config.curated());
     }
 
     private static void assertMedicationDosageConfigs(@NotNull List<MedicationDosageConfig> configs) {

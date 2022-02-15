@@ -262,13 +262,15 @@ class ClinicalDAO {
                     PRIORMOLECULARTEST.TEST,
                     PRIORMOLECULARTEST.ITEM,
                     PRIORMOLECULARTEST.MEASURE,
-                    PRIORMOLECULARTEST.SCORE,
+                    PRIORMOLECULARTEST.SCORETEXT,
+                    PRIORMOLECULARTEST.SCOREVALUE,
                     PRIORMOLECULARTEST.UNIT)
                     .values(sampleId,
                             priorMolecularTest.test(),
                             priorMolecularTest.item(),
                             priorMolecularTest.measure(),
-                            priorMolecularTest.score(),
+                            priorMolecularTest.scoreText(),
+                            priorMolecularTest.scoreValue(),
                             priorMolecularTest.unit())
                     .execute();
         }
