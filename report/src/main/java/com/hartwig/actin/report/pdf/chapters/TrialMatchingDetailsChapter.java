@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.interpretation.EligibilityEvaluator;
 import com.hartwig.actin.report.datamodel.Report;
@@ -121,10 +122,11 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         Map<CriterionReference, Evaluation> worstEvaluationPerCriterion = Maps.newHashMap();
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
             for (CriterionReference reference : entry.getKey().references()) {
-                Evaluation currentEval = worstEvaluationPerCriterion.get(reference);
+                Evaluation current = worstEvaluationPerCriterion.get(reference);
                 Evaluation newEval = entry.getValue();
-                if (currentEval != null) {
-                    worstEvaluationPerCriterion.put(reference, worst(currentEval, newEval));
+                if (current != null) {
+                    Evaluation worst = current.result().isWorseThan(newEval.result()) ? current : newEval;
+                    worstEvaluationPerCriterion.put(reference, worst);
                 } else {
                     worstEvaluationPerCriterion.put(reference, newEval);
                 }
@@ -134,27 +136,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     @NotNull
-    private static Evaluation worst(@NotNull Evaluation evaluation1, @NotNull Evaluation evaluation2) {
-        Set<Evaluation> evaluations = Sets.newHashSet(evaluation1, evaluation2);
-        if (evaluations.contains(Evaluation.FAIL)) {
-            return Evaluation.FAIL;
-        } else if (evaluations.contains(Evaluation.UNDETERMINED)) {
-            return Evaluation.UNDETERMINED;
-        } else if (evaluations.contains(Evaluation.NOT_IMPLEMENTED)) {
-            return Evaluation.NOT_IMPLEMENTED;
-        } else if (evaluations.contains(Evaluation.PASS_BUT_WARN)) {
-            return Evaluation.PASS_BUT_WARN;
-        } else if (evaluations.contains(Evaluation.PASS)) {
-            return Evaluation.PASS;
-        } else if (evaluations.contains(Evaluation.NOT_EVALUATED)) {
-            return Evaluation.NOT_EVALUATED;
-        }
-
-        throw new IllegalStateException("Could not determine worst from " + evaluations);
-    }
-
-    @NotNull
-    private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull Evaluation overallEvaluation) {
+    private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull EvaluationResult overallEvaluation) {
         float indentWidth = 10;
         float keyWidth = 90;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
@@ -180,7 +162,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
-            @NotNull Evaluation overallEvaluation) {
+            @NotNull EvaluationResult overallEvaluation) {
         float indentWidth = 10;
         float keyWidth = 90;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
@@ -224,26 +206,26 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
         references.addAll(evaluations.keySet());
 
-        addEvaluationsOfType(table, references, evaluations, Evaluation.FAIL);
+        addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL);
         if (!displayFailOnly) {
-            addEvaluationsOfType(table, references, evaluations, Evaluation.UNDETERMINED);
-            addEvaluationsOfType(table, references, evaluations, Evaluation.NOT_IMPLEMENTED);
-            addEvaluationsOfType(table, references, evaluations, Evaluation.PASS_BUT_WARN);
-            addEvaluationsOfType(table, references, evaluations, Evaluation.PASS);
-            addEvaluationsOfType(table, references, evaluations, Evaluation.NOT_EVALUATED);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS_BUT_WARN);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_EVALUATED);
         }
 
         return table;
     }
 
     private static void addEvaluationsOfType(@NotNull Table table, Set<CriterionReference> references,
-            @NotNull Map<CriterionReference, Evaluation> evaluations, @NotNull Evaluation evaluationToRender) {
+            @NotNull Map<CriterionReference, Evaluation> evaluations, @NotNull EvaluationResult resultToRender) {
         for (CriterionReference reference : references) {
             Evaluation evaluation = evaluations.get(reference);
-            if (evaluation == evaluationToRender) {
+            if (evaluation.result() == resultToRender) {
                 table.addCell(Cells.createContent(reference.id()));
                 table.addCell(Cells.createContent(reference.text()).setKeepTogether(true));
-                table.addCell(Cells.createContent(evaluation));
+                table.addCell(Cells.createContent(evaluation.result()));
             }
         }
     }

@@ -21,13 +21,12 @@ public final class EvaluationSummarizer {
 
         for (Evaluation evaluation : evaluations) {
             count++;
-            switch (evaluation) {
+            switch (evaluation.result()) {
                 case PASS: {
                     passedCount++;
                     break;
                 }
                 case PASS_BUT_WARN: {
-                    passedCount++;
                     warningCount++;
                     break;
                 }
@@ -48,7 +47,7 @@ public final class EvaluationSummarizer {
                     break;
                 }
                 default: {
-                    throw new IllegalStateException("Cannot summarize evaluation of type '" + evaluation + "'");
+                    throw new IllegalStateException("Cannot summarize evaluation with result '" + evaluation.result() + "'");
                 }
             }
         }

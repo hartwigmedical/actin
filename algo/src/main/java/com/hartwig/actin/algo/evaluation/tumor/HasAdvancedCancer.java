@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -27,13 +27,13 @@ public class HasAdvancedCancer implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         TumorStage stage = record.clinical().tumor().stage();
 
         if (stage == null) {
-            return Evaluation.UNDETERMINED;
+            return EvaluationResult.UNDETERMINED;
         }
 
-        return STAGES_CONSIDERED_ADVANCED.contains(stage) ? Evaluation.PASS : Evaluation.FAIL;
+        return STAGES_CONSIDERED_ADVANCED.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 }

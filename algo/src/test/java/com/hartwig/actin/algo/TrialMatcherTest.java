@@ -11,6 +11,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
@@ -46,31 +47,33 @@ public class TrialMatcherTest {
 
     private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {
         assertEquals(1, trialEligibility.evaluations().size());
-        assertEquals(Evaluation.PASS, trialEligibility.overallEvaluation());
-        assertEquals(Evaluation.PASS, findEvaluationForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
+        assertEquals(EvaluationResult.PASS, trialEligibility.overallEvaluation());
+        assertEquals(EvaluationResult.PASS,
+                findEvaluationResultForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
 
         assertEquals(3, trialEligibility.cohorts().size());
 
         CohortEligibility cohortA = findCohort(trialEligibility.cohorts(), "A");
         assertEquals(1, cohortA.evaluations().size());
-        assertEquals(Evaluation.FAIL, cohortA.overallEvaluation());
-        assertEquals(Evaluation.FAIL, findEvaluationForRule(cohortA.evaluations(), EligibilityRule.NOT));
+        assertEquals(EvaluationResult.FAIL, cohortA.overallEvaluation());
+        assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT));
 
         CohortEligibility cohortB = findCohort(trialEligibility.cohorts(), "B");
-        assertEquals(Evaluation.PASS_BUT_WARN, cohortB.overallEvaluation());
-        assertEquals(Evaluation.PASS_BUT_WARN, findEvaluationForRule(cohortB.evaluations(), EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, cohortB.overallEvaluation());
+        assertEquals(EvaluationResult.PASS_BUT_WARN,
+                findEvaluationResultForRule(cohortB.evaluations(), EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS));
 
         CohortEligibility cohortC = findCohort(trialEligibility.cohorts(), "C");
-        assertEquals(Evaluation.PASS, cohortC.overallEvaluation());
+        assertEquals(EvaluationResult.PASS, cohortC.overallEvaluation());
         assertTrue(cohortC.evaluations().isEmpty());
     }
 
     @NotNull
-    private static Evaluation findEvaluationForRule(@NotNull Map<Eligibility, Evaluation> evaluations,
+    private static EvaluationResult findEvaluationResultForRule(@NotNull Map<Eligibility, Evaluation> evaluations,
             @NotNull EligibilityRule ruleToFind) {
         for (Map.Entry<Eligibility, Evaluation> evaluation : evaluations.entrySet()) {
             if (evaluation.getKey().function().rule() == ruleToFind) {
-                return evaluation.getValue();
+                return evaluation.getValue().result();
             }
         }
 

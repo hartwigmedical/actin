@@ -1,14 +1,18 @@
 package com.hartwig.actin.algo.datamodel;
 
-public enum Evaluation {
-    PASS,
-    PASS_BUT_WARN,
-    FAIL,
-    UNDETERMINED,
-    NOT_EVALUATED,
-    NOT_IMPLEMENTED;
+import java.util.Set;
 
-    public boolean isPass() {
-        return this == PASS || this == PASS_BUT_WARN || this == NOT_EVALUATED;
-    }
+import org.immutables.value.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@Value.Immutable
+@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
+public abstract class Evaluation {
+
+    @NotNull
+    public abstract EvaluationResult result();
+
+    @NotNull
+    public abstract Set<String> messages();
 }

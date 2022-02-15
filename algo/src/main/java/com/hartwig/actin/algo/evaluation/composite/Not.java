@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,15 +17,15 @@ public class Not implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Evaluation evaluation = function.evaluate(record);
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
+        EvaluationResult evaluation = function.evaluate(record);
 
-        if (evaluation == Evaluation.PASS || evaluation == Evaluation.PASS_BUT_WARN) {
-            return Evaluation.FAIL;
-        } else if (evaluation == Evaluation.FAIL) {
-            return Evaluation.PASS;
-        } else if (evaluation == Evaluation.UNDETERMINED || evaluation == Evaluation.NOT_IMPLEMENTED
-                || evaluation == Evaluation.NOT_EVALUATED) {
+        if (evaluation == EvaluationResult.PASS || evaluation == EvaluationResult.PASS_BUT_WARN) {
+            return EvaluationResult.FAIL;
+        } else if (evaluation == EvaluationResult.FAIL) {
+            return EvaluationResult.PASS;
+        } else if (evaluation == EvaluationResult.UNDETERMINED || evaluation == EvaluationResult.NOT_IMPLEMENTED
+                || evaluation == EvaluationResult.NOT_EVALUATED) {
             return evaluation;
         }
 

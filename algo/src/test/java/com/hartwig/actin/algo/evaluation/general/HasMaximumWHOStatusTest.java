@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
@@ -20,9 +20,9 @@ public class HasMaximumWHOStatusTest {
     public void canEvaluate() {
         HasMaximumWHOStatus function = new HasMaximumWHOStatus(2);
 
-        assertEquals(Evaluation.PASS, function.evaluate(patientWithWHO(0)));
-        assertEquals(Evaluation.FAIL, function.evaluate(patientWithWHO(4)));
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(patientWithWHO(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithWHO(0)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithWHO(4)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithWHO(null)));
     }
 
     @NotNull

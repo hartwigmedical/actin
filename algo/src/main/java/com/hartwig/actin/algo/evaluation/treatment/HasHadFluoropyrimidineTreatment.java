@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
@@ -27,13 +27,13 @@ public class HasHadFluoropyrimidineTreatment implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (FLUOROPYRIMIDINE_TREATMENTS.contains(treatment.name())) {
-                return Evaluation.PASS;
+                return EvaluationResult.PASS;
             }
         }
 
-        return Evaluation.FAIL;
+        return EvaluationResult.FAIL;
     }
 }

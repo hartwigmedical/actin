@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.TestEvaluationFactory;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 
@@ -16,7 +18,11 @@ public class EvaluationSummarizerTest {
 
     @Test
     public void canInterpretAllPossibleEvaluations() {
-        assertNotNull(EvaluationSummarizer.summarize(Lists.newArrayList(Evaluation.values())));
+        List<Evaluation> evaluations = Lists.newArrayList();
+        for (EvaluationResult result : EvaluationResult.values()) {
+            evaluations.add(TestEvaluationFactory.withResult(result));
+        }
+        assertNotNull(EvaluationSummarizer.summarize(evaluations));
     }
 
     @Test

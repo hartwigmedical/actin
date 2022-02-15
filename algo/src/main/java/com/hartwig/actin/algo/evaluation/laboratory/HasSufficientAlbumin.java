@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +20,7 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         double convertedValue;
         if (labValue.unit().equals(LabUnit.G_PER_DL.display())) {
             convertedValue = labValue.value();
@@ -28,7 +28,7 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
             convertedValue = labValue.value() / 10;
         } else {
             LOGGER.warn("Could not resolve albumin unit: '{}'", labValue.unit());
-            return Evaluation.UNDETERMINED;
+            return EvaluationResult.UNDETERMINED;
         }
 
         return LaboratoryUtil.evaluateVersusMinValue(convertedValue, labValue.comparator(), minAlbuminGPerDL);

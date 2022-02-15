@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -30,23 +30,23 @@ public class HasSpecificInfectionTest {
 
         // Test empty doid
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEquals(Evaluation.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with no DOIDs
         priorOtherConditions.add(builder().build());
-        assertEquals(Evaluation.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with not the correct DOID
         priorOtherConditions.add(builder().addDoids("not the correct doid").build());
-        assertEquals(Evaluation.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with child DOID
         priorOtherConditions.add(builder().addDoids("child", "some other doid").build());
-        assertEquals(Evaluation.PASS, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Also pass on the exact DOID
         PriorOtherCondition exact = builder().addDoids(doidToFind).build();
-        assertEquals(Evaluation.PASS, function.evaluate(withPriorOtherCondition(exact)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withPriorOtherCondition(exact)));
     }
 
     @NotNull

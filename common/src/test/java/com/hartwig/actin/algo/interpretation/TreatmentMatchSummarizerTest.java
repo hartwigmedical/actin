@@ -41,5 +41,4 @@ public class TreatmentMatchSummarizerTest {
 
         throw new IllegalStateException("Could not find cohort with id: " + cohortIdToFind);
     }
-
 }

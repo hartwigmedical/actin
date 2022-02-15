@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +17,9 @@ public class GeneIsWildtype implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         // TODO First determine all wildtype genes properly.
-        return Evaluation.UNDETERMINED;
+        return EvaluationResult.UNDETERMINED;
         //        if (record.molecular().wildtypeGenes().contains(gene)) {
         //            return Evaluation.PASS;
         //        }

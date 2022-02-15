@@ -24,7 +24,11 @@
               ]
             }
           },
-          "PASS"
+          {
+            "result": "PASS",
+            "messages": [
+            ]
+          }
         ]
       ],
       "cohorts": [
@@ -55,7 +59,11 @@
                   ]
                 }
               },
-              "NOT_IMPLEMENTED"
+              {
+                "result": "NOT_IMPLEMENTED",
+                "messages": [
+                ]
+              }
             ]
           ]
         },

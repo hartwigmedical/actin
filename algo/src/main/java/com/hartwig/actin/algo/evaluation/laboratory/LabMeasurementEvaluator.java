@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import java.time.LocalDate;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -31,23 +31,23 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         LabInterpretation interpretation = LabInterpreter.interpret(record.clinical().labValues());
 
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            return Evaluation.UNDETERMINED;
+            return EvaluationResult.UNDETERMINED;
         }
 
-        Evaluation evaluation = function.evaluate(record, mostRecent);
+        EvaluationResult evaluation = function.evaluate(record, mostRecent);
 
-        if (evaluation == Evaluation.FAIL) {
+        if (evaluation == EvaluationResult.FAIL) {
             LabValue secondMostRecent = interpretation.secondMostRecentValue(measurement);
             if (isValid(secondMostRecent, measurement)) {
-                Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
-                if (secondEvaluation == Evaluation.PASS) {
-                    return Evaluation.UNDETERMINED;
+                EvaluationResult secondEvaluation = function.evaluate(record, secondMostRecent);
+                if (secondEvaluation == EvaluationResult.PASS) {
+                    return EvaluationResult.UNDETERMINED;
                 }
             }
         }

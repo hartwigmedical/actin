@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +16,9 @@ public class HasMeasurableDiseaseRecistTest {
     public void canEvaluate() {
         HasMeasurableDiseaseRecist function = new HasMeasurableDiseaseRecist();
 
-        assertEquals(Evaluation.PASS, function.evaluate(patientWithMeasurableLesionRecist(true)));
-        assertEquals(Evaluation.FAIL, function.evaluate(patientWithMeasurableLesionRecist(false)));
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(patientWithMeasurableLesionRecist(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithMeasurableLesionRecist(true)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithMeasurableLesionRecist(false)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithMeasurableLesionRecist(null)));
     }
 
     @NotNull

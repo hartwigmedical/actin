@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -17,9 +17,9 @@ public class HasAdvancedCancerTest {
     public void canEvaluate() {
         HasAdvancedCancer function = new HasAdvancedCancer();
 
-        assertEquals(Evaluation.PASS, function.evaluate(patientWithTumorStage(TumorStage.IIIB)));
-        assertEquals(Evaluation.FAIL, function.evaluate(patientWithTumorStage(TumorStage.II)));
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(patientWithTumorStage(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithTumorStage(TumorStage.IIIB)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithTumorStage(TumorStage.II)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithTumorStage(null)));
     }
 
     @NotNull

@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -25,18 +25,18 @@ public class HasAllergyRelatedToStudyMedicationTest {
         HasAllergyRelatedToStudyMedication function = new HasAllergyRelatedToStudyMedication();
 
         List<Allergy> allergies = Lists.newArrayList();
-        assertEquals(Evaluation.FAIL, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)));
 
         allergies.add(builder().category("some category").build());
-        assertEquals(Evaluation.FAIL, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)));
 
         allergies.add(builder().category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY).build());
-        assertEquals(Evaluation.FAIL, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withAllergies(allergies)));
 
         allergies.add(builder().category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY.toUpperCase())
                 .clinicalStatus(HasAllergyRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.toUpperCase())
                 .build());
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(withAllergies(allergies)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withAllergies(allergies)));
     }
 
     @NotNull

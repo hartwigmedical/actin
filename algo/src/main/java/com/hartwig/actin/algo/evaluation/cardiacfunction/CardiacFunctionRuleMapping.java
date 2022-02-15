@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -20,12 +20,12 @@ public final class CardiacFunctionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
-        map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
 
         return map;
     }

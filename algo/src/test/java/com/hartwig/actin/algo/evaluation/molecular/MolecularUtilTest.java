@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import static org.junit.Assert.assertEquals;
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
@@ -14,8 +14,8 @@ public class MolecularUtilTest {
 
     @Test
     public void canEvaluateNoMatch() {
-        assertEquals(Evaluation.UNDETERMINED, MolecularUtil.noMatchFound(fail()));
-        assertEquals(Evaluation.FAIL, MolecularUtil.noMatchFound(pass()));
+        assertEquals(EvaluationResult.UNDETERMINED, MolecularUtil.noMatchFound(fail()));
+        assertEquals(EvaluationResult.FAIL, MolecularUtil.noMatchFound(pass()));
     }
 
     @NotNull

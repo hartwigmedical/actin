@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -21,7 +21,7 @@ public class HasHadLimitedAntiPDL1OrPD1Immunotherapies implements EvaluationFunc
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         int count = 0;
         for (PriorTumorTreatment priorTumorTreatment : record.clinical().priorTumorTreatments()) {
             boolean isImmunotherapy = priorTumorTreatment.categories().contains(TreatmentCategory.IMMUNOTHERAPY);
@@ -33,6 +33,6 @@ public class HasHadLimitedAntiPDL1OrPD1Immunotherapies implements EvaluationFunc
             }
         }
 
-        return count <= maxAntiPDL1OrPD1Immunotherapies ? Evaluation.PASS : Evaluation.FAIL;
+        return count <= maxAntiPDL1OrPD1Immunotherapies ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 }

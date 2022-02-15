@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
@@ -21,10 +21,10 @@ public class HasCardiacArrhythmiaTest {
     public void canEvaluate() {
         HasCardiacArrhythmia function = new HasCardiacArrhythmia();
 
-        assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEquals(Evaluation.PASS, function.evaluate(withHasSignificantECGAberration(true)));
-        assertEquals(Evaluation.FAIL, function.evaluate(withHasSignificantECGAberration(false)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withHasSignificantECGAberration(true)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withHasSignificantECGAberration(false)));
     }
 
     @NotNull

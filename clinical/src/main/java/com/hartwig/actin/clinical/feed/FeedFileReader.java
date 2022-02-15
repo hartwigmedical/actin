@@ -67,11 +67,6 @@ class FeedFileReader<T extends FeedEntry> {
         return entries;
     }
 
-    @NotNull
-    private static String toStringWithFixedLineBreaks(@NotNull StringBuilder string) {
-        return string.toString().replaceAll("\\n", "\n");
-    }
-
     private static boolean hasExpectedFields(@NotNull String line, @NotNull Map<String, Integer> fields) {
         return splitFeedLine(line).length == fields.size();
     }

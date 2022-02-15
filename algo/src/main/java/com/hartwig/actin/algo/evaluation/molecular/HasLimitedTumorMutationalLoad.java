@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +16,12 @@ public class HasLimitedTumorMutationalLoad implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         Integer tumorMutationalLoad = record.molecular().tumorMutationalLoad();
         if (tumorMutationalLoad == null) {
-            return Evaluation.UNDETERMINED;
+            return EvaluationResult.UNDETERMINED;
         } else if (tumorMutationalLoad <= maxTumorMutationalLoad) {
-            return Evaluation.PASS;
+            return EvaluationResult.PASS;
         }
 
         return MolecularUtil.noMatchFound(record.molecular());

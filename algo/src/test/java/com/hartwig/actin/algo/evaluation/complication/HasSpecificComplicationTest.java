@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -24,13 +24,13 @@ public class HasSpecificComplicationTest {
         HasSpecificComplication function = new HasSpecificComplication("name to find");
 
         List<CancerRelatedComplication> complications = Lists.newArrayList();
-        assertEquals(Evaluation.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
 
         complications.add(ImmutableCancerRelatedComplication.builder().name("just a name").build());
-        assertEquals(Evaluation.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
 
         complications.add(ImmutableCancerRelatedComplication.builder().name("this includes name to find").build());
-        assertEquals(Evaluation.PASS, function.evaluate(withCancerRelatedComplications(complications)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withCancerRelatedComplications(complications)));
     }
 
     @NotNull

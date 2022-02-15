@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.infection;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -22,15 +22,15 @@ public class HasSpecificInfection implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
-                    return Evaluation.PASS;
+                    return EvaluationResult.PASS;
                 }
             }
         }
 
-        return Evaluation.FAIL;
+        return EvaluationResult.FAIL;
     }
 }

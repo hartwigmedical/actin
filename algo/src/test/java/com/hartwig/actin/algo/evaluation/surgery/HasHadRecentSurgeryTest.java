@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.Surgery;
@@ -27,13 +27,13 @@ public class HasHadRecentSurgeryTest {
         HasHadRecentSurgery function = new HasHadRecentSurgery(REFERENCE_DATE.minusWeeks(4));
 
         List<Surgery> surgeries = Lists.newArrayList();
-        assertEquals(Evaluation.FAIL, function.evaluate(withSurgeries(surgeries)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)));
 
         surgeries.add(ImmutableSurgery.builder().endDate(REFERENCE_DATE.minusWeeks(8)).build());
-        assertEquals(Evaluation.FAIL, function.evaluate(withSurgeries(surgeries)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)));
 
         surgeries.add(ImmutableSurgery.builder().endDate(REFERENCE_DATE.minusWeeks(2)).build());
-        assertEquals(Evaluation.PASS, function.evaluate(withSurgeries(surgeries)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(withSurgeries(surgeries)));
     }
 
     @NotNull

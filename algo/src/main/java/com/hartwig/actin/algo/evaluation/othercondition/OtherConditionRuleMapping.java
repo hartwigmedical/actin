@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -46,7 +46,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasSpecificPriorConditionCreator(doidModel, STROKE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasSpecificPriorConditionCreator(doidModel, TIA_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));

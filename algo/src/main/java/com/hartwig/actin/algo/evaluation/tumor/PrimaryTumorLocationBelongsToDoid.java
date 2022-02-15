@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
@@ -23,14 +23,14 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         Set<String> doids = record.clinical().tumor().doids();
 
         if (doids == null || doids.isEmpty()) {
-            return Evaluation.UNDETERMINED;
+            return EvaluationResult.UNDETERMINED;
         }
 
-        return isDoidMatch(doids, doidToMatch) ? Evaluation.PASS : Evaluation.FAIL;
+        return isDoidMatch(doids, doidToMatch) ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {

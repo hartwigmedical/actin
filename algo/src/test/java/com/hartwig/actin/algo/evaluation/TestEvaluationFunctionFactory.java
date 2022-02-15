@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation;
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,36 +11,36 @@ public final class TestEvaluationFunctionFactory {
 
     @NotNull
     public static EvaluationFunction pass() {
-        return fixedEvaluation(Evaluation.PASS);
+        return fixedEvaluation(EvaluationResult.PASS);
     }
 
     @NotNull
     public static EvaluationFunction passButWarn() {
-        return fixedEvaluation(Evaluation.PASS_BUT_WARN);
+        return fixedEvaluation(EvaluationResult.PASS_BUT_WARN);
     }
 
     @NotNull
     public static EvaluationFunction fail() {
-        return fixedEvaluation(Evaluation.FAIL);
+        return fixedEvaluation(EvaluationResult.FAIL);
     }
 
     @NotNull
     public static EvaluationFunction undetermined() {
-        return fixedEvaluation(Evaluation.UNDETERMINED);
+        return fixedEvaluation(EvaluationResult.UNDETERMINED);
     }
 
     @NotNull
     public static EvaluationFunction notEvaluated() {
-        return fixedEvaluation(Evaluation.NOT_EVALUATED);
+        return fixedEvaluation(EvaluationResult.NOT_EVALUATED);
     }
 
     @NotNull
     public static EvaluationFunction notImplemented() {
-        return fixedEvaluation(Evaluation.NOT_IMPLEMENTED);
+        return fixedEvaluation(EvaluationResult.NOT_IMPLEMENTED);
     }
 
     @NotNull
-    private static EvaluationFunction fixedEvaluation(@NotNull Evaluation output) {
+    private static EvaluationFunction fixedEvaluation(@NotNull EvaluationResult output) {
         return record -> output;
     }
 }

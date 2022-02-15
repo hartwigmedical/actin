@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.interpretation;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
@@ -18,25 +18,25 @@ public class EligibilityEvaluatorTest {
 
     @Test
     public void canEvaluateEligibility() {
-        TrialEligibility passNoCohorts = createTestTrialBuilder().overallEvaluation(Evaluation.PASS).build();
+        TrialEligibility passNoCohorts = createTestTrialBuilder().overallEvaluation(EvaluationResult.PASS).build();
         assertTrue(EligibilityEvaluator.isEligibleTrial(passNoCohorts));
 
-        TrialEligibility passWithPassCohort = createTestTrialBuilder().overallEvaluation(Evaluation.PASS)
-                .addCohorts(createTestCohortBuilder(false).overallEvaluation(Evaluation.PASS).build())
+        TrialEligibility passWithPassCohort = createTestTrialBuilder().overallEvaluation(EvaluationResult.PASS)
+                .addCohorts(createTestCohortBuilder(false).overallEvaluation(EvaluationResult.PASS).build())
                 .build();
         assertTrue(EligibilityEvaluator.isEligibleTrial(passWithPassCohort));
 
-        TrialEligibility passWithFailCohort = createTestTrialBuilder().overallEvaluation(Evaluation.PASS)
-                .addCohorts(createTestCohortBuilder(false).overallEvaluation(Evaluation.FAIL).build())
+        TrialEligibility passWithFailCohort = createTestTrialBuilder().overallEvaluation(EvaluationResult.PASS)
+                .addCohorts(createTestCohortBuilder(false).overallEvaluation(EvaluationResult.FAIL).build())
                 .build();
         assertFalse(EligibilityEvaluator.isEligibleTrial(passWithFailCohort));
 
-        TrialEligibility passWithBlacklistCohort = createTestTrialBuilder().overallEvaluation(Evaluation.PASS)
-                .addCohorts(createTestCohortBuilder(true).overallEvaluation(Evaluation.PASS).build())
+        TrialEligibility passWithBlacklistCohort = createTestTrialBuilder().overallEvaluation(EvaluationResult.PASS)
+                .addCohorts(createTestCohortBuilder(true).overallEvaluation(EvaluationResult.PASS).build())
                 .build();
         assertFalse(EligibilityEvaluator.isEligibleTrial(passWithBlacklistCohort));
 
-        TrialEligibility fail = createTestTrialBuilder().overallEvaluation(Evaluation.FAIL).build();
+        TrialEligibility fail = createTestTrialBuilder().overallEvaluation(EvaluationResult.FAIL).build();
         assertFalse(EligibilityEvaluator.isEligibleTrial(fail));
     }
 

@@ -35,7 +35,7 @@ final class EvaluationMapCompareUtil {
                 return eligibilityCompare;
             }
 
-            int evaluationCompare = map1.get(key1).compareTo(map2.get(key2));
+            int evaluationCompare = map1.get(key1).result().compareTo(map2.get(key2).result());
             if (evaluationCompare != 0) {
                 return evaluationCompare;
             }

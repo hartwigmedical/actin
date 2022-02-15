@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.StringJoiner;
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.Style;
 
@@ -63,7 +63,7 @@ public final class Formats {
     }
 
     @NotNull
-    public static DeviceRgb fontColorForEvaluation(@NotNull Evaluation evaluation) {
+    public static DeviceRgb fontColorForEvaluation(@NotNull EvaluationResult evaluation) {
         switch (evaluation) {
             case PASS:
             case PASS_BUT_WARN:

@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.pregnancy;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
@@ -13,6 +13,6 @@ public class IsPregnantTest {
     public void canEvaluate() {
         IsPregnant function = new IsPregnant();
 
-        assertEquals(Evaluation.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

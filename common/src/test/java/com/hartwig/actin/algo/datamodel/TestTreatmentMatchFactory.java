@@ -43,7 +43,7 @@ public final class TestTreatmentMatchFactory {
                         .acronym("TEST-TRIAL")
                         .title("This is an ACTIN test trial")
                         .build())
-                .overallEvaluation(Evaluation.PASS)
+                .overallEvaluation(EvaluationResult.PASS)
                 .evaluations(createTestGeneralEvaluations())
                 .cohorts(createTestCohorts())
                 .build());
@@ -58,7 +58,7 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
-                .build(), Evaluation.PASS);
+                .build(), TestEvaluationFactory.withResult(EvaluationResult.PASS));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
@@ -71,7 +71,7 @@ public final class TestTreatmentMatchFactory {
                         .id("E-01")
                         .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
                         .build())
-                .build(), Evaluation.PASS);
+                .build(), TestEvaluationFactory.withResult(EvaluationResult.PASS));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
@@ -79,7 +79,7 @@ public final class TestTreatmentMatchFactory {
                         .id("E-01")
                         .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
                         .build())
-                .build(), Evaluation.NOT_EVALUATED);
+                .build(), TestEvaluationFactory.withResult(EvaluationResult.NOT_EVALUATED));
 
         return map;
     }
@@ -90,16 +90,16 @@ public final class TestTreatmentMatchFactory {
 
         cohorts.add(ImmutableCohortEligibility.builder()
                 .metadata(createTestMetadata("A", true, false))
-                .overallEvaluation(Evaluation.FAIL)
+                .overallEvaluation(EvaluationResult.FAIL)
                 .evaluations(createTestCohortEvaluations())
                 .build());
         cohorts.add(ImmutableCohortEligibility.builder()
                 .metadata(createTestMetadata("B", true, false))
-                .overallEvaluation(Evaluation.PASS)
+                .overallEvaluation(EvaluationResult.PASS)
                 .build());
         cohorts.add(ImmutableCohortEligibility.builder()
                 .metadata(createTestMetadata("C", true, true))
-                .overallEvaluation(Evaluation.PASS)
+                .overallEvaluation(EvaluationResult.PASS)
                 .build());
 
         return cohorts;
@@ -125,7 +125,7 @@ public final class TestTreatmentMatchFactory {
                         .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
-                .build(), Evaluation.FAIL);
+                .build(), TestEvaluationFactory.withResult(EvaluationResult.FAIL));
 
         return map;
     }

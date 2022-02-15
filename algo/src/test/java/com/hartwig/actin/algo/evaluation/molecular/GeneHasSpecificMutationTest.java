@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import static org.junit.Assert.assertEquals;
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
@@ -12,8 +12,8 @@ public class GeneHasSpecificMutationTest {
     public void canEvaluate() {
         GeneHasSpecificMutation function = new GeneHasSpecificMutation("gene 1", "mutation 1");
 
-        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withGeneMutation("gene 1", "mutation 2")));
-        assertEquals(Evaluation.FAIL, function.evaluate(MolecularTestFactory.withGeneMutation("gene 2", "mutation 1")));
-        assertEquals(Evaluation.PASS, function.evaluate(MolecularTestFactory.withGeneMutation("gene 1", "mutation 1")));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withGeneMutation("gene 1", "mutation 2")));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withGeneMutation("gene 2", "mutation 1")));
+        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withGeneMutation("gene 1", "mutation 1")));
     }
 }

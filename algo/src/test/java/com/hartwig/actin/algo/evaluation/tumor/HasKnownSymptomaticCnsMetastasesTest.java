@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +16,9 @@ public class HasKnownSymptomaticCnsMetastasesTest {
     public void canEvaluate() {
         HasKnownSymptomaticCnsMetastases function = new HasKnownSymptomaticCnsMetastases();
 
-        assertEquals(Evaluation.PASS, function.evaluate(patientWithSymptomaticCnsLesions(true)));
-        assertEquals(Evaluation.FAIL, function.evaluate(patientWithSymptomaticCnsLesions(false)));
-        assertEquals(Evaluation.FAIL, function.evaluate(patientWithSymptomaticCnsLesions(null)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithSymptomaticCnsLesions(true)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithSymptomaticCnsLesions(false)));
+        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithSymptomaticCnsLesions(null)));
     }
 
     @NotNull

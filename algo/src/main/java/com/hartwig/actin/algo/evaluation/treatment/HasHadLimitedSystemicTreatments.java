@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
@@ -20,10 +20,10 @@ public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         List<PriorTumorTreatment> systemicOnly = systemicOnly(record.clinical().priorTumorTreatments());
 
-        return systemicOnly.size() <= maxSystemicTreatments ? Evaluation.PASS : Evaluation.FAIL;
+        return systemicOnly.size() <= maxSystemicTreatments ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 
     @NotNull

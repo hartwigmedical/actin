@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -23,7 +23,7 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         boolean hasHadDrugCategory = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
@@ -33,7 +33,7 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
             }
         }
 
-        return hasHadDrugCategory ? Evaluation.PASS : Evaluation.FAIL;
+        return hasHadDrugCategory ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 
     private static boolean isOfType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category,

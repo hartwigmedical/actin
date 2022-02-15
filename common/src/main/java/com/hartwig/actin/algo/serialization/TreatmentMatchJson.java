@@ -4,6 +4,7 @@ import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
+import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,7 +30,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
@@ -117,7 +120,7 @@ public final class TreatmentMatchJson {
         private static TrialEligibility toTrialEligibility(@NotNull JsonObject object) {
             return ImmutableTrialEligibility.builder()
                     .identification(toIdentification(object(object, "identification")))
-                    .overallEvaluation(Evaluation.valueOf(string(object, "overallEvaluation")))
+                    .overallEvaluation(EvaluationResult.valueOf(string(object, "overallEvaluation")))
                     .evaluations(toEvaluations(object.get("evaluations")))
                     .cohorts(toCohorts(array(object, "cohorts")))
                     .build();
@@ -140,7 +143,7 @@ public final class TreatmentMatchJson {
 
                 cohortEligibilities.add(ImmutableCohortEligibility.builder()
                         .metadata(toMetadata(object(cohort, "metadata")))
-                        .overallEvaluation(Evaluation.valueOf(string(cohort, "overallEvaluation")))
+                        .overallEvaluation(EvaluationResult.valueOf(string(cohort, "overallEvaluation")))
                         .evaluations(toEvaluations(cohort.get("evaluations")))
                         .build());
             }
@@ -163,7 +166,7 @@ public final class TreatmentMatchJson {
             if (evaluations.isJsonArray()) {
                 for (JsonElement element : evaluations.getAsJsonArray()) {
                     JsonArray array = element.getAsJsonArray();
-                    map.put(toEligibility(array.get(0).getAsJsonObject()), Evaluation.valueOf(array.get(1).getAsString()));
+                    map.put(toEligibility(array.get(0).getAsJsonObject()), toEvaluation(array.get(1).getAsJsonObject()));
                 }
             }
             return map;
@@ -174,6 +177,14 @@ public final class TreatmentMatchJson {
             return ImmutableEligibility.builder()
                     .references(toReferences(array(eligibility, "references")))
                     .function(toEligibilityFunction(object(eligibility, "function")))
+                    .build();
+        }
+
+        @NotNull
+        private static Evaluation toEvaluation(@NotNull JsonObject evaluation) {
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.valueOf(string(evaluation, "result")))
+                    .messages(stringList(evaluation, "messages"))
                     .build();
         }
 

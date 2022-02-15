@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.smoking;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -18,7 +18,7 @@ public final class SmokingRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_SMOKED_WITHIN_X_MONTHS, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_SMOKED_WITHIN_X_MONTHS, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
 
         return map;
     }

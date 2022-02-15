@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +18,12 @@ public class HasSufficientLVEF implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         Double lvef = record.clinical().clinicalStatus().lvef();
         if (lvef == null) {
-            return passIfUnknown ? Evaluation.PASS : Evaluation.UNDETERMINED;
+            return passIfUnknown ? EvaluationResult.PASS : EvaluationResult.UNDETERMINED;
         }
 
-        return Double.compare(lvef, minLVEF) >= 0 ? Evaluation.PASS : Evaluation.FAIL;
+        return Double.compare(lvef, minLVEF) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 }

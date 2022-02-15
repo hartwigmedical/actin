@@ -3,9 +3,8 @@ package com.hartwig.actin.algo.evaluation;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapping;
@@ -16,11 +15,12 @@ import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapping;
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapping;
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapping;
 import com.hartwig.actin.algo.evaluation.pregnancy.PregnancyRuleMapping;
-import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapping;
 import com.hartwig.actin.algo.evaluation.smoking.SmokingRuleMapping;
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapping;
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapping;
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapping;
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapping;
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapping;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,10 @@ final class FunctionCreatorFactory {
     public static Map<EligibilityRule, FunctionCreator> createFunctionCreatorMap(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.WARN_ALWAYS, function -> record -> Evaluation.PASS_BUT_WARN);
+        map.put(EligibilityRule.WARN_ALWAYS, function -> record -> EvaluationResult.PASS_BUT_WARN);
+
+        //        map.put(EligibilityRule.WARN_ALWAYS,
+        //                function -> record -> ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN).build());
 
         map.putAll(GeneralRuleMapping.create());
         map.putAll(TumorRuleMapping.create(doidModel));

@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -26,20 +26,20 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
-        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_DRUG_NAME_X_TREATMENT, hasHadTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, hasHadTreatmentCategoryOfTypeCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_LEAST_Z_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_LEAST_Z_LINES, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, function -> record -> Evaluation.NOT_IMPLEMENTED);
-        map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, function -> record -> Evaluation.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
+        map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, function -> record -> EvaluationResult.NOT_IMPLEMENTED);
         map.put(EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES, hasHadLimitedAntiPDL1OrPD1ImmunotherapiesCreator());
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
 

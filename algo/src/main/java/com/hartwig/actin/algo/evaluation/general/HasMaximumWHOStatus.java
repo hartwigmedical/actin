@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.general;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +16,12 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         Integer who = record.clinical().clinicalStatus().who();
         if (who == null) {
-            return Evaluation.UNDETERMINED;
+            return EvaluationResult.UNDETERMINED;
         }
 
-        return who <= maximumWHO ? Evaluation.PASS : Evaluation.FAIL;
+        return who <= maximumWHO ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 }

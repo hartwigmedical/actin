@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
@@ -14,12 +14,12 @@ public class SecondMalignanciesHaveBeenCuredRecently implements EvaluationFuncti
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
             if (priorSecondPrimary.isActive()) {
-                return Evaluation.FAIL;
+                return EvaluationResult.FAIL;
             }
         }
-        return Evaluation.PASS;
+        return EvaluationResult.PASS;
     }
 }

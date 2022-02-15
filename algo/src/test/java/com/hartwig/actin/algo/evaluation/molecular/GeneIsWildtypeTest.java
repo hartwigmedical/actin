@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ public class GeneIsWildtypeTest {
     public void canEvaluate() {
         GeneIsWildtype function = new GeneIsWildtype("gene 1");
 
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         //        assertEquals(Evaluation.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
         //

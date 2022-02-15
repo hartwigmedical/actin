@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 
@@ -32,7 +32,7 @@ public class CohortEligibilityComparatorTest {
     private static CohortEligibility withId(@NotNull String id) {
         return ImmutableCohortEligibility.builder()
                 .metadata(ImmutableCohortMetadata.builder().cohortId(id).open(true).blacklist(false).description(Strings.EMPTY).build())
-                .overallEvaluation(Evaluation.PASS)
+                .overallEvaluation(EvaluationResult.PASS)
                 .build();
     }
 

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ECG;
 
@@ -14,12 +14,12 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public EvaluationResult evaluate(@NotNull PatientRecord record) {
         ECG ecg = record.clinical().clinicalStatus().ecg();
         if (ecg == null) {
-            return Evaluation.FAIL;
+            return EvaluationResult.FAIL;
         }
 
-        return ecg.hasSigAberrationLatestECG() ? Evaluation.PASS : Evaluation.FAIL;
+        return ecg.hasSigAberrationLatestECG() ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 }

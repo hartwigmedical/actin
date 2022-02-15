@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory;
 
@@ -18,47 +18,47 @@ public class OrTest {
 
     @Test
     public void canCombineEvaluations() {
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.notEvaluated()));
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.notImplemented()));
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.undetermined()));
-        assertEquals(Evaluation.PASS, combinedWithPass(TestEvaluationFunctionFactory.fail()));
+        assertEquals(EvaluationResult.PASS, combinedWithPass(TestEvaluationFunctionFactory.pass()));
+        assertEquals(EvaluationResult.PASS, combinedWithPass(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(EvaluationResult.PASS, combinedWithPass(TestEvaluationFunctionFactory.notEvaluated()));
+        assertEquals(EvaluationResult.PASS, combinedWithPass(TestEvaluationFunctionFactory.notImplemented()));
+        assertEquals(EvaluationResult.PASS, combinedWithPass(TestEvaluationFunctionFactory.undetermined()));
+        assertEquals(EvaluationResult.PASS, combinedWithPass(TestEvaluationFunctionFactory.fail()));
 
-        assertEquals(Evaluation.PASS, combinedWithPassButWarn(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.notEvaluated()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.notImplemented()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.undetermined()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.fail()));
+        assertEquals(EvaluationResult.PASS, combinedWithPassButWarn(TestEvaluationFunctionFactory.pass()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.notEvaluated()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.notImplemented()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.undetermined()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithPassButWarn(TestEvaluationFunctionFactory.fail()));
 
-        assertEquals(Evaluation.PASS, combinedWithNotEvaluated(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithNotEvaluated(TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.notEvaluated()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.notImplemented()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.undetermined()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.fail()));
+        assertEquals(EvaluationResult.PASS, combinedWithNotEvaluated(TestEvaluationFunctionFactory.pass()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithNotEvaluated(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.notEvaluated()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.notImplemented()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.undetermined()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithNotEvaluated(TestEvaluationFunctionFactory.fail()));
 
-        assertEquals(Evaluation.PASS, combinedWithNotImplemented(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithNotImplemented(TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithNotImplemented(TestEvaluationFunctionFactory.notEvaluated()));
-        assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.notImplemented()));
-        assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.undetermined()));
-        assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.fail()));
+        assertEquals(EvaluationResult.PASS, combinedWithNotImplemented(TestEvaluationFunctionFactory.pass()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithNotImplemented(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithNotImplemented(TestEvaluationFunctionFactory.notEvaluated()));
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.notImplemented()));
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.undetermined()));
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED, combinedWithNotImplemented(TestEvaluationFunctionFactory.fail()));
 
-        assertEquals(Evaluation.PASS, combinedWithUndetermined(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithUndetermined(TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithUndetermined(TestEvaluationFunctionFactory.notEvaluated()));
-        assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithUndetermined(TestEvaluationFunctionFactory.notImplemented()));
-        assertEquals(Evaluation.UNDETERMINED, combinedWithUndetermined(TestEvaluationFunctionFactory.undetermined()));
-        assertEquals(Evaluation.UNDETERMINED, combinedWithUndetermined(TestEvaluationFunctionFactory.fail()));
+        assertEquals(EvaluationResult.PASS, combinedWithUndetermined(TestEvaluationFunctionFactory.pass()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithUndetermined(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithUndetermined(TestEvaluationFunctionFactory.notEvaluated()));
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED, combinedWithUndetermined(TestEvaluationFunctionFactory.notImplemented()));
+        assertEquals(EvaluationResult.UNDETERMINED, combinedWithUndetermined(TestEvaluationFunctionFactory.undetermined()));
+        assertEquals(EvaluationResult.UNDETERMINED, combinedWithUndetermined(TestEvaluationFunctionFactory.fail()));
 
-        assertEquals(Evaluation.PASS, combinedWithFail(TestEvaluationFunctionFactory.pass()));
-        assertEquals(Evaluation.PASS_BUT_WARN, combinedWithFail(TestEvaluationFunctionFactory.passButWarn()));
-        assertEquals(Evaluation.NOT_EVALUATED, combinedWithFail(TestEvaluationFunctionFactory.notEvaluated()));
-        assertEquals(Evaluation.NOT_IMPLEMENTED, combinedWithFail(TestEvaluationFunctionFactory.notImplemented()));
-        assertEquals(Evaluation.UNDETERMINED, combinedWithFail(TestEvaluationFunctionFactory.undetermined()));
-        assertEquals(Evaluation.FAIL, combinedWithFail(TestEvaluationFunctionFactory.fail()));
+        assertEquals(EvaluationResult.PASS, combinedWithFail(TestEvaluationFunctionFactory.pass()));
+        assertEquals(EvaluationResult.PASS_BUT_WARN, combinedWithFail(TestEvaluationFunctionFactory.passButWarn()));
+        assertEquals(EvaluationResult.NOT_EVALUATED, combinedWithFail(TestEvaluationFunctionFactory.notEvaluated()));
+        assertEquals(EvaluationResult.NOT_IMPLEMENTED, combinedWithFail(TestEvaluationFunctionFactory.notImplemented()));
+        assertEquals(EvaluationResult.UNDETERMINED, combinedWithFail(TestEvaluationFunctionFactory.undetermined()));
+        assertEquals(EvaluationResult.FAIL, combinedWithFail(TestEvaluationFunctionFactory.fail()));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -67,37 +67,37 @@ public class OrTest {
     }
 
     @NotNull
-    private static Evaluation combinedWithPass(@NotNull EvaluationFunction function) {
+    private static EvaluationResult combinedWithPass(@NotNull EvaluationFunction function) {
         return evaluate(TestEvaluationFunctionFactory.pass(), function);
     }
 
     @NotNull
-    private static Evaluation combinedWithPassButWarn(@NotNull EvaluationFunction function) {
+    private static EvaluationResult combinedWithPassButWarn(@NotNull EvaluationFunction function) {
         return evaluate(TestEvaluationFunctionFactory.passButWarn(), function);
     }
 
     @NotNull
-    private static Evaluation combinedWithFail(@NotNull EvaluationFunction function) {
+    private static EvaluationResult combinedWithFail(@NotNull EvaluationFunction function) {
         return evaluate(TestEvaluationFunctionFactory.fail(), function);
     }
 
     @NotNull
-    private static Evaluation combinedWithUndetermined(@NotNull EvaluationFunction function) {
+    private static EvaluationResult combinedWithUndetermined(@NotNull EvaluationFunction function) {
         return evaluate(TestEvaluationFunctionFactory.undetermined(), function);
     }
 
     @NotNull
-    private static Evaluation combinedWithNotEvaluated(@NotNull EvaluationFunction function) {
+    private static EvaluationResult combinedWithNotEvaluated(@NotNull EvaluationFunction function) {
         return evaluate(TestEvaluationFunctionFactory.notEvaluated(), function);
     }
 
     @NotNull
-    private static Evaluation combinedWithNotImplemented(@NotNull EvaluationFunction function) {
+    private static EvaluationResult combinedWithNotImplemented(@NotNull EvaluationFunction function) {
         return evaluate(TestEvaluationFunctionFactory.notImplemented(), function);
     }
 
     @NotNull
-    private static Evaluation evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
+    private static EvaluationResult evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
         return new Or(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);
     }
 }

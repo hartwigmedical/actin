@@ -8,7 +8,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
@@ -23,24 +23,24 @@ public class LabMeasurementEvaluatorTest {
     @Test
     public void canEvaluate() {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
-        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> Evaluation.PASS, ALWAYS_VALID_DATE);
+        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> EvaluationResult.PASS, ALWAYS_VALID_DATE);
 
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         LabValue labValue = LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build();
-        assertEquals(Evaluation.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)));
+        assertEquals(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)));
     }
 
     @Test
     public void canIgnoreOldDatesAndInvalidUnits() {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
-        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> Evaluation.PASS, TEST_DATE);
+        LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement, (x, y) -> EvaluationResult.PASS, TEST_DATE);
 
         LabValue wrongUnit = LabTestFactory.builder().code(measurement.code()).date(TEST_DATE).build();
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)));
 
         LabValue oldDate = LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build();
-        assertEquals(Evaluation.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)));
+        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)));
     }
 
     @Test
@@ -53,23 +53,23 @@ public class LabMeasurementEvaluatorTest {
         PatientRecord record = LabTestFactory.withLabValues(values);
 
         LabMeasurementEvaluator functionPass =
-                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.PASS), ALWAYS_VALID_DATE);
-        assertEquals(Evaluation.UNDETERMINED, functionPass.evaluate(record));
+                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(EvaluationResult.PASS), ALWAYS_VALID_DATE);
+        assertEquals(EvaluationResult.UNDETERMINED, functionPass.evaluate(record));
 
         LabMeasurementEvaluator functionFail =
-                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.FAIL), ALWAYS_VALID_DATE);
-        assertEquals(Evaluation.FAIL, functionFail.evaluate(record));
+                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(EvaluationResult.FAIL), ALWAYS_VALID_DATE);
+        assertEquals(EvaluationResult.FAIL, functionFail.evaluate(record));
 
         LabMeasurementEvaluator functionUndetermined =
-                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(Evaluation.UNDETERMINED), ALWAYS_VALID_DATE);
-        assertEquals(Evaluation.FAIL, functionUndetermined.evaluate(record));
+                new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(EvaluationResult.UNDETERMINED), ALWAYS_VALID_DATE);
+        assertEquals(EvaluationResult.FAIL, functionUndetermined.evaluate(record));
     }
 
     @NotNull
-    private static LabEvaluationFunction firstFailAndRestWithParam(@NotNull Evaluation defaultEvaluation) {
+    private static LabEvaluationFunction firstFailAndRestWithParam(@NotNull EvaluationResult defaultEvaluation) {
         return (record, labValue) -> {
             if (labValue.date().equals(TEST_DATE)) {
-                return Evaluation.FAIL;
+                return EvaluationResult.FAIL;
             } else {
                 return defaultEvaluation;
             }
