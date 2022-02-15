@@ -205,7 +205,7 @@ public final class TestCurationFactory {
     private static List<CancerRelatedComplicationConfig> createTestCancerRelatedComplicationConfigs() {
         List<CancerRelatedComplicationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableCancerRelatedComplicationConfig.builder().input("term").name("curated").build());
+        configs.add(ImmutableCancerRelatedComplicationConfig.builder().input("Term").name("Curated").build());
 
         return configs;
     }

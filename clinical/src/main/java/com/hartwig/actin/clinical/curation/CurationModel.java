@@ -258,9 +258,10 @@ public class CurationModel {
 
         List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
         for (String input : inputs) {
-            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), input);
+            String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
+            CancerRelatedComplicationConfig config = find(database.cancerRelatedComplicationConfigs(), reformatted);
             cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder()
-                    .name(config != null ? config.name() : CurationUtil.capitalizeFirstLetterOnly(input))
+                    .name(config != null ? config.name() : reformatted)
                     .build());
         }
 
