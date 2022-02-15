@@ -22,12 +22,12 @@ public enum EvaluationResult {
                 return this == FAIL;
             } case NOT_IMPLEMENTED: {
                 return this == FAIL || this == UNDETERMINED;
-            } case PASS_BUT_WARN: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED;
-            } case PASS: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == PASS_BUT_WARN;
             } case NOT_EVALUATED: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == PASS_BUT_WARN || this == PASS;
+                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED;
+            } case PASS_BUT_WARN: {
+                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED;
+            } case PASS: {
+                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED || this == PASS_BUT_WARN;
             } default: {
                 throw new IllegalStateException("Cannot compare evaluation result with " + otherResult);
             }

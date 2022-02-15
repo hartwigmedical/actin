@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.composite;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,19 +22,25 @@ public class WarnOnPass implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Evaluation evaluation = function.evaluate(record);
 
+        EvaluationResult updatedResult;
         switch (evaluation.result()) {
             case PASS:
             case PASS_BUT_WARN:
-                return EvaluationFactory.create(EvaluationResult.PASS_BUT_WARN);
+                updatedResult = EvaluationResult.PASS_BUT_WARN;
+                break;
             case FAIL:
-                return EvaluationFactory.create(EvaluationResult.PASS);
+                updatedResult = EvaluationResult.PASS;
+                break;
             case NOT_IMPLEMENTED:
             case UNDETERMINED:
             case NOT_EVALUATED:
-                return evaluation;
+                updatedResult = evaluation.result();
+                break;
             default: {
                 throw new IllegalStateException("Could not determine output for WarnOnPass for evaluation result: " + evaluation.result());
             }
         }
+
+        return ImmutableEvaluation.builder().result(updatedResult).messages(evaluation.messages()).build();
     }
 }

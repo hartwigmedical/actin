@@ -12,6 +12,7 @@ public class EvaluationResultTest {
         assertTrue(EvaluationResult.PASS.isPass());
         assertTrue(EvaluationResult.PASS_BUT_WARN.isPass());
         assertTrue(EvaluationResult.NOT_EVALUATED.isPass());
+
         assertFalse(EvaluationResult.FAIL.isPass());
         assertFalse(EvaluationResult.UNDETERMINED.isPass());
         assertFalse(EvaluationResult.NOT_IMPLEMENTED.isPass());
