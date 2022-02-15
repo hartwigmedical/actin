@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasBiopsyAmenableLesion implements EvaluationFunction {
 
+    HasBiopsyAmenableLesion() {
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
