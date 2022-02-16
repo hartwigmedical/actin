@@ -296,7 +296,7 @@ CREATE TABLE molecularEvidence
     sampleId varchar(50) NOT NULL,
     type varchar(50) NOT NULL,
     event varchar(50) NOT NULL,
-    treatment varchar(50) NOT NULL,
+    treatment varchar(500) NOT NULL,
     isResponsive BOOLEAN NOT NULL,
     source varchar(50) NOT NULL,
     PRIMARY KEY (id)
