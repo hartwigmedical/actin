@@ -1,7 +1,12 @@
 package com.hartwig.actin.report.pdf.tables;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -66,41 +71,55 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
+        return priorTumorTreatmentString(record.priorTumorTreatments(), true);
+    }
+
+    @NotNull
+    private static String relevantNonSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
+        return priorTumorTreatmentString(record.priorTumorTreatments(), false);
+    }
+
+    @NotNull
+    private static String priorTumorTreatmentString(@NotNull List<PriorTumorTreatment> priorTumorTreatments, boolean requireSystemic) {
         StringJoiner joiner = Formats.commaJoiner();
-        for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
-            if (priorTumorTreatment.isSystemic()) {
-                joiner.add(toTreatmentString(priorTumorTreatment));
+        Map<String, Set<String>> treatmentMap = treatmentDatesByName(priorTumorTreatments, requireSystemic);
+        for (Map.Entry<String, Set<String>> treatmentEntry : treatmentMap.entrySet()) {
+            StringJoiner dateJoiner = Formats.commaJoiner();
+            for (String date : treatmentEntry.getValue()) {
+                dateJoiner.add(date);
             }
+            String dateAddition = dateJoiner.toString();
+            String treatment = treatmentEntry.getKey() + (!dateAddition.isEmpty() ? " (" + dateAddition + ")" : "");
+
+            joiner.add(treatment);
         }
         return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
-    private static String relevantNonSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.commaJoiner();
-        for (PriorTumorTreatment priorTumorTreatment : record.priorTumorTreatments()) {
-            if (!priorTumorTreatment.isSystemic()) {
-                joiner.add(toTreatmentString(priorTumorTreatment));
+    private static Map<String, Set<String>> treatmentDatesByName(@NotNull List<PriorTumorTreatment> priorTumorTreatments,
+            boolean requireSystemic) {
+        Map<String, Set<String>> treatmentsByName = Maps.newHashMap();
+        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
+            if (priorTumorTreatment.isSystemic() == requireSystemic) {
+                String treatmentName = !priorTumorTreatment.name().isEmpty()
+                        ? priorTumorTreatment.name()
+                        : TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories());
+
+                Set<String> dateStrings = treatmentsByName.get(treatmentName);
+                if (dateStrings == null) {
+                    dateStrings = Sets.newTreeSet();
+                }
+
+                String date = toDateString(priorTumorTreatment.year(), priorTumorTreatment.month());
+                if (date != null) {
+                    dateStrings.add(date);
+                }
+
+                treatmentsByName.put(treatmentName, dateStrings);
             }
         }
-
-        return joiner.toString();
-    }
-
-    @NotNull
-    private static String toTreatmentString(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        String date = toDateString(priorTumorTreatment.year(), priorTumorTreatment.month());
-
-        String dateAddition = Strings.EMPTY;
-        if (date != null) {
-            dateAddition = " (" + date + ")";
-        }
-
-        String treatmentName = !priorTumorTreatment.name().isEmpty()
-                ? priorTumorTreatment.name()
-                : TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories());
-
-        return treatmentName + dateAddition;
+        return treatmentsByName;
     }
 
     @NotNull
