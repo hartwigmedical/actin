@@ -35,6 +35,7 @@ public enum LabMeasurement {
     CORRECTED_CALCIUM("Ca_C", "mmol/L"),
     NT_PRO_BNP("BNP", "pmol/l"),
     TROPONIN_IT("HSTNT", "ng/L"),
+    TRIGLYCERIDE("TG", "mmol/l"),
     POTASSIUM("K", "mmol/l"),
     MAGNESIUM("MG", "mmol/l"),
     PHOSPHORUS("P", "mmol/l"),

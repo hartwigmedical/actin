@@ -38,6 +38,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
+        map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMriVolumeAmenableLesionCreator());
         map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
@@ -118,6 +119,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasInjectionAmenableLesionCreator() {
         return function -> new HasInjectionAmenableLesion();
+    }
+
+    @NotNull
+    private static FunctionCreator hasMriVolumeAmenableLesionCreator() {
+        return function -> new HasMriVolumeAmenableLesion();
     }
 
     @NotNull
