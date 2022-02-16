@@ -135,6 +135,7 @@ HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_LEAST_Z_LINES | categories contai
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines <= Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T (since these have a corresponding type in model)
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
+HAS_HAD_TYROSINE_KINASE_TREATMENT |  Prior tumor treatments > category = 'Targeted therapy' & T.B.D.
 HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT | T.B.D
 HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
