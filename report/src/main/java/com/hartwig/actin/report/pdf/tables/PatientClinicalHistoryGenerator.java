@@ -1,27 +1,31 @@
 package com.hartwig.actin.report.pdf.tables;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PatientClinicalHistoryGenerator implements TableGenerator {
+
+    private static final Logger LOGGER = LogManager.getLogger(PatientClinicalHistoryGenerator.class);
 
     @NotNull
     private final ClinicalRecord record;
@@ -81,45 +85,54 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String priorTumorTreatmentString(@NotNull List<PriorTumorTreatment> priorTumorTreatments, boolean requireSystemic) {
-        StringJoiner joiner = Formats.commaJoiner();
-        Map<String, Set<String>> treatmentMap = treatmentDatesByName(priorTumorTreatments, requireSystemic);
-        for (Map.Entry<String, Set<String>> treatmentEntry : treatmentMap.entrySet()) {
-            StringJoiner dateJoiner = Formats.commaJoiner();
-            for (String date : treatmentEntry.getValue()) {
-                dateJoiner.add(date);
+        List<PriorTumorTreatment> filtered = Lists.newArrayList();
+        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
+            if (priorTumorTreatment.isSystemic() == requireSystemic) {
+                filtered.add(priorTumorTreatment);
             }
-            String dateAddition = dateJoiner.toString();
-            String treatment = treatmentEntry.getKey() + (!dateAddition.isEmpty() ? " (" + dateAddition + ")" : "");
+        }
+        filtered.sort(new PriorTumorTreatmentDescendingDateComparator());
 
-            joiner.add(treatment);
+        StringJoiner joiner = Formats.commaJoiner();
+        Set<String> evaluatedNames = Sets.newHashSet();
+        for (PriorTumorTreatment priorTumorTreatment : filtered) {
+            String treatmentName = treatmentName(priorTumorTreatment);
+            if (!evaluatedNames.contains(treatmentName)) {
+                StringJoiner dateJoiner = Formats.commaJoiner();
+                for (String date : extractDatesForTreatmentName(filtered, treatmentName)) {
+                    dateJoiner.add(date);
+                }
+                String dateAddition = dateJoiner.toString();
+                String treatment = treatmentName + (!dateAddition.isEmpty() ? " (" + dateAddition + ")" : "");
+
+                joiner.add(treatment);
+            }
+            evaluatedNames.add(treatmentName);
         }
         return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
-    private static Map<String, Set<String>> treatmentDatesByName(@NotNull List<PriorTumorTreatment> priorTumorTreatments,
-            boolean requireSystemic) {
-        Map<String, Set<String>> treatmentsByName = Maps.newHashMap();
+    private static Set<String> extractDatesForTreatmentName(@NotNull List<PriorTumorTreatment> priorTumorTreatments,
+            @NotNull String treatmentNameToInclude) {
+        Set<String> dates = Sets.newTreeSet();
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            if (priorTumorTreatment.isSystemic() == requireSystemic) {
-                String treatmentName = !priorTumorTreatment.name().isEmpty()
-                        ? priorTumorTreatment.name()
-                        : TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories());
-
-                Set<String> dateStrings = treatmentsByName.get(treatmentName);
-                if (dateStrings == null) {
-                    dateStrings = Sets.newTreeSet();
-                }
-
+            String treatmentName = treatmentName(priorTumorTreatment);
+            if (treatmentName.equals(treatmentNameToInclude)) {
                 String date = toDateString(priorTumorTreatment.year(), priorTumorTreatment.month());
                 if (date != null) {
-                    dateStrings.add(date);
+                    dates.add(date);
                 }
-
-                treatmentsByName.put(treatmentName, dateStrings);
             }
         }
-        return treatmentsByName;
+        return dates;
+    }
+
+    @NotNull
+    private static String treatmentName(@NotNull PriorTumorTreatment priorTumorTreatment) {
+        return !priorTumorTreatment.name().isEmpty()
+                ? priorTumorTreatment.name()
+                : TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories());
     }
 
     @NotNull
