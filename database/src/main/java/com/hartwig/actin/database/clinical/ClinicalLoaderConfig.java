@@ -1,5 +1,6 @@
-package com.hartwig.actin.database;
+package com.hartwig.actin.database.clinical;
 
+import com.hartwig.actin.database.DatabaseLoaderConfig;
 import com.hartwig.actin.util.ApplicationConfig;
 
 import org.apache.commons.cli.CommandLine;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface ClinicalLoaderConfig {
+public interface ClinicalLoaderConfig extends DatabaseLoaderConfig {
 
     Logger LOGGER = LogManager.getLogger(ClinicalLoaderConfig.class);
 
@@ -46,12 +47,15 @@ public interface ClinicalLoaderConfig {
     String clinicalDirectory();
 
     @NotNull
+    @Override
     String dbUser();
 
     @NotNull
+    @Override
     String dbPass();
 
     @NotNull
+    @Override
     String dbUrl();
 
     @NotNull

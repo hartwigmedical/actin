@@ -1,4 +1,4 @@
-package com.hartwig.actin.database;
+package com.hartwig.actin.database.clinical;
 
 import java.io.IOException;
 import java.sql.SQLException;

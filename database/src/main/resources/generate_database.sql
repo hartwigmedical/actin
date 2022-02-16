@@ -4,6 +4,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS otherComplication;
 DROP TABLE IF EXISTS molecularTest;
 
+
+
+-- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
 (   id int NOT NULL AUTO_INCREMENT,
@@ -216,6 +219,86 @@ CREATE TABLE medication
     startDate DATE,
     stopDate DATE,
     active BOOLEAN,
+    PRIMARY KEY (id)
+);
+
+
+
+-- MOLECULAR
+DROP TABLE IF EXISTS molecular;
+CREATE TABLE molecular
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) UNIQUE,
+    experimentType varchar(50) NOT NULL,
+    experimentDate DATE,
+    hasReliableQuality BOOLEAN NOT NULL,
+    isMicrosatelliteUnstable BOOLEAN,
+    isHomologousRepairDeficient BOOLEAN,
+    tumorMutationalBurden double precision,
+    tumorMutationalLoad int,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS mutation;
+CREATE TABLE mutation
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    mutation varchar(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS activatedGene;
+CREATE TABLE activatedGene
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS inactivatedGene;
+CREATE TABLE inactivatedGene
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    hasBeenDeleted BOOLEAN NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS amplifiedGene;
+CREATE TABLE amplifiedGene
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS wildtypeGene;
+CREATE TABLE wildtypeGene
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS fusionGene;
+CREATE TABLE fusionGene
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    fiveGene varchar(50) NOT NULL,
+    threeGene varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS molecularEvidence;
+CREATE TABLE molecularEvidence
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    type varchar(50) NOT NULL,
+    event varchar(50) NOT NULL,
+    treatment varchar(50) NOT NULL,
+    isResponsive BOOLEAN NOT NULL,
+    source varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 

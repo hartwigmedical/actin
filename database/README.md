@@ -6,11 +6,21 @@ Before this application can be used, a schema has to be set up on a mysql server
 schema defined in [generate_database.sql](src/main/resources/generate_database.sql). See [readme](src/main/resources/readme) for help on 
 additional steps and what is required to be able to compile this module.
 
-Currently this module can only load up the clinical output from [ACTIN-Clinical](../clinical/README.md) as follows:
+### Clinical Data Loader
+The clinical data loader loads up clinical data from [ACTIN-Clinical](../clinical/README.md) as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.database.ClinicalLoaderApplication \
+java -cp actin.jar com.hartwig.actin.database.clinical.ClinicalLoaderApplication \
     -clinical_directory /path/to/clinical_json_files \
+    -db_user user -db_pass pass -db_url url
+```
+
+### Molecular Data Loader
+The molecular data loader loads up molecular data from [ACTIN-Molecular](../molecular/README.md) as follows:
+
+```
+java -cp actin.jar com.hartwig.actin.database.molecular.MolecularLoaderApplication \
+    -molecular_json /path/to/molecular_json \
     -db_user user -db_pass pass -db_url url
 ```
 

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +27,8 @@ public class DatabaseAccess {
 
     @NotNull
     private final ClinicalDAO clinicalDAO;
+    @NotNull
+    private final MolecularDAO molecularDAO;
 
     @NotNull
     public static DatabaseAccess fromCredentials(@NotNull String user, @NotNull String pass, @NotNull String url) throws SQLException {
@@ -40,7 +43,7 @@ public class DatabaseAccess {
         LOGGER.info("Connecting to database '{}'", catalog);
 
         DSLContext context = DSL.using(conn, SQLDialect.MYSQL, settings(catalog));
-        return new DatabaseAccess(new ClinicalDAO(context));
+        return new DatabaseAccess(new ClinicalDAO(context), new MolecularDAO(context));
     }
 
     @Nullable
@@ -51,16 +54,25 @@ public class DatabaseAccess {
                 : null;
     }
 
-    private DatabaseAccess(@NotNull final ClinicalDAO clinicalDAO) {
+    private DatabaseAccess(@NotNull final ClinicalDAO clinicalDAO, @NotNull final MolecularDAO molecularDAO) {
         this.clinicalDAO = clinicalDAO;
+        this.molecularDAO = molecularDAO;
     }
 
     public void writeClinicalRecords(@NotNull List<ClinicalRecord> records) {
-        LOGGER.info(" Clearing all data");
+        LOGGER.info(" Clearing all clinical data");
         clinicalDAO.clear();
         for (ClinicalRecord record : records) {
             LOGGER.info(" Writing clinical data for {}", record.sampleId());
             clinicalDAO.writeClinicalRecord(record);
         }
+    }
+
+    public void writeMolecularRecord(@NotNull MolecularRecord record) {
+        LOGGER.info(" Clearing molecular data for {}", record.sampleId());
+        molecularDAO.clear(record);
+
+        LOGGER.info(" Writing molecular data for {}", record.sampleId());
+        molecularDAO.writeMolecularRecord(record);
     }
 }
