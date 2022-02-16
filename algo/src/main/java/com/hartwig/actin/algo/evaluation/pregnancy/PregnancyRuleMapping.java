@@ -19,7 +19,7 @@ public final class PregnancyRuleMapping {
 
         map.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
         map.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
-        map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION_IF_REQUIRED, canUseAdequateAnticonceptionCreator());
+        map.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, canUseAdequateAnticonceptionCreator());
 
         return map;
     }

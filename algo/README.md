@@ -307,7 +307,7 @@ CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other"
 CURRENTLY_GETS_NSAIDS_MEDICATION | Medication > categories contains type of "NSAIDs"
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
-CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
+CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
 CURRENTLY_GETS_COLONY_STIMULATING_FACTORS | Medication > categories contains type of "Colony stimulating factors" and status is active
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D. - Currently resolves to UNDETERMINED | P-glycoprotein
@@ -322,7 +322,7 @@ Rule | When does a patient pass evaluation?
 ---|---
 IS_BREASTFEEDING | > won't be evaluated
 IS_PREGNANT | > won't be evaluated
-IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ ANTICONCEPTION_IF_REQUIRED | > won't be evaluated
+USES_ADEQUATE_ANTICONCEPTION | > won't be evaluated
 
 ##### Rules related to cancer related complication
 

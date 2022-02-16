@@ -221,7 +221,7 @@ public enum EligibilityRule {
     // Rules related to pregnancy/anticonception
     IS_BREASTFEEDING,
     IS_PREGNANT,
-    IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION_IF_REQUIRED,
+    USES_ADEQUATE_ANTICONCEPTION,
 
     // Rules related to complications
     HAS_COMPLICATION_X,

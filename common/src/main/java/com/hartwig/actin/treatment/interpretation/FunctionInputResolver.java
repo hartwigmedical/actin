@@ -249,7 +249,7 @@ public final class FunctionInputResolver {
 
         RULE_INPUT_MAP.put(EligibilityRule.IS_BREASTFEEDING, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_PREGNANT, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_USE_ADEQUATE_ANTICONCEPTION_IF_REQUIRED, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_X, FunctionInput.ONE_STRING);
 
