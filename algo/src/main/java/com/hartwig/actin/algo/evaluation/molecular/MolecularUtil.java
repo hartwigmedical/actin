@@ -14,7 +14,9 @@ final class MolecularUtil {
 
     @NotNull
     public static Evaluation noMatchFound(@NotNull MolecularRecord molecular) {
-        EvaluationResult result = molecular.hasReliableQuality() ? EvaluationResult.FAIL : EvaluationResult.UNDETERMINED;
+//        EvaluationResult result = molecular.hasReliableQuality() ? EvaluationResult.FAIL : EvaluationResult.UNDETERMINED;
+
+        EvaluationResult result = EvaluationResult.FAIL;
         return EvaluationFactory.create(result);
     }
 }

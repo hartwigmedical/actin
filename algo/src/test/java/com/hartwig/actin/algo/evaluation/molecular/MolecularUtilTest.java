@@ -14,7 +14,7 @@ public class MolecularUtilTest {
 
     @Test
     public void canEvaluateNoMatch() {
-        assertEquals(EvaluationResult.UNDETERMINED, MolecularUtil.noMatchFound(fail()).result());
+        assertEquals(EvaluationResult.FAIL, MolecularUtil.noMatchFound(fail()).result());
         assertEquals(EvaluationResult.FAIL, MolecularUtil.noMatchFound(pass()).result());
     }
 
