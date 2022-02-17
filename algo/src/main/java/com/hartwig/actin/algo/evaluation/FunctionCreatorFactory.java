@@ -35,9 +35,6 @@ final class FunctionCreatorFactory {
     public static Map<EligibilityRule, FunctionCreator> createFunctionCreatorMap(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.WARN_ALWAYS,
-                function -> record -> ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN).build());
-
         map.putAll(GeneralRuleMapping.create());
         map.putAll(TumorRuleMapping.create(doidModel));
         map.putAll(TreatmentRuleMapping.create(doidModel));

@@ -57,6 +57,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
         map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
+        map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
 
         return map;
@@ -93,6 +94,11 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator isInDialysisCreator() {
         return function -> new IsInDialysis();
+    }
+
+    @NotNull
+    private static FunctionCreator hasAdequateVeinAccessCreator()  {
+        return function -> new HasAdequateVeinAccessCreator();
     }
 
     @NotNull

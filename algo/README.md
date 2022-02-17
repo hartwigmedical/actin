@@ -66,11 +66,6 @@ won't be evaluated.
 
 The following rules are available:
 
-##### General utility rules
-Rule | When does a patient pass evaluation? | Note
----|---|---
-WARN_ALWAYS | Never, always returns PASS_BUT_WARN | This rule is meant to be used for criteria that currently always need to be manually evaluated
-
 ##### Rules related to general patient characteristics
 
 Rule | When does a patient pass evaluation? | Note
@@ -112,6 +107,7 @@ HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or 
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
+HAS_PROGESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
 HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
@@ -261,6 +257,7 @@ HAS_DIABETES | Prior other conditions > any configured doid should be equal or b
 HAS_HISTORY_OF_ANAPHYLAXIS | T.B.D. - currently resolves to FAIL
 HAS_KNOWN_MALABSORPTION_SYNDROME | T.B.D. - currently resolves to FAIL
 IS_IN_DIALYSIS | > won't be evaluated, resolves to FAIL
+HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | resolves to UNDETERMINED
 HAS_SEVERE_CONCOMITANT_CONDITION | > won't be evaluated, resolves to FAIL
 
 ##### Rules related to cardiac function
@@ -307,6 +304,7 @@ CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other"
 CURRENTLY_GETS_NSAIDS_MEDICATION | Medication > categories contains type of "NSAIDs"
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
+CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D. - Currently resolves to Undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
 CURRENTLY_GETS_COLONY_STIMULATING_FACTORS | Medication > categories contains type of "Colony stimulating factors" and status is active
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D. - Currently resolves to UNDETERMINED | Cytochrome P450 enzymes

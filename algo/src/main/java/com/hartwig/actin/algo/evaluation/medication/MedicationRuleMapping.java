@@ -43,6 +43,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_NSAIDS_MEDICATION, getsActiveMedicationOfCategoryCreator(NSAIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, currentlyGetsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS,
@@ -88,6 +89,11 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsImmunoSuppressantMedicationCreator() {
         return function -> new CurrentlyGetsImmunoSuppressantMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator currentlyGetsProhibitedMedicationCreator() {
+        return function -> new CurrentlyGetsProhibitedMedicationCreator();
     }
 
     @NotNull
