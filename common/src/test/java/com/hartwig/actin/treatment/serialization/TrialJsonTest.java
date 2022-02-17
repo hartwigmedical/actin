@@ -95,11 +95,6 @@ public class TrialJsonTest {
 
         EligibilityFunction subFunction2 = findSubFunction(functionC2.parameters(), EligibilityRule.IS_PREGNANT);
         assertTrue(subFunction2.parameters().isEmpty());
-
-        EligibilityFunction functionC3 =
-                findBaseFunction(cohortC.eligibility(), EligibilityRule.HAS_HAD_MAX_X_NR_ANTI_PD_L1_OR_PD_1_IMMUNOTHERAPIES);
-        assertEquals(1, functionC3.parameters().size());
-        assertTrue(functionC3.parameters().contains("2"));
     }
 
     @NotNull

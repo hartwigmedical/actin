@@ -83,7 +83,6 @@ HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
 PATIENT_IS_TREATED_IN_HOSPITAL_X | > won't be evaluated
 PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X | > currently set to Netherlands (T.B.D.)
 PATIENT_IS_LEGALLY_INSTITUTIONALIZED | > won't be evaluated
-HAS_CONTRAINDICATION_TO_MRI | > prior other condition, category like %Implant% or name like %Claustrophobia% | Undetermined in case of other condition belonging to DOID 557 or allergy name like %contrast agent%
 IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | > will resolve to PASS_BUT_WARN
 
 ##### Rules related to tumor and lesion locations
@@ -123,7 +122,7 @@ HAS_DECLINED_SOC_TREATMENTS | T.B.D - currently not evaluated
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D.
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
-HAS_HAD_DRUG_NAME_X_TREATMENT | Prior tumor treatments > name contains X
+HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains X | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Vaccine, Car T
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T (since these have a corresponding type in model)
 HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y% | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T (since these have a corresponding type in model). Multiple names can be specified within 1 rule, separated by ";"
@@ -131,11 +130,11 @@ HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES | Prior tumor treatments > cat
 HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines <= Y | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Vaccine, Car T
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_LEAST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines => Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T (since these have a corresponding type in model)
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines <= Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T (since these have a corresponding type in model)
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding types like %Y% (split per ";") and distinct number of lines <= Z | "X" can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T (since these have a corresponding type in model). 
 HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any fluoropyrimidine | Fluoropyrimidines: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur (T.B.D.)
 HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
 HAS_HAD_TYROSINE_KINASE_TREATMENT |  Prior tumor treatments > category = 'Targeted therapy' & T.B.D.
 HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT | T.B.D
-HAS_HAD_MAX_X_NR_ANTI_PD_L1_ OR_PD_1_IMMUNOTHERAPIES | Prior tumor treatments > nr of lines with immunoType Anti-PD-1 or Anti-PD-L1 should be <= X
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 
 ##### Rules related to previous primary tumors
@@ -257,6 +256,7 @@ HAS_DIABETES | Prior other conditions > any configured doid should be equal or b
 HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
 HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
+HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or allergy name like %contrast agent%
 IS_IN_DIALYSIS | won't be evaluated
 HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | currently resolves to undetermined
 HAS_SEVERE_CONCOMITANT_CONDITION | won't be evaluated
@@ -346,7 +346,7 @@ Rule | When does a patient pass evaluation?
 ---|---
 HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent systolic blood pressure AND average value => X
 HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent diastolic blood pressure AND average value => X
-HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | in %. Currently resolves to UNDETERMINED
+HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | in %. Currently resolves to undetermined
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 
 ##### Rules related to blood transfusions
@@ -366,7 +366,7 @@ HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surg
  
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SMOKED_WITHIN_X_MONTHS | Always resolves to PASS_BUT_WARN
+HAS_SMOKED_WITHIN_X_MONTHS | Currently resolves to undetermined
  
 ### Disease Ontology ID (DOID)
  
