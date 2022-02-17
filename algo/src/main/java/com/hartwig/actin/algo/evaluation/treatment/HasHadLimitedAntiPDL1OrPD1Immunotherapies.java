@@ -24,6 +24,7 @@ public class HasHadLimitedAntiPDL1OrPD1Immunotherapies implements EvaluationFunc
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        // TODO Remove
         int count = 0;
         for (PriorTumorTreatment priorTumorTreatment : record.clinical().priorTumorTreatments()) {
             boolean isImmunotherapy = priorTumorTreatment.categories().contains(TreatmentCategory.IMMUNOTHERAPY);
