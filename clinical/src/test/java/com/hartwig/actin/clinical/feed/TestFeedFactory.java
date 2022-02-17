@@ -87,6 +87,16 @@ public final class TestFeedFactory {
         entries.add(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build());
         entries.add(toxicityBuilder.itemText("Vomiting").itemAnswerValueValueString(Strings.EMPTY).build());
 
+        ImmutableQuestionnaireEntry.Builder bloodTransfusionBuilder = ImmutableQuestionnaireEntry.builder()
+                .subject(TEST_SUBJECT)
+                .authored(LocalDate.of(2020, 7, 7))
+                .parentIdentifierValue(Strings.EMPTY)
+                .questionnaireQuestionnaireValue(Strings.EMPTY)
+                .description("Aanvraag bloedproducten_test")
+                .itemText(Strings.EMPTY);
+
+        entries.add(bloodTransfusionBuilder.itemAnswerValueValueString("Product").build());
+
         return entries;
     }
 

@@ -8,11 +8,13 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
+import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
@@ -109,6 +111,7 @@ public class ClinicalRecordsFactory {
                     .surgeries(extractSurgeries(subject))
                     .bodyWeights(extractBodyWeights(subject))
                     .vitalFunctions(extractVitalFunctions(subject))
+                    .bloodTransfusions(extractBloodTransfusions(subject))
                     .medications(extractMedications(subject))
                     .build());
         }
@@ -342,6 +345,18 @@ public class ClinicalRecordsFactory {
                     .build());
         }
         return vitalFunctions;
+    }
+
+    @NotNull
+    private List<BloodTransfusion> extractBloodTransfusions(@NotNull String subject) {
+        List<BloodTransfusion> bloodTransfusions = Lists.newArrayList();
+        for (QuestionnaireEntry entry : feed.bloodTransfusionQuestionnaireEntries(subject)) {
+            bloodTransfusions.add(curation.translateBloodTransfusion(ImmutableBloodTransfusion.builder()
+                    .date(entry.authored())
+                    .product(entry.itemAnswerValueValueString())
+                    .build()));
+        }
+        return bloodTransfusions;
     }
 
     @NotNull

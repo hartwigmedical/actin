@@ -56,7 +56,7 @@ public class ClinicalFeedReaderTest {
     }
 
     private static void assertQuestionnaires(@NotNull List<QuestionnaireEntry> entries) {
-        assertEquals(3, entries.size());
+        assertEquals(4, entries.size());
 
         QuestionnaireEntry entry1 = findByParentIdentifierValue(entries, "XX");
         assertEquals("ACTN-01-02-9999", entry1.subject());
@@ -88,6 +88,12 @@ public class ClinicalFeedReaderTest {
         assertTrue(entry3.itemAnswerValueValueString().startsWith("ACTIN Questionnaire"));
         assertTrue(entry3.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
         assertTrue(entry3.itemAnswerValueValueString().contains("Other (e.g. Osteoporosis, Pleural effusion)"));
+
+        QuestionnaireEntry entry4 = findByParentIdentifierValue(entries, "QQ");
+        assertEquals(LocalDate.of(2021, 12, 17), entry4.authored());
+        assertEquals("C", entry4.questionnaireQuestionnaireValue());
+        assertEquals("Aanvraag bloedproducten_test", entry4.description());
+        assertEquals("Erytrocytenconcentraat", entry4.itemAnswerValueValueString());
     }
 
     @NotNull

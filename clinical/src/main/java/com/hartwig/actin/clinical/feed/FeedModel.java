@@ -57,6 +57,17 @@ public class FeedModel {
     }
 
     @NotNull
+    public List<QuestionnaireEntry> bloodTransfusionQuestionnaireEntries(@NotNull String subject) {
+        List<QuestionnaireEntry> bloodTransfusions = Lists.newArrayList();
+        for (QuestionnaireEntry entry : entriesForSubject(feed.questionnaireEntries(), subject)) {
+            if (QuestionnaireExtraction.isBloodTransfusionEntry(entry)) {
+                bloodTransfusions.add(entry);
+            }
+        }
+        return bloodTransfusions;
+    }
+
+    @NotNull
     public List<QuestionnaireEntry> toxicityQuestionnaireEntries(@NotNull String subject) {
         List<QuestionnaireEntry> toxicities = Lists.newArrayList();
         for (QuestionnaireEntry entry : entriesForSubject(feed.questionnaireEntries(), subject)) {

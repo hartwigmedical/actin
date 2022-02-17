@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
@@ -78,6 +79,7 @@ public class ClinicalRecordsFactoryTest {
         assertSurgeries(record.surgeries());
         assertBodyWeights(record.bodyWeights());
         assertVitalFunctions(record.vitalFunctions());
+        assertBloodTransfusions(record.bloodTransfusions());
         assertMedications(record.medications());
     }
 
@@ -180,6 +182,14 @@ public class ClinicalRecordsFactoryTest {
         assertEquals("systolic", vitalFunction.subcategory());
         assertEquals(120, vitalFunction.value(), EPSILON);
         assertEquals("mm[Hg]", vitalFunction.unit());
+    }
+
+    private static void assertBloodTransfusions(@NotNull List<BloodTransfusion> bloodTransfusions) {
+        assertEquals(1, bloodTransfusions.size());
+
+        BloodTransfusion bloodTransfusion = bloodTransfusions.get(0);
+        assertEquals(LocalDate.of(2020, 7, 7), bloodTransfusion.date());
+        assertEquals("Translated product", bloodTransfusion.product());
     }
 
     private static void assertMedications(@NotNull List<Medication> medications) {

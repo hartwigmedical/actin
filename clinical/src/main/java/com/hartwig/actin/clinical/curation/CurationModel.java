@@ -485,12 +485,12 @@ public class CurationModel {
     public LabValue translateLabValue(@NotNull LabValue input) {
         LaboratoryTranslation translation = findLaboratoryTranslation(input);
 
-        if (translation != null) {
-            evaluatedTranslations.put(LaboratoryTranslation.class, translation);
-            return ImmutableLabValue.builder().from(input).code(translation.translatedCode()).name(translation.translatedName()).build();
-        } else {
+        if (translation == null) {
             return input;
         }
+
+        evaluatedTranslations.put(LaboratoryTranslation.class, translation);
+        return ImmutableLabValue.builder().from(input).code(translation.translatedCode()).name(translation.translatedName()).build();
     }
 
     @Nullable
@@ -509,12 +509,12 @@ public class CurationModel {
     public Allergy translateAllergy(@NotNull Allergy input) {
         AllergyTranslation translation = findAllergyTranslation(input);
 
-        if (translation != null) {
-            evaluatedTranslations.put(AllergyTranslation.class, translation);
-            return ImmutableAllergy.builder().from(input).name(translation.translatedName()).build();
-        } else {
+        if (translation == null) {
             return input;
         }
+
+        evaluatedTranslations.put(AllergyTranslation.class, translation);
+        return ImmutableAllergy.builder().from(input).name(translation.translatedName()).build();
     }
 
     @Nullable
@@ -533,12 +533,12 @@ public class CurationModel {
     public BloodTransfusion translateBloodTransfusion(@NotNull BloodTransfusion input) {
         BloodTransfusionTranslation translation = findBloodTransfusionTranslation(input);
 
-        if (translation != null) {
-            evaluatedTranslations.put(BloodTransfusionTranslation.class, translation);
-            return ImmutableBloodTransfusion.builder().from(input).product(translation.translatedProduct()).build();
-        } else {
+        if (translation == null) {
             return input;
         }
+
+        evaluatedTranslations.put(BloodTransfusionTranslation.class, translation);
+        return ImmutableBloodTransfusion.builder().from(input).product(translation.translatedProduct()).build();
     }
 
     @Nullable

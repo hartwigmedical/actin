@@ -22,6 +22,7 @@ public final class QuestionnaireExtraction {
     static final String VALUE_LIST_SEPARATOR_1 = ",";
     static final String VALUE_LIST_SEPARATOR_2 = ";";
 
+    private static final String BLOOD_TRANSFUSION_DESCRIPTION = "Aanvraag bloedproducten_test";
     private static final String TOXICITY_DESCRIPTION = "ONC Kuuroverzicht";
     private static final String ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire";
 
@@ -29,6 +30,10 @@ public final class QuestionnaireExtraction {
     private static final int SYMPTOMATIC_LINE_OFFSET = 2;
 
     private QuestionnaireExtraction() {
+    }
+
+    public static boolean isBloodTransfusionEntry(@NotNull QuestionnaireEntry entry) {
+        return entry.description().equals(BLOOD_TRANSFUSION_DESCRIPTION);
     }
 
     public static boolean isToxicityEntry(@NotNull QuestionnaireEntry entry) {
