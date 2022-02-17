@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.othercondition.CanSwallowOralMedication;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,6 @@ public final class MedicationRuleMapping {
 
         map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
-        map.put(EligibilityRule.IS_ABLE_TO_SWALLOW_ORAL_MEDICATION, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIBIOTICS));
@@ -64,11 +64,6 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator hasAllergyRelatedToStudyMedicationCreator() {
         return function -> new HasAllergyRelatedToStudyMedication();
-    }
-
-    @NotNull
-    private static FunctionCreator canSwallowOralMedicationCreator() {
-        return function -> new CanSwallowOralMedication();
     }
 
     @NotNull

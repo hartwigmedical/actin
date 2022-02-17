@@ -8,14 +8,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasKnownMalabsorptionSyndrome implements EvaluationFunction {
+public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
 
-    HasKnownMalabsorptionSyndrome() {
+    HasPotentialAbsorptionDifficulties() {
     }
 
     @NotNull
     @Override
+    // To do: extend evaluation
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.create(EvaluationResult.FAIL);
+        return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
     }
 }

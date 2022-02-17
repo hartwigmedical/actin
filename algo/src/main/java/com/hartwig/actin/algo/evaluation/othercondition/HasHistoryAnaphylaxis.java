@@ -15,7 +15,8 @@ public class HasHistoryAnaphylaxis implements EvaluationFunction {
 
     @NotNull
     @Override
+    // To do: extend evaluation
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.create(EvaluationResult.FAIL);
+        return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
     }
 }

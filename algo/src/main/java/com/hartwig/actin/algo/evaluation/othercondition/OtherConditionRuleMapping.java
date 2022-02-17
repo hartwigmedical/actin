@@ -55,7 +55,8 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
-        map.put(EligibilityRule.HAS_KNOWN_MALABSORPTION_SYNDROME, hasKnownMalabsorptionSyndromeCreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES, hasPotentialAbsorptionDifficultiesCreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
@@ -87,8 +88,13 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasKnownMalabsorptionSyndromeCreator() {
-        return function -> new HasKnownMalabsorptionSyndrome();
+    private static FunctionCreator hasPotentialAbsorptionDifficultiesCreator() {
+        return function -> new HasPotentialAbsorptionDifficulties();
+    }
+
+    @NotNull
+    private static FunctionCreator canSwallowOralMedicationCreator() {
+        return function -> new CanSwallowOralMedication();
     }
 
     @NotNull
@@ -105,4 +111,6 @@ public final class OtherConditionRuleMapping {
     private static FunctionCreator hasSevereConcomitantIllnessCreator() {
         return function -> new HasSevereConcomitantIllness();
     }
+
+
 }

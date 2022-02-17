@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.othercondition;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -15,7 +15,8 @@ public class CanSwallowOralMedication implements EvaluationFunction {
 
     @NotNull
     @Override
+    // To do: extend evaluation
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.create(EvaluationResult.NOT_EVALUATED);
+        return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
     }
 }
