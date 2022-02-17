@@ -88,7 +88,7 @@ HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
 PATIENT_IS_TREATED_IN_HOSPITAL_X | > won't be evaluated
 PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X | > currently set to Netherlands (T.B.D.)
 PATIENT_IS_LEGALLY_INSTITUTIONALIZED | > won't be evaluated
-HAS_CONTRAINDICATION_TO_MRI | T.B.D.
+HAS_CONTRAINDICATION_TO_MRI | > prior other condition, category like %Implant% or name like %Claustrophobia% | Undetermined in case of other condition belonging to DOID 557 or allergy name like %contrast agent%
 IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | > will resolve to PASS_BUT_WARN
 
 ##### Rules related to tumor and lesion locations
@@ -166,17 +166,17 @@ DELETION_OF_GENE_X | Deletion is found in gene X
 FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
 SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
 OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 
-EXPRESSION_OF_GENE_X_BY_IHC | > Currently set to UNDETERMINED
-EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | > Currently set to UNDETERMINED
-EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | > Currently set to UNDETERMINED
+EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
+EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y
+EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
 TML_OF_AT_MOST_X | TML should be <= X
-PD_L1_SCORE_CPS_OF_AT_LEAST_X | > Currently set to UNDETERMINED
-PD_L1_SCORE_CPS_OF_AT_MOST_X | > Currently set to UNDETERMINED
+PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
+PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
 
 ##### Rules related to recent laboratory measurements
 
