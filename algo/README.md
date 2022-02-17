@@ -254,12 +254,12 @@ HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ t
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
-HAS_HISTORY_OF_ANAPHYLAXIS | Currently resolves to Undetermined in case of presence of any allergies 
+HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
 HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
-IS_IN_DIALYSIS | > won't be evaluated, resolves to FAIL
-HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | resolves to UNDETERMINED
-HAS_SEVERE_CONCOMITANT_CONDITION | > won't be evaluated, resolves to FAIL
+IS_IN_DIALYSIS | won't be evaluated
+HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | currently resolves to undetermined
+HAS_SEVERE_CONCOMITANT_CONDITION | won't be evaluated
 
 ##### Rules related to cardiac function
 

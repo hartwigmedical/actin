@@ -16,6 +16,6 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.create(EvaluationResult.FAIL);
+        return EvaluationFactory.create(EvaluationResult.NOT_EVALUATED);
     }
 }
