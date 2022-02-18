@@ -160,7 +160,8 @@ AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion is found in gene X
 FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
 SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
-OVEREXPRESSION_OF_GENE_X | > Currently set to UNDETERMINED 
+OVEREXPRESSION_OF_GENE_X | > Currently set to fail (T.B.D.)
+NON_EXPRESSION_OF_GENE_X | > Currently set to fail (T.B.D.)
 EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
 EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y
 EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y

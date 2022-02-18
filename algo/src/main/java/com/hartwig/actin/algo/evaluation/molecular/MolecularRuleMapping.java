@@ -32,6 +32,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
         map.put(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, hasSpecificFusionCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
+        map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneIsExpressedByIHCCreator());
@@ -121,6 +122,11 @@ public final class MolecularRuleMapping {
     @NotNull
     private static FunctionCreator geneIsOverexpressedCreator() {
         return function -> new GeneIsOverexpressed();
+    }
+
+    @NotNull
+    private static FunctionCreator geneIsNotExpressedCreator() {
+        return function -> new GeneIsNotExpressed();
     }
 
     @NotNull
