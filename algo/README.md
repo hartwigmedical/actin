@@ -318,8 +318,8 @@ HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NS
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAD_RECEIVED_DRUG_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > name like %X% | 
-HAD_RECEIVED_CATEGORY_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > categories like %X% OR if category name is present in category list **, use category config | 
+HAS_RECEIVED_DRUG_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > name like %X% | 
+HAS_RECEIVED_CATEGORY_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > categories like %X% OR if category name is present in category list **, use category config | 
 HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month | 
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Does not include radiotherapy or surgery, these are separate rules.
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Does not include radiotherapy or surgery, these are separate rules.
