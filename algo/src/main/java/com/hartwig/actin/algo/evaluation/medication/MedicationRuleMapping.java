@@ -29,7 +29,6 @@ public final class MedicationRuleMapping {
 
         map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY, getsAntiCancerMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIBIOTICS));
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTICOAGULANTS));
@@ -66,10 +65,6 @@ public final class MedicationRuleMapping {
         return function -> new HasAllergyRelatedToStudyMedication();
     }
 
-    @NotNull
-    private static FunctionCreator getsAntiCancerMedicationCreator() {
-        return function -> new CurrentlyGetsAntiCancerMedication();
-    }
 
     @NotNull
     private static FunctionCreator getsActiveMedicationCreator() {

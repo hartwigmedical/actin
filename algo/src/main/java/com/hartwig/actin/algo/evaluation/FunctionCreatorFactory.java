@@ -22,6 +22,7 @@ import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapping;
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapping;
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapping;
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapping;
+import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapping;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,7 @@ final class FunctionCreatorFactory {
         map.putAll(BloodTransfusionRuleMapping.create());
         map.putAll(SurgeryRuleMapping.create());
         map.putAll(SmokingRuleMapping.create());
+        map.putAll(WashoutRuleMapping.create());
 
         return map;
     }

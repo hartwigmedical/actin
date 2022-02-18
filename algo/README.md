@@ -287,13 +287,12 @@ HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid shou
 HAS_CURRENT_COVID_19_INFECTION | T.B.D.
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated. 
 
-##### Rules related to allergies / current medication
+##### Rules related to allergies / current medication 
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
 HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
 HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Resolves to Undetermined, since exact ingredients cannot yet be automatically evaluated
-CURRENTLY_GETS_OTHER_ANTI_CANCER_THERAPY | > won't be evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
 CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > categories contains type of "Antibiotics" and status is active
@@ -313,6 +312,30 @@ CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_OATP_X | T.B.D. - Currently re
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D. - Currently resolves to UNDETERMINED | 
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage
 HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% AND only 1 distinct dosage per name (T.B.E.)
+
+##### Rules related to washout period 
+
+Rule | When does a patient pass evaluation?| Note
+---|---|---
+HAD_RECEIVED_DRUG_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > name like %X% | 
+HAD_RECEIVED_CATEGORY_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > categories like %X% OR if category name is present in category list **, use category config | 
+HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month | 
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Does not include radiotherapy or surgery, these are separate rules.
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Does not include radiotherapy or surgery, these are separate rules.
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules.
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.
+WILL_REQUIRE_ANY_ANTICANCER_THERAPY_ DURING_TRIAL | won't be evaluated.
+
+*Anti-cancer medication list includes the following categories: Platinum compounds, Pyrimidine antagonists, Taxanes, Alkylating agents, Cytotoxic antibiotics, Gonadorelin agonists, Gonadorelin antagonists, Monoclonal antibody for malignancies, Protein kinase inhibitors, Anti-androgens, Anti-estrogens, 'Oncolytics, other'. 
+
+**Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:
+1] Chemotherapy: includes all medication categories of Platinum compounds, Pyrimidine antagonists, Taxanes and Alkylating agents
+2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab
+3] Endocrine therapy: includes all medication categories of Anti-androgens, Anti-estrogens
+4] PARP inhibitors: medication drug names Olaparib, Rucaparib
+5] Gonadorelin: Gonadorelin agonists, Gonadorelin antagonists 
+
+Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway. 
 
 ##### Rules related to pregnancy / anticonception
 
@@ -361,6 +384,8 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
+
+Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
  
 ##### Rules related to smoking
  
