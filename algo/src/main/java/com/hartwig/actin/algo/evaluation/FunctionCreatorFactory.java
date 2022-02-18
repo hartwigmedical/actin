@@ -45,6 +45,7 @@ final class FunctionCreatorFactory {
         map.putAll(CardiacFunctionRuleMapping.create());
         map.putAll(InfectionRuleMapping.create(doidModel));
         map.putAll(MedicationRuleMapping.create());
+        map.putAll(WashoutRuleMapping.create());
         map.putAll(PregnancyRuleMapping.create());
         map.putAll(ComplicationRuleMapping.create());
         map.putAll(ToxicityRuleMapping.create());
@@ -52,7 +53,6 @@ final class FunctionCreatorFactory {
         map.putAll(BloodTransfusionRuleMapping.create());
         map.putAll(SurgeryRuleMapping.create());
         map.putAll(SmokingRuleMapping.create());
-        map.putAll(WashoutRuleMapping.create());
 
         return map;
     }
