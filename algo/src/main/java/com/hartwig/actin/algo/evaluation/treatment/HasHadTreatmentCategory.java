@@ -59,6 +59,10 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
                 type = treatment.hormoneType();
                 break;
             }
+            case RADIOTHERAPY: {
+                type = treatment.radioType();
+                break;
+            }
             case TRANSPLANTATION: {
                 type = treatment.transplantType();
                 break;

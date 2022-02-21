@@ -72,6 +72,7 @@ CREATE TABLE priorTumorTreatment
     immunoType varchar(50),
     targetedType varchar(200),
     hormoneType varchar(50),
+    radioType varchar(50),
     transplantType varchar(50),
     supportiveType varchar(50),
     trialAcronym varchar(50),

@@ -37,6 +37,9 @@ public abstract class PriorTumorTreatment {
     public abstract String hormoneType();
 
     @Nullable
+    public abstract String radioType();
+
+    @Nullable
     public abstract String transplantType();
 
     @Nullable

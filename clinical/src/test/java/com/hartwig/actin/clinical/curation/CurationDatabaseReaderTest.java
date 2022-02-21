@@ -100,6 +100,7 @@ public class CurationDatabaseReaderTest {
         assertNull(curated1.immunoType());
         assertNull(curated1.targetedType());
         assertNull(curated1.hormoneType());
+        assertNull(curated1.radioType());
         assertNull(curated1.transplantType());
         assertNull(curated1.supportiveType());
         assertNull(curated1.trialAcronym());
