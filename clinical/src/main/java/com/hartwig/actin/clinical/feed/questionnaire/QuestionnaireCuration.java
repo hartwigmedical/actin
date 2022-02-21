@@ -38,6 +38,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("-", null);
         OPTION_MAPPING.put("yes/no", null);
         OPTION_MAPPING.put("yes/no/unknown", null);
+        OPTION_MAPPING.put("botaantasting bij weke delen massa", false);
 
         STAGE_MAPPING.put("I", TumorStage.I);
         STAGE_MAPPING.put("II", TumorStage.II);
