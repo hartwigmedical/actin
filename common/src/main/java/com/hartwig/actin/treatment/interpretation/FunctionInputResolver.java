@@ -234,15 +234,14 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_NSAIDS_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, FunctionInput.NONE);
@@ -284,6 +283,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
 
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SMOKED_WITHIN_X_MONTHS, FunctionInput.ONE_INTEGER);

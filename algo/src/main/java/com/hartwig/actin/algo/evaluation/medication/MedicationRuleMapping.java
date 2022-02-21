@@ -14,11 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public final class MedicationRuleMapping {
 
     private static final String ANTICOAGULANTS = "Anticoagulants";
-    private static final String ANTIBIOTICS = "Antibiotics";
-    private static final String ANTIEPILEPTICS = "Antiepileptics";
     private static final String CORTICOSTEROIDS = "Corticosteroids";
     private static final String VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists";
-    private static final String NSAIDS = "NSAIDs";
 
     private MedicationRuleMapping() {
     }
@@ -30,10 +27,12 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTIBIOTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIBIOTICS));
+        map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION, getsActiveMedicationOfCategoryCreator(ANTIEPILEPTICS));
+        map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfCategoryCreator(CORTICOSTEROIDS));
@@ -42,7 +41,6 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_NSAIDS_MEDICATION, getsActiveMedicationOfCategoryCreator(NSAIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, currentlyGetsProhibitedMedicationCreator());

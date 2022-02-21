@@ -226,7 +226,7 @@ HAS_CORRECTED_PHOSPHORUS_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN 
 HAS_CALCIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Calcium (Ca) LLN<X<ULN (isOutsideRef=0)
 HAS_CORRECTED_CALCIUM_WITHIN_ INSTITUTIONAL_NORMAL_LIMITS | Calcium corrected (Ca_C) LLN<X<ULN (isOutsideRef=0)
 HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X | Total protein in urine (TE_U) => X.
-HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X | T.B.D
+HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X | In g/24h. T.B.D
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
@@ -296,15 +296,14 @@ Rule | When does a patient pass evaluation?| Note
 HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
 HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Resolves to Undetermined, since exact ingredients cannot yet be automatically evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
+CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > Medication with categories like "X"
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
-CURRENTLY_GETS_ANTIBIOTICS_MEDICATION | Medication > categories contains type of "Antibiotics" and status is active
-CURRENTLY_GETS_ANTIEPILEPTICS_MEDICATION | Medication > categories contains type of "Antiepileptics" and status is active
+CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneuous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other"
-CURRENTLY_GETS_NSAIDS_MEDICATION | Medication > categories contains type of "NSAIDs"
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D. - Currently resolves to Undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
@@ -384,11 +383,11 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 
 ##### Rules related to surgery
 
-Rule | When does a patient pass evaluation?
----|---
-HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_HAD_RECENT_SURGERY | Surgeries > presence
+HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
 
-Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
  
 ##### Rules related to smoking
  
