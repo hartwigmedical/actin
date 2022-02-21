@@ -14,17 +14,21 @@ import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneString;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneStringTwoIntegers;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneStringOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoDoubles;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
+import com.hartwig.actin.treatment.interpretation.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.TwoDoubles;
+import com.hartwig.actin.treatment.interpretation.single.TwoIntegers;
 import com.hartwig.actin.treatment.interpretation.single.TwoStrings;
 
 import org.apache.logging.log4j.LogManager;
@@ -88,8 +92,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT_CATEGORY);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y,
-                FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
@@ -216,7 +219,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LONG_QT_SYNDROME, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, FunctionInput.TWO_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, FunctionInput.TWO_DOUBLES);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HEPATITIS_A_INFECTION, FunctionInput.NONE);
@@ -255,9 +258,11 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_CANCER_THERAPY_WITHIN_Y_WEEKS, FunctionInput.ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS, FunctionInput.ONE_INTEGER);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORY_X_WITHIN_Y_WEEKS, FunctionInput.ONE_STRING_ONE_INTEGER);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES, FunctionInput.TWO_INTEGER); //Todo implement
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORY_X_WITHIN_Y_WEEKS_Z_HALF_LIVES, FunctionInput.ONE_STRING_TWO_INTEGER); //Todo implement
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORY_X_WITHIN_Y_WEEKS,
+                FunctionInput.ONE_STRING_ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES, FunctionInput.TWO_INTEGERS);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORY_X_WITHIN_Y_WEEKS_Z_HALF_LIVES,
+                FunctionInput.ONE_STRING_TWO_INTEGERS);
         RULE_INPUT_MAP.put(EligibilityRule.WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.IS_BREASTFEEDING, FunctionInput.NONE);
@@ -324,11 +329,15 @@ public final class FunctionInputResolver {
                     createOneIntegerInput(function);
                     return true;
                 }
+                case TWO_INTEGERS: {
+                    createTwoIntegerInput(function);
+                    return true;
+                }
                 case ONE_DOUBLE: {
                     createOneDoubleInput(function);
                     return true;
                 }
-                case TWO_DOUBLE: {
+                case TWO_DOUBLES: {
                     createTwoDoubleInput(function);
                     return true;
                 }
@@ -354,6 +363,10 @@ public final class FunctionInputResolver {
                 }
                 case ONE_STRING_ONE_INTEGER: {
                     createOneStringOneIntegerInput(function);
+                    return true;
+                }
+                case ONE_STRING_TWO_INTEGERS: {
+                    createOneStringTwoIntegerInput(function);
                     return true;
                 }
                 case TWO_STRINGS: {
@@ -384,6 +397,16 @@ public final class FunctionInputResolver {
         return Integer.parseInt((String) function.parameters().get(0));
     }
 
+    @NotNull
+    public static TwoIntegers createTwoIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.TWO_INTEGERS, 2);
+
+        return ImmutableTwoIntegers.builder()
+                .integer1(Integer.parseInt((String) function.parameters().get(0)))
+                .integer2(Integer.parseInt((String) function.parameters().get(1)))
+                .build();
+    }
+
     public static double createOneDoubleInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_DOUBLE, 1);
 
@@ -392,7 +415,7 @@ public final class FunctionInputResolver {
 
     @NotNull
     public static TwoDoubles createTwoDoubleInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.TWO_DOUBLE, 2);
+        assertParamConfig(function, FunctionInput.TWO_DOUBLES, 2);
 
         return ImmutableTwoDoubles.builder()
                 .double1(Double.parseDouble((String) function.parameters().get(0)))
@@ -453,6 +476,17 @@ public final class FunctionInputResolver {
         return ImmutableOneIntegerOneString.builder()
                 .string((String) function.parameters().get(0))
                 .integer(Integer.parseInt((String) function.parameters().get(1)))
+                .build();
+    }
+
+    @NotNull
+    public static OneStringTwoIntegers createOneStringTwoIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_STRING_TWO_INTEGERS, 3);
+
+        return ImmutableOneStringTwoIntegers.builder()
+                .string((String) function.parameters().get(0))
+                .integer1(Integer.parseInt((String) function.parameters().get(1)))
+                .integer2(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
     }
 

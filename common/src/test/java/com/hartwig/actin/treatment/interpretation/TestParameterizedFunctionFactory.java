@@ -52,7 +52,8 @@ public final class TestParameterizedFunctionFactory {
             case ONE_DOUBLE: {
                 return Lists.newArrayList("1");
             }
-            case TWO_DOUBLE: {
+            case TWO_INTEGERS:
+            case TWO_DOUBLES: {
                 return Lists.newArrayList("1", "2");
             }
             case ONE_TREATMENT_CATEGORY: {
@@ -72,6 +73,9 @@ public final class TestParameterizedFunctionFactory {
             }
             case ONE_STRING_ONE_INTEGER: {
                 return Lists.newArrayList("string", "1");
+            }
+            case ONE_STRING_TWO_INTEGERS: {
+                return Lists.newArrayList("string", "1", "2");
             }
             case TWO_STRINGS: {
                 return Lists.newArrayList("string", "string");
