@@ -17,15 +17,11 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PatientClinicalHistoryGenerator implements TableGenerator {
-
-    private static final Logger LOGGER = LogManager.getLogger(PatientClinicalHistoryGenerator.class);
 
     @NotNull
     private final ClinicalRecord record;
