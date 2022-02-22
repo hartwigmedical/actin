@@ -16,14 +16,14 @@ import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WGSMolecularResultsGenerator implements TableGenerator {
+public class RecentMolecularResultsGenerator implements TableGenerator {
 
     @NotNull
     private final MolecularRecord record;
     private final float keyWidth;
     private final float valueWidth;
 
-    public WGSMolecularResultsGenerator(@NotNull final MolecularRecord record, final float keyWidth, final float valueWidth) {
+    public RecentMolecularResultsGenerator(@NotNull final MolecularRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
@@ -32,7 +32,7 @@ public class WGSMolecularResultsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Molecular results (" + record.type() + ", " + Formats.date(record.date()) + ")";
+        return record.type() + " molecular results (" + record.type() + ", " + Formats.date(record.date()) + ")";
     }
 
     @NotNull
@@ -40,7 +40,7 @@ public class WGSMolecularResultsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-        table.addCell(Cells.createKey("Molecular results have reliable quality"));
+        table.addCell(Cells.createKey("Results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
 
         Set<String> eventsWithApprovedEvidence = extractEvents(record.approvedResponsiveEvidence());

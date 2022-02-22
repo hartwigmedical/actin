@@ -117,7 +117,7 @@ class OrangeEvidenceFactory {
         for (TreatmentEvidence evidence : reportedCkbEvidences) {
             boolean hasEqualOrWorseResponsive = hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level());
 
-            if (evidence.direction().isResistant() && hasEqualOrWorseResponsive) {
+            if (evidence.direction().isResistant() && !evidence.direction().isPredicted() && hasEqualOrWorseResponsive) {
                 result.add(toMolecularEvidence(evidence));
             }
         }
@@ -168,11 +168,14 @@ class OrangeEvidenceFactory {
     }
 
     private static boolean isApproved(@NotNull TreatmentEvidence evidence) {
-        return evidence.onLabel() && evidence.level() == EvidenceLevel.A;
+        return evidence.onLabel() && evidence.level() == EvidenceLevel.A && !evidence.direction().isPredicted();
     }
 
     private static boolean isExperimental(@NotNull TreatmentEvidence evidence) {
-        return (evidence.onLabel() && evidence.level() == EvidenceLevel.B) || (!evidence.onLabel() && evidence.level() == EvidenceLevel.A);
+        boolean isOffLabelA = !evidence.onLabel() && evidence.level() == EvidenceLevel.A;
+        boolean isOnLabelB = evidence.onLabel() && evidence.level() == EvidenceLevel.B && !evidence.direction().isPredicted();
+
+        return isOffLabelA || isOnLabelB;
     }
 
     private static boolean isOther(@NotNull TreatmentEvidence evidence) {
@@ -180,7 +183,7 @@ class OrangeEvidenceFactory {
             return false;
         }
 
-        return evidence.level() != EvidenceLevel.D && evidence.level() != EvidenceLevel.C;
+        return evidence.level() != EvidenceLevel.D && evidence.level() != EvidenceLevel.C && !evidence.direction().isPredicted();
     }
 
     @NotNull

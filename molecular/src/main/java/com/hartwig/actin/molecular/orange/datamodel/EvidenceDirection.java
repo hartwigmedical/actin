@@ -6,6 +6,10 @@ public enum EvidenceDirection {
     RESISTANT,
     PREDICTED_RESISTANT;
 
+    public boolean isPredicted() {
+        return this == PREDICTED_RESPONSIVE || this == PREDICTED_RESISTANT;
+    }
+
     public boolean isResponsive() {
         return this == RESPONSIVE || this == PREDICTED_RESPONSIVE;
     }
