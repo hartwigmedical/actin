@@ -107,7 +107,9 @@
   ],
   "cancerRelatedComplications": [
     {
-      "name": "Nausea"
+      "name": "Nausea",
+      "year": 2020,
+      "month": null
     }
   ],
   "labValues": [

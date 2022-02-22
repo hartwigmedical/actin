@@ -329,7 +329,11 @@ public final class ClinicalRecordJson {
             List<CancerRelatedComplication> cancerRelatedComplicationList = Lists.newArrayList();
             for (JsonElement element : cancerRelatedComplications) {
                 JsonObject object = element.getAsJsonObject();
-                cancerRelatedComplicationList.add(ImmutableCancerRelatedComplication.builder().name(string(object, "name")).build());
+                cancerRelatedComplicationList.add(ImmutableCancerRelatedComplication.builder()
+                        .name(string(object, "name"))
+                        .year(nullableInteger(object, "year"))
+                        .month(nullableInteger(object, "month"))
+                        .build());
             }
             return cancerRelatedComplicationList;
         }
