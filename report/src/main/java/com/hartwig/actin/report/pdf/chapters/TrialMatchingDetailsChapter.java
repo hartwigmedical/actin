@@ -33,6 +33,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TrialMatchingDetailsChapter implements ReportChapter {
 
+    private static final float RULE_COL_WIDTH = 30;
+    private static final float EVALUATION_COL_WIDTH = 150;
+
     @NotNull
     private final Report report;
 
@@ -194,28 +197,26 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createEvaluationTable(@NotNull Map<CriterionReference, Evaluation> evaluations, boolean displayFailOnly) {
-        float ruleWidth = 30;
-        float evaluationWidth = 150;
-        float referenceWidth = contentWidth() - (ruleWidth + evaluationWidth + 10);
-        Table table = Tables.createFixedWidthCols(ruleWidth, referenceWidth, evaluationWidth).setWidth(contentWidth());
+        float referenceWidth = contentWidth() - (RULE_COL_WIDTH + EVALUATION_COL_WIDTH);
+        Table headerTable = Tables.createFixedWidthCols(RULE_COL_WIDTH, referenceWidth, EVALUATION_COL_WIDTH).setWidth(contentWidth());
 
-        table.addHeaderCell(Cells.createHeader("Rule"));
-        table.addHeaderCell(Cells.createHeader("Reference"));
-        table.addHeaderCell(Cells.createHeader("Evaluation"));
+        headerTable.addHeaderCell(Cells.createHeader("Rule"));
+        headerTable.addHeaderCell(Cells.createHeader("Reference"));
+        headerTable.addHeaderCell(Cells.createHeader("Evaluation"));
 
         Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
         references.addAll(evaluations.keySet());
 
-        addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL);
+        addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.FAIL);
         if (!displayFailOnly) {
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED);
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS_BUT_WARN);
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS);
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_EVALUATED);
+            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.UNDETERMINED);
+            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
+            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.PASS_BUT_WARN);
+            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.PASS);
+            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.NOT_EVALUATED);
         }
 
-        return table;
+        return headerTable;
     }
 
     private static void addEvaluationsOfType(@NotNull Table table, Set<CriterionReference> references,
@@ -225,7 +226,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             if (evaluation.result() == resultToRender) {
                 table.addCell(Cells.createContent(reference.id()));
                 table.addCell(Cells.createContent(reference.text()));
-                Table evalTable = Tables.createSingleColWithWidth(145);
+                Table evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH);
                 evalTable.addCell(Cells.createEvaluation(evaluation.result()));
                 if (evaluation.result() == EvaluationResult.FAIL) {
                     for (String failMessage : evaluation.failMessages()) {
