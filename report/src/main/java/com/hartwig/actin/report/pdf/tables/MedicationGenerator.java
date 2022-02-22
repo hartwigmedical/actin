@@ -10,6 +10,7 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class MedicationGenerator implements TableGenerator {
@@ -45,8 +46,8 @@ public class MedicationGenerator implements TableGenerator {
         for (Medication medication : medications) {
             table.addCell(Cells.createContent(medication.name()));
             table.addCell(Cells.createContent(concat(medication.categories())));
-            table.addCell(Cells.createContent(Formats.date(medication.startDate())));
-            table.addCell(Cells.createContent(Formats.date(medication.stopDate())));
+            table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
+            table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
             table.addCell(Cells.createContent(Formats.yesNoUnknown(medication.active())));
             table.addCell(Cells.createContent(dosage(medication)));
             table.addCell(Cells.createContent(frequency(medication)));
@@ -60,7 +61,7 @@ public class MedicationGenerator implements TableGenerator {
         String dosageMin = medication.dosageMin() != null ? Formats.number(medication.dosageMin()) : "?";
         String dosageMax = medication.dosageMax() != null ? Formats.number(medication.dosageMax()) : "?";
 
-        String result = dosageMin + " - " + dosageMax;
+        String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
         if (medication.dosageUnit() != null) {
             result += (" " + medication.dosageUnit());
         }

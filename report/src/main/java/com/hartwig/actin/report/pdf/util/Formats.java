@@ -33,7 +33,12 @@ public final class Formats {
 
     @NotNull
     public static String date(@Nullable LocalDate date) {
-        return date != null ? DATE_FORMAT.format(date) : DATE_UNKNOWN;
+        return date(date, DATE_UNKNOWN);
+}
+
+    @NotNull
+    public static String date(@Nullable LocalDate date, @NotNull String fallback) {
+        return date != null ? DATE_FORMAT.format(date) : fallback;
     }
 
     @NotNull
