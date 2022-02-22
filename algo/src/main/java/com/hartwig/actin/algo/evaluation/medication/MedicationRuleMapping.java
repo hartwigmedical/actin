@@ -27,6 +27,8 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION,
@@ -41,6 +43,8 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunoSuppressantMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, currentlyGetsProhibitedMedicationCreator());

@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
@@ -49,6 +50,7 @@ public final class TreatmentRuleMapping {
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));

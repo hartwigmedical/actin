@@ -107,6 +107,7 @@ public final class FunctionInputResolver {
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
@@ -236,6 +237,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, FunctionInput.NONE);
@@ -244,6 +246,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, FunctionInput.NONE);
