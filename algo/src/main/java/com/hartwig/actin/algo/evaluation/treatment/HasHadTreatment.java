@@ -31,6 +31,6 @@ public class HasHadTreatment implements EvaluationFunction {
             }
         }
 
-        return EvaluationFactory.create(EvaluationResult.FAIL); // todo: add working message
+        return EvaluationFactory.create(EvaluationResult.FAIL); // TODO add working message
     }
 }
