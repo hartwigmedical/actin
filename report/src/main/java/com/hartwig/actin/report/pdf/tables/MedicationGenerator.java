@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf.tables;
 
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -15,16 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public class MedicationGenerator implements TableGenerator {
 
     @NotNull
-    private final ClinicalRecord record;
+    private final List<Medication> medications;
     private final float totalWidth;
 
-    @NotNull
-    public static MedicationGenerator fromRecord(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
-        return new MedicationGenerator(record, keyWidth + valueWidth);
-    }
-
-    private MedicationGenerator(@NotNull final ClinicalRecord record, final float totalWidth) {
-        this.record = record;
+    public MedicationGenerator(@NotNull final List<Medication> medications, final float totalWidth) {
+        this.medications = medications;
         this.totalWidth = totalWidth;
     }
 
@@ -47,7 +42,7 @@ public class MedicationGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Dosage"));
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
-        for (Medication medication : record.medications()) {
+        for (Medication medication : medications) {
             table.addCell(Cells.createContent(medication.name()));
             table.addCell(Cells.createContent(concat(medication.categories())));
             table.addCell(Cells.createContent(Formats.date(medication.startDate())));

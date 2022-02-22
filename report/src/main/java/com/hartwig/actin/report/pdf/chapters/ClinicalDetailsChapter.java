@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.report.datamodel.Report;
+import com.hartwig.actin.report.pdf.tables.BloodTransfusionGenerator;
 import com.hartwig.actin.report.pdf.tables.LaboratoryResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.MedicationGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsGenerator;
@@ -56,7 +57,11 @@ public class ClinicalDetailsChapter implements ReportChapter {
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
                 LaboratoryResultsGenerator.fromRecord(report.clinical(), keyWidth, valueWidth),
-                MedicationGenerator.fromRecord(report.clinical(), keyWidth, valueWidth));
+                new MedicationGenerator(report.clinical().medications(), contentWidth()));
+
+        if (!report.clinical().bloodTransfusions().isEmpty()) {
+            generators.add(new BloodTransfusionGenerator(report.clinical().bloodTransfusions(), contentWidth()));
+        }
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
