@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.pdf.tables;
 
+import java.util.List;
 import java.util.StringJoiner;
 
+import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -51,12 +54,32 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
         ECG ecg = record.clinicalStatus().ecg();
         if (ecg != null && ecg.hasSigAberrationLatestECG()) {
-            table.addCell(Cells.createKey("Significant aberration on latest ECG"));
-            table.addCell(Cells.createValue(ecg.aberrationDescription()));
+            if (ecg.hasSigAberrationLatestECG()) {
+                table.addCell(Cells.createKey("Significant aberration on latest ECG"));
+                table.addCell(Cells.createValue(ecg.aberrationDescription()));
+            }
+
+            if (ecg.qtcfValue() != null && ecg.qtcfUnit() != null) {
+                table.addCell(Cells.createKey("QTcF"));
+                table.addCell(Cells.createValue(Formats.number(ecg.qtcfValue()) + " " + ecg.qtcfUnit()));
+            }
+        }
+
+        if (record.clinicalStatus().lvef() != null) {
+            table.addCell(Cells.createKey("LVEF"));
+            table.addCell(Cells.createValue(Formats.number(record.clinicalStatus().lvef())));
         }
 
         table.addCell(Cells.createKey("Cancer-related complications"));
-        table.addCell(Cells.createValue(cancerRelatedComplications(record)));
+        table.addCell(Cells.createValue(cancerRelatedComplications(record.cancerRelatedComplications())));
+
+        table.addCell(Cells.createKey("Known allergies"));
+        table.addCell(Cells.createValue(allergies(record.allergies())));
+
+        if (!record.surgeries().isEmpty()) {
+            table.addCell(Cells.createKey("Recent surgeries"));
+            table.addCell(Cells.createValue(surgeries(record.surgeries())));
+        }
 
         return table;
     }
@@ -71,15 +94,38 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
                 joiner.add(toxicity.name() + gradeString);
             }
         }
+
         return Formats.valueOrDefault(joiner.toString(), "None");
     }
 
     @NotNull
-    private static String cancerRelatedComplications(@NotNull ClinicalRecord record) {
+    private static String cancerRelatedComplications(@NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
         StringJoiner joiner = Formats.commaJoiner();
-        for (CancerRelatedComplication complication : record.cancerRelatedComplications()) {
+        for (CancerRelatedComplication complication : cancerRelatedComplications) {
             joiner.add(complication.name());
         }
+
+        return Formats.valueOrDefault(joiner.toString(), "None");
+    }
+
+    @NotNull
+    private static String allergies(@NotNull List<Allergy> allergies) {
+        StringJoiner joiner = Formats.commaJoiner();
+        for (Allergy allergy : allergies) {
+            String addition = !allergy.category().isEmpty() ? " (" + allergy.category() + ")" : Strings.EMPTY;
+            joiner.add(allergy.name() + addition);
+        }
+
+        return Formats.valueOrDefault(joiner.toString(), "None");
+    }
+
+    @NotNull
+    private static String surgeries(@NotNull List<Surgery> surgeries) {
+        StringJoiner joiner = Formats.commaJoiner();
+        for (Surgery surgery : surgeries) {
+            joiner.add(Formats.date(surgery.endDate()));
+        }
+
         return Formats.valueOrDefault(joiner.toString(), "None");
     }
 }
