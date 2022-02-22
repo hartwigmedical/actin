@@ -23,7 +23,6 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                 .ignore(ignore)
                 .curated(!ignore ? curateObject(fields, parts) : null)
                 .build();
-
     }
 
     @NotNull
