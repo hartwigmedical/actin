@@ -289,7 +289,7 @@ public class CurationModel {
             }
 
             for (CancerRelatedComplicationConfig config : configs) {
-                cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name(config.name()).build());
+                cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().from(config.curated()).build());
             }
         }
 

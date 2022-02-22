@@ -32,6 +32,7 @@ import com.hartwig.actin.clinical.curation.translation.ImmutableAllergyTranslati
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
@@ -216,7 +217,10 @@ public final class TestCurationFactory {
     private static List<CancerRelatedComplicationConfig> createTestCancerRelatedComplicationConfigs() {
         List<CancerRelatedComplicationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableCancerRelatedComplicationConfig.builder().input("Term").name("Curated").build());
+        configs.add(ImmutableCancerRelatedComplicationConfig.builder()
+                .input("Term")
+                .curated(ImmutableCancerRelatedComplication.builder().name("Curated").build())
+                .build());
 
         return configs;
     }

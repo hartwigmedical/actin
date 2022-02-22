@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.curation.config;
 
+import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,11 +20,6 @@ public abstract class CancerRelatedComplicationConfig implements CurationConfig 
     }
 
     @NotNull
-    public abstract String name();
+    public abstract CancerRelatedComplication curated();
 
-    @Nullable
-    public abstract Integer year();
-
-    @Nullable
-    public abstract Integer month();
 }
