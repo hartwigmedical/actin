@@ -1,2 +1,2 @@
-input	name
-something	curated something
+input	name	year	month
+something	curated something	2000	1

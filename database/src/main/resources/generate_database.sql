@@ -124,6 +124,8 @@ CREATE TABLE cancerRelatedComplication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(150) NOT NULL,
+    year int,
+    month int,
     PRIMARY KEY (id)
 );
 

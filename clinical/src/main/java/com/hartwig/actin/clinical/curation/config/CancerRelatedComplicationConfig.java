@@ -19,4 +19,10 @@ public abstract class CancerRelatedComplicationConfig implements CurationConfig 
 
     @NotNull
     public abstract String name();
+
+    @Nullable
+    public abstract Integer year();
+
+    @Nullable
+    public abstract Integer month();
 }

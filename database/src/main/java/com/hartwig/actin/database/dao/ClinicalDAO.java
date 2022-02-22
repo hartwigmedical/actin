@@ -281,8 +281,15 @@ class ClinicalDAO {
     private void writeCancerRelatedComplications(@NotNull String sampleId,
             @NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
         for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
-            context.insertInto(CANCERRELATEDCOMPLICATION, CANCERRELATEDCOMPLICATION.SAMPLEID, CANCERRELATEDCOMPLICATION.NAME)
-                    .values(sampleId, cancerRelatedComplication.name())
+            context.insertInto(CANCERRELATEDCOMPLICATION,
+                    CANCERRELATEDCOMPLICATION.SAMPLEID,
+                    CANCERRELATEDCOMPLICATION.NAME,
+                    CANCERRELATEDCOMPLICATION.YEAR,
+                    CANCERRELATEDCOMPLICATION.MONTH)
+                    .values(sampleId,
+                            cancerRelatedComplication.name(),
+                            cancerRelatedComplication.year(),
+                            cancerRelatedComplication.month())
                     .execute();
         }
     }

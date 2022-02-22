@@ -178,6 +178,8 @@ public class CurationDatabaseReaderTest {
         CancerRelatedComplicationConfig config = configs.get(0);
         assertEquals("something", config.input());
         assertEquals("curated something", config.name());
+        assertEquals(2000, (int) config.year());
+        assertEquals(1, (int) config.month());
     }
 
     private static void assertToxicityConfigs(@NotNull List<ToxicityConfig> configs) {
