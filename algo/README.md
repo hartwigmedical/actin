@@ -108,6 +108,7 @@ HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
+HAS_SUPERSCAN_BONE_SCAN | won't be evaluated
 HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS details (to be extended)
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
