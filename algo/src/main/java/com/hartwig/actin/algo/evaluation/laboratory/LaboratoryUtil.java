@@ -72,11 +72,12 @@ final class LaboratoryUtil {
         }
 
         double maxValue = refLimitUp * maxULN;
-        return evaluateVersusMaxValue(labValue.value(), labValue.comparator(), maxValue);
+        return evaluateVersusMaxValue(labValue.code(), labValue.value(), labValue.comparator(), maxValue);
     }
 
     @NotNull
-    public static Evaluation evaluateVersusMaxValue(double value, @NotNull String comparator, double maxValue) {
+    public static Evaluation evaluateVersusMaxValue(@NotNull String code, double value, @NotNull String comparator, double maxValue) {
+        // TODO (Nina): Use code in messages.
         if (cannotBeDetermined(value, comparator, maxValue)) {
             return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         } else {

@@ -58,13 +58,17 @@ public class LaboratoryUtilTest {
 
     @Test
     public void canEvaluateVersusMaxValue() {
-        assertEquals(EvaluationResult.PASS, LaboratoryUtil.evaluateVersusMaxValue(1D, Strings.EMPTY, 2D).result());
-        assertEquals(EvaluationResult.FAIL, LaboratoryUtil.evaluateVersusMaxValue(4D, Strings.EMPTY, 2D).result());
+        assertEquals(EvaluationResult.PASS, LaboratoryUtil.evaluateVersusMaxValue(Strings.EMPTY, 1D, Strings.EMPTY, 2D).result());
+        assertEquals(EvaluationResult.FAIL, LaboratoryUtil.evaluateVersusMaxValue(Strings.EMPTY, 4D, Strings.EMPTY, 2D).result());
 
-        assertEquals(EvaluationResult.PASS, LaboratoryUtil.evaluateVersusMaxValue(1D, LaboratoryUtil.SMALLER_THAN, 2D).result());
-        assertEquals(EvaluationResult.FAIL, LaboratoryUtil.evaluateVersusMaxValue(4D, LaboratoryUtil.LARGER_THAN, 2D).result());
+        assertEquals(EvaluationResult.PASS,
+                LaboratoryUtil.evaluateVersusMaxValue(Strings.EMPTY, 1D, LaboratoryUtil.SMALLER_THAN, 2D).result());
+        assertEquals(EvaluationResult.FAIL,
+                LaboratoryUtil.evaluateVersusMaxValue(Strings.EMPTY, 4D, LaboratoryUtil.LARGER_THAN, 2D).result());
 
-        assertEquals(EvaluationResult.UNDETERMINED, LaboratoryUtil.evaluateVersusMaxValue(4D, LaboratoryUtil.SMALLER_THAN, 2D).result());
-        assertEquals(EvaluationResult.UNDETERMINED, LaboratoryUtil.evaluateVersusMaxValue(1D, LaboratoryUtil.LARGER_THAN, 2D).result());
+        assertEquals(EvaluationResult.UNDETERMINED,
+                LaboratoryUtil.evaluateVersusMaxValue(Strings.EMPTY, 4D, LaboratoryUtil.SMALLER_THAN, 2D).result());
+        assertEquals(EvaluationResult.UNDETERMINED,
+                LaboratoryUtil.evaluateVersusMaxValue(Strings.EMPTY, 1D, LaboratoryUtil.LARGER_THAN, 2D).result());
     }
 }
