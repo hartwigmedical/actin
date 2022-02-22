@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,16 +32,29 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
         LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
         if (measuredUnit == null) {
             LOGGER.warn("Could not determine lab unit for '{}'", labValue);
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Could not determine hemoglobin lab unit for '" + labValue.code() + "'")
+                    .build();
         }
 
         Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
         if (value == null) {
             LOGGER.warn("Could not convert value from '{}' to '{}'", measuredUnit, targetUnit);
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Could not convert hemoglobin value from '" + measuredUnit + "' to '" + targetUnit + "'")
+                    .build();
         }
 
-        return LaboratoryUtil.evaluateVersusMinValue(labValue.code(), value, labValue.comparator(), minHemoglobin);
+        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages(labValue.code() + " is insufficient");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            builder.addUndeterminedMessages(labValue.code() + " sufficiency could not be evaluated");
+        } else if (result.isPass()) {
+            builder.addPassMessages(labValue.code() + " is sufficient");
+        }
+        return builder.build();
     }
 
     @Nullable

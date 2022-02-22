@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,9 +30,20 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
             convertedValue = labValue.value() / 10;
         } else {
             LOGGER.warn("Could not resolve albumin unit: '{}'", labValue.unit());
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Could not determine albumin unit '" + labValue.unit() + "'")
+                    .build();
         }
 
-        return LaboratoryUtil.evaluateVersusMinValue(labValue.code(), convertedValue, labValue.comparator(), minAlbuminGPerDL);
+        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(convertedValue, labValue.comparator(), minAlbuminGPerDL);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages(labValue.code() + " is insufficient");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            builder.addUndeterminedMessages(labValue.code() + " sufficiency could not be evaluated");
+        } else if (result.isPass()) {
+            builder.addPassMessages(labValue.code() + " is sufficient");
+        }
+        return builder.build();
     }
 }

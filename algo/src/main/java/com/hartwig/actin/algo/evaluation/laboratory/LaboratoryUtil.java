@@ -4,10 +4,7 @@ import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
@@ -31,59 +28,47 @@ final class LaboratoryUtil {
     }
 
     @NotNull
-    public static Evaluation evaluateVersusMinULN(@NotNull LabValue labValue, double minULN) {
+    public static EvaluationResult evaluateVersusMinULN(@NotNull LabValue labValue, double minULN) {
         Double refLimitLow = labValue.refLimitLow();
         if (refLimitLow == null) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return EvaluationResult.UNDETERMINED;
         }
 
         double minValue = refLimitLow * minULN;
-        return evaluateVersusMinValue(labValue.code(), labValue.value(), labValue.comparator(), minValue);
+        return evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
     }
 
     @NotNull
-    public static Evaluation evaluateVersusMinValue(@NotNull String labCode, double value, @NotNull String comparator, double minValue) {
+    public static EvaluationResult evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
         if (cannotBeDetermined(value, comparator, minValue)) {
-            return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages(labCode + " cannot be determined with available data")
-                    .build();
+            return EvaluationResult.UNDETERMINED;
         }
 
-        EvaluationResult result = Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(labCode + " " + value + " is not acceptable");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages(labCode + " " + value + " is acceptable");
-        }
-        return builder.build();
+        return Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 
     @NotNull
-    public static Evaluation evaluateVersusMaxULN(@NotNull LabValue labValue, double maxULN) {
+    public static EvaluationResult evaluateVersusMaxULN(@NotNull LabValue labValue, double maxULN) {
         Double refLimitUp = labValue.refLimitUp();
         if (refLimitUp == null) {
             refLimitUp = REF_LIMIT_UP_OVERRIDES.get(labValue.code());
         }
 
         if (refLimitUp == null) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return EvaluationResult.UNDETERMINED;
         }
 
         double maxValue = refLimitUp * maxULN;
-        return evaluateVersusMaxValue(labValue.code(), labValue.value(), labValue.comparator(), maxValue);
+        return evaluateVersusMaxValue(labValue.value(), labValue.comparator(), maxValue);
     }
 
     @NotNull
-    public static Evaluation evaluateVersusMaxValue(@NotNull String code, double value, @NotNull String comparator, double maxValue) {
-        // TODO (Nina): Use code in messages.
+    public static EvaluationResult evaluateVersusMaxValue(double value, @NotNull String comparator, double maxValue) {
         if (cannotBeDetermined(value, comparator, maxValue)) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
-        } else {
-            EvaluationResult result = Double.compare(value, maxValue) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-            return EvaluationFactory.create(result);
+            return EvaluationResult.UNDETERMINED;
         }
+
+        return Double.compare(value, maxValue) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
     }
 
     private static boolean cannotBeDetermined(double value, @NotNull String comparator, double refValue) {

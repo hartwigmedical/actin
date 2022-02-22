@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -51,7 +51,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
                 return evaluateCockcroftGault(record, labValue);
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
-                return EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED);
+                return ImmutableEvaluation.builder().result(EvaluationResult.NOT_IMPLEMENTED).build();
             }
         }
     }
@@ -59,24 +59,6 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     @NotNull
     private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
         return evaluateValues("MRD", toMDRD(record, creatinine), creatinine.comparator());
-    }
-
-    @NotNull
-    private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
-        Set<EvaluationResult> evaluations = Sets.newHashSet();
-        for (Double value : values) {
-            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(code, value, comparator, minCreatinineClearance).result());
-        }
-
-        if (evaluations.contains(EvaluationResult.FAIL)) {
-            EvaluationResult result = evaluations.contains(EvaluationResult.PASS) ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
-            return EvaluationFactory.create(result);
-        } else if (evaluations.contains(EvaluationResult.UNDETERMINED)) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
-        } else {
-            // Every value should be pass.
-            return EvaluationFactory.create(EvaluationResult.PASS);
-        }
     }
 
     @NotNull
@@ -147,20 +129,17 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
         double genderCorrected = isFemale ? base * 0.85 : base;
 
-        Evaluation evaluation =
-                LaboratoryUtil.evaluateVersusMinValue("CG", genderCorrected, creatinine.comparator(), minCreatinineClearance);
+        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
 
-        if (weightIsKnown) {
-            return evaluation;
-        } else {
-            if (evaluation.result() == EvaluationResult.FAIL) {
-                return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
-            } else if (evaluation.result() == EvaluationResult.PASS) {
-                return EvaluationFactory.create(EvaluationResult.PASS_BUT_WARN);
-            } else {
-                return evaluation;
+        if (!weightIsKnown) {
+            if (result == EvaluationResult.FAIL) {
+                result = EvaluationResult.UNDETERMINED;
+            } else if (result == EvaluationResult.PASS) {
+                result = EvaluationResult.PASS_BUT_WARN;
             }
         }
+
+        return toEvaluation(result, "Cockcroft-Gault");
     }
 
     @Nullable
@@ -175,5 +154,38 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
         }
 
         return weight;
+    }
+
+    @NotNull
+    private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
+        Set<EvaluationResult> evaluations = Sets.newHashSet();
+        for (Double value : values) {
+            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
+        }
+
+        EvaluationResult result;
+        if (evaluations.contains(EvaluationResult.FAIL)) {
+            result = evaluations.contains(EvaluationResult.PASS) ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+        } else if (evaluations.contains(EvaluationResult.UNDETERMINED)) {
+            result = EvaluationResult.UNDETERMINED;
+        } else {
+            // Every value should be pass.
+            result = EvaluationResult.PASS;
+        }
+
+        return toEvaluation(result, code);
+    }
+
+    @NotNull
+    private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages(code + " failed evaluation");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            builder.addUndeterminedMessages(code + " evaluation led to ambiguous results");
+        } else if (result.isPass()) {
+            builder.addPassMessages(code + " passed evaluation");
+        }
+        return builder.build();
     }
 }

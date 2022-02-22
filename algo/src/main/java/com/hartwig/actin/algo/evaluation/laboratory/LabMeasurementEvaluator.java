@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -39,7 +39,9 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("No valid measurement found for " + measurement.code())
+                    .build();
         }
 
         Evaluation evaluation = function.evaluate(record, mostRecent);
@@ -49,7 +51,9 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             if (isValid(secondMostRecent, measurement)) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
-                    return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+                    return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                            .addUndeterminedMessages("First measurement fails for " + measurement.code() + " while second succeeds")
+                            .build();
                 }
             }
         }
