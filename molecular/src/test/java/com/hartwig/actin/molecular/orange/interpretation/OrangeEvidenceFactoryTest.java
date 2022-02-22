@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.TestTreatmentEvidenceFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -134,24 +133,6 @@ public class OrangeEvidenceFactoryTest {
                 .treatment("treatment C off-label")
                 .onLabel(false)
                 .level(EvidenceLevel.C)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build());
-
-        // Should be filtered out as it affects a non-applicable gene.
-        evidences.add(evidenceBuilder.gene(OrangeEvidenceFactory.NON_APPLICABLE_GENES.iterator().next())
-                .event("irrelevant")
-                .treatment(Strings.EMPTY)
-                .onLabel(true)
-                .level(EvidenceLevel.A)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build());
-
-        // Should be filtered out as it is a non-applicable event.
-        evidences.add(evidenceBuilder.gene(null)
-                .event(OrangeEvidenceFactory.NON_APPLICABLE_EVENTS.iterator().next())
-                .treatment(Strings.EMPTY)
-                .onLabel(true)
-                .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 

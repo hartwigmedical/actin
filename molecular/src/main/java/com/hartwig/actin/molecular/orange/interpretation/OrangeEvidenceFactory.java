@@ -1,17 +1,14 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
-import com.hartwig.actin.molecular.orange.util.EventFormatter;
+import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
 import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
@@ -26,15 +23,6 @@ class OrangeEvidenceFactory {
     static final String ACTIN_SOURCE = "ACTIN";
     static final String ICLUSION_SOURCE = "ICLUSION";
     static final String CKB_SOURCE = "CKB";
-
-    static final Set<String> NON_APPLICABLE_GENES = Sets.newHashSet();
-    static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
-
-    static {
-        NON_APPLICABLE_GENES.add("CDKN2A");
-
-        NON_APPLICABLE_EVENTS.add("VEGFA amp");
-    }
 
     @NotNull
     private final EvidenceEvaluator evidenceEvaluator;
@@ -142,29 +130,11 @@ class OrangeEvidenceFactory {
     private static List<TreatmentEvidence> reportedApplicableForSource(@NotNull List<TreatmentEvidence> evidences, @NotNull String source) {
         List<TreatmentEvidence> filtered = Lists.newArrayList();
         for (TreatmentEvidence evidence : evidences) {
-            if (evidence.reported() && evidence.sources().contains(source) && isPotentiallyApplicable(evidence)) {
+            if (evidence.reported() && evidence.sources().contains(source) && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
                 filtered.add(evidence);
             }
         }
         return filtered;
-    }
-
-    private static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
-        String gene = evidence.gene();
-        for (String nonApplicableGene : NON_APPLICABLE_GENES) {
-            if (gene != null && gene.equals(nonApplicableGene)) {
-                return false;
-            }
-        }
-
-        String event = toEvent(evidence);
-        for (String nonApplicableEvent : NON_APPLICABLE_EVENTS) {
-            if (event.equals(nonApplicableEvent)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static boolean isApproved(@NotNull TreatmentEvidence evidence) {
@@ -188,14 +158,6 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private static MolecularEvidence toMolecularEvidence(@NotNull TreatmentEvidence evidence) {
-        return ImmutableMolecularEvidence.builder().event(toEvent(evidence)).treatment(evidence.treatment()).build();
-    }
-
-    @NotNull
-    private static String toEvent(@NotNull TreatmentEvidence evidence) {
-        String gene = evidence.gene();
-        String event = EventFormatter.format(evidence.event());
-        // Promiscuous fusions have the gene embedded in the event.
-        return gene != null && evidence.type() != EvidenceType.PROMISCUOUS_FUSION ? gene + " " + event : event;
+        return ImmutableMolecularEvidence.builder().event(OrangeUtil.toEvent(evidence)).treatment(evidence.treatment()).build();
     }
 }
