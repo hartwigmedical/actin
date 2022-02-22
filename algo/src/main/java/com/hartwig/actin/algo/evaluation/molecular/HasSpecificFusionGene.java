@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
@@ -26,7 +27,10 @@ public class HasSpecificFusionGene implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (FusionGene fusion : record.molecular().fusions()) {
             if (fusion.fiveGene().equals(fiveGene) || fusion.threeGene().equals(threeGene)) {
-                return EvaluationFactory.create(EvaluationResult.PASS);
+                return ImmutableEvaluation.builder()
+                        .result(EvaluationResult.PASS)
+                        .addPassMessages("WGS detected specific fusion " + fiveGene + " - " + threeGene)
+                        .build();
             }
         }
 
