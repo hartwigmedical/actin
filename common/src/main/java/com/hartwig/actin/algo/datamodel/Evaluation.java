@@ -14,5 +14,11 @@ public abstract class Evaluation {
     public abstract EvaluationResult result();
 
     @NotNull
-    public abstract Set<String> messages();
+    public abstract Set<String> passMessages();
+
+    @NotNull
+    public abstract Set<String> undeterminedMessages();
+
+    @NotNull
+    public abstract Set<String> failMessages();
 }

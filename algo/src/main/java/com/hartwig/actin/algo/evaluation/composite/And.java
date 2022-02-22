@@ -24,20 +24,39 @@ public class And implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        EvaluationResult worst = null;
-        Set<String> messages = Sets.newHashSet();
+        Set<Evaluation> evaluations = Sets.newHashSet();
         for (EvaluationFunction function : functions) {
-            Evaluation eval = function.evaluate(record);
+            evaluations.add(function.evaluate(record));
+        }
+
+        EvaluationResult worst = null;
+        for (Evaluation eval : evaluations) {
             if (worst == null || eval.result().isWorseThan(worst)) {
                 worst = eval.result();
             }
-            messages.addAll(eval.messages());
         }
 
         if (worst == null) {
             throw new IllegalStateException("Could not determine AND result for functions: " + functions);
         }
 
-        return ImmutableEvaluation.builder().result(worst).messages(messages).build();
+        Set<String> passMessages = Sets.newHashSet();
+        Set<String> undeterminedMessages = Sets.newHashSet();
+        Set<String> failMessages = Sets.newHashSet();
+
+        for (Evaluation eval : evaluations) {
+            if (eval.result() == worst) {
+                passMessages.addAll(eval.passMessages());
+                undeterminedMessages.addAll(eval.undeterminedMessages());
+                failMessages.addAll(eval.failMessages());
+            }
+        }
+
+        return ImmutableEvaluation.builder()
+                .result(worst)
+                .passMessages(passMessages)
+                .undeterminedMessages(undeterminedMessages)
+                .failMessages(failMessages)
+                .build();
     }
 }

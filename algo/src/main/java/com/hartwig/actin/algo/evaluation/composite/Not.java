@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite;
 
+import java.util.Set;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -23,19 +25,32 @@ public class Not implements EvaluationFunction {
         Evaluation evaluation = function.evaluate(record);
 
         EvaluationResult negatedResult = null;
+        Set<String> passMessages = null;
+        Set<String> failMessages = null;
         if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.PASS_BUT_WARN) {
             negatedResult = EvaluationResult.FAIL;
+            passMessages = evaluation.failMessages();
+            failMessages = evaluation.passMessages();
         } else if (evaluation.result() == EvaluationResult.FAIL) {
             negatedResult = EvaluationResult.PASS;
+            passMessages = evaluation.failMessages();
+            failMessages = evaluation.passMessages();
         } else if (evaluation.result() == EvaluationResult.UNDETERMINED || evaluation.result() == EvaluationResult.NOT_IMPLEMENTED
                 || evaluation.result() == EvaluationResult.NOT_EVALUATED) {
             negatedResult = evaluation.result();
+            passMessages = evaluation.passMessages();
+            failMessages = evaluation.failMessages();
         }
 
         if (negatedResult == null) {
             throw new IllegalStateException("NOT function cannot negate evaluation: " + evaluation);
         }
 
-        return ImmutableEvaluation.builder().result(negatedResult).messages(evaluation.messages()).build();
+        return ImmutableEvaluation.builder()
+                .result(negatedResult)
+                .passMessages(passMessages)
+                .undeterminedMessages(evaluation.undeterminedMessages())
+                .failMessages(failMessages)
+                .build();
     }
 }

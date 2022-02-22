@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.doid;
 
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -7,20 +8,30 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DoidModel {
 
     @NotNull
     private final Multimap<String, String> relationship;
+    @NotNull
+    private final Map<String, String> termsPerDoid;
 
-    DoidModel(@NotNull final Multimap<String, String> relationship) {
+    DoidModel(@NotNull final Multimap<String, String> relationship, @NotNull final Map<String, String> termsPerDoid) {
         this.relationship = relationship;
+        this.termsPerDoid = termsPerDoid;
     }
 
     @NotNull
     @VisibleForTesting
     Multimap<String, String> relationship() {
         return relationship;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    Map<String, String> termsForDoid() {
+        return termsPerDoid;
     }
 
     @NotNull
@@ -40,5 +51,10 @@ public class DoidModel {
                 addParents(parent, result);
             }
         }
+    }
+
+    @Nullable
+    public String term(@NotNull String doid) {
+        return termsForDoid().get(doid);
     }
 }

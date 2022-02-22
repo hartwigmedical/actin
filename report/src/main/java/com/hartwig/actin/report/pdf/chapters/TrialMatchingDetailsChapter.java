@@ -227,8 +227,18 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                 table.addCell(Cells.createContent(reference.text()));
                 Table evalTable = Tables.createSingleColWithWidth(145);
                 evalTable.addCell(Cells.createEvaluation(evaluation.result()));
-                for (String message : evaluation.messages()) {
-                    evalTable.addCell(Cells.create(new Paragraph(message)));
+                if (evaluation.result() == EvaluationResult.FAIL) {
+                    for (String failMessage : evaluation.failMessages()) {
+                        evalTable.addCell(Cells.create(new Paragraph(failMessage)));
+                    }
+                } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
+                    for (String undeterminedMessage : evaluation.undeterminedMessages()) {
+                        evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
+                    }
+                } else if (evaluation.result().isPass()) {
+                    for (String passMessage : evaluation.passMessages()) {
+                        evalTable.addCell(Cells.create(new Paragraph(passMessage)));
+                    }
                 }
                 table.addCell(Cells.createContent(evalTable));
             }

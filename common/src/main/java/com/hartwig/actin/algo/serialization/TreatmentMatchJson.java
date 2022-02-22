@@ -184,7 +184,9 @@ public final class TreatmentMatchJson {
         private static Evaluation toEvaluation(@NotNull JsonObject evaluation) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.valueOf(string(evaluation, "result")))
-                    .messages(stringList(evaluation, "messages"))
+                    .passMessages(stringList(evaluation, "passMessages"))
+                    .undeterminedMessages(stringList(evaluation, "undeterminedMessages"))
+                    .failMessages(stringList(evaluation, "failMessages"))
                     .build();
         }
 

@@ -24,20 +24,39 @@ public class Or implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        EvaluationResult best = null;
-        Set<String> messages = Sets.newHashSet();
+        Set<Evaluation> evaluations = Sets.newHashSet();
         for (EvaluationFunction function : functions) {
-            Evaluation eval = function.evaluate(record);
+            evaluations.add(function.evaluate(record));
+        }
+
+        EvaluationResult best = null;
+        for (Evaluation eval : evaluations) {
             if (best == null || best.isWorseThan(eval.result())) {
                 best = eval.result();
             }
-            messages.addAll(eval.messages());
         }
 
         if (best == null) {
             throw new IllegalStateException("Could not determine OR result for functions: " + functions);
         }
 
-        return ImmutableEvaluation.builder().result(best).messages(messages).build();
+        Set<String> passMessages = Sets.newHashSet();
+        Set<String> undeterminedMessages = Sets.newHashSet();
+        Set<String> failMessages = Sets.newHashSet();
+
+        for (Evaluation eval : evaluations) {
+            if (eval.result() == best) {
+                passMessages.addAll(eval.passMessages());
+                undeterminedMessages.addAll(eval.undeterminedMessages());
+                failMessages.addAll(eval.failMessages());
+            }
+        }
+
+        return ImmutableEvaluation.builder()
+                .result(best)
+                .passMessages(passMessages)
+                .undeterminedMessages(undeterminedMessages)
+                .failMessages(failMessages)
+                .build();
     }
 }

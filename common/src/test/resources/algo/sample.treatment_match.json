@@ -26,7 +26,11 @@
           },
           {
             "result": "PASS",
-            "messages": [
+            "passMessages": [
+            ],
+            "undeterminedMessages": [
+            ],
+            "failMessages": [
             ]
           }
         ]
@@ -61,7 +65,11 @@
               },
               {
                 "result": "NOT_IMPLEMENTED",
-                "messages": [
+                "passMessages": [
+                ],
+                "undeterminedMessages": [
+                ],
+                "failMessages": [
                 ]
               }
             ]

@@ -1,5 +1,8 @@
 package com.hartwig.actin.algo.evaluation.composite;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -23,6 +26,8 @@ public class WarnOnPass implements EvaluationFunction {
         Evaluation evaluation = function.evaluate(record);
 
         EvaluationResult updatedResult;
+        Set<String> passMessages = evaluation.passMessages();
+        Set<String> failMessages = evaluation.failMessages();
         switch (evaluation.result()) {
             case PASS:
             case PASS_BUT_WARN:
@@ -30,6 +35,8 @@ public class WarnOnPass implements EvaluationFunction {
                 break;
             case FAIL:
                 updatedResult = EvaluationResult.PASS;
+                passMessages = evaluation.failMessages();
+                failMessages = Sets.newHashSet();
                 break;
             case NOT_IMPLEMENTED:
             case UNDETERMINED:
@@ -41,6 +48,11 @@ public class WarnOnPass implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder().result(updatedResult).messages(evaluation.messages()).build();
+        return ImmutableEvaluation.builder()
+                .result(updatedResult)
+                .passMessages(passMessages)
+                .undeterminedMessages(evaluation.undeterminedMessages())
+                .failMessages(failMessages)
+                .build();
     }
 }

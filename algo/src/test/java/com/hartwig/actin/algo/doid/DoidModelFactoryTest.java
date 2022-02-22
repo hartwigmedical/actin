@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.doid;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -11,10 +12,13 @@ import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
 import com.hartwig.actin.algo.doid.datamodel.Edge;
 import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidEntry;
 import com.hartwig.actin.algo.doid.datamodel.ImmutableEdge;
+import com.hartwig.actin.algo.doid.datamodel.ImmutableNode;
+import com.hartwig.actin.algo.doid.datamodel.Node;
 import com.hartwig.actin.algo.doid.datamodel.TestDoidEntryFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class DoidModelFactoryTest {
@@ -26,7 +30,12 @@ public class DoidModelFactoryTest {
         edges.add(createParentChildEdge("300", "400"));
         edges.add(createContainmentEdge("400", "500"));
 
-        DoidEntry entry = ImmutableDoidEntry.builder().from(TestDoidEntryFactory.createMinimalTestDoidEntry()).edges(edges).build();
+        List<Node> nodes = Lists.newArrayList();
+        nodes.add(createNode("200", "tumor A"));
+        nodes.add(createNode("300", null));
+
+        DoidEntry entry =
+                ImmutableDoidEntry.builder().from(TestDoidEntryFactory.createMinimalTestDoidEntry()).edges(edges).nodes(nodes).build();
         DoidModel model = DoidModelFactory.createFromDoidEntry(entry);
 
         assertEquals(2, model.relationship().size());
@@ -38,6 +47,15 @@ public class DoidModelFactoryTest {
         Collection<String> relations305 = model.relationship().get("300");
         assertEquals(1, relations305.size());
         assertTrue(relations305.contains("400"));
+
+        assertEquals(1, model.termsForDoid().size());
+        assertEquals("tumor A", model.termsForDoid().get("200"));
+        assertNull(model.termsForDoid().get("300"));
+    }
+
+    @NotNull
+    private static Node createNode(@NotNull String doid, @Nullable String term) {
+        return ImmutableNode.builder().doid(doid).url(Strings.EMPTY).term(term).build();
     }
 
     @NotNull

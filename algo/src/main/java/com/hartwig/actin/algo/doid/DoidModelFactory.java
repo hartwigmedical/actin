@@ -1,11 +1,14 @@
 package com.hartwig.actin.algo.doid;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
 import com.hartwig.actin.algo.doid.datamodel.Edge;
+import com.hartwig.actin.algo.doid.datamodel.Node;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +36,14 @@ public final class DoidModelFactory {
             }
         }
 
-        return new DoidModel(relationship);
+        Map<String, String> termsPerDoid = Maps.newHashMap();
+        for (Node node : doidEntry.nodes()) {
+            String term = node.term();
+            if (term != null) {
+                termsPerDoid.put(node.doid(), term);
+            }
+        }
+
+        return new DoidModel(relationship, termsPerDoid);
     }
 }
