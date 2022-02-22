@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ECG;
@@ -19,10 +20,19 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         ECG ecg = record.clinical().clinicalStatus().ecg();
         if (ecg == null) {
-            return EvaluationFactory.create(EvaluationResult.FAIL);
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.FAIL)
+                    .addFailMessages("ECG details are missing, assumed there are none")
+                    .build();
         }
 
         EvaluationResult result = ecg.hasSigAberrationLatestECG() ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("No known ECG abnormalities");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
+        }
+        return builder.build();
     }
 }

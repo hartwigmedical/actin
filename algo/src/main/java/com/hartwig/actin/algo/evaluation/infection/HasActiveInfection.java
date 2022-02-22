@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.infection;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
@@ -20,10 +21,19 @@ public class HasActiveInfection implements EvaluationFunction {
         InfectionStatus infection = record.clinical().clinicalStatus().infectionStatus();
 
         if (infection == null) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Infection status data is missing")
+                    .build();
         }
 
         EvaluationResult result = infection.hasActiveInfection() ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has no active infection");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Patient has active infection: " + infection.description());
+        }
+        return builder.build();
     }
 }
