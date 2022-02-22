@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -23,10 +24,13 @@ public class HasHadTreatment implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.name().contains(name)) {
-                return EvaluationFactory.create(EvaluationResult.PASS);
+                return ImmutableEvaluation.builder()
+                        .result(EvaluationResult.PASS)
+                        .addPassMessages("Patient has received treatment " + name)
+                        .build();
             }
         }
 
-        return EvaluationFactory.create(EvaluationResult.FAIL);
+        return EvaluationFactory.create(EvaluationResult.FAIL); // todo: add working message
     }
 }
