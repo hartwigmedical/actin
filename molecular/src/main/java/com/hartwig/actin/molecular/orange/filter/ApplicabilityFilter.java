@@ -13,20 +13,20 @@ public final class ApplicabilityFilter {
 
     static final Set<String> NON_APPLICABLE_GENES = Sets.newHashSet();
     static final Set<String> NON_APPLICABLE_EVENTS = Sets.newHashSet();
-    static final Set<ApplicabilityFilterKey> NON_APPLICABLE_KEYS = Sets.newHashSet();
+    static final Set<ApplicabilityFilterKey> NON_APPLICABLE_OFF_LABEL_KEYS = Sets.newHashSet();
 
     static {
         NON_APPLICABLE_GENES.add("CDKN2A");
 
         NON_APPLICABLE_EVENTS.add("VEGFA amp");
 
-        NON_APPLICABLE_KEYS.add(ImmutableApplicabilityFilterKey.builder()
+        NON_APPLICABLE_OFF_LABEL_KEYS.add(ImmutableApplicabilityFilterKey.builder()
                 .gene("KRAS")
                 .level(EvidenceLevel.A)
                 .treatment("Trametinib")
                 .build());
 
-        NON_APPLICABLE_KEYS.add(ImmutableApplicabilityFilterKey.builder()
+        NON_APPLICABLE_OFF_LABEL_KEYS.add(ImmutableApplicabilityFilterKey.builder()
                 .gene("KRAS")
                 .level(EvidenceLevel.A)
                 .treatment("Cobimetinib")
@@ -51,8 +51,8 @@ public final class ApplicabilityFilter {
             }
         }
 
-        for (ApplicabilityFilterKey key : NON_APPLICABLE_KEYS) {
-            if (gene != null && gene.equals(key.gene()) && evidence.level() == key.level() && evidence.treatment()
+        for (ApplicabilityFilterKey key : NON_APPLICABLE_OFF_LABEL_KEYS) {
+            if (!evidence.onLabel() && gene != null && gene.equals(key.gene()) && evidence.level() == key.level() && evidence.treatment()
                     .equals(key.treatment())) {
                 return false;
             }

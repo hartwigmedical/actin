@@ -29,9 +29,16 @@ public class ApplicabilityFilterTest {
 
     @Test
     public void canFilterOnKeys() {
-        ApplicabilityFilterKey nonApplicableKey = ApplicabilityFilter.NON_APPLICABLE_KEYS.iterator().next();
+        ApplicabilityFilterKey nonApplicableKey = ApplicabilityFilter.NON_APPLICABLE_OFF_LABEL_KEYS.iterator().next();
 
-        assertFalse(ApplicabilityFilter.isPotentiallyApplicable(testBuilder().gene(nonApplicableKey.gene())
+        assertFalse(ApplicabilityFilter.isPotentiallyApplicable(testBuilder().onLabel(false)
+                .gene(nonApplicableKey.gene())
+                .level(nonApplicableKey.level())
+                .treatment(nonApplicableKey.treatment())
+                .build()));
+
+        assertTrue(ApplicabilityFilter.isPotentiallyApplicable(testBuilder().onLabel(true)
+                .gene(nonApplicableKey.gene())
                 .level(nonApplicableKey.level())
                 .treatment(nonApplicableKey.treatment())
                 .build()));
