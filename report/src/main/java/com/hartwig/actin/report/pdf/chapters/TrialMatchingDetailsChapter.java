@@ -226,7 +226,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             if (evaluation.result() == resultToRender) {
                 table.addCell(Cells.createContent(reference.id()));
                 table.addCell(Cells.createContent(reference.text()));
-                Table evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH);
+                Table evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true);
                 evalTable.addCell(Cells.createEvaluation(evaluation.result()));
                 if (evaluation.result() == EvaluationResult.FAIL) {
                     for (String failMessage : evaluation.failMessages()) {
