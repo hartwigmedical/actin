@@ -23,14 +23,18 @@ public class LaboratoryUtilTest {
 
     @Test
     public void canEvaluateVersusMinValue() {
-        assertEquals(EvaluationResult.PASS, LaboratoryUtil.evaluateVersusMinValue(4D, Strings.EMPTY, 2D).result());
-        assertEquals(EvaluationResult.FAIL, LaboratoryUtil.evaluateVersusMinValue(1D, Strings.EMPTY, 2D).result());
+        assertEquals(EvaluationResult.PASS, LaboratoryUtil.evaluateVersusMinValue(Strings.EMPTY, 4D, Strings.EMPTY, 2D).result());
+        assertEquals(EvaluationResult.FAIL, LaboratoryUtil.evaluateVersusMinValue(Strings.EMPTY, 1D, Strings.EMPTY, 2D).result());
 
-        assertEquals(EvaluationResult.PASS, LaboratoryUtil.evaluateVersusMinValue(4D, LaboratoryUtil.LARGER_THAN, 2D).result());
-        assertEquals(EvaluationResult.FAIL, LaboratoryUtil.evaluateVersusMinValue(1D, LaboratoryUtil.SMALLER_THAN, 2D).result());
+        assertEquals(EvaluationResult.PASS,
+                LaboratoryUtil.evaluateVersusMinValue(Strings.EMPTY, 4D, LaboratoryUtil.LARGER_THAN, 2D).result());
+        assertEquals(EvaluationResult.FAIL,
+                LaboratoryUtil.evaluateVersusMinValue(Strings.EMPTY, 1D, LaboratoryUtil.SMALLER_THAN, 2D).result());
 
-        assertEquals(EvaluationResult.UNDETERMINED, LaboratoryUtil.evaluateVersusMinValue(4D, LaboratoryUtil.SMALLER_THAN, 2D).result());
-        assertEquals(EvaluationResult.UNDETERMINED, LaboratoryUtil.evaluateVersusMinValue(1D, LaboratoryUtil.LARGER_THAN, 2D).result());
+        assertEquals(EvaluationResult.UNDETERMINED,
+                LaboratoryUtil.evaluateVersusMinValue(Strings.EMPTY, 4D, LaboratoryUtil.SMALLER_THAN, 2D).result());
+        assertEquals(EvaluationResult.UNDETERMINED,
+                LaboratoryUtil.evaluateVersusMinValue(Strings.EMPTY, 1D, LaboratoryUtil.LARGER_THAN, 2D).result());
     }
 
     @Test

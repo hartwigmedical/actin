@@ -41,7 +41,7 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
             return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
         }
 
-        return LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);
+        return LaboratoryUtil.evaluateVersusMinValue(labValue.code(), value, labValue.comparator(), minHemoglobin);
     }
 
     @Nullable

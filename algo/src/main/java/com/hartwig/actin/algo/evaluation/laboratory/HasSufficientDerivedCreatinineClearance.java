@@ -58,14 +58,14 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     @NotNull
     private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return evaluateValues(toMDRD(record, creatinine), creatinine.comparator());
+        return evaluateValues("MRD", toMDRD(record, creatinine), creatinine.comparator());
     }
 
     @NotNull
-    private Evaluation evaluateValues(@NotNull List<Double> values, @NotNull String comparator) {
+    private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
         Set<EvaluationResult> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(value, comparator, minCreatinineClearance).result());
+            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(code, value, comparator, minCreatinineClearance).result());
         }
 
         if (evaluations.contains(EvaluationResult.FAIL)) {
@@ -101,7 +101,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     @NotNull
     private Evaluation evaluateCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return evaluateValues(toCKDEPI(record, creatinine), creatinine.comparator());
+        return evaluateValues("CKDEPI", toCKDEPI(record, creatinine), creatinine.comparator());
     }
 
     @NotNull
@@ -147,7 +147,8 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
         double genderCorrected = isFemale ? base * 0.85 : base;
 
-        Evaluation evaluation = LaboratoryUtil.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
+        Evaluation evaluation =
+                LaboratoryUtil.evaluateVersusMinValue("CG", genderCorrected, creatinine.comparator(), minCreatinineClearance);
 
         if (weightIsKnown) {
             return evaluation;

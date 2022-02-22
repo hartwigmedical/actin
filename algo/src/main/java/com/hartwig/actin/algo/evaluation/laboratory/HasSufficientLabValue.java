@@ -17,6 +17,6 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        return LaboratoryUtil.evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
+        return LaboratoryUtil.evaluateVersusMinValue(labValue.code(), labValue.value(), labValue.comparator(), minValue);
     }
 }

@@ -38,28 +38,26 @@ final class LaboratoryUtil {
         }
 
         double minValue = refLimitLow * minULN;
-        return evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
+        return evaluateVersusMinValue(labValue.code(), labValue.value(), labValue.comparator(), minValue);
     }
 
     @NotNull
-    public static Evaluation evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
+    public static Evaluation evaluateVersusMinValue(@NotNull String labCode, double value, @NotNull String comparator, double minValue) {
         if (cannotBeDetermined(value, comparator, minValue)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages(labValue + "cannot be determined with available data")
+                    .addUndeterminedMessages(labCode + " cannot be determined with available data")
                     .build();
         }
 
-        else {
-            EvaluationResult result = Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-            ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
-            if (result == EvaluationResult.FAIL) {
-                builder.addFailMessages(labValue + value + " is not acceptable"); //todo
-            } else if (result == EvaluationResult.PASS) {
-                builder.addPassMessages(labValue + value + " is acceptable"); //todo
-            }
-            return builder.build();
+        EvaluationResult result = Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages(labCode + " " + value + " is not acceptable");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages(labCode + " " + value + " is acceptable");
         }
+        return builder.build();
     }
 
     @NotNull
