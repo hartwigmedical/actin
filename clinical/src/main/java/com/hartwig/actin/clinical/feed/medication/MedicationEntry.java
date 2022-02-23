@@ -23,9 +23,6 @@ public abstract class MedicationEntry implements FeedEntry {
     public abstract String code5ATCDisplay();
 
     @NotNull
-    public abstract String indicationDisplay();
-
-    @NotNull
     public abstract String dosageInstructionDoseQuantityUnit();
 
     public abstract double dosageInstructionDoseQuantityValue();

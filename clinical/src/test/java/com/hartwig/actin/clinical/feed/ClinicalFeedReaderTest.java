@@ -119,7 +119,6 @@ public class ClinicalFeedReaderTest {
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals("19-0716 PEMBROLIZUMAB V/P INFOPL 25MG/ML FL 4ML", entry.codeText());
         assertTrue(entry.code5ATCDisplay().isEmpty());
-        assertTrue(entry.indicationDisplay().isEmpty());
         assertEquals("MILLIGRAM", entry.dosageInstructionDoseQuantityUnit());
         assertEquals(200, entry.dosageInstructionDoseQuantityValue(), EPSILON);
         assertTrue(entry.dosageInstructionFrequencyUnit().isEmpty());

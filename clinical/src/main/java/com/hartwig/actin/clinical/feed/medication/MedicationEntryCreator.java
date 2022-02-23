@@ -18,7 +18,6 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
         return ImmutableMedicationEntry.builder().subject(line.trimmed("subject"))
                 .codeText(line.string("code_text"))
                 .code5ATCDisplay(line.string("code5_ATC_display"))
-                .indicationDisplay(line.string("indication_display"))
                 .dosageInstructionDoseQuantityUnit(line.string("dosageInstruction_doseQuantity_unit"))
                 .dosageInstructionDoseQuantityValue(line.number("dosageInstruction_doseQuantity_value"))
                 .dosageInstructionFrequencyUnit(line.string("dosageInstruction_frequency_unit"))
