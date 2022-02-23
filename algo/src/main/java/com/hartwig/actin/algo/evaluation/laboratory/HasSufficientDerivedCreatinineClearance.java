@@ -58,7 +58,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     @NotNull
     private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        return evaluateValues("MRD", toMDRD(record, creatinine), creatinine.comparator());
+        return evaluateValues("MDRD", toMDRD(record, creatinine), creatinine.comparator());
     }
 
     @NotNull
@@ -180,11 +180,11 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(code + " failed evaluation");
+            builder.addFailMessages(code + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedMessages(code + " evaluation led to ambiguous results");
         } else if (result.isPass()) {
-            builder.addPassMessages(code + " passed evaluation");
+            builder.addPassMessages(code + " sufficient");
         }
         return builder.build();
     }
