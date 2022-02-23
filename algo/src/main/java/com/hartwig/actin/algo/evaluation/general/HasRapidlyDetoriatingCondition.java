@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasRapidlyProgressiveDisease implements EvaluationFunction {
+public class HasRapidlyDetoriatingCondition implements EvaluationFunction {
 
-    HasRapidlyProgressiveDisease() {
+    HasRapidlyDetoriatingCondition() {
     }
 
     @NotNull
