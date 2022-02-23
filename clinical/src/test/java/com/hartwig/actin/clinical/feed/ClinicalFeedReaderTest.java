@@ -110,16 +110,10 @@ public class ClinicalFeedReaderTest {
         EncounterEntry entry = entries.get(0);
 
         assertEquals("ACTN-01-02-9999", entry.subject());
-        assertTrue(entry.type1Display().isEmpty());
         assertEquals("surgery", entry.classDisplay());
         assertEquals(LocalDate.of(2020, 8, 28), entry.periodStart());
         assertEquals(LocalDate.of(2020, 8, 28), entry.periodEnd());
-        assertEquals("ID", entry.identifierValue());
-        assertEquals("URL", entry.identifierSystem());
-        assertEquals("code", entry.codeCodingCodeOriginal());
         assertEquals("diagnostics stomach", entry.codeCodingDisplayOriginal());
-        assertEquals(Strings.EMPTY, entry.reason());
-        assertEquals(Strings.EMPTY, entry.accessionValue());
     }
 
     private static void assertMedication(@NotNull List<MedicationEntry> entries) {
@@ -128,8 +122,6 @@ public class ClinicalFeedReaderTest {
         MedicationEntry entry = entries.get(0);
 
         assertEquals("ACTN-01-02-9999", entry.subject());
-        assertEquals("P_90059949", entry.medicationReferenceMedicationValue());
-        assertEquals("EPD", entry.medicationReferenceMedicationSystem());
         assertEquals("19-0716 PEMBROLIZUMAB V/P INFOPL 25MG/ML FL 4ML", entry.codeText());
         assertTrue(entry.code5ATCDisplay().isEmpty());
         assertTrue(entry.indicationDisplay().isEmpty());
@@ -151,8 +143,6 @@ public class ClinicalFeedReaderTest {
         assertEquals(LocalDate.of(2019, 6, 7), entry.periodOfUseValuePeriodStart());
         assertEquals(LocalDate.of(2019, 6, 7), entry.periodOfUseValuePeriodEnd());
         assertEquals("Definitief", entry.stopTypeDisplay());
-        assertEquals("Inpatient", entry.categoryMedicationRequestCategoryDisplay());
-        assertEquals("K", entry.categoryMedicationRequestCategoryCodeOriginal());
     }
 
     private static void assertLab(@NotNull List<LabEntry> entries) {
@@ -161,26 +151,18 @@ public class ClinicalFeedReaderTest {
         LabEntry entry1 = findByCodeCodeOriginal(entries, "HT");
         assertEquals("ACTN-01-02-9999", entry1.subject());
         assertEquals("Hematocriet", entry1.codeDisplayOriginal());
-        assertEquals(LocalDate.of(2019, 6, 28), entry1.issued());
         assertEquals(Strings.EMPTY, entry1.valueQuantityComparator());
         assertEquals(0.36, entry1.valueQuantityValue(), EPSILON);
         assertEquals("L/L", entry1.valueQuantityUnit());
-        assertEquals("Referentiewaarde \"te laag\" overschreden", entry1.interpretationDisplayOriginal());
-        assertEquals(Strings.EMPTY, entry1.valueString());
-        assertEquals(Strings.EMPTY, entry1.codeCode());
         assertEquals("0.42 - 0.52", entry1.referenceRangeText());
         assertEquals(LocalDate.of(2019, 6, 27), entry1.effectiveDateTime());
 
         LabEntry entry2 = findByCodeCodeOriginal(entries, "HB");
         assertEquals("ACTN-01-02-9999", entry2.subject());
         assertEquals("Hemoglobine", entry2.codeDisplayOriginal());
-        assertEquals(LocalDate.of(2019, 5, 28), entry2.issued());
         assertEquals(Strings.EMPTY, entry2.valueQuantityComparator());
         assertEquals(4.2, entry2.valueQuantityValue(), EPSILON);
         assertEquals("mmol/L", entry2.valueQuantityUnit());
-        assertEquals("Referentiewaarde \"te laag\" overschreden", entry2.interpretationDisplayOriginal());
-        assertEquals(Strings.EMPTY, entry2.valueString());
-        assertEquals(Strings.EMPTY, entry2.codeCode());
         assertEquals("8.8 - 10.7", entry2.referenceRangeText());
         assertEquals(LocalDate.of(2019, 5, 27), entry2.effectiveDateTime());
     }
@@ -203,7 +185,6 @@ public class ClinicalFeedReaderTest {
 
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals(LocalDate.of(2019, 4, 28), entry.effectiveDateTime());
-        assertEquals("CS00000003", entry.codeCodeOriginal());
         assertEquals("NIBP", entry.codeDisplayOriginal());
         assertEquals("8481-6", entry.componentCodeCode());
         assertEquals("Systolic blood pressure", entry.componentCodeDisplay());
@@ -219,11 +200,9 @@ public class ClinicalFeedReaderTest {
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals(LocalDate.of(2014, 4, 21), entry.assertedDate());
         assertEquals("medication", entry.category());
-        assertEquals("419511003", entry.categoryAllergyCategoryCode());
         assertEquals("Propensity to adverse reactions to drug", entry.categoryAllergyCategoryDisplay());
         assertEquals("active", entry.clinicalStatus());
         assertEquals("confirmed", entry.verificationStatus());
-        assertEquals("Actief", entry.clinicalStatusAllergyStatusDisplayNl());
         assertEquals("SIMVASTATINE", entry.codeText());
         assertEquals("low", entry.criticality());
     }

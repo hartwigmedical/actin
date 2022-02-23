@@ -16,8 +16,6 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
     @Override
     public MedicationEntry fromLine(@NotNull final FeedLine line) {
         return ImmutableMedicationEntry.builder().subject(line.trimmed("subject"))
-                .medicationReferenceMedicationValue(line.string("medicationReference_Medication_value"))
-                .medicationReferenceMedicationSystem(line.string("medicationReference_Medication_system"))
                 .codeText(line.string("code_text"))
                 .code5ATCDisplay(line.string("code5_ATC_display"))
                 .indicationDisplay(line.string("indication_display"))
@@ -39,8 +37,6 @@ public class MedicationEntryCreator implements FeedEntryCreator<MedicationEntry>
                 .periodOfUseValuePeriodStart(line.date("periodOfUse_valuePeriod_start"))
                 .periodOfUseValuePeriodEnd(line.optionalDate("periodOfUse_valuePeriod_end"))
                 .stopTypeDisplay(line.string("stopType_display"))
-                .categoryMedicationRequestCategoryDisplay(line.string("category_medicationRequestCategory_display"))
-                .categoryMedicationRequestCategoryCodeOriginal(line.string("category_medicationRequestCategory_code_original"))
                 .build();
     }
 

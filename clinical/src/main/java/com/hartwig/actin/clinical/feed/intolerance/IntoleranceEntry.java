@@ -23,9 +23,6 @@ public abstract class IntoleranceEntry implements FeedEntry {
     public abstract String category();
 
     @NotNull
-    public abstract String categoryAllergyCategoryCode();
-
-    @NotNull
     public abstract String categoryAllergyCategoryDisplay();
 
     @NotNull
@@ -33,9 +30,6 @@ public abstract class IntoleranceEntry implements FeedEntry {
 
     @NotNull
     public abstract String verificationStatus();
-
-    @NotNull
-    public abstract String clinicalStatusAllergyStatusDisplayNl();
 
     @NotNull
     public abstract String codeText();

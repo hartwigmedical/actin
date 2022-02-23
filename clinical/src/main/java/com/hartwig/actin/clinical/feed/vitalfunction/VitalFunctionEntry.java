@@ -20,9 +20,6 @@ public abstract class VitalFunctionEntry implements FeedEntry {
     public abstract LocalDate effectiveDateTime();
 
     @NotNull
-    public abstract String codeCodeOriginal();
-
-    @NotNull
     public abstract String codeDisplayOriginal();
 
     @NotNull

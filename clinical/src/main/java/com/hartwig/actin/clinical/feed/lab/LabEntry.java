@@ -17,16 +17,10 @@ public abstract class LabEntry implements FeedEntry {
     public abstract String subject();
 
     @NotNull
-    public abstract String identifierValue();
-
-    @NotNull
     public abstract String codeCodeOriginal();
 
     @NotNull
     public abstract String codeDisplayOriginal();
-
-    @NotNull
-    public abstract LocalDate issued();
 
     @NotNull
     public abstract String valueQuantityComparator();
@@ -35,15 +29,6 @@ public abstract class LabEntry implements FeedEntry {
 
     @NotNull
     public abstract String valueQuantityUnit();
-
-    @NotNull
-    public abstract String interpretationDisplayOriginal();
-
-    @Nullable
-    public abstract String valueString();
-
-    @Nullable
-    public abstract String codeCode();
 
     @NotNull
     public abstract String referenceRangeText();

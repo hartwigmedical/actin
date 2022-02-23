@@ -20,12 +20,6 @@ public abstract class QuestionnaireEntry implements FeedEntry {
     public abstract LocalDate authored();
 
     @NotNull
-    public abstract String parentIdentifierValue();
-
-    @NotNull
-    public abstract String questionnaireQuestionnaireValue();
-
-    @NotNull
     public abstract String description();
 
     @NotNull

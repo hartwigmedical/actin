@@ -17,9 +17,6 @@ public abstract class EncounterEntry implements FeedEntry {
     public abstract String subject();
 
     @NotNull
-    public abstract String type1Display();
-
-    @NotNull
     public abstract String classDisplay();
 
     @NotNull
@@ -29,20 +26,5 @@ public abstract class EncounterEntry implements FeedEntry {
     public abstract LocalDate periodEnd();
 
     @NotNull
-    public abstract String identifierValue();
-
-    @NotNull
-    public abstract String identifierSystem();
-
-    @NotNull
-    public abstract String codeCodingCodeOriginal();
-
-    @NotNull
     public abstract String codeCodingDisplayOriginal();
-
-    @NotNull
-    public abstract String reason();
-
-    @NotNull
-    public abstract String accessionValue();
 }

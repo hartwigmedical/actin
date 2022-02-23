@@ -16,11 +16,9 @@ public class IntoleranceEntryCreator implements FeedEntryCreator<IntoleranceEntr
         return ImmutableIntoleranceEntry.builder().subject(line.trimmed("subject"))
                 .assertedDate(line.date("assertedDate"))
                 .category(line.string("category"))
-                .categoryAllergyCategoryCode(line.string("category_allergyCategory_code"))
                 .categoryAllergyCategoryDisplay(line.string("category_allergyCategory_display"))
                 .clinicalStatus(line.string("clinicalStatus"))
                 .verificationStatus(line.string("verificationStatus"))
-                .clinicalStatusAllergyStatusDisplayNl(line.string("clinicalStatus_allergyStatus_display_nl"))
                 .codeText(line.string("code_text"))
                 .criticality(line.string("criticality"))
                 .build();

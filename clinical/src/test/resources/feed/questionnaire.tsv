@@ -1,6 +1,6 @@
-﻿"subject"	"authored"	"parent_identifier_value"	"questionnaire_Questionnaire_value"	"description"	"item_text"	"item_answer_value_valueString"
-"ACTN-01-02-9999"	"2021-08-16 12:07:00.000"		"A"	"INT Consult"	"Beloop"	"ACTIN Questionnaire\n\nImportant: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonimized data!\n\n\n\nPatient history\n\nOncological: something\n\nOther: sarcoidose\n\n\n\nInformation\n\nWHO status: 2\n\nTNM criteria: T N M : Unknown\n\nCNS lesions yes/no/unknown: unknown\n\n- Active yes/no: n.v.t.\n\n- Symptomatic yes/no: n.v.t\n\nBrain lesions yes/no/unknown: unknown\n\n- Active yes/no: n.v.t\n\n- Symptomatic yes/no: n.v.t.\n\nBone lesions yes/no/unknown: Yes\n\nLiver lesions yes/no/unknown: yes\n\nHas bioptable lesion yes/no: yes\n\nHas measurable lesion (RECIST) yes/no: yes\n\nSignificant current infection: No\n\nSignificant aberration on latest ECG: No\n\nSignificant aberration on latest lung function test:\n\nLatest LVEF (%): Unknown\n\nUnresolved toxicities from prior anti-tumor therapy grade => 2: Neuropathy GR3\n\nOther (e.g. Osteoporosis, Pleural effusion):"
-"ACTN-01-02-9999"	"2020-08-28 12:18:00.000"		"B"	"INT Consult"	"Beloop"	"ACTIN Questionnaire V1.0
+﻿"subject"	"authored"	"description"	"item_text"	"item_answer_value_valueString"
+"ACTN-01-02-9999"	"2021-08-16 12:07:00.000"	"Beloop"	"ACTIN Questionnaire\n\nImportant: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonimized data!\n\n\n\nPatient history\n\nOncological: something\n\nOther: sarcoidose\n\n\n\nInformation\n\nWHO status: 2\n\nTNM criteria: T N M : Unknown\n\nCNS lesions yes/no/unknown: unknown\n\n- Active yes/no: n.v.t.\n\n- Symptomatic yes/no: n.v.t\n\nBrain lesions yes/no/unknown: unknown\n\n- Active yes/no: n.v.t\n\n- Symptomatic yes/no: n.v.t.\n\nBone lesions yes/no/unknown: Yes\n\nLiver lesions yes/no/unknown: yes\n\nHas bioptable lesion yes/no: yes\n\nHas measurable lesion (RECIST) yes/no: yes\n\nSignificant current infection: No\n\nSignificant aberration on latest ECG: No\n\nSignificant aberration on latest lung function test:\n\nLatest LVEF (%): Unknown\n\nUnresolved toxicities from prior anti-tumor therapy grade => 2: Neuropathy GR3\n\nOther (e.g. Osteoporosis, Pleural effusion):"
+"ACTN-01-02-9999"	"2020-08-28 12:18:00.000"	"Beloop"	"ACTIN Questionnaire V1.0
 Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonimized data!
 
 Relevant patient history
@@ -30,5 +30,5 @@ Unresolved toxicities grade => 2: NA
 Significant current infection: NO
 Significant aberration on latest ECG: UNKNOWN
 Cancer-related complications (e.g. pleural effusion): chronisch diarree (ws ziektegerelateerd)"
-"ACTN-01-02-9999"	"2021-06-06 18:10:00.0000000"		"C"	"ONC Kuuroverzicht"	"Nausea"	"0"
-"ACTN-01-02-0999"	"2021-12-17 09:19:00.000"		"D"	"Aanvraag bloedproducten_test"		"Erytrocytenconcentraat"
+"ACTN-01-02-9999"	"2021-06-06 18:10:00.0000000"	"ONC Kuuroverzicht"	"Nausea"	"0"
+"ACTN-01-02-0999"	"2021-12-17 09:19:00.000"	"Aanvraag bloedproducten_test"		"Erytrocytenconcentraat"

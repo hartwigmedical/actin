@@ -17,12 +17,6 @@ public abstract class MedicationEntry implements FeedEntry {
     public abstract String subject();
 
     @NotNull
-    public abstract String medicationReferenceMedicationValue();
-
-    @NotNull
-    public abstract String medicationReferenceMedicationSystem();
-
-    @NotNull
     public abstract String codeText();
 
     @NotNull
@@ -83,11 +77,5 @@ public abstract class MedicationEntry implements FeedEntry {
 
     @NotNull
     public abstract String stopTypeDisplay();
-
-    @NotNull
-    public abstract String categoryMedicationRequestCategoryDisplay();
-
-    @NotNull
-    public abstract String categoryMedicationRequestCategoryCodeOriginal();
 
 }
