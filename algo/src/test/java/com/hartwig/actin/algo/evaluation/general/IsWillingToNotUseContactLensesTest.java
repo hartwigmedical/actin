@@ -7,12 +7,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasSufficientLifeExpectancyTest {
+public class IsWillingToNotUseContactLensesTest {
 
     @Test
     public void canEvaluate() {
-        HasSufficientLifeExpectancy function = new HasSufficientLifeExpectancy();
+        IsWillingToNotUseContactLenses function = new IsWillingToNotUseContactLenses();
 
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.PASS_BUT_WARN, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

@@ -8,14 +8,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CanGiveAdequateInformedConsent implements EvaluationFunction {
+public class HasParticipatedInCurrentTrial implements EvaluationFunction {
 
-    CanGiveAdequateInformedConsent() {
+    HasParticipatedInCurrentTrial() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED).build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Current trial participation is currently not determined.")
+                .build();
     }
 }

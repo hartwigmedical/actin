@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.general;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +22,25 @@ public class HasAtLeastCertainAge implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         int age = referenceYear - record.clinical().patient().birthYear();
+
+        EvaluationResult result;
         if (age > minAge) {
-            return EvaluationFactory.create(EvaluationResult.PASS);
+            result = EvaluationResult.PASS;
         } else if (age == minAge) {
-            return EvaluationFactory.create(EvaluationResult.PASS_BUT_WARN);
+            result = EvaluationResult.UNDETERMINED;
         } else {
-            return EvaluationFactory.create(EvaluationResult.FAIL);
+            result = EvaluationResult.FAIL;
         }
+
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient is younger than " + minAge + " years old");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            builder.addUndeterminedMessages("Could not determine whether patient is at least " + minAge + " years old");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Patient is at least " + minAge + " years old");
+        }
+
+        return builder.build();
     }
 }

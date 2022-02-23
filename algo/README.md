@@ -70,13 +70,13 @@ The following rules are available:
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | PASS_BUT_WARN in case of exactly X
+IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | `UNDETERMINED` in case of exactly X
 IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
-HAS_PARTICIPATED_IN_CURRENT_TRIAL | T.B.D.
+HAS_PARTICIPATED_IN_CURRENT_TRIAL | T.B.D. | Currently always set to `UNDETERMINED`
 HAS_RAPIDLY_PROGRESSIVE_DISEASE | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated

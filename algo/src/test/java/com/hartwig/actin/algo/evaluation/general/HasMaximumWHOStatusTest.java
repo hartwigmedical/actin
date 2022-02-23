@@ -1,17 +1,9 @@
 package com.hartwig.actin.algo.evaluation.general;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class HasMaximumWHOStatusTest {
@@ -20,19 +12,8 @@ public class HasMaximumWHOStatusTest {
     public void canEvaluate() {
         HasMaximumWHOStatus function = new HasMaximumWHOStatus(2);
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithWHO(0)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithWHO(4)).result());
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithWHO(null)).result());
-    }
-
-    @NotNull
-    private static PatientRecord patientWithWHO(@Nullable Integer who) {
-        return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .clinicalStatus(ImmutableClinicalStatus.builder().who(who).build())
-                        .build())
-                .build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withWHO(0)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(4)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(GeneralTestFactory.withWHO(null)));
     }
 }

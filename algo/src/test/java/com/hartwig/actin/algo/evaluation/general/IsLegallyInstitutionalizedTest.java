@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasSufficientLifeExpectancyTest {
+public class IsLegallyInstitutionalizedTest {
 
     @Test
     public void canEvaluate() {
-        HasSufficientLifeExpectancy function = new HasSufficientLifeExpectancy();
+        IsLegallyInstitutionalized function = new IsLegallyInstitutionalized();
 
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
