@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -18,18 +18,15 @@ public class HasHadFluoropyrimidineTreatmentTest {
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add a random non-fluoropyrimidine treatment
         priorTumorTreatments.add(TreatmentTestFactory.builder().name("some random treatment").build());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add a random fluoropyrimidine treatment
         String firstValidTreatment = HasHadFluoropyrimidineTreatment.FLUOROPYRIMIDINE_TREATMENTS.iterator().next();
         priorTumorTreatments.add(TreatmentTestFactory.builder().name(firstValidTreatment).build());
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
     }
 }

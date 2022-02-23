@@ -87,25 +87,6 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
-        return function -> {
-            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
-            return new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyCreator(@NotNull DoidModel doidModel, @Nullable String doidToMatch,
-            boolean mustBeInactive) {
-        return function -> new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
-    }
-
-    @NotNull
-    private static FunctionCreator secondMalignanciesHaveBeenCuredRecentlyCreator() {
-        return function -> new SecondMalignanciesHaveBeenCuredRecently();
-    }
-
-    @NotNull
     private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
             int maxSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
@@ -145,5 +126,24 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator isEligibleForOnLabelDrugCreator() {
         return function -> new IsEligibleForOnLabelDrug();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
+        return function -> {
+            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
+            return new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfSecondMalignancyCreator(@NotNull DoidModel doidModel, @Nullable String doidToMatch,
+            boolean mustBeInactive) {
+        return function -> new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
+    }
+
+    @NotNull
+    private static FunctionCreator secondMalignanciesHaveBeenCuredRecentlyCreator() {
+        return function -> new SecondMalignanciesHaveBeenCuredRecently();
     }
 }

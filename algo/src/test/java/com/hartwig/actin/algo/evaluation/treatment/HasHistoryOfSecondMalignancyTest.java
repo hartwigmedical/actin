@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -29,27 +29,27 @@ public class HasHistoryOfSecondMalignancyTest {
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         PatientRecord noMalignancyRecord = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
 
-        assertEquals(EvaluationResult.FAIL, anyMalignancy.evaluate(noMalignancyRecord).result());
-        assertEquals(EvaluationResult.FAIL, specificDoid.evaluate(noMalignancyRecord).result());
-        assertEquals(EvaluationResult.FAIL, specificDoidInactive.evaluate(noMalignancyRecord).result());
+        assertEvaluation(EvaluationResult.FAIL, anyMalignancy.evaluate(noMalignancyRecord));
+        assertEvaluation(EvaluationResult.FAIL, specificDoid.evaluate(noMalignancyRecord));
+        assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(noMalignancyRecord));
 
         priorSecondPrimaries.add(withDoidAndActive("300", true));
         PatientRecord oneMalignancyRecord = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
-        assertEquals(EvaluationResult.PASS, anyMalignancy.evaluate(oneMalignancyRecord).result());
-        assertEquals(EvaluationResult.FAIL, specificDoid.evaluate(oneMalignancyRecord).result());
-        assertEquals(EvaluationResult.FAIL, specificDoidInactive.evaluate(oneMalignancyRecord).result());
+        assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(oneMalignancyRecord));
+        assertEvaluation(EvaluationResult.FAIL, specificDoid.evaluate(oneMalignancyRecord));
+        assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(oneMalignancyRecord));
 
         priorSecondPrimaries.add(withDoidAndActive("200", true));
         PatientRecord twoMalignancyRecords = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
-        assertEquals(EvaluationResult.PASS, anyMalignancy.evaluate(twoMalignancyRecords).result());
-        assertEquals(EvaluationResult.PASS, specificDoid.evaluate(twoMalignancyRecords).result());
-        assertEquals(EvaluationResult.FAIL, specificDoidInactive.evaluate(twoMalignancyRecords).result());
+        assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(twoMalignancyRecords));
+        assertEvaluation(EvaluationResult.PASS, specificDoid.evaluate(twoMalignancyRecords));
+        assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(twoMalignancyRecords));
 
         priorSecondPrimaries.add(withDoidAndActive("200", false));
         PatientRecord threeMalignancyRecords = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
-        assertEquals(EvaluationResult.PASS, anyMalignancy.evaluate(threeMalignancyRecords).result());
-        assertEquals(EvaluationResult.PASS, specificDoid.evaluate(threeMalignancyRecords).result());
-        assertEquals(EvaluationResult.PASS, specificDoidInactive.evaluate(threeMalignancyRecords).result());
+        assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(threeMalignancyRecords));
+        assertEvaluation(EvaluationResult.PASS, specificDoid.evaluate(threeMalignancyRecords));
+        assertEvaluation(EvaluationResult.PASS, specificDoidInactive.evaluate(threeMalignancyRecords));
     }
 
     @NotNull

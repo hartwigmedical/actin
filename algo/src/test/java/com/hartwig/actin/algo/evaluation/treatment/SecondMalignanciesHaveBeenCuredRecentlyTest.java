@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -19,8 +19,7 @@ public class SecondMalignanciesHaveBeenCuredRecentlyTest {
         SecondMalignanciesHaveBeenCuredRecently function = new SecondMalignanciesHaveBeenCuredRecently();
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries)));
 
         PriorSecondPrimary secondPrimaryInactive = ImmutablePriorSecondPrimary.builder()
                 .tumorLocation(Strings.EMPTY)
@@ -32,13 +31,11 @@ public class SecondMalignanciesHaveBeenCuredRecentlyTest {
                 .build();
 
         priorSecondPrimaries.add(secondPrimaryInactive);
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries)));
 
         PriorSecondPrimary secondPrimaryActive = ImmutablePriorSecondPrimary.builder().from(secondPrimaryInactive).isActive(true).build();
         priorSecondPrimaries.add(secondPrimaryActive);
 
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries)));
     }
 }

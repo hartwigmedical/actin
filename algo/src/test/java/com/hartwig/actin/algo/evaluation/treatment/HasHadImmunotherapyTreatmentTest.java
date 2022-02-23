@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -19,19 +19,16 @@ public class HasHadImmunotherapyTreatmentTest {
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one non-immunotherapy
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.RADIOTHERAPY).build());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add one immuno/radiotherapy
         priorTumorTreatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.RADIOTHERAPY, TreatmentCategory.IMMUNOTHERAPY)
                 .build());
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
     }
 }

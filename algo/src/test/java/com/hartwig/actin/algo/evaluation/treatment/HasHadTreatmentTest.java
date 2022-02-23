@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -18,17 +18,14 @@ public class HasHadTreatmentTest {
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add wrong treatment
         priorTumorTreatments.add(TreatmentTestFactory.builder().name("treatment 2").build());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
         // Add correct treatment
         priorTumorTreatments.add(TreatmentTestFactory.builder().name("treatment 1").build());
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
     }
 }

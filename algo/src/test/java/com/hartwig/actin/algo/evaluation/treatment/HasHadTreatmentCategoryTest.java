@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -21,25 +21,25 @@ public class HasHadTreatmentCategoryTest {
 
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         PatientRecord noPriorTreatmentRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.FAIL, any.evaluate(noPriorTreatmentRecord).result());
-        assertEquals(EvaluationResult.FAIL, specific.evaluate(noPriorTreatmentRecord).result());
+        assertEvaluation(EvaluationResult.FAIL, any.evaluate(noPriorTreatmentRecord));
+        assertEvaluation(EvaluationResult.FAIL, specific.evaluate(noPriorTreatmentRecord));
 
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
         PatientRecord immunoRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.FAIL, any.evaluate(immunoRecord).result());
-        assertEquals(EvaluationResult.FAIL, specific.evaluate(immunoRecord).result());
+        assertEvaluation(EvaluationResult.FAIL, any.evaluate(immunoRecord));
+        assertEvaluation(EvaluationResult.FAIL, specific.evaluate(immunoRecord));
 
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
         PatientRecord multiRecord1 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.PASS, any.evaluate(multiRecord1).result());
-        assertEquals(EvaluationResult.FAIL, specific.evaluate(multiRecord1).result());
+        assertEvaluation(EvaluationResult.PASS, any.evaluate(multiRecord1));
+        assertEvaluation(EvaluationResult.FAIL, specific.evaluate(multiRecord1));
 
         priorTumorTreatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some Anti-EGFR Type")
                 .build());
         PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEquals(EvaluationResult.PASS, any.evaluate(multiRecord2).result());
-        assertEquals(EvaluationResult.PASS, specific.evaluate(multiRecord2).result());
+        assertEvaluation(EvaluationResult.PASS, any.evaluate(multiRecord2));
+        assertEvaluation(EvaluationResult.PASS, specific.evaluate(multiRecord2));
     }
 }

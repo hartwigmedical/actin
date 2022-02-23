@@ -80,8 +80,6 @@ public final class TestFeedFactory {
         ImmutableQuestionnaireEntry.Builder toxicityBuilder = ImmutableQuestionnaireEntry.builder()
                 .subject(TEST_SUBJECT)
                 .authored(LocalDate.of(2020, 6, 6))
-                .parentIdentifierValue(Strings.EMPTY)
-                .questionnaireQuestionnaireValue(Strings.EMPTY)
                 .description("ONC Kuuroverzicht");
 
         entries.add(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build());
@@ -90,8 +88,6 @@ public final class TestFeedFactory {
         ImmutableQuestionnaireEntry.Builder bloodTransfusionBuilder = ImmutableQuestionnaireEntry.builder()
                 .subject(TEST_SUBJECT)
                 .authored(LocalDate.of(2020, 7, 7))
-                .parentIdentifierValue(Strings.EMPTY)
-                .questionnaireQuestionnaireValue(Strings.EMPTY)
                 .description("Aanvraag bloedproducten_test")
                 .itemText(Strings.EMPTY);
 
@@ -104,16 +100,8 @@ public final class TestFeedFactory {
     private static List<EncounterEntry> createTestEncounterEntries() {
         List<EncounterEntry> entries = Lists.newArrayList();
 
-        ImmutableEncounterEntry.Builder builder = ImmutableEncounterEntry.builder()
-                .subject(TEST_SUBJECT)
-                .type1Display(Strings.EMPTY)
-                .classDisplay("surgery")
-                .identifierValue("ID")
-                .identifierSystem("URL")
-                .codeCodingCodeOriginal("code")
-                .codeCodingDisplayOriginal("diagnostics")
-                .reason(Strings.EMPTY)
-                .accessionValue(Strings.EMPTY);
+        ImmutableEncounterEntry.Builder builder =
+                ImmutableEncounterEntry.builder().subject(TEST_SUBJECT).classDisplay("surgery").codeCodingDisplayOriginal("diagnostics");
 
         entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());
         entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());
@@ -127,8 +115,6 @@ public final class TestFeedFactory {
 
         ImmutableMedicationEntry.Builder builder = ImmutableMedicationEntry.builder()
                 .subject(TEST_SUBJECT)
-                .medicationReferenceMedicationValue(Strings.EMPTY)
-                .medicationReferenceMedicationSystem(Strings.EMPTY)
                 .codeText(Strings.EMPTY)
                 .indicationDisplay(Strings.EMPTY)
                 .dosageInstructionDoseQuantityUnit(Strings.EMPTY)
@@ -144,9 +130,7 @@ public final class TestFeedFactory {
                 .dosageDoseValue(Strings.EMPTY)
                 .dosageRateQuantityUnit(Strings.EMPTY)
                 .dosageDoseUnitDisplayOriginal(Strings.EMPTY)
-                .stopTypeDisplay(Strings.EMPTY)
-                .categoryMedicationRequestCategoryDisplay(Strings.EMPTY)
-                .categoryMedicationRequestCategoryCodeOriginal(Strings.EMPTY);
+                .stopTypeDisplay(Strings.EMPTY);
 
         entries.add(builder.code5ATCDisplay("PARACETAMOL")
                 .dosageInstructionText("50-60 mg per day")
@@ -169,48 +153,37 @@ public final class TestFeedFactory {
     public static List<LabEntry> createTestLabEntries() {
         List<LabEntry> entries = Lists.newArrayList();
 
-        ImmutableLabEntry.Builder baseBuilder = ImmutableLabEntry.builder().subject(TEST_SUBJECT).identifierValue(Strings.EMPTY)
-                .valueQuantityComparator(Strings.EMPTY)
-                .valueString(Strings.EMPTY)
-                .codeCode(Strings.EMPTY);
+        ImmutableLabEntry.Builder baseBuilder = ImmutableLabEntry.builder().subject(TEST_SUBJECT).valueQuantityComparator(Strings.EMPTY);
 
         entries.add(baseBuilder.codeCodeOriginal("LAB1")
                 .codeDisplayOriginal("Lab Value 1")
-                .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(30D)
                 .valueQuantityUnit("U/l")
-                .interpretationDisplayOriginal("ok")
                 .referenceRangeText("20 - 40")
                 .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB2")
                 .codeDisplayOriginal("Lab Value 2")
-                .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(22D)
                 .valueQuantityUnit("mmol/L")
-                .interpretationDisplayOriginal("too low")
                 .referenceRangeText("> 30")
                 .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB3")
                 .codeDisplayOriginal("Lab Value 3")
-                .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityComparator(">")
                 .valueQuantityValue(50D)
                 .valueQuantityUnit("mL/min")
-                .interpretationDisplayOriginal("ok")
                 .referenceRangeText("> 50")
                 .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
 
         entries.add(baseBuilder.codeCodeOriginal("LAB4")
                 .codeDisplayOriginal("Lab Value 4")
-                .issued(LocalDate.of(2018, 5, 29))
                 .valueQuantityValue(20D)
                 .valueQuantityUnit("mL/min")
-                .interpretationDisplayOriginal("ok")
                 .referenceRangeText(Strings.EMPTY)
                 .effectiveDateTime(LocalDate.of(2018, 5, 29))
                 .build());
@@ -225,7 +198,6 @@ public final class TestFeedFactory {
         entries.add(ImmutableVitalFunctionEntry.builder()
                 .subject(TEST_SUBJECT)
                 .effectiveDateTime(LocalDate.of(2021, 2, 27))
-                .codeCodeOriginal(Strings.EMPTY)
                 .codeDisplayOriginal("NIBP")
                 .componentCodeCode(Strings.EMPTY)
                 .componentCodeDisplay("systolic")
@@ -244,11 +216,9 @@ public final class TestFeedFactory {
                 .subject(TEST_SUBJECT)
                 .assertedDate(LocalDate.of(2018, 1, 1))
                 .category("medication")
-                .categoryAllergyCategoryCode(Strings.EMPTY)
                 .categoryAllergyCategoryDisplay(Strings.EMPTY)
                 .clinicalStatus(Strings.EMPTY)
                 .verificationStatus(Strings.EMPTY)
-                .clinicalStatusAllergyStatusDisplayNl(Strings.EMPTY)
                 .codeText("pills")
                 .criticality("unknown")
                 .build());
