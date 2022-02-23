@@ -39,14 +39,18 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
         EvaluationResult result = hasHadDrugCategory ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         String categoryDisplay = TreatmentCategoryResolver.toString(category);
-        if (result == EvaluationResult.FAIL && type == null) {
-            builder.addFailMessages("Patient has not received " + categoryDisplay);
-        } else if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received " + categoryDisplay + " treatment of type " + type);
-        } else if (type == null) {
-            builder.addPassMessages("Patient has received " + categoryDisplay);
+        if (result == EvaluationResult.FAIL) {
+            if (type == null) {
+                builder.addFailMessages("Patient has not received " + categoryDisplay);
+            } else {
+                builder.addFailMessages("Patient has not received " + categoryDisplay + " treatment of type " + type);
+            }
         } else {
-            builder.addPassMessages("Patient has received " + categoryDisplay + " treatment of type " + type);
+            if (type == null) {
+                builder.addPassMessages("Patient has received " + categoryDisplay);
+            } else {
+                builder.addPassMessages("Patient has received " + categoryDisplay + " treatment of type " + type);
+            }
         }
         return builder.build();
     }
