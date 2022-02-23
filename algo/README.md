@@ -308,7 +308,7 @@ CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other"
-CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | T.B.D.
+CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | T.B.D. - name like Probenecid, Rifampicin, Novobiocin, Cabotegravir
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D. - Currently resolves to Undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D. - Currently resolves to UNDETERMINED
