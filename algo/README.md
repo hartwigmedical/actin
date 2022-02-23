@@ -372,12 +372,14 @@ In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names
 
 ##### Rules related to vital function / body weight measurements
 
-Rule | When does a patient pass evaluation?
+Rule | When does a patient pass evaluation? 
 ---|---
 HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent systolic blood pressure AND average value => X
 HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent diastolic blood pressure AND average value => X
-HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | in %. Currently resolves to undetermined
+HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND average value => X
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
+
+For SBP, DBP and Pulse oximetry, evaluation should resolve to UNDETERMINED in case of no PASS, but at least 1 of the up to 5 most recent values would be sufficient to PASS.
 
 ##### Rules related to blood transfusions
 
