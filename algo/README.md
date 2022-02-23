@@ -94,7 +94,7 @@ HAS_MELANOMA_OF_UNKNOWN_PRIMARY | All configured DOIDs are equal to 1909
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
-HAS_ANY_LESION | Tumor details > hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions not empty
+HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
