@@ -3,9 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -44,13 +42,11 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
-        map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMriVolumeAmenableLesionCreator());
+        map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMRIVolumeAmenableLesionCreator());
         map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
-        map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, hasLowRiskOfHemorrhageUponTreatmentCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
-        map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
 
         return map;
     }
@@ -64,8 +60,7 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasPrimaryTumorLocationWithExactDoidCreator(@NotNull DoidModel doidModel,
-            @NotNull String doidToMatch) {
+    private static FunctionCreator hasPrimaryTumorLocationWithExactDoidCreator(@NotNull DoidModel doidModel, @NotNull String doidToMatch) {
         return function -> new PrimaryTumorLocationIsExactDoid(doidModel, doidToMatch);
     }
 
@@ -158,17 +153,27 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasMriVolumeAmenableLesionCreator() {
-        return function -> new HasMriVolumeAmenableLesion();
+    private static FunctionCreator hasMRIVolumeAmenableLesionCreator() {
+        return function -> new HasMRIVolumeAmenableLesion();
     }
 
     @NotNull
     private static FunctionCreator hasSuperScanBoneScanCreator() {
-        return function -> new HasSuperScanBoneScanCreator();
+        return function -> new HasSuperScanBoneScan();
+    }
+
+    @NotNull
+    private static FunctionCreator hasLowRiskOfHemorrhageUponTreatmentCreator() {
+        return function -> new HasLowRiskOfHemorrhageUponTreatment();
     }
 
     @NotNull
     private static FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
         return function -> new TumorBiopsyTakenBeforeInformedConsent();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistologicalDocumentationOfTumorTypeCreator() {
+        return function -> new HasHistologicalDocumentationOfTumorType();
     }
 }

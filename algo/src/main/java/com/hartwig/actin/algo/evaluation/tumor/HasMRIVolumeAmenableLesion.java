@@ -4,13 +4,14 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasInjectionAmenableLesion implements EvaluationFunction {
+public class HasMRIVolumeAmenableLesion implements EvaluationFunction {
 
-    HasInjectionAmenableLesion() {
+    HasMRIVolumeAmenableLesion() {
     }
 
     @NotNull
@@ -18,7 +19,7 @@ public class HasInjectionAmenableLesion implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Injection amenability of lesions is undetermined")
+                .addUndeterminedMessages("Currently can't determine whether patient has an MRI volume amenable lesion")
                 .build();
     }
 }

@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasInjectionAmenableLesion implements EvaluationFunction {
+public class HasLowRiskOfHemorrhageUponTreatment implements EvaluationFunction {
 
-    HasInjectionAmenableLesion() {
+    HasLowRiskOfHemorrhageUponTreatment() {
     }
 
     @NotNull
@@ -18,7 +18,7 @@ public class HasInjectionAmenableLesion implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Injection amenability of lesions is undetermined")
+                .addUndeterminedMessages("Currently can't determine whether there is low risk of hemorrhage upon treatment")
                 .build();
     }
 }

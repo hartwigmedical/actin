@@ -8,17 +8,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasInjectionAmenableLesion implements EvaluationFunction {
+public class HasHistologicalDocumentationOfTumorType implements EvaluationFunction {
 
-    HasInjectionAmenableLesion() {
+    HasHistologicalDocumentationOfTumorType() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Injection amenability of lesions is undetermined")
-                .build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED).build();
     }
 }
