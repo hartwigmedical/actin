@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.previoustumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
@@ -27,26 +27,26 @@ public class HasHistoryOfSecondMalignancyTest {
         HasHistoryOfSecondMalignancy specificDoidInactive = new HasHistoryOfSecondMalignancy(doidModel, "100", true);
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
-        PatientRecord noMalignancyRecord = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord noMalignancyRecord = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
 
         assertEvaluation(EvaluationResult.FAIL, anyMalignancy.evaluate(noMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoid.evaluate(noMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(noMalignancyRecord));
 
         priorSecondPrimaries.add(withDoidAndActive("300", true));
-        PatientRecord oneMalignancyRecord = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord oneMalignancyRecord = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(oneMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoid.evaluate(oneMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(oneMalignancyRecord));
 
         priorSecondPrimaries.add(withDoidAndActive("200", true));
-        PatientRecord twoMalignancyRecords = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord twoMalignancyRecords = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(twoMalignancyRecords));
         assertEvaluation(EvaluationResult.PASS, specificDoid.evaluate(twoMalignancyRecords));
         assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(twoMalignancyRecords));
 
         priorSecondPrimaries.add(withDoidAndActive("200", false));
-        PatientRecord threeMalignancyRecords = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord threeMalignancyRecords = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(threeMalignancyRecords));
         assertEvaluation(EvaluationResult.PASS, specificDoid.evaluate(threeMalignancyRecords));
         assertEvaluation(EvaluationResult.PASS, specificDoidInactive.evaluate(threeMalignancyRecords));

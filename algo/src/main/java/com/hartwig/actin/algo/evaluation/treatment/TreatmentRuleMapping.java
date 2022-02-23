@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -13,7 +12,6 @@ import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class TreatmentRuleMapping {
 
@@ -21,7 +19,7 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
@@ -55,13 +53,6 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
-
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator(doidModel, null, false));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
-                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, false));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
-                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, true));
-        map.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignanciesHaveBeenCuredRecentlyCreator());
 
         return map;
     }
@@ -126,24 +117,5 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator isEligibleForOnLabelDrugCreator() {
         return function -> new IsEligibleForOnLabelDrug();
-    }
-
-    @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
-        return function -> {
-            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
-            return new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyCreator(@NotNull DoidModel doidModel, @Nullable String doidToMatch,
-            boolean mustBeInactive) {
-        return function -> new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
-    }
-
-    @NotNull
-    private static FunctionCreator secondMalignanciesHaveBeenCuredRecentlyCreator() {
-        return function -> new SecondMalignanciesHaveBeenCuredRecently();
     }
 }

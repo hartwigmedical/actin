@@ -3,8 +3,6 @@ package com.hartwig.actin.algo.evaluation;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
@@ -16,6 +14,7 @@ import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapping;
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapping;
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapping;
 import com.hartwig.actin.algo.evaluation.pregnancy.PregnancyRuleMapping;
+import com.hartwig.actin.algo.evaluation.previoustumor.PreviousTumorRuleMapping;
 import com.hartwig.actin.algo.evaluation.smoking.SmokingRuleMapping;
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapping;
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapping;
@@ -38,7 +37,8 @@ final class FunctionCreatorFactory {
 
         map.putAll(GeneralRuleMapping.create());
         map.putAll(TumorRuleMapping.create(doidModel));
-        map.putAll(TreatmentRuleMapping.create(doidModel));
+        map.putAll(TreatmentRuleMapping.create());
+        map.putAll(PreviousTumorRuleMapping.create(doidModel));
         map.putAll(MolecularRuleMapping.create());
         map.putAll(LaboratoryRuleMapping.create());
         map.putAll(OtherConditionRuleMapping.create(doidModel));
