@@ -25,7 +25,7 @@ public enum EligibilityRule {
 
     // Rules related to tumor and lesion locations
     PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X,
-    HAS_CANCER_OF_UNKNOWN_PRIMARY,
+    HAS_MELANOMA_OF_UNKNOWN_PRIMARY,
     HAS_STAGE_X,
     HAS_ADVANCED_CANCER,
     HAS_METASTATIC_CANCER,
