@@ -27,7 +27,7 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Medication";
+        return "Medication details";
     }
 
     @NotNull
