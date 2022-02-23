@@ -18,10 +18,10 @@ public class HasBoneMetastases implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasBoneMetastases = record.clinical().tumor().hasBoneLesions();
         if (hasBoneMetastases == null) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Data regarding presence of bone metastases is missing")
                     .build();
-
         }
 
         EvaluationResult result = hasBoneMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;

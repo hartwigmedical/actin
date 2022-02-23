@@ -16,7 +16,7 @@ public class HasAnyLesion implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasLiverMetastases = record.clinical().tumor().hasLiverLesions();
         Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
         Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();

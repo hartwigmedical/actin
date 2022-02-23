@@ -14,7 +14,7 @@ import org.junit.Test;
 public class PrimaryTumorLocationBelongsToDoidTest {
 
     @Test
-    public void canMatchWithPrimaryTumorDoid() {
+    public void canEvaluate() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
 
         PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100");

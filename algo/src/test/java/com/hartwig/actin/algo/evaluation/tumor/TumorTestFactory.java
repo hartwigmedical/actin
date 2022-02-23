@@ -81,8 +81,13 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withOtherLesions(@Nullable Boolean hasOtherLesions) {
+    public static PatientRecord withHasOtherLesions(@Nullable Boolean hasOtherLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasOtherLesions(hasOtherLesions).build());
+    }
+
+    @NotNull
+    public static PatientRecord withOtherLesions(@Nullable List<String> otherLesions) {
+        return withTumorDetails(ImmutableTumorDetails.builder().otherLesions(otherLesions).build());
     }
 
     @NotNull

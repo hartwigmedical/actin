@@ -18,7 +18,8 @@ public class HasBiopsyAmenableLesion implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         if (record.molecular().type() != ExperimentType.WGS) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Can't determine whether patient has biopsy-amenable lesions without WGS")
                     .build();
         }

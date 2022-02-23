@@ -17,8 +17,10 @@ public class HasKnownBrainMetastases implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasKnownBrainMetastases = record.clinical().tumor().hasBrainLesions();
+
         if (hasKnownBrainMetastases == null) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.FAIL)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.FAIL)
                     .addFailMessages("Data regarding presence of brain metastases is missing")
                     .build();
         }

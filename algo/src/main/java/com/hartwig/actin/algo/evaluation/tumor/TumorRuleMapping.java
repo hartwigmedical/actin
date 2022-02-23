@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TumorRuleMapping {
 
+    private static final String MELANOMA_OF_UNKNOWN_PRIMARY_DOID = "1909";
+
     private TumorRuleMapping() {
     }
 
@@ -23,7 +25,8 @@ public final class TumorRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY,
+                hasPrimaryTumorLocationWithExactDoidCreator(doidModel, MELANOMA_OF_UNKNOWN_PRIMARY_DOID));
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
@@ -36,7 +39,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, hasKnownActiveBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES, hasKnownSymptomaticBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
-        map.put(EligibilityRule.HAS_LUNG_METASTASES, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
@@ -58,6 +61,12 @@ public final class TumorRuleMapping {
             String doid = FunctionInputResolver.createOneStringInput(function);
             return new PrimaryTumorLocationBelongsToDoid(doidModel, doid);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasPrimaryTumorLocationWithExactDoidCreator(@NotNull DoidModel doidModel,
+            @NotNull String doidToMatch) {
+        return function -> new PrimaryTumorLocationIsExactDoid(doidModel, doidToMatch);
     }
 
     @NotNull
@@ -121,6 +130,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasBoneMetastasesCreator() {
         return function -> new HasBoneMetastases();
+    }
+
+    @NotNull
+    private static FunctionCreator hasLungMetastasesCreator() {
+        return function -> new HasLungMetastases();
     }
 
     @NotNull

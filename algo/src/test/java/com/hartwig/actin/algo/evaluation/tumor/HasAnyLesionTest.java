@@ -19,12 +19,12 @@ public class HasAnyLesionTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLiverLesions(true)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withCnsLesions(true)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(true)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(true)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withHasOtherLesions(true)));
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBoneLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLiverLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withCnsLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(false)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withOtherLesions(false)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withHasOtherLesions(false)));
     }
 }

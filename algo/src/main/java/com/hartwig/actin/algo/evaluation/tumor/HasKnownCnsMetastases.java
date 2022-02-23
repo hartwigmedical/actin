@@ -17,8 +17,10 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasKnownCnsMetastases = record.clinical().tumor().hasCnsLesions();
+
         if (hasKnownCnsMetastases == null) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.FAIL)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.FAIL)
                     .addFailMessages("Data regarding presence of CNS metastases is missing")
                     .build();
         }

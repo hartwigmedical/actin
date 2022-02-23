@@ -17,8 +17,10 @@ public class HasLiverMetastases implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasLiverMetastases = record.clinical().tumor().hasLiverLesions();
+
         if (hasLiverMetastases == null) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Data regarding presence of liver metastases is missing")
                     .build();
         }
