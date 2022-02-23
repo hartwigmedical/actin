@@ -1,8 +1,5 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -12,22 +9,19 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasMetastaticCancer implements EvaluationFunction {
+public class HasTumorStage implements EvaluationFunction {
 
-    private static final Set<TumorStage> STAGES_CONSIDERED_METASTATIC = Sets.newHashSet();
+    @NotNull
+    private final TumorStage stageToMatch;
 
-    static {
-        STAGES_CONSIDERED_METASTATIC.add(TumorStage.IV);
-    }
-
-    HasMetastaticCancer() {
+    HasTumorStage(@NotNull final TumorStage stageToMatch) {
+        this.stageToMatch = stageToMatch;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         TumorStage stage = record.clinical().tumor().stage();
-
         if (stage == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
@@ -35,12 +29,13 @@ public class HasMetastaticCancer implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = STAGES_CONSIDERED_METASTATIC.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        boolean hasTumorStage = stage == stageToMatch || stage.category() == stageToMatch;
+        EvaluationResult result = hasTumorStage ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor stage " + stage + " is not considered metastatic (IV)");
+            builder.addFailMessages("Patient does not meet required tumor stage " + stageToMatch);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor stage " + stage + " is considered metastatic (IV)");
+            builder.addPassMessages("Patient meets required tumor stage " + stageToMatch);
         }
 
         return builder.build();

@@ -7,14 +7,15 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.junit.Test;
 
-public class HasAdvancedCancerTest {
+public class HasTumorStageTest {
 
     @Test
     public void canEvaluate() {
-        HasAdvancedCancer function = new HasAdvancedCancer();
+        HasTumorStage function = new HasTumorStage(TumorStage.III);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)));
     }
 }

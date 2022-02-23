@@ -1,14 +1,10 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class HasMetastaticCancerTest {
@@ -17,13 +13,8 @@ public class HasMetastaticCancerTest {
     public void canEvaluate() {
         HasMetastaticCancer function = new HasMetastaticCancer();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithTumorStage(TumorStage.IV)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithTumorStage(TumorStage.IIIC)).result());
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithTumorStage(null)).result());
-    }
-
-    @NotNull
-    private static PatientRecord patientWithTumorStage(@Nullable TumorStage stage) {
-        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().stage(stage).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIC)));
     }
 }

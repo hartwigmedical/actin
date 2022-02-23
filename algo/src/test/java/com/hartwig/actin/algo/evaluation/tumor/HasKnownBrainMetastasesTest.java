@@ -1,13 +1,9 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class HasKnownBrainMetastasesTest {
@@ -16,13 +12,8 @@ public class HasKnownBrainMetastasesTest {
     public void canEvaluate() {
         HasKnownBrainMetastases function = new HasKnownBrainMetastases();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithBrainLesions(true)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithBrainLesions(false)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithBrainLesions(null)).result());
-    }
-
-    @NotNull
-    private static PatientRecord patientWithBrainLesions(@Nullable Boolean hasBrainLesions) {
-        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder().hasBrainLesions(hasBrainLesions).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(true)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(false)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(null)));
     }
 }

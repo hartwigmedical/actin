@@ -1,13 +1,9 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class HasMeasurableDiseaseRecistTest {
@@ -16,15 +12,8 @@ public class HasMeasurableDiseaseRecistTest {
     public void canEvaluate() {
         HasMeasurableDiseaseRecist function = new HasMeasurableDiseaseRecist();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithMeasurableLesionRecist(true)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithMeasurableLesionRecist(false)).result());
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(patientWithMeasurableLesionRecist(null)).result());
-    }
-
-    @NotNull
-    private static PatientRecord patientWithMeasurableLesionRecist(@Nullable Boolean hasMeasurableLesionRecist) {
-        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
-                .hasMeasurableLesionRecist(hasMeasurableLesionRecist)
-                .build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMeasurableLesionRecist(true)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withMeasurableLesionRecist(false)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withMeasurableLesionRecist(null)));
     }
 }

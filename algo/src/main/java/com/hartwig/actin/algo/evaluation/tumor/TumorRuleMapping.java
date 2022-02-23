@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
@@ -24,10 +24,10 @@ public final class TumorRuleMapping {
 
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_STAGE_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
-        map.put(EligibilityRule.HAS_METASTASES, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_ANY_LESION, hasAnyLesionCreator());
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());
@@ -61,6 +61,14 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator hasTumorStageCreator() {
+        return function -> {
+            TumorStage stageToMatch = FunctionInputResolver.createOneTumorStageInput(function);
+            return new HasTumorStage(stageToMatch);
+        };
+    }
+
+    @NotNull
     private static FunctionCreator hasAdvancedCancerCreator() {
         return function -> new HasAdvancedCancer();
     }
@@ -68,6 +76,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasMetastaticCancerCreator() {
         return function -> new HasMetastaticCancer();
+    }
+
+    @NotNull
+    private static FunctionCreator hasAnyLesionCreator() {
+        return function -> new HasAnyLesion();
     }
 
     @NotNull

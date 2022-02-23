@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -290,6 +291,20 @@ public class FunctionInputResolverTest {
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("1"))));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not an integer", "not an integer"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneTumorStageInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_TUMOR_STAGE);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("IIIA"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+
+        assertEquals(TumorStage.IIIA, FunctionInputResolver.createOneTumorStageInput(valid));
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("IIIa"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("II", "III"))));
     }
 
     @NotNull

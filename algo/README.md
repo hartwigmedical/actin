@@ -94,7 +94,7 @@ HAS_MELANOMA_OF_UNKNOWN_PRIMARY | All configured DOIDs are equal to 1909
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
-HAS_METASTASES | Tumor details > hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions not empty
+HAS_ANY_LESION | Tumor details > hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions not empty
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
@@ -105,7 +105,7 @@ HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesi
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
-HAS_BIOPSY_AMENABLE_LESION | Presence of WGS details (to be extended)
+HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined

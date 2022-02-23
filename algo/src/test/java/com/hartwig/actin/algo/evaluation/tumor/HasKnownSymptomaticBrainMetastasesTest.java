@@ -1,13 +1,9 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class HasKnownSymptomaticBrainMetastasesTest {
@@ -16,15 +12,8 @@ public class HasKnownSymptomaticBrainMetastasesTest {
     public void canEvaluate() {
         HasKnownSymptomaticBrainMetastases function = new HasKnownSymptomaticBrainMetastases();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(patientWithSymptomaticBrainLesions(true)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithSymptomaticBrainLesions(false)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(patientWithSymptomaticBrainLesions(null)).result());
-    }
-
-    @NotNull
-    private static PatientRecord patientWithSymptomaticBrainLesions(@Nullable Boolean hasSymptomaticBrainLesions) {
-        return TumorEvaluationTestUtil.withTumorDetails(ImmutableTumorDetails.builder()
-                .hasSymptomaticBrainLesions(hasSymptomaticBrainLesions)
-                .build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withSymptomaticBrainLesions(true)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withSymptomaticBrainLesions(false)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withSymptomaticBrainLesions(null)));
     }
 }

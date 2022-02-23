@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -85,6 +86,9 @@ public final class TestParameterizedFunctionFactory {
             }
             case ONE_INTEGER_MANY_STRINGS: {
                 return Lists.newArrayList("1", "string1;string2");
+            }
+            case ONE_TUMOR_STAGE: {
+                return Lists.newArrayList(TumorStage.I.display());
             }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);

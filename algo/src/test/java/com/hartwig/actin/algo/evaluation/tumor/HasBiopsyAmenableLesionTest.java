@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -13,6 +13,6 @@ public class HasBiopsyAmenableLesionTest {
     public void canEvaluate() {
         HasBiopsyAmenableLesion function = new HasBiopsyAmenableLesion();
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

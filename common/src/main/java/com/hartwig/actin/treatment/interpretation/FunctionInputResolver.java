@@ -6,8 +6,8 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
@@ -63,10 +63,10 @@ public final class FunctionInputResolver {
 
         RULE_INPUT_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_STAGE_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_STAGE_X, FunctionInput.ONE_TUMOR_STAGE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ADVANCED_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_METASTATIC_CANCER, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_METASTASES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_ANY_LESION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIVER_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, FunctionInput.NONE);
@@ -387,6 +387,10 @@ public final class FunctionInputResolver {
                     createOneIntegerManyStringsInput(function);
                     return true;
                 }
+                case ONE_TUMOR_STAGE: {
+                    createOneTumorStageInput(function);
+                    return true;
+                }
                 default: {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule());
                     return null;
@@ -529,6 +533,13 @@ public final class FunctionInputResolver {
                 .integer(Integer.parseInt((String) function.parameters().get(0)))
                 .strings(strings)
                 .build();
+    }
+
+    @NotNull
+    public static TumorStage createOneTumorStageInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TUMOR_STAGE, 1);
+
+        return TumorStage.valueOf((String) function.parameters().get(0));
     }
 
     @NotNull
