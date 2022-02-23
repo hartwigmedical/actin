@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasMRIVolumeAmenableLesion implements EvaluationFunction {
+public class Tmp implements EvaluationFunction {
 
-    HasMRIVolumeAmenableLesion() {
+    Tmp() {
     }
 
     @NotNull
