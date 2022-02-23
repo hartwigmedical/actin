@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
@@ -31,6 +30,6 @@ public class HasHadTreatment implements EvaluationFunction {
             }
         }
 
-        return EvaluationFactory.create(EvaluationResult.FAIL); // TODO add working message
+        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Nina fail me in").build();
     }
 }
