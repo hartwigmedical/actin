@@ -30,6 +30,6 @@ public class HasHadTreatment implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Nina fail me in").build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Patient has not received treatment " + name).build();
     }
 }
