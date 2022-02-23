@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasRapidlyDetoriatingConditionTest {
+public class HasRapidlyDeterioratingConditionTest {
 
     @Test
     public void canEvaluate() {
-        HasRapidlyDetoriatingCondition function = new HasRapidlyDetoriatingCondition();
+        HasRapidlyDeterioratingCondition function = new HasRapidlyDeterioratingCondition();
 
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
