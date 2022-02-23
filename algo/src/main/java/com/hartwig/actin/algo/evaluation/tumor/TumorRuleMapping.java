@@ -154,7 +154,7 @@ public final class TumorRuleMapping {
 
     @NotNull
     private static FunctionCreator hasMRIVolumeAmenableLesionCreator() {
-        return function -> new Tmp();
+        return function -> new HasMRIVolumeAmenableLesion();
     }
 
     @NotNull

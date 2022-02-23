@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class TmpTest {
+public class HasMRIVolumeAmenableLesionTest {
 
     @Test
     public void canEvaluate() {
-        Tmp function = new Tmp();
+        HasMRIVolumeAmenableLesion function = new HasMRIVolumeAmenableLesion();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
