@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.previoustumor;
+package com.hartwig.actin.algo.evaluation.priortumor;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;

@@ -14,7 +14,7 @@ import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapping;
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapping;
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapping;
 import com.hartwig.actin.algo.evaluation.pregnancy.PregnancyRuleMapping;
-import com.hartwig.actin.algo.evaluation.previoustumor.PreviousTumorRuleMapping;
+import com.hartwig.actin.algo.evaluation.priortumor.PreviousTumorRuleMapping;
 import com.hartwig.actin.algo.evaluation.smoking.SmokingRuleMapping;
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapping;
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapping;
