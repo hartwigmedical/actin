@@ -14,9 +14,9 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-final class TreatmentEvaluationTestUtil {
+final class TreatmentTestFactory {
 
-    private TreatmentEvaluationTestUtil() {
+    private TreatmentTestFactory() {
     }
 
     @NotNull

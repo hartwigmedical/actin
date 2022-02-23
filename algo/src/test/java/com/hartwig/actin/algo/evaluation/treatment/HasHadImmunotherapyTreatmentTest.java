@@ -20,18 +20,18 @@ public class HasHadImmunotherapyTreatmentTest {
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add one non-immunotherapy
-        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder().addCategories(TreatmentCategory.RADIOTHERAPY).build());
+        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.RADIOTHERAPY).build());
         assertEquals(EvaluationResult.FAIL,
-                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
 
         // Add one immuno/radiotherapy
-        priorTumorTreatments.add(TreatmentEvaluationTestUtil.builder()
+        priorTumorTreatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.RADIOTHERAPY, TreatmentCategory.IMMUNOTHERAPY)
                 .build());
         assertEquals(EvaluationResult.PASS,
-                function.evaluate(TreatmentEvaluationTestUtil.withPriorTumorTreatments(priorTumorTreatments)).result());
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)).result());
     }
 }

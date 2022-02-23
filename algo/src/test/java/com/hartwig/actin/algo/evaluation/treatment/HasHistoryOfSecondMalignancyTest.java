@@ -27,26 +27,26 @@ public class HasHistoryOfSecondMalignancyTest {
         HasHistoryOfSecondMalignancy specificDoidInactive = new HasHistoryOfSecondMalignancy(doidModel, "100", true);
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
-        PatientRecord noMalignancyRecord = TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord noMalignancyRecord = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
 
         assertEquals(EvaluationResult.FAIL, anyMalignancy.evaluate(noMalignancyRecord).result());
         assertEquals(EvaluationResult.FAIL, specificDoid.evaluate(noMalignancyRecord).result());
         assertEquals(EvaluationResult.FAIL, specificDoidInactive.evaluate(noMalignancyRecord).result());
 
         priorSecondPrimaries.add(withDoidAndActive("300", true));
-        PatientRecord oneMalignancyRecord = TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord oneMalignancyRecord = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEquals(EvaluationResult.PASS, anyMalignancy.evaluate(oneMalignancyRecord).result());
         assertEquals(EvaluationResult.FAIL, specificDoid.evaluate(oneMalignancyRecord).result());
         assertEquals(EvaluationResult.FAIL, specificDoidInactive.evaluate(oneMalignancyRecord).result());
 
         priorSecondPrimaries.add(withDoidAndActive("200", true));
-        PatientRecord twoMalignancyRecords = TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord twoMalignancyRecords = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEquals(EvaluationResult.PASS, anyMalignancy.evaluate(twoMalignancyRecords).result());
         assertEquals(EvaluationResult.PASS, specificDoid.evaluate(twoMalignancyRecords).result());
         assertEquals(EvaluationResult.FAIL, specificDoidInactive.evaluate(twoMalignancyRecords).result());
 
         priorSecondPrimaries.add(withDoidAndActive("200", false));
-        PatientRecord threeMalignancyRecords = TreatmentEvaluationTestUtil.withPriorSecondPrimaries(priorSecondPrimaries);
+        PatientRecord threeMalignancyRecords = TreatmentTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEquals(EvaluationResult.PASS, anyMalignancy.evaluate(threeMalignancyRecords).result());
         assertEquals(EvaluationResult.PASS, specificDoid.evaluate(threeMalignancyRecords).result());
         assertEquals(EvaluationResult.PASS, specificDoidInactive.evaluate(threeMalignancyRecords).result());
