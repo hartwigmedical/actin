@@ -22,7 +22,7 @@ public class HasHadTreatment implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.name().contains(name)) {
+            if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassMessages("Patient has received treatment " + name)
@@ -30,6 +30,9 @@ public class HasHadTreatment implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Patient has not received treatment " + name).build();
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.FAIL)
+                .addFailMessages("Patient has not received treatment " + name)
+                .build();
     }
 }
