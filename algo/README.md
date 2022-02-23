@@ -140,7 +140,7 @@ HAS_HAD_TYROSINE_KINASE_TREATMENT |  Prior tumor treatments > category = 'Target
 HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT | T.B.D
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 
-##### Rules related to previous primary tumors
+##### Rules related to prior primary tumors
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
@@ -246,7 +246,7 @@ HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
 HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 77
-HAS_HISTORY_OF_IMMUNE_SYSYEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
+HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
@@ -259,7 +259,7 @@ HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equ
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
-HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
+HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionnaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
 HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or allergy name like %contrast agent%
 IS_IN_DIALYSIS | won't be evaluated
@@ -302,7 +302,7 @@ CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status activ
 CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X%
 CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like "X"
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
-CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneuous" or "Imidazoles, other" and status is active
+CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
