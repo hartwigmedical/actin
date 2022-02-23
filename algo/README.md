@@ -119,9 +119,9 @@ HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | T.B.D. - currently not evaluated
-HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D - currently resolves to PASS_BUT_WARN
-HAS_DECLINED_SOC_TREATMENTS | T.B.D - currently not evaluated
-HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D.
+HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D. - currently resolves to PASS_BUT_WARN
+HAS_DECLINED_SOC_TREATMENTS | T.B.D. - currently not evaluated
+HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D. - current undetermined
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
