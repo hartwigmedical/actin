@@ -90,6 +90,7 @@ IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | > will resolve to PASS_BUT_WARN
 Rule | When does a patient pass evaluation?
 ---|---
 PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Configured DOID should be equal or be a child of DOID X
+HAS_CANCER_OF_UNKNOWN_PRIMARY | ALL of configured DOIDs belong to EXACTLY 162, 305, 299, 169, 3030, 4552, 4015, 1800, 1749, 0050685, 3493
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
