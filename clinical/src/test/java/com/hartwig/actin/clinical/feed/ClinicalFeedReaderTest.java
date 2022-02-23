@@ -58,10 +58,9 @@ public class ClinicalFeedReaderTest {
     private static void assertQuestionnaires(@NotNull List<QuestionnaireEntry> entries) {
         assertEquals(4, entries.size());
 
-        QuestionnaireEntry entry1 = findByParentIdentifierValue(entries, "XX");
+        QuestionnaireEntry entry1 = findByQuestionnaireValue(entries, "B");
         assertEquals("ACTN-01-02-9999", entry1.subject());
         assertEquals(LocalDate.of(2020, 8, 28), entry1.authored());
-        assertEquals("A", entry1.questionnaireQuestionnaireValue());
         assertEquals("INT Consult", entry1.description());
         assertEquals("Beloop", entry1.itemText());
 
@@ -70,18 +69,16 @@ public class ClinicalFeedReaderTest {
         assertTrue(entry1.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
         assertTrue(entry1.itemAnswerValueValueString().contains("Cancer-related complications (e.g. pleural effusion)"));
 
-        QuestionnaireEntry entry2 = findByParentIdentifierValue(entries, "YY");
+        QuestionnaireEntry entry2 = findByQuestionnaireValue(entries, "C");
         assertEquals("ACTN-01-02-9999", entry2.subject());
         assertEquals(LocalDate.of(2021, 6, 6), entry2.authored());
-        assertEquals("B", entry2.questionnaireQuestionnaireValue());
         assertEquals("ONC Kuuroverzicht", entry2.description());
         assertEquals("Nausea", entry2.itemText());
         assertEquals("0", entry2.itemAnswerValueValueString());
 
-        QuestionnaireEntry entry3 = findByParentIdentifierValue(entries, "ZZ");
+        QuestionnaireEntry entry3 = findByQuestionnaireValue(entries, "A");
         assertEquals("ACTN-01-02-9999", entry3.subject());
         assertEquals(LocalDate.of(2021, 8, 16), entry3.authored());
-        assertEquals("A", entry3.questionnaireQuestionnaireValue());
         assertEquals("INT Consult", entry3.description());
         assertEquals("Beloop", entry3.itemText());
         assertEquals(26, entry3.itemAnswerValueValueString().split("\n").length);
@@ -89,23 +86,22 @@ public class ClinicalFeedReaderTest {
         assertTrue(entry3.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
         assertTrue(entry3.itemAnswerValueValueString().contains("Other (e.g. Osteoporosis, Pleural effusion)"));
 
-        QuestionnaireEntry entry4 = findByParentIdentifierValue(entries, "QQ");
+        QuestionnaireEntry entry4 = findByQuestionnaireValue(entries, "D");
         assertEquals(LocalDate.of(2021, 12, 17), entry4.authored());
-        assertEquals("C", entry4.questionnaireQuestionnaireValue());
         assertEquals("Aanvraag bloedproducten_test", entry4.description());
         assertEquals("Erytrocytenconcentraat", entry4.itemAnswerValueValueString());
     }
 
     @NotNull
-    private static QuestionnaireEntry findByParentIdentifierValue(@NotNull List<QuestionnaireEntry> entries,
-            @NotNull String parentIdentifierValue) {
+    private static QuestionnaireEntry findByQuestionnaireValue(@NotNull List<QuestionnaireEntry> entries,
+            @NotNull String questionnaireQuestionnaireValue) {
         for (QuestionnaireEntry entry : entries) {
-            if (entry.parentIdentifierValue().equals(parentIdentifierValue)) {
+            if (entry.questionnaireQuestionnaireValue().equals(questionnaireQuestionnaireValue)) {
                 return entry;
             }
         }
 
-        throw new IllegalStateException("No questionnaire entry found with parentIdentifierValue '" + parentIdentifierValue + "'");
+        throw new IllegalStateException("No questionnaire entry found for '" + questionnaireQuestionnaireValue + "'");
     }
 
     private static void assertEncounters(@NotNull List<EncounterEntry> entries) {
