@@ -43,13 +43,13 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
             if (type == null) {
                 builder.addFailMessages("Patient has not received " + categoryDisplay);
             } else {
-                builder.addFailMessages("Patient has not received " + categoryDisplay + " treatment of type " + type);
+                builder.addFailMessages("Patient has not received " + type + " " + categoryDisplay + " treatment");
             }
         } else {
             if (type == null) {
                 builder.addPassMessages("Patient has received " + categoryDisplay);
             } else {
-                builder.addPassMessages("Patient has received " + categoryDisplay + " treatment of type " + type);
+                builder.addPassMessages("Patient has received " + type + " " + categoryDisplay + " treatment");
             }
         }
         return builder.build();

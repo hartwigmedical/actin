@@ -25,14 +25,14 @@ public class HasHadTreatment implements EvaluationFunction {
             if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has received treatment " + name)
+                        .addPassMessages("Patient has received " + name + " treatment")
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has not received treatment " + name)
+                .addFailMessages("Patient has not received " + name + " treatment")
                 .build();
     }
 }
