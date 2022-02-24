@@ -4,17 +4,14 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadTreatmentCategoryButNotOfTypes implements EvaluationFunction {
+public class HasHadTreatmentCategoryButNotOfTypes implements PassOrFailEvaluator {
 
     @NotNull
     private final TreatmentCategory category;
@@ -26,10 +23,8 @@ public class HasHadTreatmentCategoryButNotOfTypes implements EvaluationFunction 
         this.ignoreTypes = ignoreTypes;
     }
 
-    @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasHadTreatmentWithCategoryButNotOfType = false;
+    public boolean isPass(@NotNull final PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 boolean hasCorrectType = true;
@@ -39,21 +34,28 @@ public class HasHadTreatmentCategoryButNotOfTypes implements EvaluationFunction 
                     }
                 }
                 if (hasCorrectType) {
-                    hasHadTreatmentWithCategoryButNotOfType = true;
+                    return true;
                 }
             }
         }
 
-        EvaluationResult result = hasHadTreatmentWithCategoryButNotOfType ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public String passMessage() {
         String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
         String types = concat(ignoreTypes);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received " + categoryDisplay + ", ignoring " + types);
-        } else {
-            builder.addPassMessages("Patient received " + categoryDisplay + ", ignoring " + types);
-        }
-        return builder.build();
+        return "Patient received " + categoryDisplay + ", ignoring " + types;
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
+        String types = concat(ignoreTypes);
+        return "Patient has not received " + categoryDisplay + ", ignoring " + types;
     }
 
     @NotNull

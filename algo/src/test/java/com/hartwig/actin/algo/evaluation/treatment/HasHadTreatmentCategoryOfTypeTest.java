@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
@@ -21,25 +21,25 @@ public class HasHadTreatmentCategoryOfTypeTest {
 
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         PatientRecord noPriorTreatmentRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEvaluation(EvaluationResult.FAIL, any.evaluate(noPriorTreatmentRecord));
-        assertEvaluation(EvaluationResult.FAIL, specific.evaluate(noPriorTreatmentRecord));
+        assertFalse(any.isPass(noPriorTreatmentRecord));
+        assertFalse(specific.isPass(noPriorTreatmentRecord));
 
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
         PatientRecord immunoRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEvaluation(EvaluationResult.FAIL, any.evaluate(immunoRecord));
-        assertEvaluation(EvaluationResult.FAIL, specific.evaluate(immunoRecord));
+        assertFalse(any.isPass(immunoRecord));
+        assertFalse(specific.isPass(immunoRecord));
 
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
         PatientRecord multiRecord1 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEvaluation(EvaluationResult.PASS, any.evaluate(multiRecord1));
-        assertEvaluation(EvaluationResult.FAIL, specific.evaluate(multiRecord1));
+        assertTrue(any.isPass(multiRecord1));
+        assertFalse(specific.isPass(multiRecord1));
 
         priorTumorTreatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some anti-EGFR Type")
                 .build());
         PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
-        assertEvaluation(EvaluationResult.PASS, any.evaluate(multiRecord2));
-        assertEvaluation(EvaluationResult.PASS, specific.evaluate(multiRecord2));
+        assertTrue(any.isPass(multiRecord2));
+        assertTrue(specific.isPass(multiRecord2));
     }
 }

@@ -1,15 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSpecificTreatment implements EvaluationFunction {
+public class HasHadSpecificTreatment implements PassOrFailEvaluator {
 
     @NotNull
     private final String name;
@@ -18,21 +15,26 @@ public class HasHadSpecificTreatment implements EvaluationFunction {
         this.name = name;
     }
 
-    @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public boolean isPass(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
-                return ImmutableEvaluation.builder()
-                        .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has received " + name + " treatment")
-                        .build();
+                return true;
             }
         }
 
-        return ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has not received " + name + " treatment")
-                .build();
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public String passMessage() {
+        return "Patient has received " + name + " treatment";
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        return "Patient has not received " + name + " treatment";
     }
 }

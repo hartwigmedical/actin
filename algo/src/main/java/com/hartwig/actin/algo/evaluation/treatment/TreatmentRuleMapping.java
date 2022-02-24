@@ -97,7 +97,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSpecificTreatmentCreator() {
         return function -> {
             String treatment = FunctionInputResolver.createOneStringInput(function);
-            return new HasHadSpecificTreatment(treatment);
+            return new PassOrFailEvaluationFunction(new HasHadSpecificTreatment(treatment));
         };
     }
 
@@ -105,7 +105,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryCreator() {
         return function -> {
             TreatmentCategory category = FunctionInputResolver.createOneTreatmentCategoryInput(function);
-            return new HasHadTreatmentCategoryOfType(category, null);
+            return new PassOrFailEvaluationFunction(new HasHadTreatmentCategoryOfType(category, null));
         };
     }
 
@@ -113,7 +113,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
         return function -> {
             OneTreatmentCategoryOneString input = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(function);
-            return new HasHadTreatmentCategoryOfType(input.treatmentCategory(), input.string());
+            return new PassOrFailEvaluationFunction(new HasHadTreatmentCategoryOfType(input.treatmentCategory(), input.string()));
         };
     }
 
@@ -121,7 +121,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
         return function -> {
             OneTreatmentCategoryManyStrings input = FunctionInputResolver.createOneTreatmentCategoryManyStringsInput(function);
-            return new HasHadTreatmentCategoryButNotOfTypes(input.treatmentCategory(), input.strings());
+            return new PassOrFailEvaluationFunction(new HasHadTreatmentCategoryButNotOfTypes(input.treatmentCategory(), input.strings()));
         };
     }
 
@@ -129,7 +129,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSomeTreatmentsOfCategoryCreator() {
         return function -> {
             OneTreatmentCategoryOneInteger input = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(function);
-            return new HasHadSomeTreatmentsWithCategory(input.treatmentCategory(), input.integer());
+            return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategory(input.treatmentCategory(), input.integer()));
         };
     }
 

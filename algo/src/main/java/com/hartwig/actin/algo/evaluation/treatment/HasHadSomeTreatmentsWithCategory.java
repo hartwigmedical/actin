@@ -1,17 +1,14 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSomeTreatmentsWithCategory implements EvaluationFunction {
+public class HasHadSomeTreatmentsWithCategory implements PassOrFailEvaluator {
 
     @NotNull
     private final TreatmentCategory category;
@@ -22,9 +19,8 @@ public class HasHadSomeTreatmentsWithCategory implements EvaluationFunction {
         this.minTreatmentLines = minTreatmentLines;
     }
 
-    @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public boolean isPass(@NotNull final PatientRecord record) {
         int numTreatmentLines = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
@@ -32,14 +28,20 @@ public class HasHadSomeTreatmentsWithCategory implements EvaluationFunction {
             }
         }
 
-        EvaluationResult result = numTreatmentLines >= minTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        return numTreatmentLines >= minTreatmentLines;
+    }
+
+    @NotNull
+    @Override
+    public String passMessage() {
         String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received at least " + minTreatmentLines + " lines of " + categoryDisplay);
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has received at least " + minTreatmentLines + " lines of " + categoryDisplay);
-        }
-        return builder.build();
+        return "Patient has received at least " + minTreatmentLines + " lines of " + categoryDisplay;
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
+        return "Patient has not received at least " + minTreatmentLines + " lines of " + categoryDisplay;
     }
 }
