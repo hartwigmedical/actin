@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 public enum VitalFunctionCategory {
     NON_INVASIVE_BLOOD_PRESSURE("Non-invasive blood pressure"),
     ARTERIAL_BLOOD_PRESSURE("Arterial blood pressure"),
-    HEART_RATE("Heart rate");
+    HEART_RATE("Heart rate"),
+    SPO2("SpO2");
 
     @NotNull
     private final String display;

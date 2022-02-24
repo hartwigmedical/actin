@@ -30,6 +30,8 @@ public final class VitalFunctionExtraction {
                 return VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE;
             case "HR":
                 return VitalFunctionCategory.HEART_RATE;
+            case "SpO2":
+                return VitalFunctionCategory.SPO2;
             default:
                 return null;
         }

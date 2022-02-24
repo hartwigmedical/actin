@@ -13,6 +13,7 @@ public class VitalFunctionExtractionTest {
         assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, VitalFunctionExtraction.determineCategory("NIBP"));
         assertEquals(VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE, VitalFunctionExtraction.determineCategory("ABP"));
         assertEquals(VitalFunctionCategory.HEART_RATE, VitalFunctionExtraction.determineCategory("HR"));
+        assertEquals(VitalFunctionCategory.SPO2, VitalFunctionExtraction.determineCategory("SpO2"));
     }
 
     @Test(expected = IllegalArgumentException.class)
