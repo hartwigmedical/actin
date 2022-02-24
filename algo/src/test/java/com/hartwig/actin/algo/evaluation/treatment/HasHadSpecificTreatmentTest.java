@@ -10,11 +10,11 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.junit.Test;
 
-public class HasHadTreatmentTest {
+public class HasHadSpecificTreatmentTest {
 
     @Test
     public void canEvaluate() {
-        HasHadTreatment function = new HasHadTreatment("treatment 1");
+        HasHadSpecificTreatment function = new HasHadSpecificTreatment("treatment 1");
 
         // Empty list
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();

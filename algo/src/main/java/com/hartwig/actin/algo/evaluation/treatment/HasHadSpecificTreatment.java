@@ -9,12 +9,12 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadTreatment implements EvaluationFunction {
+public class HasHadSpecificTreatment implements EvaluationFunction {
 
     @NotNull
     private final String name;
 
-    HasHadTreatment(@NotNull final String name) {
+    HasHadSpecificTreatment(@NotNull final String name) {
         this.name = name;
     }
 
