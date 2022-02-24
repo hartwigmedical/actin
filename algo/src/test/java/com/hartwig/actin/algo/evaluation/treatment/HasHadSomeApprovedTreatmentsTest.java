@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasHadSufficientApprovedTreatmentsTest {
+public class HasHadSomeApprovedTreatmentsTest {
 
     @Test
     public void canEvaluate() {
-        HasHadSufficientApprovedTreatments function = new HasHadSufficientApprovedTreatments();
+        HasHadSomeApprovedTreatments function = new HasHadSomeApprovedTreatments();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

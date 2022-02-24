@@ -25,6 +25,7 @@ import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneStringTwoIntegers;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
@@ -173,6 +174,25 @@ public class FunctionInputResolverTest {
         assertEquals("string", inputs.string());
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneTreatmentCategoryManyStringsInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_STRINGS);
+
+        String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, "string1;string2"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+
+        OneTreatmentCategoryManyStrings inputs = FunctionInputResolver.createOneTreatmentCategoryManyStringsInput(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.treatmentCategory());
+        assertEquals(2, inputs.strings().size());
+        assertTrue(inputs.strings().contains("string1"));
+        assertTrue(inputs.strings().contains("string2"));
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList(category))));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
     }
 

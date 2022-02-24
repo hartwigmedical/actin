@@ -12,14 +12,14 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasHadTreatmentCategory implements EvaluationFunction {
+public class HasHadTreatmentCategoryOfType implements EvaluationFunction {
 
     @NotNull
     private final TreatmentCategory category;
     @Nullable
     private final String type;
 
-    HasHadTreatmentCategory(@NotNull final TreatmentCategory category, @Nullable final String type) {
+    HasHadTreatmentCategoryOfType(@NotNull final TreatmentCategory category, @Nullable final String type) {
         this.category = category;
         this.type = type;
     }
@@ -27,16 +27,16 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasHadDrugCategory = false;
+        boolean hasHadTreatmentWithCategoryAndType = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
-                if (type == null || isOfType(treatment, category, type)) {
-                    hasHadDrugCategory = true;
+                if (type == null || TreatmentTypeResolver.isOfType(treatment, category, type)) {
+                    hasHadTreatmentWithCategoryAndType = true;
                 }
             }
         }
 
-        EvaluationResult result = hasHadDrugCategory ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasHadTreatmentWithCategoryAndType ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
         if (result == EvaluationResult.FAIL) {
@@ -53,38 +53,5 @@ public class HasHadTreatmentCategory implements EvaluationFunction {
             }
         }
         return builder.build();
-    }
-
-    private static boolean isOfType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category,
-            @NotNull String termToFind) {
-        String type = null;
-        switch (category) {
-            case CHEMOTHERAPY: {
-                type = treatment.chemoType();
-                break;
-            }
-            case IMMUNOTHERAPY: {
-                type = treatment.immunoType();
-                break;
-            }
-            case TARGETED_THERAPY: {
-                type = treatment.targetedType();
-                break;
-            }
-            case HORMONE_THERAPY: {
-                type = treatment.hormoneType();
-                break;
-            }
-            case RADIOTHERAPY: {
-                type = treatment.radioType();
-                break;
-            }
-            case TRANSPLANTATION: {
-                type = treatment.transplantType();
-                break;
-            }
-        }
-
-        return type != null && type.toLowerCase().contains(termToFind.toLowerCase());
     }
 }

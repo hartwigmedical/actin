@@ -16,6 +16,7 @@ import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneStringTwoIntegers;
+import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneTreatmentCategoryOneStringOneInteger;
@@ -25,6 +26,7 @@ import com.hartwig.actin.treatment.interpretation.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneStringTwoIntegers;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
@@ -95,7 +97,7 @@ public final class FunctionInputResolver {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT_CATEGORY);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_STRINGS);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
@@ -356,6 +358,10 @@ public final class FunctionInputResolver {
                     createOneTreatmentCategoryOneStringInput(function);
                     return true;
                 }
+                case ONE_TREATMENT_CATEGORY_MANY_STRINGS: {
+                    createOneTreatmentCategoryManyStringsInput(function);
+                    return true;
+                }
                 case ONE_TREATMENT_CATEGORY_ONE_INTEGER: {
                     createOneTreatmentCategoryOneIntegerInput(function);
                     return true;
@@ -448,6 +454,21 @@ public final class FunctionInputResolver {
         return ImmutableOneTreatmentCategoryOneString.builder()
                 .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
                 .string((String) function.parameters().get(1))
+                .build();
+    }
+
+    @NotNull
+    public static OneTreatmentCategoryManyStrings createOneTreatmentCategoryManyStringsInput(@NotNull EligibilityFunction function) {
+        assertParamType(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_STRINGS);
+
+        List<String> strings = Lists.newArrayList();
+        for (String input : ((String) function.parameters().get(1)).split(MANY_STRING_SEPARATOR)) {
+            strings.add(input.trim());
+        }
+
+        return ImmutableOneTreatmentCategoryManyStrings.builder()
+                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .strings(strings)
                 .build();
     }
 

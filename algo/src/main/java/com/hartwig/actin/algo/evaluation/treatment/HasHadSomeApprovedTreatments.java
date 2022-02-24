@@ -8,14 +8,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSufficientApprovedTreatments implements EvaluationFunction {
+public class HasHadSomeApprovedTreatments implements EvaluationFunction {
 
-    HasHadSufficientApprovedTreatments() {
+    HasHadSomeApprovedTreatments() {
     }
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedMessages("Currently approved treatments can't be determined")

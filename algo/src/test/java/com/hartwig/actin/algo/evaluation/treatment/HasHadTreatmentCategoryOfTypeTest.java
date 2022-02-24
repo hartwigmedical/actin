@@ -12,12 +12,12 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.junit.Test;
 
-public class HasHadTreatmentCategoryTest {
+public class HasHadTreatmentCategoryOfTypeTest {
 
     @Test
     public void canEvaluate() {
-        HasHadTreatmentCategory any = new HasHadTreatmentCategory(TreatmentCategory.TARGETED_THERAPY, null);
-        HasHadTreatmentCategory specific = new HasHadTreatmentCategory(TreatmentCategory.TARGETED_THERAPY, "Anti-EGFR");
+        HasHadTreatmentCategoryOfType any = new HasHadTreatmentCategoryOfType(TreatmentCategory.TARGETED_THERAPY, null);
+        HasHadTreatmentCategoryOfType specific = new HasHadTreatmentCategoryOfType(TreatmentCategory.TARGETED_THERAPY, "Anti-EGFR");
 
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         PatientRecord noPriorTreatmentRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
@@ -36,7 +36,7 @@ public class HasHadTreatmentCategoryTest {
 
         priorTumorTreatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
-                .targetedType("Some Anti-EGFR Type")
+                .targetedType("Some anti-EGFR Type")
                 .build());
         PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
         assertEvaluation(EvaluationResult.PASS, any.evaluate(multiRecord2));

@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +26,13 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
-        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSufficientApprovedTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
+        map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, hasHadTreatmentCategoryOfTypeCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
@@ -73,8 +72,16 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadSufficientApprovedTreatmentCreator() {
-        return function -> new HasHadSufficientApprovedTreatments();
+    private static FunctionCreator hasHadSomeApprovedTreatmentCreator() {
+        return function -> new HasHadSomeApprovedTreatments();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadSomeSystemicTreatmentCreator() {
+        return function -> {
+            int minSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasHadSomeSystemicTreatments(minSystemicTreatments);
+        };
     }
 
     @NotNull
@@ -97,7 +104,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryCreator() {
         return function -> {
             TreatmentCategory category = FunctionInputResolver.createOneTreatmentCategoryInput(function);
-            return new HasHadTreatmentCategory(category, null);
+            return new HasHadTreatmentCategoryOfType(category, null);
         };
     }
 
@@ -105,7 +112,15 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
         return function -> {
             OneTreatmentCategoryOneString input = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(function);
-            return new HasHadTreatmentCategory(input.treatmentCategory(), input.string());
+            return new HasHadTreatmentCategoryOfType(input.treatmentCategory(), input.string());
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
+        return function -> {
+            OneTreatmentCategoryManyStrings input = FunctionInputResolver.createOneTreatmentCategoryManyStringsInput(function);
+            return new HasHadTreatmentCategoryButNotOfTypes(input.treatmentCategory(), input.strings());
         };
     }
 
