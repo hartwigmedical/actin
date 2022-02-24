@@ -18,7 +18,7 @@ public class HasSpecificProgressiveDiseaseCriteria implements EvaluationFunction
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Disease progression cannot currently be determined")
+                .addUndeterminedMessages("Tumor progression according to specific criteria currently cannot be determined")
                 .build();
     }
 }

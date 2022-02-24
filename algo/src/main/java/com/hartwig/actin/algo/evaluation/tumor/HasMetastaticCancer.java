@@ -31,7 +31,7 @@ public class HasMetastaticCancer implements EvaluationFunction {
         if (stage == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Tumor stage is missing")
+                    .addUndeterminedMessages("Tumor stage details are missing")
                     .build();
         }
 
