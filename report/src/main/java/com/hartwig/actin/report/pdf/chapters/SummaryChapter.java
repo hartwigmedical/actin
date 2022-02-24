@@ -69,8 +69,8 @@ public class SummaryChapter implements ReportChapter {
         Paragraph tumorDetailsLine = new Paragraph();
         tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
-        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text(" | Biopsy location: ").addStyle(Styles.labelStyle()));
+        tumorDetailsLine.add(new Text(biopsyLocation(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 
@@ -118,10 +118,11 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
-    private static String stage(@NotNull TumorDetails tumor) {
-        TumorStage stage = tumor.stage();
-        return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
+    private static String biopsyLocation(@NotNull TumorDetails tumor) {
+        String biopsyLocation = tumor.biopsyLocation();
+        return biopsyLocation != null ? biopsyLocation : Formats.VALUE_UNKNOWN;
     }
+
 
     private void addChapterTitle(@NotNull Document document) {
         document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));

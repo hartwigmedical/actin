@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -30,7 +31,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Current tumor localization (" + Formats.date(record.patient().questionnaireDate()) + ")";
+        return "Tumor localization details (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull
@@ -38,8 +39,8 @@ public class TumorDetailsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-        table.addCell(Cells.createKey("Biopsy location"));
-        table.addCell(Cells.createValue(biopsyLocation(record.tumor())));
+        table.addCell(Cells.createKey("Tumor stage"));
+        table.addCell(Cells.createValue(stage(record.tumor())));
 
         table.addCell(Cells.createKey("Lesion locations"));
         table.addCell(Cells.createValue(lesionInformation(record.tumor())));
@@ -51,9 +52,9 @@ public class TumorDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String biopsyLocation(@NotNull TumorDetails tumor) {
-        String biopsyLocation = tumor.biopsyLocation();
-        return biopsyLocation != null ? biopsyLocation : Formats.VALUE_UNKNOWN;
+    private static String stage(@NotNull TumorDetails tumor) {
+        TumorStage stage = tumor.stage();
+        return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
