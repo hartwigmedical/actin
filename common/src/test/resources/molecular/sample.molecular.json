@@ -42,6 +42,7 @@
   "isHomologousRepairDeficient": true,
   "tumorMutationalBurden": 4.32,
   "tumorMutationalLoad": 243,
+  "actinSource": "local",
   "actinTrials": [
     {
       "event": "High TML",

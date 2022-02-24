@@ -48,7 +48,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(concat(eventsWithApprovedEvidence)));
 
         Set<String> eventsWithActinEvidence = extractEvents(record.actinTrials());
-        table.addCell(Cells.createKey("Events with trial eligibility in Erasmus MC database"));
+        table.addCell(Cells.createKey("Events with trial eligibility in " + record.actinSource() + " database"));
         table.addCell(Cells.createValue(concat(eventsWithActinEvidence)));
 
         Set<String> eventsWithExternalTrialEvidence = extractEvents(record.externalTrials());
@@ -62,7 +62,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         Set<String> eventsWithExperimentalEvidence = extractEvents(record.experimentalResponsiveEvidence());
         Set<String> additionalExperimentalEvents =
                 subtract(eventsWithExperimentalEvidence, Lists.newArrayList(eventsWithApprovedEvidence, eventsWithActinEvidence));
-        table.addCell(addIndent(Cells.createKey("Additional events with any potential trial eligibility (" + record.evidenceSource() +")")));
+        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + record.evidenceSource() +")")));
         table.addCell(Cells.createValue(concat(additionalExperimentalEvents)));
 
         Set<String> eventsWithOtherEvidence = extractEvents(record.otherResponsiveEvidence());

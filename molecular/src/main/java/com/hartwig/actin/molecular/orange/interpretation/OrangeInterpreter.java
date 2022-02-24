@@ -60,6 +60,7 @@ public class OrangeInterpreter {
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())
                 .tumorMutationalLoad(record.tumorMutationalLoad())
+                .actinSource("Erasmus MC")
                 .actinTrials(evidenceFactory.createActinTrials(record.evidences()))
                 .externalTrialSource("iClusion")
                 .externalTrials(evidenceFactory.createExternalTrials(record.evidences()))
