@@ -16,7 +16,9 @@ public class HasSufficientLifeExpectancy implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED).build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Currently assumed that requested life expectancy will be met")
+                .build();
     }
 }
 

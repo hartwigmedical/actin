@@ -16,6 +16,8 @@ public class ParticipatesInAnotherTrial implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED).build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Assumed that patient is not currently participating in another trial")
+                .build();
     }
 }

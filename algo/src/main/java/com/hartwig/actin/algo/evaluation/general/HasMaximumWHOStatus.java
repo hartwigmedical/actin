@@ -31,9 +31,9 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         EvaluationResult result = who <= maximumWHO ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient WHO status " + who + " is worse than maximum (WHO " + maximumWHO +")");
+            builder.addFailMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO +")");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient WHO status " + who + " is within requested range");
+            builder.addPassMessages("Patient WHO status " + who + " is within requested max (WHO " + maximumWHO +")");
         }
 
         return builder.build();
