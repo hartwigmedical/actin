@@ -29,12 +29,12 @@ public class HasHadLimitedSystemicTreatments implements PassOrFailEvaluator {
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient has received at most " + maxSystemicTreatments + " systematic treatments";
+        return "Patient has received at most " + maxSystemicTreatments + " systemic treatments";
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient has received more than " + maxSystemicTreatments + " systematic treatments";
+        return "Patient has received more than " + maxSystemicTreatments + " systemic treatments";
     }
 }
