@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;

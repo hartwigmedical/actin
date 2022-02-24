@@ -1,18 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
+public class HasHadLimitedSystemicTreatments implements PassOrFailEvaluator {
 
     private final int maxSystemicTreatments;
 
@@ -20,23 +14,27 @@ public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
         this.maxSystemicTreatments = maxSystemicTreatments;
     }
 
-    @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorTumorTreatment> systemicOnly = systemicOnly(record.clinical().priorTumorTreatments());
+    public boolean isPass(@NotNull PatientRecord record) {
+        int systemicCount = 0;
+        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+            if (treatment.isSystemic()) {
+                systemicCount++;
+            }
+        }
 
-        EvaluationResult result = systemicOnly.size() <= maxSystemicTreatments ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+        return systemicCount <= maxSystemicTreatments;
     }
 
     @NotNull
-    private static List<PriorTumorTreatment> systemicOnly(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        List<PriorTumorTreatment> filtered = Lists.newArrayList();
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            if (priorTumorTreatment.isSystemic()) {
-                filtered.add(priorTumorTreatment);
-            }
-        }
-        return filtered;
+    @Override
+    public String passMessage() {
+        return "Patient has received at most " + maxSystemicTreatments + " systematic treatments";
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        return "Patient has received more than " + maxSystemicTreatments + " systematic treatments";
     }
 }

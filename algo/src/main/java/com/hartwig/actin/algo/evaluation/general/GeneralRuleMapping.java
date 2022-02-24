@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.general;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.evaluation.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 

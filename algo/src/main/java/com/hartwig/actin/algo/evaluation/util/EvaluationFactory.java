@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation.util;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;

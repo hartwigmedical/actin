@@ -5,15 +5,14 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationConstants;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
+import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
+import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
 
 import org.jetbrains.annotations.NotNull;
 

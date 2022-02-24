@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation.util;
 
 import java.time.LocalDate;
 

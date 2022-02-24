@@ -4,15 +4,12 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadFluoropyrimidineTreatment implements EvaluationFunction {
+public class HasHadFluoropyrimidineTreatment implements PassOrFailEvaluator {
 
     static final Set<String> FLUOROPYRIMIDINE_TREATMENTS = Sets.newHashSet();
 
@@ -27,15 +24,26 @@ public class HasHadFluoropyrimidineTreatment implements EvaluationFunction {
     HasHadFluoropyrimidineTreatment() {
     }
 
-    @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public boolean isPass(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (FLUOROPYRIMIDINE_TREATMENTS.contains(treatment.name())) {
-                return EvaluationFactory.create(EvaluationResult.PASS);
+                return true;
             }
         }
 
-        return EvaluationFactory.create(EvaluationResult.FAIL);
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public String passMessage() {
+        return "Patient has received fluoropyrimidine treatment";
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        return "Patient has not received fluoropyrimidine treatment";
     }
 }

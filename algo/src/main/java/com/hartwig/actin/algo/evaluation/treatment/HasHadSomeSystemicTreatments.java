@@ -1,18 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSomeSystemicTreatments implements EvaluationFunction {
+public class HasHadSomeSystemicTreatments implements PassOrFailEvaluator {
 
     private final int minSystemicTreatments;
 
@@ -20,30 +14,27 @@ public class HasHadSomeSystemicTreatments implements EvaluationFunction {
         this.minSystemicTreatments = minSystemicTreatments;
     }
 
-    @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorTumorTreatment> systemicOnly = systemicOnly(record.clinical().priorTumorTreatments());
-
-        EvaluationResult result = systemicOnly.size() >= minSystemicTreatments ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient received at least " + minSystemicTreatments + " systemic treatments");
+    public boolean isPass(@NotNull PatientRecord record) {
+        int systemicCount = 0;
+        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+            if (treatment.isSystemic()) {
+                systemicCount++;
+            }
         }
 
-        return builder.build();
+        return systemicCount >= minSystemicTreatments;
     }
 
     @NotNull
-    private static List<PriorTumorTreatment> systemicOnly(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        List<PriorTumorTreatment> filtered = Lists.newArrayList();
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            if (priorTumorTreatment.isSystemic()) {
-                filtered.add(priorTumorTreatment);
-            }
-        }
-        return filtered;
+    @Override
+    public String passMessage() {
+        return "Patient received at least " + minSystemicTreatments + " systemic treatments";
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        return "Patient did not receive at least " + minSystemicTreatments + " systemic treatments";
     }
 }

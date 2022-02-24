@@ -4,8 +4,9 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -80,7 +81,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSomeSystemicTreatmentCreator() {
         return function -> {
             int minSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasHadSomeSystemicTreatments(minSystemicTreatments);
+            return new PassOrFailEvaluationFunction(new HasHadSomeSystemicTreatments(minSystemicTreatments));
         };
     }
 
@@ -88,7 +89,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
             int maxSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
+            return new PassOrFailEvaluationFunction(new HasHadLimitedSystemicTreatments(maxSystemicTreatments));
         };
     }
 
@@ -134,7 +135,7 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadFluoropyrimidineTreatmentCreator() {
-        return function -> new HasHadFluoropyrimidineTreatment();
+        return function -> new PassOrFailEvaluationFunction(new HasHadFluoropyrimidineTreatment());
     }
 
     @NotNull
