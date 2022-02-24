@@ -20,7 +20,6 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
         return ImmutableVitalFunctionEntry.builder().subject(line.trimmed("subject"))
                 .effectiveDateTime(line.date("effectiveDateTime"))
                 .codeDisplayOriginal(line.string("code_display_original"))
-                .componentCodeCode(line.string("component_code_code"))
                 .componentCodeDisplay(line.string("component_code_display"))
                 .quantityUnit(line.string("quantity_unit"))
                 .quantityValue(line.number("quantity_value"))

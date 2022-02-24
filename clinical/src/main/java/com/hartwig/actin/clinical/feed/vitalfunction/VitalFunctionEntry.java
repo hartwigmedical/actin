@@ -23,9 +23,6 @@ public abstract class VitalFunctionEntry implements FeedEntry {
     public abstract String codeDisplayOriginal();
 
     @NotNull
-    public abstract String componentCodeCode();
-
-    @NotNull
     public abstract String componentCodeDisplay();
 
     @NotNull

@@ -180,7 +180,6 @@ public class ClinicalFeedReaderTest {
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals(LocalDate.of(2019, 4, 28), entry.effectiveDateTime());
         assertEquals("NIBP", entry.codeDisplayOriginal());
-        assertEquals("8481-6", entry.componentCodeCode());
         assertEquals("Systolic blood pressure", entry.componentCodeDisplay());
         assertEquals("mm[Hg]", entry.quantityUnit());
         assertEquals(108, entry.quantityValue(), EPSILON);
