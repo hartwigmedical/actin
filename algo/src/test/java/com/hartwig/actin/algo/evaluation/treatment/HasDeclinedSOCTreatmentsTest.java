@@ -13,6 +13,6 @@ public class HasDeclinedSOCTreatmentsTest {
     public void canEvaluate() {
         HasDeclinedSOCTreatments function = new HasDeclinedSOCTreatments();
 
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }
