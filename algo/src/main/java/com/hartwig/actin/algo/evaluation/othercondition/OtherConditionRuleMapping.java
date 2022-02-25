@@ -22,6 +22,7 @@ public final class OtherConditionRuleMapping {
     private static final String LUNG_DISEASE_DOID = "850";
     private static final String LIVER_DISEASE_DOID = "409";
     private static final String TIA_DOID = "224";
+    private static final String MYOCARDIAL_INFARCT_DOID = "5844";
     private static final String STROKE_DOID = "6713";
     private static final String HYPERTENSION_DOID = "10763";
     private static final String DIABETES_DOID = "9351";
@@ -47,6 +48,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasSpecificPriorConditionCreator(doidModel, LIVER_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasSpecificPriorConditionCreator(doidModel, STROKE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasSpecificPriorConditionCreator(doidModel, TIA_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasSpecificPriorConditionCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
