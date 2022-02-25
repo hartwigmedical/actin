@@ -22,6 +22,7 @@ public final class Formats {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final DecimalFormat PERCENTAGE_FORMAT = new DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     private Formats() {
     }
@@ -29,6 +30,11 @@ public final class Formats {
     @NotNull
     public static String number(double number) {
         return NUMBER_FORMAT.format(number);
+    }
+
+    @NotNull
+    public static String percentage(double number) {
+        return PERCENTAGE_FORMAT.format(number);
     }
 
     @NotNull

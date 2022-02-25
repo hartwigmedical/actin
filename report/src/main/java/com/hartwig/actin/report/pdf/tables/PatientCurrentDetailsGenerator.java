@@ -67,7 +67,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
         if (record.clinicalStatus().lvef() != null) {
             table.addCell(Cells.createKey("LVEF"));
-            table.addCell(Cells.createValue(Formats.number(record.clinicalStatus().lvef())));
+            table.addCell(Cells.createValue(Formats.percentage(record.clinicalStatus().lvef())));
         }
 
         table.addCell(Cells.createKey("Cancer-related complications"));
