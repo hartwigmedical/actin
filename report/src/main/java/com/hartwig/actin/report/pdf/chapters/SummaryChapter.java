@@ -150,9 +150,8 @@ public class SummaryChapter implements ReportChapter {
             lesions.addAll(tumor.otherLesions());
         }
 
-        String biopsyLocation = tumor.biopsyLocation();
         if (tumor.biopsyLocation() != null) {
-            lesions.add(biopsyLocation);
+            lesions.add(tumor.biopsyLocation());
         }
 
         if (lesions.isEmpty()) {
