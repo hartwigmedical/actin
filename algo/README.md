@@ -113,6 +113,7 @@ HAS_SUPERSCAN_BONE_SCAN | won't be evaluated
 HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
+MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | won't be evaluated
 
 ##### Rules related to previous cancer treatments
 
@@ -176,6 +177,7 @@ TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
 TML_OF_AT_MOST_X | TML should be <= X
 PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
 PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
+HAS_HLA_A_TYPE_X | Lilac results (T.B.D)
 
 ##### Rules related to recent laboratory measurements
 
@@ -275,6 +277,7 @@ HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestECG = 1
 HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X | Clinical status > sigAberrationLatestECG like %X%
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
+HAS_QTC_OF_AT_MOST_X | QTcF or QTcB. Currently: Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
 HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | T.B.D.
@@ -284,10 +287,12 @@ HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | T.B.D.
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_ACTIVE_INFECTION | Clinical status > hasActiveInfection = 1
+HAS_KNOWN_EBV_INFECTION | Prior other conditions > name like %EBV% or %Epstein Barr%
 HAS_KNOWN_HEPATITIS_A_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 12549
 HAS_KNOWN_HEPATITIS_B_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 2043
 HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 1883
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
+HAS_KNOWN_HTLV_INFECTION | Prior other conditions > name like %HTLV%
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
 HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
 HAS_CURRENT_COVID_19_INFECTION | T.B.D.
@@ -307,6 +312,7 @@ CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Tria
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
+CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS | T.B.D.
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | T.B.D. - categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other"
 CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | T.B.D. - name like Probenecid, Rifampicin, Novobiocin, Cabotegravir
@@ -333,6 +339,7 @@ HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS | Any medic
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules.
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.
 WILL_REQUIRE_ANY_ANTICANCER_THERAPY_ DURING_TRIAL | won't be evaluated.
+HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medication > categories like %supplements% or herbal remedies
 
 *Anti-cancer medication list includes the following categories: Platinum compounds, Pyrimidine antagonists, Taxanes, Alkylating agents, Cytotoxic antibiotics, Gonadorelin agonists, Gonadorelin antagonists, Monoclonal antibody for malignancies, Protein kinase inhibitors, Anti-androgens, Anti-estrogens, 'Oncolytics, other'. 
 

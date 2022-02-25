@@ -46,6 +46,8 @@ public final class MolecularRuleMapping {
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HLA_A_TYPE_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
 
         return map;
     }
