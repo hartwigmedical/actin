@@ -50,7 +50,7 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.create(prior()));
         table.addCell(Cells.createEmpty());
 
-        TableGenerator recentGenerator = new RecentMolecularResultsGenerator(molecular, keyWidth, valueWidth);
+        TableGenerator recentGenerator = new RecentMolecularResultsGenerator(clinical, molecular, keyWidth, valueWidth);
         table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
         table.addCell(Cells.create(recentGenerator.contents()));
 
