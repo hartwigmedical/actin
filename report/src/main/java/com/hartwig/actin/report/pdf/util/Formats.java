@@ -34,13 +34,13 @@ public final class Formats {
 
     @NotNull
     public static String percentage(double number) {
-        return PERCENTAGE_FORMAT.format(number);
+        return PERCENTAGE_FORMAT.format(number * 100);
     }
 
     @NotNull
     public static String date(@Nullable LocalDate date) {
         return date(date, DATE_UNKNOWN);
-}
+    }
 
     @NotNull
     public static String date(@Nullable LocalDate date, @NotNull String fallback) {
