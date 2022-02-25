@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.chapters;
 
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.datamodel.Report;
@@ -11,7 +13,6 @@ import com.hartwig.actin.report.pdf.tables.EligibleTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -71,7 +72,7 @@ public class SummaryChapter implements ReportChapter {
         tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         tumorDetailsLine.add(new Text(" | Lesions: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(lesionInformation(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text(lesions(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
         tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
@@ -127,75 +128,42 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
-    private static String lesionInformation(@NotNull TumorDetails tumor) {
-        StringJoiner joiner = new StringJoiner(", ");
-
-        Boolean hasCnsLesions = tumor.hasCnsLesions();
-        if (hasCnsLesions != null && hasCnsLesions) {
-            joiner.add(activeSymptomaticLesionString("CNS", tumor.hasActiveCnsLesions(), tumor.hasSymptomaticCnsLesions()));
+    private static String lesions(@NotNull TumorDetails tumor) {
+        Set<String> lesions = Sets.newHashSet();
+        if (tumor.hasCnsLesions() != null && tumor.hasCnsLesions()) {
+            lesions.add("CNS");
         }
 
-        Boolean hasBrainLesions = tumor.hasBrainLesions();
-        if (hasBrainLesions != null && hasBrainLesions) {
-            joiner.add(activeSymptomaticLesionString("Brain", tumor.hasActiveBrainLesions(), tumor.hasSymptomaticBrainLesions()));
+        if (tumor.hasBrainLesions() != null && tumor.hasBrainLesions()) {
+            lesions.add("Brain");
         }
 
-        Boolean hasLiverLesions = tumor.hasLiverLesions();
-        if (hasLiverLesions != null && hasLiverLesions) {
-            joiner.add("Liver");
+        if (tumor.hasLiverLesions() != null && tumor.hasLiverLesions()) {
+            lesions.add("Liver");
         }
 
-        Boolean hasBoneLesions = tumor.hasBoneLesions();
-        if (hasBoneLesions != null && hasBoneLesions) {
-            joiner.add("Bone");
+        if (tumor.hasBoneLesions() != null && tumor.hasBoneLesions()) {
+            lesions.add("Bone");
         }
 
-        Boolean hasOtherLesions = tumor.hasOtherLesions();
-        List<String> otherLesions = tumor.otherLesions();
-        if (hasOtherLesions != null && hasOtherLesions && otherLesions != null) {
-            for (String lesion : otherLesions) {
-                joiner.add(lesion);
-            }
+        if (tumor.hasOtherLesions() != null && tumor.otherLesions() != null && tumor.hasOtherLesions()) {
+            lesions.addAll(tumor.otherLesions());
         }
 
         String biopsyLocation = tumor.biopsyLocation();
-        if (biopsyLocation != "CNS" || biopsyLocation != "Brain" || biopsyLocation != "Liver" || biopsyLocation != "Bone") {
-            joiner.add(biopsyLocation);
-        } // TODO why does this not work :(
+        if (tumor.biopsyLocation() != null) {
+            lesions.add(biopsyLocation);
+        }
 
-        boolean hasDataAboutLesions = hasCnsLesions != null || hasBrainLesions != null || hasLiverLesions != null || hasBoneLesions != null
-                || hasOtherLesions != null;
-        if (hasDataAboutLesions) {
-            return Formats.valueOrDefault(joiner.toString(), "None");
-        } else {
+        if (lesions.isEmpty()) {
             return Formats.VALUE_UNKNOWN;
-        }
-    }
-
-    @NotNull
-    private static String activeSymptomaticLesionString(@NotNull String type, @Nullable Boolean active, @Nullable Boolean symptomatic) {
-        String activeString = Strings.EMPTY;
-        if (active != null) {
-            activeString = active ? "active" : "not active";
-        }
-
-        String symptomaticString = Strings.EMPTY;
-        if (symptomatic != null) {
-            symptomaticString = symptomatic ? "symptomatic" : "not symptomatic";
-        }
-
-        String lesionAddon = Strings.EMPTY;
-        if (!activeString.isEmpty() || !symptomaticString.isEmpty()) {
-            if (activeString.isEmpty()) {
-                lesionAddon = " (" + symptomaticString + ")";
-            } else if (symptomaticString.isEmpty()) {
-                lesionAddon = " (" + activeString + ")";
-            } else {
-                lesionAddon = " (" + activeString + ", " + symptomaticString + ")";
+        } else {
+            StringJoiner joiner = Formats.commaJoiner();
+            for (String lesion : lesions) {
+                joiner.add(lesion);
             }
+            return joiner.toString();
         }
-
-        return type + lesionAddon;
     }
 
     private void addChapterTitle(@NotNull Document document) {

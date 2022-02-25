@@ -1,11 +1,7 @@
 package com.hartwig.actin.report.pdf.tables;
 
-import java.util.List;
-import java.util.StringJoiner;
-
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -31,7 +27,7 @@ public class TumorDetailsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Tumor localization details (" + Formats.date(record.patient().questionnaireDate()) + ")";
+        return "Tumor details (" + Formats.date(record.patient().questionnaireDate()) + ")";
     }
 
     @NotNull
@@ -42,6 +38,65 @@ public class TumorDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Measurable disease (RECIST)"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor().hasMeasurableLesionRecist())));
 
+        table.addCell(Cells.createKey("CNS lesion status"));
+        table.addCell(Cells.createValue(cnsLesions(record.tumor())));
+
+        table.addCell(Cells.createKey("Brain lesion status"));
+        table.addCell(Cells.createValue(brainLesions(record.tumor())));
+
         return table;
     }
+
+    @NotNull
+    private static String cnsLesions(@NotNull TumorDetails tumor) {
+        if (tumor.hasCnsLesions() == null) {
+            return Formats.VALUE_UNKNOWN;
+        }
+
+        if (tumor.hasCnsLesions()) {
+            return activeSymptomaticLesionString("CNS", tumor.hasActiveCnsLesions(), tumor.hasSymptomaticCnsLesions());
+        } else {
+            return "No known CNS lesions";
+        }
+    }
+
+    @NotNull
+    private static String brainLesions(@NotNull TumorDetails tumor) {
+        if (tumor.hasBrainLesions() == null) {
+            return Formats.VALUE_UNKNOWN;
+        }
+
+        if (tumor.hasBrainLesions()) {
+            return activeSymptomaticLesionString("Brain", tumor.hasActiveBrainLesions(), tumor.hasSymptomaticBrainLesions());
+        } else {
+            return "No known brain lesions";
+        }
+    }
+
+    @NotNull
+    private static String activeSymptomaticLesionString(@NotNull String type, @Nullable Boolean active, @Nullable Boolean symptomatic) {
+        String activeString = Strings.EMPTY;
+        if (active != null) {
+            activeString = active ? "active" : "not active";
+        }
+
+        String symptomaticString = Strings.EMPTY;
+        if (symptomatic != null) {
+            symptomaticString = symptomatic ? "symptomatic" : "not symptomatic";
+        }
+
+        String lesionAddon = Strings.EMPTY;
+        if (!activeString.isEmpty() || !symptomaticString.isEmpty()) {
+            if (activeString.isEmpty()) {
+                lesionAddon = " (" + symptomaticString + ")";
+            } else if (symptomaticString.isEmpty()) {
+                lesionAddon = " (" + activeString + ")";
+            } else {
+                lesionAddon = " (" + activeString + ", " + symptomaticString + ")";
+            }
+        }
+
+        return type + lesionAddon;
+    }
+
 }
