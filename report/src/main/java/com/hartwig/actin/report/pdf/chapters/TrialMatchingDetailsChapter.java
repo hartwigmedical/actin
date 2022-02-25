@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.interpretation.EligibilityEvaluator;
 import com.hartwig.actin.report.datamodel.Report;
@@ -71,10 +72,12 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
         if (!eligible.isEmpty()) {
             addTrialMatches(document, eligible, "Potentially eligible trials & cohorts", true);
-            document.add(pageBreak());
         }
 
         if (!nonEligible.isEmpty()) {
+            if (!eligible.isEmpty()) {
+                document.add(pageBreak());
+            }
             addTrialMatches(document, nonEligible, "Other trials & cohorts", false);
         }
     }
@@ -105,36 +108,76 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         boolean displayFailOnly = !EligibilityEvaluator.isEligibleTrial(trial);
         document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
         document.add(blankLine());
+
         Map<CriterionReference, Evaluation> trialEvaluationPerCriterion = toWorstEvaluationPerReference(trial.evaluations());
-        document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)));
+        if (hasDisplayableEvaluations(trialEvaluationPerCriterion, displayFailOnly)) {
+            document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)));
+        }
 
         for (CohortEligibility cohort : trial.cohorts()) {
             document.add(blankLine());
             document.add(createCohortIdentificationTable(trial.identification().trialId(), cohort.metadata(), cohort.overallEvaluation()));
 
             Map<CriterionReference, Evaluation> cohortEvaluationPerCriterion = toWorstEvaluationPerReference(cohort.evaluations());
-            if (!cohortEvaluationPerCriterion.isEmpty()) {
+            if (hasDisplayableEvaluations(cohortEvaluationPerCriterion, displayFailOnly)) {
                 document.add(blankLine());
                 document.add(Tables.makeWrapping(createEvaluationTable(cohortEvaluationPerCriterion, displayFailOnly)));
             }
         }
     }
 
+    private static boolean hasDisplayableEvaluations(@NotNull Map<CriterionReference, Evaluation> evaluationsPerCriterion,
+            boolean displayFailOnly) {
+        if (!displayFailOnly) {
+            return !evaluationsPerCriterion.isEmpty();
+        }
+
+        for (Evaluation evaluation : evaluationsPerCriterion.values()) {
+            if (evaluation.result() == EvaluationResult.FAIL) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @NotNull
     private static Map<CriterionReference, Evaluation> toWorstEvaluationPerReference(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        Map<CriterionReference, Evaluation> worstEvaluationPerCriterion = Maps.newHashMap();
+        Map<CriterionReference, EvaluationResult> worstResultPerCriterion = Maps.newHashMap();
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
             for (CriterionReference reference : entry.getKey().references()) {
-                Evaluation currentWorst = worstEvaluationPerCriterion.get(reference);
-                Evaluation evaluation = entry.getValue();
+                EvaluationResult currentWorst = worstResultPerCriterion.get(reference);
+                EvaluationResult evaluation = entry.getValue().result();
                 if (currentWorst != null) {
-                    Evaluation newWorst = currentWorst.result().isWorseThan(evaluation.result()) ? currentWorst : evaluation;
-                    worstEvaluationPerCriterion.put(reference, newWorst);
+                    EvaluationResult newWorst = currentWorst.isWorseThan(evaluation) ? currentWorst : evaluation;
+                    worstResultPerCriterion.put(reference, newWorst);
                 } else {
-                    worstEvaluationPerCriterion.put(reference, evaluation);
+                    worstResultPerCriterion.put(reference, evaluation);
                 }
             }
         }
+
+        Map<CriterionReference, Evaluation> worstEvaluationPerCriterion = Maps.newHashMap();
+        for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
+            Evaluation evaluation = entry.getValue();
+            for (CriterionReference reference : entry.getKey().references()) {
+                if (evaluation.result() == worstResultPerCriterion.get(reference)) {
+                    Evaluation current = worstEvaluationPerCriterion.get(reference);
+                    if (current == null) {
+                        worstEvaluationPerCriterion.put(reference, evaluation);
+                    } else {
+                        Evaluation updated = ImmutableEvaluation.builder()
+                                .from(current)
+                                .addAllPassMessages(evaluation.passMessages())
+                                .addAllUndeterminedMessages(evaluation.undeterminedMessages())
+                                .addAllFailMessages(evaluation.failMessages())
+                                .build();
+                        worstEvaluationPerCriterion.put(reference, updated);
+                    }
+                }
+            }
+        }
+
         return worstEvaluationPerCriterion;
     }
 
@@ -198,25 +241,25 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     @NotNull
     private Table createEvaluationTable(@NotNull Map<CriterionReference, Evaluation> evaluations, boolean displayFailOnly) {
         float referenceWidth = contentWidth() - (RULE_COL_WIDTH + EVALUATION_COL_WIDTH);
-        Table headerTable = Tables.createFixedWidthCols(RULE_COL_WIDTH, referenceWidth, EVALUATION_COL_WIDTH).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(RULE_COL_WIDTH, referenceWidth, EVALUATION_COL_WIDTH).setWidth(contentWidth());
 
-        headerTable.addHeaderCell(Cells.createHeader("Rule"));
-        headerTable.addHeaderCell(Cells.createHeader("Reference"));
-        headerTable.addHeaderCell(Cells.createHeader("Evaluation"));
+        table.addHeaderCell(Cells.createHeader("Rule"));
+        table.addHeaderCell(Cells.createHeader("Reference"));
+        table.addHeaderCell(Cells.createHeader("Evaluation"));
 
         Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
         references.addAll(evaluations.keySet());
 
-        addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.FAIL);
+        addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL);
         if (!displayFailOnly) {
-            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.UNDETERMINED);
-            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
-            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.PASS_BUT_WARN);
-            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.PASS);
-            addEvaluationsOfType(headerTable, references, evaluations, EvaluationResult.NOT_EVALUATED);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS_BUT_WARN);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_EVALUATED);
         }
 
-        return headerTable;
+        return table;
     }
 
     private static void addEvaluationsOfType(@NotNull Table table, Set<CriterionReference> references,

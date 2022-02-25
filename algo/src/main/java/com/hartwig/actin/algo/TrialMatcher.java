@@ -20,6 +20,7 @@ import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
+import com.hartwig.actin.algo.sort.CohortEligibilityComparator;
 import com.hartwig.actin.algo.sort.TrialEligibilityComparator;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
@@ -47,21 +48,24 @@ public class TrialMatcher {
     public TreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
         List<TrialEligibility> trialMatches = Lists.newArrayList();
         for (Trial trial : trials) {
+            Map<Eligibility, Evaluation> trialEvaluations = evaluateEligibility(patient, trial.generalEligibility());
+
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
-                Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, cohort.eligibility());
+                Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
                 cohortMatching.add(ImmutableCohortEligibility.builder()
                         .metadata(cohort.metadata())
-                        .overallEvaluation(determineOverallEvaluation(evaluations))
-                        .evaluations(evaluations)
+                        .overallEvaluation(determineOverallEvaluation(cohortEvaluations))
+                        .evaluations(cohortEvaluations)
                         .build());
             }
 
-            Map<Eligibility, Evaluation> evaluations = evaluateEligibility(patient, trial.generalEligibility());
+            cohortMatching.sort(new CohortEligibilityComparator());
+
             trialMatches.add(ImmutableTrialEligibility.builder()
                     .identification(trial.identification())
-                    .overallEvaluation(determineOverallEvaluation(evaluations))
-                    .evaluations(evaluations)
+                    .overallEvaluation(determineOverallEvaluation(trialEvaluations))
+                    .evaluations(trialEvaluations)
                     .cohorts(cohortMatching)
                     .build());
         }
