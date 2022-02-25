@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.tables.LaboratoryResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.MedicationGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
+import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -56,6 +57,7 @@ public class ClinicalDetailsChapter implements ReportChapter {
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
+                new TumorDetailsGenerator(report.clinical(), keyWidth, valueWidth),
                 LaboratoryResultsGenerator.fromRecord(report.clinical(), keyWidth, valueWidth),
                 new MedicationGenerator(report.clinical().medications(), contentWidth()));
 

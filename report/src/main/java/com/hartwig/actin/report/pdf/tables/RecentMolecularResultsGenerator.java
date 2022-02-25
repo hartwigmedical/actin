@@ -6,13 +6,16 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,13 +35,17 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return record.type() + " molecular results (" + record.type() + ", " + Formats.date(record.date()) + ")";
+        return record.type() + " molecular results (" + Formats.date(record.date()) + ")";
     }
 
     @NotNull
     @Override
     public Table contents() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
+
+        table.addCell(Cells.createKey("Biopsy location"));
+        table.addCell(Cells.createKey("location"));
+        // table.addCell(Cells.createValue(biopsyLocation)); //TODO
 
         table.addCell(Cells.createKey("Results have reliable quality"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.hasReliableQuality())));
@@ -78,6 +85,12 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         }
 
         return table;
+    }
+
+    @NotNull
+    private static String biopsyLocation(@NotNull TumorDetails tumor) {
+        String biopsyLocation = tumor.biopsyLocation();
+        return biopsyLocation != null ? biopsyLocation : Formats.VALUE_UNKNOWN;
     }
 
     @NotNull
