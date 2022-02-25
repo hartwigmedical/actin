@@ -16,6 +16,9 @@ public class IsEligibleForCurativeTreatment implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED).build();
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Currently it is assumed patient is not eligible for curative treatment")
+                .build();
     }
 }

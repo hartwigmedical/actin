@@ -16,6 +16,9 @@ public class HasDeclinedSOCTreatments implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED).build();
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Currently it is not determined if patient has declined SOC treatments")
+                .build();
     }
 }

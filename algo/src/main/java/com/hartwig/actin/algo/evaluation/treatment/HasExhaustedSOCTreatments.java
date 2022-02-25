@@ -17,8 +17,8 @@ public class HasExhaustedSOCTreatments implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
-                .result(EvaluationResult.PASS_BUT_WARN)
-                .addPassMessages("It is assumed all patients have exhausted SOC treatments")
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Currently it is not determined if patient has exhausted SOC treatments")
                 .build();
     }
 }

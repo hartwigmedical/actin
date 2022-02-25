@@ -13,5 +13,7 @@ public enum TreatmentCategory {
     TRANSPLANTATION,
     TRIAL,
     VACCINE,
-    CAR_T
+    CAR_T,
+    TCR_T,
+    GENE_THERAPY
 }
