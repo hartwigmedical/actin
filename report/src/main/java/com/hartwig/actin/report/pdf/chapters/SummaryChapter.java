@@ -129,7 +129,7 @@ public class SummaryChapter implements ReportChapter {
 
     @NotNull
     private static String lesions(@NotNull TumorDetails tumor) {
-        Set<String> lesions = Sets.newHashSet();
+        Set<String> lesions = Sets.newTreeSet();
         if (tumor.hasCnsLesions() != null && tumor.hasCnsLesions()) {
             lesions.add("CNS");
         }
