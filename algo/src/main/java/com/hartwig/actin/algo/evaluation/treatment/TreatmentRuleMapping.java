@@ -32,7 +32,7 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentCategoryCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, hasHadTreatmentCategoryOfTypeCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
@@ -102,10 +102,10 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentCategoryCreator() {
+    private static FunctionCreator hasHadTreatmentWithCategoryCreator() {
         return function -> {
             TreatmentCategory category = FunctionInputResolver.createOneTreatmentCategoryInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadTreatmentCategoryOfType(category, null));
+            return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategory(category, 1));
         };
     }
 
@@ -113,7 +113,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
         return function -> {
             OneTreatmentCategoryOneString input = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadTreatmentCategoryOfType(input.treatmentCategory(), input.string()));
+            return new PassOrFailEvaluationFunction(new HasHadTreatmentWithCategoryOfType(input.treatmentCategory(), input.string()));
         };
     }
 
@@ -121,7 +121,8 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
         return function -> {
             OneTreatmentCategoryManyStrings input = FunctionInputResolver.createOneTreatmentCategoryManyStringsInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadTreatmentCategoryButNotOfTypes(input.treatmentCategory(), input.strings()));
+            return new PassOrFailEvaluationFunction(new HasHadTreatmentWithCategoryButNotOfTypes(input.treatmentCategory(),
+                    input.strings()));
         };
     }
 

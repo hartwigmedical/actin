@@ -7,16 +7,15 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class HasHadTreatmentCategoryOfType implements PassOrFailEvaluator {
+public class HasHadTreatmentWithCategoryOfType implements PassOrFailEvaluator {
 
     @NotNull
     private final TreatmentCategory category;
-    @Nullable
+    @NotNull
     private final String type;
 
-    HasHadTreatmentCategoryOfType(@NotNull final TreatmentCategory category, @Nullable final String type) {
+    HasHadTreatmentWithCategoryOfType(@NotNull final TreatmentCategory category, @NotNull final String type) {
         this.category = category;
         this.type = type;
     }
@@ -25,7 +24,7 @@ public class HasHadTreatmentCategoryOfType implements PassOrFailEvaluator {
     public boolean isPass(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
-                if (type == null || TreatmentTypeResolver.isOfType(treatment, category, type)) {
+                if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
                     return true;
                 }
             }
@@ -37,22 +36,17 @@ public class HasHadTreatmentCategoryOfType implements PassOrFailEvaluator {
     @NotNull
     @Override
     public String passMessage() {
-        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        if (type == null) {
-            return "Patient has received " + categoryDisplay;
-        } else {
-            return "Patient has received " + type + " " + categoryDisplay + " treatment";
-        }
+        return "Patient has received " + type + " " + display(category) + " treatment";
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        if (type == null) {
-            return "Patient has not received " + categoryDisplay;
-        } else {
-            return "Patient has not received " + type + " " + categoryDisplay + " treatment";
-        }
+        return "Patient has not received " + type + " " + display(category) + " treatment";
+    }
+
+    @NotNull
+    private static String display(@NotNull TreatmentCategory category) {
+        return TreatmentCategoryResolver.toString(category).toLowerCase();
     }
 }

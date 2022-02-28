@@ -17,7 +17,7 @@ public class IsEligibleForOnLabelDrug implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("ACTIN does not have a SOC treatment database yet")
+                .addUndeterminedMessages("Anything related to SOC can not be determined yet")
                 .build();
     }
 }

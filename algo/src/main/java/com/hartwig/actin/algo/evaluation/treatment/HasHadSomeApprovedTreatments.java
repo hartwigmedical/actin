@@ -18,7 +18,7 @@ public class HasHadSomeApprovedTreatments implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently approved treatments can't be determined")
+                .addUndeterminedMessages("Currently approved treatments are not determined")
                 .build();
     }
 }

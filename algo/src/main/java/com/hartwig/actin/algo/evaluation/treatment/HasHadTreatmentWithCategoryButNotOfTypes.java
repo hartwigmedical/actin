@@ -11,14 +11,14 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadTreatmentCategoryButNotOfTypes implements PassOrFailEvaluator {
+public class HasHadTreatmentWithCategoryButNotOfTypes implements PassOrFailEvaluator {
 
     @NotNull
     private final TreatmentCategory category;
     @NotNull
     private final List<String> ignoreTypes;
 
-    HasHadTreatmentCategoryButNotOfTypes(@NotNull final TreatmentCategory category, @NotNull final List<String> ignoreTypes) {
+    HasHadTreatmentWithCategoryButNotOfTypes(@NotNull final TreatmentCategory category, @NotNull final List<String> ignoreTypes) {
         this.category = category;
         this.ignoreTypes = ignoreTypes;
     }
@@ -45,17 +45,18 @@ public class HasHadTreatmentCategoryButNotOfTypes implements PassOrFailEvaluator
     @NotNull
     @Override
     public String passMessage() {
-        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        String types = concat(ignoreTypes);
-        return "Patient received " + categoryDisplay + ", ignoring " + types;
+        return "Patient received " + display(category) + ", ignoring " + concat(ignoreTypes);
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        String types = concat(ignoreTypes);
-        return "Patient has not received " + categoryDisplay + ", ignoring " + types;
+        return "Patient has not received " + display(category) + ", ignoring " + concat(ignoreTypes);
+    }
+
+    @NotNull
+    private static String display(@NotNull TreatmentCategory category) {
+        return TreatmentCategoryResolver.toString(category).toLowerCase();
     }
 
     @NotNull

@@ -34,14 +34,17 @@ public class HasHadSomeTreatmentsWithCategory implements PassOrFailEvaluator {
     @NotNull
     @Override
     public String passMessage() {
-        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        return "Patient has received at least " + minTreatmentLines + " lines of " + categoryDisplay;
+        return "Patient has received at least " + minTreatmentLines + " lines of " + display(category);
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        String categoryDisplay = TreatmentCategoryResolver.toString(category).toLowerCase();
-        return "Patient has not received at least " + minTreatmentLines + " lines of " + categoryDisplay;
+        return "Patient has not received at least " + minTreatmentLines + " lines of " + display(category);
+    }
+
+    @NotNull
+    private static String display(@NotNull TreatmentCategory category) {
+        return TreatmentCategoryResolver.toString(category).toLowerCase();
     }
 }

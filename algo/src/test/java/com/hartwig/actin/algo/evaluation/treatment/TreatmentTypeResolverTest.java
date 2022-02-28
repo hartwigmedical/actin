@@ -46,5 +46,4 @@ public class TreatmentTypeResolverTest {
         assertTrue(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "transplant"));
         assertFalse(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "chemo"));
     }
-
 }

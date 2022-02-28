@@ -11,13 +11,13 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.junit.Test;
 
-public class HasHadTreatmentCategoryButNotOfTypesTest {
+public class HasHadTreatmentWithCategoryButNotOfTypesTest {
 
     @Test
     public void canEvaluate() {
         TreatmentCategory category = TreatmentCategory.TARGETED_THERAPY;
         List<String> ignoreTypes = Lists.newArrayList("type1", "type2");
-        HasHadTreatmentCategoryButNotOfTypes function = new HasHadTreatmentCategoryButNotOfTypes(category, ignoreTypes);
+        HasHadTreatmentWithCategoryButNotOfTypes function = new HasHadTreatmentWithCategoryButNotOfTypes(category, ignoreTypes);
 
         // No treatments yet
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
