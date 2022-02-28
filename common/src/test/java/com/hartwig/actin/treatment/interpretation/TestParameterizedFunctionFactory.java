@@ -39,7 +39,7 @@ public final class TestParameterizedFunctionFactory {
                 throw new IllegalStateException("Cannot interpret composite input: " + inputs);
             }
         } else {
-            return createForInputs(FunctionInputResolver.RULE_INPUT_MAP.get(rule));
+            return createForInputs(FunctionInputMapping.RULE_INPUT_MAP.get(rule));
         }
     }
 
@@ -71,6 +71,9 @@ public final class TestParameterizedFunctionFactory {
             }
             case ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER: {
                 return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string", "1");
+            }
+            case ONE_TREATMENT_CATEGORY_MANY_STRINGS_ONE_INTEGER: {
+                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string1;string2", "1");
             }
             case ONE_STRING: {
                 return Lists.newArrayList("string");

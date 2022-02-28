@@ -15,7 +15,6 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.ImmutableOneIntegerOneString;
@@ -26,6 +25,7 @@ import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStringsOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
@@ -36,15 +36,6 @@ import org.junit.Test;
 public class FunctionInputResolverTest {
 
     private static final double EPSILON = 1.0E-10;
-
-    @Test
-    public void everyRuleHasInputsConfigured() {
-        for (EligibilityRule rule : EligibilityRule.values()) {
-            if (!CompositeRules.isComposite(rule)) {
-                assertTrue(FunctionInputResolver.RULE_INPUT_MAP.containsKey(rule));
-            }
-        }
-    }
 
     @Test
     public void canDetermineInputValidityForEveryRule() {
@@ -230,6 +221,26 @@ public class FunctionInputResolverTest {
     }
 
     @Test
+    public void canResolveFunctionsWithOneTreatmentCategoryManyStringsOneIntegerInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_STRINGS_ONE_INTEGER);
+
+        String category = TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY);
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, "hello1; hello2", "1"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+
+        OneTreatmentCategoryManyStringsOneInteger inputs =
+                FunctionInputResolver.createOneTreatmentCategoryManyStringsOneIntegerInput(valid);
+        assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.treatmentCategory());
+        assertEquals(2, inputs.strings().size());
+        assertTrue(inputs.strings().contains("hello1"));
+        assertTrue(inputs.strings().contains("hello2"));
+        assertEquals(1, inputs.integer());
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList(category, "1", "hello1;hello2"))));
+    }
+
+    @Test
     public void canResolveFunctionsWithOneStringInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING);
 
@@ -329,13 +340,13 @@ public class FunctionInputResolverTest {
 
     @NotNull
     private static EligibilityRule firstOfType(@NotNull FunctionInput input) {
-        for (Map.Entry<EligibilityRule, FunctionInput> entry : FunctionInputResolver.RULE_INPUT_MAP.entrySet()) {
+        for (Map.Entry<EligibilityRule, FunctionInput> entry : FunctionInputMapping.RULE_INPUT_MAP.entrySet()) {
             if (entry.getValue() == input) {
                 return entry.getKey();
             }
         }
-        throw new IllegalStateException("Could not find single rule requiring input: " + input);
 
+        throw new IllegalStateException("Could not find single rule requiring input: " + input);
     }
 
     @NotNull
