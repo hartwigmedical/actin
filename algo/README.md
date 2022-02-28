@@ -182,59 +182,105 @@ MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results (l
 MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | won't be evaluated
 
 ##### Rules related to recent laboratory measurements
+_Blood components / blood cell components_
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X
-HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN
-HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10*9/L => X 
-HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X 
+HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X |
+HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN |
 HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X | Lymphocytes absolute (LYMPHO-ABS-eDA/LYMPHO-ABS-eDM) in 10*9/L => X
 HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X | Lymphocytes in cells per mm3 => X | In case lymphocytes is measured in 10*9/L, the value is converted using Lympho[cells/mm3]=Lympho[10*9/L]/0.001
-HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
-HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
+HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10*9/L => X 
+HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X 
 HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X | Hemoglobin (Hb) in g/dL => X. | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206
 HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X | Hemoglobin (Hb) in mmol/L => X. | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206
-HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X | Glucose /PL (GL_P) in mmol/L <= X
-HAS_SERUM_TESTOSTERONE_NG_PER_DL_ OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X
-HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X | Creatinine (CREA) in mg/dL <= X | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42
-HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN 
-HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN
-HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X | Total Bilirubin (TBIL) in umol/L <= X
-HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
+
+_Blood clotting factors_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 HAS_INR_ULN_OF_AT_MOST_X | International normalized ratio (INR/POCT_INR) <= X*ULN 
 HAS_PT_ULN_OF_AT_MOST_X | Prothrombin time (PT/POCT_PT) <= X*ULN 
 HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN 
 HAS_PTT_ULN_OF_AT_MOST_X | T.B.D. 
+
+_Liver function_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X | Albumin (ALB) in g/dL => X. | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10.
+HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
-HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
-HAS_PHOSPHORUS_ULN_OF_AT_MOST_X | Phosphate (P) <= X*ULN
-HAS_AFP_ULN_OF_AT_LEAST_X | Alpha fetoprotein (AFP) <= X*ULN
-HAS_CA125_ULN_OF_AT_LEAST_X | CA 125 (C125) <= X*ULN
-HAS_HCG_ULN_OF_AT_LEAST_X | HCG + beta HCG (HCG) <= X*ULN
-HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X | Calcium (Ca) in mg/dL <= X | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495
-HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Calcium (Ca) in mmol/L <= X | In case calcium is measured in mg/dL, the value is converted to mmol/L using Ca[mmol/L]=Ca=[mg/dL]*0.2495
-HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X
-HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X | Calcium corrected (Ca_C) <= X*ULN
-HAS_SERUM_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X | Potassium (K) in mmol/l => X
+HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN
+HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X | Total Bilirubin (TBIL) in umol/L <= X
+HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
+
+_Kidney function_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X | Creatinine (CREA) in mg/dL <= X | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42
+HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN 
+HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
+HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
+HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
+
+_Cardiac / cardiovascular function_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 HAS_BNP_ULN_OF_AT_MOST_X | NT-pro-BNP (BNP) <= X*ULN
 HAS_TROPONIN_IT_ULN_OF_AT_MOST_X | High-sensitivity Troponin T (HSTNT) <= X*ULN
 HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X | Triglyceride (TG) <= X
-HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (isOutsideRef=0)
-HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)
+
+_Minerals_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X | Calcium (Ca) in mg/dL <= X | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495
+HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Calcium (Ca) in mmol/L <= X | In case calcium is measured in mg/dL, the value is converted to mmol/L using Ca[mmol/L]=Ca=[mg/dL]*0.2495
+HAS_CALCIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Calcium (Ca) LLN<X<ULN (isOutsideRef=0)
+HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X | Calcium corrected (Ca_C) <= X*ULN
+HAS_CORRECTED_CALCIUM_WITHIN_ INSTITUTIONAL_NORMAL_LIMITS | Calcium corrected (Ca_C) LLN<X<ULN (isOutsideRef=0)
+HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X | Iononized calcium (B_ICA) in mmol/L <= X
 HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Magnesium (MG) LLN<X<ULN (isOutsideRef=0)
 HAS_CORRECTED_MAGNESIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)
+HAS_PHOSPHORUS_ULN_OF_AT_MOST_X | Phosphate (P) <= X*ULN
 HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Phosphate (P) LLN<X<ULN (isOutsideRef=0)
 HAS_CORRECTED_PHOSPHORUS_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)
-HAS_CALCIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Calcium (Ca) LLN<X<ULN (isOutsideRef=0)
-HAS_CORRECTED_CALCIUM_WITHIN_ INSTITUTIONAL_NORMAL_LIMITS | Calcium corrected (Ca_C) LLN<X<ULN (isOutsideRef=0)
+HAS_SERUM_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X | Potassium (K) in mmol/l => X
+HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (isOutsideRef=0)
+HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)
+
+_Hormones_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_SERUM_TESTOSTERONE_NG_PER_DL_ OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X
+
+_Tumor markers_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_AFP_ULN_OF_AT_LEAST_X | Alpha fetoprotein (AFP) <= X*ULN
+HAS_CA125_ULN_OF_AT_LEAST_X | CA 125 (C125) <= X*ULN
+HAS_HCG_ULN_OF_AT_LEAST_X | HCG + beta HCG (HCG) <= X*ULN
+HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
+
+_Urine measurements_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X | Total protein in urine (TE_U) => X.
 HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X | In g/24h. T.B.D
+
+_Other_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X | Glucose /PL (GL_P) in mmol/L <= X
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
