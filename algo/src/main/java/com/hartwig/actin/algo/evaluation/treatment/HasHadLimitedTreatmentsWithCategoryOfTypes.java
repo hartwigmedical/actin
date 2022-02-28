@@ -26,7 +26,7 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements PassOrFailEva
     }
 
     @Override
-    public boolean isPass(@NotNull final PatientRecord record) {
+    public boolean isPass(@NotNull PatientRecord record) {
         int numTreatmentLines = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {

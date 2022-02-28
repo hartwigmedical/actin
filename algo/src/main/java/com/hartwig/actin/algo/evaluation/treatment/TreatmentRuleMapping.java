@@ -4,9 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -48,12 +46,9 @@ public final class TreatmentRuleMapping {
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, hasHadTaxaneTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, hasHadTaxaneTreatmentWithMaxLinesCreator());
+        map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, hasHadTyrosineKinaseTreatmentCreator());
+        map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, hadHadIntraTumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
 
         return map;
@@ -184,7 +179,25 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadTaxaneTreatmentCreator() {
-        return function -> new PassOrFailEvaluationFunction(new HasHadTaxaneTreatment());
+        return function -> new PassOrFailEvaluationFunction(new HasHadTaxaneTreatmentWithPotentialMax(null));
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadTaxaneTreatmentWithMaxLinesCreator() {
+        return function -> {
+            int maxTaxaneTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            return new PassOrFailEvaluationFunction(new HasHadTaxaneTreatmentWithPotentialMax(maxTaxaneTreatments));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadTyrosineKinaseTreatmentCreator() {
+        return function -> new HasHadTyrosineKinaseTreatment();
+    }
+
+    @NotNull
+    private static FunctionCreator hadHadIntraTumoralInjectionTreatmentCreator() {
+        return function -> new HadHadIntraTumoralInjectionTreatment();
     }
 
     @NotNull

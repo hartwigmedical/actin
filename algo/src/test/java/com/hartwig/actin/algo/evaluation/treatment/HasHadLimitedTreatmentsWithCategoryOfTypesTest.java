@@ -20,23 +20,23 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         HasHadLimitedTreatmentsWithCategoryOfTypes function = new HasHadLimitedTreatmentsWithCategoryOfTypes(category, types, 1);
 
         // No treatments yet
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add wrong treatment category
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category with wrong type
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-EGFR").build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-EGFR").build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category with correct type
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-BRAF").build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-BRAF").build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category with another correct type
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-KRAS").build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-KRAS").build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

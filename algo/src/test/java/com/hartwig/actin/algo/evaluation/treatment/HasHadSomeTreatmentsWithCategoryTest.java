@@ -19,19 +19,19 @@ public class HasHadSomeTreatmentsWithCategoryTest {
         HasHadSomeTreatmentsWithCategory function = new HasHadSomeTreatmentsWithCategory(category, 2);
 
         // No treatments yet
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add wrong treatment category
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add another correct treatment category
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

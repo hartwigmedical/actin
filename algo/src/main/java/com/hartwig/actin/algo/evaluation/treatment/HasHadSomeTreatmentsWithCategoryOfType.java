@@ -23,7 +23,7 @@ public class HasHadSomeTreatmentsWithCategoryOfType implements PassOrFailEvaluat
     }
 
     @Override
-    public boolean isPass(@NotNull final PatientRecord record) {
+    public boolean isPass(@NotNull PatientRecord record) {
         int numTreatmentLines = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category) && TreatmentTypeResolver.isOfType(treatment, category, type)) {

@@ -16,20 +16,20 @@ public class HasHadSomeSystemicTreatmentsTest {
     public void canEvaluate() {
         HasHadSomeSystemicTreatments function = new HasHadSomeSystemicTreatments(1);
 
-        // Empty list
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        // No treatments yet
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one non-systemic
-        priorTumorTreatments.add(TreatmentTestFactory.builder().isSystemic(false).build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().isSystemic(false).build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one systemic
-        priorTumorTreatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one more systemic
-        priorTumorTreatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

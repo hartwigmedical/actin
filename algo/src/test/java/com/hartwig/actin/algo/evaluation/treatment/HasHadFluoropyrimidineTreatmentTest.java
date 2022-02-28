@@ -16,17 +16,17 @@ public class HasHadFluoropyrimidineTreatmentTest {
     public void canEvaluate() {
         HasHadFluoropyrimidineTreatment function = new HasHadFluoropyrimidineTreatment();
 
-        // Empty list
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        // No treatments yet
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add a random non-fluoropyrimidine treatment
-        priorTumorTreatments.add(TreatmentTestFactory.builder().name("some random treatment").build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().name("some random treatment").build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add a random fluoropyrimidine treatment
         String firstValidTreatment = HasHadFluoropyrimidineTreatment.FLUOROPYRIMIDINE_TREATMENTS.iterator().next();
-        priorTumorTreatments.add(TreatmentTestFactory.builder().name(firstValidTreatment).build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().name(firstValidTreatment).build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

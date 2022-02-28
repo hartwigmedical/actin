@@ -23,7 +23,7 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements PassOrFailEvalu
     }
 
     @Override
-    public boolean isPass(@NotNull final PatientRecord record) {
+    public boolean isPass(@NotNull PatientRecord record) {
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 boolean hasCorrectType = true;

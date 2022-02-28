@@ -16,16 +16,16 @@ public class HasHadSpecificTreatmentTest {
     public void canEvaluate() {
         HasHadSpecificTreatment function = new HasHadSpecificTreatment("treatment 1");
 
-        // Empty list
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        // No treatments yet
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add wrong treatment
-        priorTumorTreatments.add(TreatmentTestFactory.builder().name("treatment 2").build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().name("treatment 2").build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment
-        priorTumorTreatments.add(TreatmentTestFactory.builder().name("treatment 1").build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().name("treatment 1").build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

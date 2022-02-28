@@ -19,26 +19,26 @@ public class HasHadTreatmentWithCategoryOfTypeTest {
         HasHadTreatmentWithCategoryOfType specific = new HasHadTreatmentWithCategoryOfType(TreatmentCategory.TARGETED_THERAPY, "Anti-EGFR");
 
         // No treatments yet
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        PatientRecord noPriorTreatmentRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        PatientRecord noPriorTreatmentRecord = TreatmentTestFactory.withPriorTumorTreatments(treatments);
         assertFalse(specific.isPass(noPriorTreatmentRecord));
 
         // Add one wrong category
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        PatientRecord immunoRecord = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
+        PatientRecord immunoRecord = TreatmentTestFactory.withPriorTumorTreatments(treatments);
         assertFalse(specific.isPass(immunoRecord));
 
         // Add one correct category but wrong type
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
-        PatientRecord multiRecord1 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
+        PatientRecord multiRecord1 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
         assertFalse(specific.isPass(multiRecord1));
 
         // Add one correct category with matching type
-        priorTumorTreatments.add(TreatmentTestFactory.builder()
+        treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some anti-EGFR Type")
                 .build());
-        PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments);
+        PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
         assertTrue(specific.isPass(multiRecord2));
     }
 }

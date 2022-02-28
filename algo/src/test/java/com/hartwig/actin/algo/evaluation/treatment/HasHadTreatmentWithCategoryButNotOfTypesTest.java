@@ -20,23 +20,23 @@ public class HasHadTreatmentWithCategoryButNotOfTypesTest {
         HasHadTreatmentWithCategoryButNotOfTypes function = new HasHadTreatmentWithCategoryButNotOfTypes(category, ignoreTypes);
 
         // No treatments yet
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add wrong treatment category
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category but with ignore type 1
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType(ignoreTypes.get(0)).build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType(ignoreTypes.get(0)).build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category but with ignore type 2
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType(ignoreTypes.get(1)).build());
-        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType(ignoreTypes.get(1)).build());
+        assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment category and correct type
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("pass me").build());
-        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("pass me").build());
+        assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }
