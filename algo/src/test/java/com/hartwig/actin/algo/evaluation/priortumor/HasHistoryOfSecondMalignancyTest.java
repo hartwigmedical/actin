@@ -9,11 +9,8 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class HasHistoryOfSecondMalignancyTest {
@@ -26,42 +23,32 @@ public class HasHistoryOfSecondMalignancyTest {
         HasHistoryOfSecondMalignancy specificDoid = new HasHistoryOfSecondMalignancy(doidModel, "100", false);
         HasHistoryOfSecondMalignancy specificDoidInactive = new HasHistoryOfSecondMalignancy(doidModel, "100", true);
 
+        // No prior second primaries.
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
-        PatientRecord noMalignancyRecord = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
-
+        PatientRecord noMalignancyRecord = PriorTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.FAIL, anyMalignancy.evaluate(noMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoid.evaluate(noMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(noMalignancyRecord));
 
-        priorSecondPrimaries.add(withDoidAndActive("300", true));
-        PatientRecord oneMalignancyRecord = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        // One second primary with no relevant doid.
+        priorSecondPrimaries.add(PriorTumorTestFactory.builder().addDoids("300").isActive(true).build());
+        PatientRecord oneMalignancyRecord = PriorTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(oneMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoid.evaluate(oneMalignancyRecord));
         assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(oneMalignancyRecord));
 
-        priorSecondPrimaries.add(withDoidAndActive("200", true));
-        PatientRecord twoMalignancyRecords = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        // Add one active second primary with child doid
+        priorSecondPrimaries.add(PriorTumorTestFactory.builder().addDoids("200").isActive(true).build());
+        PatientRecord twoMalignancyRecords = PriorTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(twoMalignancyRecords));
         assertEvaluation(EvaluationResult.PASS, specificDoid.evaluate(twoMalignancyRecords));
         assertEvaluation(EvaluationResult.FAIL, specificDoidInactive.evaluate(twoMalignancyRecords));
 
-        priorSecondPrimaries.add(withDoidAndActive("200", false));
-        PatientRecord threeMalignancyRecords = PreviousTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
+        // Add one inactive second primary with child doid
+        priorSecondPrimaries.add(PriorTumorTestFactory.builder().addDoids("200").isActive(false).build());
+        PatientRecord threeMalignancyRecords = PriorTumorTestFactory.withPriorSecondPrimaries(priorSecondPrimaries);
         assertEvaluation(EvaluationResult.PASS, anyMalignancy.evaluate(threeMalignancyRecords));
         assertEvaluation(EvaluationResult.PASS, specificDoid.evaluate(threeMalignancyRecords));
         assertEvaluation(EvaluationResult.PASS, specificDoidInactive.evaluate(threeMalignancyRecords));
-    }
-
-    @NotNull
-    private static PriorSecondPrimary withDoidAndActive(@NotNull String doid, boolean isActive) {
-        return ImmutablePriorSecondPrimary.builder()
-                .tumorLocation(Strings.EMPTY)
-                .tumorSubLocation(Strings.EMPTY)
-                .tumorType(Strings.EMPTY)
-                .tumorSubType(Strings.EMPTY)
-                .treatmentHistory(Strings.EMPTY)
-                .addDoids(doid)
-                .isActive(isActive)
-                .build();
     }
 }

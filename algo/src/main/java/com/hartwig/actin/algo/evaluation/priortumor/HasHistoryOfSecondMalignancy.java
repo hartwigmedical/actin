@@ -5,9 +5,9 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,14 @@ public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
         }
 
         EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has no history of second malignancy");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Patient has history of second malignancy");
+        }
+
+        return builder.build();
     }
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {

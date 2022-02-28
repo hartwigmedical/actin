@@ -9,7 +9,6 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class PreviousTumorRuleMapping {
 
@@ -20,7 +19,7 @@ public final class PreviousTumorRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator(doidModel, null, false));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator(doidModel, false));
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
                 hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, false));
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
@@ -39,9 +38,8 @@ public final class PreviousTumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyCreator(@NotNull DoidModel doidModel, @Nullable String doidToMatch,
-            boolean mustBeInactive) {
-        return function -> new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
+    private static FunctionCreator hasHistoryOfSecondMalignancyCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
+        return function -> new HasHistoryOfSecondMalignancy(doidModel, null, mustBeInactive);
     }
 
     @NotNull

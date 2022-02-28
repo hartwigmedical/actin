@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.priortumor;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +19,16 @@ public class SecondMalignanciesHaveBeenCuredRecently implements EvaluationFuncti
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
             if (priorSecondPrimary.isActive()) {
-                return EvaluationFactory.create(EvaluationResult.FAIL);
+                return ImmutableEvaluation.builder()
+                        .result(EvaluationResult.FAIL)
+                        .addFailMessages("Patient has an active second malignancy")
+                        .build();
             }
         }
-        return EvaluationFactory.create(EvaluationResult.PASS);
+
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.PASS)
+                .addPassMessages("Patient has no active second malignancy")
+                .build();
     }
 }
