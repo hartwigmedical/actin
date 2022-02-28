@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.interpretation.single.TwoStrings;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,10 +42,8 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneHasExactExpressionByIHCCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneHasSufficientExpressionByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X,
@@ -184,8 +183,23 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator geneHasExactExpressionByIHCCreator() {
+        return function -> {
+            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            return new GeneHasExactExpressionByIHC(input.string(), input.integer());
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator geneHasSufficientExpressionByIHCCreator() {
+        return function -> {
+            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            return new GeneHasSufficientExpressionByIHC(input.string(), input.integer());
+        };
+    }
+
+    @NotNull
     private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
         return function -> new ManufacturedTCellsWithinShelfLife();
     }
-
 }
