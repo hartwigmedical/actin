@@ -32,7 +32,7 @@ public class ServeRecordExtractorTest {
 
         List<ServeRecord> records = ServeRecordExtractor.extract(trials);
 
-        assertEquals(4, records.size());
+        assertEquals(5, records.size());
 
         ServeRecord first = find(records, EligibilityRule.FUSION_IN_GENE_X);
         assertEquals("trial 1", first.trial());
@@ -57,6 +57,12 @@ public class ServeRecordExtractorTest {
         assertNull(fourth.gene());
         assertEquals("TMB >= 10", fourth.mutation());
         assertTrue(fourth.isUsedAsInclusion());
+
+        ServeRecord fifth = find(records, EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X);
+        assertEquals("trial 3", fifth.trial());
+        assertEquals("gene 3", fifth.gene());
+        assertNull(fifth.mutation());
+        assertFalse(fifth.isUsedAsInclusion());
     }
 
     @NotNull
@@ -73,7 +79,9 @@ public class ServeRecordExtractorTest {
     @NotNull
     private static List<Trial> createTestTrials() {
         List<Trial> trials = Lists.newArrayList();
-        trials.add(ImmutableTrial.builder().identification(withTrialAcronym("trial 1"))
+
+        trials.add(ImmutableTrial.builder()
+                .identification(withTrialAcronym("trial 1"))
                 .addGeneralEligibility(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.AND)
@@ -89,7 +97,8 @@ public class ServeRecordExtractorTest {
                         .build())
                 .build());
 
-        trials.add(ImmutableTrial.builder().identification(withTrialAcronym("trial 2"))
+        trials.add(ImmutableTrial.builder()
+                .identification(withTrialAcronym("trial 2"))
                 .addGeneralEligibility(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.NOT)
@@ -107,7 +116,21 @@ public class ServeRecordExtractorTest {
                 .addCohorts(ImmutableCohort.builder()
                         .metadata(withCohortId("cohort 2"))
                         .addEligibility(ImmutableEligibility.builder()
-                                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.INACTIVATION_OF_GENE_X)
+                                .function(ImmutableEligibilityFunction.builder()
+                                        .rule(EligibilityRule.INACTIVATION_OF_GENE_X)
+                                        .addParameters("gene 3")
+                                        .build())
+                                .build())
+                        .build())
+                .build());
+
+        trials.add(ImmutableTrial.builder()
+                .identification(withTrialAcronym("trial 3"))
+                .addGeneralEligibility(ImmutableEligibility.builder()
+                        .function(ImmutableEligibilityFunction.builder()
+                                .rule(EligibilityRule.WARN_ON_PASS)
+                                .addParameters(ImmutableEligibilityFunction.builder()
+                                        .rule(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X)
                                         .addParameters("gene 3")
                                         .build())
                                 .build())

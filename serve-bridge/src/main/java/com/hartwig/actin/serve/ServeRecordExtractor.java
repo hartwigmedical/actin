@@ -42,7 +42,7 @@ public final class ServeRecordExtractor {
         List<ServeRecord> records = Lists.newArrayList();
 
         for (Eligibility eligibility : eligibilities) {
-            records.addAll(extractFromFunction(trialAcronym, eligibility.function(), true));
+            records.addAll(extractFromFunction(trialAcronym, eligibility.function(), true, true));
         }
 
         return records;
@@ -50,18 +50,25 @@ public final class ServeRecordExtractor {
 
     @NotNull
     private static List<ServeRecord> extractFromFunction(@NotNull String trialAcronym, @NotNull EligibilityFunction function,
-            boolean isUsedAsInclusion) {
+            boolean isAllowedToBeUsedAsInclusion, boolean isUsedAsInclusion) {
         List<ServeRecord> records = Lists.newArrayList();
 
         if (CompositeRules.isComposite(function.rule())) {
             CompositeInput input = CompositeRules.inputsForCompositeRule(function.rule());
             if (input == CompositeInput.EXACTLY_1) {
                 EligibilityFunction subFunction = FunctionInputResolver.createOneCompositeParameter(function);
-                boolean isStillUsedAsInclusion = (function.rule() == EligibilityRule.NOT) != isUsedAsInclusion;
-                records.addAll(extractFromFunction(trialAcronym, subFunction, isStillUsedAsInclusion));
+
+                boolean isStillUsedAsInclusion = isUsedAsInclusion;
+                boolean isStillAllowedToBeUsedAsInclusion = isAllowedToBeUsedAsInclusion;
+                if (function.rule() == EligibilityRule.NOT) {
+                    isStillUsedAsInclusion = !isUsedAsInclusion;
+                } else if (function.rule() == EligibilityRule.WARN_ON_PASS) {
+                    isStillAllowedToBeUsedAsInclusion = false;
+                }
+                records.addAll(extractFromFunction(trialAcronym, subFunction, isStillAllowedToBeUsedAsInclusion, isStillUsedAsInclusion));
             } else if (input == CompositeInput.AT_LEAST_2) {
                 for (EligibilityFunction subFunction : FunctionInputResolver.createAtLeastTwoCompositeParameters(function)) {
-                    records.addAll(extractFromFunction(trialAcronym, subFunction, isUsedAsInclusion));
+                    records.addAll(extractFromFunction(trialAcronym, subFunction, isAllowedToBeUsedAsInclusion, isUsedAsInclusion));
                 }
             } else {
                 throw new IllegalStateException("Could not interpret composite input '" + input + "'");
@@ -72,7 +79,7 @@ public final class ServeRecordExtractor {
                     .rule(function.rule())
                     .gene(ServeExtraction.gene(function))
                     .mutation(ServeExtraction.mutation(function))
-                    .isUsedAsInclusion(isUsedAsInclusion)
+                    .isUsedAsInclusion(isAllowedToBeUsedAsInclusion && isUsedAsInclusion)
                     .build());
         }
 
