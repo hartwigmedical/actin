@@ -43,6 +43,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
         map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMRIVolumeAmenableLesionCreator());
+        map.put(EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI, hasIntratumoralHemorrhageByMRICreator());
         map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
         map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, hasLowRiskOfHemorrhageUponTreatmentCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
@@ -156,6 +157,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasMRIVolumeAmenableLesionCreator() {
         return function -> new HasMRIVolumeAmenableLesion();
+    }
+
+    @NotNull
+    private static FunctionCreator hasIntratumoralHemorrhageByMRICreator() {
+        return function -> new HasIntratumoralHemorrhageByMRI();
     }
 
     @NotNull

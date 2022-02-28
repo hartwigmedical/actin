@@ -46,6 +46,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, FunctionInput.ONE_INTEGER);
@@ -76,7 +77,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, FunctionInput.ONE_STRING);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, FunctionInput.NONE);

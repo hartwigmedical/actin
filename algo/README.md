@@ -110,6 +110,7 @@ HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
 HAS_SUPERSCAN_BONE_SCAN | won't be evaluated
+HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI | T.B.D.
 HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
@@ -138,7 +139,7 @@ HAS_HAD_FLUOROPYRIMIDINE_TREATMENT | Prior tumor treatments > name contains any 
 HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
 HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES | Prior tumor treatments > name contains any taxane and and number of lines <= X  | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
 HAS_HAD_TYROSINE_KINASE_TREATMENT |  Prior tumor treatments > category = 'Targeted therapy' & T.B.D.
-HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT | T.B.D
+HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | T.B.D
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 
 ##### Rules related to prior primary tumors

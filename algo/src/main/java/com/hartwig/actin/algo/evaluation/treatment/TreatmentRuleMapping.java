@@ -48,7 +48,7 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, hasHadTaxaneTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, hasHadTaxaneTreatmentWithMaxLinesCreator());
         map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, hasHadTyrosineKinaseTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_INTRATUMURAL_INJECTION_TREATMENT, hadHadIntraTumoralInjectionTreatmentCreator());
+        map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntraTumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
 
         return map;
