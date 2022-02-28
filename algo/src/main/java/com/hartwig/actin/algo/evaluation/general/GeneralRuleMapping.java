@@ -22,6 +22,8 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator());
         map.put(EligibilityRule.IS_MALE, isMaleCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
+        map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
+        map.put(EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X, hasMinimumLanskyScoreCreator());
         map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
         map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
@@ -56,6 +58,16 @@ public final class GeneralRuleMapping {
             int maximumWHO = FunctionInputResolver.createOneIntegerInput(function);
             return new HasMaximumWHOStatus(maximumWHO);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasMinimumKarnofskyScoreCreator() {
+        return function -> new HasMinimumKarnofskyScore();
+    }
+
+    @NotNull
+    private static FunctionCreator hasMinimumLanskyScoreCreator() {
+        return function -> new HasMinimumLanskyScore();
     }
 
     @NotNull

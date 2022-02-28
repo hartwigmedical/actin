@@ -73,6 +73,8 @@ Rule | When does a patient pass evaluation? | Note
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | `UNDETERMINED` in case of exactly X
 IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
+HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > currently won't be evaluated
+HAS_LANSKY_SCORE_OF_AT_LEAST_X | > currently won't be evaluated
 CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
