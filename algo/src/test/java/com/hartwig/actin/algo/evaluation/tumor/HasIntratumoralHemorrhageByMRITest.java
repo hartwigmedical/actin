@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.tumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HadHadIntraTumoralInjectionTreatmentTest {
+public class HasIntratumoralHemorrhageByMRITest {
 
     @Test
     public void canEvaluate() {
-        HadHadIntraTumoralInjectionTreatment function = new HadHadIntraTumoralInjectionTreatment();
+        HasIntratumoralHemorrhageByMRI function = new HasIntratumoralHemorrhageByMRI();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

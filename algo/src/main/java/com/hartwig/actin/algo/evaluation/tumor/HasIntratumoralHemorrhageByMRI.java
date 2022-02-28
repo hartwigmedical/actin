@@ -17,7 +17,8 @@ public class HasIntratumoralHemorrhageByMRI implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
-                .result(EvaluationResult.NOT_IMPLEMENTED)
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Intratumoral hemorrhage by MRI is currently not determined yet")
                 .build();
     }
 }
