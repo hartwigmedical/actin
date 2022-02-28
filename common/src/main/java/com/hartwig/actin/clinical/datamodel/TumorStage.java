@@ -4,24 +4,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum TumorStage {
-    I(null, "I"),
-    II(null, "II"),
-    IIA(TumorStage.II, "IIA"),
-    IIB(TumorStage.II, "IIB"),
-    III(null, "III"),
-    IIIA(TumorStage.III, "IIIA"),
-    IIIB(TumorStage.III, "IIIB"),
-    IIIC(TumorStage.III, "IIIC"),
-    IV(null, "IV");
+    I(null),
+    II(null),
+    IIA(TumorStage.II),
+    IIB(TumorStage.II),
+    III(null),
+    IIIA(TumorStage.III),
+    IIIB(TumorStage.III),
+    IIIC(TumorStage.III),
+    IV(null);
 
     @Nullable
     private final TumorStage category;
-    @NotNull
-    private final String display;
 
-    TumorStage(@Nullable final TumorStage category, @NotNull final String display) {
+    TumorStage(@Nullable final TumorStage category) {
         this.category = category;
-        this.display = display;
     }
 
     @Nullable
@@ -31,6 +28,6 @@ public enum TumorStage {
 
     @NotNull
     public String display() {
-        return display;
+        return this.toString();
     }
 }
