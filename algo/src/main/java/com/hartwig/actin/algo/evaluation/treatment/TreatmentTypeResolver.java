@@ -12,10 +12,10 @@ final class TreatmentTypeResolver {
     }
 
     public static boolean isOfType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category,
-            @NotNull String termToFind) {
+            @NotNull String typeToFind) {
         String type = resolveType(treatment, category);
 
-        return type != null && type.toLowerCase().contains(termToFind.toLowerCase());
+        return type != null && type.toLowerCase().contains(typeToFind.toLowerCase());
     }
 
     @Nullable

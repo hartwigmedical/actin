@@ -7,7 +7,6 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,18 +44,13 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements PassOrFailEvalu
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient received " + display(category) + ", ignoring " + concat(ignoreTypes);
+        return "Patient received " + category.display() + ", ignoring " + concat(ignoreTypes);
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient has not received " + display(category) + ", ignoring " + concat(ignoreTypes);
-    }
-
-    @NotNull
-    private static String display(@NotNull TreatmentCategory category) {
-        return TreatmentCategoryResolver.toString(category).toLowerCase();
+        return "Patient has not received " + category.display() + ", ignoring " + concat(ignoreTypes);
     }
 
     @NotNull

@@ -7,15 +7,15 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSomeTreatmentsWithCategory implements PassOrFailEvaluator {
+public class HasHadLimitedTreatmentsWithCategory implements PassOrFailEvaluator {
 
     @NotNull
     private final TreatmentCategory category;
-    private final int minTreatmentLines;
+    private final int maxTreatmentLines;
 
-    HasHadSomeTreatmentsWithCategory(@NotNull final TreatmentCategory category, final int minTreatmentLines) {
+    HasHadLimitedTreatmentsWithCategory(@NotNull final TreatmentCategory category, final int maxTreatmentLines) {
         this.category = category;
-        this.minTreatmentLines = minTreatmentLines;
+        this.maxTreatmentLines = maxTreatmentLines;
     }
 
     @Override
@@ -27,18 +27,18 @@ public class HasHadSomeTreatmentsWithCategory implements PassOrFailEvaluator {
             }
         }
 
-        return numTreatmentLines >= minTreatmentLines;
+        return numTreatmentLines <= maxTreatmentLines;
     }
 
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient has received at least " + minTreatmentLines + " lines of " + category.display();
+        return "Patient has received at most " + maxTreatmentLines + " lines of " + category.display();
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient has not received at least " + minTreatmentLines + " lines of " + category.display();
+        return "Patient has received more than " + maxTreatmentLines + " lines of " + category.display();
     }
 }

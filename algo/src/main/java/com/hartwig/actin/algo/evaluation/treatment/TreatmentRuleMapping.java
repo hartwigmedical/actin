@@ -13,6 +13,7 @@ import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,12 +37,11 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y, hasHadTreatmentCategoryOfTypeCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, hasHadLimitedTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_LEAST_Z_LINES,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+                hasHadSomeTreatmentsOfCategoryWithTypeCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+                hasHadLimitedTreatmentsOfCategoryWithTypeCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
@@ -131,6 +131,36 @@ public final class TreatmentRuleMapping {
         return function -> {
             OneTreatmentCategoryOneInteger input = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(function);
             return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategory(input.treatmentCategory(), input.integer()));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadLimitedTreatmentsOfCategoryCreator() {
+        return function -> {
+            OneTreatmentCategoryOneInteger input = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(function);
+            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategory(input.treatmentCategory(), input.integer()));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypeCreator() {
+        return function -> {
+            OneTreatmentCategoryOneStringOneInteger input =
+                    FunctionInputResolver.createOneTreatmentCategoryOneStringOneIntegerInput(function);
+            return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategoryOfType(input.treatmentCategory(),
+                    input.string(),
+                    input.integer()));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypeCreator() {
+        return function -> {
+            OneTreatmentCategoryOneStringOneInteger input =
+                    FunctionInputResolver.createOneTreatmentCategoryOneStringOneIntegerInput(function);
+            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategoryOfType(input.treatmentCategory(),
+                    input.string(),
+                    input.integer()));
         };
     }
 

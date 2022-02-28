@@ -7,38 +7,42 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSomeTreatmentsWithCategory implements PassOrFailEvaluator {
+public class HasHadLimitedTreatmentsWithCategoryOfType implements PassOrFailEvaluator {
 
     @NotNull
     private final TreatmentCategory category;
-    private final int minTreatmentLines;
+    @NotNull
+    private final String type;
+    private final int maxTreatmentLines;
 
-    HasHadSomeTreatmentsWithCategory(@NotNull final TreatmentCategory category, final int minTreatmentLines) {
+    HasHadLimitedTreatmentsWithCategoryOfType(@NotNull final TreatmentCategory category, @NotNull final String type,
+            final int maxTreatmentLines) {
         this.category = category;
-        this.minTreatmentLines = minTreatmentLines;
+        this.type = type;
+        this.maxTreatmentLines = maxTreatmentLines;
     }
 
     @Override
     public boolean isPass(@NotNull final PatientRecord record) {
         int numTreatmentLines = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.categories().contains(category)) {
+            if (treatment.categories().contains(category) && TreatmentTypeResolver.isOfType(treatment, category, type)) {
                 numTreatmentLines++;
             }
         }
 
-        return numTreatmentLines >= minTreatmentLines;
+        return numTreatmentLines <= maxTreatmentLines;
     }
 
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient has received at least " + minTreatmentLines + " lines of " + category.display();
+        return "Patient has received at most " + maxTreatmentLines + " lines of " + type + " " + category.display();
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient has not received at least " + minTreatmentLines + " lines of " + category.display();
+        return "Patient has not received at most " + maxTreatmentLines + " lines of " + type + " " + category.display();
     }
 }
