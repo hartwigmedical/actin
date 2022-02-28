@@ -19,7 +19,7 @@ public class CohortMetadataComparatorTest {
         CohortMetadata metadata2 =
                 ImmutableCohortMetadata.builder().cohortId("A").description("A First").open(false).blacklist(false).build();
         CohortMetadata metadata3 =
-                ImmutableCohortMetadata.builder().cohortId("A").description("A Second").open(true).blacklist(false).build();
+                ImmutableCohortMetadata.builder().cohortId("A").description("Second A").open(true).blacklist(false).build();
         CohortMetadata metadata4 =
                 ImmutableCohortMetadata.builder().cohortId("B").description("B Third").open(true).blacklist(false).build();
         CohortMetadata metadata5 =
