@@ -42,6 +42,6 @@ public class GeneHasExactExpressionByIHCTest {
 
     @NotNull
     private static ImmutablePriorMolecularTest.Builder ihcBuilder(@NotNull String gene) {
-        return MolecularTestFactory.builder().test("IHC").item(gene);
+        return ImmutablePriorMolecularTest.builder().test("IHC").item(gene);
     }
 }
