@@ -15,9 +15,9 @@ public class MedicationDosageConfigFactory implements CurationConfigFactory<Medi
                 .input(parts[fields.get("input")])
                 .dosageMin(ResourceFile.optionalNumber(parts[fields.get("dosageMin")]))
                 .dosageMax(ResourceFile.optionalNumber(parts[fields.get("dosageMax")]))
-                .dosageUnit(parts[fields.get("dosageUnit")])
+                .dosageUnit(ResourceFile.optionalString(parts[fields.get("dosageUnit")]))
                 .frequency(ResourceFile.optionalNumber(parts[fields.get("frequency")]))
-                .frequencyUnit(parts[fields.get("frequencyUnit")])
+                .frequencyUnit(ResourceFile.optionalString(parts[fields.get("frequencyUnit")]))
                 .ifNeeded(ResourceFile.optionalBool(parts[fields.get("ifNeeded")]))
                 .build();
     }

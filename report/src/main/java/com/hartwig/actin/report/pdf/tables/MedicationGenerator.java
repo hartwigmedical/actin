@@ -71,7 +71,7 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     private static String frequency(@NotNull  Medication medication) {
         String result = medication.frequency() != null ? Formats.number(medication.frequency()) : "?";
-        if (medication.frequencyUnit() != null && !medication.frequencyUnit().isEmpty()) {
+        if (medication.frequencyUnit() != null) {
             result += (" / " + medication.frequencyUnit());
         }
         return result;

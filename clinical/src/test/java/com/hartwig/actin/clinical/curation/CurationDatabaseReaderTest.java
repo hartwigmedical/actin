@@ -220,9 +220,9 @@ public class CurationDatabaseReaderTest {
         MedicationDosageConfig config2 = find(configs, "empty");
         assertNull(config2.dosageMin());
         assertNull(config2.dosageMax());
-        assertTrue(config2.dosageUnit().isEmpty());
+        assertNull(config2.dosageUnit());
         assertNull(config2.frequency());
-        assertTrue(config2.frequencyUnit().isEmpty());
+        assertNull(config2.frequencyUnit());
         assertNull(config2.ifNeeded());
     }
 
