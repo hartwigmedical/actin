@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
@@ -11,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
+import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStringsOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
@@ -43,9 +45,9 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AND_AT_MOST_Z_LINES,
                 hasHadLimitedTreatmentsOfCategoryWithTypeCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+                hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, hasHadTaxaneTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT,
@@ -158,8 +160,19 @@ public final class TreatmentRuleMapping {
         return function -> {
             OneTreatmentCategoryOneStringOneInteger input =
                     FunctionInputResolver.createOneTreatmentCategoryOneStringOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategoryOfType(input.treatmentCategory(),
-                    input.string(),
+            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatmentCategory(),
+                    Lists.newArrayList(input.string()),
+                    input.integer()));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypesCreator() {
+        return function -> {
+            OneTreatmentCategoryManyStringsOneInteger input =
+                    FunctionInputResolver.createOneTreatmentCategoryManyStringsOneIntegerInput(function);
+            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatmentCategory(),
+                    input.strings(),
                     input.integer()));
         };
     }
@@ -167,6 +180,11 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadFluoropyrimidineTreatmentCreator() {
         return function -> new PassOrFailEvaluationFunction(new HasHadFluoropyrimidineTreatment());
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadTaxaneTreatmentCreator() {
+        return function -> new PassOrFailEvaluationFunction(new HasHadTaxaneTreatment());
     }
 
     @NotNull

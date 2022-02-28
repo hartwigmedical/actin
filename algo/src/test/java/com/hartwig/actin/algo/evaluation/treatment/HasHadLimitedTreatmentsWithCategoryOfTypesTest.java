@@ -11,12 +11,13 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.junit.Test;
 
-public class HasHadLimitedTreatmentsWithCategoryOfTypeTest {
+public class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
 
     @Test
     public void canEvaluate() {
         TreatmentCategory category = TreatmentCategory.TARGETED_THERAPY;
-        HasHadLimitedTreatmentsWithCategoryOfType function = new HasHadLimitedTreatmentsWithCategoryOfType(category, "anti-BRAF", 1);
+        List<String> types = Lists.newArrayList("anti-BRAF", "anti-KRAS");
+        HasHadLimitedTreatmentsWithCategoryOfTypes function = new HasHadLimitedTreatmentsWithCategoryOfTypes(category, types, 1);
 
         // No treatments yet
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
@@ -34,8 +35,8 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypeTest {
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-BRAF").build());
         assertTrue(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
 
-        // Add correct treatment category with correct type
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("another anti-BRAF").build());
+        // Add correct treatment category with another correct type
+        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-KRAS").build());
         assertFalse(function.isPass(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
     }
 }
