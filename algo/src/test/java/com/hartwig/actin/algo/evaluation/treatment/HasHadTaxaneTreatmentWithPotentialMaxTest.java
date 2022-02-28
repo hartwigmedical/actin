@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -16,6 +17,12 @@ public class HasHadTaxaneTreatmentWithPotentialMaxTest {
     public void canEvaluate() {
         HasHadTaxaneTreatmentWithPotentialMax noMax = new HasHadTaxaneTreatmentWithPotentialMax(null);
         HasHadTaxaneTreatmentWithPotentialMax withMax = new HasHadTaxaneTreatmentWithPotentialMax(1);
+
+        assertNotNull(noMax.passMessage());
+        assertNotNull(noMax.failMessage());
+
+        assertNotNull(withMax.passMessage());
+        assertNotNull(withMax.failMessage());
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();

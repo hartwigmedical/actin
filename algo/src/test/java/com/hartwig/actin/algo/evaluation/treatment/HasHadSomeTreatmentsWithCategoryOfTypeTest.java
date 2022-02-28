@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public class HasHadSomeTreatmentsWithCategoryOfTypeTest {
     public void canEvaluate() {
         TreatmentCategory category = TreatmentCategory.TARGETED_THERAPY;
         HasHadSomeTreatmentsWithCategoryOfType function = new HasHadSomeTreatmentsWithCategoryOfType(category, "Anti-EGFR", 2);
+
+        assertNotNull(function.passMessage());
+        assertNotNull(function.failMessage());
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();

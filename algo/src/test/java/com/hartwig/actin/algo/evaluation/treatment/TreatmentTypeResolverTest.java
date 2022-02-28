@@ -46,4 +46,11 @@ public class TreatmentTypeResolverTest {
         assertTrue(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "transplant"));
         assertFalse(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "chemo"));
     }
+
+    @Test
+    public void canHandleCategoryWithoutType() {
+        PriorTumorTreatment vaccine = TreatmentTestFactory.builder().categories(Lists.newArrayList(TreatmentCategory.VACCINE)).build();
+
+        assertFalse(TreatmentTypeResolver.isOfType(vaccine, TreatmentCategory.VACCINE, "vaccine"));
+    }
 }

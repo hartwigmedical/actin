@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public class HasHadFluoropyrimidineTreatmentTest {
     @Test
     public void canEvaluate() {
         HasHadFluoropyrimidineTreatment function = new HasHadFluoropyrimidineTreatment();
+
+        assertNotNull(function.passMessage());
+        assertNotNull(function.failMessage());
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
