@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,17 +8,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsWillingToNotUseContactLenses implements EvaluationFunction {
+public class HasParticipatedInCurrentTrial implements EvaluationFunction {
 
-    IsWillingToNotUseContactLenses() {
+    HasParticipatedInCurrentTrial() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN)
-                .addPassMessages("Currently assumed that patient is willing/able not to use contact lenses")
+        return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Current trial participation is currently not determined.")
                 .build();
     }
 }
-

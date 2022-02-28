@@ -29,6 +29,7 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
         map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
+        map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
@@ -49,7 +50,8 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, hasHadTaxaneTreatmentWithMaxLinesCreator());
         map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, hasHadTyrosineKinaseTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
-        map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
+        map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
+        map.put(EligibilityRule.HAS_PARTICIPATED_IN_CURRENT_TRIAL, hasParticipatedInCurrentTrialCreator());
 
         return map;
     }
@@ -67,6 +69,11 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasDeclinedSOCTreatmentsCreator() {
         return function -> new HasDeclinedSOCTreatments();
+    }
+
+    @NotNull
+    private static FunctionCreator isEligibleForOnLabelDrugCreator() {
+        return function -> new IsEligibleForOnLabelDrug();
     }
 
     @NotNull
@@ -201,7 +208,13 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator isEligibleForOnLabelDrugCreator() {
-        return function -> new IsEligibleForOnLabelDrug();
+    private static FunctionCreator participatesInAnotherTrialCreator() {
+        return function -> new ParticipatesInAnotherTrial();
     }
+
+    @NotNull
+    private static FunctionCreator hasParticipatedInCurrentTrialCreator() {
+        return function -> new HasParticipatedInCurrentTrial();
+    }
+
 }

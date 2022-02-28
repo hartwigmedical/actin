@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.molecular;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,16 +8,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ParticipatesInAnotherTrial implements EvaluationFunction {
+public class ManufacturedTCellsWithinShelfLife implements EvaluationFunction {
 
-    ParticipatesInAnotherTrial() {
+    ManufacturedTCellsWithinShelfLife() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Assumed that patient is not currently participating in another trial")
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Currently it is assumed that previously manufactured T-cells will be within shelf life")
                 .build();
     }
 }

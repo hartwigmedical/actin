@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.toxicity;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.PatientRecord;

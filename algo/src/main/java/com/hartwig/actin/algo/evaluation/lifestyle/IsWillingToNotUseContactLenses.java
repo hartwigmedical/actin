@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.lifestyle;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,17 +8,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ManufacturedTCellsWithinShelfLife implements EvaluationFunction {
+public class IsWillingToNotUseContactLenses implements EvaluationFunction {
 
-    ManufacturedTCellsWithinShelfLife() {
+    IsWillingToNotUseContactLenses() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder()
-                .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently it is assumed that previously manufactured T-cells will be within shelf life")
+        return ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN)
+                .addPassMessages("Currently assumed that patient is willing/able not to use contact lenses")
                 .build();
     }
 }
+

@@ -4,6 +4,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.treatment.HasParticipatedInCurrentTrial;
+import com.hartwig.actin.algo.evaluation.treatment.ParticipatesInAnotherTrial;
 import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -24,17 +26,14 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
         map.put(EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X, hasMinimumLanskyScoreCreator());
-        map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
-        map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
-        map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
-        map.put(EligibilityRule.HAS_PARTICIPATED_IN_CURRENT_TRIAL, hasParticipatedInCurrentTrialCreator());
         map.put(EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION, hasRapidlyDeterioratingConditionCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, hasSufficientLifeExpectancyCreator());
         map.put(EligibilityRule.PATIENT_IS_TREATED_IN_HOSPITAL_X, patientIsTreatedInHospitalCreator());
         map.put(EligibilityRule.PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X, patientWillBeParticipatingInCountryCreator());
+        map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
         map.put(EligibilityRule.PATIENT_IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
-        map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, isWillingToNotUseContactLensesCreator());
+        map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
 
         return map;
     }
@@ -81,16 +80,6 @@ public final class GeneralRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator participatesInAnotherTrialCreator() {
-        return function -> new ParticipatesInAnotherTrial();
-    }
-
-    @NotNull
-    private static FunctionCreator hasParticipatedInCurrentTrialCreator() {
-        return function -> new HasParticipatedInCurrentTrial();
-    }
-
-    @NotNull
     private static FunctionCreator hasRapidlyDeterioratingConditionCreator() {
         return function -> new HasRapidlyDeterioratingCondition();
     }
@@ -118,8 +107,4 @@ public final class GeneralRuleMapping {
         return function -> new IsLegallyInstitutionalized();
     }
 
-    @NotNull
-    private static FunctionCreator isWillingToNotUseContactLensesCreator() {
-        return function -> new IsWillingToNotUseContactLenses();
-    }
 }

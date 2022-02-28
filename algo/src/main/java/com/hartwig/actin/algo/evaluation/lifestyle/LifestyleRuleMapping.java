@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.smoking;
+package com.hartwig.actin.algo.evaluation.lifestyle;
 
 import java.util.Map;
 
@@ -10,9 +10,9 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class SmokingRuleMapping {
+public final class LifestyleRuleMapping {
 
-    private SmokingRuleMapping() {
+    private LifestyleRuleMapping() {
     }
 
     @NotNull
@@ -21,7 +21,13 @@ public final class SmokingRuleMapping {
 
         map.put(EligibilityRule.HAS_SMOKED_WITHIN_X_MONTHS,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, isWillingToNotUseContactLensesCreator());
 
         return map;
+    }
+
+    @NotNull
+    private static FunctionCreator isWillingToNotUseContactLensesCreator() {
+        return function -> new IsWillingToNotUseContactLenses();
     }
 }

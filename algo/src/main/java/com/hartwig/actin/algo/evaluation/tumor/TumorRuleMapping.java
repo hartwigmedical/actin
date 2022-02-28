@@ -25,6 +25,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY,
                 hasPrimaryTumorLocationWithExactDoidCreator(doidModel, MELANOMA_OF_UNKNOWN_PRIMARY_DOID));
+        map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
@@ -38,17 +39,15 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES, hasKnownSymptomaticBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
-        map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
-        map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
+        map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
+        map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
+        map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
         map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMRIVolumeAmenableLesionCreator());
         map.put(EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI, hasIntratumoralHemorrhageByMRICreator());
-        map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
         map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, hasLowRiskOfHemorrhageUponTreatmentCreator());
-        map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
-        map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
-        map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
+        map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
 
         return map;
     }
@@ -64,6 +63,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasPrimaryTumorLocationWithExactDoidCreator(@NotNull DoidModel doidModel, @NotNull String doidToMatch) {
         return function -> new PrimaryTumorLocationIsExactDoid(doidModel, doidToMatch);
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistologicalDocumentationOfTumorTypeCreator() {
+        return function -> new HasHistologicalDocumentationOfTumorType();
     }
 
     @NotNull
@@ -135,23 +139,28 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasMeasurableDiseaseRecistCreator() {
-        return function -> new HasMeasurableDiseaseRecist();
-    }
-
-    @NotNull
     private static FunctionCreator hasBiopsyAmenableLesionCreator() {
         return function -> new HasBiopsyAmenableLesion();
     }
 
     @NotNull
-    private static FunctionCreator hasInjectionAmenableLesionCreator() {
-        return function -> new HasInjectionAmenableLesion();
+    private static FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
+        return function -> new TumorBiopsyTakenBeforeInformedConsent();
+    }
+
+    @NotNull
+    private static FunctionCreator hasMeasurableDiseaseRecistCreator() {
+        return function -> new HasMeasurableDiseaseRecist();
     }
 
     @NotNull
     private static FunctionCreator hasSpecificProgressiveDiseaseCriteriaCreator() {
         return function -> new HasSpecificProgressiveDiseaseCriteria();
+    }
+
+    @NotNull
+    private static FunctionCreator hasInjectionAmenableLesionCreator() {
+        return function -> new HasInjectionAmenableLesion();
     }
 
     @NotNull
@@ -165,27 +174,12 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSuperScanBoneScanCreator() {
-        return function -> new HasSuperScanBoneScan();
-    }
-
-    @NotNull
     private static FunctionCreator hasLowRiskOfHemorrhageUponTreatmentCreator() {
         return function -> new HasLowRiskOfHemorrhageUponTreatment();
     }
 
     @NotNull
-    private static FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
-        return function -> new TumorBiopsyTakenBeforeInformedConsent();
-    }
-
-    @NotNull
-    private static FunctionCreator hasHistologicalDocumentationOfTumorTypeCreator() {
-        return function -> new HasHistologicalDocumentationOfTumorType();
-    }
-
-    @NotNull
-    private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
-        return function -> new ManufacturedTCellsWithinShelfLife();
+    private static FunctionCreator hasSuperScanBoneScanCreator() {
+        return function -> new HasSuperScanBoneScan();
     }
 }

@@ -36,6 +36,9 @@ public final class OtherConditionRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasSpecificPriorConditionCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasSpecificPriorConditionCreator(doidModel, CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
@@ -43,26 +46,22 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
                 hasSpecificPriorConditionCreator(doidModel, GASTROINTESTINAL_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE, hasSpecificPriorConditionCreator(doidModel, IMMUNE_SYSTEM_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasSpecificPriorConditionCreator(doidModel, VASCULAR_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasSpecificPriorConditionCreator(doidModel, LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasSpecificPriorConditionCreator(doidModel, LIVER_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasSpecificPriorConditionCreator(doidModel, LUNG_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasSpecificPriorConditionCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasSpecificPriorConditionCreator(doidModel, STROKE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasSpecificPriorConditionCreator(doidModel, TIA_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasSpecificPriorConditionCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasSpecificPriorConditionCreator(doidModel, VASCULAR_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
+        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
         map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES, hasPotentialAbsorptionDifficultiesCreator());
         map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, canSwallowOralMedicationCreator());
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
-        map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
 
         return map;
     }
@@ -81,13 +80,13 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadOrganTransplantCreator() {
-        return function -> new HasHadOrganTransplant();
+    private static FunctionCreator hasSevereConcomitantIllnessCreator() {
+        return function -> new HasSevereConcomitantIllness();
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryAnaphylaxisCreator() {
-        return function -> new HasHistoryAnaphylaxis();
+    private static FunctionCreator hasHadOrganTransplantCreator() {
+        return function -> new HasHadOrganTransplant();
     }
 
     @NotNull
@@ -109,11 +108,5 @@ public final class OtherConditionRuleMapping {
     private static FunctionCreator hasAdequateVeinAccessCreator()  {
         return function -> new HasAdequateVeinAccessCreator();
     }
-
-    @NotNull
-    private static FunctionCreator hasSevereConcomitantIllnessCreator() {
-        return function -> new HasSevereConcomitantIllness();
-    }
-
 
 }

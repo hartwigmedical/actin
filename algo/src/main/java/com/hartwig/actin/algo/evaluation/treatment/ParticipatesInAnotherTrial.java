@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,16 +8,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasParticipatedInCurrentTrial implements EvaluationFunction {
+public class ParticipatesInAnotherTrial implements EvaluationFunction {
 
-    HasParticipatedInCurrentTrial() {
+    ParticipatesInAnotherTrial() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Current trial participation is currently not determined.")
+        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Assumed that patient is not currently participating in another trial")
                 .build();
     }
 }

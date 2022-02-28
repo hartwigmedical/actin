@@ -31,23 +31,24 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.DELETION_OF_GENE_X, geneIsDeletedCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
         map.put(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, hasSpecificFusionCreator());
-        map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
-        map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneIsExpressedByIHCCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildtypeCreator());
         map.put(EligibilityRule.MSI_SIGNATURE, isMicrosatelliteUnstableCreator());
         map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
         map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
         map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
+        map.put(EligibilityRule.HAS_HLA_A_TYPE_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
+        map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneIsExpressedByIHCCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_HLA_A_TYPE_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
     }
@@ -122,21 +123,6 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator geneIsOverexpressedCreator() {
-        return function -> new GeneIsOverexpressed();
-    }
-
-    @NotNull
-    private static FunctionCreator geneIsNotExpressedCreator() {
-        return function -> new GeneIsNotExpressed();
-    }
-
-    @NotNull
-    private static FunctionCreator geneIsExpressedByIHCCreator() {
-        return function -> new GeneIsExpressedByIHC();
-    }
-
-    @NotNull
     private static FunctionCreator geneIsWildtypeCreator() {
         return function -> {
             String gene = FunctionInputResolver.createOneStringInput(function);
@@ -177,4 +163,25 @@ public final class MolecularRuleMapping {
             return new HasLimitedTumorMutationalLoad(maxTumorMutationalLoad);
         };
     }
+
+    @NotNull
+    private static FunctionCreator geneIsOverexpressedCreator() {
+        return function -> new GeneIsOverexpressed();
+    }
+
+    @NotNull
+    private static FunctionCreator geneIsNotExpressedCreator() {
+        return function -> new GeneIsNotExpressed();
+    }
+
+    @NotNull
+    private static FunctionCreator geneIsExpressedByIHCCreator() {
+        return function -> new GeneIsExpressedByIHC();
+    }
+
+    @NotNull
+    private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
+        return function -> new ManufacturedTCellsWithinShelfLife();
+    }
+
 }

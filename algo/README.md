@@ -66,7 +66,7 @@ won't be evaluated.
 
 The following rules are available:
 
-##### Rules related to general patient characteristics
+##### Rules related to general characteristics / statements
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
@@ -75,24 +75,22 @@ IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > currently won't be evaluated
 HAS_LANSKY_SCORE_OF_AT_LEAST_X | > currently won't be evaluated
-CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
-IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
-IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
-HAS_PARTICIPATED_IN_CURRENT_TRIAL | T.B.D. | Currently always set to `UNDETERMINED`
 HAS_RAPIDLY_DETERIORATING_CONDITION | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > won't be evaluated
 PATIENT_IS_TREATED_IN_HOSPITAL_X | > won't be evaluated
 PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X | > currently set to Netherlands (T.B.D.)
+CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > won't be evaluated
 PATIENT_IS_LEGALLY_INSTITUTIONALIZED | > won't be evaluated
-IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | > will resolve to PASS_BUT_WARN
+IS_INVOLVED_IN_STUDY_PROCEDURES | > won't be evaluated
 
-##### Rules related to tumor and lesion locations
+##### Rules related to tumor and lesion localization
  
 Rule | When does a patient pass evaluation?
 ---|---
 PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Configured DOID should be equal or be a child of DOID X
 HAS_MELANOMA_OF_UNKNOWN_PRIMARY | All configured DOIDs are equal to 1909 
+HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
@@ -106,17 +104,15 @@ HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES | Tumor details > hasSymptomaticBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
-HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
-HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
+HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
+HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
+HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
-HAS_SUPERSCAN_BONE_SCAN | won't be evaluated
 HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI | T.B.D.
 HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
-HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
-HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
-MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | won't be evaluated
+HAS_SUPERSCAN_BONE_SCAN | won't be evaluated
 
 ##### Rules related to previous cancer treatments
 
@@ -125,6 +121,7 @@ Rule | When does a patient pass evaluation? | Note
 IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | T.B.D. - currently not evaluated
 HAS_EXHAUSTED_SOC_TREATMENTS | T.B.D. - currently resolves to PASS_BUT_WARN
 HAS_DECLINED_SOC_TREATMENTS | T.B.D. - currently not evaluated
+IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | T.B.D. - current undetermined
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
@@ -142,7 +139,8 @@ HAS_HAD_TAXANE_TREATMENT | Prior tumor treatments > name contains any taxane | T
 HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES | Prior tumor treatments > name contains any taxane and and number of lines <= X  | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel (T.B.D.)
 HAS_HAD_TYROSINE_KINASE_TREATMENT |  Prior tumor treatments > category = 'Targeted therapy' & T.B.D.
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | T.B.D
-IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Drug X is in the SOC treatment DB for that tumor type (T.B.I.)
+IS_PARTICIPATING_IN_ANOTHER_TRIAL | > won't be evaluated
+HAS_PARTICIPATED_IN_CURRENT_TRIAL | T.B.D. | Currently always set to `UNDETERMINED`
 
 ##### Rules related to prior primary tumors
 
@@ -157,8 +155,6 @@ EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries i
 
 Rule | When does a patient pass evaluation?
 ---|---
-MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
-MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results (later to be extended)
 ACTIVATION_OR_AMPLIFICATION_OF_GENE_X | Activating mutation or amplification is found in gene X
 INACTIVATION_OF_GENE_X | Inactivating mutation or deletion/disruption is found in gene X
 ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
@@ -167,20 +163,23 @@ AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion is found in gene X
 FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
 SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
-OVEREXPRESSION_OF_GENE_X | > Currently set to fail (T.B.D.)
-NON_EXPRESSION_OF_GENE_X | > Currently set to fail (T.B.D.)
-EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
-EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y
-EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
 TML_OF_AT_MOST_X | TML should be <= X
+HAS_HLA_A_TYPE_X | Lilac results (T.B.D)
+OVEREXPRESSION_OF_GENE_X | > Currently set to fail (T.B.D.)
+NON_EXPRESSION_OF_GENE_X | > Currently set to fail (T.B.D.)
+EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
+EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y
+EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y
 PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
 PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
-HAS_HLA_A_TYPE_X | Lilac results (T.B.D)
+MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Ingestion of ORANGE results (later to be extended)
+MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results (later to be extended)
+MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | won't be evaluated
 
 ##### Rules related to recent laboratory measurements
 
@@ -248,30 +247,30 @@ or that this value is also out of requested range, the evaluation resolves to FA
 
 Rule | When does a patient pass evaluation?
 ---|---
+HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
+HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
 HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 77
 HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
-HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
+HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
+HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
-HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
-HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
-HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
+HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
+HAS_SEVERE_CONCOMITANT_CONDITION | won't be evaluated
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
-HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
 HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionnaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
 HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or allergy name like %contrast agent%
 IS_IN_DIALYSIS | won't be evaluated
 HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | currently resolves to undetermined
-HAS_SEVERE_CONCOMITANT_CONDITION | won't be evaluated
 
 ##### Rules related to cardiac function
 
@@ -302,12 +301,10 @@ HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid shou
 HAS_CURRENT_COVID_19_INFECTION | T.B.D.
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | > won't be evaluated. 
 
-##### Rules related to allergies / current medication 
+##### Rules related to current medication 
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
-HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Resolves to Undetermined, since exact ingredients cannot yet be automatically evaluated
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
 CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X%
 CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like "X"
@@ -370,14 +367,17 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | Cancer related complication > name like %X%. Resolves to 'Undetermined' in case UNKNOWN.
 
-##### Rules related to toxicity
+##### Rules related to allergies/toxicities
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
+HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
+HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Allergy > Category = medication AND clinicalStatus = active | Resolves to Undetermined, since exact ingredients cannot yet be automatically evaluated
+HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
+HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | T.B.D. 
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X. 
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. | Multiple names can be specified within 1 rule, separated by ";"
-HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | T.B.D. 
 
 Note for all TOXICITY rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
@@ -407,11 +407,12 @@ Rule | When does a patient pass evaluation? | Note
 HAS_HAD_RECENT_SURGERY | Surgeries > presence
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
 
-##### Rules related to smoking
+##### Rules related to lifestyle
  
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_SMOKED_WITHIN_X_MONTHS | Currently resolves to undetermined
+IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | > will resolve to PASS_BUT_WARN
  
 ### Disease Ontology ID (DOID)
  
