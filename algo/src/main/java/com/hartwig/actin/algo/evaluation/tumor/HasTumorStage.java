@@ -33,9 +33,9 @@ public class HasTumorStage implements EvaluationFunction {
         EvaluationResult result = hasTumorStage ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient tumor stage is not exact stage " + stageToMatch);
+            builder.addFailMessages("Patient tumor stage is not exact stage " + stageToMatch.display());
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient tumor stage is exact stage " + stageToMatch);
+            builder.addPassMessages("Patient tumor stage is exact stage " + stageToMatch.display());
         }
 
         return builder.build();

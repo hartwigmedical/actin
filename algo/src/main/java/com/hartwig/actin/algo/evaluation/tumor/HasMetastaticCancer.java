@@ -38,9 +38,9 @@ public class HasMetastaticCancer implements EvaluationFunction {
         EvaluationResult result = STAGES_CONSIDERED_METASTATIC.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor stage " + stage + " is not considered metastatic (IV)");
+            builder.addFailMessages("Tumor stage " + stage.display() + " is not considered metastatic (IV)");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor stage " + stage + " is considered metastatic (IV)");
+            builder.addPassMessages("Tumor stage " + stage.display() + " is considered metastatic (IV)");
         }
 
         return builder.build();

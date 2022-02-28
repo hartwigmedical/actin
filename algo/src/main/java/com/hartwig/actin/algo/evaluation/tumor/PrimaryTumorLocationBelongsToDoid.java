@@ -38,9 +38,9 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         EvaluationResult result = isDoidMatch(doids, doidToMatch) ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no '" + doidModel.term(doidToMatch) + "'");
+            builder.addFailMessages("Patient has no " + doidModel.term(doidToMatch));
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has '" + doidModel.term(doidToMatch) + "'");
+            builder.addPassMessages("Patient has " + doidModel.term(doidToMatch));
         }
 
         return builder.build();

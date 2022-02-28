@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ManufacturedTcellsWithinShelfLife implements EvaluationFunction {
+public class ManufacturedTCellsWithinShelfLife implements EvaluationFunction {
 
-    ManufacturedTcellsWithinShelfLife() {
+    ManufacturedTCellsWithinShelfLife() {
     }
 
     @NotNull

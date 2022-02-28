@@ -47,7 +47,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, hasLowRiskOfHemorrhageUponTreatmentCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
-        map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTcellsWithinShelfLifeCreator());
+        map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
     }
@@ -179,7 +179,7 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator manufacturedTcellsWithinShelfLifeCreator() {
-        return function -> new ManufacturedTcellsWithinShelfLife();
+    private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
+        return function -> new ManufacturedTCellsWithinShelfLife();
     }
 }
