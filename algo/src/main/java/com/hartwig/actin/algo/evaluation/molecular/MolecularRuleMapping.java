@@ -3,9 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
@@ -38,16 +36,14 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
         map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
         map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
-        map.put(EligibilityRule.HAS_HLA_A_TYPE_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HLA_A_TYPE_X, hasSpecificHLATypeCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneHasExactExpressionByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneHasSufficientExpressionByIHCCreator());
-        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByIHCCreator());
+        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByIHCCreator());
         map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
@@ -165,6 +161,11 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator hasSpecificHLATypeCreator() {
+        return function -> new HasSpecificHLAType();
+    }
+
+    @NotNull
     private static FunctionCreator geneIsOverexpressedCreator() {
         return function -> new GeneIsOverexpressed();
     }
@@ -195,6 +196,22 @@ public final class MolecularRuleMapping {
         return function -> {
             OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
             return new GeneHasSufficientExpressionByIHC(input.string(), input.integer());
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientPDL1ByIHCCreator() {
+        return function -> {
+            int minPDL1 = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasSufficientPDL1ByIHC(minPDL1);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedPDL1ByIHCCreator() {
+        return function -> {
+            int maxPDL1 = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasLimitedPDL1ByIHC(maxPDL1);
         };
     }
 

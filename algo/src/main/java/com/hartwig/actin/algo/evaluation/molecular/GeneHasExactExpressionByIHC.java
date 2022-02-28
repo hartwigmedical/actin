@@ -22,11 +22,11 @@ public class GeneHasExactExpressionByIHC implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
-        for (PriorMolecularTest priorMolecularTest : IHCFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene)) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        for (PriorMolecularTest ihcTest : PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene)) {
             boolean hasExactExpression = false;
 
-            Double scoreValue = priorMolecularTest.scoreValue();
+            Double scoreValue = ihcTest.scoreValue();
             if (scoreValue != null) {
                 // We assume IHC prior molecular tests always have integer score values.
                 hasExactExpression = expressionLevel == Math.round(scoreValue);

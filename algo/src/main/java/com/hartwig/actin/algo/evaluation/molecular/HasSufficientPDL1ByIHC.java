@@ -9,41 +9,36 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GeneIsExpressedByIHC implements EvaluationFunction {
+public class HasSufficientPDL1ByIHC implements EvaluationFunction {
 
-    @NotNull
-    private final String gene;
+    private final int minPDL1;
 
-    GeneIsExpressedByIHC(@NotNull final String gene) {
-        this.gene = gene;
+    HasSufficientPDL1ByIHC(final int minPDL1) {
+        this.minPDL1 = minPDL1;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorMolecularTest ihcTest : PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene)) {
-            boolean isExpressed = false;
-            String scoreText = ihcTest.scoreText();
-            if (scoreText != null && scoreText.equalsIgnoreCase("positive")) {
-                isExpressed = true;
-            }
+        for (PriorMolecularTest ihcTest : PriorMolecularTestFunctions.allPDL1TestsByCPS(record.clinical().priorMolecularTests())) {
+            boolean hasSufficientPDL1 = false;
 
             Double scoreValue = ihcTest.scoreValue();
-            if (scoreValue != null && scoreValue > 0) {
-                isExpressed = true;
+            if (scoreValue != null && scoreValue >= minPDL1) {
+                hasSufficientPDL1 = true;
             }
 
-            if (isExpressed) {
+            if (hasSufficientPDL1) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Gene " + gene + " has been determined to expressed (by IHC)")
+                        .addPassMessages("PD-L1 expression measured by CPS meets at least desired level of " + minPDL1)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Gene " + gene + " has not been determined to expressed (by IHC)")
+                .addFailMessages("No PD-L1 IHC test found where level exceeds desired level of " + minPDL1)
                 .build();
     }
 }
