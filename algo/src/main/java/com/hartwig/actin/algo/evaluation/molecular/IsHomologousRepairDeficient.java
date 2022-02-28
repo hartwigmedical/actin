@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +19,21 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
         Boolean isHomologousRepairDeficient = record.molecular().isHomologousRepairDeficient();
 
         if (isHomologousRepairDeficient == null) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
-        } else if (isHomologousRepairDeficient) {
-            return EvaluationFactory.create(EvaluationResult.PASS);
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("No homologous repair deficiency status is known")
+                    .build();
         }
 
-        return MolecularUtil.noMatchFound(record.molecular());
+        EvaluationResult result = isHomologousRepairDeficient ? EvaluationResult.PASS : EvaluationResult.FAIL;
+
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Tumor is homologous repair proficient");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Tumor is homologous repair deficient");
+        }
+
+        return builder.build();
     }
 }

@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,9 @@ public class MolecularResultsAreAvailable implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // This was implemented when ACTIN requires a mandatory molecular record.
-        return EvaluationFactory.create(EvaluationResult.PASS);
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.PASS)
+                .addPassMessages("Currently is assumed that there are always molecular results available")
+                .build();
     }
 }

@@ -25,11 +25,14 @@ public class HasActivatingFusionWithGene implements EvaluationFunction {
             if (fusion.fiveGene().equals(gene) || fusion.threeGene().equals(gene)) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("WGS detected fusion with gene " + gene)
+                        .addPassMessages("Fusion detected with gene " + gene)
                         .build();
             }
         }
 
-        return MolecularUtil.noMatchFound(record.molecular());
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.FAIL)
+                .addFailMessages("No fusion detected with gene " + gene)
+                .build();
     }
 }

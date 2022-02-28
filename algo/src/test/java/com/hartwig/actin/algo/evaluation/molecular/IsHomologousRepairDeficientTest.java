@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
@@ -12,8 +12,8 @@ public class IsHomologousRepairDeficientTest {
     public void canEvaluate() {
         IsHomologousRepairDeficient function = new IsHomologousRepairDeficient();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(null)).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(true)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(false)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(null)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(true)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(false)));
     }
 }

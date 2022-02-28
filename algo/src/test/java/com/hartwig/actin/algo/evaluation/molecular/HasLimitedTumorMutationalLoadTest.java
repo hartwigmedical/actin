@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
@@ -12,9 +12,9 @@ public class HasLimitedTumorMutationalLoadTest {
     public void canEvaluate() {
         HasLimitedTumorMutationalLoad function = new HasLimitedTumorMutationalLoad(140);
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(null)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(200)).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(140)).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(10)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(null)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(200)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(140)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(10)));
     }
 }

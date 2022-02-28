@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,11 +21,21 @@ public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Integer tumorMutationalLoad = record.molecular().tumorMutationalLoad();
         if (tumorMutationalLoad == null) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
-        } else if (tumorMutationalLoad >= minTumorMutationalLoad) {
-            return EvaluationFactory.create(EvaluationResult.PASS);
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("No tumor mutational load is known")
+                    .build();
         }
 
-        return MolecularUtil.noMatchFound(record.molecular());
+        EvaluationResult result = tumorMutationalLoad >= minTumorMutationalLoad ? EvaluationResult.PASS : EvaluationResult.FAIL;
+
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Tumor mutational load does not exceed " + minTumorMutationalLoad);
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Tumor mutational load exceeds " + minTumorMutationalLoad);
+        }
+
+        return builder.build();
     }
 }

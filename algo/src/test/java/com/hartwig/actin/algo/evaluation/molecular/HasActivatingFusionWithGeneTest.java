@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
@@ -12,8 +12,8 @@ public class HasActivatingFusionWithGeneTest {
     public void canEvaluate() {
         HasActivatingFusionWithGene function = new HasActivatingFusionWithGene("gene 1");
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 3")).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 1", "gene 2")).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 1")).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 3")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 1", "gene 2")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusionGene("gene 2", "gene 1")));
     }
 }
