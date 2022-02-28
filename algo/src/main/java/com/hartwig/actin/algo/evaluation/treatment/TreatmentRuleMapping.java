@@ -197,7 +197,7 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hadHadIntratumoralInjectionTreatmentCreator() {
-        return function -> new HadHadIntratumoralInjectionTreatment2();
+        return function -> new HadHadIntratumoralInjectionTreatment();
     }
 
     @NotNull
