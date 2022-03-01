@@ -314,6 +314,7 @@ HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal 
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionnaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
+HAS_POTENTIAL_CONTRAINDICATION_TO_CT | > prior other condition > name like %Claustrophobia% or any other condition belonging to DOID 557, or allergy name like %contrast agent%, or pregnancy, or medication use of name %metformin%, or complication of name %Hyperthyroidism%
 HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or allergy name like %contrast agent%
 IS_IN_DIALYSIS | Won't be evaluated
 HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | Currently resolves to undetermined
