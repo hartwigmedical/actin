@@ -46,6 +46,7 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
         } else if (result.isPass()) {
             builder.addPassMessages(labValue.code() + " is sufficient");
         }
+
         return builder.build();
     }
 }

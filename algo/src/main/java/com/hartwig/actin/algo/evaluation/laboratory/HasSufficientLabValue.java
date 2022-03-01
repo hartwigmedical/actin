@@ -20,6 +20,7 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(labValue.value(), labValue.comparator(), minValue);
+
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages(labValue.code() + " is insufficient");
@@ -28,6 +29,7 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
         } else if (result.isPass()) {
             builder.addPassMessages(labValue.code() + " is sufficient");
         }
+
         return builder.build();
     }
 }

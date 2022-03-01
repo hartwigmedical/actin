@@ -31,6 +31,7 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
         } else if (result == EvaluationResult.PASS) {
             builder.addPassMessages(labValue.code() + " is within reference values");
         }
+
         return builder.build();
     }
 }

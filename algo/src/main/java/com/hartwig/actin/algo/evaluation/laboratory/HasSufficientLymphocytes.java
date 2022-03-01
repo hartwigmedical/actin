@@ -30,6 +30,7 @@ public class HasSufficientLymphocytes implements LabEvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
+
         if (measuredUnit == null) {
             LOGGER.warn("Could not determine lab unit for '{}'", labValue);
             return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
@@ -54,6 +55,7 @@ public class HasSufficientLymphocytes implements LabEvaluationFunction {
         } else if (result.isPass()) {
             builder.addPassMessages(labValue.code() + " is sufficient");
         }
+
         return builder.build();
     }
 
