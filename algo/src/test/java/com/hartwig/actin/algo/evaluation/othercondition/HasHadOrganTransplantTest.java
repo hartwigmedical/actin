@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -17,15 +17,12 @@ public class HasHadOrganTransplantTest {
         HasHadOrganTransplant function = new HasHadOrganTransplant();
 
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
 
-        priorOtherConditions.add(OtherConditionTestUtil.builder().build());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        priorOtherConditions.add(OtherConditionTestFactory.builder().build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
 
-        priorOtherConditions.add(OtherConditionTestUtil.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY).build());
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        priorOtherConditions.add(OtherConditionTestFactory.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
     }
 }

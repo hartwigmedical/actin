@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.surgery;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,13 +27,13 @@ public class HasHadRecentSurgeryTest {
         HasHadRecentSurgery function = new HasHadRecentSurgery(REFERENCE_DATE.minusWeeks(4));
 
         List<Surgery> surgeries = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)));
 
         surgeries.add(ImmutableSurgery.builder().endDate(REFERENCE_DATE.minusWeeks(8)).build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgeries(surgeries)));
 
         surgeries.add(ImmutableSurgery.builder().endDate(REFERENCE_DATE.minusWeeks(2)).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withSurgeries(surgeries)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withSurgeries(surgeries)));
     }
 
     @NotNull

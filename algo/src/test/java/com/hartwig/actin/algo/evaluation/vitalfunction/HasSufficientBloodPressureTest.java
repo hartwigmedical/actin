@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,26 +30,26 @@ public class HasSufficientBloodPressureTest {
         HasSufficientBloodPressure function = new HasSufficientBloodPressure(category, 100);
         List<VitalFunction> vitalFunctions = Lists.newArrayList();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withVitalFunctions(vitalFunctions)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withVitalFunctions(vitalFunctions)));
 
         vitalFunctions.add(builder().date(REFERENCE_DATE).subcategory(category.display()).value(110).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withVitalFunctions(vitalFunctions)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withVitalFunctions(vitalFunctions)));
 
         // Fail when the average falls below 100
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(1)).subcategory(category.display()).value(70).build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withVitalFunctions(vitalFunctions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withVitalFunctions(vitalFunctions)));
 
         // Succeed again when the average goes above 100
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(2)).subcategory(category.display()).value(110).build());
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(3)).subcategory(category.display()).value(110).build());
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(4)).subcategory(category.display()).value(110).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withVitalFunctions(vitalFunctions)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withVitalFunctions(vitalFunctions)));
 
         // Still succeed since we only take X most recent measures.
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(5)).subcategory(category.display()).value(20).build());
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(6)).subcategory(category.display()).value(20).build());
         vitalFunctions.add(builder().date(REFERENCE_DATE.minusDays(7)).subcategory(category.display()).value(20).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withVitalFunctions(vitalFunctions)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withVitalFunctions(vitalFunctions)));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class HasSufficientBloodPressureTest {
         List<VitalFunction> bloodPressures = Lists.newArrayList();
 
         bloodPressures.add(builder().date(REFERENCE_DATE).subcategory(BloodPressureCategory.DIASTOLIC.display()).value(110).build());
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withVitalFunctions(bloodPressures)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withVitalFunctions(bloodPressures)));
     }
 
     @NotNull
@@ -74,7 +74,9 @@ public class HasSufficientBloodPressureTest {
 
     @NotNull
     private static ImmutableVitalFunction.Builder builder() {
-        return ImmutableVitalFunction.builder().date(LocalDate.of(2017, 7, 7)).category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
+        return ImmutableVitalFunction.builder()
+                .date(LocalDate.of(2017, 7, 7))
+                .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
                 .subcategory(Strings.EMPTY)
                 .value(0D)
                 .unit(Strings.EMPTY);

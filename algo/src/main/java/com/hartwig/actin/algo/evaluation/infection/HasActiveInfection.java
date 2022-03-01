@@ -33,6 +33,7 @@ public class HasActiveInfection implements EvaluationFunction {
         } else if (result == EvaluationResult.PASS) {
             builder.addPassMessages("Patient has active infection: " + infection.description());
         }
+
         return builder.build();
     }
 }

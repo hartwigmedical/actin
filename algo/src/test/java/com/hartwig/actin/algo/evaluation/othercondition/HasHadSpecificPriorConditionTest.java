@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -22,26 +22,22 @@ public class HasHadSpecificPriorConditionTest {
 
         // Test empty doid
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with no DOIDs
-        priorOtherConditions.add(OtherConditionTestUtil.builder().build());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        priorOtherConditions.add(OtherConditionTestFactory.builder().build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with not the correct DOID
-        priorOtherConditions.add(OtherConditionTestUtil.builder().addDoids("not the correct doid").build());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        priorOtherConditions.add(OtherConditionTestFactory.builder().addDoids("not the correct doid").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with child DOID
-        priorOtherConditions.add(OtherConditionTestUtil.builder().addDoids("child", "some other doid").build());
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(OtherConditionTestUtil.withPriorOtherConditions(priorOtherConditions)).result());
+        priorOtherConditions.add(OtherConditionTestFactory.builder().addDoids("child", "some other doid").build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
 
         // Also pass on the exact DOID
-        PriorOtherCondition exact = OtherConditionTestUtil.builder().addDoids(doidToFind).build();
-        assertEquals(EvaluationResult.PASS, function.evaluate(OtherConditionTestUtil.withPriorOtherCondition(exact)).result());
+        PriorOtherCondition exact = OtherConditionTestFactory.builder().addDoids(doidToFind).build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(exact)));
     }
 }

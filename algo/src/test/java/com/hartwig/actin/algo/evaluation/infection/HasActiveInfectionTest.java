@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.infection;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
@@ -24,9 +24,9 @@ public class HasActiveInfectionTest {
     public void canEvaluate() {
         HasActiveInfection function = new HasActiveInfection();
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)));
     }
 
     @NotNull

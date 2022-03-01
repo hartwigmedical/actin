@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -25,16 +25,16 @@ public class CurrentlyGetsMedicationWithCategoryTest {
         CurrentlyGetsMedicationWithCategory function = new CurrentlyGetsMedicationWithCategory(null, false);
 
         List<Medication> medications = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withMedications(medications)));
 
         medications.add(builder().build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withMedications(medications)));
 
         medications.add(builder().active(false).build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withMedications(medications)));
 
         medications.add(builder().active(true).build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withMedications(medications)));
     }
 
     @Test
@@ -43,10 +43,10 @@ public class CurrentlyGetsMedicationWithCategoryTest {
         List<Medication> medications = Lists.newArrayList();
 
         medications.add(builder().active(true).addCategories("category 2").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withMedications(medications)));
 
         medications.add(builder().active(true).addCategories("category 1").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withMedications(medications)));
     }
 
     @Test
@@ -65,14 +65,14 @@ public class CurrentlyGetsMedicationWithCategoryTest {
                 .build();
 
         medications.add(randomDosing);
-        assertEquals(EvaluationResult.PASS, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withMedications(medications)));
 
         medications.add(builder().from(randomDosing).frequencyUnit("some other unit").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withMedications(medications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withMedications(medications)));
 
         // Also fail in case a dosing is combined with medication without dosing.
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(withMedications(Lists.newArrayList(randomDosing, builder().active(true).build()))).result());
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(withMedications(Lists.newArrayList(randomDosing, builder().active(true).build()))));
     }
 
     @NotNull

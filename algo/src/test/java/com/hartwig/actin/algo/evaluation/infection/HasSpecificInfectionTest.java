@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.infection;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -30,23 +30,23 @@ public class HasSpecificInfectionTest {
 
         // Test empty doid
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with no DOIDs
         priorOtherConditions.add(builder().build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with not the correct DOID
         priorOtherConditions.add(builder().addDoids("not the correct doid").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Add a condition with child DOID
         priorOtherConditions.add(builder().addDoids("child", "some other doid").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withPriorOtherConditions(priorOtherConditions)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorOtherConditions(priorOtherConditions)));
 
         // Also pass on the exact DOID
         PriorOtherCondition exact = builder().addDoids(doidToFind).build();
-        assertEquals(EvaluationResult.PASS, function.evaluate(withPriorOtherCondition(exact)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorOtherCondition(exact)));
     }
 
     @NotNull

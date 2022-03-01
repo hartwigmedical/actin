@@ -18,6 +18,7 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         ECG ecg = record.clinical().clinicalStatus().ecg();
+
         if (ecg == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.FAIL)
@@ -32,6 +33,7 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
         } else if (result == EvaluationResult.PASS) {
             builder.addPassMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
         }
+
         return builder.build();
     }
 }

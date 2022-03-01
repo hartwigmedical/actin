@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
@@ -21,14 +21,14 @@ public class HasSufficientLVEFTest {
         HasSufficientLVEF function = new HasSufficientLVEF(0.71, false);
 
         // No LVEF known
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)));
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)));
 
         HasSufficientLVEF functionWithPass = new HasSufficientLVEF(0.71, true);
-        assertEquals(EvaluationResult.PASS, functionWithPass.evaluate(withLVEF(null)).result());
+        assertEvaluation(EvaluationResult.PASS, functionWithPass.evaluate(withLVEF(null)));
     }
 
     @NotNull

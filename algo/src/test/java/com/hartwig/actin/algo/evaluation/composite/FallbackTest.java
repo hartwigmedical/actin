@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.composite;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -14,10 +14,10 @@ public class FallbackTest {
     public void canEvaluate() {
         Fallback pass = new Fallback(x -> TestEvaluationFactory.withResult(EvaluationResult.PASS),
                 x -> TestEvaluationFactory.withResult(EvaluationResult.FAIL));
-        assertEquals(EvaluationResult.PASS, pass.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
+        assertEvaluation(EvaluationResult.PASS, pass.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         Fallback fallback = new Fallback(x -> TestEvaluationFactory.withResult(EvaluationResult.UNDETERMINED),
                 x -> TestEvaluationFactory.withResult(EvaluationResult.FAIL));
-        assertEquals(EvaluationResult.FAIL, fallback.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
+        assertEvaluation(EvaluationResult.FAIL, fallback.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

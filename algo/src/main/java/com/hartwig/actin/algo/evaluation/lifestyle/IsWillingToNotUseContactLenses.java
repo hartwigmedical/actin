@@ -16,7 +16,8 @@ public class IsWillingToNotUseContactLenses implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.PASS_BUT_WARN)
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.PASS_BUT_WARN)
                 .addPassMessages("Currently assumed that patient is willing/able not to use contact lenses")
                 .build();
     }

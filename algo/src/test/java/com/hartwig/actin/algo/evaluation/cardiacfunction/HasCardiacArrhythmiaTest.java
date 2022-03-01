@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
@@ -21,10 +21,10 @@ public class HasCardiacArrhythmiaTest {
     public void canEvaluate() {
         HasCardiacArrhythmia function = new HasCardiacArrhythmia();
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEquals(EvaluationResult.PASS, function.evaluate(withHasSignificantECGAberration(true)).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withHasSignificantECGAberration(false)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withHasSignificantECGAberration(true)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withHasSignificantECGAberration(false)));
     }
 
     @NotNull

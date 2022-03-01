@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,25 +28,25 @@ public class HasHadRecentBloodTransfusionTest {
                 new HasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE, REFERENCE_DATE.minusWeeks(4));
 
         List<BloodTransfusion> transfusions = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)));
 
         transfusions.add(ImmutableBloodTransfusion.builder()
                 .product(TransfusionProduct.THROMBOCYTE.display())
                 .date(REFERENCE_DATE.minusWeeks(8))
                 .build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)));
 
         transfusions.add(ImmutableBloodTransfusion.builder()
                 .product(TransfusionProduct.ERYTHROCYTE.display())
                 .date(REFERENCE_DATE.minusWeeks(2))
                 .build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withBloodTransfusions(transfusions)));
 
         transfusions.add(ImmutableBloodTransfusion.builder()
                 .product(TransfusionProduct.THROMBOCYTE.display())
                 .date(REFERENCE_DATE.minusWeeks(2))
                 .build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withBloodTransfusions(transfusions)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withBloodTransfusions(transfusions)));
     }
 
     @NotNull
