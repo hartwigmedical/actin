@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
@@ -24,13 +24,13 @@ public class HasSpecificComplicationTest {
         HasSpecificComplication function = new HasSpecificComplication("name to find");
 
         List<CancerRelatedComplication> complications = Lists.newArrayList();
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
 
         complications.add(ImmutableCancerRelatedComplication.builder().name("just a name").build());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)).result());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
 
         complications.add(ImmutableCancerRelatedComplication.builder().name("this includes name to find").build());
-        assertEquals(EvaluationResult.PASS, function.evaluate(withCancerRelatedComplications(complications)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withCancerRelatedComplications(complications)));
     }
 
     @NotNull
@@ -43,5 +43,4 @@ public class HasSpecificComplicationTest {
                         .build())
                 .build();
     }
-
 }

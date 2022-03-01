@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,7 @@ public class HasSpecificComplication implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addPassMessages("Patient does not have complication " + termToFind)
+                .addFailMessages("Patient does not have complication " + termToFind)
                 .build();
     }
 }
