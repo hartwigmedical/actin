@@ -36,11 +36,13 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.GRAM_PER_DECILITER));
         map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MILLIMOL_PER_LITER));
+
         map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO));
         map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
         map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X,
                 hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME));
-        map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, hasLimitedPTTCreator());
+
         map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientAlbuminCreator());
         map.put(EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN));
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
@@ -49,14 +51,15 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
-        map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+
+        map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X, hasLimitedCreatinineCreator());
         map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.CREATININE));
         map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CKD_EPI));
         map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD));
         map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
+
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));
         map.put(EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TROPONIN_IT));
         map.put(EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE));
@@ -133,6 +136,11 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator hasLimitedPTTCreator() {
+        return function -> new HasLimitedPTT();
+    }
+
+    @NotNull
     private static FunctionCreator hasSufficientAlbuminCreator() {
         return function -> {
             double minAlbuminGPerDL = FunctionInputResolver.createOneDoubleInput(function);
@@ -145,6 +153,14 @@ public final class LaboratoryRuleMapping {
         return function -> {
             double maxULN = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(measurement, new HasLimitedLabValueULN(maxULN), MIN_VALID_LAB_DATE);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedCreatinineCreator() {
+        return function -> {
+            double maxCreatinine = FunctionInputResolver.createOneDoubleInput(function);
+            return new LabMeasurementEvaluator(LabMeasurement.CREATININE, new HasLimitedCreatinine(maxCreatinine), MIN_VALID_LAB_DATE);
         };
     }
 

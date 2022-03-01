@@ -33,7 +33,8 @@ public class HasSufficientLymphocytes implements LabEvaluationFunction {
 
         if (measuredUnit == null) {
             LOGGER.warn("Could not determine lab unit for '{}'", labValue);
-            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Could not determine lymphocyte lab unit for '" + labValue.code() + "'")
                     .build();
         }
@@ -41,7 +42,8 @@ public class HasSufficientLymphocytes implements LabEvaluationFunction {
         Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
         if (value == null) {
             LOGGER.warn("Could not convert lymphocyte value from '{}' to '{}'", measuredUnit, targetUnit);
-            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Could not convert lymphocyte value from '" + measuredUnit + "' to '" + targetUnit + "'")
                     .build();
         }

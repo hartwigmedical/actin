@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 enum LabUnit {
     GRAM_PER_LITER("g/L"),
     GRAM_PER_DECILITER("g/dL"),
+    MICROMOL_PER_LITER("umol/L"),
     MILLIMOL_PER_LITER("mmol/L"),
     MILLIGRAM_PER_DECILITER("mg/dL"),
     CELLS_PER_MICROLITER("cells/mm3"),

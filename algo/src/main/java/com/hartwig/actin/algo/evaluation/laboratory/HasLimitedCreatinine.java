@@ -10,14 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientAlbumin implements LabEvaluationFunction {
+public class HasLimitedCreatinine implements LabEvaluationFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(HasSufficientAlbumin.class);
+    private static final Logger LOGGER = LogManager.getLogger(HasLimitedCreatinine.class);
 
-    private final double minAlbuminGPerDL;
+    private final double maxCreatinineMgPerDL;
 
-    HasSufficientAlbumin(final double minAlbuminGPerDL) {
-        this.minAlbuminGPerDL = minAlbuminGPerDL;
+    HasLimitedCreatinine(final double maxCreatinineMgPerDL) {
+        this.maxCreatinineMgPerDL = maxCreatinineMgPerDL;
     }
 
     @NotNull
@@ -26,19 +26,19 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
         double convertedValue;
 
         LabUnit labUnit = LabUnit.fromString(labValue.unit());
-        if (labUnit == LabUnit.GRAM_PER_DECILITER) {
+        if (labUnit == LabUnit.MILLIGRAM_PER_DECILITER) {
             convertedValue = labValue.value();
-        } else if (labUnit == LabUnit.GRAM_PER_LITER) {
-            convertedValue = labValue.value() / 10;
+        } else if (labUnit == LabUnit.MICROMOL_PER_LITER) {
+            convertedValue = labValue.value() / 88.42;
         } else {
-            LOGGER.warn("Could not resolve albumin unit: '{}'", labValue.unit());
+            LOGGER.warn("Could not resolve creatinine unit: '{}'", labValue.unit());
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not determine albumin unit '" + labValue.unit() + "'")
+                    .addUndeterminedMessages("Could not determine creatinine unit '" + labValue.unit() + "'")
                     .build();
         }
 
-        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(convertedValue, labValue.comparator(), minAlbuminGPerDL);
+        EvaluationResult result = LaboratoryUtil.evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxCreatinineMgPerDL);
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages(labValue.code() + " is insufficient");
