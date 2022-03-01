@@ -420,7 +420,7 @@ Rule | When does a patient pass evaluation? | Note
 HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
 HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Resolves to undetermined in case of presence of any allergies with category = medication (T.B.D.)
 HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
-HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | T.B.D. 
+HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | Resolves to undetermined in case of previous treatment with categories like immunotherapy
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. | Multiple names can be specified within 1 rule, separated by ";"

@@ -36,9 +36,8 @@ public final class InfectionRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_HTLV_INFECTION, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(doidModel, CYTOMEGALOVIRUS_DOID));
         map.put(EligibilityRule.HAS_KNOWN_TUBERCOLOSIS_INFECTION, hasSpecificInfectionCreator(doidModel, TUBERCOLOSIS_DOID));
-        map.put(EligibilityRule.HAS_CURRENT_COVID_19_INFECTION,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToVaccineUseCreator());
+        map.put(EligibilityRule.HAS_CURRENT_COVID_19_INFECTION, hasCovid19InfectionCreator());
+        map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToAttenuatedVaccineUseCreator());
 
         return map;
     }
@@ -54,7 +53,12 @@ public final class InfectionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator canAdhereToVaccineUseCreator() {
-        return function -> new CanAdhereToVaccineUse();
+    private static FunctionCreator hasCovid19InfectionCreator() {
+        return function -> new HasCovid19Infection();
+    }
+
+    @NotNull
+    private static FunctionCreator canAdhereToAttenuatedVaccineUseCreator() {
+        return function -> new CanAdhereToAttenuatedVaccineUse();
     }
 }
