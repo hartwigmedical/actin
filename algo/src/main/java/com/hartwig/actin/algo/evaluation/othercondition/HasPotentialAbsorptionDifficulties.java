@@ -19,7 +19,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Potential malabsorption currently cannot be determined")
+                .addUndeterminedMessages("Potential malabsorption difficulties currently cannot be determined")
                 .build();
     }
 }

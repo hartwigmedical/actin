@@ -18,7 +18,7 @@ public class HasDeclinedSOCTreatments implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Anything related to SOC can not be determined yet")
+                .addUndeterminedMessages("Anything related to declination of SOC treatment can not be determined yet")
                 .build();
     }
 }
