@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,10 +28,10 @@ public class LabMeasurementEvaluatorTest {
                 (x, y) -> TestEvaluationFactory.withResult(EvaluationResult.PASS),
                 ALWAYS_VALID_DATE);
 
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         LabValue labValue = LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build();
-        assertEquals(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)));
     }
 
     @Test
@@ -41,10 +41,10 @@ public class LabMeasurementEvaluatorTest {
                 new LabMeasurementEvaluator(measurement, (x, y) -> TestEvaluationFactory.withResult(EvaluationResult.PASS), TEST_DATE);
 
         LabValue wrongUnit = LabTestFactory.builder().code(measurement.code()).date(TEST_DATE).build();
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)));
 
         LabValue oldDate = LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build();
-        assertEquals(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)));
     }
 
     @Test
@@ -58,15 +58,15 @@ public class LabMeasurementEvaluatorTest {
 
         LabMeasurementEvaluator functionPass =
                 new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(EvaluationResult.PASS), ALWAYS_VALID_DATE);
-        assertEquals(EvaluationResult.UNDETERMINED, functionPass.evaluate(record).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionPass.evaluate(record));
 
         LabMeasurementEvaluator functionFail =
                 new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(EvaluationResult.FAIL), ALWAYS_VALID_DATE);
-        assertEquals(EvaluationResult.FAIL, functionFail.evaluate(record).result());
+        assertEvaluation(EvaluationResult.FAIL, functionFail.evaluate(record));
 
         LabMeasurementEvaluator functionUndetermined =
                 new LabMeasurementEvaluator(measurement, firstFailAndRestWithParam(EvaluationResult.UNDETERMINED), ALWAYS_VALID_DATE);
-        assertEquals(EvaluationResult.FAIL, functionUndetermined.evaluate(record).result());
+        assertEvaluation(EvaluationResult.FAIL, functionUndetermined.evaluate(record));
     }
 
     @NotNull

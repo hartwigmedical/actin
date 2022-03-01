@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -19,9 +19,11 @@ public class HasSufficientAlbuminTest {
 
         ImmutableLabValue.Builder albumin = LabTestFactory.forMeasurement(LabMeasurement.ALBUMIN);
 
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, albumin.value(20D).unit(LabUnit.G_PER_L.display()).build()).result());
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(record, albumin.value(20D).unit(LabUnit.G_PER_DL.display()).build()).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, albumin.value(40D).unit(LabUnit.G_PER_L.display()).build()).result());
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(record, albumin.value(20D).unit(LabUnit.GRAM_PER_LITER.display()).build()));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(record, albumin.value(20D).unit(LabUnit.GRAM_PER_DECILITER.display()).build()));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(record, albumin.value(40D).unit(LabUnit.GRAM_PER_LITER.display()).build()));
     }
 }

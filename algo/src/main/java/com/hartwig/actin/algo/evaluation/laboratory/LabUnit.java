@@ -1,19 +1,27 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 enum LabUnit {
-    G_PER_L("g/L"),
-    G_PER_DL("g/dL"),
-    MMOL_PER_L("mmol/L"),
-    MG_PER_DL("mg/dL");
+    GRAM_PER_LITER("g/L"),
+    GRAM_PER_DECILITER("g/dL"),
+    MILLIMOL_PER_LITER("mmol/L"),
+    MILLIGRAM_PER_DECILITER("mg/dL"),
+    CELLS_PER_MICROLITER("cells/mm3"),
+    BILLION_PER_LITER("10^9/L", "10*9/L");
 
     @Nullable
     public static LabUnit fromString(@NotNull String displayToMatch) {
         for (LabUnit labUnit : LabUnit.values()) {
-            if (labUnit.display().equals(displayToMatch)) {
-                return labUnit;
+            for (String display : labUnit.displays) {
+                if (display.equals(displayToMatch)) {
+                    return labUnit;
+                }
             }
         }
 
@@ -21,14 +29,14 @@ enum LabUnit {
     }
 
     @NotNull
-    private final String display;
+    private final List<String> displays;
 
-    LabUnit(@NotNull final String display) {
-        this.display = display;
+    LabUnit(@NotNull final String... displays) {
+        this.displays = Lists.newArrayList(displays);
     }
 
     @NotNull
     public String display() {
-        return display;
+        return displays.get(0);
     }
 }

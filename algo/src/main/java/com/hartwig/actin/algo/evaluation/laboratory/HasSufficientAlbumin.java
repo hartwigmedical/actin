@@ -24,9 +24,11 @@ public class HasSufficientAlbumin implements LabEvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         double convertedValue;
-        if (labValue.unit().equals(LabUnit.G_PER_DL.display())) {
+
+        LabUnit labUnit = LabUnit.fromString(labValue.unit());
+        if (labUnit == LabUnit.GRAM_PER_DECILITER) {
             convertedValue = labValue.value();
-        } else if (labValue.unit().equals(LabUnit.G_PER_L.display())) {
+        } else if (labUnit == LabUnit.GRAM_PER_LITER) {
             convertedValue = labValue.value() / 10;
         } else {
             LOGGER.warn("Could not resolve albumin unit: '{}'", labValue.unit());

@@ -11,18 +11,18 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasSufficientHemoglobin implements LabEvaluationFunction {
+public class HasSufficientLymphocytes implements LabEvaluationFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(HasSufficientHemoglobin.class);
+    private static final Logger LOGGER = LogManager.getLogger(HasSufficientLymphocytes.class);
 
-    private static final double G_PER_DL_TO_MMOL_PER_L_CONVERSION_FACTOR = 0.6206;
+    private static final double CONVERSION_FACTOR = 1000;
 
-    private final double minHemoglobin;
+    private final double minLymphocytes;
     @NotNull
     private final LabUnit targetUnit;
 
-    public HasSufficientHemoglobin(final double minHemoglobin, @NotNull final LabUnit targetUnit) {
-        this.minHemoglobin = minHemoglobin;
+    HasSufficientLymphocytes(final double minLymphocytes, @NotNull final LabUnit targetUnit) {
+        this.minLymphocytes = minLymphocytes;
         this.targetUnit = targetUnit;
     }
 
@@ -32,22 +32,20 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
         LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
         if (measuredUnit == null) {
             LOGGER.warn("Could not determine lab unit for '{}'", labValue);
-            return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not determine hemoglobin lab unit for '" + labValue.code() + "'")
+            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Could not determine lymphocyte lab unit for '" + labValue.code() + "'")
                     .build();
         }
 
         Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
         if (value == null) {
-            LOGGER.warn("Could not convert hemoglobin value from '{}' to '{}'", measuredUnit, targetUnit);
-            return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not convert hemoglobin value from '" + measuredUnit + "' to '" + targetUnit + "'")
+            LOGGER.warn("Could not convert lymphocyte value from '{}' to '{}'", measuredUnit, targetUnit);
+            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Could not convert lymphocyte value from '" + measuredUnit + "' to '" + targetUnit + "'")
                     .build();
         }
 
-        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);
+        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minLymphocytes);
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages(labValue.code() + " is insufficient");
@@ -63,10 +61,10 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
     private static Double convertValue(double value, @NotNull LabUnit measuredUnit, @NotNull LabUnit targetUnit) {
         if (measuredUnit == targetUnit) {
             return value;
-        } else if (measuredUnit == LabUnit.GRAM_PER_DECILITER && targetUnit == LabUnit.MILLIMOL_PER_LITER) {
-            return value * G_PER_DL_TO_MMOL_PER_L_CONVERSION_FACTOR;
-        } else if (measuredUnit == LabUnit.MILLIMOL_PER_LITER && targetUnit == LabUnit.GRAM_PER_DECILITER) {
-            return value / G_PER_DL_TO_MMOL_PER_L_CONVERSION_FACTOR;
+        } else if (measuredUnit == LabUnit.BILLION_PER_LITER && targetUnit == LabUnit.CELLS_PER_MICROLITER) {
+            return value * CONVERSION_FACTOR;
+        } else if (measuredUnit == LabUnit.CELLS_PER_MICROLITER && targetUnit == LabUnit.BILLION_PER_LITER) {
+            return value / CONVERSION_FACTOR;
         } else {
             return null;
         }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -15,9 +15,7 @@ public class HasSufficientLabValueLLNTest {
         HasSufficientLabValueLLN function = new HasSufficientLabValueLLN(2);
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
 
-        assertEquals(EvaluationResult.PASS,
-                function.evaluate(record, LabTestFactory.builder().value(80D).refLimitLow(35D).build()).result());
-        assertEquals(EvaluationResult.FAIL,
-                function.evaluate(record, LabTestFactory.builder().value(100D).refLimitLow(75D).build()).result());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().value(80D).refLimitLow(35D).build()));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().value(100D).refLimitLow(75D).build()));
     }
 }

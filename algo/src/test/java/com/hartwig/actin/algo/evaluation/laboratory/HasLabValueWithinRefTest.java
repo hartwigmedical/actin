@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -15,9 +15,8 @@ public class HasLabValueWithinRefTest {
         HasLabValueWithinRef function = new HasLabValueWithinRef();
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
 
-        assertEquals(EvaluationResult.UNDETERMINED,
-                function.evaluate(record, LabTestFactory.builder().isOutsideRef(null).build()).result());
-        assertEquals(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().isOutsideRef(false).build()).result());
-        assertEquals(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().isOutsideRef(true).build()).result());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record, LabTestFactory.builder().isOutsideRef(null).build()));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().isOutsideRef(false).build()));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().isOutsideRef(true).build()));
     }
 }
