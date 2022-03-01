@@ -20,7 +20,7 @@ public class IsPregnant implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         if (record.clinical().patient().gender() == Gender.MALE)
             return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.PASS)
+                    .result(EvaluationResult.FAIL)
                     .addPassMessages("Patient is male, hence won't be pregnant")
                     .build();
         else

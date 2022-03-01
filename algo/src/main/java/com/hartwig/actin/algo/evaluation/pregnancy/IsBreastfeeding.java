@@ -20,7 +20,7 @@ public class IsBreastfeeding implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         if (record.clinical().patient().gender() == Gender.MALE)
             return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.PASS)
+                    .result(EvaluationResult.FAIL)
                     .addPassMessages("Patient is male thus won't be breastfeeding")
                     .build();
         else
