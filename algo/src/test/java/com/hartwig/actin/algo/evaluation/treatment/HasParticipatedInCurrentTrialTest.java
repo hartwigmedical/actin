@@ -14,6 +14,6 @@ public class HasParticipatedInCurrentTrialTest {
     public void canEvaluate() {
         HasParticipatedInCurrentTrial function = new HasParticipatedInCurrentTrial();
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

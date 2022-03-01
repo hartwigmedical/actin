@@ -16,8 +16,8 @@ public class HasParticipatedInCurrentTrial implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Current trial participation is currently not determined.")
+        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Currently it is assumed that patient has not participated to current trial before")
                 .build();
     }
 }

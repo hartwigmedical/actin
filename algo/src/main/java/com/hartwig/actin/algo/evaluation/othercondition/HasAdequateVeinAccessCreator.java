@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 
@@ -17,6 +18,9 @@ public class HasAdequateVeinAccessCreator implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         // Currently cannot be determined
-        return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Currently adequate vein access cannot be determined")
+                .build();
     }
 }

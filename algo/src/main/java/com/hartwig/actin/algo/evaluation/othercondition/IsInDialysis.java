@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 
@@ -16,6 +17,10 @@ public class IsInDialysis implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.create(EvaluationResult.NOT_EVALUATED);
+
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.NOT_EVALUATED)
+                .addPassMessages("Currently assumed that patient won't be in dialysis")
+                .build();
     }
 }
