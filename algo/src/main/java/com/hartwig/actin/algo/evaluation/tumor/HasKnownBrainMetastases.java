@@ -21,7 +21,7 @@ public class HasKnownBrainMetastases implements EvaluationFunction {
         if (hasKnownBrainMetastases == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.FAIL)
-                    .addFailMessages("Data regarding presence of brain metastases is missing")
+                    .addFailMessages("Data regarding presence of brain metastases is missing, assuming there are none")
                     .build();
         }
 
