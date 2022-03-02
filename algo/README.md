@@ -213,9 +213,10 @@ HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
-HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN
-HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X | Total Bilirubin (TBIL) in umol/L <= X
-HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
+HAS_TOTAL_BILIRUBIN_ULN_ OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN
+HAS_TOTAL_BILIRUBIN_UMOL_ PER_L_OF_AT_MOST_X | Total Bilirubin (TBIL) in umol/L <= X
+HAS_DIRECT_BILIRUBIN_ULN_ OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
+HAS_DIRECT_BILIRUBIN_PERCENTAGE_ OF_TOTAL_OF_AT_MOST_X | Direct Bilirubin (DBIL) / Total Bilirubin (TBIL) * 100 <= X
 
 _Kidney function_
 
