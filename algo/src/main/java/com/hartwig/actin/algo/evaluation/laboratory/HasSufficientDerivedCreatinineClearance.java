@@ -129,7 +129,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
         double genderCorrected = isFemale ? base * 0.85 : base;
 
-        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
+        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(genderCorrected, creatinine.comparator(), minCreatinineClearance);
 
         if (!weightIsKnown) {
             if (result == EvaluationResult.FAIL) {
@@ -160,7 +160,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
         Set<EvaluationResult> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LaboratoryUtil.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
+            evaluations.add(LabEvaluation.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
         }
 
         EvaluationResult result;

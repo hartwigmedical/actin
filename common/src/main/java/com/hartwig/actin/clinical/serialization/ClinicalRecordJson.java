@@ -64,6 +64,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -350,7 +351,7 @@ public final class ClinicalRecordJson {
                         .name(string(object, "name"))
                         .comparator(string(object, "comparator"))
                         .value(number(object, "value"))
-                        .unit(string(object, "unit"))
+                        .unit(LabUnit.valueOf(string(object, "unit")))
                         .refLimitLow(nullableNumber(object, "refLimitLow"))
                         .refLimitUp(nullableNumber(object, "refLimitUp"))
                         .isOutsideRef(nullableBool(object, "isOutsideRef"))

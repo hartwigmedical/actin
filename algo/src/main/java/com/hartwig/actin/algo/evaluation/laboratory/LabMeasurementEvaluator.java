@@ -21,6 +21,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     private final LabMeasurement measurement;
     @NotNull
     private final LabEvaluationFunction function;
+
     @NotNull
     private final LocalDate minValidDate;
 
@@ -39,7 +40,8 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("No valid measurement found for " + measurement.code())
                     .build();
         }
@@ -51,7 +53,8 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             if (isValid(secondMostRecent, measurement)) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
-                    return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED)
+                    return ImmutableEvaluation.builder()
+                            .result(EvaluationResult.UNDETERMINED)
                             .addUndeterminedMessages("First measurement fails for " + measurement.code() + " while second succeeds")
                             .build();
                 }
@@ -62,6 +65,6 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     }
 
     private boolean isValid(@Nullable LabValue value, @NotNull LabMeasurement measurement) {
-        return value != null && value.unit().equals(measurement.expectedUnit()) && !value.date().isBefore(minValidDate);
+        return value != null && value.unit().equals(measurement.defaultUnit()) && !value.date().isBefore(minValidDate);
     }
 }

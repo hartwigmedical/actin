@@ -1,54 +1,55 @@
 package com.hartwig.actin.clinical.interpretation;
 
-import org.apache.logging.log4j.util.Strings;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
+
 import org.jetbrains.annotations.NotNull;
 
 public enum LabMeasurement {
-    ALANINE_AMINOTRANSFERASE("ALAT", "U/l"),
-    ASPARTATE_AMINOTRANSFERASE("ASAT", "U/l"),
-    ALKALINE_PHOSPHATASE("ALP", "U/l"),
-    ALPHA_FETOPROTEIN("AFP", "ug/L"),
-    LACTATE_DEHYDROGENASE("LDH", "U/L"),
-    INTERNATIONAL_NORMALIZED_RATIO("INR", ""),
-    INTERNATIONAL_NORMALIZED_RATIO_POCT("POCT_INR","INR"),
-    ALBUMIN("ALB", "g/L"),
-    CA_125("C125", "kU/l"),
-    HCG_AND_BETA_HCG("HCG", "IU/L"),
-    CREATININE("CREA", "umol/l"),
-    CREATININE_CLEARANCE_CG("CGCRCL", Strings.EMPTY),
-    EGFR_CKD_EPI("CKD-EPIeGFR", "mL/min"),
-    EGFR_MDRD("MDRDeGFR", Strings.EMPTY),
-    LEUKOCYTES_ABS("LEUKO-ABS", "10^9/L"),
-    NEUTROPHILS_ABS("NEUTRO-ABS", "10^9/L"),
-    NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "10*9/L"),
-    HEMOGLOBIN("Hb", "mmol/L"),
-    THROMBOCYTES_ABS("THROMBO-ABS", "10*9/L"),
-    LYMPHOCYTES_ABS_EDA("LYMPHO-ABS-eDA", "10*9/L"),
-    LYMPHOCYTES_ABS_EDM("LYMPHO-ABS-eDM", "10*9/L"),
-    PROTHROMBIN_TIME("PT", "sec"),
-    PROTHROMBIN_TIME_POCT("POCT_PT","sec"),
-    ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", "sec"),
-    DIRECT_BILIRUBIN("DBIL", "umol/l"),
-    TOTAL_BILIRUBIN("TBIL", "umol/l"),
-    CALCIUM("Ca", "mmol/l"),
-    IONIZED_CALCIUM("B_ICA", "mmol/l"),
-    CORRECTED_CALCIUM("Ca_C", "mmol/L"),
-    NT_PRO_BNP("BNP", "pmol/l"),
-    TROPONIN_IT("HSTNT", "ng/L"),
-    TRIGLYCERIDE("TG", "mmol/l"),
-    POTASSIUM("K", "mmol/l"),
-    MAGNESIUM("MG", "mmol/l"),
-    PHOSPHORUS("P", "mmol/l"),
-    TOTAL_PROTEIN_URINE("TE_U", "g/l");
+    ALANINE_AMINOTRANSFERASE("ALAT", LabUnit.UNITS_PER_LITER),
+    ASPARTATE_AMINOTRANSFERASE("ASAT", LabUnit.UNITS_PER_LITER),
+    ALKALINE_PHOSPHATASE("ALP", LabUnit.UNITS_PER_LITER),
+    ALPHA_FETOPROTEIN("AFP", LabUnit.MICROGRAMS_PER_LITER),
+    LACTATE_DEHYDROGENASE("LDH", LabUnit.UNITS_PER_LITER),
+    INTERNATIONAL_NORMALIZED_RATIO("INR", LabUnit.NONE),
+    INTERNATIONAL_NORMALIZED_RATIO_POCT("POCT_INR", LabUnit.UNITS_OF_INR),
+    ALBUMIN("ALB", LabUnit.GRAMS_PER_LITER),
+    CA_125("C125", LabUnit.KILOUNITS_PER_LITER),
+    HCG_AND_BETA_HCG("HCG", LabUnit.INTERNATIONAL_UNITS_PER_LITER),
+    CREATININE("CREA", LabUnit.MICROMOLES_PER_LITER),
+    CREATININE_CLEARANCE_CG("CGCRCL", LabUnit.NONE),
+    EGFR_CKD_EPI("CKD-EPIeGFR", LabUnit.MILLILITERS_PER_MINUTE),
+    EGFR_MDRD("MDRDeGFR", LabUnit.NONE),
+    LEUKOCYTES_ABS("LEUKO-ABS", LabUnit.BILLIONS_PER_LITER),
+    NEUTROPHILS_ABS("NEUTRO-ABS", LabUnit.BILLIONS_PER_LITER),
+    NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", LabUnit.BILLIONS_PER_LITER),
+    HEMOGLOBIN("Hb", LabUnit.MILLIMOLES_PER_LITER),
+    THROMBOCYTES_ABS("THROMBO-ABS", LabUnit.BILLIONS_PER_LITER),
+    LYMPHOCYTES_ABS_EDA("LYMPHO-ABS-eDA", LabUnit.BILLIONS_PER_LITER),
+    LYMPHOCYTES_ABS_EDM("LYMPHO-ABS-eDM", LabUnit.BILLIONS_PER_LITER),
+    PROTHROMBIN_TIME("PT", LabUnit.SECONDS),
+    PROTHROMBIN_TIME_POCT("POCT_PT", LabUnit.SECONDS),
+    ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", LabUnit.SECONDS),
+    DIRECT_BILIRUBIN("DBIL", LabUnit.MICROMOLES_PER_LITER),
+    TOTAL_BILIRUBIN("TBIL", LabUnit.MICROMOLES_PER_LITER),
+    CALCIUM("Ca", LabUnit.MILLIMOLES_PER_LITER),
+    IONIZED_CALCIUM("B_ICA", LabUnit.MILLIMOLES_PER_LITER),
+    CORRECTED_CALCIUM("Ca_C", LabUnit.MILLIMOLES_PER_LITER),
+    NT_PRO_BNP("BNP", LabUnit.PICOMOLES_PER_LITER),
+    TROPONIN_IT("HSTNT", LabUnit.NANOGRAMS_PER_LITER),
+    TRIGLYCERIDE("TG", LabUnit.MILLIMOLES_PER_LITER),
+    POTASSIUM("K", LabUnit.MILLIMOLES_PER_LITER),
+    MAGNESIUM("MG", LabUnit.MILLIMOLES_PER_LITER),
+    PHOSPHORUS("P", LabUnit.MILLIMOLES_PER_LITER),
+    TOTAL_PROTEIN_URINE("TE_U", LabUnit.GRAMS_PER_LITER);
 
     @NotNull
     private final String code;
     @NotNull
-    private final String expectedUnit;
+    private final LabUnit defaultUnit;
 
-    LabMeasurement(@NotNull final String code, @NotNull final String expectedUnit) {
+    LabMeasurement(@NotNull final String code, @NotNull final LabUnit defaultUnit) {
         this.code = code;
-        this.expectedUnit = expectedUnit;
+        this.defaultUnit = defaultUnit;
     }
 
     @NotNull
@@ -57,7 +58,7 @@ public enum LabMeasurement {
     }
 
     @NotNull
-    public String expectedUnit() {
-        return expectedUnit;
+    public LabUnit defaultUnit() {
+        return defaultUnit;
     }
 }

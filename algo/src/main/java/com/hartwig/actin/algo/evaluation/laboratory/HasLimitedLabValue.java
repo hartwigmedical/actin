@@ -7,38 +7,32 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientAlbumin implements LabEvaluationFunction {
+public class HasLimitedLabValue implements LabEvaluationFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(HasSufficientAlbumin.class);
+    private final double maxValue;
+    @NotNull
+    private final LabUnit targetUnit;
 
-    private final double minAlbuminGPerDL;
-
-    HasSufficientAlbumin(final double minAlbuminGPerDL) {
-        this.minAlbuminGPerDL = minAlbuminGPerDL;
+    public HasLimitedLabValue(final double maxValue, @NotNull final LabUnit targetUnit) {
+        this.maxValue = maxValue;
+        this.targetUnit = targetUnit;
     }
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        double convertedValue;
+    public Evaluation evaluate(@NotNull final PatientRecord record, @NotNull final LabValue labValue) {
+        Double convertedValue = LabUnitConverter.convert(labValue, targetUnit);
 
-        if (labValue.unit() == LabUnit.GRAMS_PER_DECILITER) {
-            convertedValue = labValue.value();
-        } else if (labValue.unit() == LabUnit.GRAMS_PER_LITER) {
-            convertedValue = labValue.value() / 10;
-        } else {
-            LOGGER.warn("Could not resolve albumin unit: '{}'", labValue.unit());
+        if (convertedValue == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not determine albumin unit '" + labValue.unit() + "'")
+                    .addUndeterminedMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
                     .build();
         }
 
-        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(convertedValue, labValue.comparator(), minAlbuminGPerDL);
+        EvaluationResult result = LabEvaluation.evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue);
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages(labValue.code() + " is insufficient");

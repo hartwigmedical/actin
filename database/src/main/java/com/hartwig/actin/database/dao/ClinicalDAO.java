@@ -313,7 +313,7 @@ class ClinicalDAO {
                             lab.name(),
                             lab.comparator(),
                             lab.value(),
-                            lab.unit(),
+                            lab.unit().display(),
                             lab.refLimitLow(),
                             lab.refLimitUp(),
                             DataUtil.toByte(lab.isOutsideRef()))

@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,26 +30,16 @@ public class HasSufficientLymphocytes implements LabEvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
-
-        if (measuredUnit == null) {
-            LOGGER.warn("Could not determine lab unit for '{}'", labValue);
-            return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not determine lymphocyte lab unit for '" + labValue.code() + "'")
-                    .build();
-        }
-
-        Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
+        Double value = convertValue(labValue.value(), labValue.unit(), targetUnit);
         if (value == null) {
-            LOGGER.warn("Could not convert lymphocyte value from '{}' to '{}'", measuredUnit, targetUnit);
+            LOGGER.warn("Could not convert lymphocyte value from '{}' to '{}'", labValue.unit(), targetUnit);
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not convert lymphocyte value from '" + measuredUnit + "' to '" + targetUnit + "'")
+                    .addUndeterminedMessages("Could not convert lymphocyte value from '" + labValue.unit() + "' to '" + targetUnit + "'")
                     .build();
         }
 
-        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minLymphocytes);
+        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(value, labValue.comparator(), minLymphocytes);
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages(labValue.code() + " is insufficient");
@@ -65,9 +56,9 @@ public class HasSufficientLymphocytes implements LabEvaluationFunction {
     private static Double convertValue(double value, @NotNull LabUnit measuredUnit, @NotNull LabUnit targetUnit) {
         if (measuredUnit == targetUnit) {
             return value;
-        } else if (measuredUnit == LabUnit.BILLION_PER_LITER && targetUnit == LabUnit.CELLS_PER_MICROLITER) {
+        } else if (measuredUnit == LabUnit.BILLIONS_PER_LITER && targetUnit == LabUnit.CELLS_PER_CUBIC_MILLIMETER) {
             return value * CONVERSION_FACTOR;
-        } else if (measuredUnit == LabUnit.CELLS_PER_MICROLITER && targetUnit == LabUnit.BILLION_PER_LITER) {
+        } else if (measuredUnit == LabUnit.CELLS_PER_CUBIC_MILLIMETER && targetUnit == LabUnit.BILLIONS_PER_LITER) {
             return value / CONVERSION_FACTOR;
         } else {
             return null;

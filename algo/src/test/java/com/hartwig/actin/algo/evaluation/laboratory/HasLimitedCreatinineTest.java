@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.junit.Test;
@@ -18,9 +19,9 @@ public class HasLimitedCreatinineTest {
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
 
         ImmutableLabValue.Builder creatinineMgPerDL =
-                LabTestFactory.forMeasurement(LabMeasurement.CREATININE).unit(LabUnit.MILLIGRAM_PER_DECILITER.display());
+                LabTestFactory.forMeasurement(LabMeasurement.CREATININE).unit(LabUnit.MILLIGRAMS_PER_DECILITER);
         ImmutableLabValue.Builder creatinineUMolPerL =
-                LabTestFactory.forMeasurement(LabMeasurement.CREATININE).unit(LabUnit.MICROMOL_PER_LITER.display());
+                LabTestFactory.forMeasurement(LabMeasurement.CREATININE).unit(LabUnit.MICROMOLES_PER_LITER);
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, creatinineMgPerDL.value(2).build()));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, creatinineMgPerDL.value(0.5).build()));

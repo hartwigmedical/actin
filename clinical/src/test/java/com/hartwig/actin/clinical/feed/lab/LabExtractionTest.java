@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
 
@@ -27,7 +28,7 @@ public class LabExtractionTest {
         assertEquals(LocalDate.of(2018, 5, 29), lab1.date());
         assertEquals(Strings.EMPTY, lab1.comparator());
         assertEquals(30, lab1.value(), EPSILON);
-        assertEquals("U/l", lab1.unit());
+        assertEquals(LabUnit.UNITS_PER_LITER, lab1.unit());
         assertEquals(20, lab1.refLimitLow(), EPSILON);
         assertEquals(40, lab1.refLimitUp(), EPSILON);
         assertFalse(lab1.isOutsideRef());
@@ -36,7 +37,7 @@ public class LabExtractionTest {
         assertEquals(LocalDate.of(2018, 5, 29), lab2.date());
         assertEquals(Strings.EMPTY, lab2.comparator());
         assertEquals(22, lab2.value(), EPSILON);
-        assertEquals("mmol/L", lab2.unit());
+        assertEquals(LabUnit.MILLIMOLES_PER_LITER, lab2.unit());
         assertEquals(30, lab2.refLimitLow(), EPSILON);
         assertNull(lab2.refLimitUp());
         assertTrue(lab2.isOutsideRef());
@@ -45,7 +46,7 @@ public class LabExtractionTest {
         assertEquals(LocalDate.of(2018, 5, 29), lab3.date());
         assertEquals(">", lab3.comparator());
         assertEquals(50, lab3.value(), EPSILON);
-        assertEquals("mL/min", lab3.unit());
+        assertEquals(LabUnit.MILLILITERS_PER_MINUTE, lab3.unit());
         assertEquals(50, lab3.refLimitLow(), EPSILON);
         assertNull(lab3.refLimitUp());
         assertFalse(lab3.isOutsideRef());

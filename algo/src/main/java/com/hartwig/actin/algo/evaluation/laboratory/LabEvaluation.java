@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
-final class LaboratoryUtil {
+final class LabEvaluation {
 
     @VisibleForTesting
     static final String LARGER_THAN = ">";
@@ -24,7 +24,7 @@ final class LaboratoryUtil {
         REF_LIMIT_UP_OVERRIDES.put(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code(), 1.1);
     }
 
-    private LaboratoryUtil() {
+    private LabEvaluation() {
     }
 
     @NotNull

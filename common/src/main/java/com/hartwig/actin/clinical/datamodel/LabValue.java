@@ -25,7 +25,7 @@ public abstract class LabValue {
     public abstract double value();
 
     @NotNull
-    public abstract String unit();
+    public abstract LabUnit unit();
 
     @Nullable
     public abstract Double refLimitLow();

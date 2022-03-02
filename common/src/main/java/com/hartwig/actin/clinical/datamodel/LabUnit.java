@@ -1,0 +1,54 @@
+package com.hartwig.actin.clinical.datamodel;
+
+import org.apache.logging.log4j.util.Strings;
+import org.jetbrains.annotations.NotNull;
+
+public enum LabUnit {
+    NANOGRAMS_PER_LITER("ng/L"),
+    NANOGRAMS_PER_MILLILITER("ng/mL"),
+    MICROGRAMS_PER_LITER("ug/L"),
+    MILLIGRAMS_PER_DECILITER("mg/dL"),
+    MILLIGRAMS_PER_LITER("mg/L"),
+    GRAMS_PER_DECILITER("g/dL"),
+    GRAMS_PER_LITER("g/L"),
+    KILOGRAMS_PER_LITER("kg/L"),
+    PICOMOLES_PER_LITER("pmol/L"),
+    NANOMOLES_PER_LITER("nmol/L"),
+    MICROMOLES_PER_LITER("umol/L"),
+    MILLIMOLES_PER_LITER("mmol/L"),
+    MILLIMOLES_PER_MOLE("mmol/mol"),
+    CELLS_PER_CUBIC_MILLIMETER("cells/mm3"),
+    MILLIONS_PER_LITER("10^6/L"),
+    BILLIONS_PER_LITER("10^9/L"),
+    TRILLIONS_PER_LITER("10^12/L"),
+    MILLIUNITS_PER_LITER("mU/L"),
+    UNITS_PER_LITER("U/L"),
+    UNITS_PER_MILLILITER("U/mL"),
+    KILOUNITS_PER_LITER("kU/L"),
+    INTERNATIONAL_UNITS_PER_LITER("IU/L"),
+    UNITS_OF_INR("INR"),
+    NANOMOLES_PER_DAY("nmol/24h"),
+    MILLIMOLES_PER_DAY("mmol/24h"),
+    MILLIMETERS_PER_HOUR("mm/hr"),
+    MILLILITERS_PER_MINUTE("mL/min"),
+    FEMTOLITERS("fL"),
+    MILLILITERS("mL"),
+    KILO_PASCAL("kPa"),
+    SECONDS("sec"),
+    PERCENTAGE("%"),
+    PERCENTAGE_OF_LEUKOCYTES("% of leukocytes"),
+    PERCENTAGE_OF_T_CELLS("% of T-cells"),
+    NONE(Strings.EMPTY);
+
+    @NotNull
+    private final String display;
+
+    LabUnit(@NotNull final String display) {
+        this.display = display;
+    }
+
+    @NotNull
+    public String display() {
+        return display;
+    }
+}

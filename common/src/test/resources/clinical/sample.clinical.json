@@ -124,7 +124,7 @@
       "name": "Code 1",
       "comparator": "",
       "value": 11,
-      "unit": "",
+      "unit": "NONE",
       "refLimitLow": null,
       "refLimitUp": null,
       "isOutsideRef": null
@@ -139,7 +139,7 @@
       "name": "Code 2",
       "comparator": "",
       "value": 8.8,
-      "unit": "mmol/L",
+      "unit": "MILLIMOLES_PER_LITER",
       "refLimitLow": 4,
       "refLimitUp": 6.1,
       "isOutsideRef": true

@@ -44,7 +44,7 @@ public final class LabInterpreter {
 
     @NotNull
     private static LabValue convert(@NotNull LabValue labValue, @NotNull LabMeasurement targetMeasure) {
-        return ImmutableLabValue.builder().from(labValue).code(targetMeasure.code()).unit(targetMeasure.expectedUnit()).build();
+        return ImmutableLabValue.builder().from(labValue).code(targetMeasure.code()).unit(targetMeasure.defaultUnit()).build();
     }
 
     @NotNull

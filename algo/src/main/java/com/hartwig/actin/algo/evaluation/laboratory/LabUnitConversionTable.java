@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,13 +15,13 @@ final class LabUnitConversionTable {
 
     static {
         Map<LabUnit, Double> mgPerDLMap = Maps.newHashMap();
-        mgPerDLMap.put(LabUnit.MICROMOL_PER_LITER, 88.42);
+        mgPerDLMap.put(LabUnit.MICROMOLES_PER_LITER, 88.42);
 
         Map<LabUnit, Double> mmolPerLMap = Maps.newHashMap();
-        mmolPerLMap.put(LabUnit.MILLIGRAM_PER_DECILITER, 1 / 88.42);
+        mmolPerLMap.put(LabUnit.MILLIGRAMS_PER_DECILITER, 1 / 88.42);
 
-        CONVERSION_MAP.put(LabUnit.MILLIGRAM_PER_DECILITER, mgPerDLMap);
-        CONVERSION_MAP.put(LabUnit.MICROMOL_PER_LITER, mmolPerLMap);
+        CONVERSION_MAP.put(LabUnit.MILLIGRAMS_PER_DECILITER, mgPerDLMap);
+        CONVERSION_MAP.put(LabUnit.MICROMOLES_PER_LITER, mmolPerLMap);
     }
 
     @Nullable

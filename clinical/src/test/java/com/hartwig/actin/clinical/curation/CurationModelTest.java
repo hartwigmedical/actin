@@ -25,6 +25,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
@@ -320,7 +321,7 @@ public class CurationModelTest {
                 .name("naam")
                 .comparator(Strings.EMPTY)
                 .value(0D)
-                .unit(Strings.EMPTY)
+                .unit(LabUnit.NONE)
                 .isOutsideRef(false)
                 .build();
 

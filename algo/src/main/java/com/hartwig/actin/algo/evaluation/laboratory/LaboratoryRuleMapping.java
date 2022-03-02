@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
 import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -30,12 +31,12 @@ public final class LaboratoryRuleMapping {
 
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS));
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.LEUKOCYTES_ABS));
-        map.put(EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLymphocytesCreator(LabUnit.BILLION_PER_LITER));
-        map.put(EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X, hasSufficientLymphocytesCreator(LabUnit.CELLS_PER_MICROLITER));
+        map.put(EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLymphocytesCreator(LabUnit.BILLIONS_PER_LITER));
+        map.put(EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X, hasSufficientLymphocytesCreator(LabUnit.CELLS_PER_CUBIC_MILLIMETER));
         map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.NEUTROPHILS_ABS));
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS));
-        map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.GRAM_PER_DECILITER));
-        map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MILLIMOL_PER_LITER));
+        map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.GRAMS_PER_DECILITER));
+        map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MILLIMOLES_PER_LITER));
 
         map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO));
         map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
@@ -63,8 +64,8 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));
         map.put(EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TROPONIN_IT));
         map.put(EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE));
-        map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MILLIGRAM_PER_DECILITER));
-        map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MILLIMOL_PER_LITER));
+        map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MILLIGRAMS_PER_DECILITER));
+        map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedCalciumCreator(LabUnit.MILLIMOLES_PER_LITER));
         map.put(EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.IONIZED_CALCIUM));
         map.put(EligibilityRule.HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.CORRECTED_CALCIUM));
         map.put(EligibilityRule.HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.CALCIUM));
@@ -157,6 +158,16 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator hasLimitedLabValueCreator(@NotNull LabMeasurement measurement) {
+        return function -> {
+            double maxValue = FunctionInputResolver.createOneDoubleInput(function);
+            return new LabMeasurementEvaluator(measurement,
+                    new HasLimitedLabValue(maxValue, measurement.defaultUnit()),
+                    MIN_VALID_LAB_DATE);
+        };
+    }
+
+    @NotNull
     private static FunctionCreator hasLimitedCreatinineCreator() {
         return function -> {
             double maxCreatinine = FunctionInputResolver.createOneDoubleInput(function);
@@ -197,12 +208,6 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasLimitedCalciumCreator(@NotNull LabUnit unit) {
-        // TODO
-        return function -> evaluation -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED);
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedLabValueCreator(@NotNull LabMeasurement measurement) {
         // TODO
         return function -> evaluation -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED);
     }

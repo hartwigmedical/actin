@@ -26,8 +26,8 @@ public class LabInterpreterTest {
         LabMeasurement firstValue = LabInterpreter.MAPPINGS.get(firstKey);
 
         List<LabValue> values = Lists.newArrayList();
-        values.add(LabInterpretationTestUtil.builder().code(firstKey.code()).unit(firstKey.expectedUnit()).build());
-        values.add(LabInterpretationTestUtil.builder().code(firstValue.code()).unit(firstValue.expectedUnit()).build());
+        values.add(LabInterpretationTestUtil.builder().code(firstKey.code()).unit(firstKey.defaultUnit()).build());
+        values.add(LabInterpretationTestUtil.builder().code(firstValue.code()).unit(firstValue.defaultUnit()).build());
 
         LabInterpretation interpretation = LabInterpreter.interpret(values);
 
@@ -35,7 +35,7 @@ public class LabInterpreterTest {
         assertEquals(2, interpretation.allValues(firstValue).size());
         for (LabValue labValue : interpretation.allValues(firstValue)) {
             assertEquals(firstValue.code(), labValue.code());
-            assertEquals(firstValue.expectedUnit(), labValue.unit());
+            assertEquals(firstValue.defaultUnit(), labValue.unit());
         }
     }
 }

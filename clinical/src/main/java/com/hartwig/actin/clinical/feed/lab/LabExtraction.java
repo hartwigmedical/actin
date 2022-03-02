@@ -31,7 +31,7 @@ public final class LabExtraction {
                 .name(entry.codeDisplayOriginal())
                 .comparator(entry.valueQuantityComparator())
                 .value(value)
-                .unit(entry.valueQuantityUnit())
+                .unit(LabUnitResolver.resolve(entry.valueQuantityUnit()))
                 .refLimitLow(limits.lower())
                 .refLimitUp(limits.upper())
                 .isOutsideRef(isOutsideRef)

@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.interpretation;
 import java.time.LocalDate;
 
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,6 @@ final class LabInterpretationTestUtil {
                 .name(Strings.EMPTY)
                 .comparator(Strings.EMPTY)
                 .value(0D)
-                .unit(Strings.EMPTY);
+                .unit(LabUnit.NONE);
     }
 }

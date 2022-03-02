@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.util.Strings;
@@ -16,7 +17,7 @@ public class LabValueDescendingDateComparatorTest {
 
     @Test
     public void canSortLabValues() {
-        ImmutableLabValue.Builder builder = ImmutableLabValue.builder().name(Strings.EMPTY).comparator(Strings.EMPTY).unit(Strings.EMPTY);
+        ImmutableLabValue.Builder builder = ImmutableLabValue.builder().name(Strings.EMPTY).comparator(Strings.EMPTY).unit(LabUnit.NONE);
 
         LabValue value1 = builder.date(LocalDate.of(2018, 1, 1)).code("Y").value(0D).build();
         LabValue value2 = builder.date(LocalDate.of(2019, 1, 1)).code("X").value(0D).build();

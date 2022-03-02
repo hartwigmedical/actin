@@ -142,13 +142,13 @@ public class ClinicalFeedReaderTest {
     private static void assertLab(@NotNull List<LabEntry> entries) {
         assertEquals(2, entries.size());
 
-        LabEntry entry1 = findByCodeCodeOriginal(entries, "HT");
+        LabEntry entry1 = findByCodeCodeOriginal(entries, "LEUKO-ABS");
         assertEquals("ACTN-01-02-9999", entry1.subject());
-        assertEquals("Hematocriet", entry1.codeDisplayOriginal());
+        assertEquals("Leukocytes", entry1.codeDisplayOriginal());
         assertEquals(Strings.EMPTY, entry1.valueQuantityComparator());
-        assertEquals(0.36, entry1.valueQuantityValue(), EPSILON);
-        assertEquals("L/L", entry1.valueQuantityUnit());
-        assertEquals("0.42 - 0.52", entry1.referenceRangeText());
+        assertEquals(5.5, entry1.valueQuantityValue(), EPSILON);
+        assertEquals("10^9/L", entry1.valueQuantityUnit());
+        assertEquals("3.5 - 10", entry1.referenceRangeText());
         assertEquals(LocalDate.of(2019, 6, 27), entry1.effectiveDateTime());
 
         LabEntry entry2 = findByCodeCodeOriginal(entries, "HB");

@@ -9,6 +9,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -39,7 +40,7 @@ final class LabTestFactory {
 
     @NotNull
     public static ImmutableLabValue.Builder forMeasurement(@NotNull LabMeasurement measurement) {
-        return builder().code(measurement.code()).unit(measurement.expectedUnit());
+        return builder().code(measurement.code()).unit(measurement.defaultUnit());
     }
 
     @NotNull
@@ -50,6 +51,6 @@ final class LabTestFactory {
                 .code(Strings.EMPTY)
                 .comparator(Strings.EMPTY)
                 .value(0D)
-                .unit(Strings.EMPTY);
+                .unit(LabUnit.NONE);
     }
 }

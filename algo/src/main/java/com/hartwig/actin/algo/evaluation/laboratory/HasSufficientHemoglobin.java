@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,26 +30,17 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        LabUnit measuredUnit = LabUnit.fromString(labValue.unit());
+        Double value = convertValue(labValue.value(), labValue.unit(), targetUnit);
 
-        if (measuredUnit == null) {
-            LOGGER.warn("Could not determine lab unit for '{}'", labValue);
-            return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not determine hemoglobin lab unit for '" + labValue.code() + "'")
-                    .build();
-        }
-
-        Double value = convertValue(labValue.value(), measuredUnit, targetUnit);
         if (value == null) {
-            LOGGER.warn("Could not convert hemoglobin value from '{}' to '{}'", measuredUnit, targetUnit);
+            LOGGER.warn("Could not convert hemoglobin value from '{}' to '{}'", labValue.unit(), targetUnit);
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not convert hemoglobin value from '" + measuredUnit + "' to '" + targetUnit + "'")
+                    .addUndeterminedMessages("Could not convert hemoglobin value from '" + labValue.unit() + "' to '" + targetUnit + "'")
                     .build();
         }
 
-        EvaluationResult result = LaboratoryUtil.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);
+        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(value, labValue.comparator(), minHemoglobin);
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages(labValue.code() + " is insufficient");
@@ -65,9 +57,9 @@ public class HasSufficientHemoglobin implements LabEvaluationFunction {
     private static Double convertValue(double value, @NotNull LabUnit measuredUnit, @NotNull LabUnit targetUnit) {
         if (measuredUnit == targetUnit) {
             return value;
-        } else if (measuredUnit == LabUnit.GRAM_PER_DECILITER && targetUnit == LabUnit.MILLIMOL_PER_LITER) {
+        } else if (measuredUnit == LabUnit.GRAMS_PER_DECILITER && targetUnit == LabUnit.MILLIMOLES_PER_LITER) {
             return value * G_PER_DL_TO_MMOL_PER_L_CONVERSION_FACTOR;
-        } else if (measuredUnit == LabUnit.MILLIMOL_PER_LITER && targetUnit == LabUnit.GRAM_PER_DECILITER) {
+        } else if (measuredUnit == LabUnit.MILLIMOLES_PER_LITER && targetUnit == LabUnit.GRAMS_PER_DECILITER) {
             return value / G_PER_DL_TO_MMOL_PER_L_CONVERSION_FACTOR;
         } else {
             return null;

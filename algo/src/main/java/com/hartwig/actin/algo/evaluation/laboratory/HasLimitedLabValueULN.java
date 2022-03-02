@@ -19,7 +19,7 @@ public class HasLimitedLabValueULN implements LabEvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        EvaluationResult result = LaboratoryUtil.evaluateVersusMaxULN(labValue, maxULN);
+        EvaluationResult result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULN);
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
