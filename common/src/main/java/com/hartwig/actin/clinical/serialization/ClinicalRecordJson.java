@@ -382,6 +382,7 @@ public final class ClinicalRecordJson {
                 JsonObject object = element.getAsJsonObject();
                 allergyList.add(ImmutableAllergy.builder()
                         .name(string(object, "name"))
+                        .doids(stringList(object, "doids"))
                         .category(string(object, "category"))
                         .clinicalStatus(string(object, "clinicalStatus"))
                         .verificationStatus(string(object, "verificationStatus"))

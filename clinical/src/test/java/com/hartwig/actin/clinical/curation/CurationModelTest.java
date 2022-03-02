@@ -312,6 +312,28 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateAllergies() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        Allergy proper = ImmutableAllergy.builder()
+                .name("Latex type 1")
+                .category(Strings.EMPTY)
+                .clinicalStatus(Strings.EMPTY)
+                .verificationStatus(Strings.EMPTY)
+                .criticality(Strings.EMPTY)
+                .build();
+
+        Allergy curatedProper = model.curateAllergy(proper);
+        assertEquals("Latex (type 1)", curatedProper.name());
+        assertTrue(curatedProper.doids().contains("0060532"));
+
+        Allergy passThrough = ImmutableAllergy.builder().from(proper).name("don't curate me").build();
+        assertEquals(passThrough, model.curateAllergy(passThrough));
+
+        model.evaluate();
+    }
+
+    @Test
     public void canTranslateLaboratoryValues() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
@@ -333,28 +355,6 @@ public class CurationModelTest {
         LabValue notExistingTranslated = model.translateLabValue(notExisting);
         assertEquals("no", notExistingTranslated.code());
         assertEquals("does not exist", notExistingTranslated.name());
-
-        model.evaluate();
-    }
-
-    @Test
-    public void canTranslateAllergies() {
-        CurationModel model = TestCurationFactory.createProperTestCurationModel();
-
-        Allergy test = ImmutableAllergy.builder()
-                .name("Naam")
-                .category(Strings.EMPTY)
-                .clinicalStatus(Strings.EMPTY)
-                .verificationStatus(Strings.EMPTY)
-                .criticality(Strings.EMPTY)
-                .build();
-
-        Allergy translated = model.translateAllergy(test);
-        assertEquals("Name", translated.name());
-
-        Allergy notExisting = ImmutableAllergy.builder().from(test).name("Does not exist").build();
-        Allergy notExistingTranslated = model.translateAllergy(notExisting);
-        assertEquals("Does not exist", notExistingTranslated.name());
 
         model.evaluate();
     }

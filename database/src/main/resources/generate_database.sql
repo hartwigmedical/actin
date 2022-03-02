@@ -155,7 +155,7 @@ CREATE TABLE allergy
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
-    doids varchar(50),
+    doids varchar(50) NOT NULL,
     category varchar(50) NOT NULL,
     clinicalStatus varchar(50) NOT NULL,
     verificationStatus varchar(50) NOT NULL,

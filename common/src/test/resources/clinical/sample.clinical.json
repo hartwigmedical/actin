@@ -170,6 +170,9 @@
   "allergies": [
     {
       "name": "Drug",
+      "doids": [
+        "123"
+      ],
       "category": "medication",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
@@ -177,6 +180,7 @@
     },
     {
       "name": "Condition",
+      "doids": [],
       "category": "environment",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",

@@ -12,9 +12,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableAllergyConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
@@ -36,7 +38,6 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
@@ -482,6 +483,24 @@ public class CurationModel {
     }
 
     @NotNull
+    public Allergy curateAllergy(@NotNull Allergy allergy) {
+        String reformatted = CurationUtil.capitalizeFirstLetterOnly(allergy.name());
+
+        Set<AllergyConfig> configs = find(database.allergyConfigs(), reformatted);
+
+        if (configs.isEmpty()) {
+            LOGGER.warn(" Could not find allergy config for '{}'", reformatted);
+            return allergy;
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple allergy configs for allergy with name '{}'", reformatted);
+            return allergy;
+        }
+
+        AllergyConfig config = configs.iterator().next();
+        return ImmutableAllergy.builder().from(allergy).name(config.name()).doids(config.doids()).build();
+    }
+
+    @NotNull
     public LabValue translateLabValue(@NotNull LabValue input) {
         LaboratoryTranslation translation = findLaboratoryTranslation(input);
 
@@ -502,30 +521,6 @@ public class CurationModel {
         }
 
         LOGGER.warn(" Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), input.name());
-        return null;
-    }
-
-    @NotNull
-    public Allergy translateAllergy(@NotNull Allergy input) {
-        AllergyTranslation translation = findAllergyTranslation(input);
-
-        if (translation == null) {
-            return input;
-        }
-
-        evaluatedTranslations.put(AllergyTranslation.class, translation);
-        return ImmutableAllergy.builder().from(input).name(translation.translatedName()).build();
-    }
-
-    @Nullable
-    private AllergyTranslation findAllergyTranslation(@NotNull Allergy input) {
-        for (AllergyTranslation entry : database.allergyTranslations()) {
-            if (entry.name().equals(input.name())) {
-                return entry;
-            }
-        }
-
-        LOGGER.warn(" Could not find allergy translation for allergy with name '{}'", input.name());
         return null;
     }
 
@@ -604,6 +599,8 @@ public class CurationModel {
             return database.medicationDosageConfigs();
         } else if (classToLookUp == ImmutableMedicationCategoryConfig.class) {
             return database.medicationCategoryConfigs();
+        } else if (classToLookUp == ImmutableAllergyConfig.class) {
+            return database.allergyConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);
@@ -613,8 +610,6 @@ public class CurationModel {
     private List<? extends Translation> translationsForClass(@NotNull Class<? extends Translation> classToLookup) {
         if (classToLookup == LaboratoryTranslation.class) {
             return database.laboratoryTranslations();
-        } else if (classToLookup == AllergyTranslation.class) {
-            return database.allergyTranslations();
         } else if (classToLookup == BloodTransfusionTranslation.class) {
             return database.bloodTransfusionTranslations();
         }

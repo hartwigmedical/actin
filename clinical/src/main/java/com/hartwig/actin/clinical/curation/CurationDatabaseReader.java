@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.util.List;
 
+import com.hartwig.actin.clinical.curation.config.AllergyConfig;
+import com.hartwig.actin.clinical.curation.config.AllergyConfigFactory;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile;
@@ -26,8 +28,6 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
@@ -54,9 +54,9 @@ public final class CurationDatabaseReader {
     private static final String MOLECULAR_TEST_TSV = "molecular_test.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
     private static final String MEDICATION_CATEGORY_TSV = "medication_category.tsv";
+    private static final String ALLERGY_TSV = "allergy.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
-    private static final String ALLERGY_TRANSLATION_TSV = "allergy_translation.tsv";
     private static final String BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv";
 
     private CurationDatabaseReader() {
@@ -80,8 +80,8 @@ public final class CurationDatabaseReader {
                 .molecularTestConfigs(readMolecularTestConfigs(basePath + MOLECULAR_TEST_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
                 .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
+                .allergyConfigs(readAllergyConfigs(basePath + ALLERGY_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
-                .allergyTranslations(readAllergyTranslations(basePath + ALLERGY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
                 .build();
     }
@@ -164,16 +164,16 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String tsv) throws IOException {
-        List<LaboratoryTranslation> translations = TranslationFile.read(tsv, new LaboratoryTranslationFactory());
-        LOGGER.info(" Read {} laboratory translations from {}", translations.size(), tsv);
-        return translations;
+    private static List<AllergyConfig> readAllergyConfigs(@NotNull String tsv) throws IOException {
+        List<AllergyConfig> configs = CurationConfigFile.read(tsv, new AllergyConfigFactory());
+        LOGGER.info(" Read {} allergy configs from {}", configs.size(), tsv);
+        return configs;
     }
 
     @NotNull
-    private static List<AllergyTranslation> readAllergyTranslations(@NotNull String tsv) throws IOException {
-        List<AllergyTranslation> translations = TranslationFile.read(tsv, new AllergyTranslationFactory());
-        LOGGER.info(" Read {} allergy translations from {}", translations.size(), tsv);
+    private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String tsv) throws IOException {
+        List<LaboratoryTranslation> translations = TranslationFile.read(tsv, new LaboratoryTranslationFactory());
+        LOGGER.info(" Read {} laboratory translations from {}", translations.size(), tsv);
         return translations;
     }
 

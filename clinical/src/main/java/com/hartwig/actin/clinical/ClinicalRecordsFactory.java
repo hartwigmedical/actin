@@ -299,13 +299,14 @@ public class ClinicalRecordsFactory {
     private List<Allergy> extractAllergies(@NotNull String subject) {
         List<Allergy> allergies = Lists.newArrayList();
         for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
-            allergies.add(curation.translateAllergy(ImmutableAllergy.builder()
+            Allergy allergy = ImmutableAllergy.builder()
                     .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
                     .category(CurationUtil.capitalizeFirstLetterOnly(entry.category()))
                     .clinicalStatus(CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus()))
                     .verificationStatus(CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus()))
                     .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
-                    .build()));
+                    .build();
+            allergies.add(curation.curateAllergy(allergy));
         }
         return allergies;
     }

@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
@@ -22,7 +23,6 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
@@ -56,9 +56,9 @@ public class CurationDatabaseReaderTest {
         assertMolecularTestConfigs(database.molecularTestConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
         assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
+        assertAllergyConfigs(database.allergyConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
-        assertAllergyTranslations(database.allergyTranslations());
         assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
     }
 
@@ -236,6 +236,14 @@ public class CurationDatabaseReaderTest {
         assertEquals(Sets.newHashSet("Beta2 sympathomimetics", "Corticosteroids"), formoterol.categories());
     }
 
+    private static void assertAllergyConfigs(@NotNull List<AllergyConfig> configs) {
+        assertEquals(1, configs.size());
+
+        AllergyConfig config = find(configs, "Clindamycine");
+        assertEquals("Clindamycin", config.name());
+        assertEquals(Sets.newHashSet("0060500"), config.doids());
+    }
+
     @NotNull
     private static <T extends CurationConfig> T find(@NotNull List<T> configs, @NotNull String input) {
         for (T config : configs) {
@@ -255,14 +263,6 @@ public class CurationDatabaseReaderTest {
         assertEquals("AC2", translation.translatedCode());
         assertEquals("ACTH", translation.name());
         assertEquals("Adrenocorticotropic hormone", translation.translatedName());
-    }
-
-    private static void assertAllergyTranslations(@NotNull List<AllergyTranslation> translations) {
-        assertEquals(1, translations.size());
-
-        AllergyTranslation translation = translations.get(0);
-        assertEquals("Simvastatine", translation.name());
-        assertEquals("Simvastatin", translation.translatedName());
     }
 
     private static void assertBloodTransfusionTranslations(@NotNull List<BloodTransfusionTranslation> translations) {

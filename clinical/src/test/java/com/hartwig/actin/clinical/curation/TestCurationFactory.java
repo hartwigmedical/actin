@@ -3,8 +3,10 @@ package com.hartwig.actin.clinical.curation;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableAllergyConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
@@ -26,9 +28,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
-import com.hartwig.actin.clinical.curation.translation.ImmutableAllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
@@ -71,8 +71,8 @@ public final class TestCurationFactory {
                 .molecularTestConfigs(createTestMolecularTestConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
                 .medicationCategoryConfigs(createTestMedicationCategoryConfigs())
+                .allergyConfigs(createTestAllergyConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
-                .allergyTranslations(createTestAllergyTranslations())
                 .bloodTransfusionTranslations(createTestBloodTransfusionTranslations())
                 .build();
     }
@@ -281,6 +281,15 @@ public final class TestCurationFactory {
     }
 
     @NotNull
+    private static List<AllergyConfig> createTestAllergyConfigs() {
+        List<AllergyConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableAllergyConfig.builder().input("Latex type 1").name("Latex (type 1)").addDoids("0060532").build());
+
+        return configs;
+    }
+
+    @NotNull
     private static List<LaboratoryTranslation> createTestLaboratoryTranslations() {
         List<LaboratoryTranslation> translations = Lists.newArrayList();
 
@@ -290,16 +299,6 @@ public final class TestCurationFactory {
                 .name("naam")
                 .translatedName("Name")
                 .build());
-
-        return translations;
-    }
-
-    @NotNull
-    private static List<AllergyTranslation> createTestAllergyTranslations() {
-        List<AllergyTranslation> translations = Lists.newArrayList();
-
-        translations.add(ImmutableAllergyTranslation.builder().name("Naam").translatedName("Name").build());
-        translations.add(ImmutableAllergyTranslation.builder().name("Not used").translatedName("never used").build());
 
         return translations;
     }

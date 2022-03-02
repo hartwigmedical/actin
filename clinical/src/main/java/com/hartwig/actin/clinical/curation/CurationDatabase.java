@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation;
 
 import java.util.List;
 
+import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
@@ -13,7 +14,6 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
-import com.hartwig.actin.clinical.curation.translation.AllergyTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 
@@ -59,10 +59,10 @@ public abstract class CurationDatabase {
     public abstract List<MedicationCategoryConfig> medicationCategoryConfigs();
 
     @NotNull
-    public abstract List<LaboratoryTranslation> laboratoryTranslations();
+    public abstract List<AllergyConfig> allergyConfigs();
 
     @NotNull
-    public abstract List<AllergyTranslation> allergyTranslations();
+    public abstract List<LaboratoryTranslation> laboratoryTranslations();
 
     @NotNull
     public abstract List<BloodTransfusionTranslation> bloodTransfusionTranslations();

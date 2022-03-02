@@ -34,6 +34,7 @@ public class ClinicalRecordJsonTest {
     @Test
     public void canReadClinicalRecordDirectory() throws IOException {
         List<ClinicalRecord> records = ClinicalRecordJson.readFromDir(CLINICAL_DIRECTORY);
+
         assertEquals(1, records.size());
 
         assertClinicalRecord(records.get(0));
