@@ -419,7 +419,9 @@ HAS_COMPLICATION_X | Cancer related complication > Name like %X%
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
-HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Resolves to undetermined in case of presence of any allergies with category = medication (T.B.D.)
+HAS_ALLERGY_BELONGING_TO_DOID_X | Allergy > doid is equal of a child of doid X
+HAS_ALLERGY_TO_TAXANE | Allergy > Name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel
+HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Resolves to undetermined in case of presence of any allergies belonging to categories in 'Medication' and/or DOID 0060500 
 HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
 HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | Resolves to undetermined in case of previous treatment with categories like immunotherapy
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X

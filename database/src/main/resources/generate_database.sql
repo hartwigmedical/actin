@@ -1,11 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Can be removed per 1st of march 2022
-DROP TABLE IF EXISTS otherComplication;
-DROP TABLE IF EXISTS molecularTest;
-
-
-
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -161,6 +155,7 @@ CREATE TABLE allergy
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
+    doids varchar(50),
     category varchar(50) NOT NULL,
     clinicalStatus varchar(50) NOT NULL,
     verificationStatus varchar(50) NOT NULL,
