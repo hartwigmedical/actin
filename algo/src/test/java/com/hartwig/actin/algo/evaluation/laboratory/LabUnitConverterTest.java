@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.junit.Test;
 
@@ -14,15 +15,21 @@ public class LabUnitConverterTest {
 
     @Test
     public void canConvert() {
-        LabValue value = LabTestFactory.builder().unit(LabUnit.MICROMOLES_PER_LITER).value(88.42).build();
+        LabMeasurement measurement = LabUnitConversionTable.CONVERSION_MAP.keySet().iterator().next();
 
-        assertEquals(88.42, LabUnitConverter.convert(value, LabUnit.MICROMOLES_PER_LITER), EPSILON);
-        assertEquals(1D, LabUnitConverter.convert(value, LabUnit.MILLIGRAMS_PER_DECILITER), EPSILON);
+        LabUnit firstFromKey = LabUnitConversionTable.CONVERSION_MAP.get(measurement).keySet().iterator().next();
+        LabUnit firstToKey = LabUnitConversionTable.CONVERSION_MAP.get(measurement).get(firstFromKey).keySet().iterator().next();
+        double conversionFactor = LabUnitConversionTable.CONVERSION_MAP.get(measurement).get(firstFromKey).get(firstToKey);
+
+        LabValue value = LabTestFactory.builder().unit(firstToKey).value(conversionFactor).build();
+
+        assertEquals(conversionFactor, LabUnitConverter.convert(measurement, value, firstToKey), EPSILON);
+        assertEquals(1D, LabUnitConverter.convert(measurement, value, firstFromKey), EPSILON);
     }
 
     @Test
     public void missingConversionEntryLeadsToNull() {
         LabValue value = LabTestFactory.builder().unit(LabUnit.CELLS_PER_CUBIC_MILLIMETER).build();
-        assertNull(LabUnitConverter.convert(value, LabUnit.GRAMS_PER_LITER));
+        assertNull(LabUnitConverter.convert(LabMeasurement.NEUTROPHILS_ABS, value, LabUnit.GRAMS_PER_LITER));
     }
 }

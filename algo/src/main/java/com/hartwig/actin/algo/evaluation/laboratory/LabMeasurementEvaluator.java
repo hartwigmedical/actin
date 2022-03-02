@@ -21,7 +21,6 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     private final LabMeasurement measurement;
     @NotNull
     private final LabEvaluationFunction function;
-
     @NotNull
     private final LocalDate minValidDate;
 

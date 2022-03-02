@@ -162,7 +162,7 @@ public final class LaboratoryRuleMapping {
         return function -> {
             double maxValue = FunctionInputResolver.createOneDoubleInput(function);
             return new LabMeasurementEvaluator(measurement,
-                    new HasLimitedLabValue(maxValue, measurement.defaultUnit()),
+                    new HasLimitedLabValue(maxValue, measurement, measurement.defaultUnit()),
                     MIN_VALID_LAB_DATE);
         };
     }

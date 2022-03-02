@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,17 +14,20 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
 
     private final double maxValue;
     @NotNull
+    private final LabMeasurement measurement;
+    @NotNull
     private final LabUnit targetUnit;
 
-    public HasLimitedLabValue(final double maxValue, @NotNull final LabUnit targetUnit) {
+    public HasLimitedLabValue(final double maxValue, @NotNull final LabMeasurement measurement, @NotNull final LabUnit targetUnit) {
         this.maxValue = maxValue;
+        this.measurement = measurement;
         this.targetUnit = targetUnit;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull final PatientRecord record, @NotNull final LabValue labValue) {
-        Double convertedValue = LabUnitConverter.convert(labValue, targetUnit);
+        Double convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit);
 
         if (convertedValue == null) {
             return ImmutableEvaluation.builder()

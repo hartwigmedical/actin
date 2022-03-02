@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,12 +17,12 @@ final class LabUnitConverter {
     }
 
     @Nullable
-    public static Double convert(@NotNull LabValue labValue, @NotNull LabUnit targetUnit) {
+    public static Double convert(@NotNull LabMeasurement measurement, @NotNull LabValue labValue, @NotNull LabUnit targetUnit) {
         if (labValue.unit() == targetUnit) {
             return labValue.value();
         }
 
-        Double conversionFactor = LabUnitConversionTable.findConversionFactor(labValue.unit(), targetUnit);
+        Double conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit(), targetUnit);
         if (conversionFactor == null) {
             LOGGER.warn("No conversion factor defined from '{}' to '{}'", labValue.unit(), targetUnit);
             return null;
