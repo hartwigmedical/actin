@@ -82,17 +82,17 @@ public final class LaboratoryRuleMapping {
                 hasLabValueWithinRefCreator(LabMeasurement.CORRECTED_CALCIUM));
         map.put(EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.MAGNESIUM));
         map.put(EligibilityRule.HAS_CORRECTED_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
-                undeterminedFunctionCreator("corrected magnesium"));
+                undeterminedLabValueCreator("corrected magnesium"));
         map.put(EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PHOSPHORUS));
         map.put(EligibilityRule.HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.PHOSPHORUS));
         map.put(EligibilityRule.HAS_CORRECTED_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
-                undeterminedFunctionCreator("corrected phosphorus"));
+                undeterminedLabValueCreator("corrected phosphorus"));
         map.put(EligibilityRule.HAS_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.POTASSIUM));
         map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.POTASSIUM));
         map.put(EligibilityRule.HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
-                undeterminedFunctionCreator("corrected potassium"));
+                undeterminedLabValueCreator("corrected potassium"));
 
-        map.put(EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X, undeterminedFunctionCreator("serum testosterone"));
+        map.put(EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X, undeterminedLabValueCreator("serum testosterone"));
 
         map.put(EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.ALPHA_FETOPROTEIN));
         map.put(EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.CA_125));
@@ -100,9 +100,9 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE));
 
         map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.TOTAL_PROTEIN_URINE));
-        map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X, undeterminedFunctionCreator("protein in 24h urine"));
+        map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X, undeterminedLabValueCreator("protein in 24h urine"));
 
-        map.put(EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X, undeterminedFunctionCreator("Glucose"));
+        map.put(EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X, undeterminedLabValueCreator("Glucose"));
 
         return map;
     }
@@ -198,10 +198,10 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator undeterminedFunctionCreator(@NotNull String code) {
+    private static FunctionCreator undeterminedLabValueCreator(@NotNull String measure) {
         return function -> record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("It is not clear yet under what code '" + code + "' is measured")
+                .addUndeterminedMessages("It is not clear yet under what code '" + measure + "' is measured")
                 .build();
     }
 
