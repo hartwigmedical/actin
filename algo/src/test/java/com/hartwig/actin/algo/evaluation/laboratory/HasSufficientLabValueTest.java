@@ -19,7 +19,11 @@ public class HasSufficientLabValueTest {
         HasSufficientLabValue function = new HasSufficientLabValue(200D, measurement, measurement.defaultUnit());
 
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
+
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(300D).build()));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(record,
+                        LabTestFactory.forMeasurement(measurement).value(300D).comparator(LabEvaluation.SMALLER_THAN).build()));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(100D).build()));
     }
 

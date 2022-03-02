@@ -19,7 +19,11 @@ public class HasLimitedLabValueTest {
         HasLimitedLabValue function = new HasLimitedLabValue(1, measurement, measurement.defaultUnit());
 
         PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
+
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(2).build()));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(record,
+                        LabTestFactory.forMeasurement(measurement).value(0.5).comparator(LabEvaluation.LARGER_THAN).build()));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(0.5).build()));
     }
 
