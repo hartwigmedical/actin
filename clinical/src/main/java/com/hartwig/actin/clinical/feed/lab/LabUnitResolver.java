@@ -21,8 +21,8 @@ final class LabUnitResolver {
         CURATION_MAP.put("% van de T-cellen", LabUnit.PERCENTAGE_OF_T_CELLS);
 
         CURATION_MAP.put("mmol/mol Kreatinine", LabUnit.MILLIMOLES_PER_MOLE);
-        CURATION_MAP.put("µg/L", LabUnit.NANOGRAMS_PER_LITER);
-        CURATION_MAP.put("µmol/L", LabUnit.NANOMOLES_PER_LITER);
+        CURATION_MAP.put("µg/L", LabUnit.MICROGRAMS_PER_LITER);
+        CURATION_MAP.put("µmol/L", LabUnit.MICROMOLES_PER_LITER);
 
         // L/L is an implied unit used for hematocrit
         CURATION_MAP.put("L/L", LabUnit.NONE);
