@@ -56,8 +56,7 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
-        map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X, hasLimitedBilirubinPercentageCreator());
 
         map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X,
                 hasLimitedLabValueCreator(LabMeasurement.CREATININE, LabUnit.MILLIGRAMS_PER_DECILITER));
@@ -159,6 +158,14 @@ public final class LaboratoryRuleMapping {
         return function -> new HasLimitedPTT();
     }
 
+    @NotNull
+    private static FunctionCreator hasLimitedBilirubinPercentageCreator() {
+        return function -> {
+            double maxPercentage = FunctionInputResolver.createOneDoubleInput(function);
+            return createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN,
+                    new HasLimitedBilirubinPercentageOfTotal(maxPercentage, MIN_VALID_LAB_DATE));
+        };
+    }
 
     @NotNull
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
