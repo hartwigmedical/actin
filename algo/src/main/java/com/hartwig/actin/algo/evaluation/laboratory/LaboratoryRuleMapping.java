@@ -31,12 +31,15 @@ public final class LaboratoryRuleMapping {
 
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS));
         map.put(EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.LEUKOCYTES_ABS));
-        map.put(EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLymphocytesCreator(LabUnit.BILLIONS_PER_LITER));
-        map.put(EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X, hasSufficientLymphocytesCreator(LabUnit.CELLS_PER_CUBIC_MILLIMETER));
+        map.put(EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS_EDA));
+        map.put(EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X,
+                hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS_EDA, LabUnit.CELLS_PER_CUBIC_MILLIMETER));
         map.put(EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.NEUTROPHILS_ABS));
         map.put(EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X, hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS));
-        map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.GRAMS_PER_DECILITER));
-        map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X, hasSufficientHemoglobinCreator(LabUnit.MILLIMOLES_PER_LITER));
+        map.put(EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X,
+                hasSufficientLabValueCreator(LabMeasurement.HEMOGLOBIN, LabUnit.GRAMS_PER_DECILITER));
+        map.put(EligibilityRule.HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X,
+                hasSufficientLabValueCreator(LabMeasurement.HEMOGLOBIN, LabUnit.MILLIMOLES_PER_LITER));
 
         map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO));
         map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
@@ -44,7 +47,8 @@ public final class LaboratoryRuleMapping {
                 hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME));
         map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, hasLimitedPTTCreator());
 
-        map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X, hasSufficientAlbuminCreator());
+        map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X,
+                hasSufficientLabValueCreator(LabMeasurement.ALBUMIN, LabUnit.GRAMS_PER_DECILITER));
         map.put(EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X, hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN));
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
@@ -53,7 +57,8 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
 
-        map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X, hasLimitedCreatinineCreator());
+        map.put(EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X,
+                hasLimitedLabValueCreator(LabMeasurement.CREATININE, LabUnit.MILLIGRAMS_PER_DECILITER));
         map.put(EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.CREATININE));
         map.put(EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CKD_EPI));
@@ -102,9 +107,14 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator hasSufficientLabValueCreator(@NotNull LabMeasurement measurement) {
+        return hasSufficientLabValueCreator(measurement, measurement.defaultUnit());
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientLabValueCreator(@NotNull LabMeasurement measurement, @NotNull LabUnit targetUnit) {
         return function -> {
             double minValue = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValue(minValue), MIN_VALID_LAB_DATE);
+            return createLabEvaluator(measurement, new HasSufficientLabValue(minValue, measurement, targetUnit));
         };
     }
 
@@ -112,40 +122,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientLabValueLLNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double minLLN = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement, new HasSufficientLabValueLLN(minLLN), MIN_VALID_LAB_DATE);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientLymphocytesCreator(@NotNull LabUnit labUnit) {
-        return function -> {
-            double minLymphocytes = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(LabMeasurement.LYMPHOCYTES_ABS_EDA,
-                    new HasSufficientLymphocytes(minLymphocytes, labUnit),
-                    MIN_VALID_LAB_DATE);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientHemoglobinCreator(@NotNull LabUnit targetUnit) {
-        return function -> {
-            double minHemoglobin = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(LabMeasurement.HEMOGLOBIN,
-                    new HasSufficientHemoglobin(minHemoglobin, targetUnit),
-                    MIN_VALID_LAB_DATE);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasLimitedPTTCreator() {
-        return function -> new HasLimitedPTT();
-    }
-
-    @NotNull
-    private static FunctionCreator hasSufficientAlbuminCreator() {
-        return function -> {
-            double minAlbuminGPerDL = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(LabMeasurement.ALBUMIN, new HasSufficientAlbumin(minAlbuminGPerDL), MIN_VALID_LAB_DATE);
+            return createLabEvaluator(measurement, new HasSufficientLabValueLLN(minLLN));
         };
     }
 
@@ -153,39 +130,43 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
             double maxULN = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement, new HasLimitedLabValueULN(maxULN), MIN_VALID_LAB_DATE);
+            return createLabEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
         };
     }
 
     @NotNull
     private static FunctionCreator hasLimitedLabValueCreator(@NotNull LabMeasurement measurement) {
+        return hasLimitedLabValueCreator(measurement, measurement.defaultUnit());
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedLabValueCreator(@NotNull LabMeasurement measurement, @NotNull LabUnit targetUnit) {
         return function -> {
             double maxValue = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(measurement,
-                    new HasLimitedLabValue(maxValue, measurement, measurement.defaultUnit()),
-                    MIN_VALID_LAB_DATE);
+            return createLabEvaluator(measurement, new HasLimitedLabValue(maxValue, measurement, targetUnit));
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedCreatinineCreator() {
-        return function -> {
-            double maxCreatinine = FunctionInputResolver.createOneDoubleInput(function);
-            return new LabMeasurementEvaluator(LabMeasurement.CREATININE, new HasLimitedCreatinine(maxCreatinine), MIN_VALID_LAB_DATE);
-        };
+    private static FunctionCreator hasLabValueWithinRefCreator(@NotNull LabMeasurement measurement) {
+        return function -> createLabEvaluator(measurement, new HasLabValueWithinRef());
     }
+
+    @NotNull
+    private static FunctionCreator hasLimitedPTTCreator() {
+        return function -> new HasLimitedPTT();
+    }
+
 
     @NotNull
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
             double minCreatinineClearance = FunctionInputResolver.createOneDoubleInput(function);
-            EvaluationFunction main = new LabMeasurementEvaluator(retrieveForMethod(method),
-                    new HasSufficientLabValue(minCreatinineClearance),
-                    MIN_VALID_LAB_DATE);
+            EvaluationFunction main = createLabEvaluator(retrieveForMethod(method),
+                    new HasSufficientLabValue(minCreatinineClearance, LabMeasurement.CREATININE, LabMeasurement.CREATININE.defaultUnit()));
 
-            EvaluationFunction fallback = new LabMeasurementEvaluator(LabMeasurement.CREATININE,
-                    new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance),
-                    MIN_VALID_LAB_DATE);
+            EvaluationFunction fallback = createLabEvaluator(LabMeasurement.CREATININE,
+                    new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance));
 
             return new Fallback(main, fallback);
         };
@@ -213,7 +194,7 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasLabValueWithinRefCreator(@NotNull LabMeasurement measurement) {
-        return function -> new LabMeasurementEvaluator(measurement, new HasLabValueWithinRef(), MIN_VALID_LAB_DATE);
+    private static EvaluationFunction createLabEvaluator(@NotNull LabMeasurement measurement, @NotNull LabEvaluationFunction function) {
+        return new LabMeasurementEvaluator(measurement, function, MIN_VALID_LAB_DATE);
     }
 }
