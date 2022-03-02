@@ -21,6 +21,7 @@ final class LabUnitConversionTable {
         CONVERSION_MAP.put(LabMeasurement.ALBUMIN, createAlbuminConversionMap());
         CONVERSION_MAP.put(LabMeasurement.LYMPHOCYTES_ABS_EDA, createLymphocytesConversionMap());
         CONVERSION_MAP.put(LabMeasurement.HEMOGLOBIN, createHemoglobinConversionMap());
+        CONVERSION_MAP.put(LabMeasurement.CALCIUM, createCalciumConversionMap());
     }
 
     @Nullable
@@ -94,6 +95,22 @@ final class LabUnitConversionTable {
         millimolesPerLiterMap.put(LabUnit.GRAMS_PER_DECILITER, 1 / 0.6206);
 
         map.put(LabUnit.GRAMS_PER_DECILITER, gramsPerDeciliterMap);
+        map.put(LabUnit.MILLIMOLES_PER_LITER, millimolesPerLiterMap);
+
+        return map;
+    }
+
+    @NotNull
+    private static Map<LabUnit, Map<LabUnit, Double>> createCalciumConversionMap() {
+        Map<LabUnit, Map<LabUnit, Double>> map = Maps.newHashMap();
+
+        Map<LabUnit, Double> milligramsPerDeciliterMap = Maps.newHashMap();
+        milligramsPerDeciliterMap.put(LabUnit.MILLIMOLES_PER_LITER, 0.2495);
+
+        Map<LabUnit, Double> millimolesPerLiterMap = Maps.newHashMap();
+        millimolesPerLiterMap.put(LabUnit.MILLIGRAMS_PER_DECILITER, 1 / 0.2495);
+
+        map.put(LabUnit.MILLIGRAMS_PER_DECILITER, milligramsPerDeciliterMap);
         map.put(LabUnit.MILLIMOLES_PER_LITER, millimolesPerLiterMap);
 
         return map;
