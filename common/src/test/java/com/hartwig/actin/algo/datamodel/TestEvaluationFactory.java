@@ -9,6 +9,16 @@ public final class TestEvaluationFactory {
 
     @NotNull
     public static Evaluation withResult(@NotNull EvaluationResult result) {
-        return ImmutableEvaluation.builder().result(result).build();
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("fail");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            builder.addUndeterminedMessages("undetermined");
+        } else if (result.isPass()) {
+            builder.addPassMessages("pass");
+        }
+
+        return builder.build();
     }
 }

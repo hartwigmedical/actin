@@ -24,9 +24,9 @@ public class Not implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Evaluation evaluation = function.evaluate(record);
 
-        EvaluationResult negatedResult = null;
-        Set<String> passMessages = null;
-        Set<String> failMessages = null;
+        EvaluationResult negatedResult;
+        Set<String> passMessages;
+        Set<String> failMessages;
         if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.PASS_BUT_WARN) {
             negatedResult = EvaluationResult.FAIL;
             passMessages = evaluation.failMessages();
@@ -40,9 +40,7 @@ public class Not implements EvaluationFunction {
             negatedResult = evaluation.result();
             passMessages = evaluation.passMessages();
             failMessages = evaluation.failMessages();
-        }
-
-        if (negatedResult == null) {
+        } else {
             throw new IllegalStateException("NOT function cannot negate evaluation: " + evaluation);
         }
 
