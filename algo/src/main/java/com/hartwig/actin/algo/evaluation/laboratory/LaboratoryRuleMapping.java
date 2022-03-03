@@ -129,14 +129,6 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
-        return function -> {
-            double maxULN = FunctionInputResolver.createOneDoubleInput(function);
-            return createLabEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
-        };
-    }
-
-    @NotNull
     private static FunctionCreator hasLimitedLabValueCreator(@NotNull LabMeasurement measurement) {
         return hasLimitedLabValueCreator(measurement, measurement.defaultUnit());
     }
@@ -146,6 +138,14 @@ public final class LaboratoryRuleMapping {
         return function -> {
             double maxValue = FunctionInputResolver.createOneDoubleInput(function);
             return createLabEvaluator(measurement, new HasLimitedLabValue(maxValue, measurement, targetUnit));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
+        return function -> {
+            double maxULN = FunctionInputResolver.createOneDoubleInput(function);
+            return createLabEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
         };
     }
 
