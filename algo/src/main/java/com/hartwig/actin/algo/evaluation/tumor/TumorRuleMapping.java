@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TumorRuleMapping {
 
-    private static final String MELANOMA_OF_UNKNOWN_PRIMARY_DOID = "1909";
-
     private TumorRuleMapping() {
     }
 
@@ -25,8 +23,6 @@ public final class TumorRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY,
-                hasPrimaryTumorLocationWithExactDoidCreator(doidModel, MELANOMA_OF_UNKNOWN_PRIMARY_DOID)); //TODO: delete rule
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_ONLY_TO_DOID_X,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_IS_EQUAL_TO_DOID_X,
@@ -65,11 +61,6 @@ public final class TumorRuleMapping {
             String doid = FunctionInputResolver.createOneStringInput(function);
             return new PrimaryTumorLocationBelongsToDoid(doidModel, doid);
         };
-    }
-
-    @NotNull
-    private static FunctionCreator hasPrimaryTumorLocationWithExactDoidCreator(@NotNull DoidModel doidModel, @NotNull String doidToMatch) {
-        return function -> new PrimaryTumorLocationIsExactDoid(doidModel, doidToMatch);
     }
 
     @NotNull

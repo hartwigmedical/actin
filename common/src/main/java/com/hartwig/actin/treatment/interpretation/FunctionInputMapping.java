@@ -26,7 +26,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, FunctionInput.ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_ONLY_TO_DOID_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_IS_EQUAL_TO_DOID_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
