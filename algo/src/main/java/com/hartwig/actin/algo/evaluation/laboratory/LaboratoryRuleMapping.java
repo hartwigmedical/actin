@@ -172,8 +172,9 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator hasSufficientCreatinineClearanceCreator(@NotNull CreatinineClearanceMethod method) {
         return function -> {
             double minCreatinineClearance = FunctionInputResolver.createOneDoubleInput(function);
-            EvaluationFunction main = createLabEvaluator(retrieveForMethod(method),
-                    new HasSufficientLabValue(minCreatinineClearance, LabMeasurement.CREATININE, LabMeasurement.CREATININE.defaultUnit()));
+            LabMeasurement measurement = retrieveForMethod(method);
+            EvaluationFunction main = createLabEvaluator(measurement,
+                    new HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit()));
 
             EvaluationFunction fallback = createLabEvaluator(LabMeasurement.CREATININE,
                     new HasSufficientDerivedCreatinineClearance(EvaluationConstants.REFERENCE_YEAR, method, minCreatinineClearance));

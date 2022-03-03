@@ -24,7 +24,10 @@ final class LabUnitConverter {
 
         Double conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit(), targetUnit);
         if (conversionFactor == null) {
-            LOGGER.warn("No conversion factor defined from '{}' to '{}'", labValue.unit(), targetUnit);
+            LOGGER.warn("No conversion factor defined from for {} to go from '{}' to '{}'",
+                    measurement.code(),
+                    labValue.unit(),
+                    targetUnit);
             return null;
         }
 
