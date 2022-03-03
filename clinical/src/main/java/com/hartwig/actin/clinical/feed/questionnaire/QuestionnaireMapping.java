@@ -24,7 +24,7 @@ final class QuestionnaireMapping {
         KEYS_V1_4.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
         KEYS_V1_4.put(QuestionnaireKey.BIOPSY_LOCATION, "Biopsy location");
         KEYS_V1_4.put(QuestionnaireKey.STAGE, "Stage");
-        KEYS_V1_4.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST)");
+        KEYS_V1_4.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Measurable disease (RECIST)");
         KEYS_V1_4.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions");
         KEYS_V1_4.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions");
         KEYS_V1_4.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
@@ -44,7 +44,7 @@ final class QuestionnaireMapping {
         KEYS_V1_3.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
         KEYS_V1_3.put(QuestionnaireKey.BIOPSY_LOCATION, "Biopsy location");
         KEYS_V1_3.put(QuestionnaireKey.STAGE, "Stage");
-        KEYS_V1_3.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST)");
+        KEYS_V1_3.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Measurable disease (RECIST)");
         KEYS_V1_3.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions");
         KEYS_V1_3.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions");
         KEYS_V1_3.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
@@ -64,7 +64,7 @@ final class QuestionnaireMapping {
         KEYS_V1_2.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
         KEYS_V1_2.put(QuestionnaireKey.BIOPSY_LOCATION, "Biopsy location");
         KEYS_V1_2.put(QuestionnaireKey.STAGE, "Stage");
-        KEYS_V1_2.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST)");
+        KEYS_V1_2.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Measurable disease (RECIST)");
         KEYS_V1_2.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions");
         KEYS_V1_2.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions");
         KEYS_V1_2.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
@@ -84,7 +84,7 @@ final class QuestionnaireMapping {
         KEYS_V1_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
         KEYS_V1_1.put(QuestionnaireKey.BIOPSY_LOCATION, "Biopsy location");
         KEYS_V1_1.put(QuestionnaireKey.STAGE, "Stage");
-        KEYS_V1_1.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST) yes/no");
+        KEYS_V1_1.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Measurable disease (RECIST) yes/no");
         KEYS_V1_1.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes/no/unknown");
         KEYS_V1_1.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
         KEYS_V1_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
@@ -104,7 +104,7 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
         KEYS_V1_0.put(QuestionnaireKey.BIOPSY_LOCATION, "Biopsy location");
         KEYS_V1_0.put(QuestionnaireKey.STAGE, "Stage");
-        KEYS_V1_0.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST) yes/no");
+        KEYS_V1_0.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Measurable disease (RECIST) yes/no");
         KEYS_V1_0.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
@@ -124,7 +124,7 @@ final class QuestionnaireMapping {
         KEYS_V0_2.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Tumor type");
         KEYS_V0_2.put(QuestionnaireKey.BIOPSY_LOCATION, "Biopsy location");
         KEYS_V0_2.put(QuestionnaireKey.STAGE, "Stage (I/II/III/IV)");
-        KEYS_V0_2.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Measurable disease (RECIST) yes/no/unknown");
+        KEYS_V0_2.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Measurable disease (RECIST) yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
@@ -144,7 +144,7 @@ final class QuestionnaireMapping {
         KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, null);
         KEYS_V0_1.put(QuestionnaireKey.BIOPSY_LOCATION, null);
         KEYS_V0_1.put(QuestionnaireKey.STAGE, null);
-        KEYS_V0_1.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE_RECIST, "Has measurable lesion (RECIST) yes/no");
+        KEYS_V0_1.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Has measurable lesion (RECIST) yes/no");
         KEYS_V0_1.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");

@@ -43,7 +43,7 @@ public abstract class Questionnaire {
     public abstract List<String> molecularTests();
 
     @Nullable
-    public abstract Boolean hasMeasurableLesionRecist();
+    public abstract Boolean hasMeasurableDisease();
 
     @Nullable
     public abstract Boolean hasBrainLesions();

@@ -36,7 +36,7 @@ public class TumorDetailsGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
         table.addCell(Cells.createKey("Measurable disease (RECIST)"));
-        table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor().hasMeasurableLesionRecist())));
+        table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor().hasMeasurableDisease())));
 
         table.addCell(Cells.createKey("CNS lesion status"));
         table.addCell(Cells.createValue(cnsLesions(record.tumor())));

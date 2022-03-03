@@ -36,8 +36,8 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withMeasurableLesionRecist(@Nullable Boolean hasMeasurableLesionRecist) {
-        return withTumorDetails(ImmutableTumorDetails.builder().hasMeasurableLesionRecist(hasMeasurableLesionRecist).build());
+    public static PatientRecord withMeasurableDisease(@Nullable Boolean hasMeasurableDisease) {
+        return withTumorDetails(ImmutableTumorDetails.builder().hasMeasurableDisease(hasMeasurableDisease).build());
     }
 
     @NotNull

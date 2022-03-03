@@ -3,10 +3,8 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
@@ -22,14 +20,13 @@ public final class CardiacFunctionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasAnyTypeOfCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, hasCardiacArrhythmiaOfTypeCreator());
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, hasCardiacArrhythmiaOfSpecificTypeCreator());
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator(doidModel));
-        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, hasRestingHeartRateWithinBoundsCreator());
 
         return map;
     }
@@ -40,7 +37,7 @@ public final class CardiacFunctionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasCardiacArrhythmiaOfTypeCreator() {
+    private static FunctionCreator hasCardiacArrhythmiaOfSpecificTypeCreator() {
         return function -> {
             String type = FunctionInputResolver.createOneStringInput(function);
             return new HasCardiacArrhythmia(type);
@@ -66,5 +63,10 @@ public final class CardiacFunctionRuleMapping {
     @NotNull
     private static FunctionCreator hasLongQTSyndromeCreator(@NotNull DoidModel doidModel) {
         return function -> new HasLongQTSyndrome(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasRestingHeartRateWithinBoundsCreator() {
+        return function -> new HasRestingHeartRateWithinBounds();
     }
 }

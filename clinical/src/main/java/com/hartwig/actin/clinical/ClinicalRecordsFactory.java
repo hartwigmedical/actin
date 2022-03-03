@@ -173,7 +173,7 @@ public class ClinicalRecordsFactory {
                 .from(curation.curateTumorDetails(questionnaire.tumorLocation(), questionnaire.tumorType()))
                 .biopsyLocation(curation.curateBiopsyLocation(biopsyLocation))
                 .stage(questionnaire.stage())
-                .hasMeasurableLesionRecist(questionnaire.hasMeasurableLesionRecist())
+                .hasMeasurableDisease(questionnaire.hasMeasurableDisease())
                 .hasBrainLesions(questionnaire.hasBrainLesions())
                 .hasActiveBrainLesions(questionnaire.hasActiveBrainLesions())
                 .hasSymptomaticBrainLesions(questionnaire.hasSymptomaticBrainLesions())

@@ -16,7 +16,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasMeasurableDiseaseRecist = record.clinical().tumor().hasMeasurableLesionRecist();
+        Boolean hasMeasurableDiseaseRecist = record.clinical().tumor().hasMeasurableDisease();
         if (hasMeasurableDiseaseRecist == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)

@@ -98,7 +98,7 @@ public class ClinicalRecordsFactoryTest {
         assertNull(tumor.primaryTumorExtraDetails());
         assertNull(tumor.doids());
         assertEquals(TumorStage.III, tumor.stage());
-        assertTrue(tumor.hasMeasurableLesionRecist());
+        assertTrue(tumor.hasMeasurableDisease());
         assertNull(tumor.hasBrainLesions());
         assertNull(tumor.hasActiveBrainLesions());
         assertNull(tumor.hasSymptomaticBrainLesions());

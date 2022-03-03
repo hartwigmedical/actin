@@ -33,7 +33,7 @@ public abstract class TumorDetails {
     public abstract TumorStage stage();
 
     @Nullable
-    public abstract Boolean hasMeasurableLesionRecist();
+    public abstract Boolean hasMeasurableDisease();
 
     @Nullable
     public abstract Boolean hasBrainLesions();

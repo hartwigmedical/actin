@@ -87,7 +87,7 @@ public final class TestClinicalDataFactory {
                 .primaryTumorExtraDetails(Strings.EMPTY)
                 .addDoids("8923")
                 .stage(TumorStage.IV)
-                .hasMeasurableLesionRecist(true)
+                .hasMeasurableDisease(true)
                 .hasBrainLesions(false)
                 .hasActiveBrainLesions(null)
                 .hasSymptomaticBrainLesions(null)

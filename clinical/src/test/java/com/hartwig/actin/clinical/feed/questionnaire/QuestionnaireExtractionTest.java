@@ -60,7 +60,7 @@ public class QuestionnaireExtractionTest {
         assertTrue(molecularTests.contains("IHC ERBB2 3+"));
 
         assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
@@ -118,7 +118,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.molecularTests());
 
         assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
@@ -176,7 +176,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.molecularTests());
 
         assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
@@ -234,7 +234,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.molecularTests());
 
         assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
@@ -291,7 +291,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.molecularTests());
 
         assertEquals(TumorStage.IV, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
@@ -353,7 +353,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.molecularTests());
 
         assertEquals(TumorStage.IV, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());
@@ -399,7 +399,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.molecularTests());
 
         assertNull(questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableLesionRecist());
+        assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertNull(questionnaire.hasSymptomaticBrainLesions());

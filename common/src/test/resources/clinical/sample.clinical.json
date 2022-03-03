@@ -22,7 +22,7 @@
     "primaryTumorExtraDetails": null,
     "doids": null,
     "stage": "III",
-    "hasMeasurableLesionRecist": true,
+    "hasMeasurableDisease": true,
     "hasBrainLesions": null,
     "hasActiveBrainLesions": null,
     "hasSymptomaticBrainLesions": null,

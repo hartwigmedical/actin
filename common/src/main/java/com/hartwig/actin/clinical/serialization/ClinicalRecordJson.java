@@ -190,7 +190,7 @@ public final class ClinicalRecordJson {
                     .primaryTumorExtraDetails(nullableString(tumor, "primaryTumorExtraDetails"))
                     .doids(nullableStringList(tumor, "doids"))
                     .stage(stageString != null ? TumorStage.valueOf(stageString) : null)
-                    .hasMeasurableLesionRecist(nullableBool(tumor, "hasMeasurableLesionRecist"))
+                    .hasMeasurableDisease(nullableBool(tumor, "hasMeasurableDisease"))
                     .hasBrainLesions(nullableBool(tumor, "hasBrainLesions"))
                     .hasActiveBrainLesions(nullableBool(tumor, "hasActiveBrainLesions"))
                     .hasSymptomaticBrainLesions(nullableBool(tumor, "hasSymptomaticBrainLesions"))
