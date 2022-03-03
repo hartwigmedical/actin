@@ -3,10 +3,8 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
@@ -37,8 +35,7 @@ public final class OtherConditionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithNameCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasSpecificPriorConditionCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasSpecificPriorConditionCreator(doidModel, CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
@@ -57,14 +54,10 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
-        map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES,
-                hasPotentialAbsorptionDifficultiesCreator()); //TODO implement according to README
-        map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES,
-                canSwallowOralMedicationCreator()); //TODO implement according to README
-        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES, hasPotentialAbsorptionDifficultiesCreator(doidModel));
+        map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, hasOralMedicationDifficultiesCreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT, hasContraindicationToCTCreator(doidModel));
+        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, hasContraindicationToMRICreator(doidModel));
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
 
@@ -76,6 +69,14 @@ public final class OtherConditionRuleMapping {
         return function -> {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
             return new HasHadSpecificPriorCondition(doidModel, doidToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasPriorConditionWithNameCreator() {
+        return function -> {
+            String nameToFind = FunctionInputResolver.createOneStringInput(function);
+            return new HasHadPriorConditionWithName(nameToFind);
         };
     }
 
@@ -95,13 +96,23 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasPotentialAbsorptionDifficultiesCreator() {
-        return function -> new HasPotentialAbsorptionDifficulties();
+    private static FunctionCreator hasPotentialAbsorptionDifficultiesCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasPotentialAbsorptionDifficulties(doidModel);
     }
 
     @NotNull
-    private static FunctionCreator canSwallowOralMedicationCreator() {
-        return function -> new CanSwallowOralMedication();
+    private static FunctionCreator hasOralMedicationDifficultiesCreator() {
+        return function -> new HasOralMedicationDifficulties();
+    }
+
+    @NotNull
+    private static FunctionCreator hasContraindicationToCTCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasContraindicationToCT(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasContraindicationToMRICreator(@NotNull DoidModel doidModel) {
+        return function -> new HasContraindicationToMRI(doidModel);
     }
 
     @NotNull
