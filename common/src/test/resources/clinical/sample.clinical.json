@@ -82,6 +82,8 @@
       "diagnosedYear": 2015,
       "diagnosedMonth": null,
       "treatmentHistory": "Surgery",
+      "lastTreatmentYear": 2016,
+      "lastTreatmentMonth": null,
       "isActive": false
     }
   ],

@@ -88,8 +88,8 @@ CREATE TABLE priorSecondPrimary
     diagnosedYear int,
     diagnosedMonth int,
     treatmentHistory varchar(150) NOT NULL,
-    latestTreatmentYear int,
-    latestTreatmentMonth int,
+    lastTreatmentYear int,
+    lastTreatmentMonth int,
     isActive BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );

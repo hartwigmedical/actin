@@ -117,6 +117,8 @@ public class CurationDatabaseReaderTest {
         assertEquals(2018, (int) curated2.diagnosedYear());
         assertEquals(1, (int) curated2.diagnosedMonth());
         assertEquals("Surgery", curated2.treatmentHistory());
+        assertEquals(2019, (int) curated2.lastTreatmentYear());
+        assertEquals(2, (int) curated2.lastTreatmentMonth());
         assertTrue(curated2.isActive());
     }
 

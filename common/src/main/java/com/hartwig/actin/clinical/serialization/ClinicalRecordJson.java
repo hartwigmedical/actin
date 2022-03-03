@@ -288,6 +288,8 @@ public final class ClinicalRecordJson {
                         .diagnosedYear(nullableInteger(object, "diagnosedYear"))
                         .diagnosedMonth(nullableInteger(object, "diagnosedMonth"))
                         .treatmentHistory(string(object, "treatmentHistory"))
+                        .lastTreatmentYear(nullableInteger(object, "lastTreatmentYear"))
+                        .lastTreatmentMonth(nullableInteger(object, "lastTreatmentMonth"))
                         .isActive(bool(object, "isActive"))
                         .build());
             }

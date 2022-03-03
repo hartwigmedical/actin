@@ -34,6 +34,12 @@ public abstract class PriorSecondPrimary {
     @NotNull
     public abstract String treatmentHistory();
 
+    @Nullable
+    public abstract Integer lastTreatmentYear();
+
+    @Nullable
+    public abstract Integer lastTreatmentMonth();
+
     public abstract boolean isActive();
 
 }

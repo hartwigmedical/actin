@@ -37,6 +37,8 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .diagnosedYear(ResourceFile.optionalInteger(parts[fields.get("year")]))
                     .diagnosedMonth(ResourceFile.optionalInteger(parts[fields.get("month")]))
                     .treatmentHistory(parts[fields.get("treatmentHistoryPreviousPrimary")])
+                    .lastTreatmentYear(ResourceFile.optionalInteger(parts[fields.get("lastTreatmentYear")]))
+                    .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields.get("lastTreatmentMonth")]))
                     .isActive(ResourceFile.bool(parts[fields.get("isSecondPrimaryActive")]))
                     .build();
         } else {
