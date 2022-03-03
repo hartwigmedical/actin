@@ -349,6 +349,7 @@ HAS_KNOWN_HTLV_INFECTION | Prior other conditions > name like %HTLV%
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
 HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
 HAS_CURRENT_COVID_19_INFECTION | Currently resolves to undetermined
+IS_FULLY_VACCINATED_AGAINST_COVID_19 | Currently resolves to undetermined
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated
 
 ##### Rules related to current medication 
