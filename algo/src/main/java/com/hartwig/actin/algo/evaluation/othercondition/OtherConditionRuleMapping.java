@@ -24,8 +24,8 @@ public final class OtherConditionRuleMapping {
     private static final String STROKE_DOID = "6713";
     private static final String HYPERTENSION_DOID = "10763";
     private static final String DIABETES_DOID = "9351";
-    private static final String GASTROINTESTINAL_DOID = "77";
-    private static final String IMMUNE_SYSTEM_DOID = "2914";
+    private static final String GASTROINTESTINAL_DISEASE_DOID = "77";
+    private static final String IMMUNE_SYSTEM_DISEASE_DOID = "2914";
 
     private OtherConditionRuleMapping() {
     }
@@ -41,8 +41,9 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
                 hasSpecificPriorConditionCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
-                hasSpecificPriorConditionCreator(doidModel, GASTROINTESTINAL_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE, hasSpecificPriorConditionCreator(doidModel, IMMUNE_SYSTEM_DOID));
+                hasSpecificPriorConditionCreator(doidModel, GASTROINTESTINAL_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,
+                hasSpecificPriorConditionCreator(doidModel, IMMUNE_SYSTEM_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasSpecificPriorConditionCreator(doidModel, LIVER_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasSpecificPriorConditionCreator(doidModel, LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasSpecificPriorConditionCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
