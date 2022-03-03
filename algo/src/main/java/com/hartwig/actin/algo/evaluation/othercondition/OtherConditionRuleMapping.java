@@ -57,19 +57,18 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
-        map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES, hasPotentialAbsorptionDifficultiesCreator()); //TODO implement according to README
-        map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, canSwallowOralMedicationCreator()); //TODO implement according to README
-        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES,
+                hasPotentialAbsorptionDifficultiesCreator()); //TODO implement according to README
+        map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES,
+                canSwallowOralMedicationCreator()); //TODO implement according to README
+        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
 
         return map;
-    }
-
-    @NotNull
-    private static FunctionCreator hasSpecificPriorConditionCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
-        return function -> new HasHadSpecificPriorCondition(doidModel, doidToFind);
     }
 
     @NotNull
@@ -78,6 +77,11 @@ public final class OtherConditionRuleMapping {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
             return new HasHadSpecificPriorCondition(doidModel, doidToFind);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSpecificPriorConditionCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
+        return function -> new HasHadSpecificPriorCondition(doidModel, doidToFind);
     }
 
     @NotNull
@@ -106,8 +110,7 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasAdequateVeinAccessCreator()  {
-        return function -> new HasAdequateVeinAccessCreator();
+    private static FunctionCreator hasAdequateVeinAccessCreator() {
+        return function -> new HasAdequateVeinAccess();
     }
-
 }

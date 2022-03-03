@@ -16,13 +16,13 @@ public class HasHadOrganTransplantTest {
     public void canEvaluate() {
         HasHadOrganTransplant function = new HasHadOrganTransplant();
 
-        List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
+        List<PriorOtherCondition> conditions = Lists.newArrayList();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
 
-        priorOtherConditions.add(OtherConditionTestFactory.builder().build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
+        conditions.add(OtherConditionTestFactory.builder().build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
 
-        priorOtherConditions.add(OtherConditionTestFactory.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(priorOtherConditions)));
+        conditions.add(OtherConditionTestFactory.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
     }
 }

@@ -20,17 +20,17 @@ final class OtherConditionTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withPriorOtherCondition(@NotNull PriorOtherCondition priorOtherCondition) {
-        return withPriorOtherConditions(Lists.newArrayList(priorOtherCondition));
+    public static PatientRecord withPriorOtherCondition(@NotNull PriorOtherCondition condition) {
+        return withPriorOtherConditions(Lists.newArrayList(condition));
     }
 
     @NotNull
-    public static PatientRecord withPriorOtherConditions(@NotNull List<PriorOtherCondition> priorOtherConditions) {
+    public static PatientRecord withPriorOtherConditions(@NotNull List<PriorOtherCondition> conditions) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .priorOtherConditions(priorOtherConditions)
+                        .priorOtherConditions(conditions)
                         .build())
                 .build();
     }

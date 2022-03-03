@@ -15,7 +15,6 @@ public class CanSwallowOralMedication implements EvaluationFunction {
 
     @NotNull
     @Override
-    // To do: extend evaluation
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
