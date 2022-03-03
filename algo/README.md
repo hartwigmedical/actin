@@ -411,11 +411,11 @@ IS_BREASTFEEDING | Won't be evaluated
 IS_PREGNANT | Won't be evaluated
 USES_ADEQUATE_ANTICONCEPTION | Won't be evaluated
 
-##### Rules related to cancer related complication
+##### Rules related to complications
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_COMPLICATION_X | Cancer related complication > Name like %X%
+HAS_COMPLICATION_X | complication > Name like %X%
 
 ##### Rules related to allergies/toxicities
 

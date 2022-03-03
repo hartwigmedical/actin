@@ -118,7 +118,7 @@ scoreText | | Test score in text
 scoreValue | 10 | Test score in value 
 unit | | Corresponding unit (if applicable)
 
-N cancer related complications
+N complications
 
 Field | Example Value | Details
 ---|---|---
