@@ -108,7 +108,7 @@ HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
-HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDiseaseRecist = 1 
+HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1 
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined

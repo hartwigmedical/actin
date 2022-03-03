@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasMeasurableDiseaseRecistTest {
+public class HasMeasurableDiseaseTest {
 
     @Test
     public void canEvaluate() {
-        HasMeasurableDiseaseRecist function = new HasMeasurableDiseaseRecist();
+        HasMeasurableDisease function = new HasMeasurableDisease();
 
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMeasurableDisease(true)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withMeasurableDisease(false)));

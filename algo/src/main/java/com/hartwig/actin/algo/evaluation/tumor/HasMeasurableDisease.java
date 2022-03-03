@@ -8,29 +8,29 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasMeasurableDiseaseRecist implements EvaluationFunction {
+public class HasMeasurableDisease implements EvaluationFunction {
 
-    HasMeasurableDiseaseRecist() {
+    HasMeasurableDisease() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasMeasurableDiseaseRecist = record.clinical().tumor().hasMeasurableDisease();
-        if (hasMeasurableDiseaseRecist == null) {
+        Boolean hasMeasurableDisease = record.clinical().tumor().hasMeasurableDisease();
+        if (hasMeasurableDisease == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Data regarding measurable disease is missing")
                     .build();
         }
 
-        EvaluationResult result = hasMeasurableDiseaseRecist ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasMeasurableDisease ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient does not have measurable disease according to RECIST");
+            builder.addFailMessages("Patient does not have measurable disease");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has measurable disease according to RECIST");
+            builder.addPassMessages("Patient has measurable disease");
         }
 
         return builder.build();
