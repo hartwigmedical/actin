@@ -29,7 +29,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
             Double scoreValue = ihcTest.scoreValue();
             if (scoreValue != null) {
                 // We assume IHC prior molecular tests always have integer score values.
-                hasSufficientExpression = Math.round(scoreValue) >= minExpressionLevel;
+                hasSufficientExpression = Double.compare(Math.round(scoreValue), minExpressionLevel) >= 0;
             }
 
             if (hasSufficientExpression) {

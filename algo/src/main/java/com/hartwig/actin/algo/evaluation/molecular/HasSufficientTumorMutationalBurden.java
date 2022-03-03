@@ -27,7 +27,8 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = tumorMutationalBurden >= minTumorMutationalBurden ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result =
+                Double.compare(tumorMutationalBurden, minTumorMutationalBurden) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {

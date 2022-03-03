@@ -41,7 +41,7 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
                     .build();
         }
 
-        boolean isPass = 100 * (labValue.value() / mostRecentTotal.value()) <= maxPercentage;
+        boolean isPass = Double.compare(100 * (labValue.value() / mostRecentTotal.value()), maxPercentage) <= 0;
 
         EvaluationResult result = isPass ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);

@@ -24,7 +24,7 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
             boolean hasSufficientPDL1 = false;
 
             Double scoreValue = ihcTest.scoreValue();
-            if (scoreValue != null && scoreValue >= minPDL1) {
+            if (scoreValue != null && Double.compare(scoreValue, minPDL1) >= 0) {
                 hasSufficientPDL1 = true;
             }
 
