@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
+import javax.annotation.Nullable;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -11,7 +13,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasCardiacArrhythmia implements EvaluationFunction {
 
-    HasCardiacArrhythmia() {
+    @Nullable
+    private final String type;
+
+    HasCardiacArrhythmia(@Nullable final String type) {
+        this.type = type;
     }
 
     @NotNull
@@ -26,12 +32,28 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = ecg.hasSigAberrationLatestECG() ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result;
+        if (ecg.hasSigAberrationLatestECG()) {
+            result = (type == null || ecg.aberrationDescription().toLowerCase().contains(type.toLowerCase()))
+                    ? EvaluationResult.PASS
+                    : EvaluationResult.FAIL;
+        } else {
+            result = EvaluationResult.FAIL;
+        }
+
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("No known ECG abnormalities");
+            if (type == null) {
+                builder.addFailMessages("No known ECG abnormalities");
+            } else {
+                builder.addFailMessages("No known ECG abnormalities of type " + type);
+            }
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
+            if (type == null) {
+                builder.addPassMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
+            } else {
+                builder.addPassMessages("Known ECG abnormalities of type " + type + ": " + ecg.aberrationDescription());
+            }
         }
 
         return builder.build();

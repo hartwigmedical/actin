@@ -20,9 +20,8 @@ public final class CardiacFunctionRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasCardiacArrhythmiaCreator());
-        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasAnyTypeOfCardiacArrhythmiaCreator());
+        map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X, hasCardiacArrhythmiaOfTypeCreator());
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
@@ -35,8 +34,16 @@ public final class CardiacFunctionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasCardiacArrhythmiaCreator() {
-        return function -> new HasCardiacArrhythmia();
+    private static FunctionCreator hasAnyTypeOfCardiacArrhythmiaCreator() {
+        return function -> new HasCardiacArrhythmia(null);
+    }
+
+    @NotNull
+    private static FunctionCreator hasCardiacArrhythmiaOfTypeCreator() {
+        return function -> {
+            String type = FunctionInputResolver.createOneStringInput(function);
+            return new HasCardiacArrhythmia(type);
+        };
     }
 
     @NotNull
