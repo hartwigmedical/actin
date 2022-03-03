@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHistologicalDocumentationOfTumorType implements EvaluationFunction {
+public class HasCytologicalDocumentationOfTumorType implements EvaluationFunction {
 
-    HasHistologicalDocumentationOfTumorType() {
+    HasCytologicalDocumentationOfTumorType() {
     }
 
     @NotNull
@@ -18,7 +18,7 @@ public class HasHistologicalDocumentationOfTumorType implements EvaluationFuncti
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently it is assumed that histological documentation of tumor type has been done or can be done")
+                .addPassMessages("Currently it is assumed that cytological documentation of tumor type has been done or can be done")
                 .build();
     }
 }

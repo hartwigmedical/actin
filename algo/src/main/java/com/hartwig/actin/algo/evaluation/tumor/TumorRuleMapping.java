@@ -3,8 +3,10 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -24,7 +26,12 @@ public final class TumorRuleMapping {
 
         map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorLocationBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_MELANOMA_OF_UNKNOWN_PRIMARY,
-                hasPrimaryTumorLocationWithExactDoidCreator(doidModel, MELANOMA_OF_UNKNOWN_PRIMARY_DOID));
+                hasPrimaryTumorLocationWithExactDoidCreator(doidModel, MELANOMA_OF_UNKNOWN_PRIMARY_DOID)); //TODO: delete rule
+        map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_ONLY_TO_DOID_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_IS_EQUAL_TO_DOID_X,
+                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
@@ -63,6 +70,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasPrimaryTumorLocationWithExactDoidCreator(@NotNull DoidModel doidModel, @NotNull String doidToMatch) {
         return function -> new PrimaryTumorLocationIsExactDoid(doidModel, doidToMatch);
+    }
+
+    @NotNull
+    private static FunctionCreator hasCytologicalDocumentationOfTumorTypeCreator() {
+        return function -> new HasCytologicalDocumentationOfTumorType();
     }
 
     @NotNull

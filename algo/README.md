@@ -88,8 +88,10 @@ IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
  
 Rule | When does a patient pass evaluation?
 ---|---
-PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Configured DOID should be equal or be a child of DOID X
-HAS_MELANOMA_OF_UNKNOWN_PRIMARY | All configured DOIDs are equal to 1909 
+PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Any configured DOID should be equal or be a child of DOID X
+PRIMARY_TUMOR_LOCATION_BELONGS_ONLY_ TO_DOID_X | ALL configured DOIDs should be equal or be a child of DOID X
+PRIMARY_TUMOR_LOCATION_IS_EQUAL_ TO_DOID_X | ALL configured DOIDs should be exactly equal to DOID X
+HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage III(A/B/C) or IV
@@ -360,7 +362,7 @@ CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type 
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
-CURRENTLY_GETS_COUMADIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
+CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" (T.B.E)
