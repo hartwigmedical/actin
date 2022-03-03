@@ -26,7 +26,7 @@ CREATE TABLE tumor
     primaryTumorExtraDetails varchar(50),
     doids varchar(50),
     stage varchar(50),
-    hasMeasurableLesionRecist BOOLEAN,
+    hasMeasurableDisease BOOLEAN,
     hasBrainLesions BOOLEAN,
     hasActiveBrainLesions BOOLEAN,
     hasSymptomaticBrainLesions BOOLEAN,
@@ -88,6 +88,8 @@ CREATE TABLE priorSecondPrimary
     diagnosedYear int,
     diagnosedMonth int,
     treatmentHistory varchar(150) NOT NULL,
+    latestTreatmentYear int,
+    latestTreatmentMonth int,
     isActive BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
