@@ -3,8 +3,8 @@ package com.hartwig.actin.database.dao;
 import static com.hartwig.actin.database.Tables.ALLERGY;
 import static com.hartwig.actin.database.Tables.BLOODTRANSFUSION;
 import static com.hartwig.actin.database.Tables.BODYWEIGHT;
-import static com.hartwig.actin.database.Tables.CANCERRELATEDCOMPLICATION;
 import static com.hartwig.actin.database.Tables.CLINICALSTATUS;
+import static com.hartwig.actin.database.Tables.COMPLICATION;
 import static com.hartwig.actin.database.Tables.LABVALUE;
 import static com.hartwig.actin.database.Tables.MEDICATION;
 import static com.hartwig.actin.database.Tables.PATIENT;
@@ -22,9 +22,9 @@ import java.util.List;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -62,7 +62,7 @@ class ClinicalDAO {
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
         context.truncate(PRIORMOLECULARTEST).execute();
-        context.truncate(CANCERRELATEDCOMPLICATION).execute();
+        context.truncate(COMPLICATION).execute();
         context.truncate(LABVALUE).execute();
         context.truncate(TOXICITY).execute();
         context.truncate(ALLERGY).execute();
@@ -84,7 +84,7 @@ class ClinicalDAO {
         writePriorSecondPrimaries(sampleId, record.priorSecondPrimaries());
         writePriorOtherConditions(sampleId, record.priorOtherConditions());
         writePriorMolecularTests(sampleId, record.priorMolecularTests());
-        writeCancerRelatedComplications(sampleId, record.cancerRelatedComplications());
+        writeComplications(sampleId, record.complications());
         writeLabValues(sampleId, record.labValues());
         writeToxicities(sampleId, record.toxicities());
         writeAllergies(sampleId, record.allergies());
@@ -278,18 +278,10 @@ class ClinicalDAO {
         }
     }
 
-    private void writeCancerRelatedComplications(@NotNull String sampleId,
-            @NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
-        for (CancerRelatedComplication cancerRelatedComplication : cancerRelatedComplications) {
-            context.insertInto(CANCERRELATEDCOMPLICATION,
-                    CANCERRELATEDCOMPLICATION.SAMPLEID,
-                    CANCERRELATEDCOMPLICATION.NAME,
-                    CANCERRELATEDCOMPLICATION.YEAR,
-                    CANCERRELATEDCOMPLICATION.MONTH)
-                    .values(sampleId,
-                            cancerRelatedComplication.name(),
-                            cancerRelatedComplication.year(),
-                            cancerRelatedComplication.month())
+    private void writeComplications(@NotNull String sampleId, @NotNull List<Complication> complications) {
+        for (Complication complication : complications) {
+            context.insertInto(COMPLICATION, COMPLICATION.SAMPLEID, COMPLICATION.NAME, COMPLICATION.YEAR, COMPLICATION.MONTH)
+                    .values(sampleId, complication.name(), complication.year(), complication.month())
                     .execute();
         }
     }

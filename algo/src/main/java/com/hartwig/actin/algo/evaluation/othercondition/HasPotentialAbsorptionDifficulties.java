@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
@@ -57,7 +57,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             }
         }
 
-        for (CancerRelatedComplication complication : record.clinical().cancerRelatedComplications()) {
+        for (Complication complication : record.clinical().complications()) {
             for (String termToFind : COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY) {
                 if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                     return ImmutableEvaluation.builder()

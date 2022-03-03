@@ -8,9 +8,9 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
@@ -96,16 +96,16 @@ public class HasContraindicationToCTTest {
         HasContraindicationToCT function = createTestContraindicationCTFunction();
 
         // Test without complications
-        List<CancerRelatedComplication> medications = Lists.newArrayList();
+        List<Complication> medications = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(medications)));
 
         // Test no relevant complication
-        medications.add(ImmutableCancerRelatedComplication.builder().name("no relevant complication").build());
+        medications.add(ImmutableComplication.builder().name("no relevant complication").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(medications)));
 
         // Test relevant medication
         String relevantComplication = HasContraindicationToCT.COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT.iterator().next();
-        medications.add(ImmutableCancerRelatedComplication.builder().name(relevantComplication).build());
+        medications.add(ImmutableComplication.builder().name(relevantComplication).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(medications)));
     }
 

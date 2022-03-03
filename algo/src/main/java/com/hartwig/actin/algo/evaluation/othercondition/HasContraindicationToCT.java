@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -80,7 +80,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
             }
         }
 
-        for (CancerRelatedComplication complication : record.clinical().cancerRelatedComplications()) {
+        for (Complication complication : record.clinical().complications()) {
             for (String term : COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT) {
                 if (complication.name().toLowerCase().contains(term)) {
                     return ImmutableEvaluation.builder()

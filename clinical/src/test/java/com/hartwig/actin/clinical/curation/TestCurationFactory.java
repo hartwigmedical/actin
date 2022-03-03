@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.config.AllergyConfig;
-import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableAllergyConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
@@ -32,7 +32,7 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
@@ -66,7 +66,7 @@ public final class TestCurationFactory {
                 .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
                 .infectionConfigs(createTestInfectionConfigs())
-                .cancerRelatedComplicationConfigs(createTestCancerRelatedComplicationConfigs())
+                .complicationConfigs(createTestComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .molecularTestConfigs(createTestMolecularTestConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
@@ -214,12 +214,12 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    private static List<CancerRelatedComplicationConfig> createTestCancerRelatedComplicationConfigs() {
-        List<CancerRelatedComplicationConfig> configs = Lists.newArrayList();
+    private static List<ComplicationConfig> createTestComplicationConfigs() {
+        List<ComplicationConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableCancerRelatedComplicationConfig.builder()
+        configs.add(ImmutableComplicationConfig.builder()
                 .input("Term")
-                .curated(ImmutableCancerRelatedComplication.builder().name("Curated").build())
+                .curated(ImmutableComplication.builder().name("Curated").build())
                 .build());
 
         return configs;

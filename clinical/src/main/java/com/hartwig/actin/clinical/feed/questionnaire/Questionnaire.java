@@ -85,6 +85,6 @@ public abstract class Questionnaire {
     public abstract ECG ecg();
 
     @Nullable
-    public abstract List<String> cancerRelatedComplications();
+    public abstract List<String> complications();
 
 }

@@ -9,9 +9,9 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,23 +23,23 @@ public class HasSpecificComplicationTest {
     public void canEvaluate() {
         HasSpecificComplication function = new HasSpecificComplication("name to find");
 
-        List<CancerRelatedComplication> complications = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
+        List<Complication> complications = Lists.newArrayList();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withComplications(complications)));
 
-        complications.add(ImmutableCancerRelatedComplication.builder().name("just a name").build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withCancerRelatedComplications(complications)));
+        complications.add(ImmutableComplication.builder().name("just a name").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withComplications(complications)));
 
-        complications.add(ImmutableCancerRelatedComplication.builder().name("this includes name to find").build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withCancerRelatedComplications(complications)));
+        complications.add(ImmutableComplication.builder().name("this includes name to find").build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withComplications(complications)));
     }
 
     @NotNull
-    private static PatientRecord withCancerRelatedComplications(@NotNull List<CancerRelatedComplication> complications) {
+    private static PatientRecord withComplications(@NotNull List<Complication> complications) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .cancerRelatedComplications(complications)
+                        .complications(complications)
                         .build())
                 .build();
     }

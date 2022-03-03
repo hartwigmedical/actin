@@ -39,17 +39,17 @@ import com.google.gson.JsonParseException;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -156,7 +156,7 @@ public final class ClinicalRecordJson {
                     .priorSecondPrimaries(toPriorSecondPrimaries(array(record, "priorSecondPrimaries")))
                     .priorOtherConditions(toPriorOtherConditions(array(record, "priorOtherConditions")))
                     .priorMolecularTests(toPriorMolecularTests(array(record, "priorMolecularTests")))
-                    .cancerRelatedComplications(toCancerRelatedComplications(array(record, "cancerRelatedComplications")))
+                    .complications(toComplications(array(record, "complications")))
                     .labValues(toLabValues(array(record, "labValues")))
                     .toxicities(toToxicities(array(record, "toxicities")))
                     .allergies(toAllergies(array(record, "allergies")))
@@ -327,17 +327,17 @@ public final class ClinicalRecordJson {
         }
 
         @NotNull
-        private static List<CancerRelatedComplication> toCancerRelatedComplications(@NotNull JsonArray cancerRelatedComplications) {
-            List<CancerRelatedComplication> cancerRelatedComplicationList = Lists.newArrayList();
-            for (JsonElement element : cancerRelatedComplications) {
+        private static List<Complication> toComplications(@NotNull JsonArray complications) {
+            List<Complication> complicationList = Lists.newArrayList();
+            for (JsonElement element : complications) {
                 JsonObject object = element.getAsJsonObject();
-                cancerRelatedComplicationList.add(ImmutableCancerRelatedComplication.builder()
+                complicationList.add(ImmutableComplication.builder()
                         .name(string(object, "name"))
                         .year(nullableInteger(object, "year"))
                         .month(nullableInteger(object, "month"))
                         .build());
             }
-            return cancerRelatedComplicationList;
+            return complicationList;
         }
 
         @NotNull

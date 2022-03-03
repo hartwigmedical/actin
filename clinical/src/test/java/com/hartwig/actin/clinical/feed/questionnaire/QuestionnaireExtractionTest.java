@@ -86,9 +86,9 @@ public class QuestionnaireExtractionTest {
         assertTrue(ecg.hasSigAberrationLatestECG());
         assertEquals("Sinus", ecg.aberrationDescription());
 
-        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-        assertEquals(1, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains("nausea"));
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("nausea"));
     }
 
     @Test
@@ -144,9 +144,9 @@ public class QuestionnaireExtractionTest {
         assertTrue(ecg.hasSigAberrationLatestECG());
         assertEquals("Sinus", ecg.aberrationDescription());
 
-        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-        assertEquals(1, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains("nausea"));
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("nausea"));
     }
 
     @Test
@@ -202,9 +202,9 @@ public class QuestionnaireExtractionTest {
         assertTrue(ecg.hasSigAberrationLatestECG());
         assertEquals("Sinus", ecg.aberrationDescription());
 
-        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-        assertEquals(1, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains("nausea"));
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("nausea"));
     }
 
     @Test
@@ -260,9 +260,9 @@ public class QuestionnaireExtractionTest {
         assertTrue(ecg.hasSigAberrationLatestECG());
         assertEquals("Sinus", ecg.aberrationDescription());
 
-        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-        assertEquals(1, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains("nausea"));
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("nausea"));
     }
 
     @Test
@@ -322,9 +322,9 @@ public class QuestionnaireExtractionTest {
         assertFalse(ecg.hasSigAberrationLatestECG());
         assertEquals("NA", ecg.aberrationDescription());
 
-        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-        assertEquals(1, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains("ascites"));
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("ascites"));
     }
 
     @Test
@@ -374,9 +374,9 @@ public class QuestionnaireExtractionTest {
 
         assertNull(questionnaire.ecg());
 
-        List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-        assertEquals(1, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains("pleural effusion"));
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("pleural effusion"));
     }
 
     @Test
@@ -429,7 +429,7 @@ public class QuestionnaireExtractionTest {
         assertFalse(ecg.hasSigAberrationLatestECG());
         assertEquals("No", ecg.aberrationDescription());
 
-        assertTrue(questionnaire.cancerRelatedComplications().isEmpty());
+        assertTrue(questionnaire.complications().isEmpty());
     }
 
     @Test

@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.AllergyConfigFactory;
-import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
-import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfigFactory;
+import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory;
@@ -49,7 +49,7 @@ public final class CurationDatabaseReader {
     private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
     private static final String INFECTION_TSV = "infection.tsv";
-    private static final String CANCER_RELATED_COMPLICATION_TSV = "cancer_related_complication.tsv";
+    private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
     private static final String MOLECULAR_TEST_TSV = "molecular_test.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
@@ -75,7 +75,7 @@ public final class CurationDatabaseReader {
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
                 .infectionConfigs(readInfectionConfigs(basePath + INFECTION_TSV))
-                .cancerRelatedComplicationConfigs(readCancerRelatedComplicationConfigs(basePath + CANCER_RELATED_COMPLICATION_TSV))
+                .complicationConfigs(readComplicationConfigs(basePath + COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .molecularTestConfigs(readMolecularTestConfigs(basePath + MOLECULAR_TEST_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
@@ -129,9 +129,9 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<CancerRelatedComplicationConfig> readCancerRelatedComplicationConfigs(@NotNull String tsv) throws IOException {
-        List<CancerRelatedComplicationConfig> configs = CurationConfigFile.read(tsv, new CancerRelatedComplicationConfigFactory());
-        LOGGER.info(" Read {} cancer related complication configs from {}", configs.size(), tsv);
+    private static List<ComplicationConfig> readComplicationConfigs(@NotNull String tsv) throws IOException {
+        List<ComplicationConfig> configs = CurationConfigFile.read(tsv, new ComplicationConfigFactory());
+        LOGGER.info(" Read {} complication configs from {}", configs.size(), tsv);
         return configs;
     }
 

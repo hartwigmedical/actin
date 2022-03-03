@@ -15,11 +15,11 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -166,20 +166,19 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canCurateCancerRelatedComplications() {
+    public void canCurateComplications() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        List<CancerRelatedComplication> cancerRelatedComplications =
-                model.curateCancerRelatedComplications(Lists.newArrayList("term", "no curation"));
+        List<Complication> complications = model.curateComplications(Lists.newArrayList("term", "no curation"));
 
-        assertEquals(2, cancerRelatedComplications.size());
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("Curated").build()));
-        assertTrue(cancerRelatedComplications.contains(ImmutableCancerRelatedComplication.builder().name("No curation").build()));
+        assertEquals(2, complications.size());
+        assertTrue(complications.contains(ImmutableComplication.builder().name("Curated").build()));
+        assertTrue(complications.contains(ImmutableComplication.builder().name("No curation").build()));
 
-        assertTrue(model.curateCancerRelatedComplications(null).isEmpty());
+        assertTrue(model.curateComplications(null).isEmpty());
 
         // Add "Unknown" in case field is not filled in
-        assertEquals(1, model.curateCancerRelatedComplications(Lists.newArrayList()).size());
+        assertEquals(1, model.curateComplications(Lists.newArrayList()).size());
 
         model.evaluate();
     }

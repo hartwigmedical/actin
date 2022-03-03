@@ -13,11 +13,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.curation.config.AllergyConfig;
-import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableAllergyConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableCancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
@@ -43,11 +43,11 @@ import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -275,31 +275,31 @@ public class CurationModel {
     }
 
     @NotNull
-    public List<CancerRelatedComplication> curateCancerRelatedComplications(@Nullable List<String> inputs) {
+    public List<Complication> curateComplications(@Nullable List<String> inputs) {
         if (inputs == null) {
             return Lists.newArrayList();
         }
 
-        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+        List<Complication> complications = Lists.newArrayList();
         for (String input : inputs) {
             String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
-            Set<CancerRelatedComplicationConfig> configs = find(database.cancerRelatedComplicationConfigs(), reformatted);
+            Set<ComplicationConfig> configs = find(database.complicationConfigs(), reformatted);
 
             if (configs.isEmpty()) {
-                cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name(reformatted).build());
+                complications.add(ImmutableComplication.builder().name(reformatted).build());
             }
 
-            for (CancerRelatedComplicationConfig config : configs) {
-                cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().from(config.curated()).build());
+            for (ComplicationConfig config : configs) {
+                complications.add(ImmutableComplication.builder().from(config.curated()).build());
             }
         }
 
-        // Add an entry if there is nothing known about cancer related complications.
-        if (cancerRelatedComplications.isEmpty()) {
-            cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("Unknown").build());
+        // Add an entry if there is nothing known about complications.
+        if (complications.isEmpty()) {
+            complications.add(ImmutableComplication.builder().name("Unknown").build());
         }
 
-        return cancerRelatedComplications;
+        return complications;
     }
 
     @NotNull
@@ -585,8 +585,8 @@ public class CurationModel {
             return database.oncologicalHistoryConfigs();
         } else if (classToLookUp == ImmutableNonOncologicalHistoryConfig.class) {
             return database.nonOncologicalHistoryConfigs();
-        } else if (classToLookUp == ImmutableCancerRelatedComplicationConfig.class) {
-            return database.cancerRelatedComplicationConfigs();
+        } else if (classToLookUp == ImmutableComplicationConfig.class) {
+            return database.complicationConfigs();
         } else if (classToLookUp == ImmutableECGConfig.class) {
             return database.ecgConfigs();
         } else if (classToLookUp == ImmutableInfectionConfig.class) {

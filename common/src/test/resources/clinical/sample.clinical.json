@@ -106,7 +106,7 @@
       "unit": "+"
     }
   ],
-  "cancerRelatedComplications": [
+  "complications": [
     {
       "name": "Nausea",
       "year": 2020,

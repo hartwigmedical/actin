@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (CancerRelatedComplication complication : record.clinical().cancerRelatedComplications()) {
+        for (Complication complication : record.clinical().complications()) {
             for (String termToFind : COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES) {
                 if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                     return ImmutableEvaluation.builder()

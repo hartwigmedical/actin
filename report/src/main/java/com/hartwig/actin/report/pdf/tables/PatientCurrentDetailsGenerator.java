@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Surgery;
@@ -71,7 +71,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         }
 
         table.addCell(Cells.createKey("Cancer-related complications"));
-        table.addCell(Cells.createValue(cancerRelatedComplications(record.cancerRelatedComplications())));
+        table.addCell(Cells.createValue(complications(record.complications())));
 
         table.addCell(Cells.createKey("Known allergies"));
         table.addCell(Cells.createValue(allergies(record.allergies())));
@@ -99,9 +99,9 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String cancerRelatedComplications(@NotNull List<CancerRelatedComplication> cancerRelatedComplications) {
+    private static String complications(@NotNull List<Complication> complications) {
         StringJoiner joiner = Formats.commaJoiner();
-        for (CancerRelatedComplication complication : cancerRelatedComplications) {
+        for (Complication complication : complications) {
             joiner.add(complication.name());
         }
 

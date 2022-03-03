@@ -8,8 +8,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutableCancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -44,16 +44,16 @@ public class HasPotentialAbsorptionDifficultiesTest {
         HasPotentialAbsorptionDifficulties function = createTestAbsorptionFunction();
 
         // Test no complications
-        List<CancerRelatedComplication> complications = Lists.newArrayList();
+        List<Complication> complications = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)));
 
         // Add a random complication
-        complications.add(ImmutableCancerRelatedComplication.builder().name("not a problem").build());
+        complications.add(ImmutableComplication.builder().name("not a problem").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)));
 
         // Add a real absorption one
         String absorptionComplication = HasPotentialAbsorptionDifficulties.COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.iterator().next();
-        complications.add(ImmutableCancerRelatedComplication.builder().name(absorptionComplication).build());
+        complications.add(ImmutableComplication.builder().name(absorptionComplication).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)));
     }
 

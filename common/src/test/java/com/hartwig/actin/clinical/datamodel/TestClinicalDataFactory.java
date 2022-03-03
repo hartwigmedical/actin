@@ -55,7 +55,7 @@ public final class TestClinicalDataFactory {
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .priorMolecularTests(createTestPriorMolecularTests())
-                .cancerRelatedComplications(createTestCancerRelatedComplications())
+                .complications(createTestComplications())
                 .labValues(createTestLabValues())
                 .toxicities(createTestToxicities())
                 .allergies(createTestAllergies())
@@ -198,12 +198,12 @@ public final class TestClinicalDataFactory {
     }
 
     @NotNull
-    private static List<CancerRelatedComplication> createTestCancerRelatedComplications() {
-        List<CancerRelatedComplication> cancerRelatedComplications = Lists.newArrayList();
+    private static List<Complication> createTestComplications() {
+        List<Complication> complications = Lists.newArrayList();
 
-        cancerRelatedComplications.add(ImmutableCancerRelatedComplication.builder().name("Ascites").build());
+        complications.add(ImmutableComplication.builder().name("Ascites").build());
 
-        return cancerRelatedComplications;
+        return complications;
     }
 
     @NotNull

@@ -7,7 +7,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -45,12 +45,12 @@ final class OtherConditionTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withComplications(@NotNull List<CancerRelatedComplication> complications) {
+    public static PatientRecord withComplications(@NotNull List<Complication> complications) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .cancerRelatedComplications(complications)
+                        .complications(complications)
                         .build())
                 .build();
     }

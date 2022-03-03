@@ -11,7 +11,7 @@ import java.util.List;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.config.AllergyConfig;
-import com.hartwig.actin.clinical.curation.config.CancerRelatedComplicationConfig;
+import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
@@ -51,7 +51,7 @@ public class CurationDatabaseReaderTest {
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
         assertInfectionConfigs(database.infectionConfigs());
-        assertCancerRelatedComplicationConfigs(database.cancerRelatedComplicationConfigs());
+        assertComplicationConfigs(database.complicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
         assertMolecularTestConfigs(database.molecularTestConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
@@ -172,10 +172,10 @@ public class CurationDatabaseReaderTest {
         assertEquals("No", config2.interpretation());
     }
 
-    private static void assertCancerRelatedComplicationConfigs(@NotNull List<CancerRelatedComplicationConfig> configs) {
+    private static void assertComplicationConfigs(@NotNull List<ComplicationConfig> configs) {
         assertEquals(1, configs.size());
 
-        CancerRelatedComplicationConfig config = configs.get(0);
+        ComplicationConfig config = configs.get(0);
         assertEquals("something", config.input());
         assertEquals("curated something", config.curated().name());
         assertEquals(2000, (int) config.curated().year());

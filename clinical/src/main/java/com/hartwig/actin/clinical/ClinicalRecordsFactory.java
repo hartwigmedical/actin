@@ -10,9 +10,9 @@ import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.CancerRelatedComplication;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
@@ -104,7 +104,7 @@ public class ClinicalRecordsFactory {
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                     .priorMolecularTests(extractPriorMolecularTests(questionnaire))
-                    .cancerRelatedComplications(extractCancerRelatedComplications(questionnaire))
+                    .complications(extractComplications(questionnaire))
                     .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(subject, questionnaire))
                     .allergies(extractAllergies(subject))
@@ -251,10 +251,10 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<CancerRelatedComplication> extractCancerRelatedComplications(@Nullable Questionnaire questionnaire) {
+    private List<Complication> extractComplications(@Nullable Questionnaire questionnaire) {
         if (questionnaire != null) {
-            List<String> cancerRelatedComplications = questionnaire.cancerRelatedComplications();
-            return curation.curateCancerRelatedComplications(cancerRelatedComplications);
+            List<String> complications = questionnaire.complications();
+            return curation.curateComplications(complications);
         } else {
             return Lists.newArrayList();
         }

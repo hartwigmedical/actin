@@ -1,5 +1,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- TODO Remove per 15th of March 2022
+DROP TABLE IF EXISTS cancerRelatedComplication;
+
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -113,8 +116,8 @@ CREATE TABLE priorMolecularTest
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS cancerRelatedComplication;
-CREATE TABLE cancerRelatedComplication
+DROP TABLE IF EXISTS complication;
+CREATE TABLE complication
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(150) NOT NULL,
