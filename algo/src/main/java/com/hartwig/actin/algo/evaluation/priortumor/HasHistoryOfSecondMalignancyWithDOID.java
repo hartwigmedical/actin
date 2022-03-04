@@ -13,18 +13,16 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
+public class HasHistoryOfSecondMalignancyWithDOID implements EvaluationFunction {
 
     @NotNull
     private final DoidModel doidModel;
     @Nullable
     private final String doidToMatch;
-    private final boolean mustBeInactive;
 
-    HasHistoryOfSecondMalignancy(@NotNull final DoidModel doidModel, @Nullable final String doidToMatch, final boolean mustBeInactive) {
+    HasHistoryOfSecondMalignancyWithDOID(@NotNull final DoidModel doidModel, @Nullable final String doidToMatch) {
         this.doidModel = doidModel;
         this.doidToMatch = doidToMatch;
-        this.mustBeInactive = mustBeInactive;
     }
 
     @NotNull
@@ -33,8 +31,7 @@ public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
         boolean hasMatch = false;
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
             boolean doidMatch = doidToMatch == null || isDoidMatch(priorSecondPrimary.doids(), doidToMatch);
-            boolean activeMatch = !mustBeInactive || !priorSecondPrimary.isActive();
-            if (doidMatch && activeMatch) {
+            if (doidMatch) {
                 hasMatch = true;
             }
         }
@@ -42,9 +39,9 @@ public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
         EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no history of second malignancy");
+            builder.addFailMessages("Patient has no history of second malignancy belonging to " + doidModel.term(doidToMatch));
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has history of second malignancy");
+            builder.addPassMessages("Patient has history of second malignancy belonging to " + doidModel.term(doidToMatch));
         }
 
         return builder.build();

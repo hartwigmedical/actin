@@ -147,10 +147,9 @@ HAS_PARTICIPATED_IN_CURRENT_TRIAL | T.B.D. | Currently resolves to not evaluated
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primaries is not empty
-HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X | Presence of prior second primary belonging to DOID X
-HAS_HISTORY_OF_SECOND_MALIGNANCY_ BELONGING_TO_DOID_X_CURRENTLY_INACTIVE | Presence of prior second primary belonging to DOID X, and status is inactive
-EVERY_SECOND_MALIGNANCY_HAS_BEEN_ CURED_SINCE_X_YEARS | Prior second primaries is empty OR every prior second primary is inactive | Years can often not be reliably evaluated; rule will be combined with WARN_ON_PASS
+HAS_ACTIVE_SECOND_MALIGNANCY | Prior second primary > any entry with active=1
+HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primaries > contains entry with DOID belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to UNDETERMINED.
 
 ##### Rules related to molecular results
 

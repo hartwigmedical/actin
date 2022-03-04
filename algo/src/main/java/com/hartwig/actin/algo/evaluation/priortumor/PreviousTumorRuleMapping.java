@@ -19,31 +19,30 @@ public final class PreviousTumorRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator(doidModel, false));
+        map.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, hasActiveSecondMalignancyCreator()); //TODO: Check implementation
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
-                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, false));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X_CURRENTLY_INACTIVE,
-                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel, true));
-        map.put(EligibilityRule.EVERY_SECOND_MALIGNANCY_HAS_BEEN_CURED_SINCE_X_YEARS, secondMalignanciesHaveBeenCuredRecentlyCreator());
+                hasHistoryOfSecondMalignancyWithDoidCreator(doidModel)); //TODO: Check implementation
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS,
+                hasHistoryOfSecondMalignancyWithinYearsCreator()); //TODO: Implement
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
+    private static FunctionCreator hasActiveSecondMalignancyCreator() {
+        return function -> new HasActiveSecondMalignancy();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator(@NotNull DoidModel doidModel) {
         return function -> {
             String doidToMatch = FunctionInputResolver.createOneStringInput(function);
-            return new HasHistoryOfSecondMalignancy(doidModel, doidToMatch, mustBeInactive);
+            return new HasHistoryOfSecondMalignancyWithDOID(doidModel, doidToMatch);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyCreator(@NotNull DoidModel doidModel, boolean mustBeInactive) {
-        return function -> new HasHistoryOfSecondMalignancy(doidModel, null, mustBeInactive);
-    }
-
-    @NotNull
-    private static FunctionCreator secondMalignanciesHaveBeenCuredRecentlyCreator() {
-        return function -> new SecondMalignanciesHaveBeenCuredRecently();
+    private static FunctionCreator hasHistoryOfSecondMalignancyWithinYearsCreator() {
+        return function -> new HasHistoryOfSecondMalignancyWithinYears();
     }
 }
