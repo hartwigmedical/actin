@@ -224,8 +224,10 @@ public class ClinicalRecordsFactory {
             return Lists.newArrayList();
         }
 
-        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
-        return curation.curatePriorSecondPrimaries(otherOncologicalHistories);
+        List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
+        priorSecondPrimaries.addAll(curation.curatePriorSecondPrimaries(questionnaire.otherOncologicalHistory()));
+        priorSecondPrimaries.addAll(curation.curatePriorSecondPrimaries(questionnaire.secondaryPrimaries()));
+        return priorSecondPrimaries;
     }
 
     @NotNull
@@ -244,8 +246,10 @@ public class ClinicalRecordsFactory {
             return Lists.newArrayList();
         }
 
-        List<String> molecularTests = questionnaire.ihcTestResults();
-        return curation.curatePriorMolecularTests(molecularTests);
+        List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
+        priorMolecularTests.addAll(curation.curatePriorMolecularTests(questionnaire.ihcTestResults()));
+        priorMolecularTests.addAll(curation.curatePriorMolecularTests(questionnaire.pdl1TestResults()));
+        return priorMolecularTests;
     }
 
     @NotNull
