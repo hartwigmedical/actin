@@ -12,8 +12,9 @@ public class HasMeasurableDiseaseTest {
     public void canEvaluate() {
         HasMeasurableDisease function = new HasMeasurableDisease();
 
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withMeasurableDisease(null)));
+
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMeasurableDisease(true)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withMeasurableDisease(false)));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withMeasurableDisease(null)));
     }
 }

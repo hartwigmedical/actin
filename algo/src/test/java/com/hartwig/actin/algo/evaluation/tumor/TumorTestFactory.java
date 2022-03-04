@@ -41,6 +41,11 @@ final class TumorTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withMeasurableDiseaseAndDoid(@Nullable Boolean hasMeasurableDisease, @NotNull String doid) {
+        return withTumorDetails(ImmutableTumorDetails.builder().hasMeasurableDisease(hasMeasurableDisease).addDoids(doid).build());
+    }
+
+    @NotNull
     public static PatientRecord withBrainLesions(@Nullable Boolean hasBrainLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasBrainLesions(hasBrainLesions).build());
     }

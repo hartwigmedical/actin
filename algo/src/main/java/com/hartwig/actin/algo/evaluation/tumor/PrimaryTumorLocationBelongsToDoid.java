@@ -17,10 +17,15 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     private final DoidModel doidModel;
     @NotNull
     private final String doidToMatch;
+    private final boolean requireExclusive;
+    private final boolean requireExact;
 
-    PrimaryTumorLocationBelongsToDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
+    public PrimaryTumorLocationBelongsToDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch,
+            final boolean requireExclusive, final boolean requireExact) {
         this.doidModel = doidModel;
         this.doidToMatch = doidToMatch;
+        this.requireExclusive = requireExclusive;
+        this.requireExact = requireExact;
     }
 
     @NotNull
@@ -47,12 +52,17 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     }
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {
+        int numMatches = 0;
+        int numMismatches = 0;
         for (String doid : doids) {
-            if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
-                return true;
+            boolean isMatch = requireExact ? doid.equals(doidToMatch) : doidModel.doidWithParents(doid).contains(doidToMatch);
+            if (isMatch) {
+                numMatches++;
+            } else {
+                numMismatches++;
             }
         }
 
-        return false;
+        return requireExclusive ? numMatches > 0 && numMismatches == 0 : numMatches > 0;
     }
 }
