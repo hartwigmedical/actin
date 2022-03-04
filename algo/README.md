@@ -410,6 +410,7 @@ Rule | When does a patient pass evaluation?
 IS_BREASTFEEDING | Won't be evaluated
 IS_PREGNANT | Won't be evaluated
 USES_ADEQUATE_ANTICONCEPTION | Won't be evaluated
+ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated
 
 ##### Rules related to complications
 

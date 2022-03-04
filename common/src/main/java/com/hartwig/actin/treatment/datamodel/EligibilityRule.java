@@ -250,6 +250,7 @@ public enum EligibilityRule {
     IS_BREASTFEEDING,
     IS_PREGNANT,
     USES_ADEQUATE_ANTICONCEPTION,
+    ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS,
 
     // Rules related to complications
     HAS_COMPLICATION_X,

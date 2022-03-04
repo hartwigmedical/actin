@@ -20,6 +20,7 @@ public final class PregnancyRuleMapping {
         map.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
         map.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
         map.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, canUseAdequateAnticonceptionCreator());
+        map.put(EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS, willingToAdhereToDonationPrescriptionsCreator());
 
         return map;
     }
@@ -38,4 +39,10 @@ public final class PregnancyRuleMapping {
     private static FunctionCreator canUseAdequateAnticonceptionCreator() {
         return function -> new CanUseAdequateAnticonception();
     }
+
+    @NotNull
+    private static FunctionCreator willingToAdhereToDonationPrescriptionsCreator() {
+        return function -> new WillingToAdhereToDonationPrescriptions();
+    }
+
 }
