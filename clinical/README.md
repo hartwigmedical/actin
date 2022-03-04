@@ -41,7 +41,7 @@ primaryTumorSubType | | Tumor sub type
 primaryTumorExtraDetails | | Additional tumor information that cannot be captured in previous fields 
 doids | 8923 | Separated by ";"
 stage | IV | Tumor stage grouping. Roman numeral from I to IV with further subdivision with letters (A, B or C) if available, eg IIIA
-hasMeasurableDisease | 1 | Can patient's disease can be measured according to the typical method for the tumor type (eg RECIST for solid tumors, RANO for glioma's) ?
+hasMeasurableDisease | 1 | Can patient's disease can be measured according to the typical method for the tumor type (eg RECIST for solid tumors, RANO for gliomas)?
 hasBrainLesions | 0 | Patient has brain lesions?
 hasActiveBrainLesions | NA | Patient has active (non-stable) brain lesions? (NA if hasBrainLesions = 0)
 hasSymptomaticBrainLesions | NA | Patient has symptomatic brain lesions? (NA if hasBrainLesions = 0)

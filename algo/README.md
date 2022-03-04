@@ -86,8 +86,8 @@ IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
 
 ##### Rules related to tumor and lesion localization
  
-Rule | When does a patient pass evaluation?
----|---
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 PRIMARY_TUMOR_LOCATION_BELONGS_ TO_DOID_X | Any configured DOID should be equal or be a child of DOID X
 PRIMARY_TUMOR_LOCATION_BELONGS_ONLY_ TO_DOID_X | ALL configured DOIDs should be equal or be a child of DOID X
 PRIMARY_TUMOR_LOCATION_IS_EQUAL_ TO_DOID_X | ALL configured DOIDs should be exactly equal to DOID X
@@ -108,7 +108,8 @@ HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
-HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1 
+HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
+HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to PASS_BUT_WARN in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
