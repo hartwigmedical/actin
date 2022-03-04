@@ -16,14 +16,55 @@ public final class TestQuestionnaireFactory {
                 .authored(LocalDate.of(2020, 8, 28))
                 .description("Description")
                 .itemText("ItemText")
-                .itemAnswerValueValueString(createTestQuestionnaireValueV1_4())
+                .itemAnswerValueValueString(createTestQuestionnaireValueV1_5())
                 .build();
+    }
+
+    @NotNull
+    static String createTestQuestionnaireValueV1_5() {
+        // @formatter:off
+        return "ACTIN Questionnaire V1.5\n"
+                + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+                + "Please make sure that these fields never contain non-anonymized data!\n"
+                + "\n"
+                + "Relevant patient history\n"
+                + "Treatment history current tumor: cisplatin; nivolumab\n"
+                + "Other oncological history (e.g. radiotherapy, surgery): surgery\n"
+                + "Secondary primary: sarcoma\n"
+                + "- Last date of active treatment: Feb 2020 \n"
+                + "Non-oncological history: diabetes\n"
+                + "\n"
+                + "Tumor details\n"
+                + "Primary tumor location: ovary\n"
+                + "Primary tumor type: serous\n"
+                + "Biopsy location: lymph node\n"
+                + "Stage: 4\n"
+                + "CNS lesions:\n"
+                + "-Active:\n"
+                + "Brain lesions: YES\n"
+                + "-Active: yes\n"
+                + "Bone lesions: NO\n"
+                + "Liver lesions: NO\n"
+                + "Other lesions (e.g. lymph node, pulmonal): pulmonal\n"
+                + "Measurable disease: YES\n"
+                + "\n"
+                + "Previous Molecular tests\n"
+                + "- IHC test results: ERBB2 3+\n"
+                + "- PD L1 test results: Positive\n"
+                + "\n"
+                + "Clinical details\n"
+                + "WHO status: 0\n"
+                + "Unresolved toxicities grade => 2: toxic\n"
+                + "Significant current infection: No\n"
+                + "Significant aberration on latest ECG: Sinus\n"
+                + "Cancer-related complications (e.g. pleural effusion): vomit\n";
+        // @formatter:on
     }
 
     @NotNull
     static String createTestQuestionnaireValueV1_4() {
         // @formatter:off
-        return "ACTIN Questionnaire V1.4"
+        return "ACTIN Questionnaire V1.4\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonymized data!\n"
                 + "\n"
@@ -61,7 +102,7 @@ public final class TestQuestionnaireFactory {
     @NotNull
     static String createTestQuestionnaireValueV1_3() {
         // @formatter:off
-        return "ACTIN Questionnaire V1.0"
+        return "ACTIN Questionnaire V1.0\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonymized data!\n"
                 + "\n"
@@ -98,7 +139,7 @@ public final class TestQuestionnaireFactory {
     @NotNull
     static String createTestQuestionnaireValueV1_2() {
         // @formatter:off
-        return "ACTIN Questionnaire V1.0"
+        return "ACTIN Questionnaire V1.0\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonymized data!\n"
                 + "\n"
@@ -135,7 +176,7 @@ public final class TestQuestionnaireFactory {
     @NotNull
     static String createTestQuestionnaireValueV1_1() {
         // @formatter:off
-        return "ACTIN Questionnaire V1.0"
+        return "ACTIN Questionnaire V1.0\n"
                 + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
                 + "Please make sure that these fields never contain non-anonymized data!\n"
                 + "\n"

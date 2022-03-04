@@ -5,25 +5,25 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 enum QuestionnaireVersion {
-    V1_4("ACTIN Questionnaire V1.4", null),
-    V1_3("CNS lesions:", "ACTIN Questionnaire V1.4"),
-    V1_2("-Active:", "CNS lesions:"),
-    V1_1("- Active:", null),
-    V1_0("\\li0\\ri0", null),
-    V0_2("Other (e.g. pleural effusion)", null),
-    V0_1("Other (e.g. Osteoporosis, Pleural effusion)", null);
+    V1_5("ACTIN Questionnaire V1.5", Sets.newHashSet()),
+    V1_4("ACTIN Questionnaire V1.4", Sets.newHashSet()),
+    V1_3("CNS lesions:", Sets.newHashSet("ACTIN Questionnaire V1.4", "ACTIN Questionnaire V1.5")),
+    V1_2("-Active:", Sets.newHashSet("CNS lesions:")),
+    V1_1("- Active:", Sets.newHashSet()),
+    V1_0("\\li0\\ri0", Sets.newHashSet()),
+    V0_2("Other (e.g. pleural effusion)", Sets.newHashSet()),
+    V0_1("Other (e.g. Osteoporosis, Pleural effusion)", Sets.newHashSet());
 
     @NotNull
     private final String specificSearchString;
-    @Nullable
-    private final String disallowedSearchString;
+    @NotNull
+    private final Set<String> disallowedSearchStrings;
 
-    QuestionnaireVersion(@NotNull final String specificSearchString, @Nullable final String disallowedSearchString) {
+    QuestionnaireVersion(@NotNull final String specificSearchString, @NotNull final Set<String> disallowedSearchStrings) {
         this.specificSearchString = specificSearchString;
-        this.disallowedSearchString = disallowedSearchString;
+        this.disallowedSearchStrings = disallowedSearchStrings;
     }
 
     @NotNull
@@ -53,8 +53,10 @@ enum QuestionnaireVersion {
                 match = true;
             }
 
-            if (disallowedSearchString != null && line.contains(disallowedSearchString)) {
-                return false;
+            for (String disallowedSearchString : disallowedSearchStrings) {
+                if (line.contains(disallowedSearchString)) {
+                    return false;
+                }
             }
         }
 

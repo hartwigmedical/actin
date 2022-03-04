@@ -20,6 +20,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void canDetermineIsActualQuestionnaire() {
+        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())));
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())));
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())));
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
@@ -29,6 +30,66 @@ public class QuestionnaireExtractionTest {
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
 
         assertFalse(QuestionnaireExtraction.isActualQuestionnaire(entry("Does not exist")));
+    }
+
+    @Test
+    public void canExtractFromQuestionnaireV1_5() {
+        QuestionnaireEntry entry = entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5());
+
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry);
+
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
+        assertEquals("ovary", questionnaire.tumorLocation());
+        assertEquals("serous", questionnaire.tumorType());
+        assertEquals("lymph node", questionnaire.biopsyLocation());
+
+        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
+        assertEquals(2, treatmentHistory.size());
+        assertTrue(treatmentHistory.contains("cisplatin"));
+        assertTrue(treatmentHistory.contains("nivolumab"));
+
+        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
+        assertEquals(1, otherOncologicalHistory.size());
+        assertTrue(otherOncologicalHistory.contains("surgery"));
+
+        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
+        assertEquals(1, nonOncologicalHistory.size());
+        assertTrue(nonOncologicalHistory.contains("diabetes"));
+
+        List<String> molecularTests = questionnaire.molecularTests();
+        assertEquals(1, molecularTests.size());
+        assertTrue(molecularTests.contains("ERBB2 3+"));
+
+        assertEquals(TumorStage.IV, questionnaire.stage());
+        assertTrue(questionnaire.hasMeasurableDisease());
+        assertTrue(questionnaire.hasBrainLesions());
+        assertTrue(questionnaire.hasActiveBrainLesions());
+        assertNull(questionnaire.hasCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
+        assertFalse(questionnaire.hasBoneLesions());
+        assertFalse(questionnaire.hasLiverLesions());
+
+        List<String> otherLesions = questionnaire.otherLesions();
+        assertEquals(1, otherLesions.size());
+        assertTrue(otherLesions.contains("pulmonal"));
+
+        assertEquals(0, (int) questionnaire.whoStatus());
+        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
+        assertEquals(1, unresolvedToxicities.size());
+        assertTrue(unresolvedToxicities.contains("toxic"));
+
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
+
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
+
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("vomit"));
     }
 
     @Test
