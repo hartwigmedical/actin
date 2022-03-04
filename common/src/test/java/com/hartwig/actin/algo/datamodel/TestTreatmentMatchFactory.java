@@ -64,12 +64,12 @@ public final class TestTreatmentMatchFactory {
                 .function(ImmutableEligibilityFunction.builder()
                         .rule(EligibilityRule.NOT)
                         .addParameters(ImmutableEligibilityFunction.builder()
-                                .rule(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES)
+                                .rule(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES)
                                 .build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("E-01")
-                        .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
+                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
                         .build())
                 .build(), TestEvaluationFactory.withResult(EvaluationResult.PASS));
 
@@ -77,7 +77,7 @@ public final class TestTreatmentMatchFactory {
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("E-01")
-                        .text("This rule has 2 conditions:\n 1. Patient has no symptomatic CNS metastases.\n 2. Patient has exhausted SOC.")
+                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
                         .build())
                 .build(), TestEvaluationFactory.withResult(EvaluationResult.NOT_EVALUATED));
 

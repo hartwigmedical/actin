@@ -36,10 +36,8 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());
-        map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_CNS_METASTASES, hasKnownSymptomaticCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_BRAIN_METASTASES, hasKnownBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, hasKnownActiveBrainMetastasesCreator());
-        map.put(EligibilityRule.HAS_KNOWN_SYMPTOMATIC_BRAIN_METASTASES, hasKnownSymptomaticBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
@@ -113,11 +111,6 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasKnownSymptomaticCnsMetastasesCreator() {
-        return function -> new HasKnownSymptomaticCnsMetastases();
-    }
-
-    @NotNull
     private static FunctionCreator hasKnownBrainMetastasesCreator() {
         return function -> new HasKnownBrainMetastases();
     }
@@ -125,11 +118,6 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasKnownActiveBrainMetastasesCreator() {
         return function -> new HasKnownActiveBrainMetastases();
-    }
-
-    @NotNull
-    private static FunctionCreator hasKnownSymptomaticBrainMetastasesCreator() {
-        return function -> new HasKnownSymptomaticBrainMetastases();
     }
 
     @NotNull

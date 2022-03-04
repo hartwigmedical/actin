@@ -44,10 +44,8 @@ stage | IV | Tumor stage grouping. Roman numeral from I to IV with further subdi
 hasMeasurableDisease | 1 | Can patient's disease can be measured according to the typical method for the tumor type (eg RECIST for solid tumors, RANO for gliomas)?
 hasBrainLesions | 0 | Patient has brain lesions?
 hasActiveBrainLesions | NA | Patient has active (non-stable) brain lesions? (NA if hasBrainLesions = 0)
-hasSymptomaticBrainLesions | NA | Patient has symptomatic brain lesions? (NA if hasBrainLesions = 0)
 hasCnsLesions | 1 | Patient has central nervous system (CNS) lesions?
 hasActiveCnsLesions | 1 | Patient has active (non-stable) CNS lesions? (NA if hasCnsLesions = 0)
-hasSymptomaticCnsLesions | 0 | Patient has symptomatic CNS lesions? (NA if hasCnsLesions = 0)
 hasBoneLesions | 0 | Patient has bone lesions?
 hasLiverLesions | 1 | Patient has liver lesions?
 hasOtherLesions | 1 | Patient has lesions that are not captured in hasBrainLesions, hasCnsLesions, hasBoneLesions and hasLiverLesions?
