@@ -28,7 +28,7 @@ public class HasMeasurableDisease implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient does not have measurable disease");
+            builder.addFailMessages("Patient has no measurable disease");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassMessages("Patient has measurable disease");
         }
