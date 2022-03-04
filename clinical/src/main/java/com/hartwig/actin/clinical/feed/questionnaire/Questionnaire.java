@@ -37,10 +37,10 @@ public abstract class Questionnaire {
     public abstract List<String> otherOncologicalHistory();
 
     @Nullable
-    public abstract List<String> nonOncologicalHistory();
+    public abstract List<String> secondaryPrimaries();
 
     @Nullable
-    public abstract List<String> molecularTests();
+    public abstract List<String> nonOncologicalHistory();
 
     @Nullable
     public abstract Boolean hasMeasurableDisease();
@@ -65,6 +65,12 @@ public abstract class Questionnaire {
 
     @Nullable
     public abstract List<String> otherLesions();
+
+    @Nullable
+    public abstract List<String> ihcTestResults();
+
+    @Nullable
+    public abstract List<String> pdl1TestResults();
 
     @Nullable
     public abstract Integer whoStatus();

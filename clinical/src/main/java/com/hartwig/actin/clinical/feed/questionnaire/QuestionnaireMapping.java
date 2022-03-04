@@ -20,6 +20,7 @@ final class QuestionnaireMapping {
     static {
         KEYS_V1_5.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_5.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
+        KEYS_V1_5.put(QuestionnaireKey.SECONDARY_PRIMARY, "Secondary primary");
         KEYS_V1_5.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_5.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_5.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -31,7 +32,8 @@ final class QuestionnaireMapping {
         KEYS_V1_5.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_5.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_5.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_5.put(QuestionnaireKey.MOLECULAR_TESTS, "IHC test results");
+        KEYS_V1_5.put(QuestionnaireKey.IHC_TEST_RESULTS, "IHC test results");
+        KEYS_V1_5.put(QuestionnaireKey.PDL1_TEST_RESULTS, "PD L1 test results");
         KEYS_V1_5.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_5.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_5.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -40,6 +42,7 @@ final class QuestionnaireMapping {
 
         KEYS_V1_4.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_4.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
+        KEYS_V1_4.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_4.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_4.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_4.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -51,7 +54,8 @@ final class QuestionnaireMapping {
         KEYS_V1_4.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_4.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_4.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_4.put(QuestionnaireKey.MOLECULAR_TESTS, "Previous Molecular tests");
+        KEYS_V1_4.put(QuestionnaireKey.IHC_TEST_RESULTS, "Previous Molecular tests");
+        KEYS_V1_4.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_4.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_4.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_4.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -60,6 +64,7 @@ final class QuestionnaireMapping {
 
         KEYS_V1_3.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_3.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
+        KEYS_V1_3.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_3.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_3.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_3.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -71,7 +76,8 @@ final class QuestionnaireMapping {
         KEYS_V1_3.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_3.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_3.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_3.put(QuestionnaireKey.MOLECULAR_TESTS, null);
+        KEYS_V1_3.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
+        KEYS_V1_3.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_3.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_3.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_3.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -80,6 +86,7 @@ final class QuestionnaireMapping {
 
         KEYS_V1_2.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_2.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
+        KEYS_V1_2.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_2.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_2.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_2.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -91,7 +98,8 @@ final class QuestionnaireMapping {
         KEYS_V1_2.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_2.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_2.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_2.put(QuestionnaireKey.MOLECULAR_TESTS, null);
+        KEYS_V1_2.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
+        KEYS_V1_2.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_2.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_2.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_2.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -100,6 +108,7 @@ final class QuestionnaireMapping {
 
         KEYS_V1_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
+        KEYS_V1_1.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_1.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -111,7 +120,8 @@ final class QuestionnaireMapping {
         KEYS_V1_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V1_1.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V1_1.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_1.put(QuestionnaireKey.MOLECULAR_TESTS, null);
+        KEYS_V1_1.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
+        KEYS_V1_1.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -120,6 +130,7 @@ final class QuestionnaireMapping {
 
         KEYS_V1_0.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_0.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
+        KEYS_V1_0.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_0.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -131,7 +142,8 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_0.put(QuestionnaireKey.MOLECULAR_TESTS, null);
+        KEYS_V1_0.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
+        KEYS_V1_0.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_0.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_0.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -140,6 +152,7 @@ final class QuestionnaireMapping {
 
         KEYS_V0_2.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V0_2.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. second primary)");
+        KEYS_V0_2.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V0_2.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V0_2.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Tumor location");
         KEYS_V0_2.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Tumor type");
@@ -151,7 +164,8 @@ final class QuestionnaireMapping {
         KEYS_V0_2.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.OTHER_LESIONS, null);
-        KEYS_V0_2.put(QuestionnaireKey.MOLECULAR_TESTS, null);
+        KEYS_V0_2.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
+        KEYS_V0_2.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V0_2.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V0_2.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V0_2.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -160,6 +174,7 @@ final class QuestionnaireMapping {
 
         KEYS_V0_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
         KEYS_V0_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, null);
+        KEYS_V0_1.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V0_1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Other");
         KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Oncological");
         KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, null);
@@ -171,7 +186,8 @@ final class QuestionnaireMapping {
         KEYS_V0_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.OTHER_LESIONS, null);
-        KEYS_V0_1.put(QuestionnaireKey.MOLECULAR_TESTS, null);
+        KEYS_V0_1.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
+        KEYS_V0_1.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V0_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V0_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities from prior anti-tumor therapy grade => 2");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");

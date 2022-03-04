@@ -244,7 +244,7 @@ public class ClinicalRecordsFactory {
             return Lists.newArrayList();
         }
 
-        List<String> molecularTests = questionnaire.molecularTests();
+        List<String> molecularTests = questionnaire.ihcTestResults();
         return curation.curatePriorMolecularTests(molecularTests);
     }
 

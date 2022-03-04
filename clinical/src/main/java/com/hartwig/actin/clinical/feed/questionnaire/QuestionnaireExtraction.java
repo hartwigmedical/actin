@@ -51,8 +51,8 @@ public final class QuestionnaireExtraction {
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
 
-        LesionData brainLesionData = LesionData.forKey(entry, mapping, (QuestionnaireKey.HAS_BRAIN_LESIONS));
-        LesionData cnsLesionData = LesionData.forKey(entry, mapping, (QuestionnaireKey.HAS_CNS_LESIONS));
+        LesionData brainLesionData = LesionData.forKey(entry, mapping, QuestionnaireKey.HAS_BRAIN_LESIONS);
+        LesionData cnsLesionData = LesionData.forKey(entry, mapping, QuestionnaireKey.HAS_CNS_LESIONS);
 
         return ImmutableQuestionnaire.builder()
                 .date(entry.authored())
@@ -62,8 +62,10 @@ public final class QuestionnaireExtraction {
                 .stage(toStage(value(entry, mapping.get(QuestionnaireKey.STAGE))))
                 .treatmentHistoryCurrentTumor(toList(value(entry, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
                 .otherOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
+                .secondaryPrimaries(toSecondaryPrimaries(entry, mapping, QuestionnaireKey.SECONDARY_PRIMARY))
                 .nonOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY))))
-                .molecularTests(toList(value(entry, mapping.get(QuestionnaireKey.MOLECULAR_TESTS))))
+                .ihcTestResults(toList(value(entry, mapping.get(QuestionnaireKey.IHC_TEST_RESULTS))))
+                .pdl1TestResults(toList(value(entry, mapping.get(QuestionnaireKey.PDL1_TEST_RESULTS))))
                 .hasMeasurableDisease(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE))))
                 .hasBrainLesions(brainLesionData.present())
                 .hasActiveBrainLesions(brainLesionData.active())
@@ -78,6 +80,25 @@ public final class QuestionnaireExtraction {
                 .ecg(toECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .complications(toList(value(entry, mapping.get(QuestionnaireKey.COMPLICATIONS))))
                 .build();
+    }
+
+    @Nullable
+    private static List<String> toSecondaryPrimaries(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping,
+            @NotNull QuestionnaireKey secondaryPrimaryKey) {
+        String secondaryPrimary =value(entry, mapping.get(secondaryPrimaryKey));
+        if (secondaryPrimary == null) {
+            return null;
+        }
+
+        List<String> secondaryPrimaries = Lists.newArrayList();
+        String lastTreatmentInfo = value(entry, mapping.get(secondaryPrimaryKey), 1);
+        if (lastTreatmentInfo.isEmpty()) {
+            secondaryPrimaries.add(secondaryPrimary);
+        } else {
+            secondaryPrimaries.add(secondaryPrimary + " | " + lastTreatmentInfo);
+        }
+
+        return secondaryPrimaries;
     }
 
     @Nullable
