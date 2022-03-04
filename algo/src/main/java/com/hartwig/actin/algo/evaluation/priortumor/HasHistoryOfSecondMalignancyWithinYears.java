@@ -18,7 +18,7 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("It is currently not determined if patient has second primary within requested time period")
+                .addUndeterminedMessages("It is currently not determined if patient has had a second primary within requested time period")
                 .build();
     }
 }
