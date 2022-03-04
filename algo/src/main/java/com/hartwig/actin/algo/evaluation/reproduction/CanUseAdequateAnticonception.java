@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pregnancy;
+package com.hartwig.actin.algo.evaluation.reproduction;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WillingToAdhereToDonationPrescriptions implements EvaluationFunction {
+public class CanUseAdequateAnticonception implements EvaluationFunction {
 
-    WillingToAdhereToDonationPrescriptions() {
+    CanUseAdequateAnticonception() {
     }
 
     @NotNull
@@ -18,7 +18,7 @@ public class WillingToAdhereToDonationPrescriptions implements EvaluationFunctio
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Assumed that patient will adhere to relevant sperm/egg donation prescriptions")
+                .addPassMessages("Assumed that patient will adhere to relevant anticonception prescriptions")
                 .build();
     }
 }

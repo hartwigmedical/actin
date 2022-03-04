@@ -403,7 +403,7 @@ HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medicati
 
 Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway. 
 
-##### Rules related to pregnancy / anticonception
+##### Rules related to reproduction
 
 Rule | When does a patient pass evaluation?
 ---|---

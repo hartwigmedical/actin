@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pregnancy;
+package com.hartwig.actin.algo.evaluation.reproduction;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 

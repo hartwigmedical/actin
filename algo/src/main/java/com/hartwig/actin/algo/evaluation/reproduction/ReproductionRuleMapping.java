@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.pregnancy;
+package com.hartwig.actin.algo.evaluation.reproduction;
 
 import java.util.Map;
 
@@ -8,9 +8,9 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class PregnancyRuleMapping {
+public final class ReproductionRuleMapping {
 
-    private PregnancyRuleMapping() {
+    private ReproductionRuleMapping() {
     }
 
     @NotNull
