@@ -51,11 +51,6 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withSymptomaticBrainLesions(@Nullable Boolean hasSymptomaticBrainLesions) {
-        return withTumorDetails(ImmutableTumorDetails.builder().hasSymptomaticBrainLesions(hasSymptomaticBrainLesions).build());
-    }
-
-    @NotNull
     public static PatientRecord withCnsLesions(@Nullable Boolean hasCnsLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasCnsLesions(hasCnsLesions).build());
     }
@@ -63,11 +58,6 @@ final class TumorTestFactory {
     @NotNull
     public static PatientRecord withActiveCnsLesions(@Nullable Boolean hasActiveCnsLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasActiveCnsLesions(hasActiveCnsLesions).build());
-    }
-
-    @NotNull
-    public static PatientRecord withSymptomaticCnsLesions(@Nullable Boolean hasSymptomaticCnsLesions) {
-        return withTumorDetails(ImmutableTumorDetails.builder().hasSymptomaticCnsLesions(hasSymptomaticCnsLesions).build());
     }
 
     @NotNull

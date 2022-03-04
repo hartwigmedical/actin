@@ -27,7 +27,6 @@ public final class QuestionnaireExtraction {
     private static final String ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire";
 
     private static final int ACTIVE_LINE_OFFSET = 1;
-    private static final int SYMPTOMATIC_LINE_OFFSET = 2;
 
     private QuestionnaireExtraction() {
     }
@@ -68,10 +67,8 @@ public final class QuestionnaireExtraction {
                 .hasMeasurableDisease(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE))))
                 .hasBrainLesions(brainLesionData.present())
                 .hasActiveBrainLesions(brainLesionData.active())
-                .hasSymptomaticBrainLesions(brainLesionData.symptomatic())
                 .hasCnsLesions(cnsLesionData.present())
                 .hasActiveCnsLesions(cnsLesionData.active())
-                .hasSymptomaticCnsLesions(cnsLesionData.symptomatic())
                 .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
                 .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
                 .otherLesions(otherLesions(entry, mapping))
@@ -219,13 +216,10 @@ public final class QuestionnaireExtraction {
         private final Boolean present;
         @Nullable
         private final Boolean active;
-        @Nullable
-        private final Boolean symptomatic;
 
-        public LesionData(@Nullable final Boolean present, @Nullable final Boolean active, @Nullable final Boolean symptomatic) {
+        public LesionData(@Nullable final Boolean present, @Nullable final Boolean active) {
             this.present = present;
             this.active = active;
-            this.symptomatic = symptomatic;
         }
 
         @NotNull
@@ -233,13 +227,11 @@ public final class QuestionnaireExtraction {
                 @NotNull QuestionnaireKey key) {
             Boolean present = toOption(value(entry, mapping.get(key)));
             Boolean active = null;
-            Boolean symptomatic = null;
             if (present != null) {
                 active = present ? toOption(value(entry, mapping.get(key), ACTIVE_LINE_OFFSET)) : false;
-                symptomatic = present ? toOption(value(entry, mapping.get(key), SYMPTOMATIC_LINE_OFFSET)) : false;
             }
 
-            return new LesionData(present, active, symptomatic);
+            return new LesionData(present, active);
         }
 
         @Nullable
@@ -250,11 +242,6 @@ public final class QuestionnaireExtraction {
         @Nullable
         public Boolean active() {
             return active;
-        }
-
-        @Nullable
-        public Boolean symptomatic() {
-            return symptomatic;
         }
     }
 }

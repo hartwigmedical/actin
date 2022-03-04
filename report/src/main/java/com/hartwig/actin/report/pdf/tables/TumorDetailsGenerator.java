@@ -54,7 +54,7 @@ public class TumorDetailsGenerator implements TableGenerator {
         }
 
         if (tumor.hasCnsLesions()) {
-            return activeSymptomaticLesionString("CNS", tumor.hasActiveCnsLesions(), tumor.hasSymptomaticCnsLesions());
+            return activeLesionString("CNS", tumor.hasActiveCnsLesions());
         } else {
             return "No known CNS lesions";
         }
@@ -67,36 +67,20 @@ public class TumorDetailsGenerator implements TableGenerator {
         }
 
         if (tumor.hasBrainLesions()) {
-            return activeSymptomaticLesionString("Brain", tumor.hasActiveBrainLesions(), tumor.hasSymptomaticBrainLesions());
+            return activeLesionString("Brain", tumor.hasActiveBrainLesions());
         } else {
             return "No known brain lesions";
         }
     }
 
     @NotNull
-    private static String activeSymptomaticLesionString(@NotNull String type, @Nullable Boolean active, @Nullable Boolean symptomatic) {
+    private static String activeLesionString(@NotNull String type, @Nullable Boolean active) {
         String activeString = Strings.EMPTY;
         if (active != null) {
-            activeString = active ? "active" : "not active";
+            activeString = active ? " (active)" : " (not active)";
         }
 
-        String symptomaticString = Strings.EMPTY;
-        if (symptomatic != null) {
-            symptomaticString = symptomatic ? "symptomatic" : "not symptomatic";
-        }
-
-        String lesionAddon = Strings.EMPTY;
-        if (!activeString.isEmpty() || !symptomaticString.isEmpty()) {
-            if (activeString.isEmpty()) {
-                lesionAddon = " (" + symptomaticString + ")";
-            } else if (symptomaticString.isEmpty()) {
-                lesionAddon = " (" + activeString + ")";
-            } else {
-                lesionAddon = " (" + activeString + ", " + symptomaticString + ")";
-            }
-        }
-
-        return type + lesionAddon;
+        return type + activeString;
     }
 
 }

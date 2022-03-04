@@ -124,10 +124,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertNull(questionnaire.hasCnsLesions());
         assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 
@@ -182,10 +180,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertNull(questionnaire.hasCnsLesions());
         assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 
@@ -240,10 +236,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertNull(questionnaire.hasCnsLesions());
         assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 
@@ -298,10 +292,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertNull(questionnaire.hasCnsLesions());
         assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 
@@ -355,10 +347,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertFalse(questionnaire.hasCnsLesions());
         assertFalse(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 
@@ -417,10 +407,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertNull(questionnaire.hasCnsLesions());
         assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
         assertNull(questionnaire.otherLesions());
@@ -463,10 +451,8 @@ public class QuestionnaireExtractionTest {
         assertTrue(questionnaire.hasMeasurableDisease());
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasSymptomaticBrainLesions());
         assertNull(questionnaire.hasCnsLesions());
         assertNull(questionnaire.hasActiveCnsLesions());
-        assertNull(questionnaire.hasSymptomaticCnsLesions());
         assertTrue(questionnaire.hasBoneLesions());
         assertTrue(questionnaire.hasLiverLesions());
 

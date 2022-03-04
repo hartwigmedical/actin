@@ -42,17 +42,11 @@ public abstract class TumorDetails {
     public abstract Boolean hasActiveBrainLesions();
 
     @Nullable
-    public abstract Boolean hasSymptomaticBrainLesions();
-
-    @Nullable
     public abstract Boolean hasCnsLesions();
 
     @Nullable
     public abstract Boolean hasActiveCnsLesions();
-
-    @Nullable
-    public abstract Boolean hasSymptomaticCnsLesions();
-
+    
     @Nullable
     public abstract Boolean hasBoneLesions();
 
