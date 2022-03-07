@@ -22,7 +22,7 @@ public class HasSpecificComplication implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (Complication complication : record.clinical().complications()) {
-            if (complication.name().contains(termToFind)) {
+            if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassMessages("Patient has complication " + termToFind)
