@@ -48,9 +48,9 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
 
         if (!ihcTests.isEmpty()) {
-            builder.addFailMessages("No expression of gene " + gene + " found in prior IHC tests");
+            builder.addFailMessages("No expression of gene " + gene + " detected by prior IHC test(s)");
         } else {
-            builder.addFailMessages("Gene " + gene + " has not been tested (by IHC)");
+            builder.addFailMessages("No test result found; gene " + gene + " has not been tested by IHC");
         }
 
         return builder.build();

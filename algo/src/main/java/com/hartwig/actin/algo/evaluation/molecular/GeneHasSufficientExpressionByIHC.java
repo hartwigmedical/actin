@@ -48,7 +48,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
         if (!ihcTests.isEmpty()) {
             builder.addFailMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)");
         } else {
-            builder.addFailMessages("Gene " + gene + " has not been tested (by IHC)");
+            builder.addFailMessages("No test result found; gene " + gene + " has not been tested by IHC");
         }
 
         return builder.build();

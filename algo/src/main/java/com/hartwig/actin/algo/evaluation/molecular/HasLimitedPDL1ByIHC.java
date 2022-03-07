@@ -44,7 +44,7 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
         if (!pdl1Tests.isEmpty()) {
             builder.addFailMessages("No PD-L1 IHC test found where level does not exceed maximum level of " + maxPDL1);
         } else {
-            builder.addFailMessages("PD-L1 has not been tested (by IHC)");
+            builder.addFailMessages("No test result found; PD-L1 has not been tested by IHC");
         }
 
         return builder.build();

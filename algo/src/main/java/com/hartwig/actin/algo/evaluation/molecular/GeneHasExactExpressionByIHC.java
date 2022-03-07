@@ -48,7 +48,7 @@ public class GeneHasExactExpressionByIHC implements EvaluationFunction {
         if (!ihcTests.isEmpty()) {
             builder.addFailMessages("Gene " + gene + " does not have exact expression level " + expressionLevel + " (by IHC)");
         } else {
-            builder.addFailMessages("Gene " + gene + " has not been tested (by IHC)");
+            builder.addFailMessages("No test result found; gene " + gene + " has not been tested by IHC");
         }
 
         return builder.build();
