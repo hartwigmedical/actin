@@ -42,7 +42,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Gene " + gene + " does not have meet required expression level " + minExpressionLevel + " (by IHC)")
+                .addFailMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
                 .build();
     }
 }
