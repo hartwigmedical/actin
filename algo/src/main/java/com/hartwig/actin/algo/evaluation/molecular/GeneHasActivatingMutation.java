@@ -29,7 +29,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No activating mutation detected in gene" + gene)
+                .addFailMessages("No activating mutation detected in gene " + gene)
                 .build();
     }
 }

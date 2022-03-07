@@ -20,13 +20,13 @@ public class HasBiopsyAmenableLesion implements EvaluationFunction {
         if (record.molecular().type() != ExperimentType.WGS) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Currently biopsy-amenability of lesions cannot be without WGS")
+                    .addUndeterminedMessages("Currently biopsy-amenability of lesions cannot be determined without WGS")
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
-                .addPassMessages("It is assumed that patient has biopsy-amenable lesions")
+                .addPassMessages("It is assumed that patient will have biopsy-amenable lesions (presence of WGS analysis)")
                 .build();
     }
 }
