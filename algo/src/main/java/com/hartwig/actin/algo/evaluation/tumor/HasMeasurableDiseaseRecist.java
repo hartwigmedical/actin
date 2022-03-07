@@ -46,7 +46,8 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages("Patient has no measurable disease");
         } else if (result == EvaluationResult.PASS_BUT_WARN) {
-            builder.addPassMessages("Patient has measurable disease, but given the patient's tumor type uncertain if this has been evaluated against RECIST?");
+            builder.addPassMessages("Patient has measurable disease, "
+                    + "but given the patient's tumor type uncertain if this has been evaluated against RECIST?");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassMessages("Patient has measurable disease");
         }

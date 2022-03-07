@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.priortumor;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -27,6 +28,11 @@ final class PriorTumorTestFactory {
                 .tumorSubType(Strings.EMPTY)
                 .treatmentHistory(Strings.EMPTY)
                 .isActive(false);
+    }
+
+    @NotNull
+    public static PatientRecord withPriorSecondPrimary(@NotNull PriorSecondPrimary priorSecondPrimary) {
+        return withPriorSecondPrimaries(Lists.newArrayList(priorSecondPrimary));
     }
 
     @NotNull

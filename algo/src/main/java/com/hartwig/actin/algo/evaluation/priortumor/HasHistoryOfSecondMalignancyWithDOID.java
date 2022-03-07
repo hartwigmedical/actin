@@ -11,16 +11,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class HasHistoryOfSecondMalignancyWithDOID implements EvaluationFunction {
 
     @NotNull
     private final DoidModel doidModel;
-    @Nullable
+    @NotNull
     private final String doidToMatch;
 
-    HasHistoryOfSecondMalignancyWithDOID(@NotNull final DoidModel doidModel, @Nullable final String doidToMatch) {
+    HasHistoryOfSecondMalignancyWithDOID(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
         this.doidModel = doidModel;
         this.doidToMatch = doidToMatch;
     }
@@ -30,8 +29,7 @@ public class HasHistoryOfSecondMalignancyWithDOID implements EvaluationFunction 
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasMatch = false;
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
-            boolean doidMatch = doidToMatch == null || isDoidMatch(priorSecondPrimary.doids(), doidToMatch);
-            if (doidMatch) {
+            if (isDoidMatch(priorSecondPrimary.doids(), doidToMatch)) {
                 hasMatch = true;
             }
         }
