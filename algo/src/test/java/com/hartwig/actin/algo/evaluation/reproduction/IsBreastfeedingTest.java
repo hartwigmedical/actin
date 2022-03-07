@@ -2,19 +2,18 @@ package com.hartwig.actin.algo.evaluation.reproduction;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.clinical.datamodel.Gender;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IsBreastfeedingTest {
 
     @Test
-    @Ignore //TODO Fix test
     public void canEvaluate() {
         IsBreastfeeding function = new IsBreastfeeding();
 
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(ReproductionTestFactory.withGender(Gender.FEMALE)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ReproductionTestFactory.withGender(Gender.MALE)));
     }
 }

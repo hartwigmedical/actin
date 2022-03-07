@@ -44,5 +44,4 @@ public final class ReproductionRuleMapping {
     private static FunctionCreator willingToAdhereToDonationPrescriptionsCreator() {
         return function -> new WillingToAdhereToDonationPrescriptions();
     }
-
 }
