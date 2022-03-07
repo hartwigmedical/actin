@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -21,8 +23,10 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorMolecularTest ihcTest : PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene)) {
+        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        for (PriorMolecularTest ihcTest : ihcTests) {
             boolean isExpressed = false;
+
             String scoreText = ihcTest.scoreText();
             if (scoreText != null && scoreText.equalsIgnoreCase("positive")) {
                 isExpressed = true;
@@ -36,14 +40,19 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
             if (isExpressed) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Gene " + gene + " has been determined to expressed (by IHC)")
+                        .addPassMessages("Gene " + gene + " has been determined to be expressed (by IHC)")
                         .build();
             }
         }
 
-        return ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addFailMessages("Gene " + gene + " has not been determined to expressed (by IHC)")
-                .build();
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+
+        if (!ihcTests.isEmpty()) {
+            builder.addFailMessages("No expression of gene " + gene + " found in prior IHC tests");
+        } else {
+            builder.addFailMessages("Gene " + gene + " has not been tested (by IHC)");
+        }
+
+        return builder.build();
     }
 }

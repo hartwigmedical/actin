@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -23,7 +25,8 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorMolecularTest ihcTest : PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene)) {
+        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        for (PriorMolecularTest ihcTest : ihcTests) {
             boolean hasSufficientExpression = false;
 
             Double scoreValue = ihcTest.scoreValue();
@@ -40,9 +43,14 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addFailMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
-                .build();
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+
+        if (!ihcTests.isEmpty()) {
+            builder.addFailMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)");
+        } else {
+            builder.addFailMessages("Gene " + gene + " has not been tested (by IHC)");
+        }
+
+        return builder.build();
     }
 }

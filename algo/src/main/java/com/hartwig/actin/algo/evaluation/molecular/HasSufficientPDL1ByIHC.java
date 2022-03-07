@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -20,7 +22,8 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorMolecularTest ihcTest : PriorMolecularTestFunctions.allPDL1TestsByCPS(record.clinical().priorMolecularTests())) {
+        List<PriorMolecularTest> pdl1Tests = PriorMolecularTestFunctions.allPDL1TestsByCPS(record.clinical().priorMolecularTests());
+        for (PriorMolecularTest ihcTest : pdl1Tests) {
             boolean hasSufficientPDL1 = false;
 
             Double scoreValue = ihcTest.scoreValue();
@@ -36,9 +39,14 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addFailMessages("No PD-L1 IHC test found where level exceeds desired level of " + minPDL1)
-                .build();
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+
+        if (!pdl1Tests.isEmpty()) {
+            builder.addFailMessages("No PD-L1 IHC test found where level exceeds desired level of " + minPDL1);
+        } else {
+            builder.addFailMessages("PD-L1 has not been tested (by IHC)");
+        }
+
+        return builder.build();
     }
 }
