@@ -365,7 +365,7 @@ CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains
 CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" (T.B.E)
-CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | Medication > name like Probenecid, Rifampicin, Novobiocin, Cabotegravir (T.B.E)
+CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | Medication > name like %Probenecid%, %Rifampicin%, %Novobiocin%, %Cabotegravir% (T.B.E)
 CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
