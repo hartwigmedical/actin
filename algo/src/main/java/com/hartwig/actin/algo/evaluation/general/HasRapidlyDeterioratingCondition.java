@@ -16,7 +16,8 @@ public class HasRapidlyDeterioratingCondition implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.NOT_EVALUATED)
                 .addPassMessages("Currently assumed that patient condition is not rapidly deteriorating")
                 .build();
     }
