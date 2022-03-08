@@ -11,7 +11,7 @@ public class CurrentlyGetsOATPInhibitingMedicationTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsOATPInhibitingMedication function = new CurrentlyGetsOATPInhibitingMedication();
+        CurrentlyGetsOATPInhibitingMedication function = new CurrentlyGetsOATPInhibitingMedication("OATP999");
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

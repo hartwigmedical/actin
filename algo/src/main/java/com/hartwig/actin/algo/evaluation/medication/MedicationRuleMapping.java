@@ -127,7 +127,10 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsCYPXInhibitingMedicationCreator() {
-        return function -> new CurrentlyGetsCYPXInhibitingMedication();
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new CurrentlyGetsCYPXInhibitingMedication(termToFind);
+        };
     }
 
     @NotNull
@@ -137,7 +140,10 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsOATPInhibitingMedicationCreator() {
-        return function -> new CurrentlyGetsOATPInhibitingMedication();
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new CurrentlyGetsOATPInhibitingMedication(termToFind);
+        };
     }
 
     @NotNull

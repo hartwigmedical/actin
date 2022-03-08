@@ -11,7 +11,7 @@ public class CurrentlyGetsCYPXInhibitingMedicationTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsCYPXInhibitingMedication function = new CurrentlyGetsCYPXInhibitingMedication();
+        CurrentlyGetsCYPXInhibitingMedication function = new CurrentlyGetsCYPXInhibitingMedication("CYP9A9");
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

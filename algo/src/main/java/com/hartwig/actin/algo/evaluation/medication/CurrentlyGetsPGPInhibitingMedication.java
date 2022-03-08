@@ -18,7 +18,7 @@ public class CurrentlyGetsPGPInhibitingMedication implements EvaluationFunction 
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets PGP inhibiting medication")
+                .addUndeterminedMessages("Currently not determined if patient gets PGP inhibiting/inducing medication")
                 .build();
     }
 }

@@ -18,12 +18,12 @@ public class CurrentlyGetsAnyMedication implements PassOrFailEvaluator {
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient currently gets active medication";
+        return "Patient currently receives medication with status 'active'";
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient does not get active medication currently";
+        return "Patient does not currently receive medication with status 'active'";
     }
 }
