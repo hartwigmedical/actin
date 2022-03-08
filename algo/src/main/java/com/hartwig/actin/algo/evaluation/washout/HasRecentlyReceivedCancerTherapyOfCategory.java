@@ -5,12 +5,15 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasRecentlyReceivedCancerTherapyOfCategory implements PassOrFailEvaluator {
+public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFunction {
 
     @NotNull
     private final Set<String> categoriesToFind;
@@ -22,8 +25,11 @@ public class HasRecentlyReceivedCancerTherapyOfCategory implements PassOrFailEva
         this.minDate = minDate;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasTreatmentOfCategory = false;
+        String categoryFound = null;
         for (Medication medication : record.clinical().medications()) {
             for (String categoryToFind : categoriesToFind) {
                 for (String category : medication.categories()) {
@@ -31,23 +37,23 @@ public class HasRecentlyReceivedCancerTherapyOfCategory implements PassOrFailEva
                     boolean dateIsMatch = MedicationDateEvaluation.hasBeenGivenAfterDate(medication, minDate);
 
                     if (categoryIsMatch && dateIsMatch) {
-                        return true;
+                        hasTreatmentOfCategory = true;
+                        categoryFound = categoryToFind;
                     }
                 }
             }
-        } return false;
-    }
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient has recently received medication of category " + concat(categoriesToFind);
-    }
+        EvaluationResult result = hasTreatmentOfCategory ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has not recently received medication of category " + concat(categoriesToFind);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has not received recent treatments of category " + concat(categoriesToFind));
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient has recently received treatment with medication " + categoryFound);
+        }
+
+        return builder.build();
     }
 
     @NotNull

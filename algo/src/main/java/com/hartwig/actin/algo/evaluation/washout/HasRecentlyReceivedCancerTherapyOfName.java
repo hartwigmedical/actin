@@ -5,12 +5,15 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasRecentlyReceivedCancerTherapyOfName implements PassOrFailEvaluator {
+public class HasRecentlyReceivedCancerTherapyOfName implements EvaluationFunction {
 
     @NotNull
     private final Set<String> namesToFind;
@@ -22,31 +25,33 @@ public class HasRecentlyReceivedCancerTherapyOfName implements PassOrFailEvaluat
         this.minDate = minDate;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasTreatmentOfName = false;
+        String nameFound = null;
         for (Medication medication : record.clinical().medications()) {
             for (String nameToFind : namesToFind) {
                 boolean nameIsMatch = medication.name().equalsIgnoreCase(nameToFind);
                 boolean dateIsMatch = MedicationDateEvaluation.hasBeenGivenAfterDate(medication, minDate);
 
                 if (nameIsMatch && dateIsMatch) {
-                    return true;
+                    hasTreatmentOfName = true;
+                    nameFound = nameToFind;
                 }
             }
         }
-        return false;
-    }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient has recently received anti-cancer medication " + concat(namesToFind);
-    }
+        EvaluationResult result = hasTreatmentOfName ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has not recently received anti-cancer medication " + concat(namesToFind);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has not received recent treatments with name " + concat(namesToFind));
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient has recently received treatment with medication " + nameFound);
+        }
+
+        return builder.build();
     }
 
     @NotNull

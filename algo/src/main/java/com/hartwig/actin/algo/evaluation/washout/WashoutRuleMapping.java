@@ -74,7 +74,7 @@ public final class WashoutRuleMapping {
             OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
             LocalDate minDate = determineMinDateForWashout(input.integer());
 
-            return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.string()), minDate));
+            return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.string()), minDate);
         };
     }
 
@@ -86,10 +86,10 @@ public final class WashoutRuleMapping {
 
             Set<String> names = determineNames(input.string());
             if (names != null) {
-                return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfName(names, minDate));
+                return new HasRecentlyReceivedCancerTherapyOfName(names, minDate);
             } else {
                 Set<String> categories = determineCategories(input.string());
-                return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate));
+                return new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate);
             }
         };
     }
@@ -105,7 +105,7 @@ public final class WashoutRuleMapping {
         return function -> {
             LocalDate minDate = determineMinDateForWashout(FunctionInputResolver.createOneIntegerInput(function));
 
-            return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, minDate));
+            return new HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, minDate);
         };
     }
 
@@ -119,7 +119,7 @@ public final class WashoutRuleMapping {
             categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
 
             categoriesToConsider.removeAll(determineCategories(input.string()));
-            return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, minDate));
+            return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, minDate);
         };
     }
 
@@ -129,7 +129,7 @@ public final class WashoutRuleMapping {
             TwoIntegers input = FunctionInputResolver.createTwoIntegerInput(function);
             LocalDate minDate = determineMinDateForWashout(input.integer1());
 
-            return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, minDate));
+            return new HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, minDate);
         };
     }
 
@@ -143,7 +143,7 @@ public final class WashoutRuleMapping {
             categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
 
             categoriesToConsider.removeAll(determineCategories(input.string()));
-            return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, minDate));
+            return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, minDate);
         };
     }
 
@@ -158,7 +158,7 @@ public final class WashoutRuleMapping {
             LocalDate minDate = determineMinDateForWashout(FunctionInputResolver.createOneIntegerInput(function));
 
             Set<String> categories = Sets.newHashSet("Supplement", "Herbal remedy");
-            return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate));
+            return new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate);
         };
     }
 
