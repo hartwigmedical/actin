@@ -22,12 +22,12 @@ public final class WashoutRuleMapping {
 
     private static final Set<String> ALL_ANTI_CANCER_CATEGORIES = Sets.newHashSet();
 
-    private static final Map<String, Set<String>> MEDICATIONS_FOR_MAIN_CATEGORY_MAP = Maps.newHashMap();
+    private static final Map<String, Set<String>> MEDICATIONS_FOR_MAIN_CATEGORY = Maps.newHashMap();
     private static final Map<String, Set<String>> CATEGORIES_PER_MAIN_CATEGORY = Maps.newHashMap();
 
     static {
-        MEDICATIONS_FOR_MAIN_CATEGORY_MAP.put("Immunotherapy", Sets.newHashSet("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab"));
-        MEDICATIONS_FOR_MAIN_CATEGORY_MAP.put("PARP inhibitors", Sets.newHashSet("Olaparib", "Rucaparib"));
+        MEDICATIONS_FOR_MAIN_CATEGORY.put("Immunotherapy", Sets.newHashSet("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab"));
+        MEDICATIONS_FOR_MAIN_CATEGORY.put("PARP inhibitors", Sets.newHashSet("Olaparib", "Rucaparib"));
 
         CATEGORIES_PER_MAIN_CATEGORY.put("Chemotherapy",
                 Sets.newHashSet("Platinum compound", "Pyrimidine antagonist", "Taxane", "Alkylating agent"));
@@ -174,6 +174,6 @@ public final class WashoutRuleMapping {
 
     @Nullable
     private static Set<String> determineNames(@NotNull String input) {
-        return MEDICATIONS_FOR_MAIN_CATEGORY_MAP.get(input);
+        return MEDICATIONS_FOR_MAIN_CATEGORY.get(input);
     }
 }
