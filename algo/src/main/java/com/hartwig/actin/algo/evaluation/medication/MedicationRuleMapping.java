@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,9 +35,9 @@ public final class MedicationRuleMapping {
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationOfCategoryCreator(CORTICOSTEROIDS));
+        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationWithExactCategoryCreator(CORTICOSTEROIDS));
         map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION,
-                getsActiveMedicationOfCategoryCreator(VITAMIN_K_ANTAGONISTS));
+                getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS));
         map.put(EligibilityRule.CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION,
@@ -66,12 +67,12 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsActiveMedicationCreator() {
-        return function -> new CurrentlyGetsMedicationWithCategory(null, false);
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsAnyMedication());
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationOfCategoryCreator(@NotNull String category) {
-        return function -> new CurrentlyGetsMedicationWithCategory(category, false);
+    private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String categoryToFind) {
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfExactCategory(categoryToFind));
     }
 
     @NotNull
@@ -95,7 +96,7 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsActiveAndStableMedicationOfCategoryCreator(@NotNull String category) {
-        return function -> new CurrentlyGetsMedicationWithCategory(category, true);
+    private static FunctionCreator getsActiveAndStableMedicationOfCategoryCreator(@NotNull String categoryToFind) {
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfCategory(categoryToFind));
     }
 }

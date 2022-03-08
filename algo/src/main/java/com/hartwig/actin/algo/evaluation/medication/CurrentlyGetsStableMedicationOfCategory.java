@@ -1,38 +1,27 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
+import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsMedicationWithCategory implements EvaluationFunction {
-
-    @Nullable
-    private final String category;
-    private final boolean requireStableDosing;
-
-    CurrentlyGetsMedicationWithCategory(@Nullable final String category, final boolean requireStableDosing) {
-        this.category = category;
-        this.requireStableDosing = requireStableDosing;
-    }
+public class CurrentlyGetsStableMedicationOfCategory implements PassOrFailEvaluator {
 
     @NotNull
+    private final String categoryToFind;
+
+    CurrentlyGetsStableMedicationOfCategory(@NotNull final String categoryToFind) {
+        this.categoryToFind = categoryToFind;
+    }
+
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public boolean isPass(@NotNull PatientRecord record) {
         boolean hasActiveAndStableMedication = false;
         Medication referenceDosing = null;
-        for (Medication medication : filter(record.clinical().medications(), category)) {
+        for (Medication medication : MedicationFilter.withExactCategory(record.clinical().medications(), categoryToFind)) {
             if (referenceDosing != null) {
-                if (requireStableDosing && !hasMatchingDosing(medication, referenceDosing)) {
+                if (!hasMatchingDosing(medication, referenceDosing)) {
                     hasActiveAndStableMedication = false;
                 }
             } else {
@@ -41,20 +30,19 @@ public class CurrentlyGetsMedicationWithCategory implements EvaluationFunction {
             }
         }
 
-        EvaluationResult result = hasActiveAndStableMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+        return hasActiveAndStableMedication;
     }
 
     @NotNull
-    private static List<Medication> filter(@NotNull List<Medication> medications, @Nullable String type) {
-        List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : medications) {
-            Boolean active = medication.active();
-            if (active != null && active && (type == null || medication.categories().contains(type))) {
-                filtered.add(medication);
-            }
-        }
-        return filtered;
+    @Override
+    public String passMessage() {
+        return "Patient gets stable dosing of medication with category " + categoryToFind;
+    }
+
+    @NotNull
+    @Override
+    public String failMessage() {
+        return "Patient does not get stable dosing of medication with category " + categoryToFind;
     }
 
     private static boolean hasMatchingDosing(@NotNull Medication medication1, @NotNull Medication medication2) {
