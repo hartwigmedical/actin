@@ -41,8 +41,7 @@ public final class WashoutRuleMapping {
 
         map.put(EligibilityRule.HAS_RECEIVED_DRUG_X_CANCER_THERAPY_WITHIN_Y_WEEKS, hasRecentlyReceivedCancerTherapyOfNameCreator());
         map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_CANCER_THERAPY_WITHIN_Y_WEEKS, hasRecentlyReceivedCancerTherapyOfCategoryCreator());
-        map.put(EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS, hasRecentlyReceivedRadiotherapyCreator());
         map.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES,
@@ -82,6 +81,12 @@ public final class WashoutRuleMapping {
                 return new PassOrFailEvaluationFunction(new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate));
             }
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasRecentlyReceivedRadiotherapyCreator() {
+        return function -> new PassOrFailEvaluationFunction(new HasRecentlyReceivedRadiotherapy(EvaluationConstants.REFERENCE_YEAR,
+                EvaluationConstants.REFERENCE_MONTH));
     }
 
     @NotNull

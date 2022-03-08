@@ -9,6 +9,7 @@ public final class EvaluationConstants {
 
     public static final LocalDate REFERENCE_DATE = LocalDate.now();
     public static final int REFERENCE_YEAR = REFERENCE_DATE.getYear();
+    public static final int REFERENCE_MONTH = REFERENCE_DATE.getMonthValue();
 
     public static final int MAX_LAB_VALUE_AGE_DAYS = 30;
 }
