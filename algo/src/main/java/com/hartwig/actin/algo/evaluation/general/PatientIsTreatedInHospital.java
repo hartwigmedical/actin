@@ -16,7 +16,8 @@ public class PatientIsTreatedInHospital implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.NOT_EVALUATED)
                 .addPassMessages("Currently exact hospital of treatment is not determined")
                 .build();
     }
