@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentlyGetsOATPInhibitingMedication implements EvaluationFunction {
 
     @NotNull
-    private final String configuredTerm;
+    private final String termToFind;
 
-    CurrentlyGetsOATPInhibitingMedication(@NotNull final String configuredTerm) {
-        this.configuredTerm = configuredTerm;
+    CurrentlyGetsOATPInhibitingMedication(@NotNull final String termToFind) {
+        this.termToFind = termToFind;
     }
 
     @NotNull
@@ -22,7 +22,7 @@ public class CurrentlyGetsOATPInhibitingMedication implements EvaluationFunction
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets " + configuredTerm + " inhibiting/inducing medication")
+                .addUndeterminedMessages("Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
                 .build();
     }
 }
