@@ -26,7 +26,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
         if (ecg == null || ecg.qtcfValue() == null || ecg.qtcfUnit() == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("QTCF details are missing")
+                    .addUndeterminedMessages("No measurement found for QTCF")
                     .build();
         }
 
