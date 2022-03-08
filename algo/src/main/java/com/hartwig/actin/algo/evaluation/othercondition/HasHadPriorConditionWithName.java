@@ -23,10 +23,10 @@ public class HasHadPriorConditionWithName implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             if (priorOtherCondition.name().toLowerCase().contains(nameToFind.toLowerCase())) {
-                return ImmutableEvaluation.builder().result(EvaluationResult.PASS).addPassMessages("Patient has " + nameToFind).build();
+                return ImmutableEvaluation.builder().result(EvaluationResult.PASS).addPassMessages("Patient has history of " + nameToFind).build();
             }
         }
 
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Patient has no " + nameToFind).build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Patient has no history of " + nameToFind).build();
     }
 }

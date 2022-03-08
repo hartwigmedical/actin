@@ -391,14 +391,14 @@ HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS_Z_HALF_LIVE
 WILL_REQUIRE_ANY_ANTICANCER_THERAPY_ DURING_TRIAL | won't be evaluated.
 HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medication > categories like %supplements% or herbal remedies within X weeks
 
-*Anti-cancer medication list includes the following categories: Platinum compounds, Pyrimidine antagonists, Taxanes, Alkylating agents, Cytotoxic antibiotics, Gonadorelin agonists, Gonadorelin antagonists, Monoclonal antibody for malignancies, Protein kinase inhibitors, Anti-androgens, Anti-estrogens, 'Oncolytics, other'. 
+*Anti-cancer medication list includes the following categories: categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane%, %Alkylating agent%, %Cytotoxic antibiotics%, %Gonadorelin agonist%, %Gonadorelin antagonist%, %Monoclonal antibody for malignancies%, %Protein kinase inhibitor%, %Anti-androgen%, %Anti-estrogen%, '%Oncolytics, other%'. 
 
 **Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:
-1] Chemotherapy: includes all medication categories of Platinum compounds, Pyrimidine antagonists, Taxanes and Alkylating agents
+1] Chemotherapy: includes all medication categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane% and %Alkylating agent%
 2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab
-3] Endocrine therapy: includes all medication categories of Anti-androgens, Anti-estrogens
+3] Endocrine therapy: includes all medication categories like %Anti-androgen%, %Anti-estrogen%
 4] PARP inhibitors: medication drug names Olaparib, Rucaparib
-5] Gonadorelin: Gonadorelin agonists, Gonadorelin antagonists 
+5] Gonadorelin: includes medication categories like %Gonadorelin agonist%, %Gonadorelin antagonist% 
 
 Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway. 
 

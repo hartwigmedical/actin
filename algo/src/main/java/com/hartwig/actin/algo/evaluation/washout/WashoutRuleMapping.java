@@ -39,7 +39,7 @@ public final class WashoutRuleMapping {
         }
 
         ALL_ANTI_CANCER_CATEGORIES.add("Cytotoxic antibiotics");
-        ALL_ANTI_CANCER_CATEGORIES.add("Monoclonal antibody");
+        ALL_ANTI_CANCER_CATEGORIES.add("Monoclonal antibody for malignancies");
         ALL_ANTI_CANCER_CATEGORIES.add("Protein kinase inhibitor");
         ALL_ANTI_CANCER_CATEGORIES.add("Oncolytics, other");
     }
