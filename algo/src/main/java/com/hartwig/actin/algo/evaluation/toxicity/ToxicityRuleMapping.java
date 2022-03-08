@@ -45,7 +45,7 @@ public final class ToxicityRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHistoryAnaphylaxisCreator() {
-        return function -> new HasHistoryAnaphylaxis();
+        return function -> new HasHistoryOfAnaphylaxis();
     }
 
     @NotNull
@@ -62,7 +62,6 @@ public final class ToxicityRuleMapping {
             OneIntegerOneString input = FunctionInputResolver.createOneIntegerOneStringInput(function);
             return new HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet());
         };
-
     }
 
     @NotNull

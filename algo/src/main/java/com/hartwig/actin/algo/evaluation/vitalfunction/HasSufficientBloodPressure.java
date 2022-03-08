@@ -6,8 +6,8 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
@@ -31,9 +31,13 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<VitalFunction> relevant = selectRelevant(record.clinical().vitalFunctions());
+        String categoryDisplay = category.display().toLowerCase();
 
         if (relevant.isEmpty()) {
-            return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("No relevant vital function readout found for " + categoryDisplay)
+                    .build();
         }
 
         double sum = 0;
@@ -44,7 +48,15 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
         double avg = sum / relevant.size();
 
         EvaluationResult result = Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        return EvaluationFactory.create(result);
+
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure);
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassMessages("Patient has average " + categoryDisplay + " blood pressure exceeding " + minAvgBloodPressure);
+        }
+
+        return builder.build();
     }
 
     @NotNull

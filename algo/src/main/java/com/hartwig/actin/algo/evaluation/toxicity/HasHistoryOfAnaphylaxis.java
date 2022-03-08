@@ -8,15 +8,15 @@ import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHistoryAnaphylaxis implements EvaluationFunction {
+public class HasHistoryOfAnaphylaxis implements EvaluationFunction {
 
-    HasHistoryAnaphylaxis() {
+    HasHistoryOfAnaphylaxis() {
     }
 
     @NotNull
     @Override
-    // To do: extend evaluation
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        // TODO: extend evaluation
         return EvaluationFactory.create(EvaluationResult.UNDETERMINED);
     }
 }
