@@ -1,7 +1,5 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import java.util.Set;
-
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -13,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentlyGetsCYPXInhibitingMedication implements EvaluationFunction {
 
     @NotNull
-    private final String configuredTerm;
+    private final String termToFind;
 
-    CurrentlyGetsCYPXInhibitingMedication(@NotNull final String configuredTerm) {
-        this.configuredTerm = configuredTerm;
+    CurrentlyGetsCYPXInhibitingMedication(@NotNull final String termToFind) {
+        this.termToFind = termToFind;
     }
 
     @NotNull
@@ -24,7 +22,7 @@ public class CurrentlyGetsCYPXInhibitingMedication implements EvaluationFunction
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets " + configuredTerm + " inhibiting/inducing medication")
+                .addUndeterminedMessages("Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
                 .build();
     }
 }

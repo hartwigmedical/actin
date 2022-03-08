@@ -46,33 +46,25 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION,
-                getsActiveMedicationWithExactCategoryCreator(ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS));
-        map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION,
-                getsActiveMedicationWithExactCategoryCreator(TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES));
-        map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION,
-                getsActiveMedicationWithExactCategoryCreator(BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION));
-        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsActiveMedicationWithExactCategoryCreator(CORTICOSTEROIDS));
-        map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION,
-                getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS));
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsCorticosteroidMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS, getsDiseaseModifyingAgentsCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION,
-                getsActiveMedicationWithExactCategoryCreator(GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS));
-        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION,
-                getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS));
-        map.put(EligibilityRule.CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION,
-                getsActiveMedicationWithNamesCreator(PROBENECID, RIFAMPICIN, NOVOBIOCIN, CABOTEGRAVIR));
+        map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION, getsOAT3InhibitionMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS,
-                getsActiveMedicationWithExactCategoryCreator(COLONY_STIMULATING_FACTORS));
+        map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS, getColonyStimulatingFactorsCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS));
+        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
 
@@ -106,13 +98,48 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String... categoriesToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfExactCategory(Sets.newHashSet(categoriesToFind)));
+    private static FunctionCreator getsAnticoagulantMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS);
+    }
+
+    @NotNull
+    private static FunctionCreator getsAzoleMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES);
+    }
+
+    @NotNull
+    private static FunctionCreator getsBoneResorptiveMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION);
+    }
+
+    @NotNull
+    private static FunctionCreator getsCorticosteroidMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(CORTICOSTEROIDS);
+    }
+
+    @NotNull
+    private static FunctionCreator getsCoumarinDerivativeMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS);
+    }
+
+    @NotNull
+    private static FunctionCreator getsGonadorelinMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS);
     }
 
     @NotNull
     private static FunctionCreator getsDiseaseModifyingAgentsCreator() {
         return function -> new CurrentlyGetsDiseaseModifyingAgents();
+    }
+
+    @NotNull
+    private static FunctionCreator getsImmunosuppressantMedicationCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS);
+    }
+
+    @NotNull
+    private static FunctionCreator getsOAT3InhibitionMedicationCreator() {
+        return getsActiveMedicationWithNamesCreator(PROBENECID, RIFAMPICIN, NOVOBIOCIN, CABOTEGRAVIR);
     }
 
     @NotNull
@@ -123,6 +150,11 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsQTProlongatingMedicationCreator() {
         return function -> new CurrentlyGetsQTProlongatingMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getColonyStimulatingFactorsCreator() {
+        return getsActiveMedicationWithExactCategoryCreator(COLONY_STIMULATING_FACTORS);
     }
 
     @NotNull
@@ -152,7 +184,17 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator getsStableDosingAnticoagulantMedicationCreator() {
+        return getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS);
+    }
+
+    @NotNull
     private static FunctionCreator getsActiveAndStableMedicationOfCategoryCreator(@NotNull String categoryToFind) {
         return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfCategory(categoryToFind));
+    }
+
+    @NotNull
+    private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String... categoriesToFind) {
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfExactCategory(Sets.newHashSet(categoriesToFind)));
     }
 }
