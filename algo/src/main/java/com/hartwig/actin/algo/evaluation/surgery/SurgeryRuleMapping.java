@@ -20,15 +20,15 @@ public final class SurgeryRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadSurgeryCreator());
+        map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator());
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator hasHadSurgeryCreator() {
-        return function -> new HasHadSurgery();
+    private static FunctionCreator hasHadAnySurgeryCreator() {
+        return function -> new HasHadAnySurgery();
     }
 
     @NotNull
@@ -37,7 +37,7 @@ public final class SurgeryRuleMapping {
             int maxAgeWeeks = FunctionInputResolver.createOneIntegerInput(function);
             LocalDate minDate = EvaluationConstants.REFERENCE_DATE.minusWeeks(maxAgeWeeks).plusWeeks(2);
 
-            return new HasHadRecentSurgery(minDate);
+            return new HasHadSurgeryInPastWeeks(minDate);
         };
     }
 }

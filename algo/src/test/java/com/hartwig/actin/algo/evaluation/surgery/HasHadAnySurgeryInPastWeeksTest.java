@@ -12,12 +12,12 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 
 import org.junit.Test;
 
-public class HasHadRecentSurgeryTest {
+public class HasHadAnySurgeryInPastWeeksTest {
 
     @Test
     public void canEvaluate() {
         LocalDate minDate = LocalDate.of(2020, 2, 20);
-        HasHadRecentSurgery function = new HasHadRecentSurgery(minDate);
+        HasHadSurgeryInPastWeeks function = new HasHadSurgeryInPastWeeks(minDate);
 
         List<Surgery> surgeries = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));

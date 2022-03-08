@@ -12,11 +12,11 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 
 import org.junit.Test;
 
-public class HasHadSurgeryTest {
+public class HasHadAnySurgeryTest {
 
     @Test
     public void canEvaluate() {
-        HasHadSurgery function = new HasHadSurgery();
+        HasHadAnySurgery function = new HasHadAnySurgery();
 
         List<Surgery> surgeries = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
