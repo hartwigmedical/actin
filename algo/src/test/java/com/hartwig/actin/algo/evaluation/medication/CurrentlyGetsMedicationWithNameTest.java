@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class CurrentlyGetsMedicationWithNameTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsMedicationWithName function = new CurrentlyGetsMedicationWithName("term 1");
+        CurrentlyGetsMedicationWithName function = new CurrentlyGetsMedicationWithName(Sets.newHashSet("term 1"));
 
         // No medications yet
         List<Medication> medications = Lists.newArrayList();

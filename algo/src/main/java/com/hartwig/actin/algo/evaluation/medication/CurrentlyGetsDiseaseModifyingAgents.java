@@ -8,17 +8,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsImmunoSuppressantMedication implements EvaluationFunction {
+public class CurrentlyGetsDiseaseModifyingAgents implements EvaluationFunction {
 
-    CurrentlyGetsImmunoSuppressantMedication() {
+    CurrentlyGetsDiseaseModifyingAgents() {
     }
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull final PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets immuno suppressant medication")
+                .addUndeterminedMessages("Currently not determined if patient gets disease modifying agents")
                 .build();
     }
 }

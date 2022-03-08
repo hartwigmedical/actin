@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class CurrentlyGetsImmunoSuppressantMedicationTest {
+public class CurrentlyGetsDiseaseModifyingAgentsTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsImmunoSuppressantMedication function = new CurrentlyGetsImmunoSuppressantMedication();
+        CurrentlyGetsDiseaseModifyingAgents function = new CurrentlyGetsDiseaseModifyingAgents();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
