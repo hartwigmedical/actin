@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.priortumor;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -45,7 +46,9 @@ public final class PreviousTumorRuleMapping {
     private static FunctionCreator hasHistoryOfSecondMalignancyWithinYearsCreator() {
         return function -> {
             int maxYears = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasHistoryOfSecondMalignancyWithinYears(EvaluationConstants.REFERENCE_DATE, maxYears);
+            LocalDate minDate = EvaluationConstants.REFERENCE_DATE.minusYears(maxYears);
+
+            return new HasHistoryOfSecondMalignancyWithinYears(minDate);
         };
     }
 }

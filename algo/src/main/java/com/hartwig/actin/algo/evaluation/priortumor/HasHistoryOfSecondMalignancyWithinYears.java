@@ -14,25 +14,24 @@ import org.jetbrains.annotations.NotNull;
 public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFunction {
 
     @NotNull
-    private final LocalDate referenceDate;
-    private final int maxYears;
+    private final LocalDate minDate;
 
-    HasHistoryOfSecondMalignancyWithinYears(@NotNull final LocalDate referenceDate, final int maxYears) {
-        this.referenceDate = referenceDate;
-        this.maxYears = maxYears;
+    public HasHistoryOfSecondMalignancyWithinYears(@NotNull final LocalDate minDate) {
+        this.minDate = minDate;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasMatch = false;
+        boolean hasPotentialMatch = false;
         boolean hasUsableData = false;
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
-            int effectiveMaxYears = maxYears + 1;
+            LocalDate effectiveMinDate = minDate.minusYears(1);
             Integer secondPrimaryYear = priorSecondPrimary.diagnosedYear();
             Integer secondPrimaryMonth = priorSecondPrimary.diagnosedMonth();
             if (priorSecondPrimary.lastTreatmentYear() != null) {
-                effectiveMaxYears = maxYears;
+                effectiveMinDate = minDate;
                 secondPrimaryYear = priorSecondPrimary.lastTreatmentYear();
                 if (priorSecondPrimary.lastTreatmentMonth() != null) {
                     secondPrimaryMonth = priorSecondPrimary.lastTreatmentMonth();
@@ -44,8 +43,10 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
             if (secondPrimaryYear != null) {
                 hasUsableData = true;
                 LocalDate secondPrimaryDate = LocalDate.of(secondPrimaryYear, secondPrimaryMonth != null ? secondPrimaryMonth : 1, 1);
-                if (referenceDate.minusYears(effectiveMaxYears).isBefore(secondPrimaryDate)) {
+                if (!secondPrimaryDate.isBefore(effectiveMinDate)) {
                     hasMatch = true;
+                } else if (secondPrimaryYear.equals(effectiveMinDate.getYear()) && secondPrimaryMonth == null) {
+                    hasPotentialMatch = true;
                 }
             }
         }
@@ -53,20 +54,24 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
         if (hasMatch) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has history of previous malignancy in past " + maxYears + " years")
+                    .addPassMessages("Patient has history of recent previous malignancy")
+                    .build();
+        } else if (hasPotentialMatch) {
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedMessages("Patient has history of previous malignancy but unclear whether it is recent enough")
                     .build();
         } else {
             if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.FAIL)
-                        .addFailMessages("Patient has no history of previous malignancy in past " + maxYears + " years")
+                        .addFailMessages("Patient has no history of recent previous malignancy")
                         .build();
             } else {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedMessages(
-                                "Patient has previous malignancy, but no dates available. Cannot be determined if "
-                                        + "within time period of " + maxYears + " years")
+                        .addUndeterminedMessages("Patient has previous malignancy, but no dates available. "
+                                + " Cannot be determined if previous malignancy was recent")
                         .build();
             }
         }
