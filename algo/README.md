@@ -381,15 +381,15 @@ HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NS
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_RECEIVED_DRUG_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > name like %X% | 
-HAS_RECEIVED_CATEGORY_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > categories like %X% OR if category name is present in category list **, use category config | 
+HAS_RECEIVED_DRUG_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > name like %X% within Y weeks | 
+HAS_RECEIVED_CATEGORY_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > categories like %X% OR if category name is present in category list **, use category config ; within Y weeks | 
 HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month | 
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Does not include radiotherapy or surgery, these are separate rules.
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Does not include radiotherapy or surgery, these are separate rules.
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules.
 HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORY_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.
 WILL_REQUIRE_ANY_ANTICANCER_THERAPY_ DURING_TRIAL | won't be evaluated.
-HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medication > categories like %supplements% or herbal remedies
+HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medication > categories like %supplements% or herbal remedies within X weeks
 
 *Anti-cancer medication list includes the following categories: Platinum compounds, Pyrimidine antagonists, Taxanes, Alkylating agents, Cytotoxic antibiotics, Gonadorelin agonists, Gonadorelin antagonists, Monoclonal antibody for malignancies, Protein kinase inhibitors, Anti-androgens, Anti-estrogens, 'Oncolytics, other'. 
 
