@@ -28,6 +28,7 @@ public final class MedicationRuleMapping {
     private static final String GONADORELIN_AGONISTS = "Gonadorelin agonists";
     private static final String SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective";
     private static final String OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other";
+    private static final String COLONY_STIMULATING_FACTORS = "Colony stimulating factors";
 
     // Medication names
     private static final String PROBENECID = "Probenecid";
@@ -64,16 +65,13 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+                getsActiveMedicationWithExactCategoryCreator(COLONY_STIMULATING_FACTORS));
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS));
         map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
@@ -123,13 +121,28 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsPGPInhibitingMedicationCreator() {
-        return function -> new CurrentlyGetsPGPInhibitingMedication();
+    private static FunctionCreator getsQTProlongatingMedicationCreator() {
+        return function -> new CurrentlyGetsQTProlongatingMedication();
     }
 
     @NotNull
     private static FunctionCreator getsCYPXInhibitingMedicationCreator() {
         return function -> new CurrentlyGetsCYPXInhibitingMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getsPGPInhibitingMedicationCreator() {
+        return function -> new CurrentlyGetsPGPInhibitingMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getsOATPInhibitingMedicationCreator() {
+        return function -> new CurrentlyGetsOATPInhibitingMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getsBCRPInhibitingMedicationCreator() {
+        return function -> new CurrentlyGetsBCRPInhibitingMedication();
     }
 
     @NotNull

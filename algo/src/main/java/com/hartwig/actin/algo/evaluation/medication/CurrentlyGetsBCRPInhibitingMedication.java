@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsDiseaseModifyingAgents implements EvaluationFunction {
+public class CurrentlyGetsBCRPInhibitingMedication implements EvaluationFunction {
 
-    CurrentlyGetsDiseaseModifyingAgents() {
+    CurrentlyGetsBCRPInhibitingMedication() {
     }
 
     @NotNull
@@ -18,7 +18,7 @@ public class CurrentlyGetsDiseaseModifyingAgents implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets disease modifying agents")
+                .addUndeterminedMessages("Currently not determined if patient gets BCRP inhibiting medication")
                 .build();
     }
 }
