@@ -9,7 +9,7 @@ import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ComplicationRuleMapping {
+public final class ComplicationRuleMapping {
 
     private ComplicationRuleMapping() {
     }

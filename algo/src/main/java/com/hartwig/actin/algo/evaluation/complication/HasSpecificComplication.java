@@ -27,7 +27,6 @@ public class HasSpecificComplication implements EvaluationFunction {
                         .result(EvaluationResult.PASS)
                         .addPassMessages("Patient has complication " + termToFind)
                         .build();
-
             }
         }
 
