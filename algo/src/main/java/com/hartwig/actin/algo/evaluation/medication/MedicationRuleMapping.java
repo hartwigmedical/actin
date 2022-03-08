@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,10 +26,8 @@ public final class MedicationRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithNameCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION,
                 function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION,
@@ -68,6 +67,22 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsActiveMedicationCreator() {
         return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsAnyMedication());
+    }
+
+    @NotNull
+    private static FunctionCreator getsActiveMedicationWithNameCreator() {
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationWithName(termToFind));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator getsActiveMedicationWithApproximateCategoryCreator() {
+        return function -> {
+            String categoryTermToFind = FunctionInputResolver.createOneStringInput(function);
+            return new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfApproximateCategory(categoryTermToFind));
+        };
     }
 
     @NotNull

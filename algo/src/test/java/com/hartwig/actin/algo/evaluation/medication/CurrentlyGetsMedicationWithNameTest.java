@@ -11,26 +11,22 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.junit.Test;
 
-public class CurrentlyGetsMedicationOfExactCategoryTest {
+public class CurrentlyGetsMedicationWithNameTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsMedicationOfExactCategory function = new CurrentlyGetsMedicationOfExactCategory("category 1");
+        CurrentlyGetsMedicationWithName function = new CurrentlyGetsMedicationWithName("term 1");
 
         // No medications yet
         List<Medication> medications = Lists.newArrayList();
         assertFalse(function.isPass(MedicationTestFactory.withMedications(medications)));
 
-        // Medication with wrong category
-        medications.add(MedicationTestFactory.active().addCategories("category 2", "category 3").build());
+        // Medication with wrong name
+        medications.add(MedicationTestFactory.active().name("This is Term 2").build());
         assertFalse(function.isPass(MedicationTestFactory.withMedications(medications)));
 
-        // Medication with non-exact category
-        medications.add(MedicationTestFactory.active().addCategories("this is category 1").build());
-        assertFalse(function.isPass(MedicationTestFactory.withMedications(medications)));
-
-        // Medication with right category
-        medications.add(MedicationTestFactory.active().addCategories("category 4", "category 1").build());
+        // Medication with right name
+        medications.add(MedicationTestFactory.active().name("This is Term 1").build());
         assertTrue(function.isPass(MedicationTestFactory.withMedications(medications)));
 
         assertNotNull(function.passMessage());
