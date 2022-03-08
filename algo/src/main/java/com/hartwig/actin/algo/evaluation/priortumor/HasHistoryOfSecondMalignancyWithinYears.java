@@ -53,19 +53,20 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
         if (hasMatch) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has history of second malignancy in past " + maxYears + " years")
+                    .addPassMessages("Patient has history of previous malignancy in past " + maxYears + " years")
                     .build();
         } else {
             if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.FAIL)
-                        .addFailMessages("Patient has no history of second malignancy in past " + maxYears + " years")
+                        .addFailMessages("Patient has no history of previous malignancy in past " + maxYears + " years")
                         .build();
             } else {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedMessages(
-                                "It is currently not determined if patient has had a second primary within requested time period")
+                                "Patient has previous malignancy, but no dates available. Cannot be determined if "
+                                        + "within time period of " + maxYears + " years")
                         .build();
             }
         }
