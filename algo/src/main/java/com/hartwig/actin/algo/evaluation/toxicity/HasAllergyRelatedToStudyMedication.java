@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.toxicity;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -16,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
 
-    @VisibleForTesting
+    static final String DRUG_ALLERGY_DOID = "0060500";
+
     static final String MEDICATION_CATEGORY = "Medication";
-    @VisibleForTesting
     static final String CLINICAL_STATUS_ACTIVE = "Active";
 
     HasAllergyRelatedToStudyMedication() {
@@ -29,9 +28,13 @@ public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> allergies = Sets.newHashSet();
         for (Allergy allergy : record.clinical().allergies()) {
-            if (allergy.category().equalsIgnoreCase(MEDICATION_CATEGORY) && allergy.clinicalStatus()
-                    .equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
-                allergies.add(allergy.name());
+            if (allergy.clinicalStatus().equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
+                boolean doidMatch = allergy.doids().contains(DRUG_ALLERGY_DOID);
+                boolean categoryMatch = allergy.category().equalsIgnoreCase(MEDICATION_CATEGORY);
+
+                if (doidMatch || categoryMatch) {
+                    allergies.add(allergy.name());
+                }
             }
         }
 

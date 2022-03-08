@@ -33,6 +33,7 @@ public final class BloodTransfusionRuleMapping {
         return function -> {
             int maxAgeWeeks = FunctionInputResolver.createOneIntegerInput(function);
             LocalDate minDate = EvaluationConstants.REFERENCE_DATE.minusWeeks(maxAgeWeeks);
+
             return new HasHadRecentBloodTransfusion(product, minDate);
         };
     }
