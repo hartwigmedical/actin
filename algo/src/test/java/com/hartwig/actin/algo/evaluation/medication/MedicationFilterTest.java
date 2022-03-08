@@ -29,6 +29,38 @@ public class MedicationFilterTest {
     }
 
     @Test
+    public void canFilterOnOneTermInName() {
+        List<Medication> medications = Lists.newArrayList();
+
+        medications.add(MedicationTestFactory.active().name("name 1").build());
+        medications.add(MedicationTestFactory.active().name("name 1 with some extension").build());
+        medications.add(MedicationTestFactory.active().name("name 2").build());
+
+        List<Medication> filtered = MedicationFilter.withTermInName(medications, "Name 1");
+
+        assertEquals(2, filtered.size());
+        assertNotNull(findByName(filtered, "name 1"));
+        assertNotNull(findByName(filtered, "name 1 with some extension"));
+    }
+
+    @Test
+    public void canFilterOnAnyTermInName() {
+        List<Medication> medications = Lists.newArrayList();
+
+        medications.add(MedicationTestFactory.active().name("name 1").build());
+        medications.add(MedicationTestFactory.active().name("name 1 with some extension").build());
+        medications.add(MedicationTestFactory.active().name("name 2").build());
+        medications.add(MedicationTestFactory.active().name("name 3").build());
+
+        List<Medication> filtered = MedicationFilter.withAnyTermInName(medications, Sets.newHashSet("Name 1", "2"));
+
+        assertEquals(3, filtered.size());
+        assertNotNull(findByName(filtered, "name 1"));
+        assertNotNull(findByName(filtered, "name 1 with some extension"));
+        assertNotNull(findByName(filtered, "name 2"));
+    }
+
+    @Test
     public void canFilterOnOneExactCategory() {
         List<Medication> medications = Lists.newArrayList();
 

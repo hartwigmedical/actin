@@ -9,22 +9,23 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsStableMedicationOfCategory implements PassOrFailEvaluator {
+public class CurrentlyGetsStableMedicationOfName implements PassOrFailEvaluator {
+
 
     @NotNull
-    private final Set<String> categoriesToFind;
+    private final Set<String> termsToFind;
 
-    CurrentlyGetsStableMedicationOfCategory(@NotNull final Set<String> categoriesToFind) {
-        this.categoriesToFind = categoriesToFind;
+    CurrentlyGetsStableMedicationOfName(@NotNull final Set<String> termsToFind) {
+        this.termsToFind = termsToFind;
     }
 
     @Override
     public boolean isPass(@NotNull PatientRecord record) {
-        boolean hasFoundOnePassingCategory = false;
-        for (String categoryToFind : categoriesToFind) {
+        boolean hasFoundOnePassingTerm = false;
+        for (String termToFind : termsToFind) {
             boolean hasActiveAndStableMedication = false;
             Medication referenceDosing = null;
-            for (Medication medication : MedicationFilter.withExactCategory(record.clinical().medications(), categoryToFind)) {
+            for (Medication medication : MedicationFilter.withTermInName(record.clinical().medications(), termToFind)) {
                 if (referenceDosing != null) {
                     if (!MedicationDosage.hasMatchingDosing(medication, referenceDosing)) {
                         hasActiveAndStableMedication = false;
@@ -36,23 +37,23 @@ public class CurrentlyGetsStableMedicationOfCategory implements PassOrFailEvalua
             }
 
             if (hasActiveAndStableMedication) {
-                hasFoundOnePassingCategory = true;
+                hasFoundOnePassingTerm = true;
             }
         }
 
-        return hasFoundOnePassingCategory;
+        return hasFoundOnePassingTerm;
     }
 
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient gets stable dosing of medication with category " + concat(categoriesToFind);
+        return "Patient gets stable dosing of medication with name " + concat(termsToFind);
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient does not get stable dosing of medication with category " + concat(categoriesToFind);
+        return "Patient does not get stable dosing of medication with name " + concat(termsToFind);
     }
 
     @NotNull

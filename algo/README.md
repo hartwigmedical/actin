@@ -355,18 +355,18 @@ ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
-CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X%
-CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like %X%
+CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X% and status is active
+CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like %X% and status is active
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_CORTICOSTEROID_MEDICATION | Medication > categories contains type of "Corticosteroids" and status is active
 CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS | T.B.D., currently resolves to undetermined
-CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists"
-CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" (T.B.E)
-CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | Medication > name like %Probenecid%, %Rifampicin%, %Novobiocin%, %Cabotegravir% (T.B.E)
-CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% (T.B.E.)
+CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active
+CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active (T.B.E)
+CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION | Medication > name like %Probenecid%, %Rifampicin%, %Novobiocin%, %Cabotegravir% and status is active (T.B.E)
+CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% and status is active (T.B.E.)
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_COLONY_STIMULATING_FACTORS | Medication > categories contains type of "Colony stimulating factors" and status is active

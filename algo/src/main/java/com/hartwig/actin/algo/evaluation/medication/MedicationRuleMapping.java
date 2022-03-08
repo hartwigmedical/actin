@@ -2,11 +2,12 @@ package com.hartwig.actin.algo.evaluation.medication;
 
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
+import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -30,11 +31,18 @@ public final class MedicationRuleMapping {
     private static final String OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other";
     private static final String COLONY_STIMULATING_FACTORS = "Colony stimulating factors";
 
+    private static final String PAIN_MEDICATION_CATEGORY_1 = "NSAIDs";
+    private static final String PAIN_MEDICATION_CATEGORY_2 = "Opioids";
+
     // Medication names
     private static final String PROBENECID = "Probenecid";
     private static final String RIFAMPICIN = "Rifampicin";
     private static final String NOVOBIOCIN = "Novobiocin";
     private static final String CABOTEGRAVIR = "Cabotegravir";
+
+    private static final String PAIN_MEDICATION_NAME_1 = "Paracetamol";
+    private static final String PAIN_MEDICATION_NAME_2 = "Amitriptyline";
+    private static final String PAIN_MEDICATION_NAME_3 = "Pregabalin";
 
     private MedicationRuleMapping() {
     }
@@ -55,8 +63,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION, getsOAT3InhibitionMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, getsPainMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS, getColonyStimulatingFactorsCreator());
@@ -65,8 +72,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, getsStableDosingPainMedicationCreator());
 
         return map;
     }
@@ -80,13 +86,13 @@ public final class MedicationRuleMapping {
     private static FunctionCreator getsActiveMedicationWithConfiguredNameCreator() {
         return function -> {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
-            return new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationWithName(Sets.newHashSet(termToFind)));
+            return new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfName(Sets.newHashSet(termToFind)));
         };
     }
 
     @NotNull
     private static FunctionCreator getsActiveMedicationWithNamesCreator(@NotNull String... termsToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationWithName(Sets.newHashSet(termsToFind)));
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfName(Sets.newHashSet(termsToFind)));
     }
 
     @NotNull
@@ -143,6 +149,18 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator getsPainMedicationCreator() {
+        return function -> {
+            EvaluationFunction categoryFunction =
+                    getsActiveMedicationWithExactCategoryCreator(PAIN_MEDICATION_CATEGORY_1, PAIN_MEDICATION_CATEGORY_2).create(function);
+            EvaluationFunction nameFunction =
+                    getsActiveMedicationWithNamesCreator(PAIN_MEDICATION_NAME_1, PAIN_MEDICATION_NAME_2, PAIN_MEDICATION_NAME_3).create(
+                            function);
+            return new Or(Lists.newArrayList(categoryFunction, nameFunction));
+        };
+    }
+
+    @NotNull
     private static FunctionCreator getsProhibitedMedicationCreator() {
         return function -> new CurrentlyGetsProhibitedMedicationCreator();
     }
@@ -185,12 +203,29 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsStableDosingAnticoagulantMedicationCreator() {
-        return getsActiveAndStableMedicationOfCategoryCreator(ANTICOAGULANTS);
+        return getsStableMedicationOfCategoryCreator(ANTICOAGULANTS);
     }
 
     @NotNull
-    private static FunctionCreator getsActiveAndStableMedicationOfCategoryCreator(@NotNull String categoryToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfCategory(categoryToFind));
+    private static FunctionCreator getsStableDosingPainMedicationCreator() {
+        return function -> {
+            EvaluationFunction categoryFunction =
+                    getsStableMedicationOfCategoryCreator(PAIN_MEDICATION_CATEGORY_1, PAIN_MEDICATION_CATEGORY_2).create(function);
+            EvaluationFunction nameFunction =
+                    getsStableMedicationOfNameCreator(PAIN_MEDICATION_NAME_1, PAIN_MEDICATION_NAME_2, PAIN_MEDICATION_NAME_3).create(
+                            function);
+            return new Or(Lists.newArrayList(categoryFunction, nameFunction));
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator getsStableMedicationOfCategoryCreator(@NotNull String... categoriesToFind) {
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfCategory(Sets.newHashSet(categoriesToFind)));
+    }
+
+    @NotNull
+    private static FunctionCreator getsStableMedicationOfNameCreator(@NotNull String... termsToFind) {
+        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfName(Sets.newHashSet(termsToFind)));
     }
 
     @NotNull

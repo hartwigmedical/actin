@@ -27,6 +27,24 @@ final class MedicationFilter {
     }
 
     @NotNull
+    public static List<Medication> withTermInName(@NotNull List<Medication> medications, @NotNull String termToFind) {
+        return withAnyTermInName(medications, Sets.newHashSet(termToFind));
+    }
+
+    @NotNull
+    public static List<Medication> withAnyTermInName(@NotNull List<Medication> medications, @NotNull Set<String> termsToFind) {
+        List<Medication> filtered = Lists.newArrayList();
+        for (Medication medication : active(medications)) {
+            for (String termToFind : termsToFind) {
+                if (medication.name().toLowerCase().contains(termToFind.toLowerCase())) {
+                    filtered.add(medication);
+                }
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
     public static List<Medication> withExactCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind) {
         return withAnyExactCategory(medications, Sets.newHashSet(categoryToFind));
     }

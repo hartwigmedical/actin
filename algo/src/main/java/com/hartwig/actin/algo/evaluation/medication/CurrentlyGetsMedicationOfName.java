@@ -5,30 +5,21 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
-import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsMedicationWithName implements PassOrFailEvaluator {
+public class CurrentlyGetsMedicationOfName implements PassOrFailEvaluator {
 
     @NotNull
     private final Set<String> termsToFind;
 
-    public CurrentlyGetsMedicationWithName(@NotNull final Set<String> termsToFind) {
+    public CurrentlyGetsMedicationOfName(@NotNull final Set<String> termsToFind) {
         this.termsToFind = termsToFind;
     }
 
     @Override
     public boolean isPass(@NotNull PatientRecord record) {
-        for (Medication medication : MedicationFilter.active(record.clinical().medications())) {
-            for (String termToFind : termsToFind) {
-                if (medication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return !MedicationFilter.withAnyTermInName(record.clinical().medications(), termsToFind).isEmpty();
     }
 
     @NotNull
@@ -51,5 +42,4 @@ public class CurrentlyGetsMedicationWithName implements PassOrFailEvaluator {
         }
         return joiner.toString();
     }
-
 }

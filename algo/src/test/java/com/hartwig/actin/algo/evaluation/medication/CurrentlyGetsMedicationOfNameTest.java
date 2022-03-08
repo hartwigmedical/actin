@@ -12,11 +12,11 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.junit.Test;
 
-public class CurrentlyGetsMedicationWithNameTest {
+public class CurrentlyGetsMedicationOfNameTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsMedicationWithName function = new CurrentlyGetsMedicationWithName(Sets.newHashSet("term 1"));
+        CurrentlyGetsMedicationOfName function = new CurrentlyGetsMedicationOfName(Sets.newHashSet("term 1"));
 
         // No medications yet
         List<Medication> medications = Lists.newArrayList();
