@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.toxicity;
 
 import java.util.List;
 import java.util.Set;
-import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -12,6 +11,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 
@@ -60,7 +60,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
         if (!toxicities.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Toxicities with grade " + minGrade + " found: " + concat(toxicities))
+                    .addPassMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return ImmutableEvaluation.builder()
@@ -91,14 +91,5 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             }
         }
         return filtered;
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
     }
 }

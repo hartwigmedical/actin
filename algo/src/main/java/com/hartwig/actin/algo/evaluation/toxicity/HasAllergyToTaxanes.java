@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.toxicity;
 
 import java.util.Set;
-import java.util.StringJoiner;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
@@ -9,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class HasAllergyToTaxanes implements EvaluationFunction {
         if (!allergies.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has allergy to a taxane: " + concat(allergies))
+                    .addPassMessages("Patient has allergy to a taxane: " + Format.concat(allergies))
                     .build();
         }
 
@@ -49,14 +49,5 @@ public class HasAllergyToTaxanes implements EvaluationFunction {
                 .result(EvaluationResult.FAIL)
                 .addFailMessages("Patient has no known allergy to taxanes")
                 .build();
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
     }
 }

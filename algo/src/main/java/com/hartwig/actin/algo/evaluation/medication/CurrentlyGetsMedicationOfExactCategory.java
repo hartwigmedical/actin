@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
 import java.util.Set;
-import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,21 +25,12 @@ public class CurrentlyGetsMedicationOfExactCategory implements PassOrFailEvaluat
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient currently gets medication of category " + concat(categoriesToFind);
+        return "Patient currently gets medication of category " + Format.concat(categoriesToFind);
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient currently does not get medication of category " + concat(categoriesToFind);
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = new StringJoiner("; ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
+        return "Patient currently does not get medication of category " + Format.concat(categoriesToFind);
     }
 }

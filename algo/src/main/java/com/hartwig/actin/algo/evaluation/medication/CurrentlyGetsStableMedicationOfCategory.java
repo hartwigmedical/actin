@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
 import java.util.Set;
-import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
@@ -46,21 +46,12 @@ public class CurrentlyGetsStableMedicationOfCategory implements PassOrFailEvalua
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient gets stable dosing of medication with category " + concat(categoriesToFind);
+        return "Patient gets stable dosing of medication with category " + Format.concat(categoriesToFind);
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient does not get stable dosing of medication with category " + concat(categoriesToFind);
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = new StringJoiner("; ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
+        return "Patient does not get stable dosing of medication with category " + Format.concat(categoriesToFind);
     }
 }

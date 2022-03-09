@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
 import java.util.Set;
-import java.util.StringJoiner;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
@@ -9,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class HasSpecificComplication implements EvaluationFunction {
         if (!complications.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has complication " + concat(complications))
+                    .addPassMessages("Patient has complication " + Format.concat(complications))
                     .build();
         }
 
@@ -43,14 +43,5 @@ public class HasSpecificComplication implements EvaluationFunction {
                 .result(EvaluationResult.FAIL)
                 .addFailMessages("Patient does not have complication " + termToFind)
                 .build();
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
     }
 }

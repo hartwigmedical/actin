@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.List;
-import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -48,21 +48,12 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements PassOrFailEva
     @NotNull
     @Override
     public String passMessage() {
-        return "Patient has received at most " + maxTreatmentLines + " lines of " + concat(types) + " " + category.display();
+        return "Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " " + category.display();
     }
 
     @NotNull
     @Override
     public String failMessage() {
-        return "Patient has not received at most " + maxTreatmentLines + " lines of " + concat(types) + " " + category.display();
-    }
-
-    @NotNull
-    private static String concat(@NotNull List<String> strings) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
+        return "Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " " + category.display();
     }
 }

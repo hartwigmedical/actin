@@ -2,13 +2,13 @@ package com.hartwig.actin.algo.evaluation.washout;
 
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.StringJoiner;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,20 +46,11 @@ public class HasRecentlyReceivedCancerTherapyOfName implements EvaluationFunctio
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received recent treatments with name " + concat(namesToFind));
+            builder.addFailMessages("Patient has not received recent treatments with name " + Format.concat(namesToFind));
         } else if (result.isPass()) {
             builder.addPassMessages("Patient has recently received treatment with medication " + nameFound);
         }
 
         return builder.build();
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = new StringJoiner("; ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
     }
 }
