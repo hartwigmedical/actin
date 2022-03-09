@@ -12,7 +12,7 @@ public class GeneIsWildtypeTest {
     public void canEvaluate() {
         GeneIsWildtype function = new GeneIsWildtype("gene 1");
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 2")));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 1")));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 2")));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 1")));
     }
 }

@@ -19,11 +19,10 @@ public class GeneIsWildtype implements EvaluationFunction {
 
     @NotNull
     @Override
+    //TODO: Adjust evaluation when wildtype is fully implemented
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().wildtypeGenes().contains(gene)) {
-            return ImmutableEvaluation.builder().result(EvaluationResult.PASS).addPassMessages("Wildtype detected of gene " + gene).build();
-        }
-
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("No wildtype detected of gene " + gene).build();
+        return ImmutableEvaluation.builder().
+                result(EvaluationResult.UNDETERMINED).
+                addUndeterminedMessages("Wildtype detected of gene " + gene + "currently cannot be detected").build();
     }
 }
