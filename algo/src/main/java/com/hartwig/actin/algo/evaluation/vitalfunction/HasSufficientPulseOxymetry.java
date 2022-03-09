@@ -26,7 +26,7 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         List<VitalFunction> pulseOxymetries = selectPulseOxymetries(record.clinical().vitalFunctions());
 
         if (pulseOxymetries.isEmpty()) {

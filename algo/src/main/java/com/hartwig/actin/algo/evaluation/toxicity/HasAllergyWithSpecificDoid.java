@@ -28,7 +28,7 @@ public class HasAllergyWithSpecificDoid implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> allergies = Sets.newHashSet();
         for (Allergy allergy : record.clinical().allergies()) {
             for (String doid : allergy.doids()) {
