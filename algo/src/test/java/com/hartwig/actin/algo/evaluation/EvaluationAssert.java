@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -15,14 +16,16 @@ public final class EvaluationAssert {
 
     public static void assertEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
         assertEquals(expected, actual.result());
-        // TODO Check whether every rule adds a message of its expected type.
         if (actual.result() == EvaluationResult.FAIL) {
             assertTrue(actual.passMessages().isEmpty());
             assertTrue(actual.undeterminedMessages().isEmpty());
+            assertFalse(actual.failMessages().isEmpty());
         } else if (actual.result() == EvaluationResult.UNDETERMINED) {
             assertTrue(actual.passMessages().isEmpty());
+            assertFalse(actual.undeterminedMessages().isEmpty());
             assertTrue(actual.failMessages().isEmpty());
         } else if (actual.result().isPass()) {
+            assertFalse(actual.passMessages().isEmpty());
             assertTrue(actual.undeterminedMessages().isEmpty());
             assertTrue(actual.failMessages().isEmpty());
         }

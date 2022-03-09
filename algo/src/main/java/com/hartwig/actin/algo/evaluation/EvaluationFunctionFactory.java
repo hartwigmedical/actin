@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
@@ -16,13 +14,9 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class EvaluationFunctionFactory {
-
-    private static final Logger LOGGER = LogManager.getLogger(EvaluationFunctionFactory.class);
 
     @NotNull
     private final Map<EligibilityRule, FunctionCreator> functionCreatorMap;
@@ -40,10 +34,7 @@ public class EvaluationFunctionFactory {
     public EvaluationFunction create(@NotNull EligibilityFunction function) {
         Boolean hasValidInputs = FunctionInputResolver.hasValidInputs(function);
         if (hasValidInputs == null || !hasValidInputs) {
-            LOGGER.warn("Function with rule '{}' has invalid inputs {}. Evaluation for this rule will always be undetermined",
-                    function.rule(),
-                    function.parameters());
-            return cannotBeDeterminedCreator().create(function);
+            throw new IllegalStateException("No valid inputs defined for " + function);
         }
 
         if (CompositeRules.isComposite(function.rule())) {
@@ -82,10 +73,5 @@ public class EvaluationFunctionFactory {
             parameters.add(create(input));
         }
         return parameters;
-    }
-
-    @NotNull
-    private static FunctionCreator cannotBeDeterminedCreator() {
-        return function -> evaluation -> ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED).build();
     }
 }

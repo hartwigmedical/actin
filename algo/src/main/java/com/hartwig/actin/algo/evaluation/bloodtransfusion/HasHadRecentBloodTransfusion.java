@@ -26,18 +26,20 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        String productString = product.display().toLowerCase();
+
         for (BloodTransfusion transfusion : record.clinical().bloodTransfusions()) {
-            if (transfusion.product().equals(product.display()) && minDate.isBefore(transfusion.date())) {
+            if (transfusion.product().equalsIgnoreCase(product.display()) && minDate.isBefore(transfusion.date())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has received recent blood transfusion of product " + product.display())
+                        .addPassMessages("Patient has received recent blood transfusion of product " + productString)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has not received recent blood transfusion of product " + product.display())
+                .addFailMessages("Patient has not received recent blood transfusion of product " + productString)
                 .build();
     }
 }
