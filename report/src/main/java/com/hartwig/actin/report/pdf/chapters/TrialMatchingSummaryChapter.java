@@ -67,7 +67,7 @@ public class TrialMatchingSummaryChapter implements ReportChapter {
     }
 
     private void addTrialMatchingSummaryTable(@NotNull Document document) {
-        Table table = Tables.createFixedWidthCols(4, 1, 1, 1, 1, 1, 1, 1).setWidth(contentWidth());
+        Table table = Tables.createFixedWidthCols(4, 1, 1, 1, 1, 1, 1).setWidth(contentWidth());
 
         table.addHeaderCell(Cells.createHeader("Trial / Cohort"));
         table.addHeaderCell(Cells.createHeader("# Criteria"));
@@ -76,7 +76,6 @@ public class TrialMatchingSummaryChapter implements ReportChapter {
         table.addHeaderCell(Cells.createHeader("# Fail"));
         table.addHeaderCell(Cells.createHeader("# Undet."));
         table.addHeaderCell(Cells.createHeader("# No eval"));
-        table.addHeaderCell(Cells.createHeader("# No imp"));
 
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
             table.addCell(Cells.createContent(EligibilityDisplay.trialName(trial.identification())));
@@ -97,6 +96,5 @@ public class TrialMatchingSummaryChapter implements ReportChapter {
         table.addCell(Cells.createContent(String.valueOf(summary.failedCount())));
         table.addCell(Cells.createContent(String.valueOf(summary.undeterminedCount())));
         table.addCell(Cells.createContent(String.valueOf(summary.notEvaluatedCount())));
-        table.addCell(Cells.createContent(String.valueOf(summary.nonImplementedCount())));
     }
 }
