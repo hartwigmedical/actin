@@ -63,7 +63,7 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
     private List<VitalFunction> selectRelevant(@NotNull List<VitalFunction> vitalFunctions) {
         List<VitalFunction> filtered = Lists.newArrayList();
         for (VitalFunction vitalFunction : vitalFunctions) {
-            if (isBloodPressure(vitalFunction) && vitalFunction.subcategory().equals(category.display())) {
+            if (isBloodPressure(vitalFunction) && vitalFunction.subcategory().equalsIgnoreCase(category.display())) {
                 filtered.add(vitalFunction);
             }
         }

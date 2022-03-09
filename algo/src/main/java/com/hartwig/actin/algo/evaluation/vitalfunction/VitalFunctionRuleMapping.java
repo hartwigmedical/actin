@@ -3,9 +3,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
 
@@ -22,10 +20,8 @@ public final class VitalFunctionRuleMapping {
 
         map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
         map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
-        map.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
-        map.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X, hasSufficientPulseOxymetryCreator());
+        map.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, hasSufficientBodyWeightCreator());
 
         return map;
     }
@@ -35,6 +31,22 @@ public final class VitalFunctionRuleMapping {
         return function -> {
             double minAvgBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
             return new HasSufficientBloodPressure(category, minAvgBloodPressure);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientPulseOxymetryCreator() {
+        return function -> {
+            double minAvgPulseOxymetry = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientPulseOxymetry(minAvgPulseOxymetry);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasSufficientBodyWeightCreator() {
+        return function -> {
+            double minBodyWeight = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientBodyWeight(minBodyWeight);
         };
     }
 }
