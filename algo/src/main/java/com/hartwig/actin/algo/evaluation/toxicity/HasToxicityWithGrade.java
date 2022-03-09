@@ -51,7 +51,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             }
 
             boolean gradeMatch = grade != null && grade >= minGrade;
-            boolean nameMatch = nameFilter == null || toxicity.name().contains(nameFilter);
+            boolean nameMatch = nameFilter == null || toxicity.name().toLowerCase().contains(nameFilter.toLowerCase());
             if (gradeMatch && nameMatch) {
                 toxicities.add(toxicity.name());
             }
@@ -79,20 +79,18 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     private List<Toxicity> removeIgnored(@NotNull List<Toxicity> toxicities) {
         List<Toxicity> filtered = Lists.newArrayList();
         for (Toxicity toxicity : toxicities) {
-            if (!stringIsPresentInSet(toxicity.name(), ignoreFilters)) {
+            boolean hasIgnoredName = false;
+            for (String ignoreFilter : ignoreFilters) {
+                if (toxicity.name().toLowerCase().contains(ignoreFilter.toLowerCase())) {
+                    hasIgnoredName = true;
+                }
+            }
+
+            if (!hasIgnoredName) {
                 filtered.add(toxicity);
             }
         }
         return filtered;
-    }
-
-    private static boolean stringIsPresentInSet(@NotNull String string, @NotNull Set<String> set) {
-        for (String entry : set) {
-            if (string.contains(entry)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull

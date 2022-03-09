@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.EvaluationFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -20,12 +21,12 @@ public final class ToxicityRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+        map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, hasAllergyWithSpecificNameCreator());
         map.put(EligibilityRule.HAS_ALLERGY_BELONGING_TO_DOID_X,
-                function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
+                hasAllergyWithSpecificDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_ALLERGY_TO_TAXANE, function -> record -> EvaluationFactory.create(EvaluationResult.NOT_IMPLEMENTED));
         map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
@@ -36,6 +37,22 @@ public final class ToxicityRuleMapping {
         map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, hasToxicityWithGradeIgnoringNamesCreator());
 
         return map;
+    }
+
+    @NotNull
+    private static FunctionCreator hasAllergyWithSpecificNameCreator() {
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new HasAllergyWithSpecificName(termToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasAllergyWithSpecificDoidCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            String doidToFind = FunctionInputResolver.createOneStringInput(function);
+            return new HasAllergyWithSpecificDoid(doidModel, doidToFind);
+        };
     }
 
     @NotNull

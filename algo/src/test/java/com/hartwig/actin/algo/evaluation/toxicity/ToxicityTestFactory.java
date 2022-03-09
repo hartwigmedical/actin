@@ -35,7 +35,7 @@ final class ToxicityTestFactory {
     }
 
     @NotNull
-    public static ImmutableToxicity.Builder builder() {
+    public static ImmutableToxicity.Builder toxicity() {
         return ImmutableToxicity.builder().name(Strings.EMPTY).evaluatedDate(LocalDate.of(2020, 1, 1)).source(ToxicitySource.EHR);
     }
 
