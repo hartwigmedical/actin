@@ -44,7 +44,7 @@ public class WarnIf implements EvaluationFunction {
                 updatedResult = evaluation.result();
                 break;
             default: {
-                throw new IllegalStateException("Could not determine output for WarnOnPass for evaluation result: " + evaluation.result());
+                throw new IllegalStateException("Could not determine output for WarnIf for evaluation result: " + evaluation.result());
             }
         }
 
