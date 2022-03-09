@@ -1,12 +1,11 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.junit.Test;
@@ -19,22 +18,20 @@ public class CurrentlyGetsMedicationOfApproximateCategoryTest {
 
         // No medications yet
         List<Medication> medications = Lists.newArrayList();
-        assertFalse(function.isPass(MedicationTestFactory.withMedications(medications)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)));
 
         // Medication with wrong category
         medications.add(MedicationTestFactory.active().addCategories("category 2", "category 3").build());
-        assertFalse(function.isPass(MedicationTestFactory.withMedications(medications)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)));
 
         // Medication with non-exact category
         medications.add(MedicationTestFactory.active().addCategories("this is category 1").build());
-        assertTrue(function.isPass(MedicationTestFactory.withMedications(medications)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)));
 
         // Medication with right category
-        assertTrue(function.isPass(MedicationTestFactory.withMedications(Lists.newArrayList(MedicationTestFactory.active()
-                .addCategories("category 4", "category 1")
-                .build()))));
-
-        assertNotNull(function.passMessage());
-        assertNotNull(function.failMessage());
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(MedicationTestFactory.withMedications(Lists.newArrayList(MedicationTestFactory.active()
+                        .addCategories("category 4", "category 1")
+                        .build()))));
     }
 }

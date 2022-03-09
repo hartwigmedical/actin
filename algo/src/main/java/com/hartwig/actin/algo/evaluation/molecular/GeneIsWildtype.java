@@ -21,8 +21,9 @@ public class GeneIsWildtype implements EvaluationFunction {
     @Override
     //TODO: Adjust evaluation when wildtype is fully implemented
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().
-                result(EvaluationResult.UNDETERMINED).
-                addUndeterminedMessages("Wildtype detected of gene " + gene + "currently cannot be detected").build();
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedMessages("Wildtype detected of gene " + gene + "currently cannot be detected")
+                .build();
     }
 }

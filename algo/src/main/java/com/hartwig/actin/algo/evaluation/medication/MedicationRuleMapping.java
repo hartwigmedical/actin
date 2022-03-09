@@ -99,7 +99,7 @@ public final class MedicationRuleMapping {
     private static FunctionCreator getsActiveMedicationWithApproximateCategoryCreator() {
         return function -> {
             String categoryTermToFind = FunctionInputResolver.createOneStringInput(function);
-            return new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfApproximateCategory(categoryTermToFind));
+            return new CurrentlyGetsMedicationOfApproximateCategory(categoryTermToFind);
         };
     }
 
@@ -230,6 +230,6 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String... categoriesToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfExactCategory(Sets.newHashSet(categoriesToFind)));
+        return function ->new CurrentlyGetsMedicationOfExactCategory(Sets.newHashSet(categoriesToFind));
     }
 }

@@ -1,12 +1,19 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsMedicationOfApproximateCategory implements PassOrFailEvaluator {
+public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationFunction {
 
     @NotNull
     private final String categoryTermToFind;
@@ -15,28 +22,28 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements PassOrFailE
         this.categoryTermToFind = categoryTermToFind;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        Set<String> medications = Sets.newHashSet();
         for (Medication medication : MedicationFilter.active(record.clinical().medications())) {
             for (String category : medication.categories()) {
                 if (category.toLowerCase().contains(categoryTermToFind.toLowerCase())) {
-                    return true;
+                    medications.add(medication.name());
                 }
             }
         }
 
-        return false;
-    }
+        if (!medications.isEmpty()) {
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.PASS)
+                    .addPassMessages("Patient currently gets medication " + Format.concat(medications))
+                    .build();
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient currently gets medication of category " + categoryTermToFind;
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient currently does not get medication of category " + categoryTermToFind;
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.FAIL)
+                .addFailMessages("Patient currently does not get medication of category " + categoryTermToFind)
+                .build();
     }
 }
