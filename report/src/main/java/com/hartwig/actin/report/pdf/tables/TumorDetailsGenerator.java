@@ -82,5 +82,4 @@ public class TumorDetailsGenerator implements TableGenerator {
 
         return type + activeString;
     }
-
 }

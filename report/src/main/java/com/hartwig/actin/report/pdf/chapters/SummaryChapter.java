@@ -9,9 +9,11 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.pdf.tables.EligibleTrialsGenerator;
+import com.hartwig.actin.report.pdf.tables.EligibleActinTrialsGenerator;
+import com.hartwig.actin.report.pdf.tables.EligibleApprovedTreatmentGenerator;
+import com.hartwig.actin.report.pdf.tables.EligibleExternalTrialsGenerator;
+import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
-import com.hartwig.actin.report.pdf.tables.PriorMolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -172,11 +174,14 @@ public class SummaryChapter implements ReportChapter {
     private void addSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
+        // TODO Only display external trials if there is one to display.
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new PriorMolecularResultsGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
-                EligibleTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), contentWidth()));
+                new MolecularResultsGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
+                new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth() - 10),
+                EligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), report.molecular().actinSource(), contentWidth()),
+                new EligibleExternalTrialsGenerator(report.molecular(), keyWidth, valueWidth));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

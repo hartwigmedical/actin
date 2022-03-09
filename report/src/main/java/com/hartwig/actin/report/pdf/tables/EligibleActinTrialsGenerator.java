@@ -16,32 +16,38 @@ import com.itextpdf.layout.element.Table;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public class EligibleTrialsGenerator implements TableGenerator {
+public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     private final TreatmentMatchSummary treatmentMatchSummary;
+    @NotNull
+    private final String source;
     private final float trialIdColWidth;
     private final float trialAcronymColWidth;
     private final float cohortDescriptionColWidth;
     private final float cohortOpenColWidth;
 
     @NotNull
-    public static EligibleTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, float contentWidth) {
+    public static EligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
+            float contentWidth) {
         float trialIdColWidth = contentWidth / 6;
         float trialAcronymColWidth = contentWidth / 6;
         float cohortOpenColWidth = contentWidth / 8;
         float cohortDescriptionColWidth = contentWidth - (trialIdColWidth + trialAcronymColWidth + cohortOpenColWidth);
 
-        return new EligibleTrialsGenerator(TreatmentMatchSummarizer.summarize(treatmentMatch),
+        return new EligibleActinTrialsGenerator(TreatmentMatchSummarizer.summarize(treatmentMatch),
+                source,
                 trialIdColWidth,
                 trialAcronymColWidth,
                 cohortDescriptionColWidth,
                 cohortOpenColWidth);
     }
 
-    private EligibleTrialsGenerator(@NotNull final TreatmentMatchSummary treatmentMatchSummary, final float trialIdColWidth,
-            final float trialAcronymColWidth, final float cohortDescriptionColWidth, final float cohortOpenColWidth) {
+    public EligibleActinTrialsGenerator(@NotNull final TreatmentMatchSummary treatmentMatchSummary, @NotNull final String source,
+            final float trialIdColWidth, final float trialAcronymColWidth, final float cohortDescriptionColWidth,
+            final float cohortOpenColWidth) {
         this.treatmentMatchSummary = treatmentMatchSummary;
+        this.source = source;
         this.trialIdColWidth = trialIdColWidth;
         this.trialAcronymColWidth = trialAcronymColWidth;
         this.cohortDescriptionColWidth = cohortDescriptionColWidth;
@@ -51,7 +57,7 @@ public class EligibleTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Trials and cohorts considered potentially eligible (" + eligibleCohortCount(treatmentMatchSummary) + ")";
+        return source + " trials and cohorts considered potentially eligible (" + eligibleCohortCount(treatmentMatchSummary) + ")";
     }
 
     private static int eligibleCohortCount(@NotNull TreatmentMatchSummary treatmentMatchSummary) {

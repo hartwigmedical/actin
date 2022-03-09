@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.report.interpretation.CUPInterpreter;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -20,6 +21,7 @@ import com.itextpdf.layout.element.Table;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+// TODO Remove duplication with EligibleExternalTrials
 public class RecentMolecularResultsGenerator implements TableGenerator {
 
     @NotNull
@@ -56,7 +58,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
             table.addCell(Cells.createValue(Formats.yesNoUnknown(molecular.hasReliableQuality())));
         }
 
-        if (isCUP(clinical.tumor())) {
+        if (CUPInterpreter.isCUP(clinical.tumor())) {
             table.addCell(Cells.createKey("Predicted tumor origin"));
             table.addCell(Cells.createValue(predictedTumorOrigin((molecular.predictedTumorOrigin()))));
         }
@@ -103,13 +105,6 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
     private static String biopsyLocation(@NotNull TumorDetails tumor) {
         String biopsyLocation = tumor.biopsyLocation();
         return biopsyLocation != null ? biopsyLocation : Formats.VALUE_UNKNOWN;
-    }
-
-    private static boolean isCUP(@NotNull TumorDetails tumor) {
-        String location = tumor.primaryTumorLocation();
-        String subLocation = tumor.primaryTumorSubLocation();
-
-        return (location != null && subLocation != null && location.equalsIgnoreCase("unknown") && subLocation.equalsIgnoreCase("cup"));
     }
 
     @NotNull

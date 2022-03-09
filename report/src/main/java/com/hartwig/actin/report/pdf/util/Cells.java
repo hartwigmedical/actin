@@ -28,7 +28,12 @@ public final class Cells {
 
     @NotNull
     public static Cell createSpanningNoneEntry(@NotNull Table table) {
-        Cell cell = create(new Paragraph("None"), 1, table.getNumberOfColumns());
+        return createSpanningEntry(table, "None");
+    }
+
+    @NotNull
+    public static Cell createSpanningEntry(@NotNull Table table, @NotNull String text) {
+        Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
         cell.addStyle(Styles.tableContentStyle());
         return cell;
     }
