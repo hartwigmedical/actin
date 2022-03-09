@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +21,7 @@ public final class TestOrangeDataFactory {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .hasReliableQuality(false)
+                .predictedTumorOrigin(ImmutablePredictedTumorOrigin.builder().tumorType("Unknown").likelihood(0D).build())
                 .microsatelliteStabilityStatus(Strings.EMPTY)
                 .homologousRepairStatus(Strings.EMPTY)
                 .tumorMutationalBurden(8D)
@@ -32,10 +35,16 @@ public final class TestOrangeDataFactory {
                 .from(createMinimalTestOrangeRecord())
                 .date(LocalDate.of(2022, 1, 20))
                 .hasReliableQuality(true)
+                .predictedTumorOrigin(createTestPredictedTumorOrigin())
                 .microsatelliteStabilityStatus("MSS")
                 .homologousRepairStatus("HR_PROFICIENT")
                 .evidences(createTestEvidences())
                 .build();
+    }
+
+    @NotNull
+    private static PredictedTumorOrigin createTestPredictedTumorOrigin() {
+        return ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build();
     }
 
     @NotNull
@@ -70,7 +79,8 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        ImmutableTreatmentEvidence.Builder externalTrialBuilder = ImmutableTreatmentEvidence.builder().addSources("ICLUSION").reported(true);
+        ImmutableTreatmentEvidence.Builder externalTrialBuilder =
+                ImmutableTreatmentEvidence.builder().addSources("ICLUSION").reported(true);
         evidences.add(externalTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial X")

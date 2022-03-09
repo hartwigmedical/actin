@@ -10,5 +10,9 @@
   "chord": {
     "hrStatus": "HR_PROFICIENT"
   },
+  "cuppa": {
+    "predictedCancerType": "Unknown",
+    "bestPredictionLikelihood": 0
+  },
   "protect": []
 }

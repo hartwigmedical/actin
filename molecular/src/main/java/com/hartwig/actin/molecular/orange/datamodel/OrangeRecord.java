@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular.orange.datamodel;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +20,9 @@ public abstract class OrangeRecord {
     public abstract LocalDate date();
 
     public abstract boolean hasReliableQuality();
+
+    @NotNull
+    public abstract PredictedTumorOrigin predictedTumorOrigin();
 
     @NotNull
     public abstract String microsatelliteStabilityStatus();

@@ -56,6 +56,7 @@ public class OrangeInterpreter {
                 .amplifiedGenes(extraction.amplifiedGenes())
                 .wildtypeGenes(extraction.wildtypeGenes())
                 .fusions(extraction.fusions())
+                .predictedTumorOrigin(record.predictedTumorOrigin())
                 .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())

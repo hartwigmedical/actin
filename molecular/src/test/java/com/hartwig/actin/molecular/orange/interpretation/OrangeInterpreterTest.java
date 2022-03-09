@@ -37,6 +37,10 @@ public class OrangeInterpreterTest {
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2022, 1, 20), record.date());
         assertTrue(record.hasReliableQuality());
+
+        assertEquals("Melanoma", record.predictedTumorOrigin().tumorType());
+        assertEquals(0.996, record.predictedTumorOrigin().likelihood(), EPSILON);
+
         assertFalse(record.isMicrosatelliteUnstable());
         assertFalse(record.isHomologousRepairDeficient());
         assertEquals(8D, record.tumorMutationalBurden(), EPSILON);

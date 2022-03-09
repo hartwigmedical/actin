@@ -26,6 +26,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
@@ -62,11 +64,20 @@ public final class OrangeJson {
                     .sampleId(string(record, "sampleId"))
                     .date(nullableDate(record, "reportDate"))
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
+                    .predictedTumorOrigin(toPredictedTumorOrigin(object(record, "cuppa")))
                     .microsatelliteStabilityStatus(string(purple, "microsatelliteStatus"))
                     .homologousRepairStatus(string(chord, "hrStatus"))
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
                     .evidences(toEvidences(array(record, "protect")))
+                    .build();
+        }
+
+        @NotNull
+        private static PredictedTumorOrigin toPredictedTumorOrigin(@NotNull JsonObject cuppa) {
+            return ImmutablePredictedTumorOrigin.builder()
+                    .tumorType(string(cuppa, "predictedCancerType"))
+                    .likelihood(number(cuppa, "bestPredictionLikelihood"))
                     .build();
         }
 
