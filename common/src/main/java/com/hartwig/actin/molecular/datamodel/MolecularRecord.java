@@ -42,6 +42,9 @@ public abstract class MolecularRecord {
     public abstract Set<FusionGene> fusions();
 
     @Nullable
+    public abstract PredictedTumorOrigin predictedTumorOrigin();
+
+    @Nullable
     public abstract Boolean isMicrosatelliteUnstable();
 
     @Nullable

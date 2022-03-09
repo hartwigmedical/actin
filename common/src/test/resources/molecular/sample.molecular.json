@@ -38,6 +38,10 @@
       "threeGene": "three"
     }
   ],
+  "predictedTumorOrigin": {
+    "tumorType": "Melanoma",
+    "likelihood": 0.99
+  },
   "isMicrosatelliteUnstable": false,
   "isHomologousRepairDeficient": true,
   "tumorMutationalBurden": 4.32,

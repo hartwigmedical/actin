@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.serialization;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -78,6 +79,10 @@ public class MolecularRecordJsonTest {
         FusionGene fusionGene = molecular.fusions().iterator().next();
         assertEquals("five", fusionGene.fiveGene());
         assertEquals("three", fusionGene.threeGene());
+
+        assertNotNull(molecular.predictedTumorOrigin());
+        assertEquals("Melanoma", molecular.predictedTumorOrigin().tumorType());
+        assertEquals(0.99, molecular.predictedTumorOrigin().likelihood(), EPSILON);
 
         assertFalse(molecular.isMicrosatelliteUnstable());
         assertTrue(molecular.isHomologousRepairDeficient());

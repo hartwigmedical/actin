@@ -6,6 +6,8 @@ import static com.hartwig.actin.util.json.Json.nullableBool;
 import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableNumber;
+import static com.hartwig.actin.util.json.Json.nullableObject;
+import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.string;
 import static com.hartwig.actin.util.json.Json.stringList;
 
@@ -37,15 +39,18 @@ import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
 import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MolecularRecordJson {
 
@@ -102,6 +107,7 @@ public class MolecularRecordJson {
                     .amplifiedGenes(stringList(record, "amplifiedGenes"))
                     .wildtypeGenes(stringList(record, "wildtypeGenes"))
                     .fusions(toFusionGenes(array(record, "fusions")))
+                    .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(record, "predictedTumorOrigin")))
                     .isMicrosatelliteUnstable(nullableBool(record, "isMicrosatelliteUnstable"))
                     .isHomologousRepairDeficient(nullableBool(record, "isHomologousRepairDeficient"))
                     .tumorMutationalBurden(nullableNumber(record, "tumorMutationalBurden"))
@@ -155,6 +161,18 @@ public class MolecularRecordJson {
                         .build());
             }
             return fusionGeneSet;
+        }
+
+        @Nullable
+        private static PredictedTumorOrigin toPredictedTumorOrigin(@Nullable JsonObject predictedTumorOrigin) {
+            if (predictedTumorOrigin == null) {
+                return null;
+            }
+
+            return ImmutablePredictedTumorOrigin.builder()
+                    .tumorType(string(predictedTumorOrigin, "tumorType"))
+                    .likelihood(number(predictedTumorOrigin, "likelihood"))
+                    .build();
         }
 
         @NotNull

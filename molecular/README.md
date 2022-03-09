@@ -40,7 +40,8 @@ activatedGenes | KRAS, NRAS | A list of genes considered to be activated.
 inactivatedGenes | TP53, RB1 | A list of genes considered to be inactivated (along with a boolean whether they have been deleted completely).
 amplifiedGenes | MYC | A list of genes considered to be amplified.
 wildtypeGenes | BRAF | A list of genes considered to be wildtype. 
-fusions | EML4-ALK | A list of genes considered to be fused together. 
+fusions | EML4-ALK | A list of genes considered to be fused together.
+predictedTumorOrigin | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
 isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
 isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
 tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB.
