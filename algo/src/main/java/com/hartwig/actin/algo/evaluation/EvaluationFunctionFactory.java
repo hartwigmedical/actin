@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
 import com.hartwig.actin.algo.evaluation.composite.Or;
-import com.hartwig.actin.algo.evaluation.composite.WarnOnPass;
+import com.hartwig.actin.algo.evaluation.composite.WarnIf;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
@@ -62,8 +62,8 @@ public class EvaluationFunctionFactory {
                 return new Or(createMultipleCompositeParameters(function));
             case NOT:
                 return new Not(createSingleCompositeParameter(function));
-            case WARN_ON_PASS:
-                return new WarnOnPass(createSingleCompositeParameter(function));
+            case WARN_IF:
+                return new WarnIf(createSingleCompositeParameter(function));
             default: {
                 throw new IllegalStateException("Could not create evaluation function for composite rule '" + function.rule() + "'");
             }

@@ -128,7 +128,7 @@ public class ServeRecordExtractorTest {
                 .identification(withTrialAcronym("trial 3"))
                 .addGeneralEligibility(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder()
-                                .rule(EligibilityRule.WARN_ON_PASS)
+                                .rule(EligibilityRule.WARN_IF)
                                 .addParameters(ImmutableEligibilityFunction.builder()
                                         .rule(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X)
                                         .addParameters("gene 3")

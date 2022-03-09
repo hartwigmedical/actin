@@ -17,7 +17,7 @@ public final class CompositeRules {
         COMPOSITE_RULE_MAPPING.put(EligibilityRule.AND, CompositeInput.AT_LEAST_2);
         COMPOSITE_RULE_MAPPING.put(EligibilityRule.OR, CompositeInput.AT_LEAST_2);
         COMPOSITE_RULE_MAPPING.put(EligibilityRule.NOT, CompositeInput.EXACTLY_1);
-        COMPOSITE_RULE_MAPPING.put(EligibilityRule.WARN_ON_PASS, CompositeInput.EXACTLY_1);
+        COMPOSITE_RULE_MAPPING.put(EligibilityRule.WARN_IF, CompositeInput.EXACTLY_1);
     }
 
     private CompositeRules() {

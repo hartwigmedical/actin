@@ -11,12 +11,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WarnOnPass implements EvaluationFunction {
+public class WarnIf implements EvaluationFunction {
 
     @NotNull
     private final EvaluationFunction function;
 
-    public WarnOnPass(@NotNull final EvaluationFunction function) {
+    public WarnIf(@NotNull final EvaluationFunction function) {
         this.function = function;
     }
 

@@ -49,7 +49,7 @@ public class FunctionInputResolverTest {
         List<Object> inputs = Lists.newArrayList();
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.AND, inputs)));
-        assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_ON_PASS, inputs)));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_IF, inputs)));
 
         // Add first input
         inputs.add(createValidTestFunction());
@@ -59,7 +59,7 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid1 = create(EligibilityRule.NOT, inputs);
         assertTrue(FunctionInputResolver.hasValidInputs(valid1));
         assertNotNull(FunctionInputResolver.createOneCompositeParameter(valid1));
-        assertTrue(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_ON_PASS, inputs)));
+        assertTrue(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_IF, inputs)));
 
         // Add 2nd input
         inputs.add(createValidTestFunction());
@@ -71,7 +71,7 @@ public class FunctionInputResolverTest {
         // Add 3rd input
         inputs.add(createValidTestFunction());
         assertTrue(FunctionInputResolver.hasValidInputs(create(EligibilityRule.OR, inputs)));
-        assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_ON_PASS, inputs)));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.WARN_IF, inputs)));
 
         // Make sure that the check fails when number of inputs is correct but datamodel is not.
         assertFalse(FunctionInputResolver.hasValidInputs(create(EligibilityRule.AND,

@@ -62,7 +62,7 @@ public final class ServeRecordExtractor {
                 boolean isStillAllowedToBeUsedAsInclusion = isAllowedToBeUsedAsInclusion;
                 if (function.rule() == EligibilityRule.NOT) {
                     isStillUsedAsInclusion = !isUsedAsInclusion;
-                } else if (function.rule() == EligibilityRule.WARN_ON_PASS) {
+                } else if (function.rule() == EligibilityRule.WARN_IF) {
                     isStillAllowedToBeUsedAsInclusion = false;
                 }
                 records.addAll(extractFromFunction(trialAcronym, subFunction, isStillAllowedToBeUsedAsInclusion, isStillUsedAsInclusion));

@@ -58,7 +58,7 @@ Function | Description
 AND | indicates that all combined rules should PASS in order to PASS
 OR | indicates that one of the combined rules should PASS in order to PASS
 NOT | indicates that the rule should not be PASS in order to PASS
-WARN_ON_PASS | indicates that a warning should be displayed in case of PASS and resolves to PASS_BUT_WARN
+WARN_IF | indicates that a warning should be displayed in case of PASS, to resolve to PASS_BUT_WARN
 
 Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. 
 Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly 
