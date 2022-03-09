@@ -23,7 +23,7 @@ public class GeneIsWildtype implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Wildtype detected of gene " + gene + "currently cannot be detected")
+                .addUndeterminedMessages("Wildtype of gene " + gene + " currently cannot be detected")
                 .build();
     }
 }
