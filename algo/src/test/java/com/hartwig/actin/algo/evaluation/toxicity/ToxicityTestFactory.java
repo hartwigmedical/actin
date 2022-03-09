@@ -10,7 +10,9 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
@@ -37,6 +39,22 @@ final class ToxicityTestFactory {
     @NotNull
     public static ImmutableToxicity.Builder toxicity() {
         return ImmutableToxicity.builder().name(Strings.EMPTY).evaluatedDate(LocalDate.of(2020, 1, 1)).source(ToxicitySource.EHR);
+    }
+
+    @NotNull
+    public static PatientRecord withPriorTumorTreatments(@NotNull List<PriorTumorTreatment> treatments) {
+        return ImmutablePatientRecord.builder()
+                .from(TestDataFactory.createMinimalTestPatientRecord())
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .priorTumorTreatments(treatments)
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    public static ImmutablePriorTumorTreatment.Builder treatment() {
+        return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(false);
     }
 
     @NotNull
