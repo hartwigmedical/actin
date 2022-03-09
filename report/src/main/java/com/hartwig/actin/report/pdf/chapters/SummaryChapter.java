@@ -10,8 +10,8 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.tables.EligibleTrialsGenerator;
-import com.hartwig.actin.report.pdf.tables.MolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.PatientClinicalHistoryGenerator;
+import com.hartwig.actin.report.pdf.tables.PriorMolecularResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -175,7 +175,7 @@ public class SummaryChapter implements ReportChapter {
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularResultsGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
+                new PriorMolecularResultsGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
                 EligibleTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {

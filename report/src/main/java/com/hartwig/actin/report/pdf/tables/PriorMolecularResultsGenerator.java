@@ -17,9 +17,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class MolecularResultsGenerator implements TableGenerator {
+public class PriorMolecularResultsGenerator implements TableGenerator {
 
-    private static final Logger LOGGER = LogManager.getLogger(MolecularResultsGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(PriorMolecularResultsGenerator.class);
 
     @NotNull
     private final ClinicalRecord clinical;
@@ -28,7 +28,7 @@ public class MolecularResultsGenerator implements TableGenerator {
     private final float keyWidth;
     private final float valueWidth;
 
-    public MolecularResultsGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular, final float keyWidth,
+    public PriorMolecularResultsGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular, final float keyWidth,
             final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;

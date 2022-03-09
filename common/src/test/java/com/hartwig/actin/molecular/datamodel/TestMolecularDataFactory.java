@@ -44,6 +44,7 @@ public final class TestMolecularDataFactory {
                 .amplifiedGenes(Sets.newHashSet())
                 .wildtypeGenes(Sets.newHashSet())
                 .fusions(Lists.newArrayList())
+                .predictedTumorOrigin(createTestPredictedTumorOrigin())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
@@ -87,6 +88,11 @@ public final class TestMolecularDataFactory {
         inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("CDKN2A").hasBeenDeleted(false).build());
 
         return inactivatedGenes;
+    }
+
+    @NotNull
+    private static PredictedTumorOrigin createTestPredictedTumorOrigin() {
+        return ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build();
     }
 
     @NotNull

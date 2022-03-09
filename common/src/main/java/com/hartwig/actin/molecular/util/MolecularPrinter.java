@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ public class MolecularPrinter {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final DecimalFormat PERCENTAGE_FORMAT = new DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     @NotNull
     private final DatamodelPrinter printer;
@@ -46,6 +48,7 @@ public class MolecularPrinter {
         printer.print(" Amplified genes: " + concat(record.amplifiedGenes()));
         printer.print(" Wildtype genes: " + concat(record.wildtypeGenes()));
         printer.print(" Fusions: " + fusionString(record.fusions()));
+        printer.print(" Predicted tumor origin: " + predictedTumorString(record.predictedTumorOrigin()));
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.isMicrosatelliteUnstable()));
         printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.isHomologousRepairDeficient()));
         printer.print(" Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
@@ -99,6 +102,15 @@ public class MolecularPrinter {
             strings.add(fusion.fiveGene() + "-" + fusion.threeGene());
         }
         return concat(strings);
+    }
+
+    @NotNull
+    private static String predictedTumorString(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
+        if (predictedTumorOrigin == null) {
+            return "Not determined";
+        }
+
+        return predictedTumorOrigin.tumorType() + " (" + PERCENTAGE_FORMAT.format(predictedTumorOrigin.likelihood() * 100) + ")";
     }
 
     @NotNull
