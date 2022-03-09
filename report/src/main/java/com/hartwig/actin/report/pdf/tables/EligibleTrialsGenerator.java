@@ -13,6 +13,7 @@ import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.itextpdf.layout.element.Table;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class EligibleTrialsGenerator implements TableGenerator {
@@ -79,7 +80,7 @@ public class EligibleTrialsGenerator implements TableGenerator {
             if (eligibleCohorts.isEmpty()) {
                 table.addCell(Cells.createContent(trialId));
                 table.addCell(Cells.createContent(acronym));
-                table.addCell(Cells.createEmpty());
+                table.addCell(Cells.createContent(Strings.EMPTY));
                 table.addCell(Cells.createContentYesNo("Yes"));
             } else {
                 for (CohortMetadata cohort : eligibleCohorts) {
