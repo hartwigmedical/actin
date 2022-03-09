@@ -35,7 +35,7 @@ public class MedicationGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1, 1).setWidth(totalWidth);
 
-        table.addHeaderCell(Cells.createHeader("Name"));
+        table.addHeaderCell(Cells.createHeader("Medication"));
         table.addHeaderCell(Cells.createHeader("Categories"));
         table.addHeaderCell(Cells.createHeader("Start date"));
         table.addHeaderCell(Cells.createHeader("Stop date"));

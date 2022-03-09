@@ -51,8 +51,10 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Biopsy location"));
         table.addCell(Cells.createValue(biopsyLocation(clinical.tumor())));
 
-        table.addCell(Cells.createKey("Results have reliable quality"));
-        table.addCell(Cells.createValue(Formats.yesNoUnknown(molecular.hasReliableQuality())));
+        if (!molecular.hasReliableQuality()) {
+            table.addCell(Cells.createKey("Results have reliable quality"));
+            table.addCell(Cells.createValue(Formats.yesNoUnknown(molecular.hasReliableQuality())));
+        }
 
         if (isCUP(clinical.tumor())) {
             table.addCell(Cells.createKey("Predicted tumor origin"));
