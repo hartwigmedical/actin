@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -114,7 +113,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String toEvents(@NotNull List<MolecularEvidence> evidences) {
+    private static String toEvents(@NotNull Iterable<MolecularEvidence> evidences) {
         Set<String> events = Sets.newTreeSet();
         for (MolecularEvidence evidence : evidences) {
             events.add(evidence.event());

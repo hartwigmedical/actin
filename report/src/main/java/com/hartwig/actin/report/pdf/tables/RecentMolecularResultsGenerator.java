@@ -92,7 +92,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Additional events with other responsive evidence in " + molecular.evidenceSource()));
         table.addCell(Cells.createValue(concat(additionalOtherEvents)));
 
-        List<MolecularEvidence> resistanceEvidence = molecular.resistanceEvidence();
+        Set<MolecularEvidence> resistanceEvidence = molecular.resistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in " + molecular.evidenceSource()));
             table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));
@@ -125,7 +125,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<String> extractEvents(@NotNull List<MolecularEvidence> evidences) {
+    private static Set<String> extractEvents(@NotNull Iterable<MolecularEvidence> evidences) {
         Set<String> events = Sets.newTreeSet();
         for (MolecularEvidence evidence : evidences) {
             events.add(evidence.event());
@@ -134,7 +134,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String formatResistanceEvidence(@NotNull List<MolecularEvidence> resistanceEvidences) {
+    private static String formatResistanceEvidence(@NotNull Iterable<MolecularEvidence> resistanceEvidences) {
         Set<String> resistanceEvidenceStrings = Sets.newTreeSet();
         for (MolecularEvidence evidence : resistanceEvidences) {
             resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());

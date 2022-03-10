@@ -17,11 +17,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -176,8 +174,8 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static List<MolecularEvidence> toEvidences(@NotNull JsonArray evidenceArray) {
-            List<MolecularEvidence> evidences = Lists.newArrayList();
+        private static Set<MolecularEvidence> toEvidences(@NotNull JsonArray evidenceArray) {
+            Set<MolecularEvidence> evidences = Sets.newHashSet();
             for (JsonElement element : evidenceArray) {
                 JsonObject object = element.getAsJsonObject();
                 evidences.add(ImmutableMolecularEvidence.builder()

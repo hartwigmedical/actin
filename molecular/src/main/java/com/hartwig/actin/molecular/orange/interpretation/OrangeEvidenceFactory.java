@@ -1,9 +1,11 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
@@ -38,8 +40,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public List<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    public Set<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
+        Set<MolecularEvidence> result = Sets.newHashSet();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
                 result.add(toMolecularEvidence(evidence));
@@ -52,8 +54,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public List<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    public Set<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
+        Set<MolecularEvidence> result = Sets.newHashSet();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ICLUSION_SOURCE)) {
             result.add(toMolecularEvidence(evidence));
         }
@@ -61,8 +63,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public List<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    public Set<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<MolecularEvidence> result = Sets.newHashSet();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, CKB_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
                 result.add(toMolecularEvidence(evidence));
@@ -72,8 +74,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public List<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    public Set<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : ckbEvidences) {
@@ -85,8 +87,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public List<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    public Set<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : ckbEvidences) {
@@ -98,8 +100,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public List<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    public Set<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         List<TreatmentEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : reportedCkbEvidences) {

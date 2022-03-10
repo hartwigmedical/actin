@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -96,8 +95,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestActinTrials() {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    private static Set<MolecularEvidence> createTestActinTrials() {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
         result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
@@ -106,8 +105,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestExternalTrials() {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    private static Set<MolecularEvidence> createTestExternalTrials() {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
         result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
@@ -116,8 +115,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestApprovedResponsiveEvidence() {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    private static Set<MolecularEvidence> createTestApprovedResponsiveEvidence() {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
         result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Dabrafenib").build());
@@ -127,8 +126,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<MolecularEvidence> createTestExperimentalResponsiveEvidence() {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    private static Set<MolecularEvidence> createTestExperimentalResponsiveEvidence() {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Pembrolizumab").build());
 
@@ -136,8 +135,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<? extends MolecularEvidence> createTestOtherResponsiveEvidence() {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    private static Set<MolecularEvidence> createTestOtherResponsiveEvidence() {
+        Set<MolecularEvidence> result =Sets.newHashSet();
 
         result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trametinib").build());
 
@@ -145,12 +144,11 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static List<? extends MolecularEvidence> createTestResistanceEvidence() {
-        List<MolecularEvidence> result = Lists.newArrayList();
+    private static Set<MolecularEvidence> createTestResistanceEvidence() {
+        Set<MolecularEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Erlotinib").build());
 
         return result;
     }
-
 }

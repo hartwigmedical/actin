@@ -9,7 +9,6 @@ import static com.hartwig.actin.database.Tables.MOLECULAREVIDENCE;
 import static com.hartwig.actin.database.Tables.MUTATION;
 import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
 
-import java.util.List;
 import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.FusionGene;
@@ -126,8 +125,8 @@ class MolecularDAO {
         writeEvidenceForTypeAndSource(sampleId, record.resistanceEvidence(), "Resistance", false, record.evidenceSource());
     }
 
-    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull List<MolecularEvidence> evidences, @NotNull String type,
-            boolean isResponsive, @NotNull String source) {
+    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<MolecularEvidence> evidences,
+            @NotNull String type, boolean isResponsive, @NotNull String source) {
         for (MolecularEvidence evidence : evidences) {
             context.insertInto(MOLECULAREVIDENCE,
                     MOLECULAREVIDENCE.SAMPLEID,

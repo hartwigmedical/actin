@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
@@ -23,9 +24,9 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> actinTrials = factory.createActinTrials(evidences);
+        Set<MolecularEvidence> actinTrials = factory.createActinTrials(evidences);
         assertEquals(1, actinTrials.size());
-        assertEquals("B responsive actin event", actinTrials.get(0).event());
+        assertEquals("B responsive actin event", actinTrials.iterator().next().event());
     }
 
     @Test
@@ -41,18 +42,18 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> externalTrials = factory.createExternalTrials(evidences);
+        Set<MolecularEvidence> externalTrials = factory.createExternalTrials(evidences);
         assertEquals(1, externalTrials.size());
-        assertEquals("B responsive trial event", externalTrials.get(0).event());
+        assertEquals("B responsive trial event", externalTrials.iterator().next().event());
     }
     @Test
     public void canCreateApprovedEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> approvedResponsiveEvidence = factory.createApprovedResponsiveEvidence(evidences);
+        Set<MolecularEvidence> approvedResponsiveEvidence = factory.createApprovedResponsiveEvidence(evidences);
         assertEquals(1, approvedResponsiveEvidence.size());
-        assertEquals("A on-label responsive event", approvedResponsiveEvidence.get(0).event());
+        assertEquals("A on-label responsive event", approvedResponsiveEvidence.iterator().next().event());
     }
 
     @Test
@@ -60,9 +61,9 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> experimentalResponsiveEvidence = factory.createExperimentalResponsiveEvidence(evidences);
+        Set<MolecularEvidence> experimentalResponsiveEvidence = factory.createExperimentalResponsiveEvidence(evidences);
         assertEquals(1, experimentalResponsiveEvidence.size());
-        assertEquals("A off-label responsive event", experimentalResponsiveEvidence.get(0).event());
+        assertEquals("A off-label responsive event", experimentalResponsiveEvidence.iterator().next().event());
     }
 
     @Test
@@ -70,9 +71,9 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> otherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
+        Set<MolecularEvidence> otherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
         assertEquals(1, otherResponsiveEvidence.size());
-        assertEquals("B off-label responsive event", otherResponsiveEvidence.get(0).event());
+        assertEquals("B off-label responsive event", otherResponsiveEvidence.iterator().next().event());
     }
 
     @Test
@@ -80,9 +81,9 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        List<MolecularEvidence> resistanceEvidence = factory.createResistanceEvidence(evidences);
+        Set<MolecularEvidence> resistanceEvidence = factory.createResistanceEvidence(evidences);
         assertEquals(1, resistanceEvidence.size());
-        assertEquals("A resistant event", resistanceEvidence.get(0).event());
+        assertEquals("A resistant event", resistanceEvidence.iterator().next().event());
     }
 
     @NotNull

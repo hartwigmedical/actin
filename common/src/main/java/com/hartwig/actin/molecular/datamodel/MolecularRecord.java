@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -60,27 +59,27 @@ public abstract class MolecularRecord {
     public abstract String actinSource();
 
     @NotNull
-    public abstract List<MolecularEvidence> actinTrials();
+    public abstract Set<MolecularEvidence> actinTrials();
 
     @NotNull
     public abstract String externalTrialSource();
 
     @NotNull
-    public abstract List<MolecularEvidence> externalTrials();
+    public abstract Set<MolecularEvidence> externalTrials();
 
     @NotNull
     public abstract String evidenceSource();
 
     @NotNull
-    public abstract List<MolecularEvidence> approvedResponsiveEvidence();
+    public abstract Set<MolecularEvidence> approvedResponsiveEvidence();
 
     @NotNull
-    public abstract List<MolecularEvidence> experimentalResponsiveEvidence();
+    public abstract Set<MolecularEvidence> experimentalResponsiveEvidence();
 
     @NotNull
-    public abstract List<MolecularEvidence> otherResponsiveEvidence();
+    public abstract Set<MolecularEvidence> otherResponsiveEvidence();
 
     @NotNull
-    public abstract List<MolecularEvidence> resistanceEvidence();
+    public abstract Set<MolecularEvidence> resistanceEvidence();
 
 }
