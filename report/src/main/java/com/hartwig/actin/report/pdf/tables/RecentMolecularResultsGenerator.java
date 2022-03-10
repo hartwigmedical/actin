@@ -69,11 +69,9 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithActinEvidence(molecular))));
 
         Set<String> additionalTrialEvents = EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(molecular);
-        if (!additionalTrialEvents.isEmpty()) {
             table.addCell(addIndent(Cells.createKey(
                     "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
             table.addCell(Cells.createValue(concat(additionalTrialEvents)));
-        }
 
         table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + molecular.evidenceSource() + ")")));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExperimentalEvidence(molecular))));
