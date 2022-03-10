@@ -9,8 +9,9 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
-import com.hartwig.actin.report.interpretation.CUPInterpreter;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -56,7 +57,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
             table.addCell(Cells.createValue(Formats.yesNoUnknown(molecular.hasReliableQuality())));
         }
 
-        if (CUPInterpreter.isCUP(clinical.tumor())) {
+        if (TumorDetailsInterpreter.isCUP(clinical.tumor())) {
             table.addCell(Cells.createKey("Predicted tumor origin"));
             table.addCell(Cells.createValue(predictedTumorOrigin((molecular.predictedTumorOrigin()))));
         }
@@ -101,10 +102,11 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
             return Formats.VALUE_UNKNOWN;
         }
 
-        double likelihoodValue = predictedTumorOrigin.likelihood();
-        return likelihoodValue >= 0.8
-                ? predictedTumorOrigin.tumorType() + " (" + Formats.percentage(likelihoodValue) + ")"
-                : "Inconclusive";
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin)) {
+            return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
+        } else {
+            return "Inconclusive";
+        }
     }
 
     @NotNull

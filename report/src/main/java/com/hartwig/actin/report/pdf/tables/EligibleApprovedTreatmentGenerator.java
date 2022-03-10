@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.tables;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
-import com.hartwig.actin.report.interpretation.CUPInterpreter;
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
@@ -38,16 +38,14 @@ public class EligibleApprovedTreatmentGenerator implements TableGenerator {
 
         table.addHeaderCell(Cells.createHeader("Treatment"));
 
-        if (CUPInterpreter.isCUP(clinical.tumor()) && hasReliableTumorPrediction(molecular.predictedTumorOrigin())) {
+        boolean isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor());
+        boolean hasConfidentPrediction = TumorOriginInterpreter.hasConfidentPrediction(molecular.predictedTumorOrigin());
+        if (isCUP && hasConfidentPrediction) {
             table.addCell(Cells.createContent("Potential SOC for " + molecular.predictedTumorOrigin().tumorType()));
         } else {
             table.addCell(Cells.createContent("Not yet determined"));
         }
 
         return Tables.makeWrapping(table);
-    }
-
-    private static boolean hasReliableTumorPrediction(@NotNull PredictedTumorOrigin predictedTumorOrigin) {
-        return (predictedTumorOrigin != null && predictedTumorOrigin.likelihood() > 0.8);
     }
 }

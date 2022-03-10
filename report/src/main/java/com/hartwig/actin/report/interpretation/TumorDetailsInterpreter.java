@@ -4,12 +4,12 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class CUPInterpreter {
+public final class TumorDetailsInterpreter {
 
     static final String CUP_LOCATION = "Unknown";
     static final String CUP_SUB_LOCATION = "CUP";
 
-    private CUPInterpreter() {
+    private TumorDetailsInterpreter() {
     }
 
     public static boolean isCUP(@NotNull TumorDetails tumor) {
