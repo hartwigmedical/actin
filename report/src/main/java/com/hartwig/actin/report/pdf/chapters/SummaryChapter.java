@@ -8,7 +8,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.report.datamodel.Report;
+import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.pdf.tables.EligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.EligibleApprovedTreatmentGenerator;
 import com.hartwig.actin.report.pdf.tables.EligibleExternalTrialsGenerator;
@@ -174,14 +176,20 @@ public class SummaryChapter implements ReportChapter {
     private void addSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        // TODO Only display external trials if there is one to display.
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth - 10;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
                 new MolecularResultsGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth() - 10),
-                EligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), report.molecular().actinSource(), contentWidth()),
-                new EligibleExternalTrialsGenerator(report.molecular(), keyWidth, valueWidth));
+                EligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), report.molecular().actinSource(), contentWidth()));
+
+        Set<MolecularEvidence> evidenceForExternalTrials = EvidenceInterpreter.additionalEvidenceForExternalTrials(report.molecular());
+        if (!evidenceForExternalTrials.isEmpty()) {
+            generators.add(new EligibleExternalTrialsGenerator(report.molecular().externalTrialSource(),
+                    evidenceForExternalTrials,
+                    keyWidth,
+                    valueWidth));
+        }
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
