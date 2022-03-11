@@ -135,7 +135,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
             if (result == EvaluationResult.FAIL) {
                 result = EvaluationResult.UNDETERMINED;
             } else if (result == EvaluationResult.PASS) {
-                result = EvaluationResult.PASS_BUT_WARN;
+                result = EvaluationResult.WARN;
             }
         }
 

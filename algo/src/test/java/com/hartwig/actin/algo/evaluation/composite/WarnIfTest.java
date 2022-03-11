@@ -20,8 +20,8 @@ public class WarnIfTest {
     public void canWarnIf() {
         PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
 
-        assertEvaluation(EvaluationResult.PASS_BUT_WARN, new WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient));
-        assertEvaluation(EvaluationResult.PASS_BUT_WARN, new WarnIf(TestEvaluationFunctionFactory.passButWarn()).evaluate(patient));
+        assertEvaluation(EvaluationResult.WARN, new WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient));
+        assertEvaluation(EvaluationResult.WARN, new WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient));
         assertEvaluation(EvaluationResult.PASS, new WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient));
         assertEvaluation(EvaluationResult.UNDETERMINED, new WarnIf(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
         assertEvaluation(EvaluationResult.NOT_IMPLEMENTED,

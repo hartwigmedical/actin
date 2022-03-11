@@ -21,7 +21,7 @@ public class NotTest {
     @Test
     public void canNegateEvaluation() {
         assertEvaluation(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.pass()).evaluate(TEST_PATIENT));
-        assertEvaluation(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.passButWarn()).evaluate(TEST_PATIENT));
+        assertEvaluation(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.warn()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.PASS, new Not(TestEvaluationFunctionFactory.fail()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.UNDETERMINED, new Not(TestEvaluationFunctionFactory.undetermined()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.NOT_IMPLEMENTED, new Not(TestEvaluationFunctionFactory.notImplemented()).evaluate(TEST_PATIENT));

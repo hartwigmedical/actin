@@ -30,8 +30,8 @@ public class WarnIf implements EvaluationFunction {
         Set<String> failMessages = evaluation.failMessages();
         switch (evaluation.result()) {
             case PASS:
-            case PASS_BUT_WARN:
-                updatedResult = EvaluationResult.PASS_BUT_WARN;
+            case WARN:
+                updatedResult = EvaluationResult.WARN;
                 break;
             case FAIL:
                 updatedResult = EvaluationResult.PASS;

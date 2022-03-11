@@ -16,8 +16,8 @@ public final class TestEvaluationFunctionFactory {
     }
 
     @NotNull
-    public static EvaluationFunction passButWarn() {
-        return fixedEvaluation(EvaluationResult.PASS_BUT_WARN);
+    public static EvaluationFunction warn() {
+        return fixedEvaluation(EvaluationResult.WARN);
     }
 
     @NotNull

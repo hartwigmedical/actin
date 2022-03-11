@@ -21,7 +21,7 @@ public class HasMeasurableDiseaseRecistTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withMeasurableDisease(false)));
 
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, "random")));
-        assertEvaluation(EvaluationResult.PASS_BUT_WARN,
+        assertEvaluation(EvaluationResult.WARN,
                 function.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true,
                         HasMeasurableDiseaseRecist.NON_RECIST_TUMOR_DOIDS.iterator().next())));
     }

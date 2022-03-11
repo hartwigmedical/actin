@@ -27,7 +27,7 @@ public class Not implements EvaluationFunction {
         EvaluationResult negatedResult;
         Set<String> passMessages;
         Set<String> failMessages;
-        if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.PASS_BUT_WARN) {
+        if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.WARN) {
             negatedResult = EvaluationResult.FAIL;
             passMessages = evaluation.failMessages();
             failMessages = evaluation.passMessages();

@@ -77,8 +77,9 @@ public final class Formats {
     public static DeviceRgb fontColorForEvaluation(@NotNull EvaluationResult evaluation) {
         switch (evaluation) {
             case PASS:
-            case PASS_BUT_WARN:
                 return Styles.PALETTE_EVALUATION_PASS;
+            case WARN:
+                return Styles.PALETTE_EVALUATION_WARN;
             case FAIL:
                 return Styles.PALETTE_EVALUATION_FAILED;
             default:

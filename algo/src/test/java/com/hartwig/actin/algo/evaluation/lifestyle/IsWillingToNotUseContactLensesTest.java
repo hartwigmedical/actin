@@ -4,7 +4,6 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.lifestyle.IsWillingToNotUseContactLenses;
 
 import org.junit.Test;
 
@@ -14,6 +13,6 @@ public class IsWillingToNotUseContactLensesTest {
     public void canEvaluate() {
         IsWillingToNotUseContactLenses function = new IsWillingToNotUseContactLenses();
 
-        assertEvaluation(EvaluationResult.PASS_BUT_WARN, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

@@ -4,14 +4,14 @@ import org.jetbrains.annotations.NotNull;
 
 public enum EvaluationResult {
     PASS,
-    PASS_BUT_WARN,
+    WARN,
     FAIL,
     UNDETERMINED,
     NOT_EVALUATED,
     NOT_IMPLEMENTED;
 
     public boolean isPass() {
-        return this == PASS || this == PASS_BUT_WARN || this == NOT_EVALUATED;
+        return this == PASS || this == WARN || this == NOT_EVALUATED;
     }
 
     public boolean isWorseThan(@NotNull EvaluationResult otherResult) {
@@ -24,10 +24,10 @@ public enum EvaluationResult {
                 return this == FAIL || this == UNDETERMINED;
             } case NOT_EVALUATED: {
                 return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED;
-            } case PASS_BUT_WARN: {
+            } case WARN: {
                 return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED;
             } case PASS: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED || this == PASS_BUT_WARN;
+                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED || this == WARN;
             } default: {
                 throw new IllegalStateException("Cannot compare evaluation result with " + otherResult);
             }

@@ -96,8 +96,8 @@ public class TrialMatcher {
             return EvaluationResult.FAIL;
         } else if (results.contains(EvaluationResult.NOT_IMPLEMENTED)) {
             return EvaluationResult.UNDETERMINED;
-        } else if (results.contains(EvaluationResult.UNDETERMINED) || results.contains(EvaluationResult.PASS_BUT_WARN)) {
-            return EvaluationResult.PASS_BUT_WARN;
+        } else if (results.contains(EvaluationResult.UNDETERMINED) || results.contains(EvaluationResult.WARN)) {
+            return EvaluationResult.WARN;
         } else {
             return EvaluationResult.PASS;
         }

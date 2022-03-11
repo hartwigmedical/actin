@@ -108,7 +108,7 @@ public class HasSufficientDerivedCreatinineClearanceTest {
         LabValue creatinine = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70D).build();
 
         PatientRecord fallBack1 = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList());
-        assertEvaluation(EvaluationResult.PASS_BUT_WARN, function.evaluate(fallBack1, creatinine));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(fallBack1, creatinine));
 
         PatientRecord fallBack2 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), Lists.newArrayList());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack2, creatinine));

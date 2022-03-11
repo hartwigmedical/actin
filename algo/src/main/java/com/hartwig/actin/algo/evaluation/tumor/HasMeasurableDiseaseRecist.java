@@ -37,7 +37,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
 
         EvaluationResult result;
         if (hasMeasurableDisease) {
-            result = hasNonRecistDoid(record.clinical().tumor().doids()) ? EvaluationResult.PASS_BUT_WARN : EvaluationResult.PASS;
+            result = hasNonRecistDoid(record.clinical().tumor().doids()) ? EvaluationResult.WARN : EvaluationResult.PASS;
         } else {
             result = EvaluationResult.FAIL;
         }
@@ -45,7 +45,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailMessages("Patient has no measurable disease");
-        } else if (result == EvaluationResult.PASS_BUT_WARN) {
+        } else if (result == EvaluationResult.WARN) {
             builder.addPassMessages("Patient has measurable disease, "
                     + "but given the patient's tumor type uncertain if this has been evaluated against RECIST?");
         } else if (result == EvaluationResult.PASS) {

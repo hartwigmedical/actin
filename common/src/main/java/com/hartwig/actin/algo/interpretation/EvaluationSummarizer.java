@@ -26,7 +26,7 @@ public final class EvaluationSummarizer {
                     passedCount++;
                     break;
                 }
-                case PASS_BUT_WARN: {
+                case WARN: {
                     warningCount++;
                     break;
                 }

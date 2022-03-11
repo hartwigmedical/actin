@@ -254,7 +254,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         if (!displayFailOnly) {
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED);
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS_BUT_WARN);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.WARN);
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS);
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_EVALUATED);
         }
