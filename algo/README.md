@@ -36,16 +36,14 @@ UNDETERMINED | The data provided to the inclusion or exclusion criterion is insu
 NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. 
 NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.
 
-For every trial (and cohort) an overall evaluation is determined using the following algorithm:
- 1. A patient is eligible for a trial (or cohort) only in case no criteria are `PASS`, `WARN` or `NOT_EVALUATED`
- 1. In case one of the criteria evaluates to a `FAIL` or `NOT_IMPLEMENTED` the patient fails overall eligibility for the trial (or cohort). 
- 1. In case of no fails but at least one `UNDETERMINED` evaluation, the overall evaluation is determined to be `UNDETERMINED`. 
- Trials (and cohorts) with this evaluation are considered _potentially_ eligible.    
+Once all criteria are evaluated, the following algorithm determines whether the patient is potentially eligible:
+ 1. For every cohort within a trial, the patient is considered potentially eligible in case none of the cohort-specific criteria evaluated 
+ to `FAIL` or `NOT_IMPLEMENTED` and the cohort is not blacklisted.
+ 1. A patient is eligible for a trial in case none of its overall criteria evaluated to `FAIL` or `NOT_IMPLEMENTED` and the trial 
+ either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
-The following additional rules are applied for trials versus cohorts:
- 1. A patient is eligible for a specific cohort only if the overall evaluation for both the cohort as well as the trial itself are passed.
- 1. A patient is eligible for a trial only if it is eligible for at least one of the cohorts within the trial or if the trial has no 
- cohorts defined and the patient passes all criteria for the trial.
+Do note that a patient is considered potentially eligible for a cohort if both the cohort is considered potentially eligible _and_ the trial
+that the cohort is part of is considered eligible. 
    
 #### Individual criteria algorithms
 
