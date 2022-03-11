@@ -30,14 +30,14 @@ Every criterion evaluates to one of the following options:
 Evaluation | Description
 ---|---
 PASS | The patient complies with the inclusion or exclusion criterion.  
-PASS_BUT_WARN | The patient complies with the inclusion or exclusion criterion but a manual check is required.
+WARN | The patient has a condition that makes complying with inclusion or exclusion criterion unclear. A manual evaluation is required.
 FAIL | The patient does not comply with the inclusion or exclusion criterion. 
 UNDETERMINED | The data provided to the inclusion or exclusion criterion is insufficient for determining eligibility.
 NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. 
 NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.
 
 For every trial (and cohort) an overall evaluation is determined using the following algorithm:
- 1. A patient is eligible for a trial (or cohort) only in case no criteria are `PASS`, `PASS_BUT_WARN` or `NOT_EVALUATED`
+ 1. A patient is eligible for a trial (or cohort) only in case no criteria are `PASS`, `WARN` or `NOT_EVALUATED`
  1. In case one of the criteria evaluates to a `FAIL` or `NOT_IMPLEMENTED` the patient fails overall eligibility for the trial (or cohort). 
  1. In case of no fails but at least one `UNDETERMINED` evaluation, the overall evaluation is determined to be `UNDETERMINED`. 
  Trials (and cohorts) with this evaluation are considered _potentially_ eligible.    
@@ -58,7 +58,7 @@ Function | Description
 AND | indicates that all combined rules should PASS in order to PASS
 OR | indicates that one of the combined rules should PASS in order to PASS
 NOT | indicates that the rule should not be PASS in order to PASS
-WARN_IF | indicates that a warning should be displayed in case of PASS, to resolve to PASS_BUT_WARN
+WARN_IF | indicates that a warning should be displayed in case evaluation leads to PASS, thereby resolving to WARN
 
 Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. 
 Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly 
@@ -107,7 +107,7 @@ HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or 
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
-HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to PASS_BUT_WARN in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
+HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to WARN in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
@@ -464,7 +464,7 @@ HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surg
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_SMOKED_WITHIN_X_MONTHS | Currently resolves to undetermined
-IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to PASS_BUT_WARN
+IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to WARN
  
 ### Disease Ontology ID (DOID)
  
