@@ -16,19 +16,25 @@ public enum EvaluationResult {
 
     public boolean isWorseThan(@NotNull EvaluationResult otherResult) {
         switch (otherResult) {
-            case FAIL: {
+            case NOT_IMPLEMENTED: {
                 return false;
-            }case UNDETERMINED: {
-                return this == FAIL;
-            } case NOT_IMPLEMENTED: {
-                return this == FAIL || this == UNDETERMINED;
-            } case NOT_EVALUATED: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED;
-            } case WARN: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED;
-            } case PASS: {
-                return this == FAIL || this == UNDETERMINED || this == NOT_IMPLEMENTED || this == NOT_EVALUATED || this == WARN;
-            } default: {
+            }
+            case FAIL: {
+                return this == NOT_IMPLEMENTED;
+            }
+            case UNDETERMINED: {
+                return this == NOT_IMPLEMENTED || this == FAIL;
+            }
+            case WARN: {
+                return this == NOT_IMPLEMENTED || this == FAIL || this == UNDETERMINED;
+            }
+            case NOT_EVALUATED: {
+                return this == NOT_IMPLEMENTED || this == FAIL || this == UNDETERMINED || this == WARN;
+            }
+            case PASS: {
+                return this == NOT_IMPLEMENTED || this == FAIL || this == UNDETERMINED || this == WARN || this == NOT_EVALUATED;
+            }
+            default: {
                 throw new IllegalStateException("Cannot compare evaluation result with " + otherResult);
             }
         }

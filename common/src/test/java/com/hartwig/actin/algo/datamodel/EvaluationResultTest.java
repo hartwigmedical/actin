@@ -10,8 +10,8 @@ public class EvaluationResultTest {
     @Test
     public void canEvaluateEvaluations() {
         assertTrue(EvaluationResult.PASS.isPass());
-        assertTrue(EvaluationResult.WARN.isPass());
         assertTrue(EvaluationResult.NOT_EVALUATED.isPass());
+        assertTrue(EvaluationResult.WARN.isPass());
 
         assertFalse(EvaluationResult.FAIL.isPass());
         assertFalse(EvaluationResult.UNDETERMINED.isPass());
@@ -22,6 +22,7 @@ public class EvaluationResultTest {
     public void canCompareEvaluationResults() {
         assertTrue(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS));
         assertTrue(EvaluationResult.UNDETERMINED.isWorseThan(EvaluationResult.WARN));
+
         assertFalse(EvaluationResult.NOT_EVALUATED.isWorseThan(EvaluationResult.NOT_IMPLEMENTED));
     }
 
