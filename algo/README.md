@@ -42,7 +42,7 @@ Once all criteria are evaluated, the following algorithm determines whether a pa
  1. A patient is eligible for a trial in case none of its overall criteria evaluated to `FAIL` or `NOT_IMPLEMENTED` and the trial 
  either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
-Note that, following this logic, a patient is considered potentially eligible for a cohort if both the cohort is considered  eligible 
+Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered  eligible 
 _and_ the trial that the cohort is part of is considered eligible. 
    
 #### Individual criteria algorithms
