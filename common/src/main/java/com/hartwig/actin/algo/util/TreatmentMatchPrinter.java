@@ -51,10 +51,10 @@ public class TreatmentMatchPrinter {
 
         EvaluationSummary evaluationSummary = EvaluationSummarizer.sum(summaries);
         printer.print("# Rules evaluated: " + evaluationSummary.count());
-        printer.print("# Rules that PASS evaluation: " + evaluationSummary.passedCount());
-        printer.print("# Rules that WARN evaluation: " + evaluationSummary.warningCount());
-        printer.print("# Rules that FAIL evaluation: " + evaluationSummary.failedCount());
-        printer.print("# Rules for which evaluation could not be determined: " + evaluationSummary.undeterminedCount());
+        printer.print("# Rules with PASS evaluation: " + evaluationSummary.passedCount());
+        printer.print("# Rules with WARN evaluation: " + evaluationSummary.warningCount());
+        printer.print("# Rules with FAIL evaluation: " + evaluationSummary.failedCount());
+        printer.print("# Rules with UNDETERMINED evaluation: " + evaluationSummary.undeterminedCount());
         printer.print("# Rules which have not been evaluated: " + evaluationSummary.notEvaluatedCount());
         printer.print("# Rules which have not been implemented: " + evaluationSummary.nonImplementedCount());
     }
