@@ -111,9 +111,9 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createValue(@NotNull EvaluationResult evaluation) {
-        Cell cell = createValue(evaluation.toString());
-        cell.setFontColor(Formats.fontColorForEvaluation(evaluation));
+    public static Cell createValueYesNo(@NotNull String yesNo) {
+        Cell cell = createValue(yesNo);
+        cell.setFontColor(Formats.fontColorForYesNo(yesNo));
         return cell;
     }
 

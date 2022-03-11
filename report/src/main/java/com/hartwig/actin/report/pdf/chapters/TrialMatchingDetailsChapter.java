@@ -194,7 +194,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Potentially eligible"));
-        table.addCell(Cells.createValue(Formats.yesNoUnknown(isPotentiallyEligible)));
+        table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)));
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Acronym"));
@@ -224,7 +224,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Potentially eligible"));
-        table.addCell(Cells.createValue(Formats.yesNoUnknown(isPotentiallyEligible)));
+        table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)));
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Open for inclusion?"));
