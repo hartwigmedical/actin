@@ -51,20 +51,30 @@ public class TrialMatcher {
             Map<Eligibility, Evaluation> trialEvaluations = evaluateEligibility(patient, trial.generalEligibility());
 
             List<CohortEligibility> cohortMatching = Lists.newArrayList();
+            boolean hasEligibleCohort = false;
             for (Cohort cohort : trial.cohorts()) {
                 Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
+                boolean isPotentiallyEligible = isEligible(cohortEvaluations) && !cohort.metadata().blacklist();
+
+                if (isPotentiallyEligible) {
+                    hasEligibleCohort = true;
+                }
+
                 cohortMatching.add(ImmutableCohortEligibility.builder()
                         .metadata(cohort.metadata())
-                        .overallEvaluation(determineOverallEvaluation(cohortEvaluations))
+                        .isPotentiallyEligible(isPotentiallyEligible)
                         .evaluations(cohortEvaluations)
                         .build());
+
+
             }
 
             cohortMatching.sort(new CohortEligibilityComparator());
 
+            boolean isEligible = isEligible(trialEvaluations) && (trial.cohorts().isEmpty() || hasEligibleCohort);
             trialMatches.add(ImmutableTrialEligibility.builder()
                     .identification(trial.identification())
-                    .overallEvaluation(determineOverallEvaluation(trialEvaluations))
+                    .isPotentiallyEligible(isEligible)
                     .evaluations(trialEvaluations)
                     .cohorts(cohortMatching)
                     .build());
@@ -85,21 +95,12 @@ public class TrialMatcher {
         return evaluations;
     }
 
-    @NotNull
-    private static EvaluationResult determineOverallEvaluation(@NotNull Map<Eligibility, Evaluation> evaluations) {
+    private static boolean isEligible(@NotNull Map<Eligibility, Evaluation> evaluations) {
         Set<EvaluationResult> results = Sets.newHashSet();
         for (Evaluation evaluation : evaluations.values()) {
             results.add(evaluation.result());
         }
 
-        if (results.contains(EvaluationResult.FAIL)) {
-            return EvaluationResult.FAIL;
-        } else if (results.contains(EvaluationResult.NOT_IMPLEMENTED)) {
-            return EvaluationResult.UNDETERMINED;
-        } else if (results.contains(EvaluationResult.UNDETERMINED) || results.contains(EvaluationResult.WARN)) {
-            return EvaluationResult.WARN;
-        } else {
-            return EvaluationResult.PASS;
-        }
+        return !results.contains(EvaluationResult.FAIL) && !results.contains(EvaluationResult.NOT_IMPLEMENTED);
     }
 }

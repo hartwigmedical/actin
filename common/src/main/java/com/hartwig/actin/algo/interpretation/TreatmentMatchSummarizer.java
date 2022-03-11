@@ -30,10 +30,10 @@ public final class TreatmentMatchSummarizer {
             boolean hasCohorts = !trial.cohorts().isEmpty();
             cohortCount += hasCohorts ? trial.cohorts().size() : 1;
 
-            if (EligibilityEvaluator.isEligibleTrial(trial)) {
+            if (trial.isPotentiallyEligible()) {
                 List<CohortMetadata> eligibleCohorts = Lists.newArrayList();
                 for (CohortEligibility cohort : trial.cohorts()) {
-                    if (EligibilityEvaluator.isEligibleCohort(cohort)) {
+                    if (cohort.isPotentiallyEligible()) {
                         eligibleCohorts.add(cohort.metadata());
                     }
                 }

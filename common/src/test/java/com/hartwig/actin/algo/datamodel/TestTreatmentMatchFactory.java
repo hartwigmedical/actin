@@ -43,7 +43,7 @@ public final class TestTreatmentMatchFactory {
                         .acronym("TEST-TRIAL")
                         .title("This is an ACTIN test trial")
                         .build())
-                .overallEvaluation(EvaluationResult.PASS)
+                .isPotentiallyEligible(true)
                 .evaluations(createTestGeneralEvaluations())
                 .cohorts(createTestCohorts())
                 .build());
@@ -90,17 +90,14 @@ public final class TestTreatmentMatchFactory {
 
         cohorts.add(ImmutableCohortEligibility.builder()
                 .metadata(createTestMetadata("A", true, false))
-                .overallEvaluation(EvaluationResult.FAIL)
+                .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluations())
                 .build());
         cohorts.add(ImmutableCohortEligibility.builder()
                 .metadata(createTestMetadata("B", true, false))
-                .overallEvaluation(EvaluationResult.PASS)
+                .isPotentiallyEligible(true)
                 .build());
-        cohorts.add(ImmutableCohortEligibility.builder()
-                .metadata(createTestMetadata("C", true, true))
-                .overallEvaluation(EvaluationResult.PASS)
-                .build());
+        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("C", true, true)).isPotentiallyEligible(false).build());
 
         return cohorts;
     }

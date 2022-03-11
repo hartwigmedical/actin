@@ -16,8 +16,7 @@ public abstract class CohortEligibility {
     @NotNull
     public abstract CohortMetadata metadata();
 
-    @NotNull
-    public abstract EvaluationResult overallEvaluation();
+    public abstract boolean isPotentiallyEligible();
 
     @NotNull
     public abstract Map<Eligibility, Evaluation> evaluations();

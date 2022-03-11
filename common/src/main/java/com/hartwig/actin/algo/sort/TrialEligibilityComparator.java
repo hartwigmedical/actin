@@ -21,9 +21,9 @@ public class TrialEligibilityComparator implements Comparator<TrialEligibility> 
             return identificationCompare;
         }
 
-        int overallEvaluationCompare = eligibility1.overallEvaluation().compareTo(eligibility2.overallEvaluation());
-        if (overallEvaluationCompare != 0) {
-            return overallEvaluationCompare;
+        int isPotentiallyEligibleCompare = Boolean.compare(eligibility1.isPotentiallyEligible(), eligibility2.isPotentiallyEligible());
+        if (isPotentiallyEligibleCompare != 0) {
+            return isPotentiallyEligibleCompare;
         }
 
         int sizeCompare = eligibility1.cohorts().size() - eligibility2.cohorts().size();

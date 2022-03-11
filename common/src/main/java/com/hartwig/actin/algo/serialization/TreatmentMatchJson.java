@@ -120,7 +120,7 @@ public final class TreatmentMatchJson {
         private static TrialEligibility toTrialEligibility(@NotNull JsonObject object) {
             return ImmutableTrialEligibility.builder()
                     .identification(toIdentification(object(object, "identification")))
-                    .overallEvaluation(EvaluationResult.valueOf(string(object, "overallEvaluation")))
+                    .isPotentiallyEligible(bool(object, "isPotentiallyEligible"))
                     .evaluations(toEvaluations(object.get("evaluations")))
                     .cohorts(toCohorts(array(object, "cohorts")))
                     .build();
@@ -143,7 +143,7 @@ public final class TreatmentMatchJson {
 
                 cohortEligibilities.add(ImmutableCohortEligibility.builder()
                         .metadata(toMetadata(object(cohort, "metadata")))
-                        .overallEvaluation(EvaluationResult.valueOf(string(cohort, "overallEvaluation")))
+                        .isPotentiallyEligible(bool(cohort, "isPotentiallyEligible"))
                         .evaluations(toEvaluations(cohort.get("evaluations")))
                         .build());
             }

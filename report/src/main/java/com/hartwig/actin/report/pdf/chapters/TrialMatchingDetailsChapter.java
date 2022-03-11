@@ -12,7 +12,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
-import com.hartwig.actin.algo.interpretation.EligibilityEvaluator;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -63,7 +62,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         List<TrialEligibility> eligible = Lists.newArrayList();
         List<TrialEligibility> nonEligible = Lists.newArrayList();
         for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
-            if (EligibilityEvaluator.isEligibleTrial(trial)) {
+            if (trial.isPotentiallyEligible()) {
                 eligible.add(trial);
             } else {
                 nonEligible.add(trial);
@@ -105,8 +104,8 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
-        boolean displayFailOnly = !EligibilityEvaluator.isEligibleTrial(trial);
-        document.add(createTrialIdentificationTable(trial.identification(), trial.overallEvaluation()));
+        boolean displayFailOnly = !trial.isPotentiallyEligible();
+        document.add(createTrialIdentificationTable(trial.identification(), trial.isPotentiallyEligible()));
         document.add(blankLine());
 
         Map<CriterionReference, Evaluation> trialEvaluationPerCriterion = toWorstEvaluationPerReference(trial.evaluations());
@@ -116,7 +115,9 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
         for (CohortEligibility cohort : trial.cohorts()) {
             document.add(blankLine());
-            document.add(createCohortIdentificationTable(trial.identification().trialId(), cohort.metadata(), cohort.overallEvaluation()));
+            document.add(createCohortIdentificationTable(trial.identification().trialId(),
+                    cohort.metadata(),
+                    cohort.isPotentiallyEligible()));
 
             Map<CriterionReference, Evaluation> cohortEvaluationPerCriterion = toWorstEvaluationPerReference(cohort.evaluations());
             if (hasDisplayableEvaluations(cohortEvaluationPerCriterion, displayFailOnly)) {
@@ -182,7 +183,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     }
 
     @NotNull
-    private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, @NotNull EvaluationResult overallEvaluation) {
+    private Table createTrialIdentificationTable(@NotNull TrialIdentification identification, boolean isPotentiallyEligible) {
         float indentWidth = 10;
         float keyWidth = 90;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
@@ -192,8 +193,8 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addCell(Cells.createSpanningTitle(identification.trialId(), table));
 
         table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createKey("Evaluation"));
-        table.addCell(Cells.createValue(overallEvaluation));
+        table.addCell(Cells.createKey("Potentially eligible"));
+        table.addCell(Cells.createValue(Formats.yesNoUnknown(isPotentiallyEligible)));
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Acronym"));
@@ -208,7 +209,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
 
     @NotNull
     private Table createCohortIdentificationTable(@NotNull String trialId, @NotNull CohortMetadata metadata,
-            @NotNull EvaluationResult overallEvaluation) {
+            boolean isPotentiallyEligible) {
         float indentWidth = 10;
         float keyWidth = 90;
         float valueWidth = contentWidth() - (keyWidth + indentWidth + 10);
@@ -222,8 +223,8 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addCell(Cells.createValue(metadata.cohortId()));
 
         table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createKey("Evaluation"));
-        table.addCell(Cells.createValue(overallEvaluation));
+        table.addCell(Cells.createKey("Potentially eligible"));
+        table.addCell(Cells.createValue(Formats.yesNoUnknown(isPotentiallyEligible)));
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Open for inclusion?"));

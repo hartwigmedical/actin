@@ -7,7 +7,7 @@
         "acronym": "TEST-TRIAL",
         "title": "This is an ACTIN test trial"
       },
-      "overallEvaluation": "PASS",
+      "isPotentiallyEligible": true,
       "evaluations": [
         [
           {
@@ -43,7 +43,7 @@
             "blacklist": false,
             "description": "Cohort A"
           },
-          "overallEvaluation": "UNDETERMINED",
+          "isPotentiallyEligible": true,
           "evaluations": [
             [
               {
@@ -82,7 +82,7 @@
             "blacklist": false,
             "description": "Cohort B"
           },
-          "overallEvaluation": "PASS",
+          "isPotentiallyEligible": true,
           "evaluations": {}
         },
         {
@@ -92,7 +92,7 @@
             "blacklist": false,
             "description": "Cohort C"
           },
-          "overallEvaluation": "PASS",
+          "isPotentiallyEligible": true,
           "evaluations": {}
         }
       ]

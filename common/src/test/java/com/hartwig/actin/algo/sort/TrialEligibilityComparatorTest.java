@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
@@ -32,7 +31,7 @@ public class TrialEligibilityComparatorTest {
     private static TrialEligibility withId(@NotNull String id) {
         return ImmutableTrialEligibility.builder()
                 .identification(ImmutableTrialIdentification.builder().trialId(id).acronym(Strings.EMPTY).title(Strings.EMPTY).build())
-                .overallEvaluation(EvaluationResult.PASS)
+                .isPotentiallyEligible(true)
                 .build();
     }
 }

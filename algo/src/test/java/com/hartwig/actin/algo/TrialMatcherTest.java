@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class TrialMatcherTest {
 
     private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {
         assertEquals(1, trialEligibility.evaluations().size());
-        assertEquals(EvaluationResult.PASS, trialEligibility.overallEvaluation());
+        assertTrue(trialEligibility.isPotentiallyEligible());
         assertEquals(EvaluationResult.PASS,
                 findEvaluationResultForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
 
@@ -55,16 +56,16 @@ public class TrialMatcherTest {
 
         CohortEligibility cohortA = findCohort(trialEligibility.cohorts(), "A");
         assertEquals(1, cohortA.evaluations().size());
-        assertEquals(EvaluationResult.FAIL, cohortA.overallEvaluation());
+        assertFalse(cohortA.isPotentiallyEligible());
         assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT));
 
         CohortEligibility cohortB = findCohort(trialEligibility.cohorts(), "B");
-        assertEquals(EvaluationResult.WARN, cohortB.overallEvaluation());
+        assertTrue(cohortB.isPotentiallyEligible());
         assertEquals(EvaluationResult.UNDETERMINED,
                 findEvaluationResultForRule(cohortB.evaluations(), EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS));
 
         CohortEligibility cohortC = findCohort(trialEligibility.cohorts(), "C");
-        assertEquals(EvaluationResult.PASS, cohortC.overallEvaluation());
+        assertTrue(cohortC.isPotentiallyEligible());
         assertTrue(cohortC.evaluations().isEmpty());
     }
 

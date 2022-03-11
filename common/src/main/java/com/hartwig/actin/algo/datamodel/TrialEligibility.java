@@ -17,8 +17,7 @@ public abstract class TrialEligibility {
     @NotNull
     public abstract TrialIdentification identification();
 
-    @NotNull
-    public abstract EvaluationResult overallEvaluation();
+    public abstract boolean isPotentiallyEligible();
 
     @NotNull
     public abstract Map<Eligibility, Evaluation> evaluations();
