@@ -14,14 +14,14 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
     @NotNull
     private final String source;
     @NotNull
-    private final Set<MolecularEvidence> additionalEvidenceForExternalTrials;
+    private final Set<MolecularEvidence> evidenceForExternalTrials;
     private final float keyWidth;
     private final float valueWidth;
 
-    public EligibleExternalTrialsGenerator(@NotNull final String source,
-            @NotNull final Set<MolecularEvidence> additionalEvidenceForExternalTrials, final float keyWidth, final float valueWidth) {
+    public EligibleExternalTrialsGenerator(@NotNull final String source, @NotNull final Set<MolecularEvidence> evidenceForExternalTrials,
+            final float keyWidth, final float valueWidth) {
         this.source = source;
-        this.additionalEvidenceForExternalTrials = additionalEvidenceForExternalTrials;
+        this.evidenceForExternalTrials = evidenceForExternalTrials;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -29,7 +29,7 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Additional " + source + " trials eligible based on molecular results";
+        return source + " trials potentially eligible based on molecular results";
     }
 
     @NotNull
@@ -40,7 +40,7 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Event"));
         table.addHeaderCell(Cells.createHeader("Trial"));
 
-        for (MolecularEvidence evidence : additionalEvidenceForExternalTrials) {
+        for (MolecularEvidence evidence : evidenceForExternalTrials) {
             table.addCell(Cells.createContent(evidence.event()));
             table.addCell(Cells.createContent(evidence.treatment()));
         }

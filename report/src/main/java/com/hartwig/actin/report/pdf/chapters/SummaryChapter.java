@@ -8,9 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.pdf.tables.EligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.EligibleApprovedTreatmentGenerator;
 import com.hartwig.actin.report.pdf.tables.EligibleExternalTrialsGenerator;
@@ -187,10 +185,9 @@ public class SummaryChapter implements ReportChapter {
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth() - 10),
                 EligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), report.molecular().actinSource(), contentWidth()));
 
-        Set<MolecularEvidence> evidenceForExternalTrials = EvidenceInterpreter.additionalEvidenceForExternalTrials(report.molecular());
-        if (!evidenceForExternalTrials.isEmpty()) {
+        if (!report.molecular().externalTrials().isEmpty()) {
             generators.add(new EligibleExternalTrialsGenerator(report.molecular().externalTrialSource(),
-                    evidenceForExternalTrials,
+                    report.molecular().externalTrials(),
                     keyWidth,
                     valueWidth));
         }
