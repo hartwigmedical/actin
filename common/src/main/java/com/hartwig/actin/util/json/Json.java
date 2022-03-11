@@ -99,6 +99,11 @@ public final class Json {
     }
 
     @Nullable
+    public static Boolean optionalBool(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? nullableBool(object, field) : null;
+    }
+
+    @Nullable
     public static Boolean nullableBool(@NotNull JsonObject object, @NotNull String field) {
         return !isNull(object, field) ? bool(object, field) : null;
     }

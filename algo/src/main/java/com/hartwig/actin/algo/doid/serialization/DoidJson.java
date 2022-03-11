@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.doid.serialization;
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.optionalArray;
+import static com.hartwig.actin.util.json.Json.optionalBool;
 import static com.hartwig.actin.util.json.Json.optionalObject;
 import static com.hartwig.actin.util.json.Json.optionalString;
 import static com.hartwig.actin.util.json.Json.optionalStringList;
@@ -268,6 +269,8 @@ public final class DoidJson {
                 .subsets(optionalStringList(metadata, "subsets"))
                 .xrefs(xrefs)
                 .snomedConceptId(extractSnomedConceptId(xrefs))
+                .deprecated(optionalBool(metadata, "deprecated"))
+                .comments(optionalStringList(metadata, "comments"))
                 .build();
     }
 

@@ -29,4 +29,10 @@ public abstract class Metadata {
     @Nullable
     public abstract String snomedConceptId();
 
+    @Nullable
+    public abstract Boolean deprecated();
+
+    @Nullable
+    public abstract List<String> comments();
+
 }
