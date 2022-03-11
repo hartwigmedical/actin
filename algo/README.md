@@ -36,14 +36,14 @@ UNDETERMINED | The data provided to the inclusion or exclusion criterion is insu
 NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. 
 NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.
 
-Once all criteria are evaluated, the following algorithm determines whether the patient is potentially eligible:
- 1. For every cohort within a trial, the patient is considered potentially eligible in case none of the cohort-specific criteria evaluated 
- to `FAIL` or `NOT_IMPLEMENTED` and the cohort is not blacklisted.
+Once all criteria are evaluated, the following algorithm determines whether a patient is potentially eligible for a trial:
+ 1. For every cohort within a trial, the patient is considered potentially eligible for that trial in case none of the cohort-specific 
+ criteria evaluated to `FAIL` or `NOT_IMPLEMENTED` and the cohort is not blacklisted.
  1. A patient is eligible for a trial in case none of its overall criteria evaluated to `FAIL` or `NOT_IMPLEMENTED` and the trial 
  either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
-Do note that a patient is considered potentially eligible for a cohort if both the cohort is considered potentially eligible _and_ the trial
-that the cohort is part of is considered eligible. 
+Note that, following this logic, a patient is considered potentially eligible for a cohort if both the cohort is considered  eligible 
+_and_ the trial that the cohort is part of is considered eligible. 
    
 #### Individual criteria algorithms
 
