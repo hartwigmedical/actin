@@ -4,5 +4,6 @@ public enum LesionLocationCategory {
     BONE,
     LIVER,
     CNS,
-    BRAIN
+    BRAIN,
+    LUNG
 }
