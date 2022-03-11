@@ -124,7 +124,7 @@ class ClinicalDAO {
                 TUMOR.HASACTIVECNSLESIONS,
                 TUMOR.HASBONELESIONS,
                 TUMOR.HASLIVERLESIONS,
-                TUMOR.HASOTHERLESIONS,
+                TUMOR.HASLUNGLESIONS,
                 TUMOR.OTHERLESIONS,
                 TUMOR.BIOPSYLOCATION)
                 .values(sampleId,
@@ -142,7 +142,7 @@ class ClinicalDAO {
                         DataUtil.toByte(tumor.hasActiveCnsLesions()),
                         DataUtil.toByte(tumor.hasBoneLesions()),
                         DataUtil.toByte(tumor.hasLiverLesions()),
-                        DataUtil.toByte(tumor.hasOtherLesions()),
+                        DataUtil.toByte(tumor.hasLungLesions()),
                         DataUtil.concat(tumor.otherLesions()),
                         tumor.biopsyLocation())
                 .execute();

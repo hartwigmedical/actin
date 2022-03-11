@@ -48,8 +48,8 @@ hasCnsLesions | 1 | Patient has central nervous system (CNS) lesions?
 hasActiveCnsLesions | 1 | Patient has active (non-stable) CNS lesions? (NA if hasCnsLesions = 0)
 hasBoneLesions | 0 | Patient has bone lesions?
 hasLiverLesions | 1 | Patient has liver lesions?
-hasOtherLesions | 1 | Patient has lesions that are not captured in hasBrainLesions, hasCnsLesions, hasBoneLesions and hasLiverLesions?
-otherLesions | Pulmonal, Abdominal | Description of other lesions, in case hasOtherLesions = 1
+hasLungLesions | 1 | Patient has lung lesions?
+otherLesions | Lymph node, Abdominal | List of lesions not captured by explicit lesion fields (such as hasBoneLesions).
 biopsyLocation | Liver | Lesion from which the biopsy for molecular analyses was obtained
  
 1 clinical status

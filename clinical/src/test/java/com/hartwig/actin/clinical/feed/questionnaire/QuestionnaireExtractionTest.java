@@ -68,8 +68,9 @@ public class QuestionnaireExtractionTest {
         assertFalse(questionnaire.hasLiverLesions());
 
         List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(1, otherLesions.size());
+        assertEquals(2, otherLesions.size());
         assertTrue(otherLesions.contains("pulmonal"));
+        assertTrue(otherLesions.contains("abdominal"));
 
         List<String> ihcTestResults = questionnaire.ihcTestResults();
         assertEquals(1, ihcTestResults.size());

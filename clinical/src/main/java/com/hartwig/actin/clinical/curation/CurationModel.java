@@ -151,20 +151,6 @@ public class CurationModel {
         }
 
         ImmutableTumorDetails.Builder builder = ImmutableTumorDetails.builder().from(tumorDetails);
-        if (matches.contains(LesionLocationCategory.BONE)) {
-            if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
-                LOGGER.debug("  Overriding presence of bone lesions");
-            }
-            builder.hasBoneLesions(true);
-        }
-
-        if (matches.contains(LesionLocationCategory.LIVER)) {
-            if (tumorDetails.hasLiverLesions() != null && !tumorDetails.hasLiverLesions()) {
-                LOGGER.debug("  Overriding presence of liver lesions");
-            }
-            builder.hasLiverLesions(true);
-        }
-
         if (matches.contains(LesionLocationCategory.BRAIN)) {
             if (tumorDetails.hasBrainLesions() != null && !tumorDetails.hasBrainLesions()) {
                 LOGGER.debug("  Overriding presence of brain lesions");
@@ -177,6 +163,34 @@ public class CurationModel {
                 LOGGER.debug("  Overriding presence of CNS lesions");
             }
             builder.hasCnsLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.LIVER)) {
+            if (tumorDetails.hasLiverLesions() != null && !tumorDetails.hasLiverLesions()) {
+                LOGGER.debug("  Overriding presence of liver lesions");
+            }
+            builder.hasLiverLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.BONE)) {
+            if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
+                LOGGER.debug("  Overriding presence of bone lesions");
+            }
+            builder.hasBoneLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.BONE)) {
+            if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
+                LOGGER.debug("  Overriding presence of bone lesions");
+            }
+            builder.hasBoneLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.LUNG)) {
+            if (tumorDetails.hasLungLesions() != null && !tumorDetails.hasLungLesions()) {
+                LOGGER.debug("  Overriding presence of lung lesions");
+            }
+            builder.hasLungLesions(true);
         }
 
         return builder.build();

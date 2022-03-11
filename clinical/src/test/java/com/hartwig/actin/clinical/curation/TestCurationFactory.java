@@ -114,6 +114,12 @@ public final class TestCurationFactory {
 
         configs.add(ImmutableLesionLocationConfig.builder().input("Bone").location("Bone").category(LesionLocationCategory.BONE).build());
 
+        configs.add(ImmutableLesionLocationConfig.builder()
+                .input("Pulmonal")
+                .location("Lung")
+                .category(LesionLocationCategory.LUNG)
+                .build());
+
         configs.add(ImmutableLesionLocationConfig.builder().input("Lymph node").location("Lymph node").build());
 
         configs.add(ImmutableLesionLocationConfig.builder().input("Not a lesion").location(Strings.EMPTY).build());

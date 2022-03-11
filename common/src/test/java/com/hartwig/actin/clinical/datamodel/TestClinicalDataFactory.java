@@ -94,8 +94,7 @@ public final class TestClinicalDataFactory {
                 .hasActiveCnsLesions(true)
                 .hasBoneLesions(null)
                 .hasLiverLesions(true)
-                .hasOtherLesions(true)
-                .addOtherLesions("Pulmonal")
+                .hasLungLesions(true)
                 .addOtherLesions("Abdominal")
                 .biopsyLocation("Liver")
                 .build();

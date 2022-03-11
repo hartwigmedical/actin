@@ -150,7 +150,11 @@ public class SummaryChapter implements ReportChapter {
             lesions.add("Bone");
         }
 
-        if (tumor.hasOtherLesions() != null && tumor.otherLesions() != null && tumor.hasOtherLesions()) {
+        if (tumor.hasLungLesions() != null && tumor.hasLungLesions()) {
+            lesions.add("Lung");
+        }
+
+        if (tumor.otherLesions() != null) {
             lesions.addAll(tumor.otherLesions());
         }
 

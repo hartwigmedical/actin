@@ -45,7 +45,7 @@ public final class TestQuestionnaireFactory {
                 + "-Active: yes\n"
                 + "Bone lesions: NO\n"
                 + "Liver lesions: NO\n"
-                + "Other lesions (e.g. lymph node, pulmonal): pulmonal\n"
+                + "Other lesions (e.g. lymph node, pulmonal): pulmonal, abdominal\n"
                 + "Measurable disease: YES\n"
                 + "\n"
                 + "Previous Molecular tests\n"

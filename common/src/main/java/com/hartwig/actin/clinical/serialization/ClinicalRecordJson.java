@@ -197,7 +197,7 @@ public final class ClinicalRecordJson {
                     .hasActiveCnsLesions(nullableBool(tumor, "hasActiveCnsLesions"))
                     .hasBoneLesions(nullableBool(tumor, "hasBoneLesions"))
                     .hasLiverLesions(nullableBool(tumor, "hasLiverLesions"))
-                    .hasOtherLesions(nullableBool(tumor, "hasOtherLesions"))
+                    .hasLungLesions(nullableBool(tumor, "hasLungLesions"))
                     .otherLesions(nullableStringList(tumor, "otherLesions"))
                     .biopsyLocation(nullableString(tumor, "biopsyLocation"))
                     .build();

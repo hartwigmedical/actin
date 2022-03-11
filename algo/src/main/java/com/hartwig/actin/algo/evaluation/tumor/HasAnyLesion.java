@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -21,17 +23,20 @@ public class HasAnyLesion implements EvaluationFunction {
         Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
         Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
         Boolean hasBoneLesions = record.clinical().tumor().hasBoneLesions();
-        Boolean hasOtherLesions = record.clinical().tumor().hasOtherLesions();
+        Boolean hasLungLesions = record.clinical().tumor().hasLungLesions();
+        List<String> otherLesions = record.clinical().tumor().otherLesions();
 
         if (hasLiverMetastases == null && hasCnsMetastases == null && hasBrainMetastases == null && hasBoneLesions == null
-                && hasOtherLesions == null) {
+                && hasLungLesions == null && otherLesions == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedMessages("Data about lesions is missing")
                     .build();
         }
 
-        boolean hasLesions = anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasBoneLesions, hasOtherLesions);
+        boolean hasOtherLesions = otherLesions != null && !otherLesions.isEmpty();
+        boolean hasLesions =
+                anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasBoneLesions, hasLungLesions, hasOtherLesions);
         EvaluationResult result = hasLesions ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);

@@ -54,7 +54,7 @@ public abstract class TumorDetails {
     public abstract Boolean hasLiverLesions();
 
     @Nullable
-    public abstract Boolean hasOtherLesions();
+    public abstract Boolean hasLungLesions();
 
     @Nullable
     public abstract List<String> otherLesions();

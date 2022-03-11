@@ -29,9 +29,9 @@
     "hasActiveCnsLesions": null,
     "hasBoneLesions": false,
     "hasLiverLesions": false,
-    "hasOtherLesions": true,
+    "hasLungLesions": false,
     "otherLesions": [
-      "Pulmonal"
+      "Lymph node"
     ],
     "biopsyLocation": "Lymph node"
   },

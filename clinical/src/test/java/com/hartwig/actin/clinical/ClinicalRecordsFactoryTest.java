@@ -105,8 +105,8 @@ public class ClinicalRecordsFactoryTest {
         assertNull(tumor.hasActiveCnsLesions());
         assertFalse(tumor.hasBoneLesions());
         assertFalse(tumor.hasLiverLesions());
-        assertTrue(tumor.hasOtherLesions());
-        assertTrue(tumor.otherLesions().contains("Pulmonal"));
+        assertTrue(tumor.hasLungLesions());
+        assertTrue(tumor.otherLesions().contains("Abdominal"));
         assertEquals("Lymph node", tumor.biopsyLocation());
     }
 

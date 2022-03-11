@@ -76,8 +76,8 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withHasOtherLesions(@Nullable Boolean hasOtherLesions) {
-        return withTumorDetails(ImmutableTumorDetails.builder().hasOtherLesions(hasOtherLesions).build());
+    public static PatientRecord withHasLungLesions(@Nullable Boolean hasLungLesions) {
+        return withTumorDetails(ImmutableTumorDetails.builder().hasLungLesions(hasLungLesions).build());
     }
 
     @NotNull

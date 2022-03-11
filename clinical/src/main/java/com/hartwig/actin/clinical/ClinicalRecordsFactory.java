@@ -180,7 +180,6 @@ public class ClinicalRecordsFactory {
                 .hasActiveCnsLesions(questionnaire.hasActiveCnsLesions())
                 .hasBoneLesions(questionnaire.hasBoneLesions())
                 .hasLiverLesions(questionnaire.hasLiverLesions())
-                .hasOtherLesions(curatedOtherLesions != null ? !curatedOtherLesions.isEmpty() : null)
                 .otherLesions(curatedOtherLesions)
                 .build();
 
