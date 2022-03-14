@@ -126,6 +126,7 @@ public final class FunctionInputResolver {
                 }
                 case ONE_TUMOR_TYPE_CATEGORY: {
                     createOneTumorTypeCategoryInput(function);
+                    return true;
                 }
                 case ONE_STRING: {
                     createOneStringInput(function);
