@@ -125,26 +125,26 @@ HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to undetermine
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
-HAS_HAD_CATEGORY_X_TREATMENT | Prior tumor treatments > categories contains "X" 
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type like %Y%
-HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y | Prior tumor treatments > categories contains "X" and corresponding type not like any %Y%
-HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines => Y 
-HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Prior tumor treatments > categories contains "X" and number of lines <= Y 
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_LEAST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines => Z 
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding type like %Y% and number of lines <= Z 
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | categories contains "X" and corresponding types like any %Y% (split per ";") and distinct number of lines <= Z 
+HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like %Y%
+HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPE_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type not like any %Y%
+HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines => Y 
+HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y 
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like %Y% and number of lines => Z 
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like %Y% and number of lines <= Z 
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding types like any %Y% (split per ";") and distinct number of lines <= Z 
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to undetermined
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
 HAS_PARTICIPATED_IN_CURRENT_TRIAL | Currently resolves to not evaluated
 
-'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy.
+1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy.
 
-In addition, the following 'Categories' can be assigned:
+In addition, 3 following 'Categories' can be assigned:
 - Taxane - Treatment names: Paclitaxel, Docetaxel, Cabazitaxel
 - Fluoropyrimidine - Treatment names: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur
 - Tyrosine kinase inhibitors - Category = 'Targeted therapy' and (T.B.D.)
 
-'Category' with 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, seperated by ";"
+2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Transplantation, Car T ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, seperated by ";"
 
 ##### Rules related to prior primary tumors
 
