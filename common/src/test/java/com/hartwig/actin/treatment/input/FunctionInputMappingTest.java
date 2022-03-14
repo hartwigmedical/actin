@@ -1,9 +1,9 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.input;
 
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.composite.CompositeRules;
 
 import org.junit.Test;
 

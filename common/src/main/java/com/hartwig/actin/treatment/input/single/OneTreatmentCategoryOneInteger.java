@@ -1,6 +1,4 @@
-package com.hartwig.actin.treatment.interpretation.single;
-
-import java.util.List;
+package com.hartwig.actin.treatment.input.single;
 
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
@@ -10,13 +8,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class OneTreatmentCategoryManyStringsOneInteger {
+public abstract class OneTreatmentCategoryOneInteger {
 
     @NotNull
     public abstract TreatmentCategory treatmentCategory();
-
-    @NotNull
-    public abstract List<String> strings();
 
     public abstract int integer();
 }

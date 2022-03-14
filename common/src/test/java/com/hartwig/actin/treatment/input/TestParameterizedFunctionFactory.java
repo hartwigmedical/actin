@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.input;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import com.hartwig.actin.clinical.interpretation.TumorTypeCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
-import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
+import com.hartwig.actin.treatment.input.composite.CompositeInput;
+import com.hartwig.actin.treatment.input.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.single.FunctionInput;
 
 import org.jetbrains.annotations.NotNull;
 

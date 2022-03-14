@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation.single;
+package com.hartwig.actin.treatment.input.single;
 
 public enum FunctionInput {
     NONE,

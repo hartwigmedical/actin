@@ -5,7 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 

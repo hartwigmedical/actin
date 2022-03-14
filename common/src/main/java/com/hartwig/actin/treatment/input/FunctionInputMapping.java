@@ -1,10 +1,10 @@
-package com.hartwig.actin.treatment.interpretation;
+package com.hartwig.actin.treatment.input;
 
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.single.FunctionInput;
+import com.hartwig.actin.treatment.input.single.FunctionInput;
 
 final class FunctionInputMapping {
 

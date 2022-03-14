@@ -10,10 +10,10 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
-import com.hartwig.actin.treatment.interpretation.single.OneStringTwoIntegers;
-import com.hartwig.actin.treatment.interpretation.single.TwoIntegers;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
+import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
+import com.hartwig.actin.treatment.input.single.TwoIntegers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

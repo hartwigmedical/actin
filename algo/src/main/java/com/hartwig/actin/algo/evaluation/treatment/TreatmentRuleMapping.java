@@ -8,12 +8,12 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStrings;
-import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryManyStringsOneInteger;
-import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneInteger;
-import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneString;
-import com.hartwig.actin.treatment.interpretation.single.OneTreatmentCategoryOneStringOneInteger;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyStrings;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneString;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneStringOneInteger;
 
 import org.jetbrains.annotations.NotNull;
 

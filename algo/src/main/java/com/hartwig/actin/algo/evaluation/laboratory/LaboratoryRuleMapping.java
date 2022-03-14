@@ -13,7 +13,7 @@ import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 

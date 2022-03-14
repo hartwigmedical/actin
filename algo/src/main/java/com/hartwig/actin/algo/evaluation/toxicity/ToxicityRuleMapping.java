@@ -7,9 +7,9 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerManyStrings;
-import com.hartwig.actin.treatment.interpretation.single.OneIntegerOneString;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 
 import org.jetbrains.annotations.NotNull;
 

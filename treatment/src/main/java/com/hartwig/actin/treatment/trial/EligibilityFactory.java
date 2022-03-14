@@ -6,8 +6,8 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.composite.CompositeRules;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

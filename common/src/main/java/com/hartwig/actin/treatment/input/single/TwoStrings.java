@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation.single;
+package com.hartwig.actin.treatment.input.single;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -6,12 +6,12 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class OneStringTwoIntegers {
+public abstract class TwoStrings {
 
     @NotNull
-    public abstract String string();
+    public abstract String string1();
 
-    public abstract int integer1();
+    @NotNull
+    public abstract String string2();
 
-    public abstract int integer2();
 }

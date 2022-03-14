@@ -8,8 +8,8 @@ import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.TestParameterizedFunctionFactory;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.TestParameterizedFunctionFactory;
+import com.hartwig.actin.treatment.input.composite.CompositeRules;
 
 import org.junit.Test;
 

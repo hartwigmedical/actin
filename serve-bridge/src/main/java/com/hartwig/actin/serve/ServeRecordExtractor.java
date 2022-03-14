@@ -12,9 +12,9 @@ import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.Trial;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.composite.CompositeInput;
+import com.hartwig.actin.treatment.input.composite.CompositeRules;
 
 import org.jetbrains.annotations.NotNull;
 

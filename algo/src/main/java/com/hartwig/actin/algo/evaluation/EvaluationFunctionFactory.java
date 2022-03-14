@@ -11,8 +11,8 @@ import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.algo.evaluation.composite.WarnIf;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.interpretation.FunctionInputResolver;
-import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.composite.CompositeRules;
 
 import org.jetbrains.annotations.NotNull;
 

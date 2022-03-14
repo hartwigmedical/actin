@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.interpretation.composite;
+package com.hartwig.actin.treatment.input.composite;
 
 public enum CompositeInput {
     EXACTLY_1,
