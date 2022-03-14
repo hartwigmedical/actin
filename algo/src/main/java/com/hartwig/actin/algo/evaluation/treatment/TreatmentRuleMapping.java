@@ -28,7 +28,6 @@ public final class TreatmentRuleMapping {
 
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
-        map.put(EligibilityRule.HAS_DECLINED_SOC_TREATMENTS, hasDeclinedSOCTreatmentsCreator());
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
@@ -45,10 +44,6 @@ public final class TreatmentRuleMapping {
                 hasHadLimitedTreatmentsOfCategoryWithTypeCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
-        map.put(EligibilityRule.HAS_HAD_FLUOROPYRIMIDINE_TREATMENT, hasHadFluoropyrimidineTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT, hasHadTaxaneTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_TAXANE_TREATMENT_AND_AT_MOST_X_LINES, hasHadTaxaneTreatmentWithMaxLinesCreator());
-        map.put(EligibilityRule.HAS_HAD_TYROSINE_KINASE_TREATMENT, hasHadTyrosineKinaseTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
         map.put(EligibilityRule.HAS_PARTICIPATED_IN_CURRENT_TRIAL, hasParticipatedInCurrentTrialCreator());
@@ -64,11 +59,6 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasExhaustedSOCTreatmentsCreator() {
         return function -> new HasExhaustedSOCTreatments();
-    }
-
-    @NotNull
-    private static FunctionCreator hasDeclinedSOCTreatmentsCreator() {
-        return function -> new HasDeclinedSOCTreatments();
     }
 
     @NotNull
@@ -177,29 +167,6 @@ public final class TreatmentRuleMapping {
                     input.strings(),
                     input.integer()));
         };
-    }
-
-    @NotNull
-    private static FunctionCreator hasHadFluoropyrimidineTreatmentCreator() {
-        return function -> new PassOrFailEvaluationFunction(new HasHadFluoropyrimidineTreatment());
-    }
-
-    @NotNull
-    private static FunctionCreator hasHadTaxaneTreatmentCreator() {
-        return function -> new PassOrFailEvaluationFunction(new HasHadTaxaneTreatmentWithPotentialMax(null));
-    }
-
-    @NotNull
-    private static FunctionCreator hasHadTaxaneTreatmentWithMaxLinesCreator() {
-        return function -> {
-            int maxTaxaneTreatments = FunctionInputResolver.createOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadTaxaneTreatmentWithPotentialMax(maxTaxaneTreatments));
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasHadTyrosineKinaseTreatmentCreator() {
-        return function -> new HasHadTyrosineKinaseTreatment();
     }
 
     @NotNull
