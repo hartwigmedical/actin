@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.single.TumorTypeCategory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_ONLY_TO_DOID_X, hasPrimaryTumorExclusivelyBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_EQUAL_TO_DOID_X, hasPrimaryTumorHasExactDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
+        map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -76,8 +77,11 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasCancerOfUnknownPrimaryCreator() {
-        return function -> new HasCancerOfUnknownPrimary();
+    private static FunctionCreator hasCancerOfUnknownPrimaryCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            TumorTypeCategory categoryOfCUP = FunctionInputResolver.createOneTumorTypeCategoryInput(function);
+            return new HasCancerOfUnknownPrimary(doidModel, categoryOfCUP);
+        };
     }
 
     @NotNull
