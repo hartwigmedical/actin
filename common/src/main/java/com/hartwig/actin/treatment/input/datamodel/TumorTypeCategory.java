@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.input.single;
+package com.hartwig.actin.treatment.input.datamodel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public enum TumorTypeCategory {
     }
 
     @NotNull
-    public static TumorTypeCategory fromString(@NotNull String tumorTypeString) {
-        return TumorTypeCategory.valueOf(tumorTypeString.trim().replaceAll(" ", "_").toUpperCase());
+    public static TumorTypeCategory fromString(@NotNull String string) {
+        return TumorTypeCategory.valueOf(string.trim().replaceAll(" ", "_").toUpperCase());
     }
 }

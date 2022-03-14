@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -29,7 +30,6 @@ import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyStringsO
 import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneStringOneInteger;
-import com.hartwig.actin.treatment.input.single.TumorTypeCategory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

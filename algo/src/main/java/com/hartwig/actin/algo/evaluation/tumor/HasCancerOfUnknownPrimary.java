@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.treatment.input.single.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 
 import org.jetbrains.annotations.NotNull;
 

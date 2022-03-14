@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
-import com.hartwig.actin.treatment.input.single.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 
 import org.jetbrains.annotations.NotNull;
 

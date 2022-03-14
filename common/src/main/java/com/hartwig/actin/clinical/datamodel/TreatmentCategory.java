@@ -19,10 +19,7 @@ public enum TreatmentCategory {
     VACCINE,
     CAR_T,
     TCR_T,
-    GENE_THERAPY,
-    TAXANE, //TODO: Implement in rules
-    FLUOROPYRIMIDINE, //TODO: Implement in rules
-    TYROSINE_KINASE_INHIBITORS; //TODO: Implement in rules
+    GENE_THERAPY;
 
     @NotNull
     public String display() {

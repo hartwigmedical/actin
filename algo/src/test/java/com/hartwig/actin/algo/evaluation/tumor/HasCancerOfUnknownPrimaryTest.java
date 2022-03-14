@@ -7,7 +7,7 @@ import java.util.List;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.treatment.input.single.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 
 import org.junit.Test;
 
