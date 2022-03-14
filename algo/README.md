@@ -73,13 +73,13 @@ IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
 HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to not evaluated
 HAS_LANSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to not evaluated
+CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > Won't be evaluated
 HAS_RAPIDLY_DETERIORATING_CONDITION | > Won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > Won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > Won't be evaluated
-PATIENT_IS_TREATED_IN_HOSPITAL_X | > Won't be evaluated
-PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X | > Currently set to the Netherlands 
-CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > Won't be evaluated
-PATIENT_IS_LEGALLY_INSTITUTIONALIZED | > Won't be evaluated
+IS_TREATED_IN_HOSPITAL_X | > Won't be evaluated
+WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X | > Currently set to the Netherlands 
+IS_LEGALLY_INSTITUTIONALIZED | > Won't be evaluated
 IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
 
 ##### Rules related to tumor and lesion localization

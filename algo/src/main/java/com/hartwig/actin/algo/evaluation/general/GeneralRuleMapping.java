@@ -24,13 +24,13 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
         map.put(EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X, hasMinimumLanskyScoreCreator());
+        map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
         map.put(EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION, hasRapidlyDeterioratingConditionCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, hasSufficientLifeExpectancyCreator());
-        map.put(EligibilityRule.PATIENT_IS_TREATED_IN_HOSPITAL_X, patientIsTreatedInHospitalCreator());
-        map.put(EligibilityRule.PATIENT_WILL_BE_PARTICIPATING_IN_COUNTRY_X, patientWillBeParticipatingInCountryCreator());
-        map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
-        map.put(EligibilityRule.PATIENT_IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
+        map.put(EligibilityRule.IS_TREATED_IN_HOSPITAL_X, patientIsTreatedInHospitalCreator());
+        map.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, patientWillBeParticipatingInCountryCreator());
+        map.put(EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
 
         return map;
