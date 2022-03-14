@@ -89,7 +89,7 @@ public class TrialJsonTest {
         assertEquals(2, functionC2.parameters().size());
 
         EligibilityFunction subFunction1 =
-                findSubFunction(functionC2.parameters(), EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X);
+                findSubFunction(functionC2.parameters(), EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X);
         assertEquals(1, subFunction1.parameters().size());
         assertTrue(subFunction1.parameters().contains("0123"));
 

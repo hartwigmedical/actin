@@ -20,9 +20,10 @@ public final class TumorRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_TO_DOID_X, primaryTumorBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_BELONGS_ONLY_TO_DOID_X, primaryTumorExclusivelyBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.PRIMARY_TUMOR_LOCATION_IS_EQUAL_TO_DOID_X, primaryTumorHasExactDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, primaryTumorBelongsToDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_ONLY_TO_DOID_X, primaryTumorExclusivelyBelongsToDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_EQUAL_TO_DOID_X, primaryTumorHasExactDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -72,6 +73,11 @@ public final class TumorRuleMapping {
             String doidToMatch = FunctionInputResolver.createOneStringInput(function);
             return new PrimaryTumorLocationBelongsToDoid(doidModel, doidToMatch, true, true);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasCancerOfUnknownPrimaryCreator() {
+        return function -> new HasCancerOfUnknownPrimary();
     }
 
     @NotNull

@@ -7,7 +7,9 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.TumorTypeCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.clinical.interpretation.TumorTypeCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeInput;
 import com.hartwig.actin.treatment.interpretation.composite.CompositeRules;
@@ -121,6 +123,9 @@ public final class FunctionInputResolver {
                 case ONE_TREATMENT_CATEGORY_MANY_STRINGS_ONE_INTEGER: {
                     createOneTreatmentCategoryManyStringsOneIntegerInput(function);
                     return true;
+                }
+                case ONE_TUMOR_TYPE_CATEGORY: {
+                    createOneTumorTypeCategoryInput(function);
                 }
                 case ONE_STRING: {
                     createOneStringInput(function);
@@ -251,6 +256,13 @@ public final class FunctionInputResolver {
                 .strings(toStringList(function.parameters().get(1)))
                 .integer(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
+    }
+
+    @NotNull
+    public static TumorTypeCategory createOneTumorTypeCategoryInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE_CATEGORY, 1);
+
+        return TumorTypeCategoryResolver.fromString((String) function.parameters().get(0));
     }
 
     @NotNull
