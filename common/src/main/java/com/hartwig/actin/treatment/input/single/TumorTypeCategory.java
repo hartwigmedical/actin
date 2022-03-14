@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.input.datamodel;
+package com.hartwig.actin.treatment.input.single;
 
 import org.jetbrains.annotations.NotNull;
 

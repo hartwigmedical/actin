@@ -11,8 +11,8 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
+import com.hartwig.actin.treatment.input.single.TumorTypeCategory;
 
 import org.jetbrains.annotations.NotNull;
 
