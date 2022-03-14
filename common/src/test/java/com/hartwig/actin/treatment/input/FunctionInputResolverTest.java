@@ -11,12 +11,11 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.clinical.datamodel.TumorTypeCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.clinical.interpretation.TumorTypeCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -246,7 +245,7 @@ public class FunctionInputResolverTest {
     public void canResolveFunctionsWithOneTumorTypeCategoryInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TUMOR_TYPE_CATEGORY);
 
-        String category = TumorTypeCategoryResolver.toString(TumorTypeCategory.CARCINOMA);
+        String category = TumorTypeCategory.CARCINOMA.display();
         EligibilityFunction valid = create(rule, Lists.newArrayList(category));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
         assertEquals(TumorTypeCategory.CARCINOMA, FunctionInputResolver.createOneTumorTypeCategoryInput(valid));

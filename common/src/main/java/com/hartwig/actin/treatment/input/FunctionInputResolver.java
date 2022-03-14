@@ -7,12 +7,11 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.clinical.datamodel.TumorTypeCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.clinical.interpretation.TumorTypeCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -263,7 +262,7 @@ public final class FunctionInputResolver {
     public static TumorTypeCategory createOneTumorTypeCategoryInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE_CATEGORY, 1);
 
-        return TumorTypeCategoryResolver.fromString((String) function.parameters().get(0));
+        return TumorTypeCategory.fromString((String) function.parameters().get(0));
     }
 
     @NotNull

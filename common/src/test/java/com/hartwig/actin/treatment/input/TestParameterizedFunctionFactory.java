@@ -5,14 +5,13 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.clinical.datamodel.TumorTypeCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.clinical.interpretation.TumorTypeCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +77,7 @@ public final class TestParameterizedFunctionFactory {
                 return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string1;string2", "1");
             }
             case ONE_TUMOR_TYPE_CATEGORY: {
-                return Lists.newArrayList(TumorTypeCategoryResolver.toString(TumorTypeCategory.SQUAMOUS_CELL_CARCINOMA));
+                return Lists.newArrayList(TumorTypeCategory.SQUAMOUS_CELL_CARCINOMA.display());
             }
             case ONE_STRING: {
                 return Lists.newArrayList("string");
