@@ -8,12 +8,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PatientWillBeParticipatingInCountry implements EvaluationFunction {
+public class WillParticipateInTrialInCountry implements EvaluationFunction {
 
     @NotNull
     private final String country;
 
-    PatientWillBeParticipatingInCountry(@NotNull final String country) {
+    WillParticipateInTrialInCountry(@NotNull final String country) {
         this.country = country;
     }
 

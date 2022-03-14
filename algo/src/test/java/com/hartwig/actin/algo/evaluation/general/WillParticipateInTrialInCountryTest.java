@@ -7,14 +7,14 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class PatientWillBeParticipatingInCountryTest {
+public class WillParticipateInTrialInCountryTest {
 
     @Test
     public void canEvaluate() {
-        PatientWillBeParticipatingInCountry netherlands = new PatientWillBeParticipatingInCountry("The Netherlands");
+        WillParticipateInTrialInCountry netherlands = new WillParticipateInTrialInCountry("The Netherlands");
         assertEvaluation(EvaluationResult.PASS, netherlands.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        PatientWillBeParticipatingInCountry germany = new PatientWillBeParticipatingInCountry("Germany");
+        WillParticipateInTrialInCountry germany = new WillParticipateInTrialInCountry("Germany");
         assertEvaluation(EvaluationResult.FAIL, germany.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

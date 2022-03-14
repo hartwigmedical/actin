@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class PatientIsTreatedInHospitalTest {
+public class IsTreatedInHospitalTest {
 
     @Test
     public void canEvaluate() {
-        PatientIsTreatedInHospital function = new PatientIsTreatedInHospital();
+        IsTreatedInHospital function = new IsTreatedInHospital();
 
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

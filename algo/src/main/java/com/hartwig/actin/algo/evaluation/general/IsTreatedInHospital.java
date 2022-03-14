@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PatientIsTreatedInHospital implements EvaluationFunction {
+public class IsTreatedInHospital implements EvaluationFunction {
 
-    PatientIsTreatedInHospital() {
+    IsTreatedInHospital() {
     }
 
     @NotNull

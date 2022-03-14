@@ -28,8 +28,8 @@ public final class GeneralRuleMapping {
         map.put(EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION, hasRapidlyDeterioratingConditionCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
         map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, hasSufficientLifeExpectancyCreator());
-        map.put(EligibilityRule.IS_TREATED_IN_HOSPITAL_X, patientIsTreatedInHospitalCreator());
-        map.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, patientWillBeParticipatingInCountryCreator());
+        map.put(EligibilityRule.IS_TREATED_IN_HOSPITAL_X, isTreatedInHospitalCreator());
+        map.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, willParticipateInTrialInCountryCreator());
         map.put(EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
 
@@ -88,15 +88,15 @@ public final class GeneralRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator patientIsTreatedInHospitalCreator() {
-        return function -> new PatientIsTreatedInHospital();
+    private static FunctionCreator isTreatedInHospitalCreator() {
+        return function -> new IsTreatedInHospital();
     }
 
     @NotNull
-    private static FunctionCreator patientWillBeParticipatingInCountryCreator() {
+    private static FunctionCreator willParticipateInTrialInCountryCreator() {
         return function -> {
             String country = FunctionInputResolver.createOneStringInput(function);
-            return new PatientWillBeParticipatingInCountry(country);
+            return new WillParticipateInTrialInCountry(country);
         };
     }
 
