@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
-import com.hartwig.actin.treatment.input.single.OneTreatmentManyStrings;
-import com.hartwig.actin.treatment.input.single.OneTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
+import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -108,16 +108,16 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadTreatmentCategoryOfTypesCreator() {
         return function -> {
-            OneTreatmentManyStrings input = FunctionInputResolver.createOneTreatmentManyStringsInput(function);
-            return new HasHadTreatmentWithCategoryOfTypes(input.treatment().mappedCategory(), input.strings());
+            OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
+            return new HasHadTreatmentWithCategoryOfTypes(input.category(), input.strings());
         };
     }
 
     @NotNull
     private static FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
         return function -> {
-            OneTreatmentManyStrings input = FunctionInputResolver.createOneTreatmentManyStringsInput(function);
-            return new HasHadTreatmentWithCategoryButNotOfTypes(input.treatment().mappedCategory(), input.strings());
+            OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
+            return new HasHadTreatmentWithCategoryButNotOfTypes(input.category(), input.strings());
         };
     }
 
@@ -148,16 +148,18 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypesCreator() {
         return function -> {
-            OneTreatmentManyStringsOneInteger input = FunctionInputResolver.createOneTreatmentManyStringsOneIntegerInput(function);
-            return new HasHadSomeTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(), input.strings(), input.integer());
+            OneTypedTreatmentManyStringsOneInteger input =
+                    FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
+            return new HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer());
         };
     }
 
     @NotNull
     private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypesCreator() {
         return function -> {
-            OneTreatmentManyStringsOneInteger input = FunctionInputResolver.createOneTreatmentManyStringsOneIntegerInput(function);
-            return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(), input.strings(), input.integer());
+            OneTypedTreatmentManyStringsOneInteger input =
+                    FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
+            return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer());
         };
     }
 

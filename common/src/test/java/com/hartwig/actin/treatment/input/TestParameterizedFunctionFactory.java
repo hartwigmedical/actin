@@ -60,13 +60,13 @@ public final class TestParameterizedFunctionFactory {
             case ONE_TREATMENT: {
                 return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display());
             }
-            case ONE_TREATMENT_MANY_STRINGS: {
+            case ONE_TYPED_TREATMENT_MANY_STRINGS: {
                 return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), "string1;string2");
             }
             case ONE_TREATMENT_ONE_INTEGER: {
                 return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), "1");
             }
-            case ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
+            case ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
                 return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), "string1;string2", "1");
             }
             case ONE_TUMOR_TYPE: {
