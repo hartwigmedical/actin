@@ -18,7 +18,7 @@ public class WillingToAdhereToDonationPrescriptions implements EvaluationFunctio
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Assumed that patient will adhere to relevant sperm/egg donation prescriptions")
+                .addPassSpecificMessages("Assumed that patient will adhere to relevant sperm/egg donation prescriptions")
                 .build();
     }
 }

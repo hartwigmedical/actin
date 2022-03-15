@@ -21,7 +21,7 @@ public class HasKnownActiveCnsMetastases implements EvaluationFunction {
         if (hasKnownActiveCnsMetastases == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.FAIL)
-                    .addFailMessages("Data regarding presence of active CNS metastases is missing")
+                    .addFailSpecificMessages("Data regarding presence of active CNS metastases is missing")
                     .build();
         }
 
@@ -29,9 +29,9 @@ public class HasKnownActiveCnsMetastases implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("No known active CNS metastases present");
+            builder.addFailSpecificMessages("No known active CNS metastases present");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Active CNS metastases are present");
+            builder.addPassSpecificMessages("Active CNS metastases are present");
         }
 
         return builder.build();

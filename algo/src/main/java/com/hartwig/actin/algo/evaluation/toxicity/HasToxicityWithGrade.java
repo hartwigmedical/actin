@@ -60,18 +60,18 @@ public class HasToxicityWithGrade implements EvaluationFunction {
         if (!toxicities.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
+                    .addPassSpecificMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not resolve the grade of all toxicities")
+                    .addUndeterminedSpecificMessages("Could not resolve the grade of all toxicities")
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No toxicities found with grade " + minGrade + " or higher")
+                .addFailSpecificMessages("No toxicities found with grade " + minGrade + " or higher")
                 .build();
     }
 

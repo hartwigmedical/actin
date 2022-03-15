@@ -18,7 +18,7 @@ public class HasMinimumLanskyScore implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Lansky score is currently not evaluated")
+                .addPassSpecificMessages("Lansky score is currently not evaluated")
                 .build();
     }
 }

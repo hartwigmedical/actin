@@ -48,9 +48,9 @@ public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFun
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received recent treatments of category " + Format.concat(categoriesToFind));
+            builder.addFailSpecificMessages("Patient has not received recent treatments of category " + Format.concat(categoriesToFind));
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has recently received treatment with medication " + categoryFound);
+            builder.addPassSpecificMessages("Patient has recently received treatment with medication " + categoryFound);
         }
 
         return builder.build();

@@ -26,12 +26,23 @@
           },
           {
             "result": "PASS",
-            "passMessages": [
+            "passSpecificMessages": [
             ],
-            "undeterminedMessages": [
+            "passGeneralMessages": [
             ],
-            "failMessages": [
+            "warnSpecificMessages": [
+            ],
+            "warnGeneralMessages": [
+            ],
+            "undeterminedSpecificMessages": [
+            ],
+            "undeterminedGeneralMessages": [
+            ],
+            "failSpecificMessages": [
+            ],
+            "failGeneralMessages": [
             ]
+
           }
         ]
       ],
@@ -65,11 +76,21 @@
               },
               {
                 "result": "NOT_IMPLEMENTED",
-                "passMessages": [
+                "passSpecificMessages": [
                 ],
-                "undeterminedMessages": [
+                "passGeneralMessages": [
                 ],
-                "failMessages": [
+                "warnSpecificMessages": [
+                ],
+                "warnGeneralMessages": [
+                ],
+                "undeterminedSpecificMessages": [
+                ],
+                "undeterminedGeneralMessages": [
+                ],
+                "failSpecificMessages": [
+                ],
+                "failGeneralMessages": [
                 ]
               }
             ]

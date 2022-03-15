@@ -25,14 +25,14 @@ public class GeneIsInactivated implements EvaluationFunction {
             if (inactivatedGene.gene().equals(gene)) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Inactivation detected of gene " + gene)
+                        .addPassSpecificMessages("Inactivation detected of gene " + gene)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No inactivation detected of gene " + gene)
+                .addFailSpecificMessages("No inactivation detected of gene " + gene)
                 .build();
     }
 }

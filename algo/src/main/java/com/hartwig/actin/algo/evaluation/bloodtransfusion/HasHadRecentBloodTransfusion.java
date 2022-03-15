@@ -32,14 +32,14 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
             if (transfusion.product().equalsIgnoreCase(product.display()) && minDate.isBefore(transfusion.date())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has received recent blood transfusion of product " + productString)
+                        .addPassSpecificMessages("Patient has received recent blood transfusion of product " + productString)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has not received recent blood transfusion of product " + productString)
+                .addFailSpecificMessages("Patient has not received recent blood transfusion of product " + productString)
                 .build();
     }
 }

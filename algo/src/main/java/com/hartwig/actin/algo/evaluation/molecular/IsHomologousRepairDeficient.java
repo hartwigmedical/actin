@@ -21,7 +21,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
         if (isHomologousRepairDeficient == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No homologous repair deficiency status is known")
+                    .addUndeterminedSpecificMessages("No homologous repair deficiency status is known")
                     .build();
         }
 
@@ -29,9 +29,9 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor is homologous repair proficient");
+            builder.addFailSpecificMessages("Tumor is homologous repair proficient");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor is homologous repair deficient");
+            builder.addPassSpecificMessages("Tumor is homologous repair deficient");
         }
 
         return builder.build();

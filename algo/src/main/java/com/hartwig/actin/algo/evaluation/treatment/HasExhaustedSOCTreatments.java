@@ -18,7 +18,7 @@ public class HasExhaustedSOCTreatments implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Anything related to exhaustion of SOC treatment can not be determined yet")
+                .addUndeterminedSpecificMessages("Anything related to exhaustion of SOC treatment can not be determined yet")
                 .build();
     }
 }

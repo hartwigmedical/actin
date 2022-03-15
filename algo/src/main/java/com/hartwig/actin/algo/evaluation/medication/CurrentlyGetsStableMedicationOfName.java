@@ -47,9 +47,9 @@ public class CurrentlyGetsStableMedicationOfName implements EvaluationFunction {
         EvaluationResult result = hasFoundOnePassingTerm ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient does not get stable dosing of medication with name " + Format.concat(termsToFind));
+            builder.addFailSpecificMessages("Patient does not get stable dosing of medication with name " + Format.concat(termsToFind));
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient gets stable dosing of medication with name " + Format.concat(termsToFind));
+            builder.addPassSpecificMessages("Patient gets stable dosing of medication with name " + Format.concat(termsToFind));
         }
 
         return builder.build();

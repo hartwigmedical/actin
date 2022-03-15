@@ -18,7 +18,7 @@ public class CanAdhereToAttenuatedVaccineUse implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Adherence to protocol for attenuated vaccine use is currently not evaluated")
+                .addPassSpecificMessages("Adherence to protocol for attenuated vaccine use is currently not evaluated")
                 .build();
     }
 }

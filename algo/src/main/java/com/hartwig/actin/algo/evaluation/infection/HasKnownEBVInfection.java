@@ -32,7 +32,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
                 if (priorOtherCondition.name().toLowerCase().contains(ebvTerm.toLowerCase())) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has known EBV infection: " + priorOtherCondition.name())
+                            .addPassSpecificMessages("Patient has known EBV infection: " + priorOtherCondition.name())
                             .build();
                 }
             }
@@ -40,7 +40,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no known EBV infection")
+                .addFailSpecificMessages("Patient has no known EBV infection")
                 .build();
     }
 }

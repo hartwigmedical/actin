@@ -18,7 +18,7 @@ public class ManufacturedTCellsWithinShelfLife implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently it is assumed that previously manufactured T-cells will be within shelf life")
+                .addPassSpecificMessages("Currently it is assumed that previously manufactured T-cells will be within shelf life")
                 .build();
     }
 }

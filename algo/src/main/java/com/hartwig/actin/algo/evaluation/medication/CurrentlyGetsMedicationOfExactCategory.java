@@ -36,7 +36,7 @@ public class CurrentlyGetsMedicationOfExactCategory implements EvaluationFunctio
 
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages(
+                    .addPassSpecificMessages(
                             "Patient currently gets medication " + Format.concat(names) + ", which belong(s) to category " + Format.concat(
                                     categoriesToFind))
                     .build();
@@ -44,7 +44,7 @@ public class CurrentlyGetsMedicationOfExactCategory implements EvaluationFunctio
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient currently does not get medication of category " + Format.concat(categoriesToFind))
+                .addFailSpecificMessages("Patient currently does not get medication of category " + Format.concat(categoriesToFind))
                 .build();
     }
 }

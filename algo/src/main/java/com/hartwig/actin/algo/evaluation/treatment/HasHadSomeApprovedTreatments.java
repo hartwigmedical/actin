@@ -22,13 +22,13 @@ public class HasHadSomeApprovedTreatments implements EvaluationFunction {
         if (record.clinical().priorTumorTreatments().isEmpty() && minApprovedTreatments > 0) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.FAIL)
-                    .addFailMessages("Patient has had no prior tumor treatment")
+                    .addFailSpecificMessages("Patient has had no prior tumor treatment")
                     .build();
         }
         
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently the number of approved treatments cannot be determined")
+                .addUndeterminedSpecificMessages("Currently the number of approved treatments cannot be determined")
                 .build();
     }
 }

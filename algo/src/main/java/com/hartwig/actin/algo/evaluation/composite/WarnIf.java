@@ -26,8 +26,8 @@ public class WarnIf implements EvaluationFunction {
         Evaluation evaluation = function.evaluate(record);
 
         EvaluationResult updatedResult;
-        Set<String> passMessages = evaluation.passMessages();
-        Set<String> failMessages = evaluation.failMessages();
+        Set<String> passMessages = evaluation.passSpecificMessages();
+        Set<String> failMessages = evaluation.failSpecificMessages();
         switch (evaluation.result()) {
             case PASS:
             case WARN:
@@ -35,7 +35,7 @@ public class WarnIf implements EvaluationFunction {
                 break;
             case FAIL:
                 updatedResult = EvaluationResult.PASS;
-                passMessages = evaluation.failMessages();
+                passMessages = evaluation.failSpecificMessages();
                 failMessages = Sets.newHashSet();
                 break;
             case NOT_IMPLEMENTED:
@@ -50,9 +50,9 @@ public class WarnIf implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(updatedResult)
-                .passMessages(passMessages)
-                .undeterminedMessages(evaluation.undeterminedMessages())
-                .failMessages(failMessages)
+                .passSpecificMessages(passMessages)
+                .undeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
+                .failSpecificMessages(failMessages)
                 .build();
     }
 }

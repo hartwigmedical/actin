@@ -41,7 +41,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         if (!isValid(mostRecent, measurement)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No valid measurement found for " + measurement.code())
+                    .addUndeterminedSpecificMessages("No valid measurement found for " + measurement.code())
                     .build();
         }
 
@@ -54,7 +54,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedMessages("First measurement fails for " + measurement.code() + " while second succeeds")
+                            .addUndeterminedSpecificMessages("First measurement fails for " + measurement.code() + " while second succeeds")
                             .build();
                 }
             }

@@ -22,7 +22,7 @@ public class CurrentlyGetsOATPInhibitingMedication implements EvaluationFunction
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
+                .addUndeterminedSpecificMessages("Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
                 .build();
     }
 }

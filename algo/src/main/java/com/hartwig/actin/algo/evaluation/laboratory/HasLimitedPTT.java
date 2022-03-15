@@ -18,7 +18,7 @@ public class HasLimitedPTT implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("PTT cannot be determined yet")
+                .addUndeterminedSpecificMessages("PTT cannot be determined yet")
                 .build();
     }
 }

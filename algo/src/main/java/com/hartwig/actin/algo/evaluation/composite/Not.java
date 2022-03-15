@@ -29,26 +29,26 @@ public class Not implements EvaluationFunction {
         Set<String> failMessages;
         if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.WARN) {
             negatedResult = EvaluationResult.FAIL;
-            passMessages = evaluation.failMessages();
-            failMessages = evaluation.passMessages();
+            passMessages = evaluation.failSpecificMessages();
+            failMessages = evaluation.passSpecificMessages();
         } else if (evaluation.result() == EvaluationResult.FAIL) {
             negatedResult = EvaluationResult.PASS;
-            passMessages = evaluation.failMessages();
-            failMessages = evaluation.passMessages();
+            passMessages = evaluation.failSpecificMessages();
+            failMessages = evaluation.passSpecificMessages();
         } else if (evaluation.result() == EvaluationResult.UNDETERMINED || evaluation.result() == EvaluationResult.NOT_IMPLEMENTED
                 || evaluation.result() == EvaluationResult.NOT_EVALUATED) {
             negatedResult = evaluation.result();
-            passMessages = evaluation.passMessages();
-            failMessages = evaluation.failMessages();
+            passMessages = evaluation.passSpecificMessages();
+            failMessages = evaluation.failSpecificMessages();
         } else {
             throw new IllegalStateException("NOT function cannot negate evaluation: " + evaluation);
         }
 
         return ImmutableEvaluation.builder()
                 .result(negatedResult)
-                .passMessages(passMessages)
-                .undeterminedMessages(evaluation.undeterminedMessages())
-                .failMessages(failMessages)
+                .passSpecificMessages(passMessages)
+                .undeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
+                .failSpecificMessages(failMessages)
                 .build();
     }
 }

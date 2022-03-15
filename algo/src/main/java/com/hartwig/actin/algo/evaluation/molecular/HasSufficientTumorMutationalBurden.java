@@ -23,7 +23,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
         if (tumorMutationalBurden == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No tumor mutational burden is known")
+                    .addUndeterminedSpecificMessages("No tumor mutational burden is known")
                     .build();
         }
 
@@ -32,9 +32,9 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor mutational burden does not exceed " + minTumorMutationalBurden);
+            builder.addFailSpecificMessages("Tumor mutational burden does not exceed " + minTumorMutationalBurden);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor mutational burden exceeds " + minTumorMutationalBurden);
+            builder.addPassSpecificMessages("Tumor mutational burden exceeds " + minTumorMutationalBurden);
         }
 
         return builder.build();

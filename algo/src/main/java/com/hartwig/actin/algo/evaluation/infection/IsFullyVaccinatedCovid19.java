@@ -18,7 +18,7 @@ public class IsFullyVaccinatedCovid19 implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient is fully vaccinated against Covid-19")
+                .addUndeterminedSpecificMessages("Currently not determined if patient is fully vaccinated against Covid-19")
                 .build();
     }
 }

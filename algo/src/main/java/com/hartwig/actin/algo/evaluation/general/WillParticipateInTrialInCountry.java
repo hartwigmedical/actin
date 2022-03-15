@@ -24,9 +24,9 @@ public class WillParticipateInTrialInCountry implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient will not be participating in " + country);
+            builder.addFailSpecificMessages("Patient will not be participating in " + country);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient will be participating in " + country);
+            builder.addPassSpecificMessages("Patient will be participating in " + country);
         }
 
         return builder.build();

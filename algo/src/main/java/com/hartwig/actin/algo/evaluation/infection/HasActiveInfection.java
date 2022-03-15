@@ -22,16 +22,16 @@ public class HasActiveInfection implements EvaluationFunction {
         if (infection == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Infection status data is missing")
+                    .addUndeterminedSpecificMessages("Infection status data is missing")
                     .build();
         }
 
         EvaluationResult result = infection.hasActiveInfection() ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no active infection");
+            builder.addFailSpecificMessages("Patient has no active infection");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has active infection: " + infection.description());
+            builder.addPassSpecificMessages("Patient has active infection: " + infection.description());
         }
 
         return builder.build();

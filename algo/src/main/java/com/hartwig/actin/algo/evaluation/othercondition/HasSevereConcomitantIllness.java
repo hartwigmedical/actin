@@ -18,7 +18,7 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Any severe concomitant illnesses are assumed not to be present")
+                .addPassSpecificMessages("Any severe concomitant illnesses are assumed not to be present")
                 .build();
     }
 }

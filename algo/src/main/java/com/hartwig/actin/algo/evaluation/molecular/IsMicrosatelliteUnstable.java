@@ -21,7 +21,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
         if (isMicrosatelliteUnstable == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No microsatellite status is known")
+                    .addUndeterminedSpecificMessages("No microsatellite status is known")
                     .build();
         }
 
@@ -29,9 +29,9 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor is microsatellite stable");
+            builder.addFailSpecificMessages("Tumor is microsatellite stable");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor is microsatellite unstable");
+            builder.addPassSpecificMessages("Tumor is microsatellite unstable");
         }
 
         return builder.build();

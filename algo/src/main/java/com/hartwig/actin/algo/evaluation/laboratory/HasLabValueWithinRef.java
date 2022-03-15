@@ -20,16 +20,16 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
         if (isOutsideRef == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not determine whether " + labValue.code() + " is within ref")
+                    .addUndeterminedSpecificMessages("Could not determine whether " + labValue.code() + " is within ref")
                     .build();
         }
 
         EvaluationResult result = isOutsideRef ? EvaluationResult.FAIL : EvaluationResult.PASS;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(labValue.code() + " is not within reference values");
+            builder.addFailSpecificMessages(labValue.code() + " is not within reference values");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages(labValue.code() + " is within reference values");
+            builder.addPassSpecificMessages(labValue.code() + " is within reference values");
         }
 
         return builder.build();

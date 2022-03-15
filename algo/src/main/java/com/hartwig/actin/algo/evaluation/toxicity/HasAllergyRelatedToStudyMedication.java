@@ -41,14 +41,14 @@ public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
         if (!allergies.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Patient has medication-related allergies: " + Format.concat(allergies) + ". "
+                    .addUndeterminedSpecificMessages("Patient has medication-related allergies: " + Format.concat(allergies) + ". "
                             + "Currently not determined if this could be related to potential study medication")
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no known allergies with category 'medication'")
+                .addFailSpecificMessages("Patient has no known allergies with category 'medication'")
                 .build();
     }
 }

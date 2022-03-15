@@ -18,7 +18,7 @@ public class CanGiveAdequateInformedConsent implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently assumed that adequate IC can/will be given")
+                .addPassSpecificMessages("Currently assumed that adequate IC can/will be given")
                 .build();
     }
 }

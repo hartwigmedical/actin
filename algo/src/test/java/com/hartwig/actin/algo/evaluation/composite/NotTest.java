@@ -32,47 +32,47 @@ public class NotTest {
     public void canFlipMessagesForPass() {
         EvaluationFunction pass = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
-                .addPassMessages("pass")
-                .addUndeterminedMessages("undetermined")
-                .addFailMessages("fail")
+                .addPassSpecificMessages("pass")
+                .addUndeterminedSpecificMessages("undetermined")
+                .addFailSpecificMessages("fail")
                 .build();
 
         Evaluation result = new Not(pass).evaluate(TEST_PATIENT);
 
-        assertTrue(result.failMessages().contains("pass"));
-        assertTrue(result.passMessages().contains("fail"));
-        assertTrue(result.undeterminedMessages().contains("undetermined"));
+        assertTrue(result.failSpecificMessages().contains("pass"));
+        assertTrue(result.passSpecificMessages().contains("fail"));
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined"));
     }
 
     @Test
     public void canFlipMessagesForFail() {
         EvaluationFunction fail = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addPassMessages("pass")
-                .addUndeterminedMessages("undetermined")
-                .addFailMessages("fail")
+                .addPassSpecificMessages("pass")
+                .addUndeterminedSpecificMessages("undetermined")
+                .addFailSpecificMessages("fail")
                 .build();
 
         Evaluation result = new Not(fail).evaluate(TEST_PATIENT);
 
-        assertTrue(result.failMessages().contains("pass"));
-        assertTrue(result.passMessages().contains("fail"));
-        assertTrue(result.undeterminedMessages().contains("undetermined"));
+        assertTrue(result.failSpecificMessages().contains("pass"));
+        assertTrue(result.passSpecificMessages().contains("fail"));
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined"));
     }
 
     @Test
     public void canRetainMessagesForUndetermined() {
         EvaluationFunction fail = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addPassMessages("pass")
-                .addUndeterminedMessages("undetermined")
-                .addFailMessages("fail")
+                .addPassSpecificMessages("pass")
+                .addUndeterminedSpecificMessages("undetermined")
+                .addFailSpecificMessages("fail")
                 .build();
 
         Evaluation result = new Not(fail).evaluate(TEST_PATIENT);
 
-        assertTrue(result.failMessages().contains("fail"));
-        assertTrue(result.passMessages().contains("pass"));
-        assertTrue(result.undeterminedMessages().contains("undetermined"));
+        assertTrue(result.failSpecificMessages().contains("fail"));
+        assertTrue(result.passSpecificMessages().contains("pass"));
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined"));
     }
 }

@@ -20,13 +20,13 @@ public class TumorBiopsyTakenBeforeInformedConsent implements EvaluationFunction
         if (record.molecular().type() != ExperimentType.WGS) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Currently can't determine whether patient has taken a biopsy prior to IC without WGS")
+                    .addUndeterminedSpecificMessages("Currently can't determine whether patient has taken a biopsy prior to IC without WGS")
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
-                .addPassMessages("It is currently assumed that patient has taken a tumor biopsy prior to IC")
+                .addPassSpecificMessages("It is currently assumed that patient has taken a tumor biopsy prior to IC")
                 .build();
     }
 }

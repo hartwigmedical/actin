@@ -20,9 +20,9 @@ public class HasHistoryOfAnaphylaxis implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no known history of anaphylaxis");
+            builder.addFailSpecificMessages("Patient has no known history of anaphylaxis");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedMessages("Cannot be determined if patient has history of anaphylaxis");
+            builder.addUndeterminedSpecificMessages("Cannot be determined if patient has history of anaphylaxis");
         }
 
         return builder.build();

@@ -13,6 +13,6 @@ public class HasSpecificHLAType implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("HLA typing not yet supported").build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailSpecificMessages("HLA typing not yet supported").build();
     }
 }

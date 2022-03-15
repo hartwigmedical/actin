@@ -34,11 +34,11 @@ public class HasAtLeastCertainAge implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient is younger than " + minAge + " years old");
+            builder.addFailSpecificMessages("Patient is younger than " + minAge + " years old");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedMessages("Could not determine whether patient is at least " + minAge + " years old");
+            builder.addUndeterminedSpecificMessages("Could not determine whether patient is at least " + minAge + " years old");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient is at least " + minAge + " years old");
+            builder.addPassSpecificMessages("Patient is at least " + minAge + " years old");
         }
 
         return builder.build();

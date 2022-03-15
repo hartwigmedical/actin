@@ -202,7 +202,7 @@ public final class LaboratoryRuleMapping {
     private static FunctionCreator undeterminedLabValueCreator(@NotNull String measure) {
         return function -> record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("It is not clear yet under what code '" + measure + "' is measured")
+                .addUndeterminedSpecificMessages("It is not clear yet under what code '" + measure + "' is measured")
                 .build();
     }
 

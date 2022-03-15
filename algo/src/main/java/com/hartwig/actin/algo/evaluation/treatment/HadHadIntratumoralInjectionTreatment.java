@@ -18,7 +18,7 @@ public class HadHadIntratumoralInjectionTreatment implements EvaluationFunction 
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Not determined yet if patient has had previous intratumoral injection treatments")
+                .addUndeterminedSpecificMessages("Not determined yet if patient has had previous intratumoral injection treatments")
                 .build();
     }
 }

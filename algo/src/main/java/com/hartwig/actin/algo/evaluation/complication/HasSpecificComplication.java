@@ -35,13 +35,13 @@ public class HasSpecificComplication implements EvaluationFunction {
         if (!complications.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has complication " + Format.concat(complications))
+                    .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient does not have complication " + termToFind)
+                .addFailSpecificMessages("Patient does not have complication " + termToFind)
                 .build();
     }
 }

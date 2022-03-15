@@ -28,14 +28,14 @@ public class HasSpecificFusionGene implements EvaluationFunction {
             if (fusion.fiveGene().equals(fiveGene) || fusion.threeGene().equals(threeGene)) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Specific fusion detected " + fiveGene + "-" + threeGene)
+                        .addPassSpecificMessages("Specific fusion detected " + fiveGene + "-" + threeGene)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No specific fusion detected " + fiveGene + "-" + threeGene)
+                .addFailSpecificMessages("No specific fusion detected " + fiveGene + "-" + threeGene)
                 .build();
     }
 }

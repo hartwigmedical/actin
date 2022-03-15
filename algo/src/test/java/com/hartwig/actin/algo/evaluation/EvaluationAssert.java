@@ -17,17 +17,17 @@ public final class EvaluationAssert {
     public static void assertEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
         assertEquals(expected, actual.result());
         if (actual.result() == EvaluationResult.FAIL) {
-            assertTrue(actual.passMessages().isEmpty());
-            assertTrue(actual.undeterminedMessages().isEmpty());
-            assertFalse(actual.failMessages().isEmpty());
+            assertTrue(actual.passSpecificMessages().isEmpty());
+            assertTrue(actual.undeterminedSpecificMessages().isEmpty());
+            assertFalse(actual.failSpecificMessages().isEmpty());
         } else if (actual.result() == EvaluationResult.UNDETERMINED) {
-            assertTrue(actual.passMessages().isEmpty());
-            assertFalse(actual.undeterminedMessages().isEmpty());
-            assertTrue(actual.failMessages().isEmpty());
+            assertTrue(actual.passSpecificMessages().isEmpty());
+            assertFalse(actual.undeterminedSpecificMessages().isEmpty());
+            assertTrue(actual.failSpecificMessages().isEmpty());
         } else if (actual.result().isPass()) {
-            assertFalse(actual.passMessages().isEmpty());
-            assertTrue(actual.undeterminedMessages().isEmpty());
-            assertTrue(actual.failMessages().isEmpty());
+            assertFalse(actual.passSpecificMessages().isEmpty());
+            assertTrue(actual.undeterminedSpecificMessages().isEmpty());
+            assertTrue(actual.failSpecificMessages().isEmpty());
         }
     }
 }

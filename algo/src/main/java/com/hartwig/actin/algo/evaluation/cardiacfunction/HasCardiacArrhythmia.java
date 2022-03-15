@@ -28,7 +28,7 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
         if (ecg == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.FAIL)
-                    .addFailMessages("ECG details are missing, assumed there are none")
+                    .addFailSpecificMessages("ECG details are missing, assumed there are none")
                     .build();
         }
 
@@ -44,15 +44,15 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             if (type == null) {
-                builder.addFailMessages("No known ECG abnormalities");
+                builder.addFailSpecificMessages("No known ECG abnormalities");
             } else {
-                builder.addFailMessages("No known ECG abnormalities of type " + type);
+                builder.addFailSpecificMessages("No known ECG abnormalities of type " + type);
             }
         } else if (result == EvaluationResult.PASS) {
             if (type == null) {
-                builder.addPassMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
+                builder.addPassSpecificMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
             } else {
-                builder.addPassMessages("Known ECG abnormalities of type " + type + ": " + ecg.aberrationDescription());
+                builder.addPassSpecificMessages("Known ECG abnormalities of type " + type + ": " + ecg.aberrationDescription());
             }
         }
 

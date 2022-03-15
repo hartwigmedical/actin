@@ -21,9 +21,9 @@ public class CurrentlyGetsAnyMedication implements EvaluationFunction {
         EvaluationResult result = hasReceivedMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient does not currently receive medication with status 'active'");
+            builder.addFailSpecificMessages("Patient does not currently receive medication with status 'active'");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient currently receives medication with status 'active'");
+            builder.addPassSpecificMessages("Patient currently receives medication with status 'active'");
         }
 
         return builder.build();

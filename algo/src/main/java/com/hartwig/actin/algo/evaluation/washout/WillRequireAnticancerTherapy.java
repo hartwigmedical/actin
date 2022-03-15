@@ -18,7 +18,7 @@ public class WillRequireAnticancerTherapy implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently not evaluated whether anticancer therapy is required")
+                .addPassSpecificMessages("Currently not evaluated whether anticancer therapy is required")
                 .build();
     }
 }

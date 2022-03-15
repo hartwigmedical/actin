@@ -23,11 +23,11 @@ public class HasSufficientLabValueLLN implements LabEvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(labValue.code() + " is insufficient versus LLN");
+            builder.addFailSpecificMessages(labValue.code() + " is insufficient versus LLN");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedMessages(labValue.code() + " sufficiency could not be evaluated versus LLN");
+            builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated versus LLN");
         } else if (result.isPass()) {
-            builder.addPassMessages(labValue.code() + " is sufficient versus LLN");
+            builder.addPassSpecificMessages(labValue.code() + " is sufficient versus LLN");
         }
 
         return builder.build();

@@ -28,14 +28,14 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
             if (geneMutation.gene().equals(gene) && geneMutation.mutation().equals(mutation)) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Specific gene mutation detected " + gene + " " + mutation)
+                        .addPassSpecificMessages("Specific gene mutation detected " + gene + " " + mutation)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No specific gene mutation detected " + gene + " " + mutation)
+                .addFailSpecificMessages("No specific gene mutation detected " + gene + " " + mutation)
                 .build();
     }
 }

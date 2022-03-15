@@ -29,9 +29,9 @@ public class HasExperiencedImmuneRelatedAdverseEvents implements EvaluationFunct
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not experienced immune related adverse events");
+            builder.addFailSpecificMessages("Patient has not experienced immune related adverse events");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedMessages("Cannot be determined if patient has experienced immune related adverse events");
+            builder.addUndeterminedSpecificMessages("Cannot be determined if patient has experienced immune related adverse events");
         }
 
         return builder.build();

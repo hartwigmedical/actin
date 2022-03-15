@@ -18,7 +18,7 @@ public class IsEligibleForOnLabelDrug implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Anything related to SOC can not be determined yet")
+                .addUndeterminedSpecificMessages("Anything related to SOC can not be determined yet")
                 .build();
     }
 }

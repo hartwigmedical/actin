@@ -33,14 +33,14 @@ public class WarnIfTest {
     public void canFlipMessagesOnFail() {
         EvaluationFunction fail = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("fail 1")
-                .addUndeterminedMessages("undetermined 1")
-                .addPassMessages("pass 1")
+                .addFailSpecificMessages("fail 1")
+                .addUndeterminedSpecificMessages("undetermined 1")
+                .addPassSpecificMessages("pass 1")
                 .build();
 
         Evaluation result = new WarnIf(fail).evaluate(TestDataFactory.createMinimalTestPatientRecord());
 
-        assertTrue(result.passMessages().contains("fail 1"));
-        assertTrue(result.failMessages().isEmpty());
+        assertTrue(result.passSpecificMessages().contains("fail 1"));
+        assertTrue(result.failSpecificMessages().isEmpty());
     }
 }

@@ -70,44 +70,44 @@ public class AndTest {
     public void canRetainMessages() {
         EvaluationFunction  function1 = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("fail 1")
-                .addUndeterminedMessages("undetermined 1")
-                .addPassMessages("pass 1")
+                .addFailSpecificMessages("fail 1")
+                .addUndeterminedSpecificMessages("undetermined 1")
+                .addPassSpecificMessages("pass 1")
                 .build();
 
         EvaluationFunction function2 = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("fail 2")
-                .addUndeterminedMessages("undetermined 2")
-                .addPassMessages("pass 2")
+                .addFailSpecificMessages("fail 2")
+                .addUndeterminedSpecificMessages("undetermined 2")
+                .addPassSpecificMessages("pass 2")
                 .build();
 
         EvaluationFunction function3 = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
-                .addFailMessages("fail 3")
-                .addUndeterminedMessages("undetermined 3")
-                .addPassMessages("pass 3")
+                .addFailSpecificMessages("fail 3")
+                .addUndeterminedSpecificMessages("undetermined 3")
+                .addPassSpecificMessages("pass 3")
                 .build();
 
         EvaluationFunction function4 = record -> ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
-                .addFailMessages("fail 4")
-                .addUndeterminedMessages("undetermined 4")
-                .addPassMessages("pass 4")
+                .addFailSpecificMessages("fail 4")
+                .addUndeterminedSpecificMessages("undetermined 4")
+                .addPassSpecificMessages("pass 4")
                 .build();
 
         Evaluation result = new And(Lists.newArrayList(function1, function2, function3, function4)).evaluate(TEST_PATIENT);
-        assertEquals(2, result.failMessages().size());
-        assertTrue(result.failMessages().contains("fail 1"));
-        assertTrue(result.failMessages().contains("fail 2"));
+        assertEquals(2, result.failSpecificMessages().size());
+        assertTrue(result.failSpecificMessages().contains("fail 1"));
+        assertTrue(result.failSpecificMessages().contains("fail 2"));
 
-        assertEquals(2, result.passMessages().size());
-        assertTrue(result.passMessages().contains("pass 1"));
-        assertTrue(result.passMessages().contains("pass 2"));
+        assertEquals(2, result.passSpecificMessages().size());
+        assertTrue(result.passSpecificMessages().contains("pass 1"));
+        assertTrue(result.passSpecificMessages().contains("pass 2"));
 
-        assertEquals(2, result.undeterminedMessages().size());
-        assertTrue(result.undeterminedMessages().contains("undetermined 1"));
-        assertTrue(result.undeterminedMessages().contains("undetermined 2"));
+        assertEquals(2, result.undeterminedSpecificMessages().size());
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined 1"));
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined 2"));
     }
 
     @Test(expected = IllegalStateException.class)

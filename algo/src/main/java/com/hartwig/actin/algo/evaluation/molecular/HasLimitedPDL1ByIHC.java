@@ -34,7 +34,7 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
             if (hasLimitedPDL1) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("PD-L1 expression measured by CPS does not exceed maximum level of " + maxPDL1)
+                        .addPassSpecificMessages("PD-L1 expression measured by CPS does not exceed maximum level of " + maxPDL1)
                         .build();
             }
         }
@@ -42,9 +42,9 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
 
         if (!pdl1Tests.isEmpty()) {
-            builder.addFailMessages("No PD-L1 IHC test found where level does not exceed maximum level of " + maxPDL1);
+            builder.addFailSpecificMessages("No PD-L1 IHC test found where level does not exceed maximum level of " + maxPDL1);
         } else {
-            builder.addFailMessages("No test result found; PD-L1 has not been tested by IHC");
+            builder.addFailSpecificMessages("No test result found; PD-L1 has not been tested by IHC");
         }
 
         return builder.build();

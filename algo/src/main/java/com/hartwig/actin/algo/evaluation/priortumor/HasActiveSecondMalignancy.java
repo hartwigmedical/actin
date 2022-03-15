@@ -27,9 +27,9 @@ public class HasActiveSecondMalignancy implements EvaluationFunction {
         EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no active second malignancy");
+            builder.addFailSpecificMessages("Patient has no active second malignancy");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has active second malignancy");
+            builder.addPassSpecificMessages("Patient has active second malignancy");
         }
 
         return builder.build();

@@ -36,16 +36,16 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No tumor type known for patient")
+                    .addUndeterminedSpecificMessages("No tumor type known for patient")
                     .build();
         }
 
         EvaluationResult result = isDoidMatch(doids, doidToMatch) ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no " + doidModel.term(doidToMatch));
+            builder.addFailSpecificMessages("Patient has no " + doidModel.term(doidToMatch));
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has " + doidModel.term(doidToMatch));
+            builder.addPassSpecificMessages("Patient has " + doidModel.term(doidToMatch));
         }
 
         return builder.build();

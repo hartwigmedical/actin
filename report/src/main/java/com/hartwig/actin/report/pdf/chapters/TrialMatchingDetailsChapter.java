@@ -169,9 +169,9 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                     } else {
                         Evaluation updated = ImmutableEvaluation.builder()
                                 .from(current)
-                                .addAllPassMessages(evaluation.passMessages())
-                                .addAllUndeterminedMessages(evaluation.undeterminedMessages())
-                                .addAllFailMessages(evaluation.failMessages())
+                                .addAllPassSpecificMessages(evaluation.passSpecificMessages())
+                                .addAllUndeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
+                                .addAllFailSpecificMessages(evaluation.failSpecificMessages())
                                 .build();
                         worstEvaluationPerCriterion.put(reference, updated);
                     }
@@ -273,15 +273,15 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                 Table evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true);
                 evalTable.addCell(Cells.createEvaluation(evaluation.result()));
                 if (evaluation.result() == EvaluationResult.FAIL) {
-                    for (String failMessage : evaluation.failMessages()) {
+                    for (String failMessage : evaluation.failSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(failMessage)));
                     }
                 } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
-                    for (String undeterminedMessage : evaluation.undeterminedMessages()) {
+                    for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
                     }
                 } else if (evaluation.result().isPass()) {
-                    for (String passMessage : evaluation.passMessages()) {
+                    for (String passMessage : evaluation.passSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(passMessage)));
                     }
                 }

@@ -18,7 +18,7 @@ public class CurrentlyGetsQTProlongatingMedication implements EvaluationFunction
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient gets QT prolongating medication")
+                .addUndeterminedSpecificMessages("Currently not determined if patient gets QT prolongating medication")
                 .build();
     }
 }

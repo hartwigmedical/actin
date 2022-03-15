@@ -16,6 +16,6 @@ public class GeneIsOverexpressed implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("RNA expression not yet supported").build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailSpecificMessages("RNA expression not yet supported").build();
     }
 }

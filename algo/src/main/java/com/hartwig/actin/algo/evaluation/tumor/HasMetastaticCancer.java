@@ -31,16 +31,16 @@ public class HasMetastaticCancer implements EvaluationFunction {
         if (stage == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Tumor stage details are missing")
+                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
                     .build();
         }
 
         EvaluationResult result = STAGES_CONSIDERED_METASTATIC.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor stage " + stage.display() + " is not considered metastatic (IV)");
+            builder.addFailSpecificMessages("Tumor stage " + stage.display() + " is not considered metastatic (IV)");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor stage " + stage.display() + " is considered metastatic (IV)");
+            builder.addPassSpecificMessages("Tumor stage " + stage.display() + " is considered metastatic (IV)");
         }
 
         return builder.build();

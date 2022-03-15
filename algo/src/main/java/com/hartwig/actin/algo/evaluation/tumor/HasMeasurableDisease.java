@@ -20,7 +20,7 @@ public class HasMeasurableDisease implements EvaluationFunction {
         if (hasMeasurableDisease == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Data regarding measurable disease is missing")
+                    .addUndeterminedSpecificMessages("Data regarding measurable disease is missing")
                     .build();
         }
 
@@ -28,9 +28,9 @@ public class HasMeasurableDisease implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no measurable disease");
+            builder.addFailSpecificMessages("Patient has no measurable disease");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has measurable disease");
+            builder.addPassSpecificMessages("Patient has measurable disease");
         }
 
         return builder.build();

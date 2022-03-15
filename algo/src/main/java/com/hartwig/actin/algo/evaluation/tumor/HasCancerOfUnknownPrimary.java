@@ -36,14 +36,14 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No tumor type known for patient")
+                    .addUndeterminedSpecificMessages("No tumor type known for patient")
                     .build();
         }
 
         if (doids.equals(Sets.newHashSet(CANCER_DOID))) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.WARN)
-                    .addPassMessages("Patient has tumor type 'cancer' configured")
+                    .addPassSpecificMessages("Patient has tumor type 'cancer' configured")
                     .build();
         }
 
@@ -61,9 +61,9 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         EvaluationResult result = isMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no cancer of unknown primary of category " + categoryOfCUP.display());
+            builder.addFailSpecificMessages("Patient has no cancer of unknown primary of category " + categoryOfCUP.display());
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has cancer of unknown primary of category " + categoryOfCUP.display());
+            builder.addPassSpecificMessages("Patient has cancer of unknown primary of category " + categoryOfCUP.display());
         }
 
         return builder.build();

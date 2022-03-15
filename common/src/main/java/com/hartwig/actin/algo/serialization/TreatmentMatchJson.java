@@ -184,9 +184,14 @@ public final class TreatmentMatchJson {
         private static Evaluation toEvaluation(@NotNull JsonObject evaluation) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.valueOf(string(evaluation, "result")))
-                    .passMessages(stringList(evaluation, "passMessages"))
-                    .undeterminedMessages(stringList(evaluation, "undeterminedMessages"))
-                    .failMessages(stringList(evaluation, "failMessages"))
+                    .passSpecificMessages(stringList(evaluation, "passSpecificMessages"))
+                    .passGeneralMessages(stringList(evaluation, "passGeneralMessages"))
+                    .warnSpecificMessages(stringList(evaluation, "warnSpecificMessages"))
+                    .warnGeneralMessages(stringList(evaluation, "warnGeneralMessages"))
+                    .undeterminedSpecificMessages(stringList(evaluation, "undeterminedSpecificMessages"))
+                    .undeterminedGeneralMessages(stringList(evaluation, "undeterminedGeneralMessages"))
+                    .failSpecificMessages(stringList(evaluation, "failSpecificMessages"))
+                    .failGeneralMessages(stringList(evaluation, "failGeneralMessages"))
                     .build();
         }
 

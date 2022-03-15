@@ -29,12 +29,12 @@ public class HasLongQTSyndrome implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(LONG_QT_SYNDROME_DOID)) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has long QT syndrome")
+                            .addPassSpecificMessages("Patient has long QT syndrome")
                             .build();
                 }
             }
         }
 
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailMessages("Patient has no long QT syndrome").build();
+        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailSpecificMessages("Patient has no long QT syndrome").build();
     }
 }

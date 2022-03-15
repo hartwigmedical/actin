@@ -32,7 +32,7 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
         if (pulseOxymetries.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No pulse oxymetries readouts found")
+                    .addUndeterminedSpecificMessages("No pulse oxymetries readouts found")
                     .build();
         }
 
@@ -47,9 +47,9 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry);
+            builder.addFailSpecificMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has average pulse oxymetry exceeding " + minAvgPulseOxymetry);
+            builder.addPassSpecificMessages("Patient has average pulse oxymetry exceeding " + minAvgPulseOxymetry);
         }
 
         return builder.build();

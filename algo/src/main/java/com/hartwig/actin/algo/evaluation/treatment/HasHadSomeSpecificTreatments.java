@@ -39,9 +39,9 @@ public class HasHadSomeSpecificTreatments implements EvaluationFunction {
         EvaluationResult result = treatments.size() >= minTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received " + Format.concat(names) + " at least " + minTreatmentLines + " times");
+            builder.addFailSpecificMessages("Patient has not received " + Format.concat(names) + " at least " + minTreatmentLines + " times");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has received " + Format.concat(treatments) + " " + treatments.size() + " times");
+            builder.addPassSpecificMessages("Patient has received " + Format.concat(treatments) + " " + treatments.size() + " times");
         }
 
         return builder.build();

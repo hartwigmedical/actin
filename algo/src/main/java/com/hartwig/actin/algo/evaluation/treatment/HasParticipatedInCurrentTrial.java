@@ -18,7 +18,7 @@ public class HasParticipatedInCurrentTrial implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently it is assumed that patient has not participated to current trial before")
+                .addPassSpecificMessages("Currently it is assumed that patient has not participated to current trial before")
                 .build();
     }
 }

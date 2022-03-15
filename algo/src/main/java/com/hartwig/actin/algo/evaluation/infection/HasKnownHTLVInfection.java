@@ -31,7 +31,7 @@ public class HasKnownHTLVInfection implements EvaluationFunction {
                 if (priorOtherCondition.name().toLowerCase().contains(htlvTerm.toLowerCase())) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has known HTLV infection: " + priorOtherCondition.name())
+                            .addPassSpecificMessages("Patient has known HTLV infection: " + priorOtherCondition.name())
                             .build();
                 }
             }
@@ -39,7 +39,7 @@ public class HasKnownHTLVInfection implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no known HTLV infection")
+                .addFailSpecificMessages("Patient has no known HTLV infection")
                 .build();
     }
 }

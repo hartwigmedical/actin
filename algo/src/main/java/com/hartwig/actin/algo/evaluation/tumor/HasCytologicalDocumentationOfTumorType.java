@@ -18,7 +18,7 @@ public class HasCytologicalDocumentationOfTumorType implements EvaluationFunctio
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently it is assumed that cytological documentation of tumor type has been done or can be done")
+                .addPassSpecificMessages("Currently it is assumed that cytological documentation of tumor type has been done or can be done")
                 .build();
     }
 }

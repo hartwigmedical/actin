@@ -24,16 +24,16 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         if (who == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("WHO status is missing")
+                    .addUndeterminedSpecificMessages("WHO status is missing")
                     .build();
         }
 
         EvaluationResult result = who <= maximumWHO ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")");
+            builder.addFailSpecificMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient WHO status " + who + " is within requested max (WHO " + maximumWHO + ")");
+            builder.addPassSpecificMessages("Patient WHO status " + who + " is within requested max (WHO " + maximumWHO + ")");
         }
 
         return builder.build();

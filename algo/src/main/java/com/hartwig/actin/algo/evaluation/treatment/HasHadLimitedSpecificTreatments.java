@@ -39,9 +39,9 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
         EvaluationResult result = treatments.size() <= maxTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has received " + Format.concat(names) + " more than " + maxTreatmentLines + " times");
+            builder.addFailSpecificMessages("Patient has received " + Format.concat(names) + " more than " + maxTreatmentLines + " times");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has received " + Format.concat(treatments) + " " + treatments.size() + " times");
+            builder.addPassSpecificMessages("Patient has received " + Format.concat(treatments) + " " + treatments.size() + " times");
         }
 
         return builder.build();

@@ -37,14 +37,14 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
         if (!medications.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
+                    .addPassSpecificMessages("Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
                             + categoryTermToFind)
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient currently does not get medication of category " + categoryTermToFind)
+                .addFailSpecificMessages("Patient currently does not get medication of category " + categoryTermToFind)
                 .build();
     }
 }

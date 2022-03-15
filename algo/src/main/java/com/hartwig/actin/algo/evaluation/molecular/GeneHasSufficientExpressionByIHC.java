@@ -38,7 +38,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
             if (hasSufficientExpression) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
+                        .addPassSpecificMessages("Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
                         .build();
             }
         }
@@ -46,9 +46,9 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
 
         if (!ihcTests.isEmpty()) {
-            builder.addFailMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)");
+            builder.addFailSpecificMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)");
         } else {
-            builder.addFailMessages("No test result found; gene " + gene + " has not been tested by IHC");
+            builder.addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC");
         }
 
         return builder.build();

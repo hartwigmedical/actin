@@ -17,7 +17,7 @@ public class IsLegallyInstitutionalized implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently assumed that patient is not legally institutionalized")
+                .addPassSpecificMessages("Currently assumed that patient is not legally institutionalized")
                 .build();
     }
 }

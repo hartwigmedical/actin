@@ -30,7 +30,7 @@ public class HasAnyLesion implements EvaluationFunction {
                 && hasLungLesions == null && otherLesions == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Data about lesions is missing")
+                    .addUndeterminedSpecificMessages("Data about lesions is missing")
                     .build();
         }
 
@@ -41,9 +41,9 @@ public class HasAnyLesion implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient does not have any lesions");
+            builder.addFailSpecificMessages("Patient does not have any lesions");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has at least one lesion");
+            builder.addPassSpecificMessages("Patient has at least one lesion");
         }
 
         return builder.build();

@@ -20,9 +20,9 @@ public class HasHadAnySurgery implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has had no recent surgeries");
+            builder.addFailSpecificMessages("Patient has had no recent surgeries");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has had at least one recent surgery");
+            builder.addPassSpecificMessages("Patient has had at least one recent surgery");
         }
 
         return builder.build();

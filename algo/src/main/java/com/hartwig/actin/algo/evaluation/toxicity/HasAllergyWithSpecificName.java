@@ -35,13 +35,13 @@ public class HasAllergyWithSpecificName implements EvaluationFunction {
         if (!allergies.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has allergy " + Format.concat(allergies))
+                    .addPassSpecificMessages("Patient has allergy " + Format.concat(allergies))
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no allergies with name " + termToFind)
+                .addFailSpecificMessages("Patient has no allergies with name " + termToFind)
                 .build();
     }
 }

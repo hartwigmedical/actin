@@ -31,7 +31,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
         if (hasMeasurableDisease == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Data regarding measurable disease is missing")
+                    .addUndeterminedSpecificMessages("Data regarding measurable disease is missing")
                     .build();
         }
 
@@ -44,12 +44,12 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has no measurable disease");
+            builder.addFailSpecificMessages("Patient has no measurable disease");
         } else if (result == EvaluationResult.WARN) {
-            builder.addPassMessages("Patient has measurable disease, "
+            builder.addPassSpecificMessages("Patient has measurable disease, "
                     + "but given the patient's tumor type uncertain if this has been evaluated against RECIST?");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has measurable disease");
+            builder.addPassSpecificMessages("Patient has measurable disease");
         }
 
         return builder.build();

@@ -28,9 +28,9 @@ public class CurrentlyGetsMedicationOfName implements EvaluationFunction {
         EvaluationResult result = hasReceivedMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient currently does not get medication with name " + Format.concat(termsToFind));
+            builder.addFailSpecificMessages("Patient currently does not get medication with name " + Format.concat(termsToFind));
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient currently gets medication with name " + Format.concat(termsToFind));
+            builder.addPassSpecificMessages("Patient currently gets medication with name " + Format.concat(termsToFind));
         }
 
         return builder.build();

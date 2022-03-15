@@ -34,9 +34,9 @@ public class HasHadLimitedTreatmentsWithCategory implements EvaluationFunction {
         EvaluationResult result = numTreatmentLines <= maxTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has received more than " + maxTreatmentLines + " lines of " + category.display());
+            builder.addFailSpecificMessages("Patient has received more than " + maxTreatmentLines + " lines of " + category.display());
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has received at most " + maxTreatmentLines + " lines of " + category.display());
+            builder.addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + category.display());
         }
 
         return builder.build();

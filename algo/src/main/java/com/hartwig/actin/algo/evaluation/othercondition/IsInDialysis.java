@@ -18,7 +18,7 @@ public class IsInDialysis implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently assumed that patient won't be in dialysis")
+                .addPassSpecificMessages("Currently assumed that patient won't be in dialysis")
                 .build();
     }
 }

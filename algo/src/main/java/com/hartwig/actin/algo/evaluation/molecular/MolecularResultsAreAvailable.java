@@ -18,7 +18,7 @@ public class MolecularResultsAreAvailable implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
-                .addPassMessages("Currently it is assumed that there are always molecular results available")
+                .addPassSpecificMessages("Currently it is assumed that there are always molecular results available")
                 .build();
     }
 }

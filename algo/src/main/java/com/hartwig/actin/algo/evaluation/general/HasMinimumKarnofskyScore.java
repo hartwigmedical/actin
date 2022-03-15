@@ -18,7 +18,7 @@ public class HasMinimumKarnofskyScore implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Karnofsky score is currently not evaluated")
+                .addPassSpecificMessages("Karnofsky score is currently not evaluated")
                 .build();
     }
 }

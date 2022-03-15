@@ -32,18 +32,18 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
         if (convertedValue == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
+                    .addUndeterminedSpecificMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
                     .build();
         }
 
         EvaluationResult result = LabEvaluation.evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue);
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(labValue.code() + " is insufficient");
+            builder.addFailSpecificMessages(labValue.code() + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedMessages(labValue.code() + " sufficiency could not be evaluated");
+            builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated");
         } else if (result.isPass()) {
-            builder.addPassMessages(labValue.code() + " is sufficient");
+            builder.addPassSpecificMessages(labValue.code() + " is sufficient");
         }
 
         return builder.build();

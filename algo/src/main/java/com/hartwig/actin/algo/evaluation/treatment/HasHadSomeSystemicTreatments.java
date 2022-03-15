@@ -30,9 +30,9 @@ public class HasHadSomeSystemicTreatments implements EvaluationFunction {
         EvaluationResult result = systemicCount >= minSystemicTreatments ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments");
+            builder.addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient received at least " + minSystemicTreatments + " systemic treatments");
+            builder.addPassSpecificMessages("Patient received at least " + minSystemicTreatments + " systemic treatments");
         }
 
         return builder.build();

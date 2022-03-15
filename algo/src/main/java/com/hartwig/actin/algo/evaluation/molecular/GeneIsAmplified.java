@@ -23,13 +23,13 @@ public class GeneIsAmplified implements EvaluationFunction {
         if (record.molecular().amplifiedGenes().contains(gene)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Amplification detected of gene " + gene)
+                    .addPassSpecificMessages("Amplification detected of gene " + gene)
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No amplification detected of gene " + gene)
+                .addFailSpecificMessages("No amplification detected of gene " + gene)
                 .build();
     }
 }

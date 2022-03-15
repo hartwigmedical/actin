@@ -51,7 +51,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has potential absorption difficulties due to " + doidModel.term(doid))
+                            .addPassSpecificMessages("Patient has potential absorption difficulties due to " + doidModel.term(doid))
                             .build();
                 }
             }
@@ -62,7 +62,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                 if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has potential absorption difficulties due to " + complication.name())
+                            .addPassSpecificMessages("Patient has potential absorption difficulties due to " + complication.name())
                             .build();
                 }
             }
@@ -74,7 +74,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                     if (toxicity.name().toLowerCase().contains(termToFind.toLowerCase())) {
                         return ImmutableEvaluation.builder()
                                 .result(EvaluationResult.PASS)
-                                .addPassMessages("Patient has potential absorption difficulties due to " + toxicity.name())
+                                .addPassSpecificMessages("Patient has potential absorption difficulties due to " + toxicity.name())
                                 .build();
                     }
                 }
@@ -83,7 +83,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No potential reasons for absorption problems identified")
+                .addFailSpecificMessages("No potential reasons for absorption problems identified")
                 .build();
     }
 }

@@ -30,9 +30,9 @@ public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
         EvaluationResult result = systemicCount <= maxSystemicTreatments ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has received more than " + maxSystemicTreatments + " systemic treatments");
+            builder.addFailSpecificMessages("Patient has received more than " + maxSystemicTreatments + " systemic treatments");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has received at most " + maxSystemicTreatments + " systemic treatments");
+            builder.addPassSpecificMessages("Patient has received at most " + maxSystemicTreatments + " systemic treatments");
         }
 
         return builder.build();

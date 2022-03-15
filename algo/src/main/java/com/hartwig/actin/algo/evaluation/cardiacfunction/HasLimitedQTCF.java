@@ -26,7 +26,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
         if (ecg == null || ecg.qtcfValue() == null || ecg.qtcfUnit() == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No measurement found for QTCF")
+                    .addUndeterminedSpecificMessages("No measurement found for QTCF")
                     .build();
         }
 
@@ -36,16 +36,16 @@ public class HasLimitedQTCF implements EvaluationFunction {
         if (!unit.equalsIgnoreCase(EXPECTED_QTCF_UNIT)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("QTCF measure not in '" + EXPECTED_QTCF_UNIT + "': " + unit)
+                    .addUndeterminedSpecificMessages("QTCF measure not in '" + EXPECTED_QTCF_UNIT + "': " + unit)
                     .build();
         }
 
         EvaluationResult result = Double.compare(value, maxQTCF) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("QTCF of " + value + " " + unit + " exceeds maximum threshold of " + maxQTCF);
+            builder.addFailSpecificMessages("QTCF of " + value + " " + unit + " exceeds maximum threshold of " + maxQTCF);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("QTCF of " + value + " " + unit + " is below maximum threshold of " + maxQTCF);
+            builder.addPassSpecificMessages("QTCF of " + value + " " + unit + " is below maximum threshold of " + maxQTCF);
         }
 
         return builder.build();

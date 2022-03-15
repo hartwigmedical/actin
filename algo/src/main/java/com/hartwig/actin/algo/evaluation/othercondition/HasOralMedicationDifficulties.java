@@ -32,7 +32,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
                 if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has potential oral medication difficulties due to " + complication.name())
+                            .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
                             .build();
                 }
             }
@@ -40,7 +40,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No potential reasons for difficulty with oral medication identified")
+                .addFailSpecificMessages("No potential reasons for difficulty with oral medication identified")
                 .build();
     }
 }

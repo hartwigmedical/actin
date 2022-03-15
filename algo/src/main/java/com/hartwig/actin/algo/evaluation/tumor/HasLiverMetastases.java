@@ -21,7 +21,7 @@ public class HasLiverMetastases implements EvaluationFunction {
         if (hasLiverMetastases == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Data regarding presence of liver metastases is missing")
+                    .addUndeterminedSpecificMessages("Data regarding presence of liver metastases is missing")
                     .build();
         }
 
@@ -29,9 +29,9 @@ public class HasLiverMetastases implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("No liver metastases present");
+            builder.addFailSpecificMessages("No liver metastases present");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Liver metastases are present");
+            builder.addPassSpecificMessages("Liver metastases are present");
         }
 
         return builder.build();

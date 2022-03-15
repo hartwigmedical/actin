@@ -35,16 +35,16 @@ public class HasAdvancedCancer implements EvaluationFunction {
         if (stage == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Tumor stage details are missing")
+                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
                     .build();
         }
 
         EvaluationResult result = STAGES_CONSIDERED_ADVANCED.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor stage " + stage + " is not considered advanced (III/IV)");
+            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered advanced (III/IV)");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor stage " + stage + " is considered advanced (III/IV)");
+            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered advanced (III/IV)");
         }
 
         return builder.build();

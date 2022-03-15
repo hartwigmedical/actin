@@ -31,7 +31,7 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
         if (weights.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No body weights found")
+                    .addUndeterminedSpecificMessages("No body weights found")
                     .build();
         }
 
@@ -42,7 +42,7 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
         if (!mostRecent.unit().equalsIgnoreCase(EXPECTED_UNIT)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("Most recent body weight not measured in " + EXPECTED_UNIT)
+                    .addUndeterminedSpecificMessages("Most recent body weight not measured in " + EXPECTED_UNIT)
                     .build();
         }
 
@@ -50,9 +50,9 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has body weight below " + minBodyWeight);
+            builder.addFailSpecificMessages("Patient has body weight below " + minBodyWeight);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Patient has body weight above " + minBodyWeight);
+            builder.addPassSpecificMessages("Patient has body weight above " + minBodyWeight);
         }
 
         return builder.build();

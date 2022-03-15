@@ -41,13 +41,13 @@ public class HasAllergyToTaxanes implements EvaluationFunction {
         if (!allergies.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has allergy to a taxane: " + Format.concat(allergies))
+                    .addPassSpecificMessages("Patient has allergy to a taxane: " + Format.concat(allergies))
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no known allergy to taxanes")
+                .addFailSpecificMessages("Patient has no known allergy to taxanes")
                 .build();
     }
 }

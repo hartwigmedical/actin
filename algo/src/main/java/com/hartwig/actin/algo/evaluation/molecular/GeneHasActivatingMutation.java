@@ -23,13 +23,13 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         if (record.molecular().activatedGenes().contains(gene)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Activating mutation detected in gene " + gene)
+                    .addPassSpecificMessages("Activating mutation detected in gene " + gene)
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No activating mutation detected in gene " + gene)
+                .addFailSpecificMessages("No activating mutation detected in gene " + gene)
                 .build();
     }
 }

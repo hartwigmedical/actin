@@ -30,14 +30,14 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
             if (minDate.isBefore(surgery.endDate())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
+                        .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has not had surgery after " + DATE_FORMAT.format(minDate))
+                .addFailSpecificMessages("Patient has not had surgery after " + DATE_FORMAT.format(minDate))
                 .build();
     }
 }

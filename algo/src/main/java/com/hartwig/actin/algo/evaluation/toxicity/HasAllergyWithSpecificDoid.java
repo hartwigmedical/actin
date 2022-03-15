@@ -41,13 +41,13 @@ public class HasAllergyWithSpecificDoid implements EvaluationFunction {
         if (!allergies.isEmpty()) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
-                    .addPassMessages("Patient has allergy " + Format.concat(allergies))
+                    .addPassSpecificMessages("Patient has allergy " + Format.concat(allergies))
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no allergies with doid" + doidModel.term(doidToFind))
+                .addFailSpecificMessages("Patient has no allergies with doid" + doidModel.term(doidToFind))
                 .build();
     }
 }

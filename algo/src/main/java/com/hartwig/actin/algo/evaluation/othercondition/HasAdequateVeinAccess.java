@@ -18,7 +18,7 @@ public class HasAdequateVeinAccess implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently adequate vein access cannot be determined")
+                .addUndeterminedSpecificMessages("Currently adequate vein access cannot be determined")
                 .build();
     }
 }

@@ -23,11 +23,11 @@ public class HasLimitedLabValueULN implements LabEvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(labValue.code() + " exceeds maximum ULN");
+            builder.addFailSpecificMessages(labValue.code() + " exceeds maximum ULN");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedMessages(labValue.code() + " could not be evaluated against maximum ULN");
+            builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated against maximum ULN");
         } else if (result.isPass()) {
-            builder.addPassMessages(labValue.code() + " does not exceed maximum ULN");
+            builder.addPassSpecificMessages(labValue.code() + " does not exceed maximum ULN");
         }
 
         return builder.build();

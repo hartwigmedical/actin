@@ -46,17 +46,17 @@ public class And implements EvaluationFunction {
 
         for (Evaluation eval : evaluations) {
             if (eval.result() == worst) {
-                passMessages.addAll(eval.passMessages());
-                undeterminedMessages.addAll(eval.undeterminedMessages());
-                failMessages.addAll(eval.failMessages());
+                passMessages.addAll(eval.passSpecificMessages());
+                undeterminedMessages.addAll(eval.undeterminedSpecificMessages());
+                failMessages.addAll(eval.failSpecificMessages());
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(worst)
-                .passMessages(passMessages)
-                .undeterminedMessages(undeterminedMessages)
-                .failMessages(failMessages)
+                .passSpecificMessages(passMessages)
+                .undeterminedSpecificMessages(undeterminedMessages)
+                .failSpecificMessages(failMessages)
                 .build();
     }
 }

@@ -25,14 +25,14 @@ public class GeneIsDeleted implements EvaluationFunction {
             if (inactivatedGene.gene().equals(gene) && inactivatedGene.hasBeenDeleted()) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Deletion detected of gene " + gene)
+                        .addPassSpecificMessages("Deletion detected of gene " + gene)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("No deletion detected of gene " + gene)
+                .addFailSpecificMessages("No deletion detected of gene " + gene)
                 .build();
     }
 }

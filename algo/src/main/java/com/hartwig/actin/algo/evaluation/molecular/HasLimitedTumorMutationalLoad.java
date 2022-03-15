@@ -23,7 +23,7 @@ public class HasLimitedTumorMutationalLoad implements EvaluationFunction {
         if (tumorMutationalLoad == null) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No tumor mutational load is known")
+                    .addUndeterminedSpecificMessages("No tumor mutational load is known")
                     .build();
         }
 
@@ -31,9 +31,9 @@ public class HasLimitedTumorMutationalLoad implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Tumor mutational load exceeds " + maxTumorMutationalLoad);
+            builder.addFailSpecificMessages("Tumor mutational load exceeds " + maxTumorMutationalLoad);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassMessages("Tumor mutational load does not exceed " + maxTumorMutationalLoad);
+            builder.addPassSpecificMessages("Tumor mutational load does not exceed " + maxTumorMutationalLoad);
         }
 
         return builder.build();

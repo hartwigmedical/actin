@@ -18,7 +18,7 @@ public class CanUseAdequateAnticonception implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Assumed that patient will adhere to relevant anticonception prescriptions")
+                .addPassSpecificMessages("Assumed that patient will adhere to relevant anticonception prescriptions")
                 .build();
     }
 }

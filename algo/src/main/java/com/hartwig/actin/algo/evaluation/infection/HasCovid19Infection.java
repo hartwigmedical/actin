@@ -18,7 +18,7 @@ public class HasCovid19Infection implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Currently not determined if patient has Covid-19 infection")
+                .addUndeterminedSpecificMessages("Currently not determined if patient has Covid-19 infection")
                 .build();
     }
 }

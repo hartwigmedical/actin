@@ -37,7 +37,7 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
         if (mostRecentTotal == null || mostRecentTotal.date().isBefore(minValidDate)) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedMessages("No recent measurement found for total bilirubin")
+                    .addUndeterminedSpecificMessages("No recent measurement found for total bilirubin")
                     .build();
         }
 
@@ -47,9 +47,9 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         String messageStart = labValue.code() + " as percentage of " + mostRecentTotal.code();
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(messageStart + " exceeds " + maxPercentage + "%");
+            builder.addFailSpecificMessages(messageStart + " exceeds " + maxPercentage + "%");
         } else if (result.isPass()) {
-            builder.addPassMessages(messageStart + "is below maximum percentage of " + maxPercentage + "%");
+            builder.addPassSpecificMessages(messageStart + "is below maximum percentage of " + maxPercentage + "%");
         }
 
         return builder.build();

@@ -18,7 +18,7 @@ public class IsTreatedInHospital implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassMessages("Currently exact hospital of treatment is not determined")
+                .addPassSpecificMessages("Currently exact hospital of treatment is not determined")
                 .build();
     }
 }

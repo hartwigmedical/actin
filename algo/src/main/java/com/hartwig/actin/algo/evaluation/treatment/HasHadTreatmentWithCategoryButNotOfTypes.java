@@ -46,9 +46,9 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements EvaluationFunct
         EvaluationResult result = hasHadValidTreatment ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
+            builder.addFailSpecificMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
+            builder.addPassSpecificMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
         }
 
         return builder.build();

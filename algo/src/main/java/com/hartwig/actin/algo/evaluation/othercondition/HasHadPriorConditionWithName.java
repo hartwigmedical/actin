@@ -25,14 +25,14 @@ public class HasHadPriorConditionWithName implements EvaluationFunction {
             if (priorOtherCondition.name().toLowerCase().contains(nameToFind.toLowerCase())) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has history of " + nameToFind)
+                        .addPassSpecificMessages("Patient has history of " + nameToFind)
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no history of " + nameToFind)
+                .addFailSpecificMessages("Patient has no history of " + nameToFind)
                 .build();
     }
 }

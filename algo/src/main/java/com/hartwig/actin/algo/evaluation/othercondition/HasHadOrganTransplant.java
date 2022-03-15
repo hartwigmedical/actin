@@ -25,14 +25,14 @@ public class HasHadOrganTransplant implements EvaluationFunction {
             if (priorOtherCondition.category().equals(ORGAN_TRANSPLANT_CATEGORY)) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Patient has had an organ transplant")
+                        .addPassSpecificMessages("Patient has had an organ transplant")
                         .build();
             }
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has not had an organ transplant")
+                .addFailSpecificMessages("Patient has not had an organ transplant")
                 .build();
     }
 }

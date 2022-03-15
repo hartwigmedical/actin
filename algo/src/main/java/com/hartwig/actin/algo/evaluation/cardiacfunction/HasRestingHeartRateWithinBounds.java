@@ -18,7 +18,7 @@ public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedMessages("Resting heart rate not captured by ACTIN")
+                .addUndeterminedSpecificMessages("Resting heart rate not captured by ACTIN")
                 .build();
     }
 }

@@ -30,7 +30,7 @@ public class HasHadSpecificPriorCondition implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
-                            .addPassMessages("Patient has other condition belonging to " + doidModel.term(doidToFind))
+                            .addPassSpecificMessages("Patient has other condition belonging to " + doidModel.term(doidToFind))
                             .build();
                 }
             }
@@ -38,7 +38,7 @@ public class HasHadSpecificPriorCondition implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
-                .addFailMessages("Patient has no other condition belonging to " + doidModel.term(doidToFind))
+                .addFailSpecificMessages("Patient has no other condition belonging to " + doidModel.term(doidToFind))
                 .build();
     }
 }

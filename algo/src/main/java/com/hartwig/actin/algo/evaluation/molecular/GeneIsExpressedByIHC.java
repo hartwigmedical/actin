@@ -40,7 +40,7 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
             if (isExpressed) {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
-                        .addPassMessages("Gene " + gene + " has been determined to be expressed (by IHC)")
+                        .addPassSpecificMessages("Gene " + gene + " has been determined to be expressed (by IHC)")
                         .build();
             }
         }
@@ -48,9 +48,9 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
 
         if (!ihcTests.isEmpty()) {
-            builder.addFailMessages("No expression of gene " + gene + " detected by prior IHC test(s)");
+            builder.addFailSpecificMessages("No expression of gene " + gene + " detected by prior IHC test(s)");
         } else {
-            builder.addFailMessages("No test result found; gene " + gene + " has not been tested by IHC");
+            builder.addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC");
         }
 
         return builder.build();
