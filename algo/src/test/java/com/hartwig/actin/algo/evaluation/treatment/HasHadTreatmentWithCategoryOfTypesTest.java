@@ -12,11 +12,12 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.junit.Test;
 
-public class HasHadTreatmentWithCategoryOfTypeTest {
+public class HasHadTreatmentWithCategoryOfTypesTest {
 
     @Test
     public void canEvaluate() {
-        HasHadTreatmentWithCategoryOfType function = new HasHadTreatmentWithCategoryOfType(TreatmentCategory.TARGETED_THERAPY, "Anti-EGFR");
+        HasHadTreatmentWithCategoryOfTypes function =
+                new HasHadTreatmentWithCategoryOfTypes(TreatmentCategory.TARGETED_THERAPY, Lists.newArrayList("Anti-EGFR"));
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();

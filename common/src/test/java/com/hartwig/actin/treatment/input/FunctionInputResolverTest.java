@@ -27,8 +27,6 @@ import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneString;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneStringOneInteger;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -153,22 +151,6 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentOneStringInput() {
-        EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_ONE_STRING);
-
-        String treatment = TreatmentInput.IMMUNOTHERAPY.display();
-        EligibilityFunction valid = create(rule, Lists.newArrayList(treatment, "string"));
-        assertTrue(FunctionInputResolver.hasValidInputs(valid));
-
-        OneTreatmentOneString inputs = FunctionInputResolver.createOneTreatmentOneStringInput(valid);
-        assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
-        assertEquals("string", inputs.string());
-
-        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
-        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment input", "test"))));
-    }
-
-    @Test
     public void canResolveFunctionsWithOneTreatmentManyStringsInput() {
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_MANY_STRINGS);
 
@@ -201,23 +183,6 @@ public class FunctionInputResolverTest {
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment input", "test"))));
-    }
-
-    @Test
-    public void canResolveFunctionsWithOneTreatmentOneStringOneIntegerInput() {
-        EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_ONE_STRING_ONE_INTEGER);
-
-        String treatment = TreatmentInput.IMMUNOTHERAPY.display();
-        EligibilityFunction valid = create(rule, Lists.newArrayList(treatment, "hello", "1"));
-        assertTrue(FunctionInputResolver.hasValidInputs(valid));
-
-        OneTreatmentOneStringOneInteger inputs = FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(valid);
-        assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
-        assertEquals("hello", inputs.string());
-        assertEquals(1, inputs.integer());
-
-        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
-        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList(treatment, "1", "hello"))));
     }
 
     @Test

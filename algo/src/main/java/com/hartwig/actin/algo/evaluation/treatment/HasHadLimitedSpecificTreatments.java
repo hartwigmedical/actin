@@ -26,7 +26,7 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> treatments = Sets.newHashSet();
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             for (String name : names) {

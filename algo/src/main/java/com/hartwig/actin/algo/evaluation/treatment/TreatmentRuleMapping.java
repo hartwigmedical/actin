@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
@@ -12,8 +11,6 @@ import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneString;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneStringOneInteger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,12 +31,12 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypeCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, hasHadLimitedTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES,
-                hasHadSomeTreatmentsOfCategoryWithTypeCreator());
+                hasHadSomeTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
@@ -109,10 +106,10 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
+    private static FunctionCreator hasHadTreatmentCategoryOfTypesCreator() {
         return function -> {
-            OneTreatmentOneString input = FunctionInputResolver.createOneTreatmentOneStringInput(function);
-            return new HasHadTreatmentWithCategoryOfType(input.treatment().mappedCategory(), input.string());
+            OneTreatmentManyStrings input = FunctionInputResolver.createOneTreatmentManyStringsInput(function);
+            return new HasHadTreatmentWithCategoryOfTypes(input.treatment().mappedCategory(), input.strings());
         };
     }
 
@@ -149,20 +146,10 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypeCreator() {
+    private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypesCreator() {
         return function -> {
-            OneTreatmentOneStringOneInteger input = FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(function);
-            return new HasHadSomeTreatmentsWithCategoryOfType(input.treatment().mappedCategory(), input.string(), input.integer());
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypeCreator() {
-        return function -> {
-            OneTreatmentOneStringOneInteger input = FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(function);
-            return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(),
-                    Lists.newArrayList(input.string()),
-                    input.integer());
+            OneTreatmentManyStringsOneInteger input = FunctionInputResolver.createOneTreatmentManyStringsOneIntegerInput(function);
+            return new HasHadSomeTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(), input.strings(), input.integer());
         };
     }
 

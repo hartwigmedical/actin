@@ -22,7 +22,7 @@ public class CurrentlyGetsMedicationOfName implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasReceivedMedication = !MedicationFilter.withAnyTermInName(record.clinical().medications(), termsToFind).isEmpty();
 
         EvaluationResult result = hasReceivedMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;

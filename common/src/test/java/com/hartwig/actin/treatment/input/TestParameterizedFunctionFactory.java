@@ -3,14 +3,13 @@ package com.hartwig.actin.treatment.input;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
+import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 
@@ -59,22 +58,16 @@ public final class TestParameterizedFunctionFactory {
                 return Lists.newArrayList("1", "2");
             }
             case ONE_TREATMENT: {
-                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY));
-            }
-            case ONE_TREATMENT_ONE_STRING: {
-                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string");
+                return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display());
             }
             case ONE_TREATMENT_MANY_STRINGS: {
-                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string1;string2");
+                return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), "string1;string2");
             }
             case ONE_TREATMENT_ONE_INTEGER: {
-                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "1");
-            }
-            case ONE_TREATMENT_ONE_STRING_ONE_INTEGER: {
-                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string", "1");
+                return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), "1");
             }
             case ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
-                return Lists.newArrayList(TreatmentCategoryResolver.toString(TreatmentCategory.IMMUNOTHERAPY), "string1;string2", "1");
+                return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), "string1;string2", "1");
             }
             case ONE_TUMOR_TYPE: {
                 return Lists.newArrayList(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display());

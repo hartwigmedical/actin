@@ -18,8 +18,6 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneString;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneStringOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
@@ -29,8 +27,6 @@ import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneString;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneStringOneInteger;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoStrings;
@@ -102,20 +98,12 @@ public final class FunctionInputResolver {
                     createOneTreatmentInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_ONE_STRING: {
-                    createOneTreatmentOneStringInput(function);
-                    return true;
-                }
                 case ONE_TREATMENT_MANY_STRINGS: {
                     createOneTreatmentManyStringsInput(function);
                     return true;
                 }
                 case ONE_TREATMENT_ONE_INTEGER: {
                     createOneTreatmentOneIntegerInput(function);
-                    return true;
-                }
-                case ONE_TREATMENT_ONE_STRING_ONE_INTEGER: {
-                    createOneTreatmentOneStringOneIntegerInput(function);
                     return true;
                 }
                 case ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
@@ -204,16 +192,6 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTreatmentOneString createOneTreatmentOneStringInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_STRING, 2);
-
-        return ImmutableOneTreatmentOneString.builder()
-                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
-                .string((String) function.parameters().get(1))
-                .build();
-    }
-
-    @NotNull
     public static OneTreatmentManyStrings createOneTreatmentManyStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_MANY_STRINGS, 2);
 
@@ -230,17 +208,6 @@ public final class FunctionInputResolver {
         return ImmutableOneTreatmentOneInteger.builder()
                 .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
                 .integer(Integer.parseInt((String) function.parameters().get(1)))
-                .build();
-    }
-
-    @NotNull
-    public static OneTreatmentOneStringOneInteger createOneTreatmentOneStringOneIntegerInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_STRING_ONE_INTEGER, 3);
-
-        return ImmutableOneTreatmentOneStringOneInteger.builder()
-                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
-                .string((String) function.parameters().get(1))
-                .integer(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
     }
 

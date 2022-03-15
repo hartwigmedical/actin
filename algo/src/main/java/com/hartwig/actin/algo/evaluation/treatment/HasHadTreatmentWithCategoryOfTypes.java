@@ -1,47 +1,50 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSomeTreatmentsWithCategoryOfType implements EvaluationFunction {
+public class HasHadTreatmentWithCategoryOfTypes implements EvaluationFunction {
 
     @NotNull
     private final TreatmentCategory category;
     @NotNull
-    private final String type;
-    private final int minTreatmentLines;
+    private final List<String> types;
 
-    HasHadSomeTreatmentsWithCategoryOfType(@NotNull final TreatmentCategory category, @NotNull final String type,
-            final int minTreatmentLines) {
+    HasHadTreatmentWithCategoryOfTypes(@NotNull final TreatmentCategory category, @NotNull final List<String> types) {
         this.category = category;
-        this.type = type;
-        this.minTreatmentLines = minTreatmentLines;
+        this.types = types;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        int numTreatmentLines = 0;
+        boolean hasHadValidTreatment = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.categories().contains(category) && TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                numTreatmentLines++;
+            if (treatment.categories().contains(category)) {
+                for (String type : types) {
+                    if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
+                        hasHadValidTreatment = true;
+                    }
+                }
             }
         }
 
-        EvaluationResult result = numTreatmentLines >= minTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasHadValidTreatment ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages(
-                    "Patient has not received at least " + minTreatmentLines + " lines of " + type + " " + category.display());
+            builder.addFailMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has received at least " + minTreatmentLines + " lines of " + type + " " + category.display());
+            builder.addPassMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment");
         }
 
         return builder.build();
