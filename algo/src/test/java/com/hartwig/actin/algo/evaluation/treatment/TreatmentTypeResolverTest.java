@@ -20,7 +20,9 @@ public class TreatmentTypeResolverTest {
                 .targetedType("targeted")
                 .hormoneType("hormone")
                 .radioType("radio")
-                .transplantType("transplant");
+                .carTType("car-t")
+                .transplantType("transplant")
+                .supportiveType("supportive");
 
         PriorTumorTreatment chemo = builder.categories(Lists.newArrayList(TreatmentCategory.CHEMOTHERAPY)).build();
         assertTrue(TreatmentTypeResolver.isOfType(chemo, TreatmentCategory.CHEMOTHERAPY, "chemo"));
@@ -40,11 +42,19 @@ public class TreatmentTypeResolverTest {
 
         PriorTumorTreatment radio = builder.categories(Lists.newArrayList(TreatmentCategory.RADIOTHERAPY)).build();
         assertTrue(TreatmentTypeResolver.isOfType(radio, TreatmentCategory.RADIOTHERAPY, "radio"));
-        assertFalse(TreatmentTypeResolver.isOfType(radio, TreatmentCategory.RADIOTHERAPY, "transplant"));
+        assertFalse(TreatmentTypeResolver.isOfType(radio, TreatmentCategory.RADIOTHERAPY, "car-t"));
+
+        PriorTumorTreatment carT = builder.categories(Lists.newArrayList(TreatmentCategory.CAR_T)).build();
+        assertTrue(TreatmentTypeResolver.isOfType(carT, TreatmentCategory.CAR_T, "car-t"));
+        assertFalse(TreatmentTypeResolver.isOfType(carT, TreatmentCategory.CAR_T, "transplant"));
 
         PriorTumorTreatment transplant = builder.categories(Lists.newArrayList(TreatmentCategory.TRANSPLANTATION)).build();
         assertTrue(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "transplant"));
-        assertFalse(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "chemo"));
+        assertFalse(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "supportive"));
+
+        PriorTumorTreatment supportive = builder.categories(Lists.newArrayList(TreatmentCategory.SUPPORTIVE_TREATMENT)).build();
+        assertTrue(TreatmentTypeResolver.isOfType(supportive, TreatmentCategory.SUPPORTIVE_TREATMENT, "supportive"));
+        assertFalse(TreatmentTypeResolver.isOfType(supportive, TreatmentCategory.SUPPORTIVE_TREATMENT, "chemo"));
     }
 
     @Test

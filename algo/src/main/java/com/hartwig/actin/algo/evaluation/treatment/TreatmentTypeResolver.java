@@ -39,6 +39,12 @@ final class TreatmentTypeResolver {
             case TRANSPLANTATION: {
                 return treatment.transplantType();
             }
+            case SUPPORTIVE_TREATMENT: {
+                return treatment.supportiveType();
+            }
+            case CAR_T: {
+                return treatment.carTType();
+            }
             default: {
                 return null;
             }
