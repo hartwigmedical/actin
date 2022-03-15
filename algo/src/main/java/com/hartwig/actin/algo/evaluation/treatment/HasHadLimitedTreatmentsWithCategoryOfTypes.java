@@ -51,7 +51,7 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
                     + category.display());
-        } else if (result.isPass()) {
+        } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(
                     "Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " " + category.display());
         }

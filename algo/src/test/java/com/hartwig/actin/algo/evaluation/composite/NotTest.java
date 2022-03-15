@@ -2,16 +2,16 @@ package com.hartwig.actin.algo.evaluation.composite;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class NotTest {
@@ -21,8 +21,8 @@ public class NotTest {
     @Test
     public void canNegateEvaluation() {
         assertEvaluation(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.pass()).evaluate(TEST_PATIENT));
-        assertEvaluation(EvaluationResult.FAIL, new Not(TestEvaluationFunctionFactory.warn()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.PASS, new Not(TestEvaluationFunctionFactory.fail()).evaluate(TEST_PATIENT));
+        assertEvaluation(EvaluationResult.WARN, new Not(TestEvaluationFunctionFactory.warn()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.UNDETERMINED, new Not(TestEvaluationFunctionFactory.undetermined()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.NOT_IMPLEMENTED, new Not(TestEvaluationFunctionFactory.notImplemented()).evaluate(TEST_PATIENT));
         assertEvaluation(EvaluationResult.NOT_EVALUATED, new Not(TestEvaluationFunctionFactory.notEvaluated()).evaluate(TEST_PATIENT));
@@ -30,49 +30,67 @@ public class NotTest {
 
     @Test
     public void canFlipMessagesForPass() {
-        EvaluationFunction pass = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("pass")
-                .addUndeterminedSpecificMessages("undetermined")
-                .addFailSpecificMessages("fail")
-                .build();
+        Evaluation passed = create(EvaluationResult.PASS);
 
-        Evaluation result = new Not(pass).evaluate(TEST_PATIENT);
+        Evaluation result = new Not(record -> passed).evaluate(TEST_PATIENT);
 
-        assertTrue(result.failSpecificMessages().contains("pass"));
-        assertTrue(result.passSpecificMessages().contains("fail"));
-        assertTrue(result.undeterminedSpecificMessages().contains("undetermined"));
+        assertEquals(passed.passSpecificMessages(), result.failSpecificMessages());
+        assertEquals(passed.passGeneralMessages(), result.failGeneralMessages());
+        assertEquals(passed.failSpecificMessages(), result.passSpecificMessages());
+        assertEquals(passed.failGeneralMessages(), result.passGeneralMessages());
+
+        assertEquals(passed.undeterminedSpecificMessages(), result.undeterminedSpecificMessages());
+        assertEquals(passed.undeterminedGeneralMessages(), result.undeterminedGeneralMessages());
+        assertEquals(passed.warnSpecificMessages(), result.warnSpecificMessages());
+        assertEquals(passed.warnGeneralMessages(), result.warnGeneralMessages());
     }
 
     @Test
     public void canFlipMessagesForFail() {
-        EvaluationFunction fail = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addPassSpecificMessages("pass")
-                .addUndeterminedSpecificMessages("undetermined")
-                .addFailSpecificMessages("fail")
-                .build();
+        Evaluation failed = create(EvaluationResult.FAIL);
 
-        Evaluation result = new Not(fail).evaluate(TEST_PATIENT);
+        Evaluation result = new Not(record -> failed).evaluate(TEST_PATIENT);
 
-        assertTrue(result.failSpecificMessages().contains("pass"));
-        assertTrue(result.passSpecificMessages().contains("fail"));
-        assertTrue(result.undeterminedSpecificMessages().contains("undetermined"));
+        assertEquals(failed.passSpecificMessages(), result.failSpecificMessages());
+        assertEquals(failed.passGeneralMessages(), result.failGeneralMessages());
+        assertEquals(failed.failSpecificMessages(), result.passSpecificMessages());
+        assertEquals(failed.failGeneralMessages(), result.passGeneralMessages());
+
+        assertEquals(failed.undeterminedSpecificMessages(), result.undeterminedSpecificMessages());
+        assertEquals(failed.undeterminedGeneralMessages(), result.undeterminedGeneralMessages());
+        assertEquals(failed.warnSpecificMessages(), result.warnSpecificMessages());
+        assertEquals(failed.warnGeneralMessages(), result.warnGeneralMessages());
     }
 
     @Test
     public void canRetainMessagesForUndetermined() {
-        EvaluationFunction fail = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.UNDETERMINED)
-                .addPassSpecificMessages("pass")
-                .addUndeterminedSpecificMessages("undetermined")
-                .addFailSpecificMessages("fail")
+        Evaluation undetermined = create(EvaluationResult.UNDETERMINED);
+
+        Evaluation result = new Not(record -> undetermined).evaluate(TEST_PATIENT);
+
+        assertEquals(undetermined.passSpecificMessages(), result.passSpecificMessages());
+        assertEquals(undetermined.passGeneralMessages(), result.passGeneralMessages());
+        assertEquals(undetermined.failSpecificMessages(), result.failSpecificMessages());
+        assertEquals(undetermined.failGeneralMessages(), result.failGeneralMessages());
+
+        assertEquals(undetermined.undeterminedSpecificMessages(), result.undeterminedSpecificMessages());
+        assertEquals(undetermined.undeterminedGeneralMessages(), result.undeterminedGeneralMessages());
+        assertEquals(undetermined.warnSpecificMessages(), result.warnSpecificMessages());
+        assertEquals(undetermined.warnGeneralMessages(), result.warnGeneralMessages());
+    }
+
+    @NotNull
+    private static Evaluation create(@NotNull EvaluationResult result) {
+        return ImmutableEvaluation.builder()
+                .result(result)
+                .addPassSpecificMessages("pass specific")
+                .addPassGeneralMessages("pass general")
+                .addWarnSpecificMessages("warn specific")
+                .addWarnGeneralMessages("warn general")
+                .addUndeterminedSpecificMessages("undetermined specific")
+                .addUndeterminedGeneralMessages("undetermined general")
+                .addFailSpecificMessages("fail specific")
+                .addFailGeneralMessages("fail general")
                 .build();
-
-        Evaluation result = new Not(fail).evaluate(TEST_PATIENT);
-
-        assertTrue(result.failSpecificMessages().contains("fail"));
-        assertTrue(result.passSpecificMessages().contains("pass"));
-        assertTrue(result.undeterminedSpecificMessages().contains("undetermined"));
     }
 }

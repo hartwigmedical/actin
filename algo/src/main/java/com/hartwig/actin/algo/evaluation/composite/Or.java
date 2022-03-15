@@ -39,24 +39,21 @@ public class Or implements EvaluationFunction {
         if (best == null) {
             throw new IllegalStateException("Could not determine OR result for functions: " + functions);
         }
-
-        Set<String> passMessages = Sets.newHashSet();
-        Set<String> undeterminedMessages = Sets.newHashSet();
-        Set<String> failMessages = Sets.newHashSet();
-
+        
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(best);
         for (Evaluation eval : evaluations) {
             if (eval.result() == best) {
-                passMessages.addAll(eval.passSpecificMessages());
-                undeterminedMessages.addAll(eval.undeterminedSpecificMessages());
-                failMessages.addAll(eval.failSpecificMessages());
+                builder.addAllPassSpecificMessages(eval.passSpecificMessages());
+                builder.addAllPassGeneralMessages(eval.passGeneralMessages());
+                builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());
+                builder.addAllWarnGeneralMessages(eval.warnGeneralMessages());
+                builder.addAllUndeterminedSpecificMessages(eval.undeterminedSpecificMessages());
+                builder.addAllUndeterminedGeneralMessages(eval.undeterminedGeneralMessages());
+                builder.addAllFailSpecificMessages(eval.failSpecificMessages());
+                builder.addAllFailGeneralMessages(eval.failGeneralMessages());
             }
         }
 
-        return ImmutableEvaluation.builder()
-                .result(best)
-                .passSpecificMessages(passMessages)
-                .undeterminedSpecificMessages(undeterminedMessages)
-                .failSpecificMessages(failMessages)
-                .build();
+        return builder.build();
     }
 }

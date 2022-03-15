@@ -22,7 +22,7 @@ public class CurrentlyGetsAnyMedication implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient does not currently receive medication with status 'active'");
-        } else if (result.isPass()) {
+        } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient currently receives medication with status 'active'");
         }
 

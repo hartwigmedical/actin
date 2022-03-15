@@ -1,8 +1,5 @@
 package com.hartwig.actin.algo.evaluation.composite;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -25,34 +22,30 @@ public class WarnIf implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Evaluation evaluation = function.evaluate(record);
 
-        EvaluationResult updatedResult;
-        Set<String> passMessages = evaluation.passSpecificMessages();
-        Set<String> failMessages = evaluation.failSpecificMessages();
-        switch (evaluation.result()) {
-            case PASS:
-            case WARN:
-                updatedResult = EvaluationResult.WARN;
-                break;
-            case FAIL:
-                updatedResult = EvaluationResult.PASS;
-                passMessages = evaluation.failSpecificMessages();
-                failMessages = Sets.newHashSet();
-                break;
-            case NOT_IMPLEMENTED:
-            case UNDETERMINED:
-            case NOT_EVALUATED:
-                updatedResult = evaluation.result();
-                break;
-            default: {
-                throw new IllegalStateException("Could not determine output for WarnIf for evaluation result: " + evaluation.result());
-            }
+        if (evaluation.result() == EvaluationResult.PASS) {
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.WARN)
+                    .warnSpecificMessages(evaluation.passSpecificMessages())
+                    .warnGeneralMessages(evaluation.passGeneralMessages())
+                    .build();
         }
 
-        return ImmutableEvaluation.builder()
-                .result(updatedResult)
-                .passSpecificMessages(passMessages)
-                .undeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
-                .failSpecificMessages(failMessages)
-                .build();
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder()
+                .result(EvaluationResult.PASS)
+                .addAllPassSpecificMessages(evaluation.passSpecificMessages())
+                .addAllPassSpecificMessages(evaluation.warnSpecificMessages())
+                .addAllPassSpecificMessages(evaluation.undeterminedSpecificMessages())
+                .addAllPassSpecificMessages(evaluation.failSpecificMessages())
+                .addAllPassGeneralMessages(evaluation.passGeneralMessages())
+                .addAllPassGeneralMessages(evaluation.warnGeneralMessages())
+                .addAllPassGeneralMessages(evaluation.undeterminedGeneralMessages())
+                .addAllPassGeneralMessages(evaluation.failGeneralMessages());
+
+        if (evaluation.result() == EvaluationResult.NOT_IMPLEMENTED) {
+            builder.addPassGeneralMessages("not implemented");
+            builder.addPassSpecificMessages("not implemented");
+        }
+
+        return builder.build();
     }
 }

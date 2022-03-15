@@ -29,7 +29,7 @@ public class CurrentlyGetsMedicationOfName implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient currently does not get medication with name " + Format.concat(termsToFind));
-        } else if (result.isPass()) {
+        } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient currently gets medication with name " + Format.concat(termsToFind));
         }
 

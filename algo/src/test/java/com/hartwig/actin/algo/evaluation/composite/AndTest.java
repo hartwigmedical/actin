@@ -68,46 +68,44 @@ public class AndTest {
 
     @Test
     public void canRetainMessages() {
-        EvaluationFunction  function1 = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("fail 1")
-                .addUndeterminedSpecificMessages("undetermined 1")
-                .addPassSpecificMessages("pass 1")
-                .build();
-
-        EvaluationFunction function2 = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("fail 2")
-                .addUndeterminedSpecificMessages("undetermined 2")
-                .addPassSpecificMessages("pass 2")
-                .build();
-
-        EvaluationFunction function3 = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.PASS)
-                .addFailSpecificMessages("fail 3")
-                .addUndeterminedSpecificMessages("undetermined 3")
-                .addPassSpecificMessages("pass 3")
-                .build();
-
-        EvaluationFunction function4 = record -> ImmutableEvaluation.builder()
-                .result(EvaluationResult.PASS)
-                .addFailSpecificMessages("fail 4")
-                .addUndeterminedSpecificMessages("undetermined 4")
-                .addPassSpecificMessages("pass 4")
-                .build();
+        EvaluationFunction function1 = record -> create(EvaluationResult.FAIL, 1);
+        EvaluationFunction function2 = record -> create(EvaluationResult.FAIL, 2);
+        EvaluationFunction function3 = record -> create(EvaluationResult.PASS, 3);
+        EvaluationFunction function4 = record -> create(EvaluationResult.PASS, 4);
 
         Evaluation result = new And(Lists.newArrayList(function1, function2, function3, function4)).evaluate(TEST_PATIENT);
-        assertEquals(2, result.failSpecificMessages().size());
-        assertTrue(result.failSpecificMessages().contains("fail 1"));
-        assertTrue(result.failSpecificMessages().contains("fail 2"));
 
         assertEquals(2, result.passSpecificMessages().size());
-        assertTrue(result.passSpecificMessages().contains("pass 1"));
-        assertTrue(result.passSpecificMessages().contains("pass 2"));
+        assertTrue(result.passSpecificMessages().contains("pass specific 1"));
+        assertTrue(result.passSpecificMessages().contains("pass specific 2"));
+
+        assertEquals(2, result.passGeneralMessages().size());
+        assertTrue(result.passGeneralMessages().contains("pass general 1"));
+        assertTrue(result.passGeneralMessages().contains("pass general 2"));
+
+        assertEquals(2, result.warnSpecificMessages().size());
+        assertTrue(result.warnSpecificMessages().contains("warn specific 1"));
+        assertTrue(result.warnSpecificMessages().contains("warn specific 2"));
+
+        assertEquals(2, result.warnGeneralMessages().size());
+        assertTrue(result.warnGeneralMessages().contains("warn general 1"));
+        assertTrue(result.warnGeneralMessages().contains("warn general 2"));
+
+        assertEquals(2, result.failSpecificMessages().size());
+        assertTrue(result.failSpecificMessages().contains("fail specific 1"));
+        assertTrue(result.failSpecificMessages().contains("fail specific 2"));
+
+        assertEquals(2, result.failGeneralMessages().size());
+        assertTrue(result.failGeneralMessages().contains("fail general 1"));
+        assertTrue(result.failGeneralMessages().contains("fail general 2"));
 
         assertEquals(2, result.undeterminedSpecificMessages().size());
-        assertTrue(result.undeterminedSpecificMessages().contains("undetermined 1"));
-        assertTrue(result.undeterminedSpecificMessages().contains("undetermined 2"));
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined specific 1"));
+        assertTrue(result.undeterminedSpecificMessages().contains("undetermined specific 2"));
+
+        assertEquals(2, result.undeterminedGeneralMessages().size());
+        assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 1"));
+        assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -148,5 +146,20 @@ public class AndTest {
     @NotNull
     private static Evaluation evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
         return new And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);
+    }
+
+    @NotNull
+    private static Evaluation create(@NotNull EvaluationResult result, int index) {
+        return ImmutableEvaluation.builder()
+                .result(result)
+                .addPassSpecificMessages("pass specific " + index)
+                .addPassGeneralMessages("pass general " + index)
+                .addWarnSpecificMessages("warn specific " + index)
+                .addWarnGeneralMessages("warn general " + index)
+                .addUndeterminedSpecificMessages("undetermined specific " + index)
+                .addUndeterminedGeneralMessages("undetermined general " + index)
+                .addFailSpecificMessages("fail specific " + index)
+                .addFailGeneralMessages("fail general " + index)
+                .build();
     }
 }

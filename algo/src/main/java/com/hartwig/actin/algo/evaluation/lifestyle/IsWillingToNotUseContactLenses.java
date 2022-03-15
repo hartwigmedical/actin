@@ -18,7 +18,7 @@ public class IsWillingToNotUseContactLenses implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.WARN)
-                .addPassSpecificMessages("Currently assumed that patient is willing/able not to use contact lenses")
+                .addWarnSpecificMessages("Currently assumed that patient is willing/able not to use contact lenses")
                 .build();
     }
 }

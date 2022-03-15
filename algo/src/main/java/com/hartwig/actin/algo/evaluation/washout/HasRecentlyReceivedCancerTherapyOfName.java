@@ -47,7 +47,7 @@ public class HasRecentlyReceivedCancerTherapyOfName implements EvaluationFunctio
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received recent treatments with name " + Format.concat(namesToFind));
-        } else if (result.isPass()) {
+        } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has recently received treatment with medication " + nameFound);
         }
 

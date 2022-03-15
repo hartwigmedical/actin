@@ -25,30 +25,40 @@ public class Not implements EvaluationFunction {
         Evaluation evaluation = function.evaluate(record);
 
         EvaluationResult negatedResult;
-        Set<String> passMessages;
-        Set<String> failMessages;
-        if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.WARN) {
+        Set<String> passSpecificMessages;
+        Set<String> passGeneralMessages;
+        Set<String> failSpecificMessages;
+        Set<String> failGeneralMessages;
+        if (evaluation.result() == EvaluationResult.PASS) {
             negatedResult = EvaluationResult.FAIL;
-            passMessages = evaluation.failSpecificMessages();
-            failMessages = evaluation.passSpecificMessages();
+            passSpecificMessages = evaluation.failSpecificMessages();
+            passGeneralMessages = evaluation.failGeneralMessages();
+            failSpecificMessages = evaluation.passSpecificMessages();
+            failGeneralMessages = evaluation.passGeneralMessages();
         } else if (evaluation.result() == EvaluationResult.FAIL) {
             negatedResult = EvaluationResult.PASS;
-            passMessages = evaluation.failSpecificMessages();
-            failMessages = evaluation.passSpecificMessages();
-        } else if (evaluation.result() == EvaluationResult.UNDETERMINED || evaluation.result() == EvaluationResult.NOT_IMPLEMENTED
-                || evaluation.result() == EvaluationResult.NOT_EVALUATED) {
-            negatedResult = evaluation.result();
-            passMessages = evaluation.passSpecificMessages();
-            failMessages = evaluation.failSpecificMessages();
+            passSpecificMessages = evaluation.failSpecificMessages();
+            passGeneralMessages = evaluation.failGeneralMessages();
+            failSpecificMessages = evaluation.passSpecificMessages();
+            failGeneralMessages = evaluation.passGeneralMessages();
         } else {
-            throw new IllegalStateException("NOT function cannot negate evaluation: " + evaluation);
+            negatedResult = evaluation.result();
+            passSpecificMessages = evaluation.passSpecificMessages();
+            passGeneralMessages = evaluation.passGeneralMessages();
+            failSpecificMessages = evaluation.failSpecificMessages();
+            failGeneralMessages = evaluation.failGeneralMessages();
         }
 
         return ImmutableEvaluation.builder()
                 .result(negatedResult)
-                .passSpecificMessages(passMessages)
+                .passSpecificMessages(passSpecificMessages)
+                .passGeneralMessages(passGeneralMessages)
+                .warnSpecificMessages(evaluation.warnSpecificMessages())
+                .warnGeneralMessages(evaluation.warnGeneralMessages())
                 .undeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
-                .failSpecificMessages(failMessages)
+                .undeterminedGeneralMessages(evaluation.undeterminedGeneralMessages())
+                .failSpecificMessages(failSpecificMessages)
+                .failGeneralMessages(failGeneralMessages)
                 .build();
     }
 }

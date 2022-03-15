@@ -48,7 +48,7 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
         String messageStart = labValue.code() + " as percentage of " + mostRecentTotal.code();
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(messageStart + " exceeds " + maxPercentage + "%");
-        } else if (result.isPass()) {
+        } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(messageStart + "is below maximum percentage of " + maxPercentage + "%");
         }
 

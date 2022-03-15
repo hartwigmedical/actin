@@ -40,23 +40,20 @@ public class And implements EvaluationFunction {
             throw new IllegalStateException("Could not determine AND result for functions: " + functions);
         }
 
-        Set<String> passMessages = Sets.newHashSet();
-        Set<String> undeterminedMessages = Sets.newHashSet();
-        Set<String> failMessages = Sets.newHashSet();
-
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(worst);
         for (Evaluation eval : evaluations) {
             if (eval.result() == worst) {
-                passMessages.addAll(eval.passSpecificMessages());
-                undeterminedMessages.addAll(eval.undeterminedSpecificMessages());
-                failMessages.addAll(eval.failSpecificMessages());
+                builder.addAllPassSpecificMessages(eval.passSpecificMessages());
+                builder.addAllPassGeneralMessages(eval.passGeneralMessages());
+                builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());
+                builder.addAllWarnGeneralMessages(eval.warnGeneralMessages());
+                builder.addAllUndeterminedSpecificMessages(eval.undeterminedSpecificMessages());
+                builder.addAllUndeterminedGeneralMessages(eval.undeterminedGeneralMessages());
+                builder.addAllFailSpecificMessages(eval.failSpecificMessages());
+                builder.addAllFailGeneralMessages(eval.failGeneralMessages());
             }
         }
 
-        return ImmutableEvaluation.builder()
-                .result(worst)
-                .passSpecificMessages(passMessages)
-                .undeterminedSpecificMessages(undeterminedMessages)
-                .failSpecificMessages(failMessages)
-                .build();
+        return builder.build();
     }
 }

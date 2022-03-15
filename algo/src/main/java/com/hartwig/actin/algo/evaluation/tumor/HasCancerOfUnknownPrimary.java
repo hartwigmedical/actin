@@ -43,7 +43,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         if (doids.equals(Sets.newHashSet(CANCER_DOID))) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.WARN)
-                    .addPassSpecificMessages("Patient has tumor type 'cancer' configured")
+                    .addWarnSpecificMessages("Patient has tumor type 'cancer' configured")
                     .build();
         }
 
