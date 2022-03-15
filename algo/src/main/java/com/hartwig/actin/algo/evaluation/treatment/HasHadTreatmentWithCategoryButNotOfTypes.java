@@ -3,14 +3,17 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import java.util.List;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadTreatmentWithCategoryButNotOfTypes implements PassOrFailEvaluator {
+public class HasHadTreatmentWithCategoryButNotOfTypes implements EvaluationFunction {
 
     @NotNull
     private final TreatmentCategory category;
@@ -22,8 +25,10 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements PassOrFailEvalu
         this.ignoreTypes = ignoreTypes;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasHadValidTreatment = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 boolean hasCorrectType = true;
@@ -33,23 +38,19 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements PassOrFailEvalu
                     }
                 }
                 if (hasCorrectType) {
-                    return true;
+                    hasHadValidTreatment = true;
                 }
             }
         }
 
-        return false;
-    }
+        EvaluationResult result = hasHadValidTreatment ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes);
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes);
+        return builder.build();
     }
 }

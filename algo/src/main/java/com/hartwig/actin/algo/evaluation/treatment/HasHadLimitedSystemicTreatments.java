@@ -1,12 +1,15 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadLimitedSystemicTreatments implements PassOrFailEvaluator {
+public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
 
     private final int maxSystemicTreatments;
 
@@ -14,8 +17,9 @@ public class HasHadLimitedSystemicTreatments implements PassOrFailEvaluator {
         this.maxSystemicTreatments = maxSystemicTreatments;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         int systemicCount = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.isSystemic()) {
@@ -23,18 +27,14 @@ public class HasHadLimitedSystemicTreatments implements PassOrFailEvaluator {
             }
         }
 
-        return systemicCount <= maxSystemicTreatments;
-    }
+        EvaluationResult result = systemicCount <= maxSystemicTreatments ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has received more than " + maxSystemicTreatments + " systemic treatments");
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient has received at most " + maxSystemicTreatments + " systemic treatments");
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient has received at most " + maxSystemicTreatments + " systemic treatments";
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has received more than " + maxSystemicTreatments + " systemic treatments";
+        return builder.build();
     }
 }

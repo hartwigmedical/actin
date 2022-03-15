@@ -1,40 +1,47 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSpecificTreatment implements PassOrFailEvaluator {
+public class HasHadSpecificTreatment implements EvaluationFunction {
 
     @NotNull
-    private final String name;
+    private final Set<String> names;
 
-    HasHadSpecificTreatment(@NotNull final String name) {
-        this.name = name;
+    HasHadSpecificTreatment(@NotNull final Set<String> names) {
+        this.names = names;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        Set<String> treatments = Sets.newHashSet();
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
-                return true;
+            for (String name : names) {
+                if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
+                    treatments.add(treatment.name());
+                }
             }
         }
 
-        return false;
-    }
+        EvaluationResult result = !treatments.isEmpty() ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has not received " + Format.concat(names));
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient has received " + Format.concat(treatments));
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient has received " + name + " treatment";
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has not received " + name + " treatment";
+        return builder.build();
     }
 }

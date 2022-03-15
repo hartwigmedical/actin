@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadLimitedTreatmentsWithCategory implements PassOrFailEvaluator {
+public class HasHadLimitedTreatmentsWithCategory implements EvaluationFunction {
 
     @NotNull
     private final TreatmentCategory category;
@@ -18,8 +21,9 @@ public class HasHadLimitedTreatmentsWithCategory implements PassOrFailEvaluator 
         this.maxTreatmentLines = maxTreatmentLines;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         int numTreatmentLines = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
@@ -27,18 +31,14 @@ public class HasHadLimitedTreatmentsWithCategory implements PassOrFailEvaluator 
             }
         }
 
-        return numTreatmentLines <= maxTreatmentLines;
-    }
+        EvaluationResult result = numTreatmentLines <= maxTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has received more than " + maxTreatmentLines + " lines of " + category.display());
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient has received at most " + maxTreatmentLines + " lines of " + category.display());
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient has received at most " + maxTreatmentLines + " lines of " + category.display();
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has received more than " + maxTreatmentLines + " lines of " + category.display();
+        return builder.build();
     }
 }

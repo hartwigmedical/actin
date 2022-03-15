@@ -4,11 +4,11 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
@@ -68,14 +68,17 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadSomeApprovedTreatmentCreator() {
-        return function -> new HasHadSomeApprovedTreatments();
+        return function -> {
+            int minApprovedTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasHadSomeApprovedTreatments(minApprovedTreatments);
+        };
     }
 
     @NotNull
     private static FunctionCreator hasHadSomeSystemicTreatmentCreator() {
         return function -> {
             int minSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadSomeSystemicTreatments(minSystemicTreatments));
+            return new HasHadSomeSystemicTreatments(minSystemicTreatments);
         };
     }
 
@@ -83,7 +86,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
             int maxSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadLimitedSystemicTreatments(maxSystemicTreatments));
+            return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
         };
     }
 
@@ -91,15 +94,15 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSpecificTreatmentCreator() {
         return function -> {
             String treatment = FunctionInputResolver.createOneStringInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadSpecificTreatment(treatment));
+            return new HasHadSpecificTreatment(Sets.newHashSet(treatment));
         };
     }
 
     @NotNull
     private static FunctionCreator hasHadTreatmentWithCategoryCreator() {
         return function -> {
-            TreatmentCategory category = FunctionInputResolver.createOneTreatmentInput(function).mappedCategory();
-            return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategory(category, 1));
+            TreatmentInput treatment = FunctionInputResolver.createOneTreatmentInput(function);
+            return new HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), 1);
         };
     }
 
@@ -107,7 +110,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryOfTypeCreator() {
         return function -> {
             OneTreatmentOneString input = FunctionInputResolver.createOneTreatmentOneStringInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadTreatmentWithCategoryOfType(input.treatment().mappedCategory(), input.string()));
+            return new HasHadTreatmentWithCategoryOfType(input.treatment().mappedCategory(), input.string());
         };
     }
 
@@ -115,8 +118,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
         return function -> {
             OneTreatmentManyStrings input = FunctionInputResolver.createOneTreatmentManyStringsInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadTreatmentWithCategoryButNotOfTypes(input.treatment().mappedCategory(),
-                    input.strings()));
+            return new HasHadTreatmentWithCategoryButNotOfTypes(input.treatment().mappedCategory(), input.strings());
         };
     }
 
@@ -124,7 +126,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSomeTreatmentsOfCategoryCreator() {
         return function -> {
             OneTreatmentOneInteger input = FunctionInputResolver.createOneTreatmentOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer()));
+            return new HasHadSomeTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer());
         };
     }
 
@@ -132,40 +134,33 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadLimitedTreatmentsOfCategoryCreator() {
         return function -> {
             OneTreatmentOneInteger input = FunctionInputResolver.createOneTreatmentOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer()));
+            return new HasHadLimitedTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer());
         };
     }
 
     @NotNull
     private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypeCreator() {
         return function -> {
-            OneTreatmentOneStringOneInteger input =
-                    FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadSomeTreatmentsWithCategoryOfType(input.treatment().mappedCategory(),
-                    input.string(),
-                    input.integer()));
+            OneTreatmentOneStringOneInteger input = FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(function);
+            return new HasHadSomeTreatmentsWithCategoryOfType(input.treatment().mappedCategory(), input.string(), input.integer());
         };
     }
 
     @NotNull
     private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypeCreator() {
         return function -> {
-            OneTreatmentOneStringOneInteger input =
-                    FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(),
+            OneTreatmentOneStringOneInteger input = FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(function);
+            return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(),
                     Lists.newArrayList(input.string()),
-                    input.integer()));
+                    input.integer());
         };
     }
 
     @NotNull
     private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypesCreator() {
         return function -> {
-            OneTreatmentManyStringsOneInteger input =
-                    FunctionInputResolver.createOneTreatmentManyStringsOneIntegerInput(function);
-            return new PassOrFailEvaluationFunction(new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(),
-                    input.strings(),
-                    input.integer()));
+            OneTreatmentManyStringsOneInteger input = FunctionInputResolver.createOneTreatmentManyStringsOneIntegerInput(function);
+            return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.treatment().mappedCategory(), input.strings(), input.integer());
         };
     }
 

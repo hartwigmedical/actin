@@ -1,8 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Remove per 15th of March 2022
-DROP TABLE IF EXISTS cancerRelatedComplication;
-
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient

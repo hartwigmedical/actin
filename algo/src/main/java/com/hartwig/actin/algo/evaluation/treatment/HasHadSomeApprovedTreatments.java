@@ -10,13 +10,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasHadSomeApprovedTreatments implements EvaluationFunction {
 
-    //TODO: Update implementation
-    HasHadSomeApprovedTreatments() {
+    private final int minApprovedTreatments;
+
+    HasHadSomeApprovedTreatments(final int minApprovedTreatments) {
+        this.minApprovedTreatments = minApprovedTreatments;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        if (record.clinical().priorTumorTreatments().isEmpty() && minApprovedTreatments > 0) {
+            return ImmutableEvaluation.builder()
+                    .result(EvaluationResult.FAIL)
+                    .addFailMessages("Patient has had no prior tumor treatment")
+                    .build();
+        }
+        
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedMessages("Currently the number of approved treatments cannot be determined")
