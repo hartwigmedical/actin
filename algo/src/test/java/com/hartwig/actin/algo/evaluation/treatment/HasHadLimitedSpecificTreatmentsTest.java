@@ -11,26 +11,27 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.junit.Test;
 
-public class HasHadSpecificTreatmentTest {
+public class HasHadLimitedSpecificTreatmentsTest {
 
     @Test
     public void canEvaluate() {
-        HasHadSpecificTreatment function = new HasHadSpecificTreatment(Sets.newHashSet("treatment 1", "treatment 2"));
+        HasHadLimitedSpecificTreatments function = new HasHadLimitedSpecificTreatments(Sets.newHashSet("treatment 1", "treatment 2"), 1);
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add wrong treatment
         treatments.add(TreatmentTestFactory.builder().name("wrong treatment").build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add correct treatment
         treatments.add(TreatmentTestFactory.builder().name("treatment 1").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
-        // Different correct treatment
-        List<PriorTumorTreatment> different = Lists.newArrayList(TreatmentTestFactory.builder().name("treatment 2").build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(different)));
+        // Add another correct treatment
+        treatments.add(TreatmentTestFactory.builder().name("treatment 2").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
 }

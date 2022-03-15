@@ -94,7 +94,7 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSpecificTreatmentCreator() {
         return function -> {
             String treatment = FunctionInputResolver.createOneStringInput(function);
-            return new HasHadSpecificTreatment(Sets.newHashSet(treatment));
+            return new HasHadSomeSpecificTreatments(Sets.newHashSet(treatment), 1);
         };
     }
 
@@ -102,7 +102,11 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadTreatmentWithCategoryCreator() {
         return function -> {
             TreatmentInput treatment = FunctionInputResolver.createOneTreatmentInput(function);
-            return new HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), 1);
+            if (treatment.mappedCategory() != null) {
+                return new HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), 1);
+            } else {
+                return new HasHadSomeSpecificTreatments(treatment.mappedNames(), 1);
+            }
         };
     }
 
@@ -126,7 +130,11 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadSomeTreatmentsOfCategoryCreator() {
         return function -> {
             OneTreatmentOneInteger input = FunctionInputResolver.createOneTreatmentOneIntegerInput(function);
-            return new HasHadSomeTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer());
+            if (input.treatment().mappedCategory() != null) {
+                return new HasHadSomeTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer());
+            } else {
+                return new HasHadSomeSpecificTreatments(input.treatment().mappedNames(), input.integer());
+            }
         };
     }
 
@@ -134,7 +142,11 @@ public final class TreatmentRuleMapping {
     private static FunctionCreator hasHadLimitedTreatmentsOfCategoryCreator() {
         return function -> {
             OneTreatmentOneInteger input = FunctionInputResolver.createOneTreatmentOneIntegerInput(function);
-            return new HasHadLimitedTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer());
+            if (input.treatment().mappedCategory() != null) {
+                return new HasHadLimitedTreatmentsWithCategory(input.treatment().mappedCategory(), input.integer());
+            } else {
+                return new HasHadLimitedSpecificTreatments(input.treatment().mappedNames(), input.integer());
+            }
         };
     }
 

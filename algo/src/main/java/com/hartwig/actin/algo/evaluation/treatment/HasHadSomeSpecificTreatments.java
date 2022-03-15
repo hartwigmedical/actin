@@ -13,13 +13,15 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSpecificTreatment implements EvaluationFunction {
+public class HasHadSomeSpecificTreatments implements EvaluationFunction {
 
     @NotNull
     private final Set<String> names;
+    private final int minTreatmentLines;
 
-    HasHadSpecificTreatment(@NotNull final Set<String> names) {
+    HasHadSomeSpecificTreatments(@NotNull final Set<String> names, final int minTreatmentLines) {
         this.names = names;
+        this.minTreatmentLines = minTreatmentLines;
     }
 
     @NotNull
@@ -34,12 +36,12 @@ public class HasHadSpecificTreatment implements EvaluationFunction {
             }
         }
 
-        EvaluationResult result = !treatments.isEmpty() ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = treatments.size() >= minTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailMessages("Patient has not received " + Format.concat(names));
+            builder.addFailMessages("Patient has not received " + Format.concat(names) + " at least " + minTreatmentLines + " times");
         } else if (result.isPass()) {
-            builder.addPassMessages("Patient has received " + Format.concat(treatments));
+            builder.addPassMessages("Patient has received " + Format.concat(treatments) + " " + treatments.size() + " times");
         }
 
         return builder.build();
