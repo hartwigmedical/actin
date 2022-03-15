@@ -160,7 +160,7 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid = create(rule, Lists.newArrayList(treatment, "string"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTreatmentOneString inputs = FunctionInputResolver.createOneTreatmentCategoryOneStringInput(valid);
+        OneTreatmentOneString inputs = FunctionInputResolver.createOneTreatmentOneStringInput(valid);
         assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
         assertEquals("string", inputs.string());
 
@@ -176,7 +176,7 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid = create(rule, Lists.newArrayList(treatment, "string1;string2"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTreatmentManyStrings inputs = FunctionInputResolver.createOneTreatmentCategoryManyStringsInput(valid);
+        OneTreatmentManyStrings inputs = FunctionInputResolver.createOneTreatmentManyStringsInput(valid);
         assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
         assertEquals(2, inputs.strings().size());
         assertTrue(inputs.strings().contains("string1"));
@@ -195,7 +195,7 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid = create(rule, Lists.newArrayList(treatment, "1"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTreatmentOneInteger inputs = FunctionInputResolver.createOneTreatmentCategoryOneIntegerInput(valid);
+        OneTreatmentOneInteger inputs = FunctionInputResolver.createOneTreatmentOneIntegerInput(valid);
         assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
         assertEquals(1, inputs.integer());
 
@@ -211,7 +211,7 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid = create(rule, Lists.newArrayList(treatment, "hello", "1"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTreatmentOneStringOneInteger inputs = FunctionInputResolver.createOneTreatmentCategoryOneStringOneIntegerInput(valid);
+        OneTreatmentOneStringOneInteger inputs = FunctionInputResolver.createOneTreatmentOneStringOneIntegerInput(valid);
         assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
         assertEquals("hello", inputs.string());
         assertEquals(1, inputs.integer());
@@ -229,7 +229,7 @@ public class FunctionInputResolverTest {
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
         OneTreatmentManyStringsOneInteger inputs =
-                FunctionInputResolver.createOneTreatmentCategoryManyStringsOneIntegerInput(valid);
+                FunctionInputResolver.createOneTreatmentManyStringsOneIntegerInput(valid);
         assertEquals(TreatmentInput.IMMUNOTHERAPY, inputs.treatment());
         assertEquals(2, inputs.strings().size());
         assertTrue(inputs.strings().contains("hello1"));

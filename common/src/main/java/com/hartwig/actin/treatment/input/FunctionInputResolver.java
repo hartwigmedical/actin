@@ -103,23 +103,23 @@ public final class FunctionInputResolver {
                     return true;
                 }
                 case ONE_TREATMENT_ONE_STRING: {
-                    createOneTreatmentCategoryOneStringInput(function);
+                    createOneTreatmentOneStringInput(function);
                     return true;
                 }
                 case ONE_TREATMENT_MANY_STRINGS: {
-                    createOneTreatmentCategoryManyStringsInput(function);
+                    createOneTreatmentManyStringsInput(function);
                     return true;
                 }
                 case ONE_TREATMENT_ONE_INTEGER: {
-                    createOneTreatmentCategoryOneIntegerInput(function);
+                    createOneTreatmentOneIntegerInput(function);
                     return true;
                 }
                 case ONE_TREATMENT_ONE_STRING_ONE_INTEGER: {
-                    createOneTreatmentCategoryOneStringOneIntegerInput(function);
+                    createOneTreatmentOneStringOneIntegerInput(function);
                     return true;
                 }
                 case ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
-                    createOneTreatmentCategoryManyStringsOneIntegerInput(function);
+                    createOneTreatmentManyStringsOneIntegerInput(function);
                     return true;
                 }
                 case ONE_TUMOR_TYPE: {
@@ -204,7 +204,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTreatmentOneString createOneTreatmentCategoryOneStringInput(@NotNull EligibilityFunction function) {
+    public static OneTreatmentOneString createOneTreatmentOneStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_STRING, 2);
 
         return ImmutableOneTreatmentOneString.builder()
@@ -214,7 +214,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTreatmentManyStrings createOneTreatmentCategoryManyStringsInput(@NotNull EligibilityFunction function) {
+    public static OneTreatmentManyStrings createOneTreatmentManyStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_MANY_STRINGS, 2);
 
         return ImmutableOneTreatmentManyStrings.builder()
@@ -224,7 +224,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTreatmentOneInteger createOneTreatmentCategoryOneIntegerInput(@NotNull EligibilityFunction function) {
+    public static OneTreatmentOneInteger createOneTreatmentOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_INTEGER, 2);
 
         return ImmutableOneTreatmentOneInteger.builder()
@@ -234,8 +234,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTreatmentOneStringOneInteger createOneTreatmentCategoryOneStringOneIntegerInput(
-            @NotNull EligibilityFunction function) {
+    public static OneTreatmentOneStringOneInteger createOneTreatmentOneStringOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_STRING_ONE_INTEGER, 3);
 
         return ImmutableOneTreatmentOneStringOneInteger.builder()
@@ -246,8 +245,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTreatmentManyStringsOneInteger createOneTreatmentCategoryManyStringsOneIntegerInput(
-            @NotNull EligibilityFunction function) {
+    public static OneTreatmentManyStringsOneInteger createOneTreatmentManyStringsOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER, 3);
 
         return ImmutableOneTreatmentManyStringsOneInteger.builder()
