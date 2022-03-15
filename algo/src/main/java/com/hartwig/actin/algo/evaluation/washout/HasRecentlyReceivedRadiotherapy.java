@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.washout;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasRecentlyReceivedRadiotherapy implements PassOrFailEvaluator {
+public class HasRecentlyReceivedRadiotherapy implements EvaluationFunction {
 
     private final int referenceYear;
     private final int referenceMonth;
@@ -17,31 +20,29 @@ public class HasRecentlyReceivedRadiotherapy implements PassOrFailEvaluator {
         this.referenceMonth = referenceMonth;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasReceivedRadiotherapy = false;
         for (PriorTumorTreatment priorTumorTreatment : record.clinical().priorTumorTreatments()) {
             if (priorTumorTreatment.categories().contains(TreatmentCategory.RADIOTHERAPY)) {
                 Integer year = priorTumorTreatment.year();
                 Integer month = priorTumorTreatment.month();
 
                 if ((year == null) || (year == referenceYear && (month == null || month == referenceMonth))) {
-                    return true;
+                    hasReceivedRadiotherapy = true;
                 }
             }
         }
 
-        return false;
-    }
+        EvaluationResult result = hasReceivedRadiotherapy ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient has not recently received radiotherapy");
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient has recently received radiotherapy");
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient has recently received radiotherapy";
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient has not recently received radiotherapy";
+        return builder.build();
     }
 }

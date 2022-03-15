@@ -8,7 +8,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -96,8 +95,7 @@ public final class WashoutRuleMapping {
 
     @NotNull
     private static FunctionCreator hasRecentlyReceivedRadiotherapyCreator() {
-        return function -> new PassOrFailEvaluationFunction(new HasRecentlyReceivedRadiotherapy(EvaluationConstants.REFERENCE_YEAR,
-                EvaluationConstants.REFERENCE_MONTH));
+        return function -> new HasRecentlyReceivedRadiotherapy(EvaluationConstants.REFERENCE_YEAR, EvaluationConstants.REFERENCE_MONTH);
     }
 
     @NotNull
