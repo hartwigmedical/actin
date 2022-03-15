@@ -188,6 +188,7 @@ class ClinicalDAO {
                     PRIORTUMORTREATMENT.TARGETEDTYPE,
                     PRIORTUMORTREATMENT.HORMONETYPE,
                     PRIORTUMORTREATMENT.RADIOTYPE,
+                    PRIORTUMORTREATMENT.CARTTYPE,
                     PRIORTUMORTREATMENT.TRANSPLANTTYPE,
                     PRIORTUMORTREATMENT.SUPPORTIVETYPE,
                     PRIORTUMORTREATMENT.TRIALACRONYM)
@@ -202,6 +203,7 @@ class ClinicalDAO {
                             priorTumorTreatment.targetedType(),
                             priorTumorTreatment.hormoneType(),
                             priorTumorTreatment.radioType(),
+                            priorTumorTreatment.carTType(),
                             priorTumorTreatment.transplantType(),
                             priorTumorTreatment.supportiveType(),
                             priorTumorTreatment.trialAcronym())

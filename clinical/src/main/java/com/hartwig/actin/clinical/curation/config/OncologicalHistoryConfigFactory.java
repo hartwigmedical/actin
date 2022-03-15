@@ -53,6 +53,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                     .targetedType(ResourceFile.optionalString(parts[fields.get("targetedType")]))
                     .hormoneType(ResourceFile.optionalString(parts[fields.get("hormoneType")]))
                     .radioType(ResourceFile.optionalString(parts[fields.get("radioType")]))
+                    .carTType(ResourceFile.optionalString(parts[fields.get("carTType")]))
                     .transplantType(ResourceFile.optionalString(parts[fields.get("transplantType")]))
                     .supportiveType(ResourceFile.optionalString(parts[fields.get("supportiveType")]))
                     .trialAcronym(ResourceFile.optionalString(parts[fields.get("trialAcronym")]))

@@ -183,6 +183,8 @@ public class FunctionInputResolverTest {
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList(category))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule,
+                Lists.newArrayList(TreatmentCategory.ANTIVIRAL_THERAPY.display(), "test"))));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment category", "test"))));
     }
 
@@ -194,8 +196,7 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid = create(rule, Lists.newArrayList(category, "hello1; hello2", "1"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
 
-        OneTypedTreatmentManyStringsOneInteger inputs =
-                FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(valid);
+        OneTypedTreatmentManyStringsOneInteger inputs = FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(valid);
         assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.category());
         assertEquals(2, inputs.strings().size());
         assertTrue(inputs.strings().contains("hello1"));
@@ -203,6 +204,8 @@ public class FunctionInputResolverTest {
         assertEquals(1, inputs.integer());
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule,
+                Lists.newArrayList(TreatmentCategory.ANTIVIRAL_THERAPY.display(), "test", "1"))));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList(category, "1", "hello1;hello2"))));
     }
 

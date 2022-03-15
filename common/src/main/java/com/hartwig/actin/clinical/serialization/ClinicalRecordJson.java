@@ -255,6 +255,7 @@ public final class ClinicalRecordJson {
                         .targetedType(nullableString(object, "targetedType"))
                         .hormoneType(nullableString(object, "hormoneType"))
                         .radioType(nullableString(object, "radioType"))
+                        .carTType(nullableString(object, "carTType"))
                         .transplantType(nullableString(object, "transplantType"))
                         .supportiveType(nullableString(object, "supportiveType"))
                         .trialAcronym(nullableString(object, "trialAcronym"))

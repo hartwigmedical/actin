@@ -5,6 +5,7 @@ import static com.hartwig.actin.treatment.input.FunctionInputMapping.RULE_INPUT_
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -207,7 +208,7 @@ public final class FunctionInputResolver {
         assertParamConfig(function, FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS, 2);
 
         return ImmutableOneTypedTreatmentManyStrings.builder()
-                .category(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .category(toTypedCategory((String) function.parameters().get(0)))
                 .strings(toStringList(function.parameters().get(1)))
                 .build();
     }
@@ -218,10 +219,19 @@ public final class FunctionInputResolver {
         assertParamConfig(function, FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER, 3);
 
         return ImmutableOneTypedTreatmentManyStringsOneInteger.builder()
-                .category(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .category(toTypedCategory((String) function.parameters().get(0)))
                 .strings(toStringList(function.parameters().get(1)))
                 .integer(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
+    }
+
+    @NotNull
+    private static TreatmentCategory toTypedCategory(@NotNull String string) {
+        TreatmentCategory category = TreatmentCategoryResolver.fromString((String) string);
+        if (!category.hasType()) {
+            throw new IllegalStateException("Not a typed category: " + category.display());
+        }
+        return category;
     }
 
     @NotNull

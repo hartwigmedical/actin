@@ -40,6 +40,9 @@ public abstract class PriorTumorTreatment {
     public abstract String radioType();
 
     @Nullable
+    public abstract String carTType();
+
+    @Nullable
     public abstract String transplantType();
 
     @Nullable
