@@ -28,6 +28,8 @@ public class WarnIf implements EvaluationFunction {
                     .warnSpecificMessages(evaluation.passSpecificMessages())
                     .warnGeneralMessages(evaluation.passGeneralMessages())
                     .build();
+        } else if (evaluation.result() == EvaluationResult.WARN) {
+            return evaluation;
         }
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder()
