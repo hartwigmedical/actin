@@ -227,7 +227,7 @@ public final class FunctionInputResolver {
 
     @NotNull
     private static TreatmentCategory toTypedCategory(@NotNull String string) {
-        TreatmentCategory category = TreatmentCategoryResolver.fromString((String) string);
+        TreatmentCategory category = TreatmentCategoryResolver.fromString(string);
         if (!category.hasType()) {
             throw new IllegalStateException("Not a typed category: " + category.display());
         }

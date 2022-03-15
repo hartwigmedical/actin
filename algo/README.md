@@ -143,7 +143,7 @@ In addition, 3 following 'Categories' can be assigned:
 - Fluoropyrimidine - Treatment names: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur
 - Tyrosine kinase inhibitors - Category = 'Targeted therapy' and (T.B.D.)
 
-2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, seperated by ";"
+2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
 ##### Rules related to prior primary tumors
 
