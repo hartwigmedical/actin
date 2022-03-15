@@ -136,7 +136,7 @@ HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to undetermined
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
 HAS_PARTICIPATED_IN_CURRENT_TRIAL | Currently resolves to not evaluated
 
-1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Car T, TCR T,  Gene therapy, Supportive treatment.
+1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy, Supportive treatment.
 
 In addition, 3 following 'Categories' can be assigned:
 - Taxane - Treatment names: Paclitaxel, Docetaxel, Cabazitaxel
