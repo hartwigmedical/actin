@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +21,9 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
     @NotNull
     private final DoidModel doidModel;
     @NotNull
-    private final TumorTypeCategory categoryOfCUP;
+    private final TumorTypeInput categoryOfCUP;
 
-    HasCancerOfUnknownPrimary(@NotNull final DoidModel doidModel, @NotNull final TumorTypeCategory categoryOfCUP) {
+    HasCancerOfUnknownPrimary(@NotNull final DoidModel doidModel, @NotNull final TumorTypeInput categoryOfCUP) {
         this.doidModel = doidModel;
         this.categoryOfCUP = categoryOfCUP;
     }

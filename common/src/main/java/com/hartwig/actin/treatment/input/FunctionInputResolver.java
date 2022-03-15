@@ -5,33 +5,32 @@ import static com.hartwig.actin.treatment.input.FunctionInputMapping.RULE_INPUT_
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableOneStringTwoIntegers;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyStrings;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyStringsOneInteger;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryOneInteger;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryOneString;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryOneStringOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentManyStrings;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneString;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneStringOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
-import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyStrings;
-import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyStringsOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneString;
-import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOneStringOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentManyStrings;
+import com.hartwig.actin.treatment.input.single.OneTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentOneString;
+import com.hartwig.actin.treatment.input.single.OneTreatmentOneStringOneInteger;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoStrings;
@@ -99,32 +98,32 @@ public final class FunctionInputResolver {
                     createTwoDoubleInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_CATEGORY: {
-                    createOneTreatmentCategoryInput(function);
+                case ONE_TREATMENT: {
+                    createOneTreatmentInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_CATEGORY_ONE_STRING: {
+                case ONE_TREATMENT_ONE_STRING: {
                     createOneTreatmentCategoryOneStringInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_CATEGORY_MANY_STRINGS: {
+                case ONE_TREATMENT_MANY_STRINGS: {
                     createOneTreatmentCategoryManyStringsInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_CATEGORY_ONE_INTEGER: {
+                case ONE_TREATMENT_ONE_INTEGER: {
                     createOneTreatmentCategoryOneIntegerInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER: {
+                case ONE_TREATMENT_ONE_STRING_ONE_INTEGER: {
                     createOneTreatmentCategoryOneStringOneIntegerInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_CATEGORY_MANY_STRINGS_ONE_INTEGER: {
+                case ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
                     createOneTreatmentCategoryManyStringsOneIntegerInput(function);
                     return true;
                 }
-                case ONE_TUMOR_TYPE_CATEGORY: {
-                    createOneTumorTypeCategoryInput(function);
+                case ONE_TUMOR_TYPE: {
+                    createOneTumorTypeInput(function);
                     return true;
                 }
                 case ONE_STRING: {
@@ -198,71 +197,71 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TreatmentCategory createOneTreatmentCategoryInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY, 1);
+    public static TreatmentInput createOneTreatmentInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT, 1);
 
-        return TreatmentCategoryResolver.fromString((String) function.parameters().get(0));
+        return TreatmentInput.fromString((String) function.parameters().get(0));
     }
 
     @NotNull
-    public static OneTreatmentCategoryOneString createOneTreatmentCategoryOneStringInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING, 2);
+    public static OneTreatmentOneString createOneTreatmentCategoryOneStringInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_STRING, 2);
 
-        return ImmutableOneTreatmentCategoryOneString.builder()
-                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+        return ImmutableOneTreatmentOneString.builder()
+                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
                 .string((String) function.parameters().get(1))
                 .build();
     }
 
     @NotNull
-    public static OneTreatmentCategoryManyStrings createOneTreatmentCategoryManyStringsInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_STRINGS, 2);
+    public static OneTreatmentManyStrings createOneTreatmentCategoryManyStringsInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_MANY_STRINGS, 2);
 
-        return ImmutableOneTreatmentCategoryManyStrings.builder()
-                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+        return ImmutableOneTreatmentManyStrings.builder()
+                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
                 .strings(toStringList(function.parameters().get(1)))
                 .build();
     }
 
     @NotNull
-    public static OneTreatmentCategoryOneInteger createOneTreatmentCategoryOneIntegerInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER, 2);
+    public static OneTreatmentOneInteger createOneTreatmentCategoryOneIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_INTEGER, 2);
 
-        return ImmutableOneTreatmentCategoryOneInteger.builder()
-                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+        return ImmutableOneTreatmentOneInteger.builder()
+                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
                 .integer(Integer.parseInt((String) function.parameters().get(1)))
                 .build();
     }
 
     @NotNull
-    public static OneTreatmentCategoryOneStringOneInteger createOneTreatmentCategoryOneStringOneIntegerInput(
+    public static OneTreatmentOneStringOneInteger createOneTreatmentCategoryOneStringOneIntegerInput(
             @NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_STRING_ONE_INTEGER, 3);
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_STRING_ONE_INTEGER, 3);
 
-        return ImmutableOneTreatmentCategoryOneStringOneInteger.builder()
-                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+        return ImmutableOneTreatmentOneStringOneInteger.builder()
+                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
                 .string((String) function.parameters().get(1))
                 .integer(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
     }
 
     @NotNull
-    public static OneTreatmentCategoryManyStringsOneInteger createOneTreatmentCategoryManyStringsOneIntegerInput(
+    public static OneTreatmentManyStringsOneInteger createOneTreatmentCategoryManyStringsOneIntegerInput(
             @NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_STRINGS_ONE_INTEGER, 3);
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_MANY_STRINGS_ONE_INTEGER, 3);
 
-        return ImmutableOneTreatmentCategoryManyStringsOneInteger.builder()
-                .treatmentCategory(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+        return ImmutableOneTreatmentManyStringsOneInteger.builder()
+                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
                 .strings(toStringList(function.parameters().get(1)))
                 .integer(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
     }
 
     @NotNull
-    public static TumorTypeCategory createOneTumorTypeCategoryInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE_CATEGORY, 1);
+    public static TumorTypeInput createOneTumorTypeInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE, 1);
 
-        return TumorTypeCategory.fromString((String) function.parameters().get(0));
+        return TumorTypeInput.fromString((String) function.parameters().get(0));
     }
 
     @NotNull

@@ -5,18 +5,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class TreatmentTypeCategoryTest {
+public class TreatmentInputTest {
 
     @Test
     public void canConvertAllTreatmentTypeCategories() {
-        for (TreatmentTypeCategory category : TreatmentTypeCategory.values()) {
-            assertEquals(category, TreatmentTypeCategory.fromString(category.display()));
+        for (TreatmentInput category : TreatmentInput.values()) {
+            assertEquals(category, TreatmentInput.fromString(category.display()));
         }
     }
 
     @Test
     public void everyTreatmentTypeCategoryHasMappedCategoryOrNames() {
-        for (TreatmentTypeCategory category : TreatmentTypeCategory.values()) {
+        for (TreatmentInput category : TreatmentInput.values()) {
             assertTrue(category.mappedCategory() != null || category.mappedNames() != null);
         }
     }

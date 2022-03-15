@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +79,7 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasCancerOfUnknownPrimaryCreator(@NotNull DoidModel doidModel) {
         return function -> {
-            TumorTypeCategory categoryOfCUP = FunctionInputResolver.createOneTumorTypeCategoryInput(function);
+            TumorTypeInput categoryOfCUP = FunctionInputResolver.createOneTumorTypeInput(function);
             return new HasCancerOfUnknownPrimary(doidModel, categoryOfCUP);
         };
     }

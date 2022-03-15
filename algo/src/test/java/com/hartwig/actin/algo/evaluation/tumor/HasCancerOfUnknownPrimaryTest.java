@@ -7,7 +7,7 @@ import java.util.List;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeCategory;
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class HasCancerOfUnknownPrimaryTest {
 
     @Test
     public void canEvaluate() {
-        TumorTypeCategory category = TumorTypeCategory.ADENOCARCINOMA;
+        TumorTypeInput category = TumorTypeInput.ADENOCARCINOMA;
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(category.doid(), "200");
 
         HasCancerOfUnknownPrimary function = new HasCancerOfUnknownPrimary(doidModel, category);

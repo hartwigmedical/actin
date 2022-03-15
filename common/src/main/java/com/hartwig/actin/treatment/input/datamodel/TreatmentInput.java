@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public enum TreatmentTypeCategory {
+public enum TreatmentInput {
     CHEMOTHERAPY(TreatmentCategory.CHEMOTHERAPY),
     RADIOTHERAPY(TreatmentCategory.RADIOTHERAPY),
     CHEMORADIOTHERAPY((TreatmentCategory.CHEMORADIOTHERAPY)),
@@ -33,15 +33,15 @@ public enum TreatmentTypeCategory {
     @Nullable
     private final Set<String> mappedNames;
 
-    TreatmentTypeCategory(@NotNull TreatmentCategory mappedCategory) {
+    TreatmentInput(@NotNull TreatmentCategory mappedCategory) {
         this(mappedCategory, null);
     }
 
-    TreatmentTypeCategory(@NotNull Set<String> mappedNames) {
+    TreatmentInput(@NotNull Set<String> mappedNames) {
         this(null, mappedNames);
     }
 
-    TreatmentTypeCategory(@Nullable final TreatmentCategory mappedCategory, @Nullable final Set<String> mappedNames) {
+    TreatmentInput(@Nullable final TreatmentCategory mappedCategory, @Nullable final Set<String> mappedNames) {
         this.mappedCategory = mappedCategory;
         this.mappedNames = mappedNames;
     }
@@ -62,7 +62,7 @@ public enum TreatmentTypeCategory {
     }
 
     @NotNull
-    public static TreatmentTypeCategory fromString(@NotNull String string) {
-        return TreatmentTypeCategory.valueOf(string.trim().replaceAll(" ", "_").toUpperCase());
+    public static TreatmentInput fromString(@NotNull String string) {
+        return TreatmentInput.valueOf(string.trim().replaceAll(" ", "_").toUpperCase());
     }
 }

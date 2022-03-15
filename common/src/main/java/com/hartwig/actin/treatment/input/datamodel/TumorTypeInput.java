@@ -2,7 +2,7 @@ package com.hartwig.actin.treatment.input.datamodel;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum TumorTypeCategory {
+public enum TumorTypeInput {
     CARCINOMA("305"),
     ADENOCARCINOMA("299"),
     SQUAMOUS_CELL_CARCINOMA("1749"),
@@ -11,7 +11,7 @@ public enum TumorTypeCategory {
     @NotNull
     private final String doid;
 
-    TumorTypeCategory(@NotNull final String doid) {
+    TumorTypeInput(@NotNull final String doid) {
         this.doid = doid;
     }
 
@@ -26,7 +26,7 @@ public enum TumorTypeCategory {
     }
 
     @NotNull
-    public static TumorTypeCategory fromString(@NotNull String string) {
-        return TumorTypeCategory.valueOf(string.trim().replaceAll(" ", "_").toUpperCase());
+    public static TumorTypeInput fromString(@NotNull String string) {
+        return TumorTypeInput.valueOf(string.trim().replaceAll(" ", "_").toUpperCase());
     }
 }
