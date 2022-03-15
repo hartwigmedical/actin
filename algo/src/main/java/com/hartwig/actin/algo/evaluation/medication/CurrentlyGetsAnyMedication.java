@@ -1,29 +1,31 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
 import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsAnyMedication implements PassOrFailEvaluator {
+public class CurrentlyGetsAnyMedication implements EvaluationFunction {
 
     CurrentlyGetsAnyMedication() {
     }
 
-    @Override
-    public boolean isPass(@NotNull PatientRecord record) {
-        return !MedicationFilter.active(record.clinical().medications()).isEmpty();
-    }
-
     @NotNull
     @Override
-    public String passMessage() {
-        return "Patient currently receives medication with status 'active'";
-    }
+    public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasReceivedMedication = !MedicationFilter.active(record.clinical().medications()).isEmpty();
 
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient does not currently receive medication with status 'active'";
+        EvaluationResult result = hasReceivedMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient does not currently receive medication with status 'active'");
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient currently receives medication with status 'active'");
+        }
+
+        return builder.build();
     }
 }

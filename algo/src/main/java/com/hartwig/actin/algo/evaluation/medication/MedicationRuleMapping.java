@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Or;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluationFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -79,20 +78,20 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsActiveMedicationCreator() {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsAnyMedication());
+        return function -> new CurrentlyGetsAnyMedication();
     }
 
     @NotNull
     private static FunctionCreator getsActiveMedicationWithConfiguredNameCreator() {
         return function -> {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
-            return new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfName(Sets.newHashSet(termToFind)));
+            return new CurrentlyGetsMedicationOfName(Sets.newHashSet(termToFind));
         };
     }
 
     @NotNull
     private static FunctionCreator getsActiveMedicationWithNamesCreator(@NotNull String... termsToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsMedicationOfName(Sets.newHashSet(termsToFind)));
+        return function -> new CurrentlyGetsMedicationOfName(Sets.newHashSet(termsToFind));
     }
 
     @NotNull
@@ -220,16 +219,16 @@ public final class MedicationRuleMapping {
 
     @NotNull
     private static FunctionCreator getsStableMedicationOfCategoryCreator(@NotNull String... categoriesToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfCategory(Sets.newHashSet(categoriesToFind)));
+        return function -> new CurrentlyGetsStableMedicationOfCategory(Sets.newHashSet(categoriesToFind));
     }
 
     @NotNull
     private static FunctionCreator getsStableMedicationOfNameCreator(@NotNull String... termsToFind) {
-        return function -> new PassOrFailEvaluationFunction(new CurrentlyGetsStableMedicationOfName(Sets.newHashSet(termsToFind)));
+        return function -> new CurrentlyGetsStableMedicationOfName(Sets.newHashSet(termsToFind));
     }
 
     @NotNull
     private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String... categoriesToFind) {
-        return function ->new CurrentlyGetsMedicationOfExactCategory(Sets.newHashSet(categoriesToFind));
+        return function -> new CurrentlyGetsMedicationOfExactCategory(Sets.newHashSet(categoriesToFind));
     }
 }

@@ -3,14 +3,16 @@ package com.hartwig.actin.algo.evaluation.medication;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.algo.evaluation.util.PassOrFailEvaluator;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsStableMedicationOfName implements PassOrFailEvaluator {
-
+public class CurrentlyGetsStableMedicationOfName implements EvaluationFunction {
 
     @NotNull
     private final Set<String> termsToFind;
@@ -19,8 +21,9 @@ public class CurrentlyGetsStableMedicationOfName implements PassOrFailEvaluator 
         this.termsToFind = termsToFind;
     }
 
+    @NotNull
     @Override
-    public boolean isPass(@NotNull PatientRecord record) {
+    public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasFoundOnePassingTerm = false;
         for (String termToFind : termsToFind) {
             boolean hasActiveAndStableMedication = false;
@@ -41,18 +44,14 @@ public class CurrentlyGetsStableMedicationOfName implements PassOrFailEvaluator 
             }
         }
 
-        return hasFoundOnePassingTerm;
-    }
+        EvaluationResult result = hasFoundOnePassingTerm ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailMessages("Patient does not get stable dosing of medication with name " + Format.concat(termsToFind));
+        } else if (result.isPass()) {
+            builder.addPassMessages("Patient gets stable dosing of medication with name " + Format.concat(termsToFind));
+        }
 
-    @NotNull
-    @Override
-    public String passMessage() {
-        return "Patient gets stable dosing of medication with name " + Format.concat(termsToFind);
-    }
-
-    @NotNull
-    @Override
-    public String failMessage() {
-        return "Patient does not get stable dosing of medication with name " + Format.concat(termsToFind);
+        return builder.build();
     }
 }
