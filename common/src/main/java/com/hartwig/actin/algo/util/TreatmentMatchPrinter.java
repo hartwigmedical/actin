@@ -67,9 +67,14 @@ public class TreatmentMatchPrinter {
 
         StringJoiner joiner = new StringJoiner(", ");
         for (TrialIdentification trial : eligibleTrialMap.keySet()) {
-            joiner.add(EligibilityDisplay.trialName(trial));
+            joiner.add(trialName(trial));
         }
         return eligibleTrialMap.keySet().size() + " (" + joiner + ")";
+    }
+
+    @NotNull
+    private static String trialName(@NotNull TrialIdentification trial) {
+        return trial.trialId() + " (" + trial.acronym() + ")";
     }
 
     @NotNull
@@ -79,7 +84,7 @@ public class TreatmentMatchPrinter {
         for (Map.Entry<TrialIdentification, List<CohortMetadata>> entry : eligibleTrialMap.entrySet()) {
             for (CohortMetadata cohort : entry.getValue()) {
                 cohortCount++;
-                joiner.add(EligibilityDisplay.cohortName(entry.getKey(), cohort));
+                joiner.add(cohortName(entry.getKey(), cohort));
             }
         }
 
@@ -94,11 +99,17 @@ public class TreatmentMatchPrinter {
             for (CohortMetadata cohort : entry.getValue()) {
                 if (cohort.open()) {
                     openCohortCount++;
-                    joiner.add(EligibilityDisplay.cohortName(entry.getKey(), cohort));
+                    joiner.add(cohortName(entry.getKey(), cohort));
                 }
             }
         }
 
         return openCohortCount > 0 ? openCohortCount + " (" + joiner + ")" : "None";
     }
+
+    @NotNull
+    private static String cohortName(@NotNull TrialIdentification trial, @NotNull CohortMetadata cohort) {
+        return trial.trialId() + " - " + cohort.description();
+    }
+
 }
