@@ -98,7 +98,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
             table.addCell(Cells.createContent("TODO"));
-            table.addCell(Cells.createContent(concat(trial.evaluationMessages())));
+            table.addCell(Cells.createContent(concat(trial.fails())));
             table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
         }
 
@@ -111,6 +111,6 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         for (String string : strings) {
             joiner.add(string);
         }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+        return Formats.valueOrDefault(joiner.toString(), "?");
     }
 }

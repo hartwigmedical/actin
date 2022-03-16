@@ -24,6 +24,9 @@ public abstract class EvaluatedTrial {
     public abstract boolean isOpen();
 
     @NotNull
-    public abstract Set<String> evaluationMessages();
+    public abstract Set<String> warnings();
+
+    @NotNull
+    public abstract Set<String> fails();
 
 }

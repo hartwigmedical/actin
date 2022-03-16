@@ -17,6 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class EvaluatedTrialExtractor {
 
+    private static final Set<EvaluationResult> WARN_RESULTS = Sets.newHashSet(EvaluationResult.WARN, EvaluationResult.UNDETERMINED);
+    private static final Set<EvaluationResult> FAIL_RESULTS = Sets.newHashSet(EvaluationResult.FAIL);
+
     private EvaluatedTrialExtractor() {
     }
 
@@ -25,63 +28,33 @@ public final class EvaluatedTrialExtractor {
         List<EvaluatedTrial> trials = Lists.newArrayList();
 
         for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
+            Set<String> trialWarnings = extractWarnings(trialMatch.evaluations());
+            Set<String> trialFails = extractFails(trialMatch.evaluations());
+
+            ImmutableEvaluatedTrial.Builder builder = ImmutableEvaluatedTrial.builder()
+                    .trialId(trialMatch.identification().trialId())
+                    .acronym(trialMatch.identification().acronym());
+
+            for (CohortEligibility cohortMatch : trialMatch.cohorts()) {
+                Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
+                Set<String> cohortFails = extractFails(cohortMatch.evaluations());
+
+                trials.add(builder.cohort(cohortMatch.metadata().description())
+                        .isPotentiallyEligible(cohortMatch.isPotentiallyEligible() && trialMatch.isPotentiallyEligible())
+                        .isOpen(cohortMatch.metadata().open())
+                        .warnings(Sets.union(cohortWarnings, trialWarnings))
+                        .fails(Sets.union(cohortFails, trialFails))
+                        .build());
+            }
+
+            // Handle case of trial without cohorts.
             if (trialMatch.cohorts().isEmpty()) {
-                Set<String> evaluationMessages = Sets.newHashSet();
-                if (trialMatch.isPotentiallyEligible()) {
-                    List<Evaluation> evaluations = extractWarnsAndUndetermined(trialMatch.evaluations());
-                    for (Evaluation evaluation : evaluations) {
-                        evaluationMessages.addAll(evaluation.warnGeneralMessages());
-                        evaluationMessages.addAll(evaluation.undeterminedGeneralMessages());
-                    }
-                } else {
-                    List<Evaluation> evaluations = extractFails(trialMatch.evaluations());
-                    for (Evaluation evaluation : evaluations) {
-                        evaluationMessages.addAll(evaluation.failGeneralMessages());
-                    }
-                }
-                trials.add(ImmutableEvaluatedTrial.builder()
-                        .trialId(trialMatch.identification().trialId())
-                        .acronym(trialMatch.identification().acronym())
+                trials.add(builder.cohort(null)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
                         .isOpen(true)
-                        .evaluationMessages(evaluationMessages)
+                        .warnings(trialWarnings)
+                        .fails(trialFails)
                         .build());
-            } else {
-                for (CohortEligibility cohortMatch : trialMatch.cohorts()) {
-                    Set<String> evaluationMessages = Sets.newHashSet();
-                    if (cohortMatch.isPotentiallyEligible()) {
-                        List<Evaluation> cohortEvaluations = extractWarnsAndUndetermined(cohortMatch.evaluations());
-                        for (Evaluation evaluation : cohortEvaluations) {
-                            evaluationMessages.addAll(evaluation.warnGeneralMessages());
-                            evaluationMessages.addAll(evaluation.undeterminedGeneralMessages());
-                        }
-
-                        List<Evaluation> trialEvaluations = extractWarnsAndUndetermined(trialMatch.evaluations());
-                        for (Evaluation evaluation : trialEvaluations) {
-                            evaluationMessages.addAll(evaluation.warnGeneralMessages());
-                            evaluationMessages.addAll(evaluation.undeterminedGeneralMessages());
-                        }
-                    } else {
-                        List<Evaluation> cohortEvaluations = extractFails(cohortMatch.evaluations());
-                        for (Evaluation evaluation : cohortEvaluations) {
-                            evaluationMessages.addAll(evaluation.failGeneralMessages());
-                        }
-
-                        List<Evaluation> trialEvaluations = extractFails(trialMatch.evaluations());
-                        for (Evaluation evaluation : trialEvaluations) {
-                            evaluationMessages.addAll(evaluation.failGeneralMessages());
-                        }
-                    }
-
-                    trials.add(ImmutableEvaluatedTrial.builder()
-                            .trialId(trialMatch.identification().trialId())
-                            .acronym(trialMatch.identification().acronym())
-                            .cohort(cohortMatch.metadata().description())
-                            .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
-                            .isOpen(cohortMatch.metadata().open())
-                            .evaluationMessages(evaluationMessages)
-                            .build());
-                }
             }
         }
 
@@ -89,13 +62,22 @@ public final class EvaluatedTrialExtractor {
     }
 
     @NotNull
-    private static List<Evaluation> extractWarnsAndUndetermined(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        return extractEvaluations(evaluations, Sets.newHashSet(EvaluationResult.WARN, EvaluationResult.UNDETERMINED));
+    private static Set<String> extractWarnings(@NotNull Map<Eligibility, Evaluation> evaluationMap) {
+        Set<String> messages = Sets.newHashSet();
+        for (Evaluation evaluation : extractEvaluations(evaluationMap, WARN_RESULTS)) {
+            messages.addAll(evaluation.warnGeneralMessages());
+            messages.addAll(evaluation.undeterminedGeneralMessages());
+        }
+        return messages;
     }
 
     @NotNull
-    private static List<Evaluation> extractFails(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        return extractEvaluations(evaluations, Sets.newHashSet(EvaluationResult.FAIL));
+    private static Set<String> extractFails(@NotNull Map<Eligibility, Evaluation> evaluations) {
+        Set<String> messages = Sets.newHashSet();
+        for (Evaluation evaluation : extractEvaluations(evaluations, FAIL_RESULTS)) {
+            messages.addAll(evaluation.failGeneralMessages());
+        }
+        return messages;
     }
 
     @NotNull
