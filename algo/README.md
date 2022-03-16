@@ -37,15 +37,22 @@ NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skippe
 NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.
 
 Once all criteria are evaluated, the following algorithm determines whether a patient is potentially eligible for a trial:
- 1. For every cohort within a trial, the patient is considered potentially eligible for that trial in case none of the cohort-specific 
+ 1. For every cohort within a trial, the patient is considered potentially eligible for that cohort in case none of the cohort-specific 
  criteria evaluated to `FAIL` or `NOT_IMPLEMENTED` and the cohort is not blacklisted.
  1. A patient is eligible for a trial in case none of its overall criteria evaluated to `FAIL` or `NOT_IMPLEMENTED` and the trial 
  either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
 Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered  eligible 
-_and_ the trial that the cohort is part of is considered eligible. 
+_and_ the trial that the cohort is part of is considered eligible.
+
+#### Criteria evaluation feedback
+
+Every criteria algorithm provides human-readable feedback about its evaluation. This is to help with understanding why 
+a certain evaluation passes or failed, or why an evaluation could not be determined. Also, in case of `WARN`, the criteria algorithm
+provides a human-readable warning message. This enables clients of the ACTIN-algo module to present the overall evaluation in 
+a human-understandable way.  
    
-#### Individual criteria algorithms
+#### Criteria algorithms
 
 Inclusion and exclusion criteria can be defined as a set of rules that are combined using composite functions, to determine overall eligibility. 
 
