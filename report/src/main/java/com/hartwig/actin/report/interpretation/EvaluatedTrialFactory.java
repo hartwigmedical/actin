@@ -64,6 +64,8 @@ public final class EvaluatedTrialFactory {
             }
         }
 
+        trials.sort(new EvaluatedTrialComparator());
+
         return trials;
     }
 
