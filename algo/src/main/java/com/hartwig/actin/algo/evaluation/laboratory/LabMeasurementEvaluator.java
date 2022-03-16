@@ -39,11 +39,20 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No valid measurement found for " + measurement.code())
-                    .addUndeterminedGeneralMessages("Date of lab values")
-                    .build();
+            ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED);
+
+            if (mostRecent == null) {
+                builder.addUndeterminedSpecificMessages("No measurement found for " + measurement.code());
+                builder.addUndeterminedGeneralMessages("Missing lab values");
+            } else if (!mostRecent.unit().equals(measurement.defaultUnit())) {
+                builder.addUndeterminedSpecificMessages("Unexpected unit specified for " + measurement.code() + ": " + mostRecent.unit());
+                builder.addUndeterminedGeneralMessages("Unreliable lab values");
+            } else if (mostRecent.date().isBefore(minValidDate)) {
+                builder.addUndeterminedSpecificMessages("Most recent measurement too old for " + measurement.code());
+                builder.addUndeterminedGeneralMessages("Date of lab values");
+            }
+
+            return builder.build();
         }
 
         Evaluation evaluation = function.evaluate(record, mostRecent);
