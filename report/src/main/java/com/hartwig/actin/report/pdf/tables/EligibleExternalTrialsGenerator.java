@@ -1,9 +1,16 @@
 package com.hartwig.actin.report.pdf.tables;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.report.pdf.util.Cells;
+import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
 
@@ -38,13 +45,34 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
         table.addHeaderCell(Cells.createHeader("Event"));
-        table.addHeaderCell(Cells.createHeader("Trial"));
+        table.addHeaderCell(Cells.createHeader("Trials"));
 
-        for (MolecularEvidence evidence : evidenceForExternalTrials) {
-            table.addCell(Cells.createContent(evidence.event()));
-            table.addCell(Cells.createContent(evidence.treatment()));
+        Map<String, List<String>> treatmentsPerEvent = toTreatmentMapPerEvent(evidenceForExternalTrials);
+        Set<String> events = Sets.newTreeSet(treatmentsPerEvent.keySet());
+        for (String event : events) {
+            table.addCell(Cells.createContent(event));
+
+            StringJoiner joiner = Formats.commaJoiner();
+            for (String treatment : treatmentsPerEvent.get(event)) {
+                joiner.add(treatment);
+            }
+            table.addCell(Cells.createContent(joiner.toString()));
         }
 
         return Tables.makeWrapping(table);
+    }
+
+    @NotNull
+    private static Map<String, List<String>> toTreatmentMapPerEvent(@NotNull Iterable<MolecularEvidence> evidences) {
+        Map<String, List<String>> treatmentsPerEvent = Maps.newHashMap();
+        for (MolecularEvidence evidence : evidences) {
+            List<String> treatments = treatmentsPerEvent.get(evidence.event());
+            if (treatments == null) {
+                treatments = Lists.newArrayList();
+            }
+            treatments.add(evidence.treatment());
+            treatmentsPerEvent.put(evidence.event(), treatments);
+        }
+        return treatmentsPerEvent;
     }
 }
