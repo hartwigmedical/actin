@@ -5,8 +5,10 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.Style;
@@ -18,6 +20,10 @@ public final class Formats {
 
     public static final String VALUE_UNKNOWN = "Unknown";
     public static final String VALUE_COMING_SOON = "Coming soon";
+    public static final String VALUE_INCONCLUSIVE = "Inconclusive";
+
+    private static final Set<String> NON_HIGHLIGHT_VALUES = Sets.newHashSet(VALUE_UNKNOWN, VALUE_COMING_SOON, VALUE_INCONCLUSIVE);
+
     public static final String DATE_UNKNOWN = "Date unknown";
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
@@ -68,9 +74,7 @@ public final class Formats {
 
     @NotNull
     public static Style styleForTableValue(@NotNull String value) {
-        return !value.equals(Formats.VALUE_UNKNOWN) && !value.equals(Formats.VALUE_COMING_SOON)
-                ? Styles.tableValueHighlightStyle()
-                : Styles.tableValueUnknownStyle();
+        return !NON_HIGHLIGHT_VALUES.contains(value) ? Styles.tableValueHighlightStyle() : Styles.tableValueUnknownStyle();
     }
 
     @NotNull
