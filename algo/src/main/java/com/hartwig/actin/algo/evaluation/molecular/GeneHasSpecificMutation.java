@@ -36,6 +36,7 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No specific gene mutation detected " + gene + " " + mutation)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }

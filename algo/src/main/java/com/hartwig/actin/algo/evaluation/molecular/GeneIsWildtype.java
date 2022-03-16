@@ -24,6 +24,7 @@ public class GeneIsWildtype implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Wildtype of gene " + gene + " currently cannot be detected")
+                .addUndeterminedGeneralMessages("Gene wildtype statuses")
                 .build();
     }
 }

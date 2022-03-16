@@ -33,6 +33,7 @@ public class HasActivatingFusionWithGene implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No fusion detected with gene " + gene)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }

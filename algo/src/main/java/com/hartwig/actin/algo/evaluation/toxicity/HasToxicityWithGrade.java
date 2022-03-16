@@ -61,11 +61,13 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
+                    .addPassGeneralMessages("Present toxicity")
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not resolve the grade of all toxicities")
+                    .addUndeterminedGeneralMessages("Toxicity eligibility")
                     .build();
         }
 

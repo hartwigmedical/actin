@@ -19,6 +19,7 @@ public class HasSmokedRecently implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient has smoked recently")
+                .addUndeterminedGeneralMessages(("Smoking requirements"))
                 .build();
     }
 }

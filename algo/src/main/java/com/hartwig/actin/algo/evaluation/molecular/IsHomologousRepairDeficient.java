@@ -30,6 +30,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor is homologous repair proficient");
+            builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor is homologous repair deficient");
         }

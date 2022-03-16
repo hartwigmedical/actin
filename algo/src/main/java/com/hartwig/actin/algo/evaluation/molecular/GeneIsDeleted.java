@@ -33,6 +33,7 @@ public class GeneIsDeleted implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No deletion detected of gene " + gene)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }

@@ -30,6 +30,7 @@ public class GeneIsActivatedOrAmplified implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No activation/amplification detected of gene " + gene)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }

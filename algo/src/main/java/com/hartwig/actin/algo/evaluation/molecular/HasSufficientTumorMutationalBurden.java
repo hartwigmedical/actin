@@ -33,6 +33,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor mutational burden does not exceed " + minTumorMutationalBurden);
+            builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor mutational burden exceeds " + minTumorMutationalBurden);
         }

@@ -33,6 +33,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No inactivation detected of gene " + gene)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }
