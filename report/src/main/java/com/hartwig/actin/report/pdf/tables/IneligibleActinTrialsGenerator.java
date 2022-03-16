@@ -22,7 +22,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final List<EvaluatedTrial> trials;
     @NotNull
     private final String source;
-    private final float trialIdColWidth;
+    private final float trialColWidth;
     private final float acronymColWidth;
     private final float cohortColWidth;
     private final float molecularEventColWidth;
@@ -39,17 +39,17 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
             }
         }
 
-        float trialIdColWidth = contentWidth / 10;
+        float trialColWidth = contentWidth / 10;
         float acronymColWidth = contentWidth / 10;
-        float cohortColWidth = contentWidth / 5;
+        float cohortColWidth = contentWidth / 4;
         float molecularColWidth = contentWidth / 10;
-        float cohortOpenColWidth = contentWidth / 5;
+        float cohortOpenColWidth = contentWidth / 10;
         float ineligibilityReasonColWidth =
-                contentWidth - (trialIdColWidth + acronymColWidth + cohortColWidth + molecularColWidth + cohortOpenColWidth);
+                contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth + cohortOpenColWidth);
 
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
                 source,
-                trialIdColWidth,
+                trialColWidth,
                 acronymColWidth,
                 cohortColWidth,
                 molecularColWidth,
@@ -58,11 +58,11 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     }
 
     private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
-            final float trialIdColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
+            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
             final float ineligibilityReasonColWith, final float cohortOpenColWidth) {
         this.trials = trials;
         this.source = source;
-        this.trialIdColWidth = trialIdColWidth;
+        this.trialColWidth = trialColWidth;
         this.acronymColWidth = acronymColWidth;
         this.cohortColWidth = cohortColWidth;
         this.molecularEventColWidth = molecularEventColWidth;
@@ -79,14 +79,14 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(trialIdColWidth,
+        Table table = Tables.createFixedWidthCols(trialColWidth,
                 acronymColWidth,
                 cohortColWidth,
                 molecularEventColWidth,
                 ineligibilityReasonColWith,
                 cohortOpenColWidth);
 
-        table.addHeaderCell(Cells.createHeader("Trial ID"));
+        table.addHeaderCell(Cells.createHeader("Trial"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
         table.addHeaderCell(Cells.createHeader("Molecular event"));
@@ -98,7 +98,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
             table.addCell(Cells.createContent("TODO"));
-            table.addCell(Cells.createContent(concat(trial.evaluationsToCheckMessages())));
+            table.addCell(Cells.createContent(concat(trial.evaluationMessages())));
             table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
         }
 

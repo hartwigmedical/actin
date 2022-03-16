@@ -22,12 +22,11 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final List<EvaluatedTrial> trials;
     @NotNull
     private final String title;
-    private final float trialIdColWidth;
+    private final float trialColWidth;
     private final float acronymColWidth;
     private final float cohortColWidth;
     private final float molecularEventColWidth;
-    private final float criteriaToCheckColWidth;
-    private final float mainCheckColWidth;
+    private final float checksColWidth;
 
     @NotNull
     public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
@@ -59,35 +58,31 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedTrial> trials, @NotNull String title, float contentWidth) {
-        float trialIdColWidth = contentWidth / 10;
+        float trialColWidth = contentWidth / 10;
         float acronymColWidth = contentWidth / 10;
-        float cohortColWidth = contentWidth / 4;
+        float cohortColWidth = contentWidth / 3;
         float molecularColWidth = contentWidth / 10;
-        float criteriaToCheckColWidth = contentWidth / 10;
-        float mainCheckColWidth =
-                contentWidth - (trialIdColWidth + acronymColWidth + cohortColWidth + molecularColWidth + criteriaToCheckColWidth);
+        float checksColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth);
 
         return new EligibleActinTrialsGenerator(trials,
                 title,
-                trialIdColWidth,
+                trialColWidth,
                 acronymColWidth,
                 cohortColWidth,
                 molecularColWidth,
-                criteriaToCheckColWidth,
-                mainCheckColWidth);
+                checksColWidth);
     }
 
     private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title,
-            final float trialIdColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
-            final float criteriaToCheckColWidth, final float mainCheckColWidth) {
+            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
+            final float checksColWidth) {
         this.trials = trials;
         this.title = title;
-        this.trialIdColWidth = trialIdColWidth;
+        this.trialColWidth = trialColWidth;
         this.acronymColWidth = acronymColWidth;
         this.cohortColWidth = cohortColWidth;
         this.molecularEventColWidth = molecularEventColWidth;
-        this.criteriaToCheckColWidth = criteriaToCheckColWidth;
-        this.mainCheckColWidth = mainCheckColWidth;
+        this.checksColWidth = checksColWidth;
     }
 
     @NotNull
@@ -99,27 +94,21 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(trialIdColWidth,
-                acronymColWidth,
-                cohortColWidth,
-                molecularEventColWidth,
-                criteriaToCheckColWidth,
-                mainCheckColWidth);
+        Table table =
+                Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, molecularEventColWidth, checksColWidth);
 
-        table.addHeaderCell(Cells.createHeader("Trial ID"));
+        table.addHeaderCell(Cells.createHeader("Trial"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
         table.addHeaderCell(Cells.createHeader("Molecular event"));
-        table.addHeaderCell(Cells.createHeader("# Criteria to check"));
-        table.addHeaderCell(Cells.createHeader("# Main check"));
+        table.addHeaderCell(Cells.createHeader("Checks"));
 
         for (EvaluatedTrial trial : trials) {
             table.addCell(Cells.createContent(trial.trialId()));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
             table.addCell(Cells.createContent("TODO"));
-            table.addCell(Cells.createContent(String.valueOf(trial.evaluationsToCheckCount())));
-            table.addCell(Cells.createContent(concat(trial.evaluationsToCheckMessages())));
+            table.addCell(Cells.createContent(concat(trial.evaluationMessages())));
         }
 
         return Tables.makeWrapping(table);

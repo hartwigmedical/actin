@@ -5,13 +5,10 @@ import java.io.IOException;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
-import com.hartwig.actin.algo.util.TreatmentMatchPrinter;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
-import com.hartwig.actin.clinical.util.ClinicalPrinter;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
-import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.datamodel.ReportFactory;
 import com.hartwig.actin.report.pdf.ReportWriter;
@@ -72,27 +69,18 @@ public class ReporterApplication {
     @NotNull
     private static ClinicalRecord loadClinicalRecord(@NotNull String clinicalJson) throws IOException {
         LOGGER.info("Loading clinical record from {}", clinicalJson);
-        ClinicalRecord clinical = ClinicalRecordJson.read(clinicalJson);
-        ClinicalPrinter.printRecord(clinical);
-
-        return clinical;
+        return ClinicalRecordJson.read(clinicalJson);
     }
 
     @NotNull
     private static MolecularRecord loadMolecularRecord(@NotNull String molecularJson) throws IOException {
         LOGGER.info("Loading molecular record from {}", molecularJson);
-        MolecularRecord molecular = MolecularRecordJson.read(molecularJson);
-        MolecularPrinter.printRecord(molecular);
-
-        return molecular;
+        return  MolecularRecordJson.read(molecularJson);
     }
 
     @NotNull
     private static TreatmentMatch loadTreatmentMatches(@NotNull String treatmentMatchJson) throws IOException {
         LOGGER.info("Loading treatment match results from {}", treatmentMatchJson);
-        TreatmentMatch treatmentMatch = TreatmentMatchJson.read(treatmentMatchJson);
-        TreatmentMatchPrinter.printMatch(treatmentMatch);
-
-        return treatmentMatch;
+        return TreatmentMatchJson.read(treatmentMatchJson);
     }
 }

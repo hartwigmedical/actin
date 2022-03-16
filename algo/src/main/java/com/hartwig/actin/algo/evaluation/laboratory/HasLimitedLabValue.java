@@ -26,7 +26,7 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull final PatientRecord record, @NotNull final LabValue labValue) {
+    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         Double convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit);
 
         if (convertedValue == null) {
@@ -42,6 +42,7 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
             builder.addFailSpecificMessages(labValue.code() + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated");
+            builder.addUndeterminedGeneralMessages("Lab evaluation undetermined");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " is sufficient");
         }

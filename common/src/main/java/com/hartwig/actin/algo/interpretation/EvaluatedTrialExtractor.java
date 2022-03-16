@@ -26,20 +26,17 @@ public final class EvaluatedTrialExtractor {
 
         for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
             if (trialMatch.cohorts().isEmpty()) {
-                int evaluationsToCheckCount;
-                Set<String> evaluationsToCheckMessages = Sets.newHashSet();
+                Set<String> evaluationMessages = Sets.newHashSet();
                 if (trialMatch.isPotentiallyEligible()) {
                     List<Evaluation> evaluations = extractWarnsAndUndetermined(trialMatch.evaluations());
-                    evaluationsToCheckCount = evaluations.size();
                     for (Evaluation evaluation : evaluations) {
-                        evaluationsToCheckMessages.addAll(evaluation.warnGeneralMessages());
-                        evaluationsToCheckMessages.addAll(evaluation.undeterminedGeneralMessages());
+                        evaluationMessages.addAll(evaluation.warnGeneralMessages());
+                        evaluationMessages.addAll(evaluation.undeterminedGeneralMessages());
                     }
                 } else {
                     List<Evaluation> evaluations = extractFails(trialMatch.evaluations());
-                    evaluationsToCheckCount = evaluations.size();
                     for (Evaluation evaluation : evaluations) {
-                        evaluationsToCheckMessages.addAll(evaluation.failGeneralMessages());
+                        evaluationMessages.addAll(evaluation.failGeneralMessages());
                     }
                 }
                 trials.add(ImmutableEvaluatedTrial.builder()
@@ -47,39 +44,33 @@ public final class EvaluatedTrialExtractor {
                         .acronym(trialMatch.identification().acronym())
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
                         .isOpen(true)
-                        .evaluationsToCheckCount(evaluationsToCheckCount)
-                        .evaluationsToCheckMessages(evaluationsToCheckMessages)
+                        .evaluationMessages(evaluationMessages)
                         .build());
             } else {
                 for (CohortEligibility cohortMatch : trialMatch.cohorts()) {
-                    int evaluationsToCheckCount;
-                    Set<String> evaluationsToCheckMessages = Sets.newHashSet();
+                    Set<String> evaluationMessages = Sets.newHashSet();
                     if (cohortMatch.isPotentiallyEligible()) {
                         List<Evaluation> cohortEvaluations = extractWarnsAndUndetermined(cohortMatch.evaluations());
                         for (Evaluation evaluation : cohortEvaluations) {
-                            evaluationsToCheckMessages.addAll(evaluation.warnGeneralMessages());
-                            evaluationsToCheckMessages.addAll(evaluation.undeterminedGeneralMessages());
+                            evaluationMessages.addAll(evaluation.warnGeneralMessages());
+                            evaluationMessages.addAll(evaluation.undeterminedGeneralMessages());
                         }
 
                         List<Evaluation> trialEvaluations = extractWarnsAndUndetermined(trialMatch.evaluations());
                         for (Evaluation evaluation : trialEvaluations) {
-                            evaluationsToCheckMessages.addAll(evaluation.warnGeneralMessages());
-                            evaluationsToCheckMessages.addAll(evaluation.undeterminedGeneralMessages());
+                            evaluationMessages.addAll(evaluation.warnGeneralMessages());
+                            evaluationMessages.addAll(evaluation.undeterminedGeneralMessages());
                         }
-
-                        evaluationsToCheckCount = cohortEvaluations.size() + trialEvaluations.size();
                     } else {
                         List<Evaluation> cohortEvaluations = extractFails(cohortMatch.evaluations());
                         for (Evaluation evaluation : cohortEvaluations) {
-                            evaluationsToCheckMessages.addAll(evaluation.failGeneralMessages());
+                            evaluationMessages.addAll(evaluation.failGeneralMessages());
                         }
 
                         List<Evaluation> trialEvaluations = extractFails(trialMatch.evaluations());
                         for (Evaluation evaluation : trialEvaluations) {
-                            evaluationsToCheckMessages.addAll(evaluation.failGeneralMessages());
+                            evaluationMessages.addAll(evaluation.failGeneralMessages());
                         }
-
-                        evaluationsToCheckCount = cohortEvaluations.size() + trialEvaluations.size();
                     }
 
                     trials.add(ImmutableEvaluatedTrial.builder()
@@ -88,8 +79,7 @@ public final class EvaluatedTrialExtractor {
                             .cohort(cohortMatch.metadata().description())
                             .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                             .isOpen(cohortMatch.metadata().open())
-                            .evaluationsToCheckCount(evaluationsToCheckCount)
-                            .evaluationsToCheckMessages(evaluationsToCheckMessages)
+                            .evaluationMessages(evaluationMessages)
                             .build());
                 }
             }

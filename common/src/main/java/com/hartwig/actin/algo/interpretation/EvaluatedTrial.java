@@ -23,8 +23,7 @@ public abstract class EvaluatedTrial {
 
     public abstract boolean isOpen();
 
-    public abstract int evaluationsToCheckCount();
-
-    public abstract Set<String> evaluationsToCheckMessages();
+    @NotNull
+    public abstract Set<String> evaluationMessages();
 
 }

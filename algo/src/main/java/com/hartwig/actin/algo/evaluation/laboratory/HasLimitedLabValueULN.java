@@ -26,6 +26,7 @@ public class HasLimitedLabValueULN implements LabEvaluationFunction {
             builder.addFailSpecificMessages(labValue.code() + " exceeds maximum ULN");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated against maximum ULN");
+            builder.addUndeterminedGeneralMessages("Lab evaluation undetermined");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " does not exceed maximum ULN");
         }

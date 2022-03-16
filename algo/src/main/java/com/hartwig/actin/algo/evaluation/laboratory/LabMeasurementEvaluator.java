@@ -42,6 +42,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No valid measurement found for " + measurement.code())
+                    .addUndeterminedGeneralMessages("Lab measurement missing")
                     .build();
         }
 
@@ -55,6 +56,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.UNDETERMINED)
                             .addUndeterminedSpecificMessages("First measurement fails for " + measurement.code() + " while second succeeds")
+                            .addUndeterminedGeneralMessages("Lab measurement inconsistent")
                             .build();
                 }
             }
