@@ -18,17 +18,25 @@ public class TreatmentMatchSummarizerTest {
     public void canSummarizeTestData() {
         TreatmentMatchSummary summary = TreatmentMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch());
 
-        assertEquals(1, summary.trialCount());
-        assertEquals(3, summary.cohortCount());
+        assertEquals(2, summary.trialCount());
+        assertEquals(4, summary.cohortCount());
 
         assertEquals(1, summary.eligibleTrialMap().size());
 
-        TrialIdentification firstTrial = summary.eligibleTrialMap().keySet().iterator().next();
-        assertEquals("Test Trial", firstTrial.trialId());
-
-        List<CohortMetadata> eligibleCohorts = summary.eligibleTrialMap().get(firstTrial);
+        List<CohortMetadata> eligibleCohorts = summary.eligibleTrialMap().get(findByTrialId(summary, "Test Trial 1"));
         assertEquals(1, eligibleCohorts.size());
         assertNotNull(findByCohortId(eligibleCohorts, "B"));
+    }
+
+    @NotNull
+    private static TrialIdentification findByTrialId(@NotNull TreatmentMatchSummary summary, @NotNull String trialIdToFind) {
+        for (TrialIdentification identification : summary.eligibleTrialMap().keySet()) {
+            if (identification.trialId().equals(trialIdToFind)) {
+                return identification;
+            }
+        }
+
+        throw new IllegalStateException("Could not find trial with id " + trialIdToFind);
     }
 
     @NotNull

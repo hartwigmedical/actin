@@ -39,20 +39,30 @@ public final class TestTreatmentMatchFactory {
 
         matches.add(ImmutableTrialEligibility.builder()
                 .identification(ImmutableTrialIdentification.builder()
-                        .trialId("Test Trial")
-                        .acronym("TEST-TRIAL")
-                        .title("This is an ACTIN test trial")
+                        .trialId("Test Trial 1")
+                        .acronym("TEST-TRIAL-1")
+                        .title("This is the first ACTIN test trial")
                         .build())
                 .isPotentiallyEligible(true)
-                .evaluations(createTestGeneralEvaluations())
+                .evaluations(createTestGeneralEvaluationsTrial1())
                 .cohorts(createTestCohorts())
+                .build());
+
+        matches.add(ImmutableTrialEligibility.builder()
+                .identification(ImmutableTrialIdentification.builder()
+                        .trialId("Test Trial 2")
+                        .acronym("TEST-TRIAL-2")
+                        .title("This is the second ACTIN test trial")
+                        .build())
+                .isPotentiallyEligible(false)
+                .evaluations(createTestGeneralEvaluationsTrial2())
                 .build());
 
         return matches;
     }
 
     @NotNull
-    private static Map<Eligibility, Evaluation> createTestGeneralEvaluations() {
+    private static Map<Eligibility, Evaluation> createTestGeneralEvaluationsTrial1() {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
@@ -97,7 +107,10 @@ public final class TestTreatmentMatchFactory {
                 .metadata(createTestMetadata("B", true, false))
                 .isPotentiallyEligible(true)
                 .build());
-        cohorts.add(ImmutableCohortEligibility.builder().metadata(createTestMetadata("C", true, true)).isPotentiallyEligible(false).build());
+        cohorts.add(ImmutableCohortEligibility.builder()
+                .metadata(createTestMetadata("C", true, true))
+                .isPotentiallyEligible(false)
+                .build());
 
         return cohorts;
     }
@@ -123,6 +136,23 @@ public final class TestTreatmentMatchFactory {
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
                 .build(), TestEvaluationFactory.withResult(EvaluationResult.FAIL));
+
+        return map;
+    }
+
+    @NotNull
+    private static Map<Eligibility, Evaluation> createTestGeneralEvaluationsTrial2() {
+        Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_INFECTION).build())
+                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Should have active infection").build())
+                .build(), TestEvaluationFactory.withResult(EvaluationResult.FAIL));
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT).build())
+                .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Should be able to give consent").build())
+                .build(), TestEvaluationFactory.withResult(EvaluationResult.WARN));
 
         return map;
     }
