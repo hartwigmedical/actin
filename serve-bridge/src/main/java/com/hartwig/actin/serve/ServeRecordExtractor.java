@@ -23,6 +23,8 @@ public final class ServeRecordExtractor {
     private ServeRecordExtractor() {
     }
 
+    // TODO Add cohort information to the output to be used for more precise matching back into ACTIN.
+
     @NotNull
     public static List<ServeRecord> extract(@NotNull List<Trial> trials) {
         List<ServeRecord> records = Lists.newArrayList();
