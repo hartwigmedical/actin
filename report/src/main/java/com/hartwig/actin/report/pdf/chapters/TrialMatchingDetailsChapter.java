@@ -170,8 +170,13 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                         Evaluation updated = ImmutableEvaluation.builder()
                                 .from(current)
                                 .addAllPassSpecificMessages(evaluation.passSpecificMessages())
+                                .addAllPassGeneralMessages(evaluation.passGeneralMessages())
+                                .addAllWarnSpecificMessages(evaluation.warnSpecificMessages())
+                                .addAllWarnGeneralMessages(evaluation.warnGeneralMessages())
                                 .addAllUndeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
+                                .addAllUndeterminedGeneralMessages(evaluation.undeterminedGeneralMessages())
                                 .addAllFailSpecificMessages(evaluation.failSpecificMessages())
+                                .addAllFailGeneralMessages(evaluation.failGeneralMessages())
                                 .build();
                         worstEvaluationPerCriterion.put(reference, updated);
                     }
@@ -272,17 +277,21 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                 table.addCell(Cells.createContent(reference.text()));
                 Table evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true);
                 evalTable.addCell(Cells.createEvaluation(evaluation.result()));
-                if (evaluation.result() == EvaluationResult.FAIL) {
-                    for (String failMessage : evaluation.failSpecificMessages()) {
-                        evalTable.addCell(Cells.create(new Paragraph(failMessage)));
+                if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.NOT_EVALUATED) {
+                    for (String passMessage : evaluation.passSpecificMessages()) {
+                        evalTable.addCell(Cells.create(new Paragraph(passMessage)));
+                    }
+                } else if (evaluation.result() == EvaluationResult.WARN) {
+                    for (String warnMessage : evaluation.warnSpecificMessages()) {
+                        evalTable.addCell(Cells.create(new Paragraph(warnMessage)));
                     }
                 } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
                     for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
                     }
-                } else if (evaluation.result().isPass()) {
-                    for (String passMessage : evaluation.passSpecificMessages()) {
-                        evalTable.addCell(Cells.create(new Paragraph(passMessage)));
+                } else if (evaluation.result() == EvaluationResult.FAIL) {
+                    for (String failMessage : evaluation.failSpecificMessages()) {
+                        evalTable.addCell(Cells.create(new Paragraph(failMessage)));
                     }
                 }
                 table.addCell(Cells.createContent(evalTable));

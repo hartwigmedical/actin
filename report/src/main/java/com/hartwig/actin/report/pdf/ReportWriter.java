@@ -7,8 +7,8 @@ import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter;
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter;
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingSummaryChapter;
 import com.hartwig.actin.report.pdf.util.Constants;
 import com.hartwig.actin.util.Paths;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
@@ -39,7 +39,7 @@ public class ReportWriter {
 
     public void write(@NotNull Report report) throws IOException {
         ReportChapter[] chapters =
-                new ReportChapter[] { new SummaryChapter(report), new ClinicalDetailsChapter(report), new TrialMatchingSummaryChapter(report),
+                new ReportChapter[] { new SummaryChapter(report), new ClinicalDetailsChapter(report), new TrialMatchingChapter(report),
                         new TrialMatchingDetailsChapter(report) };
 
         writePdfChapters(report.sampleId(), chapters);

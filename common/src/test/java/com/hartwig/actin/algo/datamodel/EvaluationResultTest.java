@@ -8,17 +8,6 @@ import org.junit.Test;
 public class EvaluationResultTest {
 
     @Test
-    public void canEvaluateEvaluations() {
-        assertTrue(EvaluationResult.PASS.isPass());
-        assertTrue(EvaluationResult.NOT_EVALUATED.isPass());
-        assertTrue(EvaluationResult.WARN.isPass());
-
-        assertFalse(EvaluationResult.FAIL.isPass());
-        assertFalse(EvaluationResult.UNDETERMINED.isPass());
-        assertFalse(EvaluationResult.NOT_IMPLEMENTED.isPass());
-    }
-
-    @Test
     public void canCompareEvaluationResults() {
         assertTrue(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS));
         assertTrue(EvaluationResult.UNDETERMINED.isWorseThan(EvaluationResult.WARN));

@@ -16,84 +16,64 @@ import com.itextpdf.layout.element.Table;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public class EligibleActinTrialsGenerator implements TableGenerator {
+public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     private final List<EvaluatedTrial> trials;
     @NotNull
-    private final String title;
+    private final String source;
     private final float trialIdColWidth;
     private final float acronymColWidth;
     private final float cohortColWidth;
     private final float molecularEventColWidth;
-    private final float criteriaToCheckColWidth;
-    private final float mainCheckColWidth;
+    private final float ineligibilityReasonColWith;
+    private final float cohortOpenColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
+    public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
             float contentWidth) {
-        List<EvaluatedTrial> openAndEligible = Lists.newArrayList();
+        List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialExtractor.extract(treatmentMatch)) {
-            if (trial.isPotentiallyEligible() && trial.isOpen()) {
-                openAndEligible.add(trial);
+            if (!trial.isPotentiallyEligible()) {
+                ineligibleTrials.add(trial);
             }
         }
 
-        String title = source + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
-        return create(openAndEligible, title, contentWidth);
-    }
-
-    @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
-            float contentWidth) {
-        List<EvaluatedTrial> closedAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialExtractor.extract(treatmentMatch)) {
-            if (trial.isPotentiallyEligible() && !trial.isOpen()) {
-                closedAndEligible.add(trial);
-            }
-        }
-
-        String title = source + " trials that are closed but considered eligible (" + closedAndEligible.size() + ")";
-        return create(closedAndEligible, title, contentWidth);
-    }
-
-    @NotNull
-    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedTrial> trials, @NotNull String title, float contentWidth) {
         float trialIdColWidth = contentWidth / 10;
         float acronymColWidth = contentWidth / 10;
-        float cohortColWidth = contentWidth / 4;
+        float cohortColWidth = contentWidth / 5;
         float molecularColWidth = contentWidth / 10;
-        float criteriaToCheckColWidth = contentWidth / 10;
-        float mainCheckColWidth =
-                contentWidth - (trialIdColWidth + acronymColWidth + cohortColWidth + molecularColWidth + criteriaToCheckColWidth);
+        float cohortOpenColWidth = contentWidth / 5;
+        float ineligibilityReasonColWidth =
+                contentWidth - (trialIdColWidth + acronymColWidth + cohortColWidth + molecularColWidth + cohortOpenColWidth);
 
-        return new EligibleActinTrialsGenerator(trials,
-                title,
+        return new IneligibleActinTrialsGenerator(ineligibleTrials,
+                source,
                 trialIdColWidth,
                 acronymColWidth,
                 cohortColWidth,
                 molecularColWidth,
-                criteriaToCheckColWidth,
-                mainCheckColWidth);
+                ineligibilityReasonColWidth,
+                cohortOpenColWidth);
     }
 
-    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title,
+    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
             final float trialIdColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
-            final float criteriaToCheckColWidth, final float mainCheckColWidth) {
+            final float ineligibilityReasonColWith, final float cohortOpenColWidth) {
         this.trials = trials;
-        this.title = title;
+        this.source = source;
         this.trialIdColWidth = trialIdColWidth;
         this.acronymColWidth = acronymColWidth;
         this.cohortColWidth = cohortColWidth;
         this.molecularEventColWidth = molecularEventColWidth;
-        this.criteriaToCheckColWidth = criteriaToCheckColWidth;
-        this.mainCheckColWidth = mainCheckColWidth;
+        this.ineligibilityReasonColWith = ineligibilityReasonColWith;
+        this.cohortOpenColWidth = cohortOpenColWidth;
     }
 
     @NotNull
     @Override
     public String title() {
-        return title;
+        return source + " trials not considered eligible (" + trials.size() + ")";
     }
 
     @NotNull
@@ -103,23 +83,23 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
                 acronymColWidth,
                 cohortColWidth,
                 molecularEventColWidth,
-                criteriaToCheckColWidth,
-                mainCheckColWidth);
+                ineligibilityReasonColWith,
+                cohortOpenColWidth);
 
         table.addHeaderCell(Cells.createHeader("Trial ID"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
         table.addHeaderCell(Cells.createHeader("Molecular event"));
-        table.addHeaderCell(Cells.createHeader("# Criteria to check"));
-        table.addHeaderCell(Cells.createHeader("# Main check"));
+        table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
+        table.addHeaderCell(Cells.createHeader("Cohort open"));
 
         for (EvaluatedTrial trial : trials) {
             table.addCell(Cells.createContent(trial.trialId()));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
             table.addCell(Cells.createContent("TODO"));
-            table.addCell(Cells.createContent(String.valueOf(trial.evaluationsToCheckCount())));
             table.addCell(Cells.createContent(concat(trial.evaluationsToCheckMessages())));
+            table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
         }
 
         return Tables.makeWrapping(table);

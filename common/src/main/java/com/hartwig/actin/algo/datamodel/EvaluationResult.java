@@ -10,10 +10,6 @@ public enum EvaluationResult {
     NOT_EVALUATED,
     NOT_IMPLEMENTED;
 
-    public boolean isPass() {
-        return this == PASS || this == WARN || this == NOT_EVALUATED;
-    }
-
     public boolean isWorseThan(@NotNull EvaluationResult otherResult) {
         switch (otherResult) {
             case NOT_IMPLEMENTED: {
