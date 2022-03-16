@@ -6,8 +6,9 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.interpretation.EvaluatedTrial;
-import com.hartwig.actin.algo.interpretation.EvaluatedTrialExtractor;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -25,15 +26,14 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final float trialColWidth;
     private final float acronymColWidth;
     private final float cohortColWidth;
-    private final float molecularEventColWidth;
+    private final float openColWidth;
     private final float ineligibilityReasonColWith;
-    private final float cohortOpenColWidth;
 
     @NotNull
-    public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
-            float contentWidth) {
+    public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch,
+            @NotNull MolecularRecord molecular, float contentWidth) {
         List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialExtractor.extract(treatmentMatch)) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, molecular.actinTrials())) {
             if (!trial.isPotentiallyEligible()) {
                 ineligibleTrials.add(trial);
             }
@@ -41,33 +41,29 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
 
         float trialColWidth = contentWidth / 10;
         float acronymColWidth = contentWidth / 10;
-        float cohortColWidth = contentWidth / 4;
-        float molecularColWidth = contentWidth / 10;
-        float cohortOpenColWidth = contentWidth / 10;
-        float ineligibilityReasonColWidth =
-                contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth + cohortOpenColWidth);
+        float cohortColWidth = contentWidth / 3;
+        float openColWidth = contentWidth / 10;
+        float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + openColWidth);
 
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
-                source,
+                molecular.actinSource(),
                 trialColWidth,
                 acronymColWidth,
                 cohortColWidth,
-                molecularColWidth,
-                ineligibilityReasonColWidth,
-                cohortOpenColWidth);
+                openColWidth,
+                ineligibilityReasonColWidth);
     }
 
     private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
-            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
-            final float ineligibilityReasonColWith, final float cohortOpenColWidth) {
+            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float openColWidth,
+            final float ineligibilityReasonColWith) {
         this.trials = trials;
         this.source = source;
         this.trialColWidth = trialColWidth;
         this.acronymColWidth = acronymColWidth;
         this.cohortColWidth = cohortColWidth;
-        this.molecularEventColWidth = molecularEventColWidth;
+        this.openColWidth = openColWidth;
         this.ineligibilityReasonColWith = ineligibilityReasonColWith;
-        this.cohortOpenColWidth = cohortOpenColWidth;
     }
 
     @NotNull
@@ -79,27 +75,20 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(trialColWidth,
-                acronymColWidth,
-                cohortColWidth,
-                molecularEventColWidth,
-                ineligibilityReasonColWith,
-                cohortOpenColWidth);
+        Table table = Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, openColWidth, ineligibilityReasonColWith);
 
         table.addHeaderCell(Cells.createHeader("Trial"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
-        table.addHeaderCell(Cells.createHeader("Molecular event"));
+        table.addHeaderCell(Cells.createHeader("Open"));
         table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
-        table.addHeaderCell(Cells.createHeader("Cohort open"));
 
         for (EvaluatedTrial trial : trials) {
             table.addCell(Cells.createContent(trial.trialId()));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContent("TODO"));
-            table.addCell(Cells.createContent(concat(trial.fails())));
             table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
+            table.addCell(Cells.createContent(concat(trial.fails())));
         }
 
         return Tables.makeWrapping(table);

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.interpretation;
+package com.hartwig.actin.report.interpretation;
 
 import java.util.List;
 import java.util.Map;
@@ -11,20 +11,21 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class EvaluatedTrialExtractor {
+public final class EvaluatedTrialFactory {
 
     private static final Set<EvaluationResult> WARN_RESULTS = Sets.newHashSet(EvaluationResult.WARN, EvaluationResult.UNDETERMINED);
     private static final Set<EvaluationResult> FAIL_RESULTS = Sets.newHashSet(EvaluationResult.FAIL);
 
-    private EvaluatedTrialExtractor() {
+    private EvaluatedTrialFactory() {
     }
 
     @NotNull
-    public static List<EvaluatedTrial> extract(@NotNull TreatmentMatch treatmentMatch) {
+    public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<MolecularEvidence> actinEvidence) {
         List<EvaluatedTrial> trials = Lists.newArrayList();
 
         for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
@@ -33,14 +34,15 @@ public final class EvaluatedTrialExtractor {
 
             ImmutableEvaluatedTrial.Builder builder = ImmutableEvaluatedTrial.builder()
                     .trialId(trialMatch.identification().trialId())
-                    .acronym(trialMatch.identification().acronym());
+                    .acronym(trialMatch.identification().acronym())
+                    .hasMolecularEvidence(hasEvidenceForTreatment(actinEvidence, trialMatch.identification().acronym()));
 
             for (CohortEligibility cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
 
                 trials.add(builder.cohort(cohortMatch.metadata().description())
-                        .isPotentiallyEligible(cohortMatch.isPotentiallyEligible() && trialMatch.isPotentiallyEligible())
+                        .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                         .isOpen(cohortMatch.metadata().open())
                         .warnings(Sets.union(cohortWarnings, trialWarnings))
                         .fails(Sets.union(cohortFails, trialFails))
@@ -59,6 +61,16 @@ public final class EvaluatedTrialExtractor {
         }
 
         return trials;
+    }
+
+    private static boolean hasEvidenceForTreatment(@NotNull Iterable<MolecularEvidence> evidences, @NotNull String treatmentToFind) {
+        for (MolecularEvidence evidence : evidences) {
+            if (evidence.treatment().equals(treatmentToFind)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NotNull

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.interpretation;
+package com.hartwig.actin.report.interpretation;
 
 import java.util.Set;
 
@@ -15,6 +15,8 @@ public abstract class EvaluatedTrial {
 
     @NotNull
     public abstract String acronym();
+
+    public abstract boolean hasMolecularEvidence();
 
     @Nullable
     public abstract String cohort();

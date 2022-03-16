@@ -6,8 +6,9 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.interpretation.EvaluatedTrial;
-import com.hartwig.actin.algo.interpretation.EvaluatedTrialExtractor;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -29,30 +30,30 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
+    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularRecord molecular,
             float contentWidth) {
         List<EvaluatedTrial> openAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialExtractor.extract(treatmentMatch)) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, molecular.actinTrials())) {
             if (trial.isPotentiallyEligible() && trial.isOpen()) {
                 openAndEligible.add(trial);
             }
         }
 
-        String title = source + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
+        String title = molecular.actinSource() + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
         return create(openAndEligible, title, contentWidth);
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull String source,
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularRecord molecular,
             float contentWidth) {
         List<EvaluatedTrial> closedAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialExtractor.extract(treatmentMatch)) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, molecular.actinTrials())) {
             if (trial.isPotentiallyEligible() && !trial.isOpen()) {
                 closedAndEligible.add(trial);
             }
         }
 
-        String title = source + " trials that are closed but considered eligible (" + closedAndEligible.size() + ")";
+        String title = molecular.actinSource() + " trials that are closed but considered eligible (" + closedAndEligible.size() + ")";
         return create(closedAndEligible, title, contentWidth);
     }
 
@@ -73,9 +74,8 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
                 checksColWidth);
     }
 
-    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title,
-            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth,
-            final float checksColWidth) {
+    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title, final float trialColWidth,
+            final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
         this.trials = trials;
         this.title = title;
         this.trialColWidth = trialColWidth;
@@ -94,20 +94,19 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table =
-                Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, molecularEventColWidth, checksColWidth);
+        Table table = Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, molecularEventColWidth, checksColWidth);
 
         table.addHeaderCell(Cells.createHeader("Trial"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
-        table.addHeaderCell(Cells.createHeader("Molecular event"));
-        table.addHeaderCell(Cells.createHeader("Checks"));
+        table.addHeaderCell(Cells.createHeader("Molecular"));
+        table.addHeaderCell(Cells.createHeader("Warnings"));
 
         for (EvaluatedTrial trial : trials) {
             table.addCell(Cells.createContent(trial.trialId()));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContent("TODO"));
+            table.addCell(Cells.createContentYesNo(trial.hasMolecularEvidence() ? "Yes" : "No"));
             table.addCell(Cells.createContent(concat(trial.warnings())));
         }
 

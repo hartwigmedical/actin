@@ -52,11 +52,9 @@ public class TrialMatchingChapter implements ReportChapter {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
         List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(report.treatmentMatch(),
-                report.molecular().actinSource(),
+                report.molecular(),
                 contentWidth()),
-                IneligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(),
-                        report.molecular().actinSource(),
-                        contentWidth()));
+                IneligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), report.molecular(), contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
