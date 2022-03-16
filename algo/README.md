@@ -47,9 +47,9 @@ _and_ the trial that the cohort is part of is considered eligible.
 
 #### Criteria evaluation feedback
 
-Every criteria algorithm provides human-readable feedback about its evaluation. This is to help with understanding why 
-a certain evaluation passes or failed, or why an evaluation could not be determined. Also, in case of `WARN`, the criteria algorithm
-provides a human-readable warning message. This enables clients of the ACTIN-algo module to present the overall evaluation in 
+Every criteria algorithm provides human-readable feedback about its evaluation. This is for instance to help understand why 
+a certain evaluation passes or fails, or why an evaluation could not be determined. Also, in case of `WARN`, the criteria algorithm
+provides a set of human-readable warning messages. This enables clients of the ACTIN-algo to present the overall evaluation in 
 a human-understandable way.  
    
 #### Criteria algorithms
