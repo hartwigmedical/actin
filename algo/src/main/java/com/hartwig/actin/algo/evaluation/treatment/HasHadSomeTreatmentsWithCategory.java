@@ -35,8 +35,10 @@ public class HasHadSomeTreatmentsWithCategory implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received at least " + minTreatmentLines + " lines of " + category.display());
+            builder.addFailGeneralMessages("Treatment history");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has received at least " + minTreatmentLines + " lines of " + category.display());
+            builder.addPassGeneralMessages("Treatment history");
         }
 
         return builder.build();

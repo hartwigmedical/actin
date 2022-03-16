@@ -19,6 +19,7 @@ public class HasInjectionAmenableLesion implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Injection amenability of lesions currently cannot be determined")
+                .addUndeterminedGeneralMessages("Injection amenability")
                 .build();
     }
 }

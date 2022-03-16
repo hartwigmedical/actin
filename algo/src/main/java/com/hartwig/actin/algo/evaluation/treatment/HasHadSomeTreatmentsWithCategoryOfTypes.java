@@ -52,9 +52,11 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
             builder.addFailSpecificMessages(
                     "Patient has not received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
                             + category.display());
+            builder.addFailGeneralMessages("Treatment history");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(
                     "Patient has received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " " + category.display());
+            builder.addPassGeneralMessages("Treatment history");
         }
 
         return builder.build();

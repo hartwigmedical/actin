@@ -43,8 +43,10 @@ public class HasHadTreatmentWithCategoryOfTypes implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment");
+            builder.addFailGeneralMessages("Treatment history");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment");
+            builder.addPassGeneralMessages("Treatment history");
         }
 
         return builder.build();

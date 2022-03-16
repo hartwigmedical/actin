@@ -30,6 +30,7 @@ public class HasActiveSecondMalignancy implements EvaluationFunction {
             builder.addFailSpecificMessages("Patient has no active second malignancy");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has active second malignancy");
+            builder.addPassGeneralMessages("Second primary");
         }
 
         return builder.build();

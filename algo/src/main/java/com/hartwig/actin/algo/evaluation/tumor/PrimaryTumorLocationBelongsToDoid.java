@@ -44,8 +44,10 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no " + doidModel.term(doidToMatch));
+            builder.addFailGeneralMessages("Ineligible tumor type");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has " + doidModel.term(doidToMatch));
+            builder.addPassGeneralMessages("Tumor type eligibility");
         }
 
         return builder.build();

@@ -40,6 +40,7 @@ public class HasHistoryOfSecondMalignancyWithDOID implements EvaluationFunction 
             builder.addFailSpecificMessages("Patient has no history of previous malignancy belonging to " + doidModel.term(doidToMatch));
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has history of previous malignancy belonging to " + doidModel.term(doidToMatch));
+            builder.addPassGeneralMessages("Second primary");
         }
 
         return builder.build();

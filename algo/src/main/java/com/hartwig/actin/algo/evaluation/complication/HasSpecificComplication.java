@@ -36,6 +36,7 @@ public class HasSpecificComplication implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
+                    .addPassGeneralMessages("Presence of complication")
                     .build();
         }
 

@@ -55,11 +55,13 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has history of recent previous malignancy")
+                    .addPassGeneralMessages("Second primary")
                     .build();
         } else if (hasPotentialMatch) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has history of previous malignancy but unclear whether it is recent enough")
+                    .addUndeterminedGeneralMessages("Second primary")
                     .build();
         } else {
             if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
@@ -72,6 +74,7 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages("Patient has previous malignancy, but no dates available. "
                                 + " Cannot be determined if previous malignancy was recent")
+                        .addUndeterminedGeneralMessages("Second primary")
                         .build();
             }
         }
