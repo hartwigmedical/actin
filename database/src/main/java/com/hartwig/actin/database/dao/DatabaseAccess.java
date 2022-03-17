@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.treatment.datamodel.Trial;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,8 @@ public class DatabaseAccess {
     private final ClinicalDAO clinicalDAO;
     @NotNull
     private final MolecularDAO molecularDAO;
+    @NotNull
+    private final TreatmentDAO treatmentDAO;
 
     @NotNull
     public static DatabaseAccess fromCredentials(@NotNull String user, @NotNull String pass, @NotNull String url) throws SQLException {
@@ -43,7 +46,7 @@ public class DatabaseAccess {
         LOGGER.info("Connecting to database '{}'", catalog);
 
         DSLContext context = DSL.using(conn, SQLDialect.MYSQL, settings(catalog));
-        return new DatabaseAccess(new ClinicalDAO(context), new MolecularDAO(context));
+        return new DatabaseAccess(new ClinicalDAO(context), new MolecularDAO(context), new TreatmentDAO(context));
     }
 
     @Nullable
@@ -54,9 +57,11 @@ public class DatabaseAccess {
                 : null;
     }
 
-    private DatabaseAccess(@NotNull final ClinicalDAO clinicalDAO, @NotNull final MolecularDAO molecularDAO) {
+    private DatabaseAccess(@NotNull final ClinicalDAO clinicalDAO, @NotNull final MolecularDAO molecularDAO,
+            @NotNull final TreatmentDAO treatmentDAO) {
         this.clinicalDAO = clinicalDAO;
         this.molecularDAO = molecularDAO;
+        this.treatmentDAO = treatmentDAO;
     }
 
     public void writeClinicalRecords(@NotNull List<ClinicalRecord> records) {
@@ -74,5 +79,14 @@ public class DatabaseAccess {
 
         LOGGER.info(" Writing molecular data for {}", record.sampleId());
         molecularDAO.writeMolecularRecord(record);
+    }
+
+    public void writeTrials(@NotNull List<Trial> trials) {
+        LOGGER.info(" Clearing all trial data");
+        treatmentDAO.clear();
+        for (Trial trial : trials) {
+            LOGGER.info(" Writing trial data for {}", trial.identification().acronym());
+            treatmentDAO.writeTrial(trial);
+        }
     }
 }

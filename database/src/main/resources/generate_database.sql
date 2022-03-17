@@ -301,4 +301,54 @@ CREATE TABLE molecularEvidence
     PRIMARY KEY (id)
 );
 
+
+
+-- TREATMENT
+DROP TABLE IF EXISTS trial;
+CREATE TABLE trial
+(   id int NOT NULL AUTO_INCREMENT,
+    code varchar(50) UNIQUE,
+    acronym varchar(50) NOT NULL,
+    title varchar(2500) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS cohort;
+CREATE TABLE cohort
+(   id int NOT NULL AUTO_INCREMENT,
+    trialId int NOT NULL,
+    code varchar(50) NOT NULL,
+    open BOOLEAN NOT NULL,
+    blacklist BOOLEAN NOT NULL,
+    description varchar(500) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS eligibility;
+CREATE TABLE eligibility
+(   id int NOT NULL AUTO_INCREMENT,
+    trialId int NOT NULL,
+    cohortId int,
+    parentId int,
+    rule varchar(100)  NOT NULL,
+    parameters varchar(100) NOT NULL,
+    display varchar(5000) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS reference;
+CREATE TABLE reference
+(   id int NOT NULL AUTO_INCREMENT,
+    code varchar(50) NOT NULL,
+    text varchar(5000) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS eligibilityReferences;
+CREATE TABLE eligibilityReferences
+(   eligibilityId int NOT NULL,
+    referenceId int NOT NULL,
+    PRIMARY KEY (eligibilityId, referenceId)
+);
+
 SET FOREIGN_KEY_CHECKS = 1;

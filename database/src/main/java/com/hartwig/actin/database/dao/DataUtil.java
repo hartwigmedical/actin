@@ -2,9 +2,12 @@ package com.hartwig.actin.database.dao;
 
 import java.util.StringJoiner;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class DataUtil {
+
+    private static final String SEPARATOR = ";";
 
     private DataUtil() {
     }
@@ -20,9 +23,18 @@ final class DataUtil {
             return null;
         }
 
-        StringJoiner joiner = new StringJoiner(";");
+        StringJoiner joiner = new StringJoiner(SEPARATOR);
         for (String entry : strings) {
             joiner.add(entry);
+        }
+        return joiner.toString();
+    }
+
+    @NotNull
+    public static String concatObjects(@NotNull Iterable<Object> objects) {
+        StringJoiner joiner = new StringJoiner(SEPARATOR);
+        for (Object entry : objects) {
+            joiner.add((String) entry);
         }
         return joiner.toString();
     }
