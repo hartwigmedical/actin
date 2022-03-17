@@ -1,7 +1,8 @@
 package com.hartwig.actin.report.datamodel;
 
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,17 +16,18 @@ public final class ReportFactory {
     }
 
     @NotNull
-    public static Report fromInputs(@NotNull PatientRecord patient, @NotNull TreatmentMatch treatmentMatch) {
-        if (!patient.sampleId().equals(treatmentMatch.sampleId())) {
-            LOGGER.warn("Patient sampleId '{}' not the same as treatment match sampleId '{}'! Using patient sampleId",
-                    patient.sampleId(),
+    public static Report fromInputs(@NotNull ClinicalRecord clinical, @NotNull MolecularRecord molecular,
+            @NotNull TreatmentMatch treatmentMatch) {
+        if (!clinical.sampleId().equals(treatmentMatch.sampleId())) {
+            LOGGER.warn("Clinical sampleId '{}' not the same as treatment match sampleId '{}'! Using clinical sampleId",
+                    clinical.sampleId(),
                     treatmentMatch.sampleId());
         }
 
         return ImmutableReport.builder()
-                .sampleId(patient.sampleId())
-                .clinical(patient.clinical())
-                .molecular(patient.molecular())
+                .sampleId(clinical.sampleId())
+                .clinical(clinical)
+                .molecular(molecular)
                 .treatmentMatch(treatmentMatch)
                 .build();
     }

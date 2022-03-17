@@ -33,6 +33,15 @@ java -cp actin.jar com.hartwig.actin.database.treatment.TreatmentLoaderApplicati
     -db_user user -db_pass pass -db_url url
 ```
 
+### Treatment Match Data Loader
+The treatment match data loader loads up treatment match results from [ACTIN-Algo](../algo/README.md) as follows:
+
+```
+java -cp actin.jar com.hartwig.actin.database.algo.TreatmentMatchLoaderApplication \
+    -treatment_match_json /path/to/treatment_match_json \
+    -db_user user -db_pass pass -db_url url
+```
+
 ### Version History and Download Links
  - Upcoming (first release) 
  

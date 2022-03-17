@@ -2,7 +2,6 @@ package com.hartwig.actin.report;
 
 import java.io.IOException;
 
-import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -54,33 +53,20 @@ public class ReporterApplication {
     public void run() throws IOException {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
-        ClinicalRecord clinical = loadClinicalRecord(config.clinicalJson());
-        MolecularRecord molecular = loadMolecularRecord(config.molecularJson());
-        TreatmentMatch treatments = loadTreatmentMatches(config.treatmentMatchJson());
+        LOGGER.info("Loading clinical record from {}", config.clinicalJson());
+        ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
 
-        Report report = ReportFactory.fromInputs(PatientRecordFactory.fromInputs(clinical, molecular), treatments);
+        LOGGER.info("Loading molecular record from {}", config.molecularJson());
+        MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
+
+        LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson());
+        TreatmentMatch treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson());
+
+        Report report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch);
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory());
 
         writer.write(report);
 
         LOGGER.info("Done!");
-    }
-
-    @NotNull
-    private static ClinicalRecord loadClinicalRecord(@NotNull String clinicalJson) throws IOException {
-        LOGGER.info("Loading clinical record from {}", clinicalJson);
-        return ClinicalRecordJson.read(clinicalJson);
-    }
-
-    @NotNull
-    private static MolecularRecord loadMolecularRecord(@NotNull String molecularJson) throws IOException {
-        LOGGER.info("Loading molecular record from {}", molecularJson);
-        return  MolecularRecordJson.read(molecularJson);
-    }
-
-    @NotNull
-    private static TreatmentMatch loadTreatmentMatches(@NotNull String treatmentMatchJson) throws IOException {
-        LOGGER.info("Loading treatment match results from {}", treatmentMatchJson);
-        return TreatmentMatchJson.read(treatmentMatchJson);
     }
 }

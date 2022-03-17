@@ -351,4 +351,44 @@ CREATE TABLE eligibilityReferences
     PRIMARY KEY (eligibilityId, referenceId)
 );
 
+
+-- ALGO
+DROP TABLE IF EXISTS trialMatch;
+CREATE TABLE trialMatch
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    code varchar(50) NOT NULL,
+    acronym varchar(50) NOT NULL,
+    isEligible BOOLEAN NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS cohortMatch;
+CREATE TABLE cohortMatch
+(   id int NOT NULL AUTO_INCREMENT,
+    trialMatchId int NOT NULL,
+    code varchar(50) NOT NULL,
+    description varchar(500) NOT NULL,
+    isEligible BOOLEAN NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS evaluation;
+CREATE TABLE evaluation
+(   id int NOT NULL AUTO_INCREMENT,
+    trialMatchId int NOT NULL,
+    cohortMatchId int,
+    eligibility varchar(5000) NOT NULL,
+    result varchar(50) NOT NULL,
+    passSpecificMessages varchar(1000) NOT NULL,
+    passGeneralMessages varchar(1000) NOT NULL,
+    warnSpecificMessages varchar(1000) NOT NULL,
+    warnGeneralMessages varchar(1000) NOT NULL,
+    undeterminedSpecificMessages varchar(1000) NOT NULL,
+    undeterminedGeneralMessages varchar(1000) NOT NULL,
+    failSpecificMessages varchar(1000) NOT NULL,
+    failGeneralMessages varchar(1000) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 SET FOREIGN_KEY_CHECKS = 1;
