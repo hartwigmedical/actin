@@ -22,8 +22,10 @@ public class IsMale implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient is female");
+            builder.addFailGeneralMessages("Inadequate gender");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient is male");
+            builder.addPassGeneralMessages("Adequate gender");
         }
 
         return builder.build();

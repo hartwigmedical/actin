@@ -31,6 +31,7 @@ public class HasHadSpecificPriorCondition implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has other condition belonging to " + doidModel.term(doidToFind))
+                            .addPassGeneralMessages("Non-oncological condition")
                             .build();
                 }
             }

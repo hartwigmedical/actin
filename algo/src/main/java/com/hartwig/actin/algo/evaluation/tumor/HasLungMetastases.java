@@ -32,6 +32,7 @@ public class HasLungMetastases implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data regarding presence of lung metastases is missing")
+                    .addUndeterminedGeneralMessages("Missing lung metastasis data")
                     .build();
         }
 
@@ -40,8 +41,10 @@ public class HasLungMetastases implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No lung metastases present");
+            builder.addFailGeneralMessages("No lung metastases");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Lung metastases are present");
+            builder.addPassGeneralMessages("Lung metastases");
         }
 
         return builder.build();

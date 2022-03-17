@@ -21,6 +21,7 @@ public class HasBoneMetastases implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data regarding presence of bone metastases is missing")
+                    .addUndeterminedGeneralMessages("Missing bone metastasis data")
                     .build();
         }
 
@@ -29,8 +30,10 @@ public class HasBoneMetastases implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No bone metastases present");
+            builder.addFailGeneralMessages("No bone metastases");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Bone metastases are present");
+            builder.addPassGeneralMessages("Bone metastases");
         }
 
         return builder.build();

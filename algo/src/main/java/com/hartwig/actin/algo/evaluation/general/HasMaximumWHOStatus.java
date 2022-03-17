@@ -25,6 +25,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("WHO status is missing")
+                    .addUndeterminedGeneralMessages("WHO status missing")
                     .build();
         }
 
@@ -32,8 +33,10 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")");
+            builder.addFailGeneralMessages("Inadequate WHO status");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient WHO status " + who + " is within requested max (WHO " + maximumWHO + ")");
+            builder.addPassGeneralMessages("Adequate WHO status");
         }
 
         return builder.build();

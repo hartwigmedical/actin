@@ -22,6 +22,7 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Data regarding presence of CNS metastases is missing, assuming there are none")
+                    .addFailGeneralMessages("Assuming no known CNS metastases")
                     .build();
         }
 
@@ -30,8 +31,10 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No known CNS metastases present");
+            builder.addFailGeneralMessages("No known CNS metastases");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("CNS metastases are present");
+            builder.addPassGeneralMessages("CNS metastases");
         }
 
         return builder.build();
