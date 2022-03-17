@@ -23,6 +23,6 @@ class HistoricDateProvider implements ReferenceDateProvider {
     @NotNull
     @Override
     public LocalDate date() {
-        return null;
+        return historicDate;
     }
 }
