@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -35,8 +36,8 @@ public class TrialMatcher {
     private final EvaluationFunctionFactory evaluationFunctionFactory;
 
     @NotNull
-    public static TrialMatcher withDoidModel(@NotNull DoidModel doidModel) {
-        return new TrialMatcher(EvaluationFunctionFactory.withDoidModel(doidModel));
+    public static TrialMatcher create(@NotNull DoidModel doidModel, @NotNull ReferenceDateProvider referenceDateProvider) {
+        return new TrialMatcher(EvaluationFunctionFactory.create(doidModel, referenceDateProvider));
     }
 
     @VisibleForTesting

@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -17,11 +17,11 @@ public final class SurgeryRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator());
-        map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator());
+        map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator(referenceDateProvider));
 
         return map;
     }
@@ -32,10 +32,10 @@ public final class SurgeryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadSurgeryInPastWeeksCreator() {
+    private static FunctionCreator hasHadSurgeryInPastWeeksCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             int maxAgeWeeks = FunctionInputResolver.createOneIntegerInput(function);
-            LocalDate minDate = EvaluationConstants.REFERENCE_DATE.minusWeeks(maxAgeWeeks).plusWeeks(2);
+            LocalDate minDate = referenceDateProvider.date().minusWeeks(maxAgeWeeks).plusWeeks(2);
 
             return new HasHadSurgeryInPastWeeks(minDate);
         };

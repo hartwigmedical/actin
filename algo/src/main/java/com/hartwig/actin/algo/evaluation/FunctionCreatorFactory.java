@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
@@ -32,26 +33,27 @@ final class FunctionCreatorFactory {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> createFunctionCreatorMap(@NotNull DoidModel doidModel) {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel,
+            @NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.putAll(GeneralRuleMapping.create());
+        map.putAll(GeneralRuleMapping.create(referenceDateProvider));
         map.putAll(TumorRuleMapping.create(doidModel));
         map.putAll(TreatmentRuleMapping.create());
-        map.putAll(PreviousTumorRuleMapping.create(doidModel));
+        map.putAll(PreviousTumorRuleMapping.create(doidModel, referenceDateProvider));
         map.putAll(MolecularRuleMapping.create());
-        map.putAll(LaboratoryRuleMapping.create());
+        map.putAll(LaboratoryRuleMapping.create(referenceDateProvider));
         map.putAll(OtherConditionRuleMapping.create(doidModel));
         map.putAll(CardiacFunctionRuleMapping.create(doidModel));
         map.putAll(InfectionRuleMapping.create(doidModel));
         map.putAll(MedicationRuleMapping.create());
-        map.putAll(WashoutRuleMapping.create());
+        map.putAll(WashoutRuleMapping.create(referenceDateProvider));
         map.putAll(ReproductionRuleMapping.create());
         map.putAll(ComplicationRuleMapping.create());
         map.putAll(ToxicityRuleMapping.create(doidModel));
         map.putAll(VitalFunctionRuleMapping.create());
-        map.putAll(BloodTransfusionRuleMapping.create());
-        map.putAll(SurgeryRuleMapping.create());
+        map.putAll(BloodTransfusionRuleMapping.create(referenceDateProvider));
+        map.putAll(SurgeryRuleMapping.create(referenceDateProvider));
         map.putAll(LifestyleRuleMapping.create());
 
         return map;

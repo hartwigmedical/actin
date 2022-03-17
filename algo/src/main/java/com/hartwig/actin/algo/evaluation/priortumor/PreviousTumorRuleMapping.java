@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.util.EvaluationConstants;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -18,13 +18,15 @@ public final class PreviousTumorRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel,
+            @NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, hasActiveSecondMalignancyCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
                 hasHistoryOfSecondMalignancyWithDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS, hasHistoryOfSecondMalignancyWithinYearsCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS,
+                hasHistoryOfSecondMalignancyWithinYearsCreator(referenceDateProvider));
 
         return map;
     }
@@ -43,10 +45,10 @@ public final class PreviousTumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryOfSecondMalignancyWithinYearsCreator() {
+    private static FunctionCreator hasHistoryOfSecondMalignancyWithinYearsCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             int maxYears = FunctionInputResolver.createOneIntegerInput(function);
-            LocalDate minDate = EvaluationConstants.REFERENCE_DATE.minusYears(maxYears);
+            LocalDate minDate = referenceDateProvider.date().minusYears(maxYears);
 
             return new HasHistoryOfSecondMalignancyWithinYears(minDate);
         };

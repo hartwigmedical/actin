@@ -10,6 +10,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
 import com.hartwig.actin.algo.datamodel.CohortEligibility;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -43,7 +44,8 @@ public class TrialMatcherTest {
 
     @NotNull
     private static EvaluationFunctionFactory createTestEvaluationFunctionFactory() {
-        return EvaluationFunctionFactory.withDoidModel(TestDoidModelFactory.createMinimalTestDoidModel());
+        return EvaluationFunctionFactory.create(TestDoidModelFactory.createMinimalTestDoidModel(),
+                TestReferenceDateProviderFactory.createCurrentDate());
     }
 
     private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {

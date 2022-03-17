@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
@@ -22,8 +23,8 @@ public class EvaluationFunctionFactory {
     private final Map<EligibilityRule, FunctionCreator> functionCreatorMap;
 
     @NotNull
-    public static EvaluationFunctionFactory withDoidModel(@NotNull DoidModel doidModel) {
-        return new EvaluationFunctionFactory(FunctionCreatorFactory.createFunctionCreatorMap(doidModel));
+    public static EvaluationFunctionFactory create(@NotNull DoidModel doidModel, @NotNull ReferenceDateProvider referenceDateProvider) {
+        return new EvaluationFunctionFactory(FunctionCreatorFactory.create(doidModel, referenceDateProvider));
     }
 
     private EvaluationFunctionFactory(@NotNull final Map<EligibilityRule, FunctionCreator> functionCreatorMap) {

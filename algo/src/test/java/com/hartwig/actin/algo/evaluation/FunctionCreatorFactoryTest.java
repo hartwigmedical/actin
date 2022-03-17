@@ -4,6 +4,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
 
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
+import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -18,7 +20,8 @@ public class FunctionCreatorFactoryTest {
     @Test
     public void everyFunctionCanBeCreated() {
         DoidModel doidModel = TestDoidModelFactory.createMinimalTestDoidModel();
-        Map<EligibilityRule, FunctionCreator> map = FunctionCreatorFactory.createFunctionCreatorMap(doidModel);
+        ReferenceDateProvider referenceDateProvider = TestReferenceDateProviderFactory.createCurrentDate();
+        Map<EligibilityRule, FunctionCreator> map = FunctionCreatorFactory.create(doidModel, referenceDateProvider);
 
         for (EligibilityRule rule : EligibilityRule.values()) {
             EligibilityFunction function = TestParameterizedFunctionFactory.create(rule);

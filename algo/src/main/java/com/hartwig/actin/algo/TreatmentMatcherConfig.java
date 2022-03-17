@@ -27,6 +27,7 @@ public interface TreatmentMatcherConfig {
 
     String OUTPUT_DIRECTORY = "output_directory";
 
+    String RUN_HISTORICALLY = "run_historically";
     String LOG_DEBUG = "log_debug";
 
     @NotNull
@@ -41,6 +42,7 @@ public interface TreatmentMatcherConfig {
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to");
 
+        options.addOption(RUN_HISTORICALLY, false, "If set, runs the algo with a date just after the original patient registration date");
         options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled");
 
         return options;
@@ -61,11 +63,18 @@ public interface TreatmentMatcherConfig {
     @NotNull
     String outputDirectory();
 
+    boolean runHistorically();
+
     @NotNull
     static TreatmentMatcherConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         if (cmd.hasOption(LOG_DEBUG)) {
             Configurator.setRootLevel(Level.DEBUG);
             LOGGER.debug("Switched root level logging to DEBUG");
+        }
+
+        boolean runHistorically = cmd.hasOption(RUN_HISTORICALLY);
+        if (runHistorically) {
+            LOGGER.debug("Switched to run in historic mode");
         }
 
         return ImmutableTreatmentMatcherConfig.builder()
@@ -74,6 +83,7 @@ public interface TreatmentMatcherConfig {
                 .treatmentDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DATABASE_DIRECTORY))
                 .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
+                .runHistorically(runHistorically)
                 .build();
     }
 }
