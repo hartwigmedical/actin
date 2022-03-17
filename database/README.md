@@ -24,6 +24,15 @@ java -cp actin.jar com.hartwig.actin.database.molecular.MolecularLoaderApplicati
     -db_user user -db_pass pass -db_url url
 ```
 
+### Treatment Data Loader
+The treatment data loader loads up treatment data from [ACTIN-Treatment](../treatment/README.md) as follows:
+
+```
+java -cp actin.jar com.hartwig.actin.database.treatment.TreatmentLoaderApplication \
+    -treatment_database_directory /path/to/treatment_database_dir \
+    -db_user user -db_pass pass -db_url url
+```
+
 ### Version History and Download Links
  - Upcoming (first release) 
  
