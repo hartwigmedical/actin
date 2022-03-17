@@ -66,10 +66,16 @@ public class TreatmentMatchDAO {
     }
 
     private int writeCohortMatch(int trialMatchId, @NotNull CohortEligibility cohortEligibility) {
-        return context.insertInto(COHORTMATCH, COHORTMATCH.TRIALMATCHID, COHORTMATCH.CODE, COHORTMATCH.DESCRIPTION, TRIALMATCH.ISELIGIBLE)
+        return context.insertInto(COHORTMATCH,
+                COHORTMATCH.TRIALMATCHID,
+                COHORTMATCH.CODE,
+                COHORTMATCH.DESCRIPTION,
+                COHORTMATCH.OPEN,
+                TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
                         cohortEligibility.metadata().cohortId(),
                         cohortEligibility.metadata().description(),
+                        DataUtil.toByte(cohortEligibility.metadata().open()),
                         DataUtil.toByte(cohortEligibility.isPotentiallyEligible()))
                 .returning(COHORTMATCH.ID)
                 .fetchOne()

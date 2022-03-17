@@ -369,6 +369,7 @@ CREATE TABLE cohortMatch
     trialMatchId int NOT NULL,
     code varchar(50) NOT NULL,
     description varchar(500) NOT NULL,
+    open BOOLEAN NOT NULL,
     isEligible BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
