@@ -18,6 +18,9 @@ The following assumptions are made about the inputs:
  - The molecular JSON adheres to the datamodel defined by [ACTIN-Molecular](../molecular/README.md) 
  - The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
  
+An optional flag `run_historically` can be added in which case the treatment matcher sets the date to 3 weeks after the 
+patient's registration date. If this flag is not set, the treatment matcher using the current date as reference date.
+ 
 ### Treatment matching
 
 Every treatment defined in the treatment database is evaluated independently. 
