@@ -19,6 +19,7 @@ public class IsTreatedInHospital implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently exact hospital of treatment is not determined")
+                .addPassGeneralMessages("No hospital evaluated")
                 .build();
     }
 }

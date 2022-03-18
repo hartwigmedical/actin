@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.vitalfunction.HasRestingHeartRateWithinBounds;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -26,7 +27,6 @@ public final class CardiacFunctionRuleMapping {
         map.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator(doidModel));
-        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, hasRestingHeartRateWithinBoundsCreator());
 
         return map;
     }
@@ -65,8 +65,4 @@ public final class CardiacFunctionRuleMapping {
         return function -> new HasLongQTSyndrome(doidModel);
     }
 
-    @NotNull
-    private static FunctionCreator hasRestingHeartRateWithinBoundsCreator() {
-        return function -> new HasRestingHeartRateWithinBounds();
-    }
 }

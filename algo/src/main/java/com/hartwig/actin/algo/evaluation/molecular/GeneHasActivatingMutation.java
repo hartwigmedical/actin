@@ -24,6 +24,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Activating mutation detected in gene " + gene)
+                    .addPassGeneralMessages("Molecular requirements")
                     .build();
         }
 

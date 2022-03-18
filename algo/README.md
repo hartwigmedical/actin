@@ -341,7 +341,6 @@ HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavaila
 HAS_QTC_OF_AT_MOST_X | QTcF or QTcB. Currently: Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
-HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | T.B.D.
 
 ##### Rules related to infections
 
@@ -451,6 +450,7 @@ Rule | When does a patient pass evaluation?
 HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent systolic blood pressure AND average value => X
 HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent diastolic blood pressure AND average value => X
 HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND average value => X
+HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND average value between X and Y 
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 
 For SBP, DBP and Pulse oximetry, evaluation should resolve to UNDETERMINED rather than FAIL in case of no PASS, but at least 1 of the up to 5 most recent values would be sufficient to PASS.

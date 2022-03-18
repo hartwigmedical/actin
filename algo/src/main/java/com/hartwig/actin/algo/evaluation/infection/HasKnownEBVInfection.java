@@ -33,6 +33,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has known EBV infection: " + priorOtherCondition.name())
+                            .addPassGeneralMessages("Present EBV infection")
                             .build();
                 }
             }
@@ -41,6 +42,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known EBV infection")
+                .addFailGeneralMessages("Requested infection(s) not present")
                 .build();
     }
 }

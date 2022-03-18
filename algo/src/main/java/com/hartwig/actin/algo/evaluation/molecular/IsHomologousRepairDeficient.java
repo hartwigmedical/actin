@@ -33,6 +33,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
             builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor is homologous repair deficient");
+            builder.addPassGeneralMessages("Molecular requirements");
         }
 
         return builder.build();

@@ -19,6 +19,7 @@ public class HasRapidlyDeterioratingCondition implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that patient condition is not rapidly deteriorating")
+                .addPassGeneralMessages("No rapidly deteriorating condition")
                 .build();
     }
 }

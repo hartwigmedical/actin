@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
 
+    //TODO: implement according to README
     HasRestingHeartRateWithinBounds() {
     }
 

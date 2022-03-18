@@ -26,6 +26,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Inactivation detected of gene " + gene)
+                        .addPassGeneralMessages("Molecular requirements")
                         .build();
             }
         }

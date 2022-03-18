@@ -30,11 +30,16 @@ public class HasLongQTSyndrome implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has long QT syndrome")
+                            .addPassGeneralMessages("Presence long QT syndrome")
                             .build();
                 }
             }
         }
 
-        return ImmutableEvaluation.builder().result(EvaluationResult.FAIL).addFailSpecificMessages("Patient has no long QT syndrome").build();
+        return ImmutableEvaluation.builder()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient has no long QT syndrome")
+                .addFailGeneralMessages("No presence long QT syndrome")
+                .build();
     }
 }

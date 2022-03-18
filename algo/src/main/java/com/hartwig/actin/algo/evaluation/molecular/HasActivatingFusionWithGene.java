@@ -26,6 +26,7 @@ public class HasActivatingFusionWithGene implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Fusion detected with gene " + gene)
+                        .addPassGeneralMessages("Molecular requirements")
                         .build();
             }
         }

@@ -19,6 +19,7 @@ public class HasMinimumKarnofskyScore implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Karnofsky score is currently not evaluated")
+                .addPassGeneralMessages("Unevaluated Karnofsky requirements")
                 .build();
     }
 }

@@ -26,6 +26,7 @@ public class GeneIsDeleted implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Deletion detected of gene " + gene)
+                        .addPassGeneralMessages("Molecular requirements")
                         .build();
             }
         }

@@ -29,6 +29,7 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Specific gene mutation detected " + gene + " " + mutation)
+                        .addPassGeneralMessages("Molecular requirements")
                         .build();
             }
         }

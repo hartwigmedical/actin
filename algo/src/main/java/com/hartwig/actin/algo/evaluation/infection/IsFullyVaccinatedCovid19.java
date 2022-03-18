@@ -19,6 +19,7 @@ public class IsFullyVaccinatedCovid19 implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient is fully vaccinated against Covid-19")
+                .addUndeterminedSpecificMessages("Undetermined COVID-19 vaccination")
                 .build();
     }
 }

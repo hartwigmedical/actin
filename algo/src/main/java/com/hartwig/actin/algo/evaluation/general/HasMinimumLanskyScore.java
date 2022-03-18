@@ -19,6 +19,7 @@ public class HasMinimumLanskyScore implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Lansky score is currently not evaluated")
+                .addPassGeneralMessages("Unevaluated Lansky requirements")
                 .build();
     }
 }

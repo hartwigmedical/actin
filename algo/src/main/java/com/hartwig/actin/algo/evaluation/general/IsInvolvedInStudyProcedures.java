@@ -18,6 +18,7 @@ public class IsInvolvedInStudyProcedures implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return ImmutableEvaluation.builder().result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that patient is not involved with the trial of interest")
+                .addPassGeneralMessages("No contacts with trial of interest assumed")
                 .build();
     }
 }

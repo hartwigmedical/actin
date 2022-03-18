@@ -36,6 +36,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
             builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor mutational burden exceeds " + minTumorMutationalBurden);
+            builder.addPassGeneralMessages("Molecular requirements");
         }
 
         return builder.build();

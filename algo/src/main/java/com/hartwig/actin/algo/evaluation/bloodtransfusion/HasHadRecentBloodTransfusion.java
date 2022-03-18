@@ -33,6 +33,7 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has received recent blood transfusion of product " + productString)
+                        .addPassSpecificMessages("Recent blood transfusion")
                         .build();
             }
         }
@@ -40,6 +41,7 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not received recent blood transfusion of product " + productString)
+                .addFailGeneralMessages("No recent blood transfusion")
                 .build();
     }
 }

@@ -32,8 +32,10 @@ public class HasLimitedTumorMutationalLoad implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor mutational load exceeds " + maxTumorMutationalLoad);
+            builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor mutational load does not exceed " + maxTumorMutationalLoad);
+            builder.addPassGeneralMessages("Molecular requirements");
         }
 
         return builder.build();

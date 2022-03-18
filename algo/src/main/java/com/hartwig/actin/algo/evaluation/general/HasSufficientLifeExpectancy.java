@@ -19,6 +19,7 @@ public class HasSufficientLifeExpectancy implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that requested life expectancy will be met")
+                .addPassGeneralMessages("Life expectancy assumed")
                 .build();
     }
 }

@@ -33,6 +33,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
             builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor is microsatellite unstable");
+            builder.addPassGeneralMessages("Molecular requirements");
         }
 
         return builder.build();

@@ -31,6 +31,7 @@ public class HasSpecificInfection implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has infection with " + doidModel.term(doidToFind))
+                            .addPassGeneralMessages("Present " + doidModel.term(doidToFind) + " infection")
                             .build();
                 }
             }
@@ -39,6 +40,7 @@ public class HasSpecificInfection implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known infection with " + doidModel.term(doidToFind))
+                .addFailGeneralMessages("Requested infection(s) not present")
                 .build();
     }
 }

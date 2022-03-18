@@ -187,7 +187,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LONG_QT_SYNDROME, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, FunctionInput.TWO_DOUBLES);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_EBV_INFECTION, FunctionInput.NONE);
@@ -258,6 +257,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, FunctionInput.TWO_DOUBLES);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);

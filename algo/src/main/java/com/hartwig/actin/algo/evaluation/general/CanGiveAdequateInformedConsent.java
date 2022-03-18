@@ -19,6 +19,7 @@ public class CanGiveAdequateInformedConsent implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that adequate IC can/will be given")
+                .addPassGeneralMessages("Adequate IC")
                 .build();
     }
 }

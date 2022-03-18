@@ -189,7 +189,6 @@ public enum EligibilityRule {
     HAS_QTC_OF_AT_MOST_X,
     HAS_QTCF_OF_AT_MOST_X,
     HAS_LONG_QT_SYNDROME,
-    HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
 
     // Rules related to infections
     HAS_ACTIVE_INFECTION,
@@ -264,6 +263,7 @@ public enum EligibilityRule {
     HAS_SBP_MMHG_OF_AT_LEAST_X,
     HAS_DBP_MMHG_OF_AT_LEAST_X,
     HAS_PULSE_OXYMETRY_OF_AT_LEAST_X,
+    HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
     HAS_BODY_WEIGHT_OF_AT_LEAST_X,
 
     // Rules related to blood transfusions

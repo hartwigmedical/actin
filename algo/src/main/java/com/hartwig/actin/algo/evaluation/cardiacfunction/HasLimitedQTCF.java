@@ -27,6 +27,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No measurement found for QTCF")
+                    .addUndeterminedGeneralMessages("QTCF missing")
                     .build();
         }
 
@@ -37,6 +38,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("QTCF measure not in '" + EXPECTED_QTCF_UNIT + "': " + unit)
+                    .addUndeterminedGeneralMessages("QTCF unit")
                     .build();
         }
 
@@ -44,8 +46,10 @@ public class HasLimitedQTCF implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("QTCF of " + value + " " + unit + " exceeds maximum threshold of " + maxQTCF);
+            builder.addFailGeneralMessages("QTCF requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("QTCF of " + value + " " + unit + " is below maximum threshold of " + maxQTCF);
+            builder.addPassGeneralMessages("QTCF requirements");
         }
 
         return builder.build();

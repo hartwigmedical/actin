@@ -31,9 +31,10 @@ public class HasActiveInfection implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no active infection");
+            builder.addFailGeneralMessages("No infection present");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has active infection: " + infection.description());
-            builder.addPassGeneralMessages("Infection presence");
+            builder.addPassGeneralMessages("Infection presence: " + infection.description());
         }
 
         return builder.build();

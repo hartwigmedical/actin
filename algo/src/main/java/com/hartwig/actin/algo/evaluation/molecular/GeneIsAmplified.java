@@ -24,6 +24,7 @@ public class GeneIsAmplified implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Amplification detected of gene " + gene)
+                    .addPassGeneralMessages("Molecular requirements")
                     .build();
         }
 

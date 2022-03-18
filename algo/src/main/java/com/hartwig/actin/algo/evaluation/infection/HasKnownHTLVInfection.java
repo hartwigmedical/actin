@@ -32,6 +32,7 @@ public class HasKnownHTLVInfection implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has known HTLV infection: " + priorOtherCondition.name())
+                            .addPassGeneralMessages("Present HTLV infection")
                             .build();
                 }
             }
@@ -40,6 +41,7 @@ public class HasKnownHTLVInfection implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known HTLV infection")
+                .addFailGeneralMessages("Requested infection(s) not present")
                 .build();
     }
 }

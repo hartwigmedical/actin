@@ -29,6 +29,7 @@ public class HasSpecificFusionGene implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Specific fusion detected " + fiveGene + "-" + threeGene)
+                        .addPassGeneralMessages("Molecular requirements")
                         .build();
             }
         }
