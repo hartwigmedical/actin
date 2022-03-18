@@ -353,10 +353,19 @@ CREATE TABLE eligibilityReferences
 
 
 -- ALGO
+DROP TABLE IF EXISTS treatmentMatch;
+CREATE TABLE treatmentMatch
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    referenceDate DATE NOT NULL,
+    referenceDateIsLive BOOLEAN NOT NULL,
+    PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS trialMatch;
 CREATE TABLE trialMatch
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    treatmentMatchId int NOT NULL,
     code varchar(50) NOT NULL,
     acronym varchar(50) NOT NULL,
     isEligible BOOLEAN NOT NULL,

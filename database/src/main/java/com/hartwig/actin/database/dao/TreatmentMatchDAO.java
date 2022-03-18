@@ -2,6 +2,7 @@ package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.COHORTMATCH;
 import static com.hartwig.actin.database.Tables.EVALUATION;
+import static com.hartwig.actin.database.Tables.TREATMENTMATCH;
 import static com.hartwig.actin.database.Tables.TRIALMATCH;
 
 import java.util.Map;
@@ -32,19 +33,35 @@ public class TreatmentMatchDAO {
     public void clear(@NotNull TreatmentMatch treatmentMatch) {
         String sampleId = treatmentMatch.sampleId();
 
-        Result<Record1<Integer>> result = context.select(TRIALMATCH.ID).from(TRIALMATCH).where(TRIALMATCH.SAMPLEID.eq(sampleId)).fetch();
-        for (Record record : result) {
-            int trialMatchId = record.getValue(TRIALMATCH.ID);
-            context.delete(COHORTMATCH).where(COHORTMATCH.TRIALMATCHID.eq(trialMatchId)).execute();
-            context.delete(EVALUATION).where(EVALUATION.TRIALMATCHID.eq(trialMatchId)).execute();
+        Result<Record1<Integer>> treatmentResults =
+                context.select(TREATMENTMATCH.ID).from(TREATMENTMATCH).where(TREATMENTMATCH.SAMPLEID.eq(sampleId)).fetch();
+        for (Record treatmentResult : treatmentResults) {
+            int treatmentMatchId = treatmentResult.getValue(TREATMENTMATCH.ID);
+            Result<Record1<Integer>> trialResults =
+                    context.select(TRIALMATCH.ID).from(TRIALMATCH).where(TRIALMATCH.TREATMENTMATCHID.eq(treatmentMatchId)).fetch();
+            for (Record trialResult : trialResults) {
+                int trialMatchId = trialResult.getValue(TRIALMATCH.ID);
+                context.delete(COHORTMATCH).where(COHORTMATCH.TRIALMATCHID.eq(trialMatchId)).execute();
+                context.delete(EVALUATION).where(EVALUATION.TRIALMATCHID.eq(trialMatchId)).execute();
+            }
+            context.delete(TRIALMATCH).where(TRIALMATCH.TREATMENTMATCHID.eq(treatmentMatchId)).execute();
         }
 
-        context.delete(TRIALMATCH).where(TRIALMATCH.SAMPLEID.eq(sampleId)).execute();
+        context.delete(TREATMENTMATCH).where(TREATMENTMATCH.SAMPLEID.eq(sampleId)).execute();
     }
 
     public void writeTreatmentMatch(@NotNull TreatmentMatch treatmentMatch) {
+        int treatmentMatchId = context.insertInto(TREATMENTMATCH,
+                TREATMENTMATCH.SAMPLEID,
+                TREATMENTMATCH.REFERENCEDATE,
+                TREATMENTMATCH.REFERENCEDATEISLIVE)
+                .values(treatmentMatch.sampleId(), treatmentMatch.referenceDate(), DataUtil.toByte(treatmentMatch.referenceDateIsLive()))
+                .returning(TREATMENTMATCH.ID)
+                .fetchOne()
+                .getValue(TREATMENTMATCH.ID);
+
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
-            int trialMatchId = writeTrialMatch(treatmentMatch.sampleId(), trialMatch);
+            int trialMatchId = writeTrialMatch(treatmentMatchId, trialMatch);
 
             writeEvaluations(trialMatchId, null, trialMatch.evaluations());
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
@@ -54,9 +71,9 @@ public class TreatmentMatchDAO {
         }
     }
 
-    private int writeTrialMatch(@NotNull String sampleId, @NotNull TrialMatch trialMatch) {
-        return context.insertInto(TRIALMATCH, TRIALMATCH.SAMPLEID, TRIALMATCH.CODE, TRIALMATCH.ACRONYM, TRIALMATCH.ISELIGIBLE)
-                .values(sampleId,
+    private int writeTrialMatch(int treatmentMatchId, @NotNull TrialMatch trialMatch) {
+        return context.insertInto(TRIALMATCH, TRIALMATCH.TREATMENTMATCHID, TRIALMATCH.CODE, TRIALMATCH.ACRONYM, TRIALMATCH.ISELIGIBLE)
+                .values(treatmentMatchId,
                         trialMatch.identification().trialId(),
                         trialMatch.identification().acronym(),
                         DataUtil.toByte(trialMatch.isPotentiallyEligible()))
