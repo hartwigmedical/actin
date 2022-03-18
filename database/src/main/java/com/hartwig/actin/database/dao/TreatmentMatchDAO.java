@@ -72,10 +72,16 @@ public class TreatmentMatchDAO {
     }
 
     private int writeTrialMatch(int treatmentMatchId, @NotNull TrialMatch trialMatch) {
-        return context.insertInto(TRIALMATCH, TRIALMATCH.TREATMENTMATCHID, TRIALMATCH.CODE, TRIALMATCH.ACRONYM, TRIALMATCH.ISELIGIBLE)
+        return context.insertInto(TRIALMATCH,
+                TRIALMATCH.TREATMENTMATCHID,
+                TRIALMATCH.CODE,
+                TRIALMATCH.ACRONYM,
+                TRIALMATCH.TITLE,
+                TRIALMATCH.ISELIGIBLE)
                 .values(treatmentMatchId,
                         trialMatch.identification().trialId(),
                         trialMatch.identification().acronym(),
+                        trialMatch.identification().title(),
                         DataUtil.toByte(trialMatch.isPotentiallyEligible()))
                 .returning(TRIALMATCH.ID)
                 .fetchOne()
@@ -86,13 +92,15 @@ public class TreatmentMatchDAO {
         return context.insertInto(COHORTMATCH,
                 COHORTMATCH.TRIALMATCHID,
                 COHORTMATCH.CODE,
-                COHORTMATCH.DESCRIPTION,
                 COHORTMATCH.OPEN,
+                COHORTMATCH.BLACKLIST,
+                COHORTMATCH.DESCRIPTION,
                 TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
                         cohortMatch.metadata().cohortId(),
-                        cohortMatch.metadata().description(),
                         DataUtil.toByte(cohortMatch.metadata().open()),
+                        DataUtil.toByte(cohortMatch.metadata().blacklist()),
+                        cohortMatch.metadata().description(),
                         DataUtil.toByte(cohortMatch.isPotentiallyEligible()))
                 .returning(COHORTMATCH.ID)
                 .fetchOne()
@@ -109,6 +117,7 @@ public class TreatmentMatchDAO {
                     EVALUATION.COHORTMATCHID,
                     EVALUATION.ELIGIBILITY,
                     EVALUATION.RESULT,
+                    EVALUATION.RECOVERABLE,
                     EVALUATION.PASSSPECIFICMESSAGES,
                     EVALUATION.PASSGENERALMESSAGES,
                     EVALUATION.WARNSPECIFICMESSAGES,
@@ -121,6 +130,7 @@ public class TreatmentMatchDAO {
                             cohortMatchId,
                             eligibility,
                             evaluation.result().toString(),
+                            DataUtil.toByte(evaluation.recoverable()),
                             DataUtil.concat(evaluation.passSpecificMessages()),
                             DataUtil.concat(evaluation.passGeneralMessages()),
                             DataUtil.concat(evaluation.warnSpecificMessages()),

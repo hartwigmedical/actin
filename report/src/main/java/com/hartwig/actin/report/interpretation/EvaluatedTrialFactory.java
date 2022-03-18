@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 public final class EvaluatedTrialFactory {
 
-    private static final Set<EvaluationResult> WARN_RESULTS = Sets.newHashSet(EvaluationResult.WARN, EvaluationResult.UNDETERMINED);
-    private static final Set<EvaluationResult> FAIL_RESULTS = Sets.newHashSet(EvaluationResult.FAIL);
-
     private EvaluatedTrialFactory() {
     }
 
@@ -82,9 +79,14 @@ public final class EvaluatedTrialFactory {
     @NotNull
     private static Set<String> extractWarnings(@NotNull Map<Eligibility, Evaluation> evaluationMap) {
         Set<String> messages = Sets.newHashSet();
-        for (Evaluation evaluation : extractEvaluations(evaluationMap, WARN_RESULTS)) {
-            messages.addAll(evaluation.warnGeneralMessages());
-            messages.addAll(evaluation.undeterminedGeneralMessages());
+        for (Evaluation evaluation : evaluationMap.values()) {
+            if (evaluation.result() == EvaluationResult.WARN) {
+                messages.addAll(evaluation.warnGeneralMessages());
+            } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
+                messages.addAll(evaluation.undeterminedGeneralMessages());
+            } else if (evaluation.result() == EvaluationResult.FAIL && evaluation.recoverable()) {
+                messages.addAll(evaluation.failGeneralMessages());
+            }
         }
         return messages;
     }
@@ -92,8 +94,10 @@ public final class EvaluatedTrialFactory {
     @NotNull
     private static Set<String> extractFails(@NotNull Map<Eligibility, Evaluation> evaluations) {
         Set<String> messages = Sets.newHashSet();
-        for (Evaluation evaluation : extractEvaluations(evaluations, FAIL_RESULTS)) {
-            messages.addAll(evaluation.failGeneralMessages());
+        for (Evaluation evaluation : evaluations.values()) {
+            if (evaluation.result() == EvaluationResult.FAIL && !evaluation.recoverable()) {
+                messages.addAll(evaluation.failGeneralMessages());
+            }
         }
         return messages;
     }

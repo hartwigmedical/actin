@@ -2,12 +2,10 @@ package com.hartwig.actin.algo;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.datamodel.CohortMatch;
@@ -94,11 +92,12 @@ public class TrialMatcher {
     }
 
     private static boolean isEligible(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        Set<EvaluationResult> results = Sets.newHashSet();
         for (Evaluation evaluation : evaluations.values()) {
-            results.add(evaluation.result());
+            if (!evaluation.recoverable() && (evaluation.result() == EvaluationResult.FAIL
+                    || evaluation.result() == EvaluationResult.NOT_IMPLEMENTED)) {
+                return false;
+            }
         }
-
-        return !results.contains(EvaluationResult.FAIL) && !results.contains(EvaluationResult.NOT_IMPLEMENTED);
+        return true;
     }
 }

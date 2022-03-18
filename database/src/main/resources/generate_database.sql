@@ -372,6 +372,7 @@ CREATE TABLE trialMatch
     treatmentMatchId int NOT NULL,
     code varchar(50) NOT NULL,
     acronym varchar(50) NOT NULL,
+    title varchar(2500) NOT NULL,
     isEligible BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
@@ -381,8 +382,9 @@ CREATE TABLE cohortMatch
 (   id int NOT NULL AUTO_INCREMENT,
     trialMatchId int NOT NULL,
     code varchar(50) NOT NULL,
-    description varchar(500) NOT NULL,
     open BOOLEAN NOT NULL,
+    blacklist BOOLEAN NOT NULL,
+    description varchar(500) NOT NULL,
     isEligible BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
@@ -394,6 +396,7 @@ CREATE TABLE evaluation
     cohortMatchId int,
     eligibility varchar(5000) NOT NULL,
     result varchar(50) NOT NULL,
+    recoverable BOOLEAN NOT NULL,
     passSpecificMessages varchar(1000) NOT NULL,
     passGeneralMessages varchar(1000) NOT NULL,
     warnSpecificMessages varchar(1000) NOT NULL,
