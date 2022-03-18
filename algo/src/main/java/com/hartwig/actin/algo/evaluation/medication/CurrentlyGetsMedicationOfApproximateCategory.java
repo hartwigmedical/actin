@@ -39,12 +39,14 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
                             + categoryTermToFind)
+                    .addPassGeneralMessages("Received medication")
                     .build();
         }
 
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient currently does not get medication of category " + categoryTermToFind)
+                .addFailGeneralMessages("Absent medication use")
                 .build();
     }
 }

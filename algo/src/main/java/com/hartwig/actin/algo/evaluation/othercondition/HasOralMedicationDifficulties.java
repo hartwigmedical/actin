@@ -33,6 +33,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
+                            .addPassGeneralMessages("Potential oral medication difficulties")
                             .build();
                 }
             }
@@ -41,6 +42,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential reasons for difficulty with oral medication identified")
+                .addFailGeneralMessages("No potential oral medication difficulties identified")
                 .build();
     }
 }

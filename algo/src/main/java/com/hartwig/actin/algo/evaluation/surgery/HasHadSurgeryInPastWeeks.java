@@ -31,6 +31,7 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
+                        .addFailGeneralMessages("Recent surgeries")
                         .build();
             }
         }
@@ -38,6 +39,7 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had surgery after " + DATE_FORMAT.format(minDate))
+                .addFailGeneralMessages("No recent surgeries")
                 .build();
     }
 }

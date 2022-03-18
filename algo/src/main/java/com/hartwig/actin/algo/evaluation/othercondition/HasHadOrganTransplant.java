@@ -26,6 +26,7 @@ public class HasHadOrganTransplant implements EvaluationFunction {
                 return ImmutableEvaluation.builder()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had an organ transplant")
+                        .addPassGeneralMessages("Organ transplant")
                         .build();
             }
         }
@@ -33,6 +34,7 @@ public class HasHadOrganTransplant implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had an organ transplant")
+                .addFailGeneralMessages("No organ transplant")
                 .build();
     }
 }

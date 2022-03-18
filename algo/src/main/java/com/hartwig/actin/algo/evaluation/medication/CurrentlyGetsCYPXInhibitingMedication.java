@@ -23,6 +23,7 @@ public class CurrentlyGetsCYPXInhibitingMedication implements EvaluationFunction
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
+                .addUndeterminedGeneralMessages("CYP medication requirements")
                 .build();
     }
 }

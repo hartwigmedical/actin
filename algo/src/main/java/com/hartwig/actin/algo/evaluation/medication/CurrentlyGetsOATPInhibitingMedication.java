@@ -23,6 +23,7 @@ public class CurrentlyGetsOATPInhibitingMedication implements EvaluationFunction
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
+                .addUndeterminedGeneralMessages("OATP medication requirements")
                 .build();
     }
 }

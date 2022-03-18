@@ -19,6 +19,7 @@ public class CurrentlyGetsDiseaseModifyingAgents implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets disease modifying agents")
+                .addUndeterminedGeneralMessages("Medication requirements")
                 .build();
     }
 }

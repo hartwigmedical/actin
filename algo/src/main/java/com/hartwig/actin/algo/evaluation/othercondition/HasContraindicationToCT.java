@@ -44,6 +44,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to " + doidModel.term(doid))
+                            .addPassGeneralMessages("CT contraindication")
                             .build();
                 }
             }
@@ -53,6 +54,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to condition " + priorOtherCondition.name())
+                            .addPassGeneralMessages("CT contraindication")
                             .build();
                 }
             }
@@ -64,6 +66,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to allergy " + allergy.name())
+                            .addPassGeneralMessages("CT contraindication")
                             .build();
                 }
             }
@@ -75,6 +78,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to medication " + medication.name())
+                            .addPassGeneralMessages("CT contraindication")
                             .build();
                 }
             }
@@ -86,6 +90,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to complication " + complication.name())
+                            .addPassGeneralMessages("CT contraindication")
                             .build();
                 }
             }
@@ -94,6 +99,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential contraindications to CT identified")
+                .addFailGeneralMessages("No potential CT contraindication")
                 .build();
     }
 }

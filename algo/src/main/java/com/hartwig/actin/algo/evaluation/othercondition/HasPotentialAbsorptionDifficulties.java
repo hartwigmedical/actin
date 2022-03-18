@@ -52,6 +52,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has potential absorption difficulties due to " + doidModel.term(doid))
+                            .addPassGeneralMessages("Potential absorption difficulties")
                             .build();
                 }
             }
@@ -63,6 +64,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has potential absorption difficulties due to " + complication.name())
+                            .addPassGeneralMessages("Potential absorption difficulties")
                             .build();
                 }
             }
@@ -75,6 +77,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                         return ImmutableEvaluation.builder()
                                 .result(EvaluationResult.PASS)
                                 .addPassSpecificMessages("Patient has potential absorption difficulties due to " + toxicity.name())
+                                .addPassGeneralMessages("Potential absorption difficulties")
                                 .build();
                     }
                 }
@@ -84,6 +87,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential reasons for absorption problems identified")
+                .addFailGeneralMessages("No potential absorption difficulties identified")
                 .build();
     }
 }

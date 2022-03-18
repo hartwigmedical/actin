@@ -19,6 +19,7 @@ public class IsInDialysis implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that patient won't be in dialysis")
+                .addPassGeneralMessages("Assumed not in dialysis")
                 .build();
     }
 }

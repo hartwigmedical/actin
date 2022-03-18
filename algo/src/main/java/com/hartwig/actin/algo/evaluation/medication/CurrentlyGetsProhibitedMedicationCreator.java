@@ -19,6 +19,7 @@ public class CurrentlyGetsProhibitedMedicationCreator implements EvaluationFunct
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets prohibited medication")
+                .addUndeterminedGeneralMessages("Medication requirements")
                 .build();
     }
 }

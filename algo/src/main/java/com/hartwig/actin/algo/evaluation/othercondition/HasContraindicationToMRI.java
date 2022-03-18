@@ -38,6 +38,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to " + doidModel.term(doid))
+                            .addPassGeneralMessages("MRI contraindication")
                             .build();
                 }
             }
@@ -47,6 +48,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to condition " + priorOtherCondition.name())
+                            .addPassGeneralMessages("MRI contraindication")
                             .build();
                 }
             }
@@ -58,6 +60,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                     return ImmutableEvaluation.builder()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to allergy " + allergy.name())
+                            .addPassGeneralMessages("MRI contraindication")
                             .build();
                 }
             }
@@ -66,6 +69,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential contraindications to MRI identified")
+                .addFailGeneralMessages("No potential MRI contraindication")
                 .build();
     }
 }

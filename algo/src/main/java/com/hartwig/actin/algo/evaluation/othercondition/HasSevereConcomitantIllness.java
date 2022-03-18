@@ -19,6 +19,7 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Any severe concomitant illnesses are assumed not to be present")
+                .addPassGeneralMessages("Assumed no severe concomitant illnesses")
                 .build();
     }
 }
