@@ -130,12 +130,12 @@ IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | Currently resolves to not eval
 IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Currently resolves to undetermined
 HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to undetermined
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to undetermined, unless there is no prior treatment history and X>0, then resolve to FAIL
-HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X
-HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X
+HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 => X | In case there are multiple systemic treatment entries with the exact same name(s) but different start date, reconstruct the treatment timeline. 1] In case reconstruction is unambiguous and the treatments have not been interrupted by other systemic treatment(s), count the consecutive treatments as 1 line. In case they have been interrupted, count as either 1 or n. If both PASS, set to PASS, in case one PASS, one FAIL, set to UNDETERMINED, in case none PASS, set to FAIL. 2] If treatment timeline reconstruction is ambiguous, set to Undetermined.
+HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > nr of lines in case systemic = 1 <= X | In case there are multiple systemic treatment entries with the exact same name(s) but different start date, reconstruct the treatment timeline. 1] In case reconstruction is unambiguous and the treatments have not been interrupted by other systemic treatment(s), count the consecutive treatments as 1 line. In case they have been interrupted, count as either 1 or n. If both PASS, set to PASS, in case one PASS, one FAIL, set to UNDETERMINED, in case none PASS, set to FAIL. 2] If treatment timeline reconstruction is ambiguous, set to Undetermined.
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%
-HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type not like any %Y%
+HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%
+HAS_HAD_CATEGORY_X_TREATMENT_ IGNORING_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type not like any %Y%
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines => Y 
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y 
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z 

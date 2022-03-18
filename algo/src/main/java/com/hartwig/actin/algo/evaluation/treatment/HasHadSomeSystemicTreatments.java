@@ -13,6 +13,7 @@ public class HasHadSomeSystemicTreatments implements EvaluationFunction {
 
     private final int minSystemicTreatments;
 
+    //TODO: Update according to README
     HasHadSomeSystemicTreatments(final int minSystemicTreatments) {
         this.minSystemicTreatments = minSystemicTreatments;
     }

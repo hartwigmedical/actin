@@ -13,6 +13,7 @@ public class HasHadLimitedSystemicTreatments implements EvaluationFunction {
 
     private final int maxSystemicTreatments;
 
+    //TODO: Update according to README
     HasHadLimitedSystemicTreatments(final int maxSystemicTreatments) {
         this.maxSystemicTreatments = maxSystemicTreatments;
     }
