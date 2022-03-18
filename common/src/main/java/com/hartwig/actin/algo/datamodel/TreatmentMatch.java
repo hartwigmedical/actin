@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.datamodel;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.immutables.value.Value;
@@ -12,6 +13,11 @@ public abstract class TreatmentMatch {
 
     @NotNull
     public abstract String sampleId();
+
+    @NotNull
+    public abstract LocalDate referenceDate();
+
+    public abstract boolean referenceDateIsLive();
 
     @NotNull
     public abstract List<TrialMatch> trialMatches();

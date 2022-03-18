@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.datamodel;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,11 @@ public final class TestTreatmentMatchFactory {
 
     @NotNull
     public static TreatmentMatch createMinimalTreatmentMatch() {
-        return ImmutableTreatmentMatch.builder().sampleId(TestDataFactory.TEST_SAMPLE).build();
+        return ImmutableTreatmentMatch.builder()
+                .sampleId(TestDataFactory.TEST_SAMPLE)
+                .referenceDate(LocalDate.of(2021, 8, 2))
+                .referenceDateIsLive(true)
+                .build();
     }
 
     @NotNull
@@ -103,14 +108,8 @@ public final class TestTreatmentMatchFactory {
                 .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluations())
                 .build());
-        cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("B", true, false))
-                .isPotentiallyEligible(true)
-                .build());
-        cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("C", true, true))
-                .isPotentiallyEligible(false)
-                .build());
+        cohorts.add(ImmutableCohortMatch.builder().metadata(createTestMetadata("B", true, false)).isPotentiallyEligible(true).build());
+        cohorts.add(ImmutableCohortMatch.builder().metadata(createTestMetadata("C", true, true)).isPotentiallyEligible(false).build());
 
         return cohorts;
     }

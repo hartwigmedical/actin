@@ -12,6 +12,18 @@ public final class TestReferenceDateProviderFactory {
     @NotNull
     public static ReferenceDateProvider createCurrentDate() {
         LocalDate date = LocalDate.now();
-        return () -> date;
+
+        return new ReferenceDateProvider() {
+            @NotNull
+            @Override
+            public LocalDate date() {
+                return date;
+            }
+
+            @Override
+            public boolean isLive() {
+                return true;
+            }
+        };
     }
 }

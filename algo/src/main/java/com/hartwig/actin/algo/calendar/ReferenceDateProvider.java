@@ -9,6 +9,8 @@ public interface ReferenceDateProvider {
     @NotNull
     LocalDate date();
 
+    boolean isLive();
+
     default int year() {
         return date().getYear();
     }

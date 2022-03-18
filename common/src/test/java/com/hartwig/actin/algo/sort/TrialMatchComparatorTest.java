@@ -16,15 +16,15 @@ import org.junit.Test;
 public class TrialMatchComparatorTest {
 
     @Test
-    public void canSortTrialEligibility() {
-        TrialMatch eligibility1 = withId("Trial 1");
-        TrialMatch eligibility2 = withId("Trial 2");
+    public void canSortTrialMatches() {
+        TrialMatch match1 = withId("Trial 1");
+        TrialMatch match2 = withId("Trial 2");
 
-        List<TrialMatch> eligibilities = Lists.newArrayList(eligibility2, eligibility1);
-        eligibilities.sort(new TrialMatchComparator());
+        List<TrialMatch> matches = Lists.newArrayList(match2, match1);
+        matches.sort(new TrialMatchComparator());
 
-        assertEquals(eligibility1, eligibilities.get(0));
-        assertEquals(eligibility2, eligibilities.get(1));
+        assertEquals(match1, matches.get(0));
+        assertEquals(match2, matches.get(1));
     }
 
     @NotNull

@@ -1,5 +1,11 @@
 {
   "sampleId": "ACTN01029999T",
+  "referenceDate": {
+    "year": 2021,
+    "month": 8,
+    "day": 2
+  },
+  "referenceDateIsLive": true,
   "trialMatches": [
     {
       "identification": {
@@ -42,7 +48,6 @@
             ],
             "failGeneralMessages": [
             ]
-
           }
         ]
       ],

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.serialization;
 
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
 import static com.hartwig.actin.util.json.Json.stringList;
@@ -103,6 +104,8 @@ public final class TreatmentMatchJson {
 
             return ImmutableTreatmentMatch.builder()
                     .sampleId(string(match, "sampleId"))
+                    .referenceDate(date(match, "referenceDate"))
+                    .referenceDateIsLive(bool(match, "referenceDateIsLive"))
                     .trialMatches(toTrialMatches(array(match, "trialMatches")))
                     .build();
         }
@@ -111,13 +114,13 @@ public final class TreatmentMatchJson {
         private static List<TrialMatch> toTrialMatches(@NotNull JsonArray trialMatches) {
             List<TrialMatch> trialEligibilities = Lists.newArrayList();
             for (JsonElement element : trialMatches) {
-                trialEligibilities.add(toTrialEligibility(element.getAsJsonObject()));
+                trialEligibilities.add(toTrialMatch(element.getAsJsonObject()));
             }
             return trialEligibilities;
         }
 
         @NotNull
-        private static TrialMatch toTrialEligibility(@NotNull JsonObject object) {
+        private static TrialMatch toTrialMatch(@NotNull JsonObject object) {
             return ImmutableTrialMatch.builder()
                     .identification(toIdentification(object(object, "identification")))
                     .isPotentiallyEligible(bool(object, "isPotentiallyEligible"))

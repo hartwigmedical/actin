@@ -16,15 +16,15 @@ import org.junit.Test;
 public class CohortMatchComparatorTest {
 
     @Test
-    public void canSortCohortEligibility() {
-        CohortMatch eligibility1 = withId("A");
-        CohortMatch eligibility2 = withId("B");
+    public void canSortCohortMatches() {
+        CohortMatch match1 = withId("A");
+        CohortMatch match2 = withId("B");
 
-        List<CohortMatch> eligibilities = Lists.newArrayList(eligibility2, eligibility1);
-        eligibilities.sort(new CohortMatchComparator());
+        List<CohortMatch> matches = Lists.newArrayList(match2, match1);
+        matches.sort(new CohortMatchComparator());
 
-        assertEquals(eligibility1, eligibilities.get(0));
-        assertEquals(eligibility2, eligibilities.get(1));
+        assertEquals(match1, matches.get(0));
+        assertEquals(match2, matches.get(1));
     }
 
     @NotNull

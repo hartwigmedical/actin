@@ -7,7 +7,9 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory;
+import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.DoidModelFactory;
 import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
@@ -86,7 +88,15 @@ public class TreatmentMatcherApplication {
 
         LOGGER.info(("Matching patient to available trials"));
         TrialMatcher matcher = TrialMatcher.create(doidModel, referenceDateProvider);
-        TreatmentMatch match = matcher.determineEligibility(patient, trials);
+        List<TrialMatch> trialMatches = matcher.determineEligibility(patient, trials);
+
+        TreatmentMatch match = ImmutableTreatmentMatch.builder()
+                .sampleId(patient.sampleId())
+                .referenceDate(referenceDateProvider.date())
+                .referenceDateIsLive(referenceDateProvider.isLive())
+                .trialMatches(trialMatches)
+                .build();
+
         TreatmentMatchPrinter.printMatch(match);
 
         TreatmentMatchJson.write(match, config.outputDirectory());

@@ -14,7 +14,6 @@ import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
 import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
@@ -34,12 +33,11 @@ public class TrialMatcherTest {
         Trial trial = TestTreatmentFactory.createProperTestTrial();
 
         TrialMatcher matcher = new TrialMatcher(createTestEvaluationFunctionFactory());
-        TreatmentMatch match = matcher.determineEligibility(patient, Lists.newArrayList(trial));
+        List<TrialMatch> matches = matcher.determineEligibility(patient, Lists.newArrayList(trial));
 
-        assertEquals(match.sampleId(), patient.sampleId());
-        assertEquals(1, match.trialMatches().size());
+        assertEquals(1, matches.size());
 
-        assertTrialMatch(match.trialMatches().get(0));
+        assertTrialMatch(matches.get(0));
     }
 
     @NotNull

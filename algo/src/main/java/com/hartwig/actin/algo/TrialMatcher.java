@@ -14,9 +14,7 @@ import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableCohortMatch;
-import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch;
-import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
@@ -46,7 +44,7 @@ public class TrialMatcher {
     }
 
     @NotNull
-    public TreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
+    public List<TrialMatch> determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
         List<TrialMatch> trialMatches = Lists.newArrayList();
         for (Trial trial : trials) {
             Map<Eligibility, Evaluation> trialEvaluations = evaluateEligibility(patient, trial.generalEligibility());
@@ -82,7 +80,7 @@ public class TrialMatcher {
 
         trialMatches.sort(new TrialMatchComparator());
 
-        return ImmutableTreatmentMatch.builder().sampleId(patient.sampleId()).trialMatches(trialMatches).build();
+        return trialMatches;
     }
 
     @NotNull

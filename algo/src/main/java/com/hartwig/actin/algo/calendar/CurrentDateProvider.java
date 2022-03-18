@@ -14,4 +14,9 @@ class CurrentDateProvider implements ReferenceDateProvider {
     public LocalDate date() {
         return currentDate;
     }
+
+    @Override
+    public boolean isLive() {
+        return true;
+    }
 }
