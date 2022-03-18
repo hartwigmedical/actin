@@ -2,7 +2,7 @@ package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.COHORT;
 import static com.hartwig.actin.database.Tables.ELIGIBILITY;
-import static com.hartwig.actin.database.Tables.ELIGIBILITYREFERENCES;
+import static com.hartwig.actin.database.Tables.ELIGIBILITYREFERENCE;
 import static com.hartwig.actin.database.Tables.REFERENCE;
 import static com.hartwig.actin.database.Tables.TRIAL;
 
@@ -42,7 +42,7 @@ class TreatmentDAO {
         context.truncate(COHORT).execute();
         context.truncate(ELIGIBILITY).execute();
         context.truncate(REFERENCE).execute();
-        context.truncate(ELIGIBILITYREFERENCES).execute();
+        context.truncate(ELIGIBILITYREFERENCE).execute();
         context.execute("SET FOREIGN_KEY_CHECKS = 1;");
     }
 
@@ -111,7 +111,7 @@ class TreatmentDAO {
             int id = writeEligibilityFunction(trialId, cohortId, null, eligibility.function());
 
             for (CriterionReference reference : eligibility.references()) {
-                context.insertInto(ELIGIBILITYREFERENCES, ELIGIBILITYREFERENCES.ELIGIBILITYID, ELIGIBILITYREFERENCES.REFERENCEID)
+                context.insertInto(ELIGIBILITYREFERENCE, ELIGIBILITYREFERENCE.ELIGIBILITYID, ELIGIBILITYREFERENCE.REFERENCEID)
                         .values(id, referenceIdMap.get(reference))
                         .execute();
             }
