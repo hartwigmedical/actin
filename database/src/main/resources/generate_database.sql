@@ -344,8 +344,8 @@ CREATE TABLE reference
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS eligibilityReferences;
-CREATE TABLE eligibilityReferences
+DROP TABLE IF EXISTS eligibilityReference;
+CREATE TABLE eligibilityReference
 (   eligibilityId int NOT NULL,
     referenceId int NOT NULL,
     PRIMARY KEY (eligibilityId, referenceId)
