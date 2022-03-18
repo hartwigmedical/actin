@@ -43,7 +43,8 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneHasExactExpressionByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneHasSufficientExpressionByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByIHCCreator());
-        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByIHCCreator());
+        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
+        map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
         map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
@@ -208,11 +209,16 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedPDL1ByIHCCreator() {
+    private static FunctionCreator hasLimitedPDL1ByCPSByIHCCreator() {
         return function -> {
             int maxPDL1 = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasLimitedPDL1ByIHC(maxPDL1);
+            return new HasLimitedPDL1ByCPSByIHC(maxPDL1);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedPDL1ByTPSByIHCCreator() {
+        return function -> new HasLimitedPDL1ByTPSByIHC();
     }
 
     @NotNull

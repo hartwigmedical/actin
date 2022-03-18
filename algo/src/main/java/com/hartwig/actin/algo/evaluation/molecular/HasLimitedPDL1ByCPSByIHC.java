@@ -12,11 +12,11 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasLimitedPDL1ByIHC implements EvaluationFunction {
+public class HasLimitedPDL1ByCPSByIHC implements EvaluationFunction {
 
     private final int maxPDL1;
 
-    HasLimitedPDL1ByIHC(final int maxPDL1) {
+    HasLimitedPDL1ByCPSByIHC(final int maxPDL1) {
         this.maxPDL1 = maxPDL1;
     }
 

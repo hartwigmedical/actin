@@ -12,11 +12,11 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class HasLimitedPDL1ByIHCTest {
+public class HasLimitedPDL1ByCPSByIHCTest {
 
     @Test
     public void canEvaluate() {
-        HasLimitedPDL1ByIHC function = new HasLimitedPDL1ByIHC(2);
+        HasLimitedPDL1ByCPSByIHC function = new HasLimitedPDL1ByCPSByIHC(2);
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
