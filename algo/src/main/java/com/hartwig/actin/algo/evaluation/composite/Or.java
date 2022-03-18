@@ -39,10 +39,12 @@ public class Or implements EvaluationFunction {
         if (best == null) {
             throw new IllegalStateException("Could not determine OR result for functions: " + functions);
         }
-        
+
+        boolean recoverable = false;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(best);
         for (Evaluation eval : evaluations) {
             if (eval.result() == best) {
+                recoverable = recoverable || eval.recoverable();
                 builder.addAllPassSpecificMessages(eval.passSpecificMessages());
                 builder.addAllPassGeneralMessages(eval.passGeneralMessages());
                 builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());
@@ -54,6 +56,6 @@ public class Or implements EvaluationFunction {
             }
         }
 
-        return builder.build();
+        return builder.recoverable(recoverable).build();
     }
 }

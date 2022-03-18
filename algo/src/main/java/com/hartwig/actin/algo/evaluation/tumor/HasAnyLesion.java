@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class HasAnyLesion implements EvaluationFunction {
 
         if (hasLiverMetastases == null && hasCnsMetastases == null && hasBrainMetastases == null && hasBoneLesions == null
                 && hasLungLesions == null && otherLesions == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data about lesions is missing")
                     .build();
@@ -39,7 +40,7 @@ public class HasAnyLesion implements EvaluationFunction {
                 anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasBoneLesions, hasLungLesions, hasOtherLesions);
         EvaluationResult result = hasLesions ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient does not have any lesions");
         } else if (result == EvaluationResult.PASS) {

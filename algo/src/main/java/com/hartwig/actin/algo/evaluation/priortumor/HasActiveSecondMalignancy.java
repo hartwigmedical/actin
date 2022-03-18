@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
@@ -25,7 +26,7 @@ public class HasActiveSecondMalignancy implements EvaluationFunction {
         }
 
         EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no active second malignancy");
             builder.addFailGeneralMessages("No active second malignancy");

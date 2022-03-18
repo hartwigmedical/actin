@@ -169,6 +169,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                     } else {
                         Evaluation updated = ImmutableEvaluation.builder()
                                 .from(current)
+                                .recoverable(current.recoverable() && evaluation.recoverable())
                                 .addAllPassSpecificMessages(evaluation.passSpecificMessages())
                                 .addAllPassGeneralMessages(evaluation.passGeneralMessages())
                                 .addAllWarnSpecificMessages(evaluation.warnSpecificMessages())

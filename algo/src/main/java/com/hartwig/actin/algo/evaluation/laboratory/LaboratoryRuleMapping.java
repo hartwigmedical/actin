@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
@@ -243,7 +243,7 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator undeterminedLabValueCreator(@NotNull String measure) {
-        return function -> record -> ImmutableEvaluation.builder()
+        return function -> record -> EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("It is not clear yet under what code '" + measure + "' is measured")
                 .build();

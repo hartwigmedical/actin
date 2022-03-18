@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 
@@ -30,7 +30,7 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
 
         for (BloodTransfusion transfusion : record.clinical().bloodTransfusions()) {
             if (transfusion.product().equalsIgnoreCase(product.display()) && minDate.isBefore(transfusion.date())) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has received recent blood transfusion of product " + productString)
                         .addPassSpecificMessages("Recent blood transfusion")
@@ -38,7 +38,7 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not received recent blood transfusion of product " + productString)
                 .addFailGeneralMessages("No recent blood transfusion")

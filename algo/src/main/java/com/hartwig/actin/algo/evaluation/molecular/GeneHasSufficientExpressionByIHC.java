@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
@@ -36,14 +37,14 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
             }
 
             if (hasSufficientExpression) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
                         .build();
             }
         }
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
 
         if (!ihcTests.isEmpty()) {
             builder.addFailSpecificMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)");

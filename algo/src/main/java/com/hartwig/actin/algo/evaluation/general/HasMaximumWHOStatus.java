@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         Integer who = record.clinical().clinicalStatus().who();
 
         if (who == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("WHO status is missing")
                     .addUndeterminedGeneralMessages("WHO status missing")
@@ -30,7 +31,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         }
 
         EvaluationResult result = who <= maximumWHO ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")");
             builder.addFailGeneralMessages("Inadequate WHO status");

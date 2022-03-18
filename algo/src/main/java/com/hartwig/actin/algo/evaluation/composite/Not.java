@@ -51,6 +51,7 @@ public class Not implements EvaluationFunction {
 
         return ImmutableEvaluation.builder()
                 .result(negatedResult)
+                .recoverable(evaluation.recoverable())
                 .passSpecificMessages(passSpecificMessages)
                 .passGeneralMessages(passGeneralMessages)
                 .warnSpecificMessages(evaluation.warnSpecificMessages())

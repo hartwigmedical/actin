@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -27,7 +27,7 @@ public class HasLongQTSyndrome implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(LONG_QT_SYNDROME_DOID)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has long QT syndrome")
                             .addPassGeneralMessages("Presence long QT syndrome")
@@ -36,7 +36,7 @@ public class HasLongQTSyndrome implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no long QT syndrome")
                 .addFailGeneralMessages("No presence long QT syndrome")

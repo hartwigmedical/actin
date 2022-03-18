@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class HasLimitedLabValueULN implements LabEvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         EvaluationResult result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULN);
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " exceeds maximum ULN");
         } else if (result == EvaluationResult.UNDETERMINED) {

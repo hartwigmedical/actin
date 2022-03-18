@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpreter;
@@ -35,7 +36,7 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
 
         LabValue mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN);
         if (mostRecentTotal == null || mostRecentTotal.date().isBefore(minValidDate)) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No recent measurement found for total bilirubin")
                     .build();
@@ -44,7 +45,7 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
         boolean isPass = Double.compare(100 * (labValue.value() / mostRecentTotal.value()), maxPercentage) <= 0;
 
         EvaluationResult result = isPass ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         String messageStart = labValue.code() + " as percentage of " + mostRecentTotal.code();
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(messageStart + " exceeds " + maxPercentage + "%");

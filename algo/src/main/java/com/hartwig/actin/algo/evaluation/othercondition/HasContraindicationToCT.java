@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.Complication;
@@ -41,7 +41,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(KIDNEY_DISEASE_DOID)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to " + doidModel.term(doid))
                             .addPassGeneralMessages("CT contraindication")
@@ -51,7 +51,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
 
             for (String term : OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT) {
                 if (priorOtherCondition.name().toLowerCase().contains(term)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to condition " + priorOtherCondition.name())
                             .addPassGeneralMessages("CT contraindication")
@@ -63,7 +63,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
         for (Allergy allergy : record.clinical().allergies()) {
             for (String term : ALLERGIES_BEING_CONTRAINDICATIONS_TO_CT) {
                 if (allergy.name().toLowerCase().contains(term)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to allergy " + allergy.name())
                             .addPassGeneralMessages("CT contraindication")
@@ -75,7 +75,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
         for (Medication medication : record.clinical().medications()) {
             for (String term : MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT) {
                 if (medication.name().toLowerCase().contains(term)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to medication " + medication.name())
                             .addPassGeneralMessages("CT contraindication")
@@ -87,7 +87,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
         for (Complication complication : record.clinical().complications()) {
             for (String term : COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT) {
                 if (complication.name().toLowerCase().contains(term)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to complication " + complication.name())
                             .addPassGeneralMessages("CT contraindication")
@@ -96,7 +96,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential contraindications to CT identified")
                 .addFailGeneralMessages("No potential CT contraindication")

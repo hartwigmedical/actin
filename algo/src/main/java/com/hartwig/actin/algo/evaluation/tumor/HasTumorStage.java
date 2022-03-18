@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -23,7 +24,7 @@ public class HasTumorStage implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         TumorStage stage = record.clinical().tumor().stage();
         if (stage == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Tumor stage details are missing")
                     .build();
@@ -31,7 +32,7 @@ public class HasTumorStage implements EvaluationFunction {
 
         boolean hasTumorStage = stage == stageToMatch || stage.category() == stageToMatch;
         EvaluationResult result = hasTumorStage ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient tumor stage is not exact stage " + stageToMatch.display());
         } else if (result == EvaluationResult.PASS) {

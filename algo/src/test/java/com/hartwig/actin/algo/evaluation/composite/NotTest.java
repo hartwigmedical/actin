@@ -8,10 +8,8 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class NotTest {
@@ -30,7 +28,7 @@ public class NotTest {
 
     @Test
     public void canFlipMessagesForPass() {
-        Evaluation passed = create(EvaluationResult.PASS);
+        Evaluation passed = CompositeTestFactory.create(EvaluationResult.PASS);
 
         Evaluation result = new Not(record -> passed).evaluate(TEST_PATIENT);
 
@@ -47,7 +45,7 @@ public class NotTest {
 
     @Test
     public void canFlipMessagesForFail() {
-        Evaluation failed = create(EvaluationResult.FAIL);
+        Evaluation failed = CompositeTestFactory.create(EvaluationResult.FAIL);
 
         Evaluation result = new Not(record -> failed).evaluate(TEST_PATIENT);
 
@@ -64,7 +62,7 @@ public class NotTest {
 
     @Test
     public void canRetainMessagesForUndetermined() {
-        Evaluation undetermined = create(EvaluationResult.UNDETERMINED);
+        Evaluation undetermined = CompositeTestFactory.create(EvaluationResult.UNDETERMINED);
 
         Evaluation result = new Not(record -> undetermined).evaluate(TEST_PATIENT);
 
@@ -77,20 +75,5 @@ public class NotTest {
         assertEquals(undetermined.undeterminedGeneralMessages(), result.undeterminedGeneralMessages());
         assertEquals(undetermined.warnSpecificMessages(), result.warnSpecificMessages());
         assertEquals(undetermined.warnGeneralMessages(), result.warnGeneralMessages());
-    }
-
-    @NotNull
-    private static Evaluation create(@NotNull EvaluationResult result) {
-        return ImmutableEvaluation.builder()
-                .result(result)
-                .addPassSpecificMessages("pass specific")
-                .addPassGeneralMessages("pass general")
-                .addWarnSpecificMessages("warn specific")
-                .addWarnGeneralMessages("warn general")
-                .addUndeterminedSpecificMessages("undetermined specific")
-                .addUndeterminedGeneralMessages("undetermined general")
-                .addFailSpecificMessages("fail specific")
-                .addFailGeneralMessages("fail general")
-                .build();
     }
 }

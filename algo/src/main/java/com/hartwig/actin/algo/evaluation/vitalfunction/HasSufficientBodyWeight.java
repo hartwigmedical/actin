@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator;
@@ -29,7 +30,7 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
         List<BodyWeight> weights = Lists.newArrayList(record.clinical().bodyWeights());
 
         if (weights.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No body weights found")
                     .build();
@@ -40,7 +41,7 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
         BodyWeight mostRecent = weights.get(0);
 
         if (!mostRecent.unit().equalsIgnoreCase(EXPECTED_UNIT)) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Most recent body weight not measured in " + EXPECTED_UNIT)
                     .build();
@@ -48,7 +49,7 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
 
         EvaluationResult result = Double.compare(mostRecent.value(), minBodyWeight) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has body weight below " + minBodyWeight);
         } else if (result == EvaluationResult.PASS) {

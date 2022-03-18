@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class HasLiverMetastases implements EvaluationFunction {
         Boolean hasLiverMetastases = record.clinical().tumor().hasLiverLesions();
 
         if (hasLiverMetastases == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data regarding presence of liver metastases is missing")
                     .addUndeterminedGeneralMessages("Missing liver metastasis data")
@@ -28,7 +29,7 @@ public class HasLiverMetastases implements EvaluationFunction {
 
         EvaluationResult result = hasLiverMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No liver metastases present");
             builder.addFailGeneralMessages("No liver metastases");

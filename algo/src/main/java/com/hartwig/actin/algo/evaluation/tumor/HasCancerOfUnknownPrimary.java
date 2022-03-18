@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
@@ -34,14 +35,14 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         Set<String> doids = record.clinical().tumor().doids();
 
         if (doids == null || doids.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor type known for patient")
                     .build();
         }
 
         if (doids.equals(Sets.newHashSet(CANCER_DOID))) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient has tumor type 'cancer' configured")
                     .build();
@@ -59,7 +60,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         }
 
         EvaluationResult result = isMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no cancer of unknown primary of category " + categoryOfCUP.display());
         } else if (result == EvaluationResult.PASS) {

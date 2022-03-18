@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 
@@ -52,26 +52,26 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
         }
 
         if (hasMatch) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has history of recent previous malignancy")
                     .addPassGeneralMessages("Second primary")
                     .build();
         } else if (hasPotentialMatch) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has history of previous malignancy but unclear whether it is recent enough")
                     .addUndeterminedGeneralMessages("Second primary history")
                     .build();
         } else {
             if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.FAIL)
                         .addFailSpecificMessages("Patient has no history of recent previous malignancy")
                         .addFailGeneralMessages("No previous malignancy")
                         .build();
             } else {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages("Patient has previous malignancy, but no dates available. "
                                 + " Cannot be determined if previous malignancy was recent")

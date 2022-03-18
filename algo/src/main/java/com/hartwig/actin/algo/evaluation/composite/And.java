@@ -40,9 +40,11 @@ public class And implements EvaluationFunction {
             throw new IllegalStateException("Could not determine AND result for functions: " + functions);
         }
 
+        boolean recoverable = true;
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(worst);
         for (Evaluation eval : evaluations) {
             if (eval.result() == worst) {
+                recoverable = recoverable && eval.recoverable();
                 builder.addAllPassSpecificMessages(eval.passSpecificMessages());
                 builder.addAllPassGeneralMessages(eval.passGeneralMessages());
                 builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());
@@ -54,6 +56,6 @@ public class And implements EvaluationFunction {
             }
         }
 
-        return builder.build();
+        return builder.recoverable(recoverable).build();
     }
 }

@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
 
@@ -23,7 +23,7 @@ public class GeneIsInactivated implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (InactivatedGene inactivatedGene : record.molecular().inactivatedGenes()) {
             if (inactivatedGene.gene().equals(gene)) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Inactivation detected of gene " + gene)
                         .addPassGeneralMessages("Molecular requirements")
@@ -31,7 +31,7 @@ public class GeneIsInactivated implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No inactivation detected of gene " + gene)
                 .addFailGeneralMessages("Molecular requirements")

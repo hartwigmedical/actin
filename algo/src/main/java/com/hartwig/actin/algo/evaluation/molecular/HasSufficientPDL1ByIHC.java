@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
@@ -32,14 +33,14 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
             }
 
             if (hasSufficientPDL1) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("PD-L1 expression measured by CPS meets at least desired level of " + minPDL1)
                         .build();
             }
         }
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
 
         if (!pdl1Tests.isEmpty()) {
             builder.addFailSpecificMessages("No PD-L1 IHC test found where level exceeds desired level of " + minPDL1);

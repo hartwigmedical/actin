@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Complication;
 
@@ -30,7 +30,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
         for (Complication complication : record.clinical().complications()) {
             for (String termToFind : COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES) {
                 if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
                             .addPassGeneralMessages("Potential oral medication difficulties")
@@ -39,7 +39,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential reasons for difficulty with oral medication identified")
                 .addFailGeneralMessages("No potential oral medication difficulties identified")

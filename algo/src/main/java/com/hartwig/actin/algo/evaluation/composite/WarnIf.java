@@ -25,6 +25,7 @@ public class WarnIf implements EvaluationFunction {
         if (evaluation.result() == EvaluationResult.PASS) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.WARN)
+                    .recoverable(evaluation.recoverable())
                     .warnSpecificMessages(evaluation.passSpecificMessages())
                     .warnGeneralMessages(evaluation.passGeneralMessages())
                     .build();
@@ -34,6 +35,7 @@ public class WarnIf implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
+                .recoverable(evaluation.recoverable())
                 .addAllPassSpecificMessages(evaluation.passSpecificMessages())
                 .addAllPassSpecificMessages(evaluation.warnSpecificMessages())
                 .addAllPassSpecificMessages(evaluation.undeterminedSpecificMessages())

@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -35,7 +35,7 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
         }
 
         if (!medications.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
                             + categoryTermToFind)
@@ -43,7 +43,7 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
                     .build();
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient currently does not get medication of category " + categoryTermToFind)
                 .addFailGeneralMessages("Absent medication use")

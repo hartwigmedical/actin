@@ -32,6 +32,7 @@
           },
           {
             "result": "PASS",
+            "recoverable": false,
             "passSpecificMessages": [
             ],
             "passGeneralMessages": [
@@ -81,6 +82,7 @@
               },
               {
                 "result": "NOT_IMPLEMENTED",
+                "recoverable": false,
                 "passSpecificMessages": [
                 ],
                 "passGeneralMessages": [

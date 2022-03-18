@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.infection;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -28,7 +28,7 @@ public class HasSpecificInfection implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has infection with " + doidModel.term(doidToFind))
                             .addPassGeneralMessages("Present " + doidModel.term(doidToFind) + " infection")
@@ -37,7 +37,7 @@ public class HasSpecificInfection implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known infection with " + doidModel.term(doidToFind))
                 .addFailGeneralMessages("Requested infection(s) not present")

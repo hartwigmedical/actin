@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -49,7 +49,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has potential absorption difficulties due to " + doidModel.term(doid))
                             .addPassGeneralMessages("Potential absorption difficulties")
@@ -61,7 +61,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
         for (Complication complication : record.clinical().complications()) {
             for (String termToFind : COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY) {
                 if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has potential absorption difficulties due to " + complication.name())
                             .addPassGeneralMessages("Potential absorption difficulties")
@@ -74,7 +74,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             if (toxicity.source() == ToxicitySource.QUESTIONNAIRE || (toxicity.grade() != null && toxicity.grade() >= 2)) {
                 for (String termToFind : TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY) {
                     if (toxicity.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                        return ImmutableEvaluation.builder()
+                        return EvaluationFactory.unrecoverable()
                                 .result(EvaluationResult.PASS)
                                 .addPassSpecificMessages("Patient has potential absorption difficulties due to " + toxicity.name())
                                 .addPassGeneralMessages("Potential absorption difficulties")
@@ -84,7 +84,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential reasons for absorption problems identified")
                 .addFailGeneralMessages("No potential absorption difficulties identified")

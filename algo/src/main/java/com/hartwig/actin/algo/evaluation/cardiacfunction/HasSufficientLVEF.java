@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,14 +25,17 @@ public class HasSufficientLVEF implements EvaluationFunction {
         Double lvef = record.clinical().clinicalStatus().lvef();
         if (lvef == null) {
             if (passIfUnknown) {
-                return ImmutableEvaluation.builder().result(EvaluationResult.PASS).addPassSpecificMessages("No LVEF known").build();
+                return EvaluationFactory.unrecoverable().result(EvaluationResult.PASS).addPassSpecificMessages("No LVEF known").build();
             } else {
-                return ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages("No LVEF known").build();
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.UNDETERMINED)
+                        .addUndeterminedSpecificMessages("No LVEF known")
+                        .build();
             }
         }
 
         EvaluationResult result = Double.compare(lvef, minLVEF) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("LVEF of " + lvef + " is below minimum LVEF of " + minLVEF);
         } else if (result == EvaluationResult.PASS) {

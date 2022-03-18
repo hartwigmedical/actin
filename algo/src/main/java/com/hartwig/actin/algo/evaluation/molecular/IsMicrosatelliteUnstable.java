@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
         Boolean isMicrosatelliteUnstable = record.molecular().isMicrosatelliteUnstable();
 
         if (isMicrosatelliteUnstable == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No microsatellite status is known")
                     .build();
@@ -27,7 +28,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
 
         EvaluationResult result = isMicrosatelliteUnstable ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor is microsatellite stable");
             builder.addFailGeneralMessages("Molecular requirements");

@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,14 +35,14 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         Set<String> doids = record.clinical().tumor().doids();
 
         if (doids == null || doids.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor type known for patient")
                     .build();
         }
 
         EvaluationResult result = isDoidMatch(doids, doidToMatch) ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no " + doidModel.term(doidToMatch));
             builder.addFailGeneralMessages("Tumor type");

@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
@@ -38,14 +39,14 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
             }
 
             if (isExpressed) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Gene " + gene + " has been determined to be expressed (by IHC)")
                         .build();
             }
         }
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
 
         if (!ihcTests.isEmpty()) {
             builder.addFailSpecificMessages("No expression of gene " + gene + " detected by prior IHC test(s)");

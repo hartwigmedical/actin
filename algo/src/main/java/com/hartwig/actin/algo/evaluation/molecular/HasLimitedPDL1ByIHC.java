@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
@@ -32,14 +33,14 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
             }
 
             if (hasLimitedPDL1) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("PD-L1 expression measured by CPS does not exceed maximum level of " + maxPDL1)
                         .build();
             }
         }
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.FAIL);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
 
         if (!pdl1Tests.isEmpty()) {
             builder.addFailSpecificMessages("No PD-L1 IHC test found where level does not exceed maximum level of " + maxPDL1);

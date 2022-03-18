@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 
@@ -28,7 +28,7 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (Surgery surgery : record.clinical().surgeries()) {
             if (minDate.isBefore(surgery.endDate())) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
                         .addPassGeneralMessages("Recent surgeries")
@@ -36,7 +36,7 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had surgery after " + DATE_FORMAT.format(minDate))
                 .addFailGeneralMessages("No recent surgeries")

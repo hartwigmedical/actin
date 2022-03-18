@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
@@ -30,7 +31,7 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
         List<VitalFunction> pulseOxymetries = selectPulseOxymetries(record.clinical().vitalFunctions());
 
         if (pulseOxymetries.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No pulse oxymetries readouts found")
                     .build();
@@ -45,7 +46,7 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
 
         EvaluationResult result = Double.compare(avg, minAvgPulseOxymetry) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry);
         } else if (result == EvaluationResult.PASS) {

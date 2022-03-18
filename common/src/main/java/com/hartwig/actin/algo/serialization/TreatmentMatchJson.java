@@ -187,6 +187,7 @@ public final class TreatmentMatchJson {
         private static Evaluation toEvaluation(@NotNull JsonObject evaluation) {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.valueOf(string(evaluation, "result")))
+                    .recoverable(bool(evaluation, "recoverable"))
                     .passSpecificMessages(stringList(evaluation, "passSpecificMessages"))
                     .passGeneralMessages(stringList(evaluation, "passGeneralMessages"))
                     .warnSpecificMessages(stringList(evaluation, "warnSpecificMessages"))

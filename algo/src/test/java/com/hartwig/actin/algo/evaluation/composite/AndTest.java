@@ -10,7 +10,6 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory;
 
@@ -68,10 +67,10 @@ public class AndTest {
 
     @Test
     public void canRetainMessages() {
-        EvaluationFunction function1 = record -> create(EvaluationResult.FAIL, 1);
-        EvaluationFunction function2 = record -> create(EvaluationResult.FAIL, 2);
-        EvaluationFunction function3 = record -> create(EvaluationResult.PASS, 3);
-        EvaluationFunction function4 = record -> create(EvaluationResult.PASS, 4);
+        EvaluationFunction function1 = record -> CompositeTestFactory.create(EvaluationResult.FAIL, 1);
+        EvaluationFunction function2 = record -> CompositeTestFactory.create(EvaluationResult.FAIL, 2);
+        EvaluationFunction function3 = record -> CompositeTestFactory.create(EvaluationResult.PASS, 3);
+        EvaluationFunction function4 = record -> CompositeTestFactory.create(EvaluationResult.PASS, 4);
 
         Evaluation result = new And(Lists.newArrayList(function1, function2, function3, function4)).evaluate(TEST_PATIENT);
 
@@ -146,20 +145,5 @@ public class AndTest {
     @NotNull
     private static Evaluation evaluate(@NotNull EvaluationFunction function1, @NotNull EvaluationFunction function2) {
         return new And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT);
-    }
-
-    @NotNull
-    private static Evaluation create(@NotNull EvaluationResult result, int index) {
-        return ImmutableEvaluation.builder()
-                .result(result)
-                .addPassSpecificMessages("pass specific " + index)
-                .addPassGeneralMessages("pass general " + index)
-                .addWarnSpecificMessages("warn specific " + index)
-                .addWarnGeneralMessages("warn general " + index)
-                .addUndeterminedSpecificMessages("undetermined specific " + index)
-                .addUndeterminedGeneralMessages("undetermined general " + index)
-                .addFailSpecificMessages("fail specific " + index)
-                .addFailGeneralMessages("fail general " + index)
-                .build();
     }
 }

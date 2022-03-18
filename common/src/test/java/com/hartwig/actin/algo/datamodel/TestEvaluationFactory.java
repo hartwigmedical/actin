@@ -9,7 +9,7 @@ public final class TestEvaluationFactory {
 
     @NotNull
     public static Evaluation withResult(@NotNull EvaluationResult result) {
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().recoverable(false).result(result);
 
         if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("pass specific");

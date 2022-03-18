@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ECG;
 
@@ -24,7 +25,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         ECG ecg = record.clinical().clinicalStatus().ecg();
         if (ecg == null || ecg.qtcfValue() == null || ecg.qtcfUnit() == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No measurement found for QTCF")
                     .addUndeterminedGeneralMessages("QTCF missing")
@@ -35,7 +36,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
         String unit = ecg.qtcfUnit();
 
         if (!unit.equalsIgnoreCase(EXPECTED_QTCF_UNIT)) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("QTCF measure not in '" + EXPECTED_QTCF_UNIT + "': " + unit)
                     .addUndeterminedGeneralMessages("QTCF unit")
@@ -43,7 +44,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
         }
 
         EvaluationResult result = Double.compare(value, maxQTCF) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("QTCF of " + value + " " + unit + " exceeds maximum threshold of " + maxQTCF);
             builder.addFailGeneralMessages("QTCF requirements");

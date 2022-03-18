@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -30,14 +31,14 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
         Double convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit);
 
         if (convertedValue == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
                     .build();
         }
 
         EvaluationResult result = LabEvaluation.evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue);
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {

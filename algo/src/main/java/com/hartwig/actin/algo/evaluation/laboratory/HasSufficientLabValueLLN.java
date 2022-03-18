@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class HasSufficientLabValueLLN implements LabEvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         EvaluationResult result = LabEvaluation.evaluateVersusMinULN(labValue, minLLN);
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is insufficient versus LLN");
         } else if (result == EvaluationResult.UNDETERMINED) {

@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasMeasurableDisease = record.clinical().tumor().hasMeasurableDisease();
         if (hasMeasurableDisease == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data regarding measurable disease is missing")
                     .build();
@@ -42,7 +43,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
             result = EvaluationResult.FAIL;
         }
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no measurable disease");
         } else if (result == EvaluationResult.WARN) {

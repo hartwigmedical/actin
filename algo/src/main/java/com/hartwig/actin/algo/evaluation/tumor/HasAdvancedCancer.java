@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -33,14 +34,14 @@ public class HasAdvancedCancer implements EvaluationFunction {
         TumorStage stage = record.clinical().tumor().stage();
 
         if (stage == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Tumor stage details are missing")
                     .build();
         }
 
         EvaluationResult result = STAGES_CONSIDERED_ADVANCED.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered advanced (III/IV)");
         } else if (result == EvaluationResult.PASS) {

@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -35,7 +35,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(KIDNEY_DISEASE_DOID)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to " + doidModel.term(doid))
                             .addPassGeneralMessages("MRI contraindication")
@@ -45,7 +45,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
 
             for (String term : OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI) {
                 if (priorOtherCondition.name().toLowerCase().contains(term)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to condition " + priorOtherCondition.name())
                             .addPassGeneralMessages("MRI contraindication")
@@ -57,7 +57,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
         for (Allergy allergy : record.clinical().allergies()) {
             for (String term : ALLERGIES_BEING_CONTRAINDICATIONS_TO_MRI) {
                 if (allergy.name().toLowerCase().contains(term)) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to allergy " + allergy.name())
                             .addPassGeneralMessages("MRI contraindication")
@@ -66,7 +66,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential contraindications to MRI identified")
                 .addFailGeneralMessages("No potential MRI contraindication")

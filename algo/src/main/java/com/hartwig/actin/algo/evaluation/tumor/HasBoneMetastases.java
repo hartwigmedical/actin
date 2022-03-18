@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class HasBoneMetastases implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasBoneMetastases = record.clinical().tumor().hasBoneLesions();
         if (hasBoneMetastases == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data regarding presence of bone metastases is missing")
                     .addUndeterminedGeneralMessages("Missing bone metastasis data")
@@ -27,7 +28,7 @@ public class HasBoneMetastases implements EvaluationFunction {
 
         EvaluationResult result = hasBoneMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No bone metastases present");
             builder.addFailGeneralMessages("No bone metastases");

@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
@@ -34,7 +35,7 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
         String categoryDisplay = category.display().toLowerCase();
 
         if (relevant.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No relevant vital function readout found for " + categoryDisplay)
                     .build();
@@ -49,7 +50,7 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
         EvaluationResult result = Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure);
         } else if (result == EvaluationResult.PASS) {

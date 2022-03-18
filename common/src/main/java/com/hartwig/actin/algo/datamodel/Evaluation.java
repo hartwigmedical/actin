@@ -13,6 +13,8 @@ public abstract class Evaluation {
     @NotNull
     public abstract EvaluationResult result();
 
+    public abstract boolean recoverable();
+
     @NotNull
     public abstract Set<String> passSpecificMessages();
 

@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -46,7 +47,7 @@ public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFun
 
         EvaluationResult result = hasTreatmentOfCategory ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received recent treatments of category " + Format.concat(categoriesToFind));
         } else if (result == EvaluationResult.PASS) {

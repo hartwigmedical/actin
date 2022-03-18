@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -39,7 +40,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(EvaluationResult.UNDETERMINED);
+            ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.UNDETERMINED);
 
             if (mostRecent == null) {
                 builder.addUndeterminedSpecificMessages("No measurement found for " + measurement.code());
@@ -59,7 +60,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             if (isValid(secondMostRecent, measurement)) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.UNDETERMINED)
                             .addUndeterminedSpecificMessages("First measurement fails for " + measurement.code() + " while second succeeds")
                             .addUndeterminedGeneralMessages("Inconsistent lab values")

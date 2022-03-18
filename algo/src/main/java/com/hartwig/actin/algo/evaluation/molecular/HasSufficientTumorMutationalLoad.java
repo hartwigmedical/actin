@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Integer tumorMutationalLoad = record.molecular().tumorMutationalLoad();
         if (tumorMutationalLoad == null) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor mutational load is known")
                     .build();
@@ -29,7 +30,7 @@ public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
 
         EvaluationResult result = tumorMutationalLoad >= minTumorMutationalLoad ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor mutational load does not exceed " + minTumorMutationalLoad);
             builder.addFailGeneralMessages("Molecular requirements");

@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -45,7 +46,7 @@ public class CurrentlyGetsStableMedicationOfName implements EvaluationFunction {
         }
 
         EvaluationResult result = hasFoundOnePassingTerm ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient does not get stable dosing of medication with name " + Format.concat(termsToFind));
             builder.addFailGeneralMessages("Absent medication use");

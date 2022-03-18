@@ -11,6 +11,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -51,7 +52,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
                 return evaluateCockcroftGault(record, labValue);
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
-                return ImmutableEvaluation.builder().result(EvaluationResult.NOT_IMPLEMENTED).build();
+                return EvaluationFactory.unrecoverable().result(EvaluationResult.NOT_IMPLEMENTED).build();
             }
         }
     }
@@ -178,7 +179,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     @NotNull
     private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(code + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {

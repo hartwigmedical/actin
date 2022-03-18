@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -23,7 +23,7 @@ public class HasHadOrganTransplant implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             if (priorOtherCondition.category().equals(ORGAN_TRANSPLANT_CATEGORY)) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had an organ transplant")
                         .addPassGeneralMessages("Organ transplant")
@@ -31,7 +31,7 @@ public class HasHadOrganTransplant implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had an organ transplant")
                 .addFailGeneralMessages("No organ transplant")

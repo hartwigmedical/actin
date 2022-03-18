@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -30,7 +30,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String ebvTerm : EBV_TERMS) {
                 if (priorOtherCondition.name().toLowerCase().contains(ebvTerm.toLowerCase())) {
-                    return ImmutableEvaluation.builder()
+                    return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has known EBV infection: " + priorOtherCondition.name())
                             .addPassGeneralMessages("Present EBV infection")
@@ -39,7 +39,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known EBV infection")
                 .addFailGeneralMessages("Requested infection(s) not present")

@@ -9,7 +9,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -58,20 +58,20 @@ public class HasToxicityWithGrade implements EvaluationFunction {
         }
 
         if (!toxicities.isEmpty()) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
                     .addPassGeneralMessages("Present toxicity")
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
-            return ImmutableEvaluation.builder()
+            return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not resolve the grade of all toxicities")
                     .addUndeterminedGeneralMessages("Toxicity eligibility")
                     .build();
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No toxicities found with grade " + minGrade + " or higher")
                 .build();

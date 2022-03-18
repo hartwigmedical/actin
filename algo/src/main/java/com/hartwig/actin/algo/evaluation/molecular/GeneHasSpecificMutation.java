@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 
@@ -26,7 +26,7 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (GeneMutation geneMutation : record.molecular().mutations()) {
             if (geneMutation.gene().equals(gene) && geneMutation.mutation().equals(mutation)) {
-                return ImmutableEvaluation.builder()
+                return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Specific gene mutation detected " + gene + " " + mutation)
                         .addPassGeneralMessages("Molecular requirements")
@@ -34,7 +34,7 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
             }
         }
 
-        return ImmutableEvaluation.builder()
+        return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No specific gene mutation detected " + gene + " " + mutation)
                 .addFailGeneralMessages("Molecular requirements")
