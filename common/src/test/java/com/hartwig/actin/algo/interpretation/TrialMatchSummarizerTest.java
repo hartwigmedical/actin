@@ -12,11 +12,11 @@ import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class TreatmentMatchSummarizerTest {
+public class TrialMatchSummarizerTest {
 
     @Test
     public void canSummarizeTestData() {
-        TreatmentMatchSummary summary = TreatmentMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch());
+        TrialMatchSummary summary = TrialMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches());
 
         assertEquals(2, summary.trialCount());
         assertEquals(4, summary.cohortCount());
@@ -29,7 +29,7 @@ public class TreatmentMatchSummarizerTest {
     }
 
     @NotNull
-    private static TrialIdentification findByTrialId(@NotNull TreatmentMatchSummary summary, @NotNull String trialIdToFind) {
+    private static TrialIdentification findByTrialId(@NotNull TrialMatchSummary summary, @NotNull String trialIdToFind) {
         for (TrialIdentification identification : summary.eligibleTrialMap().keySet()) {
             if (identification.trialId().equals(trialIdToFind)) {
                 return identification;

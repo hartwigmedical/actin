@@ -14,5 +14,5 @@ public abstract class TreatmentMatch {
     public abstract String sampleId();
 
     @NotNull
-    public abstract List<TrialEligibility> trialMatches();
+    public abstract List<TrialMatch> trialMatches();
 }

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentMatchSummary {
+public abstract class TrialMatchSummary {
 
     public abstract int trialCount();
 

@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer;
 import com.hartwig.actin.algo.interpretation.EvaluationSummary;
-import com.hartwig.actin.algo.interpretation.TreatmentMatchSummarizer;
-import com.hartwig.actin.algo.interpretation.TreatmentMatchSummary;
+import com.hartwig.actin.algo.interpretation.TrialMatchSummarizer;
+import com.hartwig.actin.algo.interpretation.TrialMatchSummary;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
 import com.hartwig.actin.util.DatamodelPrinter;
@@ -34,7 +34,7 @@ public class TreatmentMatchPrinter {
     public void print(@NotNull TreatmentMatch treatmentMatch) {
         printer.print("Sample: " + treatmentMatch.sampleId());
 
-        TreatmentMatchSummary matchSummary = TreatmentMatchSummarizer.summarize(treatmentMatch);
+        TrialMatchSummary matchSummary = TrialMatchSummarizer.summarize(treatmentMatch.trialMatches());
         printer.print("Trials: " + matchSummary.trialCount());
         printer.print("Eligible trials: " + trialString(matchSummary.eligibleTrialMap()));
         printer.print("Cohorts: " + matchSummary.cohortCount());
@@ -42,9 +42,9 @@ public class TreatmentMatchPrinter {
         printer.print("Eligible and open cohorts: " + openCohortString(matchSummary.eligibleTrialMap()));
 
         List<EvaluationSummary> summaries = Lists.newArrayList();
-        for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
+        for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
             summaries.add(EvaluationSummarizer.summarize(trialMatch.evaluations().values()));
-            for (CohortEligibility cohortMatch : trialMatch.cohorts()) {
+            for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 summaries.add(EvaluationSummarizer.summarize(cohortMatch.evaluations().values()));
             }
         }

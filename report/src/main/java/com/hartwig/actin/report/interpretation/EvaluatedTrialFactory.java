@@ -6,11 +6,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
@@ -28,7 +28,7 @@ public final class EvaluatedTrialFactory {
     public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<MolecularEvidence> actinEvidence) {
         List<EvaluatedTrial> trials = Lists.newArrayList();
 
-        for (TrialEligibility trialMatch : treatmentMatch.trialMatches()) {
+        for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
             Set<String> trialWarnings = extractWarnings(trialMatch.evaluations());
             Set<String> trialFails = extractFails(trialMatch.evaluations());
 
@@ -37,7 +37,7 @@ public final class EvaluatedTrialFactory {
                     .acronym(trialMatch.identification().acronym())
                     .hasMolecularEvidence(hasEvidenceForTreatment(actinEvidence, trialMatch.identification().acronym()));
 
-            for (CohortEligibility cohortMatch : trialMatch.cohorts()) {
+            for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
 

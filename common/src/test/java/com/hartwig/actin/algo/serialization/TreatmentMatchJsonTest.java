@@ -8,7 +8,7 @@ import java.io.IOException;
 import com.google.common.io.Resources;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 
 import org.junit.Test;
 
@@ -37,8 +37,8 @@ public class TreatmentMatchJsonTest {
         assertEquals("ACTN01029999T", match.sampleId());
         assertEquals(1, match.trialMatches().size());
 
-        TrialEligibility trialEligibility = match.trialMatches().get(0);
-        assertEquals(1, trialEligibility.evaluations().size());
-        assertEquals(3, trialEligibility.cohorts().size());
+        TrialMatch trialMatch = match.trialMatches().get(0);
+        assertEquals(1, trialMatch.evaluations().size());
+        assertEquals(3, trialMatch.cohorts().size());
     }
 }

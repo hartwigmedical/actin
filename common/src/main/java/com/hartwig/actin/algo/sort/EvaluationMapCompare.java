@@ -11,14 +11,14 @@ import com.hartwig.actin.treatment.sort.EligibilityComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-final class EvaluationMapCompareUtil {
+final class EvaluationMapCompare {
 
     private static final Comparator<Eligibility> ELIGIBILITY_COMPARATOR = new EligibilityComparator();
 
-    private EvaluationMapCompareUtil() {
+    private EvaluationMapCompare() {
     }
 
-    public static int compareEvaluationMaps(@NotNull Map<Eligibility, Evaluation> map1, @NotNull Map<Eligibility, Evaluation> map2) {
+    public static int compare(@NotNull Map<Eligibility, Evaluation> map1, @NotNull Map<Eligibility, Evaluation> map2) {
         List<Eligibility> keys1 = Lists.newArrayList(map1.keySet());
         List<Eligibility> keys2 = Lists.newArrayList(map2.keySet());
         int sizeCompare = keys1.size() - keys2.size();

@@ -11,11 +11,11 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
@@ -48,25 +48,25 @@ public class TrialMatcherTest {
                 TestReferenceDateProviderFactory.createCurrentDate());
     }
 
-    private static void assertTrialMatch(@NotNull TrialEligibility trialEligibility) {
-        assertEquals(1, trialEligibility.evaluations().size());
-        assertTrue(trialEligibility.isPotentiallyEligible());
+    private static void assertTrialMatch(@NotNull TrialMatch trialMatch) {
+        assertEquals(1, trialMatch.evaluations().size());
+        assertTrue(trialMatch.isPotentiallyEligible());
         assertEquals(EvaluationResult.PASS,
-                findEvaluationResultForRule(trialEligibility.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
+                findEvaluationResultForRule(trialMatch.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
 
-        assertEquals(3, trialEligibility.cohorts().size());
+        assertEquals(3, trialMatch.cohorts().size());
 
-        CohortEligibility cohortA = findCohort(trialEligibility.cohorts(), "A");
+        CohortMatch cohortA = findCohort(trialMatch.cohorts(), "A");
         assertEquals(1, cohortA.evaluations().size());
         assertFalse(cohortA.isPotentiallyEligible());
         assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT));
 
-        CohortEligibility cohortB = findCohort(trialEligibility.cohorts(), "B");
+        CohortMatch cohortB = findCohort(trialMatch.cohorts(), "B");
         assertTrue(cohortB.isPotentiallyEligible());
         assertEquals(EvaluationResult.UNDETERMINED,
                 findEvaluationResultForRule(cohortB.evaluations(), EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS));
 
-        CohortEligibility cohortC = findCohort(trialEligibility.cohorts(), "C");
+        CohortMatch cohortC = findCohort(trialMatch.cohorts(), "C");
         assertTrue(cohortC.isPotentiallyEligible());
         assertTrue(cohortC.evaluations().isEmpty());
     }
@@ -84,8 +84,8 @@ public class TrialMatcherTest {
     }
 
     @NotNull
-    private static CohortEligibility findCohort(@NotNull List<CohortEligibility> cohorts, @NotNull String cohortIdToFind) {
-        for (CohortEligibility cohort : cohorts) {
+    private static CohortMatch findCohort(@NotNull List<CohortMatch> cohorts, @NotNull String cohortIdToFind) {
+        for (CohortMatch cohort : cohorts) {
             if (cohort.metadata().cohortId().equals(cohortIdToFind)) {
                 return cohort;
             }

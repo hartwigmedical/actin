@@ -34,10 +34,10 @@ public final class TestTreatmentMatchFactory {
     }
 
     @NotNull
-    private static List<TrialEligibility> createTestTrialMatches() {
-        List<TrialEligibility> matches = Lists.newArrayList();
+    private static List<TrialMatch> createTestTrialMatches() {
+        List<TrialMatch> matches = Lists.newArrayList();
 
-        matches.add(ImmutableTrialEligibility.builder()
+        matches.add(ImmutableTrialMatch.builder()
                 .identification(ImmutableTrialIdentification.builder()
                         .trialId("Test Trial 1")
                         .acronym("TEST-TRIAL-1")
@@ -48,7 +48,7 @@ public final class TestTreatmentMatchFactory {
                 .cohorts(createTestCohorts())
                 .build());
 
-        matches.add(ImmutableTrialEligibility.builder()
+        matches.add(ImmutableTrialMatch.builder()
                 .identification(ImmutableTrialIdentification.builder()
                         .trialId("Test Trial 2")
                         .acronym("TEST-TRIAL-2")
@@ -95,19 +95,19 @@ public final class TestTreatmentMatchFactory {
     }
 
     @NotNull
-    private static List<CohortEligibility> createTestCohorts() {
-        List<CohortEligibility> cohorts = Lists.newArrayList();
+    private static List<CohortMatch> createTestCohorts() {
+        List<CohortMatch> cohorts = Lists.newArrayList();
 
-        cohorts.add(ImmutableCohortEligibility.builder()
+        cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("A", true, false))
                 .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluations())
                 .build());
-        cohorts.add(ImmutableCohortEligibility.builder()
+        cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("B", true, false))
                 .isPotentiallyEligible(true)
                 .build());
-        cohorts.add(ImmutableCohortEligibility.builder()
+        cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("C", true, true))
                 .isPotentiallyEligible(false)
                 .build());

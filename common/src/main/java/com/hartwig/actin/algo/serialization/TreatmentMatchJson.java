@@ -28,15 +28,15 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
+import com.hartwig.actin.algo.datamodel.ImmutableCohortMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
-import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
+import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
@@ -108,8 +108,8 @@ public final class TreatmentMatchJson {
         }
 
         @NotNull
-        private static List<TrialEligibility> toTrialMatches(@NotNull JsonArray trialMatches) {
-            List<TrialEligibility> trialEligibilities = Lists.newArrayList();
+        private static List<TrialMatch> toTrialMatches(@NotNull JsonArray trialMatches) {
+            List<TrialMatch> trialEligibilities = Lists.newArrayList();
             for (JsonElement element : trialMatches) {
                 trialEligibilities.add(toTrialEligibility(element.getAsJsonObject()));
             }
@@ -117,8 +117,8 @@ public final class TreatmentMatchJson {
         }
 
         @NotNull
-        private static TrialEligibility toTrialEligibility(@NotNull JsonObject object) {
-            return ImmutableTrialEligibility.builder()
+        private static TrialMatch toTrialEligibility(@NotNull JsonObject object) {
+            return ImmutableTrialMatch.builder()
                     .identification(toIdentification(object(object, "identification")))
                     .isPotentiallyEligible(bool(object, "isPotentiallyEligible"))
                     .evaluations(toEvaluations(object.get("evaluations")))
@@ -136,12 +136,12 @@ public final class TreatmentMatchJson {
         }
 
         @NotNull
-        private static List<CohortEligibility> toCohorts(@NotNull JsonArray cohorts) {
-            List<CohortEligibility> cohortEligibilities = Lists.newArrayList();
+        private static List<CohortMatch> toCohorts(@NotNull JsonArray cohorts) {
+            List<CohortMatch> cohortEligibilities = Lists.newArrayList();
             for (JsonElement element : cohorts) {
                 JsonObject cohort = element.getAsJsonObject();
 
-                cohortEligibilities.add(ImmutableCohortEligibility.builder()
+                cohortEligibilities.add(ImmutableCohortMatch.builder()
                         .metadata(toMetadata(object(cohort, "metadata")))
                         .isPotentiallyEligible(bool(cohort, "isPotentiallyEligible"))
                         .evaluations(toEvaluations(cohort.get("evaluations")))

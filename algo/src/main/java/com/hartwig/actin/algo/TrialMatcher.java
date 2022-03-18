@@ -10,19 +10,19 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableCohortEligibility;
+import com.hartwig.actin.algo.datamodel.ImmutableCohortMatch;
 import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
-import com.hartwig.actin.algo.datamodel.ImmutableTrialEligibility;
+import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
-import com.hartwig.actin.algo.sort.CohortEligibilityComparator;
-import com.hartwig.actin.algo.sort.TrialEligibilityComparator;
+import com.hartwig.actin.algo.sort.CohortMatchComparator;
+import com.hartwig.actin.algo.sort.TrialMatchComparator;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.Trial;
@@ -47,11 +47,11 @@ public class TrialMatcher {
 
     @NotNull
     public TreatmentMatch determineEligibility(@NotNull PatientRecord patient, @NotNull List<Trial> trials) {
-        List<TrialEligibility> trialMatches = Lists.newArrayList();
+        List<TrialMatch> trialMatches = Lists.newArrayList();
         for (Trial trial : trials) {
             Map<Eligibility, Evaluation> trialEvaluations = evaluateEligibility(patient, trial.generalEligibility());
 
-            List<CohortEligibility> cohortMatching = Lists.newArrayList();
+            List<CohortMatch> cohortMatching = Lists.newArrayList();
             boolean passesAllTrialEvaluations = isEligible(trialEvaluations);
             boolean hasEligibleCohort = false;
             for (Cohort cohort : trial.cohorts()) {
@@ -62,17 +62,17 @@ public class TrialMatcher {
                     hasEligibleCohort = true;
                 }
 
-                cohortMatching.add(ImmutableCohortEligibility.builder()
+                cohortMatching.add(ImmutableCohortMatch.builder()
                         .metadata(cohort.metadata())
                         .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations)
                         .evaluations(cohortEvaluations)
                         .build());
             }
 
-            cohortMatching.sort(new CohortEligibilityComparator());
+            cohortMatching.sort(new CohortMatchComparator());
 
             boolean isEligible = passesAllTrialEvaluations && (trial.cohorts().isEmpty() || hasEligibleCohort);
-            trialMatches.add(ImmutableTrialEligibility.builder()
+            trialMatches.add(ImmutableTrialMatch.builder()
                     .identification(trial.identification())
                     .isPotentiallyEligible(isEligible)
                     .evaluations(trialEvaluations)
@@ -80,7 +80,7 @@ public class TrialMatcher {
                     .build());
         }
 
-        trialMatches.sort(new TrialEligibilityComparator());
+        trialMatches.sort(new TrialMatchComparator());
 
         return ImmutableTreatmentMatch.builder().sampleId(patient.sampleId()).trialMatches(trialMatches).build();
     }

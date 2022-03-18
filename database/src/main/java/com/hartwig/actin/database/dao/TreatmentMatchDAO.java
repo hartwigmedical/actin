@@ -6,10 +6,10 @@ import static com.hartwig.actin.database.Tables.TRIALMATCH;
 
 import java.util.Map;
 
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay;
 
@@ -43,29 +43,29 @@ public class TreatmentMatchDAO {
     }
 
     public void writeTreatmentMatch(@NotNull TreatmentMatch treatmentMatch) {
-        for (TrialEligibility trialEligibility : treatmentMatch.trialMatches()) {
-            int trialMatchId = writeTrialMatch(treatmentMatch.sampleId(), trialEligibility);
+        for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
+            int trialMatchId = writeTrialMatch(treatmentMatch.sampleId(), trialMatch);
 
-            writeEvaluations(trialMatchId, null, trialEligibility.evaluations());
-            for (CohortEligibility cohortEligibility : trialEligibility.cohorts()) {
-                int cohortMatchId = writeCohortMatch(trialMatchId, cohortEligibility);
-                writeEvaluations(trialMatchId, cohortMatchId, cohortEligibility.evaluations());
+            writeEvaluations(trialMatchId, null, trialMatch.evaluations());
+            for (CohortMatch cohortMatch : trialMatch.cohorts()) {
+                int cohortMatchId = writeCohortMatch(trialMatchId, cohortMatch);
+                writeEvaluations(trialMatchId, cohortMatchId, cohortMatch.evaluations());
             }
         }
     }
 
-    private int writeTrialMatch(@NotNull String sampleId, @NotNull TrialEligibility trialEligibility) {
+    private int writeTrialMatch(@NotNull String sampleId, @NotNull TrialMatch trialMatch) {
         return context.insertInto(TRIALMATCH, TRIALMATCH.SAMPLEID, TRIALMATCH.CODE, TRIALMATCH.ACRONYM, TRIALMATCH.ISELIGIBLE)
                 .values(sampleId,
-                        trialEligibility.identification().trialId(),
-                        trialEligibility.identification().acronym(),
-                        DataUtil.toByte(trialEligibility.isPotentiallyEligible()))
+                        trialMatch.identification().trialId(),
+                        trialMatch.identification().acronym(),
+                        DataUtil.toByte(trialMatch.isPotentiallyEligible()))
                 .returning(TRIALMATCH.ID)
                 .fetchOne()
                 .getValue(TRIALMATCH.ID);
     }
 
-    private int writeCohortMatch(int trialMatchId, @NotNull CohortEligibility cohortEligibility) {
+    private int writeCohortMatch(int trialMatchId, @NotNull CohortMatch cohortMatch) {
         return context.insertInto(COHORTMATCH,
                 COHORTMATCH.TRIALMATCHID,
                 COHORTMATCH.CODE,
@@ -73,10 +73,10 @@ public class TreatmentMatchDAO {
                 COHORTMATCH.OPEN,
                 TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
-                        cohortEligibility.metadata().cohortId(),
-                        cohortEligibility.metadata().description(),
-                        DataUtil.toByte(cohortEligibility.metadata().open()),
-                        DataUtil.toByte(cohortEligibility.isPotentiallyEligible()))
+                        cohortMatch.metadata().cohortId(),
+                        cohortMatch.metadata().description(),
+                        DataUtil.toByte(cohortMatch.metadata().open()),
+                        DataUtil.toByte(cohortMatch.isPotentiallyEligible()))
                 .returning(COHORTMATCH.ID)
                 .fetchOne()
                 .getValue(COHORTMATCH.ID);

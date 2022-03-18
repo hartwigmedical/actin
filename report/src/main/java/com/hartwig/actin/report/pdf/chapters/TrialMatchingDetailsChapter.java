@@ -7,11 +7,11 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.CohortEligibility;
+import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.datamodel.TrialEligibility;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -59,9 +59,9 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
     public void render(@NotNull Document document) {
         addChapterTitle(document);
 
-        List<TrialEligibility> eligible = Lists.newArrayList();
-        List<TrialEligibility> nonEligible = Lists.newArrayList();
-        for (TrialEligibility trial : report.treatmentMatch().trialMatches()) {
+        List<TrialMatch> eligible = Lists.newArrayList();
+        List<TrialMatch> nonEligible = Lists.newArrayList();
+        for (TrialMatch trial : report.treatmentMatch().trialMatches()) {
             if (trial.isPotentiallyEligible()) {
                 eligible.add(trial);
             } else {
@@ -85,12 +85,12 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
     }
 
-    private void addTrialMatches(@NotNull Document document, @NotNull List<TrialEligibility> trials, @NotNull String title,
+    private void addTrialMatches(@NotNull Document document, @NotNull List<TrialMatch> trials, @NotNull String title,
             boolean trialsAreEligible) {
         document.add(new Paragraph(title).addStyle(Styles.tableTitleStyle()));
 
         boolean addBlank = false;
-        for (TrialEligibility trial : trials) {
+        for (TrialMatch trial : trials) {
             if (addBlank) {
                 if (trialsAreEligible) {
                     document.add(pageBreak());
@@ -103,7 +103,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         }
     }
 
-    private void addTrialDetails(@NotNull Document document, @NotNull TrialEligibility trial) {
+    private void addTrialDetails(@NotNull Document document, @NotNull TrialMatch trial) {
         boolean displayFailOnly = !trial.isPotentiallyEligible();
         document.add(createTrialIdentificationTable(trial.identification(), trial.isPotentiallyEligible()));
         document.add(blankLine());
@@ -113,7 +113,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)));
         }
 
-        for (CohortEligibility cohort : trial.cohorts()) {
+        for (CohortMatch cohort : trial.cohorts()) {
             document.add(blankLine());
             document.add(createCohortIdentificationTable(trial.identification().trialId(),
                     cohort.metadata(),
