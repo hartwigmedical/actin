@@ -1,7 +1,8 @@
 CREATE OR REPLACE VIEW trialEvaluation AS (
-SELECT sampleId, trialMatch.code AS trialId, acronym AS trialAcronym, trialMatch.isEligible AS isEligibleTrial, cohortMatch.code AS cohortId, description AS cohortDescription, cohortMatch.isEligible AS isEligibleCohort, eligibility AS eligibilityRule, result, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages, undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages
+SELECT referenceDate, referenceDateIsLive, sampleId, trialMatch.code AS trialId, acronym AS trialAcronym, trialMatch.isEligible AS isEligibleTrial, cohortMatch.code AS cohortId, description AS cohortDescription, cohortMatch.isEligible AS isEligibleCohort, eligibility AS eligibilityRule, result, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages, undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages
 FROM evaluation
 INNER JOIN trialMatch ON trialMatch.id=evaluation.trialMatchId
+INNER JOIN treatmentMatch ON treatmentMatch.id=trialMatch.treatmentMatchId
 LEFT JOIN cohortMatch ON trialMatch.id=cohortMatch.trialMatchId AND cohortMatch.Id=evaluation.cohortMatchId
 );
 
