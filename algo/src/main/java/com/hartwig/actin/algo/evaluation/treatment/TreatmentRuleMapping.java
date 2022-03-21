@@ -41,7 +41,6 @@ public final class TreatmentRuleMapping {
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
-        map.put(EligibilityRule.HAS_PARTICIPATED_IN_CURRENT_TRIAL, hasParticipatedInCurrentTrialCreator());
 
         return map;
     }
@@ -171,10 +170,5 @@ public final class TreatmentRuleMapping {
     @NotNull
     private static FunctionCreator participatesInAnotherTrialCreator() {
         return function -> new ParticipatesInAnotherTrial();
-    }
-
-    @NotNull
-    private static FunctionCreator hasParticipatedInCurrentTrialCreator() {
-        return function -> new HasParticipatedInCurrentTrial();
     }
 }

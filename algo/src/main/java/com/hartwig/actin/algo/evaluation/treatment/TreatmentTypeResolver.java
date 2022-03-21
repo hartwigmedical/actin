@@ -45,6 +45,9 @@ final class TreatmentTypeResolver {
             case CAR_T: {
                 return treatment.carTType();
             }
+            case TRIAL: {
+                return treatment.trialAcronym();
+            }
             default: {
                 return null;
             }

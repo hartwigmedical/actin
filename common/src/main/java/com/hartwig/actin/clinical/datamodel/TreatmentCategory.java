@@ -15,7 +15,7 @@ public enum TreatmentCategory {
     SUPPORTIVE_TREATMENT(true),
     SURGERY(false),
     TRANSPLANTATION(true),
-    TRIAL(false),
+    TRIAL(true),
     VACCINE(false),
     CAR_T(true),
     TCR_T(false),

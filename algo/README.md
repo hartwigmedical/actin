@@ -142,16 +142,15 @@ HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had 
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z 
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to undetermined
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
-HAS_PARTICIPATED_IN_CURRENT_TRIAL | Currently resolves to not evaluated
 
-1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy, Supportive treatment.
+1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Trial, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy, Supportive treatment.
 
 In addition, 3 following 'Categories' can be assigned:
 - Taxane - Treatment names: Paclitaxel, Docetaxel, Cabazitaxel
 - Fluoropyrimidine - Treatment names: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur
 - Tyrosine kinase inhibitors - Category = 'Targeted therapy' and (T.B.D.)
 
-2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
+2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
 ##### Rules related to prior primary tumors
 

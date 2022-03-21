@@ -72,7 +72,6 @@ final class FunctionInputMapping {
                 FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_PARTICIPATED_IN_CURRENT_TRIAL, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
