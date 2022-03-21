@@ -70,6 +70,8 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES,
+                getsDrugMetabolizingEnzymeInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, getsStableDosingPainMedicationCreator());
 
@@ -198,6 +200,11 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsBCRPInhibitingMedicationCreator() {
         return function -> new CurrentlyGetsBCRPInhibitingMedication();
+    }
+
+    @NotNull
+    private static FunctionCreator getsDrugMetabolizingEnzymeInhibitingMedicationCreator() {
+        return function -> new CurrentlyGetsMetabolizingEnzymeInhibitingMedication();
     }
 
     @NotNull

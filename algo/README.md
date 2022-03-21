@@ -384,6 +384,7 @@ CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently reso
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D., currently resolves to undetermined | P-glycoprotein
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_OATP_X | T.B.D., currently resolves to undetermined | Organic-anion-transporting polypeptides
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D., currently resolves to undetermined | Breast cancer resistance protein
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to warn in case patient receives any medication
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)
 HAS_STABLE_PAIN_MEDICATION_DOSING | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin%, AND only 1 distinct dosage per name (T.B.D)
 
