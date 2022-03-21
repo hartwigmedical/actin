@@ -53,6 +53,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS, hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator());
@@ -102,6 +103,11 @@ public final class MedicationRuleMapping {
             String categoryTermToFind = FunctionInputResolver.createOneStringInput(function);
             return new CurrentlyGetsMedicationOfApproximateCategory(categoryTermToFind);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator() {
+        return function -> new HasReceivedMedicationWithApproximateCategoryWithinWeeks();
     }
 
     @NotNull

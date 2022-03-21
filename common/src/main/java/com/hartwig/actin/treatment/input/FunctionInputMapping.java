@@ -205,6 +205,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS, FunctionInput.ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, FunctionInput.NONE);
