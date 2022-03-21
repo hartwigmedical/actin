@@ -36,10 +36,10 @@ public class HasHadSomeTreatmentsWithCategory implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received at least " + minTreatmentLines + " lines of " + category.display());
-            builder.addFailGeneralMessages("Treatment history");
+            builder.addFailGeneralMessages("No " + category.display() + " treatment");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has received at least " + minTreatmentLines + " lines of " + category.display());
-            builder.addPassGeneralMessages("Treatment history");
+            builder.addPassGeneralMessages(category.display() + " treatment");
         }
 
         return builder.build();

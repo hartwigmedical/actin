@@ -50,11 +50,14 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
         EvaluationResult result = numTreatmentLines <= maxTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
-                    + category.display());
+            builder.addFailSpecificMessages(
+                    "Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
+                            + category.display());
+            builder.addFailGeneralMessages("No " + category.display() + " treatment");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(
                     "Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " " + category.display());
+            builder.addPassGeneralMessages(category.display() + " treatment");
         }
 
         return builder.build();

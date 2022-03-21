@@ -48,10 +48,10 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements EvaluationFunct
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
-            builder.addFailGeneralMessages("Treatment history");
+            builder.addFailGeneralMessages("No " + category.display() + " treatment");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
-            builder.addPassGeneralMessages("Treatment history");
+            builder.addPassGeneralMessages(category.display() + " treatment");
         }
 
         return builder.build();

@@ -23,12 +23,14 @@ public class HasHadSomeApprovedTreatments implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has had no prior tumor treatment")
+                    .addFailGeneralMessages("No prior treatment")
                     .build();
         }
         
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently the number of approved treatments cannot be determined")
+                .addUndeterminedGeneralMessages("Approved treatments")
                 .build();
     }
 }

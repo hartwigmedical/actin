@@ -33,8 +33,10 @@ public class HasHadSomeSystemicTreatments implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments");
+            builder.addFailGeneralMessages("Nr of systemic treatments");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient received at least " + minSystemicTreatments + " systemic treatments");
+            builder.addPassGeneralMessages("Nr of systemic treatments");
         }
 
         return builder.build();
