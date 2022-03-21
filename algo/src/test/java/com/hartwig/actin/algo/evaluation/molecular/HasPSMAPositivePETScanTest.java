@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.infection;
+package com.hartwig.actin.algo.evaluation.molecular;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
@@ -7,12 +7,13 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasCovid19InfectionTest {
+public class HasPSMAPositivePETScanTest {
 
     @Test
     public void canEvaluate() {
-        HasCovid19Infection function = new HasCovid19Infection();
+        HasPSMAPositivePETScan function = new HasPSMAPositivePETScan();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }
+

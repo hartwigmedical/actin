@@ -188,6 +188,7 @@ EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, I
 PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
 PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
 PD_L1_SCORE_TPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X
+HAS_PSMA_POSITIVE_PET_SCAN | Currently resolves to undetermined
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Currently set to ingestion of ORANGE results (T.B.D.)
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Currently set to ingestion of ORANGE results (T.B.D.)
 MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | Won't be evaluated
@@ -356,7 +357,7 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 HAS_KNOWN_HTLV_INFECTION | Prior other conditions > name like %HTLV%
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
 HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
-HAS_CURRENT_COVID_19_INFECTION | Currently resolves to undetermined
+MEETS_COVID_19_INFECTION_REQUIREMENTS | Currently resolves to undetermined
 IS_FULLY_VACCINATED_AGAINST_COVID_19 | Currently resolves to undetermined
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated
 

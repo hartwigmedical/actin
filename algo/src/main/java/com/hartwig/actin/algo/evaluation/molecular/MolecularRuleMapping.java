@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -45,6 +46,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
+        map.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, hasPSMAPositivePETScanCreator());
         map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
@@ -220,6 +222,9 @@ public final class MolecularRuleMapping {
     private static FunctionCreator hasLimitedPDL1ByTPSByIHCCreator() {
         return function -> new HasLimitedPDL1ByTPSByIHC();
     }
+
+    @NotNull
+    private static FunctionCreator hasPSMAPositivePETScanCreator() { return function -> new HasPSMAPositivePETScan(); }
 
     @NotNull
     private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {

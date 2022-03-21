@@ -101,6 +101,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, FunctionInput.ONE_STRING);
 
@@ -198,7 +199,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HTLV_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_TUBERCOLOSIS_INFECTION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_CURRENT_COVID_19_INFECTION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, FunctionInput.NONE);
 
