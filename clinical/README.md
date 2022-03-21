@@ -117,11 +117,11 @@ scoreText | | Test score in text
 scoreValue | 10 | Test score in value 
 unit | | Corresponding unit (if applicable)
 
-N complications
+N cancer related complications
 
 Field | Example Value | Details
 ---|---|---
-name | Ascites | Cancer related complication considered relevant for treatment decision making
+name | Ascites | Complication considered relevant for treatment decision making
 
 N lab values
 
@@ -180,7 +180,7 @@ date | 2021-07-01 | Date of measurement
 value | 70 
 unit | kilogram | Unit of measurement
 
-N blood transfusions (!! In development)
+N blood transfusions
 
 Field | Example Value | Details
 ---|---|---
