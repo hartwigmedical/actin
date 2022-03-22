@@ -21,6 +21,7 @@ public class IntoleranceEntryCreator implements FeedEntryCreator<IntoleranceEntr
                 .verificationStatus(line.string("verificationStatus"))
                 .codeText(line.string("code_text"))
                 .criticality(line.string("criticality"))
+                .isSideEffect(line.string("isSideEffect"))
                 .build();
     }
 

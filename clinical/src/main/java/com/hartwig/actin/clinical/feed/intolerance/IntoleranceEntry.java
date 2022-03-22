@@ -36,4 +36,7 @@ public abstract class IntoleranceEntry implements FeedEntry {
 
     @NotNull
     public abstract String criticality();
+
+    @NotNull
+    public abstract String isSideEffect();
 }

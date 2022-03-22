@@ -198,6 +198,7 @@ public class ClinicalFeedReaderTest {
         assertEquals("confirmed", entry.verificationStatus());
         assertEquals("SIMVASTATINE", entry.codeText());
         assertEquals("low", entry.criticality());
+        assertEquals("allergy", entry.isSideEffect());
     }
 
     private static void assertBodyWeights(@NotNull List<BodyWeightEntry> entries) {

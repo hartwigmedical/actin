@@ -219,6 +219,7 @@ public final class TestFeedFactory {
                 .verificationStatus(Strings.EMPTY)
                 .codeText("pills")
                 .criticality("unknown")
+                .isSideEffect("allergy")
                 .build());
 
         return entries;
