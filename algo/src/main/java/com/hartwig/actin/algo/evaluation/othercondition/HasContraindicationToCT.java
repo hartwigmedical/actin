@@ -9,8 +9,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -22,7 +22,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
 
     static final Set<String> OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT = Sets.newHashSet("claustrophobia");
 
-    static final Set<String> ALLERGIES_BEING_CONTRAINDICATIONS_TO_CT = Sets.newHashSet("contrast agent");
+    static final Set<String> INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT = Sets.newHashSet("contrast agent");
 
     static final Set<String> MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT = Sets.newHashSet("metformin");
 
@@ -60,12 +60,12 @@ public class HasContraindicationToCT implements EvaluationFunction {
             }
         }
 
-        for (Allergy allergy : record.clinical().allergies()) {
-            for (String term : ALLERGIES_BEING_CONTRAINDICATIONS_TO_CT) {
-                if (allergy.name().toLowerCase().contains(term)) {
+        for (Intolerance intolerance : record.clinical().intolerances()) {
+            for (String term : INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT) {
+                if (intolerance.name().toLowerCase().contains(term)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has a contraindication to CT due to allergy " + allergy.name())
+                            .addPassSpecificMessages("Patient has a contraindication to CT due to intolerance " + intolerance.name())
                             .addPassGeneralMessages("CT contraindication")
                             .build();
                 }

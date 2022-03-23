@@ -3,8 +3,6 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.util.List;
 
-import com.hartwig.actin.clinical.curation.config.AllergyConfig;
-import com.hartwig.actin.clinical.curation.config.AllergyConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile;
@@ -12,6 +10,8 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory;
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
@@ -54,7 +54,7 @@ public final class CurationDatabaseReader {
     private static final String MOLECULAR_TEST_TSV = "molecular_test.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
     private static final String MEDICATION_CATEGORY_TSV = "medication_category.tsv";
-    private static final String ALLERGY_TSV = "allergy.tsv";
+    private static final String INTOLERANCE_TSV = "intolerance.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
     private static final String BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv";
@@ -80,7 +80,7 @@ public final class CurationDatabaseReader {
                 .molecularTestConfigs(readMolecularTestConfigs(basePath + MOLECULAR_TEST_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
                 .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
-                .allergyConfigs(readAllergyConfigs(basePath + ALLERGY_TSV))
+                .intoleranceConfigs(readIntoleranceConfigs(basePath + INTOLERANCE_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
                 .build();
@@ -164,9 +164,9 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<AllergyConfig> readAllergyConfigs(@NotNull String tsv) throws IOException {
-        List<AllergyConfig> configs = CurationConfigFile.read(tsv, new AllergyConfigFactory());
-        LOGGER.info(" Read {} allergy configs from {}", configs.size(), tsv);
+    private static List<IntoleranceConfig> readIntoleranceConfigs(@NotNull String tsv) throws IOException {
+        List<IntoleranceConfig> configs = CurationConfigFile.read(tsv, new IntoleranceConfigFactory());
+        LOGGER.info(" Read {} intolerance configs from {}", configs.size(), tsv);
         return configs;
     }
 

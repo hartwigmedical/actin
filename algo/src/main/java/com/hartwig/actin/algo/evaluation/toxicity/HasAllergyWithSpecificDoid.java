@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,10 +30,10 @@ public class HasAllergyWithSpecificDoid implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> allergies = Sets.newHashSet();
-        for (Allergy allergy : record.clinical().allergies()) {
-            for (String doid : allergy.doids()) {
+        for (Intolerance intolerance : record.clinical().intolerances()) {
+            for (String doid : intolerance.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
-                    allergies.add(allergy.name());
+                    allergies.add(intolerance.name());
                 }
             }
         }

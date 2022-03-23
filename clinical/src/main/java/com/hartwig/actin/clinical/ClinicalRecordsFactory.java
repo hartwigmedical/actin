@@ -7,23 +7,23 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -107,7 +107,7 @@ public class ClinicalRecordsFactory {
                     .complications(extractComplications(questionnaire))
                     .labValues(extractLabValues(subject))
                     .toxicities(extractToxicities(subject, questionnaire))
-                    .allergies(extractAllergies(subject))
+                    .intolerances(extractIntolerances(subject))
                     .surgeries(extractSurgeries(subject))
                     .bodyWeights(extractBodyWeights(subject))
                     .vitalFunctions(extractVitalFunctions(subject))
@@ -297,17 +297,18 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<Allergy> extractAllergies(@NotNull String subject) {
-        List<Allergy> allergies = Lists.newArrayList();
+    private List<Intolerance> extractIntolerances(@NotNull String subject) {
+        List<Intolerance> allergies = Lists.newArrayList();
         for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
-            Allergy allergy = ImmutableAllergy.builder()
+            Intolerance intolerance = ImmutableIntolerance.builder()
                     .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
                     .category(CurationUtil.capitalizeFirstLetterOnly(entry.category()))
+                    .type(CurationUtil.capitalizeFirstLetterOnly(entry.isSideEffect()))
                     .clinicalStatus(CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus()))
                     .verificationStatus(CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus()))
                     .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
                     .build();
-            allergies.add(curation.curateAllergy(allergy));
+            allergies.add(curation.curateIntolerance(intolerance));
         }
         return allergies;
     }

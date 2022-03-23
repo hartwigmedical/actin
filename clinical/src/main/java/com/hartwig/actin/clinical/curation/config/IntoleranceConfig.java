@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class AllergyConfig implements CurationConfig {
+public abstract class IntoleranceConfig implements CurationConfig {
 
     @NotNull
     @Override

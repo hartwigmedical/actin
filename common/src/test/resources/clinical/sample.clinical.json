@@ -168,13 +168,14 @@
       "grade": 1
     }
   ],
-  "allergies": [
+  "intolerances": [
     {
       "name": "Drug",
       "doids": [
         "123"
       ],
       "category": "medication",
+      "type": "allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "low"
@@ -183,6 +184,7 @@
       "name": "Condition",
       "doids": [],
       "category": "environment",
+      "type": "allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "unable-to-assess"

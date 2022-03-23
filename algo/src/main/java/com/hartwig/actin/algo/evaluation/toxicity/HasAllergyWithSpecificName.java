@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,9 +26,9 @@ public class HasAllergyWithSpecificName implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> allergies = Sets.newHashSet();
-        for (Allergy allergy : record.clinical().allergies()) {
-            if (allergy.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                allergies.add(allergy.name());
+        for (Intolerance intolerance : record.clinical().intolerances()) {
+            if (intolerance.name().toLowerCase().contains(termToFind.toLowerCase())) {
+                allergies.add(intolerance.name());
             }
         }
 

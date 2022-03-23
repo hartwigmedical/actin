@@ -58,7 +58,7 @@ public class ClinicalRecordJsonTest {
         assertEquals(1, record.complications().size());
         assertEquals(2, record.labValues().size());
         assertEquals(2, record.toxicities().size());
-        assertEquals(2, record.allergies().size());
+        assertEquals(2, record.intolerances().size());
         assertEquals(1, record.surgeries().size());
         assertEquals(1, record.vitalFunctions().size());
         assertEquals(1, record.bloodTransfusions().size());

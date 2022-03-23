@@ -17,7 +17,7 @@ public class HasHistoryOfAnaphylaxis implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        EvaluationResult result = record.clinical().allergies().isEmpty() ? EvaluationResult.FAIL : EvaluationResult.UNDETERMINED;
+        EvaluationResult result = record.clinical().intolerances().isEmpty() ? EvaluationResult.FAIL : EvaluationResult.UNDETERMINED;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {

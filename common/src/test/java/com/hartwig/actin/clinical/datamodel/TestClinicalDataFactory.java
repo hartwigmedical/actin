@@ -58,7 +58,7 @@ public final class TestClinicalDataFactory {
                 .complications(createTestComplications())
                 .labValues(createTestLabValues())
                 .toxicities(createTestToxicities())
-                .allergies(createTestAllergies())
+                .intolerances(createTestIntolerances())
                 .surgeries(createTestSurgeries())
                 .bodyWeights(createTestBodyWeights())
                 .vitalFunctions(createTestVitalFunctions())
@@ -332,26 +332,28 @@ public final class TestClinicalDataFactory {
     }
 
     @NotNull
-    private static List<Allergy> createTestAllergies() {
-        List<Allergy> allergies = Lists.newArrayList();
+    private static List<Intolerance> createTestIntolerances() {
+        List<Intolerance> intolerances = Lists.newArrayList();
 
-        allergies.add(ImmutableAllergy.builder()
+        intolerances.add(ImmutableIntolerance.builder()
                 .name("Wasps")
                 .category("Environment")
+                .type("Allergy")
                 .clinicalStatus("Active")
                 .verificationStatus("Confirmed")
                 .criticality("Unable-to-assess")
                 .build());
 
-        allergies.add(ImmutableAllergy.builder()
+        intolerances.add(ImmutableIntolerance.builder()
                 .name("Pembrolizumab")
                 .category("Medication")
+                .type("Allergy")
                 .clinicalStatus("Active")
                 .verificationStatus("Confirmed")
                 .criticality("High")
                 .build());
 
-        return allergies;
+        return intolerances;
     }
 
     @NotNull

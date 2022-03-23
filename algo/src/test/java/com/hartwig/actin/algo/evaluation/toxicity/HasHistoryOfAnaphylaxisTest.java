@@ -13,8 +13,8 @@ public class HasHistoryOfAnaphylaxisTest {
     public void canEvaluate() {
         HasHistoryOfAnaphylaxis function = new HasHistoryOfAnaphylaxis();
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withAllergies(Lists.newArrayList())));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(ToxicityTestFactory.withAllergy(ToxicityTestFactory.allergy().build())));
+                function.evaluate(ToxicityTestFactory.withIntolerance(ToxicityTestFactory.intolerance().build())));
     }
 }

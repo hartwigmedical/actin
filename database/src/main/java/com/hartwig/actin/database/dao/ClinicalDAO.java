@@ -1,10 +1,10 @@
 package com.hartwig.actin.database.dao;
 
-import static com.hartwig.actin.database.Tables.ALLERGY;
 import static com.hartwig.actin.database.Tables.BLOODTRANSFUSION;
 import static com.hartwig.actin.database.Tables.BODYWEIGHT;
 import static com.hartwig.actin.database.Tables.CLINICALSTATUS;
 import static com.hartwig.actin.database.Tables.COMPLICATION;
+import static com.hartwig.actin.database.Tables.INTOLERANCE;
 import static com.hartwig.actin.database.Tables.LABVALUE;
 import static com.hartwig.actin.database.Tables.MEDICATION;
 import static com.hartwig.actin.database.Tables.PATIENT;
@@ -19,7 +19,6 @@ import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -27,6 +26,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
@@ -65,7 +65,7 @@ class ClinicalDAO {
         context.truncate(COMPLICATION).execute();
         context.truncate(LABVALUE).execute();
         context.truncate(TOXICITY).execute();
-        context.truncate(ALLERGY).execute();
+        context.truncate(INTOLERANCE).execute();
         context.truncate(SURGERY).execute();
         context.truncate(BODYWEIGHT).execute();
         context.truncate(VITALFUNCTION).execute();
@@ -87,7 +87,7 @@ class ClinicalDAO {
         writeComplications(sampleId, record.complications());
         writeLabValues(sampleId, record.labValues());
         writeToxicities(sampleId, record.toxicities());
-        writeAllergies(sampleId, record.allergies());
+        writeIntolerances(sampleId, record.intolerances());
         writeSurgeries(sampleId, record.surgeries());
         writeBodyWeights(sampleId, record.bodyWeights());
         writeVitalFunctions(sampleId, record.vitalFunctions());
@@ -323,23 +323,25 @@ class ClinicalDAO {
         }
     }
 
-    private void writeAllergies(@NotNull String sampleId, @NotNull List<Allergy> allergies) {
-        for (Allergy allergy : allergies) {
-            context.insertInto(ALLERGY,
-                    ALLERGY.SAMPLEID,
-                    ALLERGY.NAME,
-                    ALLERGY.DOIDS,
-                    ALLERGY.CATEGORY,
-                    ALLERGY.CLINICALSTATUS,
-                    ALLERGY.VERIFICATIONSTATUS,
-                    ALLERGY.CRITICALITY)
+    private void writeIntolerances(@NotNull String sampleId, @NotNull List<Intolerance> allergies) {
+        for (Intolerance intolerance : allergies) {
+            context.insertInto(INTOLERANCE,
+                    INTOLERANCE.SAMPLEID,
+                    INTOLERANCE.NAME,
+                    INTOLERANCE.DOIDS,
+                    INTOLERANCE.CATEGORY,
+                    INTOLERANCE.TYPE,
+                    INTOLERANCE.CLINICALSTATUS,
+                    INTOLERANCE.VERIFICATIONSTATUS,
+                    INTOLERANCE.CRITICALITY)
                     .values(sampleId,
-                            allergy.name(),
-                            DataUtil.concat(allergy.doids()),
-                            allergy.category(),
-                            allergy.clinicalStatus(),
-                            allergy.verificationStatus(),
-                            allergy.criticality())
+                            intolerance.name(),
+                            DataUtil.concat(intolerance.doids()),
+                            intolerance.category(),
+                            intolerance.type(),
+                            intolerance.clinicalStatus(),
+                            intolerance.verificationStatus(),
+                            intolerance.criticality())
                     .execute();
         }
     }

@@ -3,11 +3,11 @@ package com.hartwig.actin.report.pdf.tables;
 import java.util.List;
 import java.util.StringJoiner;
 
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
@@ -74,7 +74,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(complications(record.complications())));
 
         table.addCell(Cells.createKey("Known allergies"));
-        table.addCell(Cells.createValue(allergies(record.allergies())));
+        table.addCell(Cells.createValue(allergies(record.intolerances())));
 
         if (!record.surgeries().isEmpty()) {
             table.addCell(Cells.createKey("Recent surgeries"));
@@ -109,11 +109,11 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String allergies(@NotNull List<Allergy> allergies) {
+    private static String allergies(@NotNull List<Intolerance> allergies) {
         StringJoiner joiner = Formats.commaJoiner();
-        for (Allergy allergy : allergies) {
-            String addition = !allergy.category().isEmpty() ? " (" + allergy.category() + ")" : Strings.EMPTY;
-            joiner.add(allergy.name() + addition);
+        for (Intolerance intolerance : allergies) {
+            String addition = !intolerance.category().isEmpty() ? " (" + intolerance.category() + ")" : Strings.EMPTY;
+            joiner.add(intolerance.name() + addition);
         }
 
         return Formats.valueOrDefault(joiner.toString(), "None");

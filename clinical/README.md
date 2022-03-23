@@ -151,10 +151,10 @@ N allergies
 Field | Example Value | Details
 ---|---|---
 name | Pembrolizumab | Allergy
-category | Medication | Category of allergy
+category | Medication | Category of intolerance
 clinicalStatus | Active | Clinical applicability
 verificationStatus | Confirmed | Confirmation status
-criticality | High | Assigned criticality of allergy
+criticality | High | Assigned criticality of intolerance
 
 N surgeries
 

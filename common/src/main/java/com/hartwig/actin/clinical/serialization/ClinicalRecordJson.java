@@ -36,7 +36,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -44,7 +43,6 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.Gender;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -52,6 +50,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
@@ -64,6 +63,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -159,7 +159,7 @@ public final class ClinicalRecordJson {
                     .complications(toComplications(array(record, "complications")))
                     .labValues(toLabValues(array(record, "labValues")))
                     .toxicities(toToxicities(array(record, "toxicities")))
-                    .allergies(toAllergies(array(record, "allergies")))
+                    .intolerances(toIntolerances(array(record, "intolerances")))
                     .surgeries(toSurgeries(array(record, "surgeries")))
                     .bodyWeights(toBodyWeights(array(record, "bodyWeights")))
                     .vitalFunctions(toVitalFunctions(array(record, "vitalFunctions")))
@@ -377,20 +377,21 @@ public final class ClinicalRecordJson {
         }
 
         @NotNull
-        private static List<Allergy> toAllergies(@NotNull JsonArray allergies) {
-            List<Allergy> allergyList = Lists.newArrayList();
+        private static List<Intolerance> toIntolerances(@NotNull JsonArray allergies) {
+            List<Intolerance> intoleranceList = Lists.newArrayList();
             for (JsonElement element : allergies) {
                 JsonObject object = element.getAsJsonObject();
-                allergyList.add(ImmutableAllergy.builder()
+                intoleranceList.add(ImmutableIntolerance.builder()
                         .name(string(object, "name"))
                         .doids(stringList(object, "doids"))
                         .category(string(object, "category"))
+                        .type(string(object, "type"))
                         .clinicalStatus(string(object, "clinicalStatus"))
                         .verificationStatus(string(object, "verificationStatus"))
                         .criticality(string(object, "criticality"))
                         .build());
             }
-            return allergyList;
+            return intoleranceList;
         }
 
         @NotNull

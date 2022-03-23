@@ -13,7 +13,6 @@ import java.util.List;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -21,6 +20,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Surgery;
@@ -75,7 +75,7 @@ public class ClinicalRecordsFactoryTest {
         assertTumorDetails(record.tumor());
         assertClinicalStatus(record.clinicalStatus());
         assertToxicities(record.toxicities());
-        assertAllergies(record.allergies());
+        assertAllergies(record.intolerances());
         assertSurgeries(record.surgeries());
         assertBodyWeights(record.bodyWeights());
         assertVitalFunctions(record.vitalFunctions());
@@ -132,13 +132,13 @@ public class ClinicalRecordsFactoryTest {
         assertEquals(2, (int) toxicity.grade());
     }
 
-    private static void assertAllergies(@NotNull List<Allergy> allergies) {
+    private static void assertAllergies(@NotNull List<Intolerance> allergies) {
         assertEquals(1, allergies.size());
 
-        Allergy allergy = allergies.get(0);
-        assertEquals("Pills", allergy.name());
-        assertEquals("Medication", allergy.category());
-        assertEquals("Unknown", allergy.criticality());
+        Intolerance intolerance = allergies.get(0);
+        assertEquals("Pills", intolerance.name());
+        assertEquals("Medication", intolerance.category());
+        assertEquals("Unknown", intolerance.criticality());
     }
 
     private static void assertSurgeries(@NotNull List<Surgery> surgeries) {

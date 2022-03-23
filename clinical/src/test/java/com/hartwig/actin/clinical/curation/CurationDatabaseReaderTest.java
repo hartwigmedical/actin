@@ -10,11 +10,11 @@ import java.util.List;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
-import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
@@ -56,7 +56,7 @@ public class CurationDatabaseReaderTest {
         assertMolecularTestConfigs(database.molecularTestConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
         assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
-        assertAllergyConfigs(database.allergyConfigs());
+        assertAllergyConfigs(database.intoleranceConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
         assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
@@ -238,10 +238,10 @@ public class CurationDatabaseReaderTest {
         assertEquals(Sets.newHashSet("Beta2 sympathomimetics", "Corticosteroids"), formoterol.categories());
     }
 
-    private static void assertAllergyConfigs(@NotNull List<AllergyConfig> configs) {
+    private static void assertAllergyConfigs(@NotNull List<IntoleranceConfig> configs) {
         assertEquals(1, configs.size());
 
-        AllergyConfig config = find(configs, "Clindamycine");
+        IntoleranceConfig config = find(configs, "Clindamycine");
         assertEquals("Clindamycin", config.name());
         assertEquals(Sets.newHashSet("0060500"), config.doids());
     }

@@ -7,8 +7,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -52,28 +52,29 @@ public class HasContraindicationToMRITest {
     }
 
     @Test
-    public void canEvaluateOnAllergy() {
+    public void canEvaluateOnIntolerance() {
         HasContraindicationToMRI function = createTestContraindicationMRIFunction();
 
-        // Test without allergies
-        List<Allergy> allergies = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withAllergies(allergies)));
+        // Test without intolerances
+        List<Intolerance> intolerances = Lists.newArrayList();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(intolerances)));
 
-        // Test no relevant allergy
-        allergies.add(allergyBuilder().name("no relevant allergy").build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withAllergies(allergies)));
+        // Test no relevant intolerance
+        intolerances.add(intoleranceBuilder().name("no relevant intolerance").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(intolerances)));
 
-        // Test relevant allergy
-        String relevantAllergy = HasContraindicationToMRI.ALLERGIES_BEING_CONTRAINDICATIONS_TO_MRI.iterator().next();
-        allergies.add(allergyBuilder().name(relevantAllergy).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withAllergies(allergies)));
+        // Test relevant intolerance
+        String relevantIntolerance = HasContraindicationToMRI.INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI.iterator().next();
+        intolerances.add(intoleranceBuilder().name(relevantIntolerance).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withIntolerances(intolerances)));
     }
 
     @NotNull
-    private static ImmutableAllergy.Builder allergyBuilder() {
-        return ImmutableAllergy.builder()
+    private static ImmutableIntolerance.Builder intoleranceBuilder() {
+        return ImmutableIntolerance.builder()
                 .name(Strings.EMPTY)
                 .category(Strings.EMPTY)
+                .type(Strings.EMPTY)
                 .clinicalStatus(Strings.EMPTY)
                 .verificationStatus(Strings.EMPTY)
                 .criticality(Strings.EMPTY);

@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.junit.Test;
 
@@ -18,18 +18,18 @@ public class HasAllergyWithSpecificDoidTest {
         HasAllergyWithSpecificDoid function = new HasAllergyWithSpecificDoid(doidModel, "parent");
 
         // No allergies
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withAllergies(Lists.newArrayList())));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));
 
         // Allergy with mismatching doid
-        Allergy mismatch = ToxicityTestFactory.allergy().addDoids("other").build();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withAllergy(mismatch)));
+        Intolerance mismatch = ToxicityTestFactory.intolerance().addDoids("other").build();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch)));
 
         // Matching with parent doid
-        Allergy matchParent = ToxicityTestFactory.allergy().addDoids("other", "parent").build();
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withAllergy(matchParent)));
+        Intolerance matchParent = ToxicityTestFactory.intolerance().addDoids("other", "parent").build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(matchParent)));
 
         // Matching with child doid
-        Allergy matchChild = ToxicityTestFactory.allergy().addDoids("child").build();
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withAllergy(matchChild)));
+        Intolerance matchChild = ToxicityTestFactory.intolerance().addDoids("child").build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(matchChild)));
     }
 }

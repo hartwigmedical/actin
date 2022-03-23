@@ -6,10 +6,10 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
@@ -67,12 +67,12 @@ final class OtherConditionTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withAllergies(@NotNull List<Allergy> allergies) {
+    public static PatientRecord withIntolerances(@NotNull List<Intolerance> intolerances) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .allergies(allergies)
+                        .intolerances(intolerances)
                         .build())
                 .build();
     }

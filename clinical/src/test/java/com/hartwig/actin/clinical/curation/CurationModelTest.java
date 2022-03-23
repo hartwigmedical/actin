@@ -13,18 +13,18 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -311,23 +311,24 @@ public class CurationModelTest {
     }
 
     @Test
-    public void canCurateAllergies() {
+    public void canCurateIntolerances() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Allergy proper = ImmutableAllergy.builder()
+        Intolerance proper = ImmutableIntolerance.builder()
                 .name("Latex type 1")
                 .category(Strings.EMPTY)
+                .type(Strings.EMPTY)
                 .clinicalStatus(Strings.EMPTY)
                 .verificationStatus(Strings.EMPTY)
                 .criticality(Strings.EMPTY)
                 .build();
 
-        Allergy curatedProper = model.curateAllergy(proper);
+        Intolerance curatedProper = model.curateIntolerance(proper);
         assertEquals("Latex (type 1)", curatedProper.name());
         assertTrue(curatedProper.doids().contains("0060532"));
 
-        Allergy passThrough = ImmutableAllergy.builder().from(proper).name("don't curate me").build();
-        assertEquals(passThrough, model.curateAllergy(passThrough));
+        Intolerance passThrough = ImmutableIntolerance.builder().from(proper).name("don't curate me").build();
+        assertEquals(passThrough, model.curateIntolerance(passThrough));
 
         model.evaluate();
     }

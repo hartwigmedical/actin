@@ -7,11 +7,11 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.apache.logging.log4j.util.Strings;
@@ -56,21 +56,21 @@ public class HasContraindicationToCTTest {
     }
 
     @Test
-    public void canEvaluateOnAllergy() {
+    public void canEvaluateOnIntolerance() {
         HasContraindicationToCT function = createTestContraindicationCTFunction();
 
-        // Test without allergies
-        List<Allergy> allergies = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withAllergies(allergies)));
+        // Test without intolerances
+        List<Intolerance> intolerances = Lists.newArrayList();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(intolerances)));
 
-        // Test no relevant allergy
-        allergies.add(allergyBuilder().name("no relevant allergy").build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withAllergies(allergies)));
+        // Test no relevant intolerance
+        intolerances.add(intoleranceBuilder().name("no relevant allergy").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(intolerances)));
 
-        // Test relevant allergy
-        String relevantAllergy = HasContraindicationToCT.ALLERGIES_BEING_CONTRAINDICATIONS_TO_CT.iterator().next();
-        allergies.add(allergyBuilder().name(relevantAllergy).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withAllergies(allergies)));
+        // Test relevant intolerance
+        String relevantAllergy = HasContraindicationToCT.INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT.iterator().next();
+        intolerances.add(intoleranceBuilder().name(relevantAllergy).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withIntolerances(intolerances)));
     }
 
     @Test
@@ -110,10 +110,11 @@ public class HasContraindicationToCTTest {
     }
 
     @NotNull
-    private static ImmutableAllergy.Builder allergyBuilder() {
-        return ImmutableAllergy.builder()
+    private static ImmutableIntolerance.Builder intoleranceBuilder() {
+        return ImmutableIntolerance.builder()
                 .name(Strings.EMPTY)
                 .category(Strings.EMPTY)
+                .type(Strings.EMPTY)
                 .clinicalStatus(Strings.EMPTY)
                 .verificationStatus(Strings.EMPTY)
                 .criticality(Strings.EMPTY);

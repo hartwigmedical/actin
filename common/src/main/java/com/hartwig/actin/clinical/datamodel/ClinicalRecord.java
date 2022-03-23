@@ -44,7 +44,7 @@ public abstract class ClinicalRecord {
     public abstract List<Toxicity> toxicities();
 
     @NotNull
-    public abstract List<Allergy> allergies();
+    public abstract List<Intolerance> intolerances();
 
     @NotNull
     public abstract List<Surgery> surgeries();

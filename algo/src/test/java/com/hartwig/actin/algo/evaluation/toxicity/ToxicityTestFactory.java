@@ -7,11 +7,11 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.Allergy;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -58,26 +58,27 @@ final class ToxicityTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withAllergy(@NotNull Allergy allergy) {
-        return withAllergies(Lists.newArrayList(allergy));
+    public static PatientRecord withIntolerance(@NotNull Intolerance intolerance) {
+        return withIntolerances(Lists.newArrayList(intolerance));
     }
 
     @NotNull
-    public static PatientRecord withAllergies(@NotNull List<Allergy> allergies) {
+    public static PatientRecord withIntolerances(@NotNull List<Intolerance> intolerances) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                        .allergies(allergies)
+                        .intolerances(intolerances)
                         .build())
                 .build();
     }
 
     @NotNull
-    public static ImmutableAllergy.Builder allergy() {
-        return ImmutableAllergy.builder()
+    public static ImmutableIntolerance.Builder intolerance() {
+        return ImmutableIntolerance.builder()
                 .name(Strings.EMPTY)
                 .category(Strings.EMPTY)
+                .type(Strings.EMPTY)
                 .clinicalStatus(Strings.EMPTY)
                 .verificationStatus(Strings.EMPTY)
                 .criticality(Strings.EMPTY);

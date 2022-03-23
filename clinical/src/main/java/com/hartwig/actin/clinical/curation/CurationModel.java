@@ -12,14 +12,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.curation.config.AllergyConfig;
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.CurationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableAllergyConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableIntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
@@ -29,6 +28,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
@@ -41,20 +41,20 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
-import com.hartwig.actin.clinical.datamodel.Allergy;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.ImmutableAllergy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
@@ -497,21 +497,21 @@ public class CurationModel {
     }
 
     @NotNull
-    public Allergy curateAllergy(@NotNull Allergy allergy) {
-        String reformatted = CurationUtil.capitalizeFirstLetterOnly(allergy.name());
+    public Intolerance curateIntolerance(@NotNull Intolerance intolerance) {
+        String reformatted = CurationUtil.capitalizeFirstLetterOnly(intolerance.name());
 
-        Set<AllergyConfig> configs = find(database.allergyConfigs(), reformatted);
+        Set<IntoleranceConfig> configs = find(database.intoleranceConfigs(), reformatted);
 
         if (configs.isEmpty()) {
             LOGGER.warn(" Could not find allergy config for '{}'", reformatted);
-            return allergy;
+            return intolerance;
         } else if (configs.size() > 1) {
             LOGGER.warn(" Multiple allergy configs for allergy with name '{}'", reformatted);
-            return allergy;
+            return intolerance;
         }
 
-        AllergyConfig config = configs.iterator().next();
-        return ImmutableAllergy.builder().from(allergy).name(config.name()).doids(config.doids()).build();
+        IntoleranceConfig config = configs.iterator().next();
+        return ImmutableIntolerance.builder().from(intolerance).name(config.name()).doids(config.doids()).build();
     }
 
     @NotNull
@@ -613,8 +613,8 @@ public class CurationModel {
             return database.medicationDosageConfigs();
         } else if (classToLookUp == ImmutableMedicationCategoryConfig.class) {
             return database.medicationCategoryConfigs();
-        } else if (classToLookUp == ImmutableAllergyConfig.class) {
-            return database.allergyConfigs();
+        } else if (classToLookUp == ImmutableIntoleranceConfig.class) {
+            return database.intoleranceConfigs();
         }
 
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);

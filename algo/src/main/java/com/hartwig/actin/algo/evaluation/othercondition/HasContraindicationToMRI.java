@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
 
     static final Set<String> OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI = Sets.newHashSet("implant", "claustrophobia");
 
-    static final Set<String> ALLERGIES_BEING_CONTRAINDICATIONS_TO_MRI = Sets.newHashSet("contrast agent");
+    static final Set<String> INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI = Sets.newHashSet("contrast agent");
 
     @NotNull
     private final DoidModel doidModel;
@@ -54,12 +54,12 @@ public class HasContraindicationToMRI implements EvaluationFunction {
             }
         }
 
-        for (Allergy allergy : record.clinical().allergies()) {
-            for (String term : ALLERGIES_BEING_CONTRAINDICATIONS_TO_MRI) {
-                if (allergy.name().toLowerCase().contains(term)) {
+        for (Intolerance intolerance : record.clinical().intolerances()) {
+            for (String term : INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI) {
+                if (intolerance.name().toLowerCase().contains(term)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has a contraindication to MRI due to allergy " + allergy.name())
+                            .addPassSpecificMessages("Patient has a contraindication to MRI due to intolerance " + intolerance.name())
                             .addPassGeneralMessages("MRI contraindication")
                             .build();
                 }

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Allergy {
+public abstract class Intolerance {
 
     @NotNull
     public abstract String name();
@@ -18,6 +18,9 @@ public abstract class Allergy {
 
     @NotNull
     public abstract String category();
+
+    @NotNull
+    public abstract String type();
 
     @NotNull
     public abstract String clinicalStatus();

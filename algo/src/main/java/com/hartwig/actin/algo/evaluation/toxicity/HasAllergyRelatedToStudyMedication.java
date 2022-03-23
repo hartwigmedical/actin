@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Allergy;
+import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,13 +27,13 @@ public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> allergies = Sets.newHashSet();
-        for (Allergy allergy : record.clinical().allergies()) {
-            if (allergy.clinicalStatus().equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
-                boolean doidMatch = allergy.doids().contains(DRUG_ALLERGY_DOID);
-                boolean categoryMatch = allergy.category().equalsIgnoreCase(MEDICATION_CATEGORY);
+        for (Intolerance intolerance : record.clinical().intolerances()) {
+            if (intolerance.clinicalStatus().equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
+                boolean doidMatch = intolerance.doids().contains(DRUG_ALLERGY_DOID);
+                boolean categoryMatch = intolerance.category().equalsIgnoreCase(MEDICATION_CATEGORY);
 
                 if (doidMatch || categoryMatch) {
-                    allergies.add(allergy.name());
+                    allergies.add(intolerance.name());
                 }
             }
         }
