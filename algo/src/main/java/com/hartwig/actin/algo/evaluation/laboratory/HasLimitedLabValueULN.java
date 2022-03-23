@@ -22,7 +22,7 @@ public class HasLimitedLabValueULN implements LabEvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         EvaluationResult result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULN);
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " exceeds maximum ULN");
         } else if (result == EvaluationResult.UNDETERMINED) {

@@ -52,7 +52,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
                 return evaluateCockcroftGault(record, labValue);
             default: {
                 LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
-                return EvaluationFactory.unrecoverable().result(EvaluationResult.NOT_IMPLEMENTED).build();
+                return EvaluationFactory.recoverable().result(EvaluationResult.NOT_IMPLEMENTED).build();
             }
         }
     }
@@ -179,7 +179,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
 
     @NotNull
     private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(code + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {

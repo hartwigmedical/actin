@@ -40,7 +40,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
         LabValue mostRecent = interpretation.mostRecentValue(measurement);
 
         if (!isValid(mostRecent, measurement)) {
-            ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.UNDETERMINED);
+            ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(EvaluationResult.UNDETERMINED);
 
             if (mostRecent == null) {
                 builder.addUndeterminedSpecificMessages("No measurement found for " + measurement.code());
@@ -60,7 +60,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             if (isValid(secondMostRecent, measurement)) {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
-                    return EvaluationFactory.unrecoverable()
+                    return EvaluationFactory.recoverable()
                             .result(EvaluationResult.UNDETERMINED)
                             .addUndeterminedSpecificMessages("First measurement fails for " + measurement.code() + " while second succeeds")
                             .addUndeterminedGeneralMessages("Inconsistent lab values")

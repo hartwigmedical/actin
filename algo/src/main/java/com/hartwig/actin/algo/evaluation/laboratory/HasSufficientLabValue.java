@@ -31,7 +31,7 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
         Double convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit);
 
         if (convertedValue == null) {
-            return EvaluationFactory.unrecoverable()
+            return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
                     .build();
@@ -39,7 +39,7 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
 
         EvaluationResult result = LabEvaluation.evaluateVersusMinValue(convertedValue, labValue.comparator(), minValue);
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {

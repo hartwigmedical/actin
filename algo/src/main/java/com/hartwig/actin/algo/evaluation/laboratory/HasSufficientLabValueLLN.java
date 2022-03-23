@@ -22,7 +22,7 @@ public class HasSufficientLabValueLLN implements LabEvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         EvaluationResult result = LabEvaluation.evaluateVersusMinULN(labValue, minLLN);
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is insufficient versus LLN");
         } else if (result == EvaluationResult.UNDETERMINED) {

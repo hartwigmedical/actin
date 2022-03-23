@@ -19,14 +19,14 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
         Boolean isOutsideRef = labValue.isOutsideRef();
         if (isOutsideRef == null) {
-            return EvaluationFactory.unrecoverable()
+            return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether " + labValue.code() + " is within ref")
                     .build();
         }
 
         EvaluationResult result = isOutsideRef ? EvaluationResult.FAIL : EvaluationResult.PASS;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is not within reference values");
         } else if (result == EvaluationResult.PASS) {
