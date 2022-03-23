@@ -367,7 +367,7 @@ Rule | When does a patient pass evaluation?| Note
 CURRENTLY_GETS_MEDICATION | Medication > Any medication exists with status active
 CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X% and status is active
 CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like %X% and status is active
-HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS | Medication > categories like %X% and active OR endDate within Y weeks
+HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS | Medication > categories like %X% and active OR endDate within Y weeks | Undetermined in case Y would require stop dates to be prior to ACTIN registration date.
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
