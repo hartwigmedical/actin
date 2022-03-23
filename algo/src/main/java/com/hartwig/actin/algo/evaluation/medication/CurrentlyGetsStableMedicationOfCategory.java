@@ -49,10 +49,10 @@ public class CurrentlyGetsStableMedicationOfCategory implements EvaluationFuncti
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient does not get stable dosing of medication with category " + Format.concat(categoriesToFind));
-            builder.addFailGeneralMessages("Absent medication use");
+            builder.addFailGeneralMessages("No stable dosing of " + Format.concat(categoriesToFind));
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient gets stable dosing of medication with category " + Format.concat(categoriesToFind));
-            builder.addPassGeneralMessages("Received medication");
+            builder.addPassGeneralMessages("Stable dosing of " + Format.concat(categoriesToFind));
         }
 
         return builder.build();

@@ -39,14 +39,14 @@ public class CurrentlyGetsMedicationOfExactCategory implements EvaluationFunctio
                     .addPassSpecificMessages(
                             "Patient currently gets medication " + Format.concat(names) + ", which belong(s) to category " + Format.concat(
                                     categoriesToFind))
-                    .addPassGeneralMessages("Received medication")
+                    .addPassGeneralMessages(categoriesToFind + " medication")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient currently does not get medication of category " + Format.concat(categoriesToFind))
-                .addFailGeneralMessages("Absent medication use")
+                .addFailGeneralMessages("No " + categoriesToFind + " medication")
                 .build();
     }
 }

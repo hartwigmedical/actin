@@ -19,7 +19,7 @@ public class CurrentlyGetsQTProlongatingMedication implements EvaluationFunction
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets QT prolongating medication")
-                .addUndeterminedGeneralMessages("Medication requirements")
+                .addUndeterminedGeneralMessages("Potential QT prolongating medication")
                 .build();
     }
 }
