@@ -9,6 +9,7 @@ FROM evaluation
 INNER JOIN trialMatch ON trialMatch.id = evaluation.trialMatchId
 INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
 LEFT JOIN cohortMatch ON trialMatch.id = cohortMatch.trialMatchId AND cohortMatch.Id = evaluation.cohortMatchId
+ORDER BY sampleId
 );
 
 CREATE OR REPLACE VIEW criteriaMapping
