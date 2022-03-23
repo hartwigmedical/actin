@@ -3,8 +3,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- TODO Can be removed per 25th of March 2022
 DROP TABLE IF EXISTS eligibilityReferences;
--- TODO Can be removed per April 1st 2022
-DROP TABLE IF EXISTS allergy;
 
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
@@ -157,14 +155,13 @@ CREATE TABLE toxicity
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS intolerance;
-CREATE TABLE intolerance
+DROP TABLE IF EXISTS allergy;
+CREATE TABLE allergy
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
     doids varchar(50) NOT NULL,
     category varchar(50) NOT NULL,
-    type varchar(50) NOT NULL,
     clinicalStatus varchar(50) NOT NULL,
     verificationStatus varchar(50) NOT NULL,
     criticality varchar(50) NOT NULL,
