@@ -5,7 +5,6 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.vitalfunction.HasRestingHeartRateWithinBounds;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 

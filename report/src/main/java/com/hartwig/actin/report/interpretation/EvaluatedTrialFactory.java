@@ -101,16 +101,4 @@ public final class EvaluatedTrialFactory {
         }
         return messages;
     }
-
-    @NotNull
-    private static List<Evaluation> extractEvaluations(@NotNull Map<Eligibility, Evaluation> evaluations,
-            @NotNull Set<EvaluationResult> includeFilter) {
-        List<Evaluation> filtered = Lists.newArrayList();
-        for (Evaluation evaluation : evaluations.values()) {
-            if (includeFilter.contains(evaluation.result())) {
-                filtered.add(evaluation);
-            }
-        }
-        return filtered;
-    }
 }
