@@ -28,17 +28,11 @@ public final class MedicationRuleMapping {
     private static final String GONADORELIN_AGONISTS = "Gonadorelin agonists";
     private static final String SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective";
     private static final String OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other";
-    private static final String COLONY_STIMULATING_FACTORS = "Colony stimulating factors";
 
     private static final String PAIN_MEDICATION_CATEGORY_1 = "NSAIDs";
     private static final String PAIN_MEDICATION_CATEGORY_2 = "Opioids";
 
     // Medication names
-    private static final String PROBENECID = "Probenecid";
-    private static final String RIFAMPICIN = "Rifampicin";
-    private static final String NOVOBIOCIN = "Novobiocin";
-    private static final String CABOTEGRAVIR = "Cabotegravir";
-
     private static final String PAIN_MEDICATION_NAME_1 = "Paracetamol";
     private static final String PAIN_MEDICATION_NAME_2 = "Amitriptyline";
     private static final String PAIN_MEDICATION_NAME_3 = "Pregabalin";
@@ -50,23 +44,19 @@ public final class MedicationRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION, getsActiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator());
-        map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS, hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS,
+                hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_CORTICOSTEROID_MEDICATION, getsCorticosteroidMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_DISEASE_MODIFYING_AGENTS, getsDiseaseModifyingAgentsCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_OAT3_INHIBITORS_MEDICATION, getsOAT3InhibitionMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, getsPainMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_COLONY_STIMULATING_FACTORS, getColonyStimulatingFactorsCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
@@ -74,14 +64,8 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES,
                 getsDrugMetabolizingEnzymeInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_PAIN_MEDICATION_DOSING, getsStableDosingPainMedicationCreator());
 
         return map;
-    }
-
-    @NotNull
-    private static FunctionCreator getsActiveMedicationCreator() {
-        return function -> new CurrentlyGetsAnyMedication();
     }
 
     @NotNull
@@ -141,18 +125,8 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsDiseaseModifyingAgentsCreator() {
-        return function -> new CurrentlyGetsDiseaseModifyingAgents();
-    }
-
-    @NotNull
     private static FunctionCreator getsImmunosuppressantMedicationCreator() {
         return getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS);
-    }
-
-    @NotNull
-    private static FunctionCreator getsOAT3InhibitionMedicationCreator() {
-        return getsActiveMedicationWithNamesCreator(PROBENECID, RIFAMPICIN, NOVOBIOCIN, CABOTEGRAVIR);
     }
 
     @NotNull
@@ -175,11 +149,6 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsQTProlongatingMedicationCreator() {
         return function -> new CurrentlyGetsQTProlongatingMedication();
-    }
-
-    @NotNull
-    private static FunctionCreator getColonyStimulatingFactorsCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(COLONY_STIMULATING_FACTORS);
     }
 
     @NotNull
@@ -219,25 +188,8 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsStableDosingPainMedicationCreator() {
-        return function -> {
-            EvaluationFunction categoryFunction =
-                    getsStableMedicationOfCategoryCreator(PAIN_MEDICATION_CATEGORY_1, PAIN_MEDICATION_CATEGORY_2).create(function);
-            EvaluationFunction nameFunction =
-                    getsStableMedicationOfNameCreator(PAIN_MEDICATION_NAME_1, PAIN_MEDICATION_NAME_2, PAIN_MEDICATION_NAME_3).create(
-                            function);
-            return new Or(Lists.newArrayList(categoryFunction, nameFunction));
-        };
-    }
-
-    @NotNull
     private static FunctionCreator getsStableMedicationOfCategoryCreator(@NotNull String... categoriesToFind) {
         return function -> new CurrentlyGetsStableMedicationOfCategory(Sets.newHashSet(categoriesToFind));
-    }
-
-    @NotNull
-    private static FunctionCreator getsStableMedicationOfNameCreator(@NotNull String... termsToFind) {
-        return function -> new CurrentlyGetsStableMedicationOfName(Sets.newHashSet(termsToFind));
     }
 
     @NotNull
