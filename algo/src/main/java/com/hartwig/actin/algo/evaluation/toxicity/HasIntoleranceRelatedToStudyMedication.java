@@ -13,14 +13,14 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasAllergyRelatedToStudyMedication implements EvaluationFunction {
+public class HasIntoleranceRelatedToStudyMedication implements EvaluationFunction {
 
     static final String DRUG_ALLERGY_DOID = "0060500";
 
     static final String MEDICATION_CATEGORY = "Medication";
     static final String CLINICAL_STATUS_ACTIVE = "Active";
 
-    HasAllergyRelatedToStudyMedication() {
+    HasIntoleranceRelatedToStudyMedication() {
     }
 
     @NotNull

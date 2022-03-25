@@ -372,8 +372,8 @@ CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Tria
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active
-CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active (T.B.E)
-CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol% or %Amitriptyline% or %Pregabalin% and status is active (T.B.E.)
+CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active 
+CURRENTLY_GETS_PAIN_MEDICATION | Medication > categories contains type of "NSAIDs", "Opioids", or name like %Paracetamol%, %Amitriptyline%, %Pregabalin% or %Gabapentin% and status is active 
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to undetermined | Cytochrome P450 enzymes
@@ -423,14 +423,14 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | complication > Name like %X%
 
-##### Rules related to allergies/toxicities
+##### Rules related to intolerances/toxicities
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_ALLERGY_OF_NAME_X | Allergy > Name like %X%
-HAS_ALLERGY_BELONGING_TO_DOID_X | Allergy > doid is equal of a child of doid X
-HAS_ALLERGY_TO_TAXANE | Allergy > Name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel
-HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION | Resolves to undetermined in case of presence of any active allergies belonging to categories in 'Medication' and/or DOID 0060500 
+HAS_INTOLERANCE_FOR_NAME_X | Intolerance > Name like %X%
+HAS_INTOLERANCE_BELONGING_TO_DOID_X | Intolerance > doid is equal of a child of doid X
+HAS_INTOLERANCE_FOR_TAXANE | Intolerance > Name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel
+HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION | Intolerance > Resolves to undetermined in case of presence of any active allergies belonging to categories in 'Medication' and/or DOID 0060500 
 HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
 HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | Resolves to undetermined in case of previous treatment with categories like immunotherapy
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X
@@ -439,6 +439,8 @@ HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignori
 
 Note for all TOXICITY rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
+
+Monoclonal antibodies: Intolerance for category 'medication' > category 'monoclonal antibody for malignancies'
 
 ##### Rules related to vital function / body weight measurements
 

@@ -146,12 +146,14 @@ evaluatedDate | 2021-07-01 | Date on which toxicity was measured
 source | Questionnaire | EHR or Questionnaire, depending on where the toxicity data originated from
 grade | 2 | Determined grade of toxicity
 
-N allergies
+N intolerances
 
 Field | Example Value | Details
 ---|---|---
-name | Pembrolizumab | Allergy
+name | Pembrolizumab | Name of intolerance
+doids | | if applicable
 category | Medication | Category of intolerance
+type | Allergy | 'Allergy', 'Side effect' or 'Not specified'
 clinicalStatus | Active | Clinical applicability
 verificationStatus | Confirmed | Confirmation status
 criticality | High | Assigned criticality of intolerance

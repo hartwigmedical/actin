@@ -8,11 +8,11 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.junit.Test;
 
-public class HasAllergyWithSpecificNameTest {
+public class HasIntoleranceWithSpecificNameTest {
 
     @Test
     public void canEvaluate() {
-        HasAllergyWithSpecificName function = new HasAllergyWithSpecificName("allergy");
+        HasIntoleranceWithSpecificName function = new HasIntoleranceWithSpecificName("allergy");
 
         // No allergies
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));

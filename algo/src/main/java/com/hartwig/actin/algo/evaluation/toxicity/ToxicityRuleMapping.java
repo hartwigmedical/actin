@@ -22,10 +22,10 @@ public final class ToxicityRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_ALLERGY_OF_NAME_X, hasAllergyWithSpecificNameCreator());
-        map.put(EligibilityRule.HAS_ALLERGY_BELONGING_TO_DOID_X, hasAllergyWithSpecificDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_ALLERGY_TO_TAXANE, hasAllergyToTaxaneCreator());
-        map.put(EligibilityRule.HAS_ALLERGY_RELATED_TO_STUDY_MEDICATION, hasAllergyRelatedToStudyMedicationCreator());
+        map.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, hasIntoleranceWithSpecificNameCreator());
+        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, hasIntoleranceWithSpecificDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, hasIntoleranceToTaxaneCreator());
+        map.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, hasIntoleranceRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
         map.put(EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS, hasExperiencedImmuneRelatedAdverseEventsCreator());
         map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
@@ -36,29 +36,29 @@ public final class ToxicityRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasAllergyWithSpecificNameCreator() {
+    private static FunctionCreator hasIntoleranceWithSpecificNameCreator() {
         return function -> {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
-            return new HasAllergyWithSpecificName(termToFind);
+            return new HasIntoleranceWithSpecificName(termToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasAllergyWithSpecificDoidCreator(@NotNull DoidModel doidModel) {
+    private static FunctionCreator hasIntoleranceWithSpecificDoidCreator(@NotNull DoidModel doidModel) {
         return function -> {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
-            return new HasAllergyWithSpecificDoid(doidModel, doidToFind);
+            return new HasIntoleranceWithSpecificDoid(doidModel, doidToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasAllergyToTaxaneCreator() {
+    private static FunctionCreator hasIntoleranceToTaxaneCreator() {
         return function -> new HasAllergyToTaxanes();
     }
 
     @NotNull
-    private static FunctionCreator hasAllergyRelatedToStudyMedicationCreator() {
-        return function -> new HasAllergyRelatedToStudyMedication();
+    private static FunctionCreator hasIntoleranceRelatedToStudyMedicationCreator() {
+        return function -> new HasIntoleranceRelatedToStudyMedication();
     }
 
     @NotNull

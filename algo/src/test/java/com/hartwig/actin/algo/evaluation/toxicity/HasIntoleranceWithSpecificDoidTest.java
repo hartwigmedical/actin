@@ -10,12 +10,12 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.junit.Test;
 
-public class HasAllergyWithSpecificDoidTest {
+public class HasIntoleranceWithSpecificDoidTest {
 
     @Test
     public void canEvaluate() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child");
-        HasAllergyWithSpecificDoid function = new HasAllergyWithSpecificDoid(doidModel, "parent");
+        HasIntoleranceWithSpecificDoid function = new HasIntoleranceWithSpecificDoid(doidModel, "parent");
 
         // No allergies
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));

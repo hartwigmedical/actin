@@ -8,11 +8,11 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.junit.Test;
 
-public class HasAllergyRelatedToStudyMedicationTest {
+public class HasIntoleranceRelatedToStudyMedicationTest {
 
     @Test
     public void canEvaluate() {
-        HasAllergyRelatedToStudyMedication function = new HasAllergyRelatedToStudyMedication();
+        HasIntoleranceRelatedToStudyMedication function = new HasIntoleranceRelatedToStudyMedication();
 
         // No allergies
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));
@@ -22,20 +22,20 @@ public class HasAllergyRelatedToStudyMedicationTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(wrongCategory)));
 
         // Inactive allergy for medication
-        Intolerance inactive = ToxicityTestFactory.intolerance().category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY).build();
+        Intolerance inactive = ToxicityTestFactory.intolerance().category(HasIntoleranceRelatedToStudyMedication.MEDICATION_CATEGORY).build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(inactive)));
 
         // Actual relevant allergy
         Intolerance relevantCategory = ToxicityTestFactory.intolerance()
-                .category(HasAllergyRelatedToStudyMedication.MEDICATION_CATEGORY.toUpperCase())
-                .clinicalStatus(HasAllergyRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.toUpperCase())
+                .category(HasIntoleranceRelatedToStudyMedication.MEDICATION_CATEGORY.toUpperCase())
+                .clinicalStatus(HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.toUpperCase())
                 .build();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(relevantCategory)));
 
         // Actual relevant allergy due to DOID
         Intolerance relevantDoid = ToxicityTestFactory.intolerance()
-                .addDoids(HasAllergyRelatedToStudyMedication.DRUG_ALLERGY_DOID)
-                .clinicalStatus(HasAllergyRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE)
+                .addDoids(HasIntoleranceRelatedToStudyMedication.DRUG_ALLERGY_DOID)
+                .clinicalStatus(HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE)
                 .build();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(relevantDoid)));
     }

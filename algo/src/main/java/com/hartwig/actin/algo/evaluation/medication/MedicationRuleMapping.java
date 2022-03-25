@@ -36,6 +36,7 @@ public final class MedicationRuleMapping {
     private static final String PAIN_MEDICATION_NAME_1 = "Paracetamol";
     private static final String PAIN_MEDICATION_NAME_2 = "Amitriptyline";
     private static final String PAIN_MEDICATION_NAME_3 = "Pregabalin";
+    private static final String PAIN_MEDICATION_NAME_4 = "Gabapentin";
 
     private MedicationRuleMapping() {
     }
@@ -134,9 +135,10 @@ public final class MedicationRuleMapping {
         return function -> {
             EvaluationFunction categoryFunction =
                     getsActiveMedicationWithExactCategoryCreator(PAIN_MEDICATION_CATEGORY_1, PAIN_MEDICATION_CATEGORY_2).create(function);
-            EvaluationFunction nameFunction =
-                    getsActiveMedicationWithNamesCreator(PAIN_MEDICATION_NAME_1, PAIN_MEDICATION_NAME_2, PAIN_MEDICATION_NAME_3).create(
-                            function);
+            EvaluationFunction nameFunction = getsActiveMedicationWithNamesCreator(PAIN_MEDICATION_NAME_1,
+                    PAIN_MEDICATION_NAME_2,
+                    PAIN_MEDICATION_NAME_3,
+                    PAIN_MEDICATION_NAME_4).create(function);
             return new Or(Lists.newArrayList(categoryFunction, nameFunction));
         };
     }
