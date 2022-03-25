@@ -440,8 +440,6 @@ HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignori
 Note for all TOXICITY rules: In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
 
-Monoclonal antibodies: Intolerance for category 'medication' > category 'monoclonal antibody for malignancies'
-
 ##### Rules related to vital function / body weight measurements
 
 Rule | When does a patient pass evaluation? 
