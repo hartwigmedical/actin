@@ -8,11 +8,11 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.junit.Test;
 
-public class HasAllergyToTaxanesTest {
+public class HasIntoleranceToTaxanesTest {
 
     @Test
     public void canEvaluate() {
-        HasAllergyToTaxanes function = new HasAllergyToTaxanes();
+        HasIntoleranceToTaxanes function = new HasIntoleranceToTaxanes();
 
         // No allergies
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));
@@ -22,7 +22,7 @@ public class HasAllergyToTaxanesTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch)));
 
         // Matching allergy
-        Intolerance match = ToxicityTestFactory.intolerance().name(HasAllergyToTaxanes.TAXANES.iterator().next()).build();
+        Intolerance match = ToxicityTestFactory.intolerance().name(HasIntoleranceToTaxanes.TAXANES.iterator().next()).build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match)));
     }
 }

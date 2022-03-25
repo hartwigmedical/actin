@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasAllergyToTaxanes implements EvaluationFunction {
+public class HasIntoleranceToTaxanes implements EvaluationFunction {
 
     static final Set<String> TAXANES = Sets.newHashSet();
 
@@ -23,7 +23,7 @@ public class HasAllergyToTaxanes implements EvaluationFunction {
         TAXANES.add("Cabazitaxel");
     }
 
-    HasAllergyToTaxanes() {
+    HasIntoleranceToTaxanes() {
     }
 
     @NotNull

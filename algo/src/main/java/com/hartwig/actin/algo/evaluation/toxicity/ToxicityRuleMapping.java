@@ -53,7 +53,7 @@ public final class ToxicityRuleMapping {
 
     @NotNull
     private static FunctionCreator hasIntoleranceToTaxaneCreator() {
-        return function -> new HasAllergyToTaxanes();
+        return function -> new HasIntoleranceToTaxanes();
     }
 
     @NotNull
