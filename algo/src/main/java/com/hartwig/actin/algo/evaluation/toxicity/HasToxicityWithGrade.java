@@ -61,19 +61,20 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
-                    .addPassGeneralMessages("Present toxicity")
+                    .addPassGeneralMessages("Toxicities presence")
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not resolve the grade of all toxicities")
-                    .addUndeterminedGeneralMessages("Toxicity eligibility")
+                    .addUndeterminedSpecificMessages("The exact grade (2, 3 or 4) is not known for all toxicities")
+                    .addUndeterminedGeneralMessages("Toxicities presence")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No toxicities found with grade " + minGrade + " or higher")
+                .addFailGeneralMessages("Toxicities not present")
                 .build();
     }
 
