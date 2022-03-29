@@ -42,6 +42,7 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Gene " + gene + " has been determined to be expressed (by IHC)")
+                        .addPassGeneralMessages(gene + " expression by IHC")
                         .build();
             }
         }
@@ -50,8 +51,10 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
 
         if (!ihcTests.isEmpty()) {
             builder.addFailSpecificMessages("No expression of gene " + gene + " detected by prior IHC test(s)");
+            builder.addFailGeneralMessages("No " + gene + " expression by IHC");
         } else {
             builder.addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC");
+            builder.addFailGeneralMessages("No " + gene + " test by IHC");
         }
 
         return builder.build();

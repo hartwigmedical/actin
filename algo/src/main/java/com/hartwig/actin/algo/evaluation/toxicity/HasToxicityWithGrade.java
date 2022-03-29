@@ -60,7 +60,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
         if (!toxicities.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Toxicities with grade " + minGrade + " found: " + Format.concat(toxicities))
+                    .addPassSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities))
                     .addPassGeneralMessages("Toxicities presence")
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
