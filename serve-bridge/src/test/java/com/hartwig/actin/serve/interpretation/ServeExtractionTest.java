@@ -72,6 +72,10 @@ public class ServeExtractionTest {
                 ImmutableEligibilityFunction.builder().rule(EligibilityRule.TML_OF_AT_MOST_X).addParameters("200").build();
         assertEquals("TML <= 200", ServeExtraction.mutation(tmlLowFunction));
 
+        EligibilityFunction hasHLAFunction =
+                ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_HLA_A_TYPE_X).addParameters("HLA-A*02:01").build();
+        assertEquals("HLA-A*02:01", ServeExtraction.mutation(hasHLAFunction));
+
         EligibilityFunction otherFunction =
                 ImmutableEligibilityFunction.builder().rule(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X).build();
         assertNull(ServeExtraction.mutation(otherFunction));

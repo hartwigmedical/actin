@@ -84,7 +84,13 @@ public final class ServeExtraction {
                     throw new IllegalStateException("Cannot determine TML cutoff for rule: " + function);
                 }
                 return "TML <= " + function.parameters().get(0);
-            } default: {
+            } case HAS_HLA_A_TYPE_X: {
+                if (function.parameters().size() != 1) {
+                    throw new IllegalStateException("Cannot determine required HLA type for rule: " + function);
+                }
+                return (String) function.parameters().get(0);
+            }
+            default: {
                 return null;
             }
         }
