@@ -53,7 +53,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
         if (hasPotentiallyPositiveTest) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedGeneralMessages(
+                    .addUndeterminedSpecificMessages(
                             "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
                     .addUndeterminedGeneralMessages("Unknown " + gene + "exact IHC expression level")
                     .build();
