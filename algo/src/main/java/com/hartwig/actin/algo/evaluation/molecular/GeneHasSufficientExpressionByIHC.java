@@ -55,7 +55,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
-                    .addUndeterminedGeneralMessages("Unknown " + gene + "exact IHC expression level")
+                    .addUndeterminedGeneralMessages("Unknown " + gene + " exact IHC expression level")
                     .build();
         } else if (!ihcTests.isEmpty()) {
             return EvaluationFactory.unrecoverable()
