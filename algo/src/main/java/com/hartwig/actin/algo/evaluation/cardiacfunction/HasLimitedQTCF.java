@@ -28,7 +28,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No measurement found for QTCF")
-                    .addUndeterminedGeneralMessages("QTCF missing")
+                    .addUndeterminedGeneralMessages("QTCF unknown")
                     .build();
         }
 
