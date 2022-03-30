@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import java.util.List;
 
+import javax.swing.DefaultListSelectionModel;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -42,16 +44,29 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
                         .addPassSpecificMessages("Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
                         .build();
             }
+
+            String scoreText = ihcTest.scoreText();
+            if (scoreValue == null && scoreText == "Positive") {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.UNDETERMINED)
+                        .addUndeterminedGeneralMessages(
+                                "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
+                        .build();
+
+            } else if (!ihcTests.isEmpty()) {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.FAIL)
+                        .addFailSpecificMessages(
+                                "Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
+                        .build();
+            } else {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.FAIL)
+                        .addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
+                        .build();
+
+            }
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
-
-        if (!ihcTests.isEmpty()) {
-            builder.addFailSpecificMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)");
-        } else {
-            builder.addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC");
-        }
-
         return builder.build();
     }
 }
