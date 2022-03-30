@@ -2,12 +2,9 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import java.util.List;
 
-import javax.swing.DefaultListSelectionModel;
-
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
@@ -29,6 +26,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        boolean hasPotentiallyPositiveTest = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
             boolean hasSufficientExpression = false;
 
@@ -46,27 +44,29 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
             }
 
             String scoreText = ihcTest.scoreText();
-            if (scoreValue == null && scoreText == "Positive") {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedGeneralMessages(
-                                "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
-                        .build();
-
-            } else if (!ihcTests.isEmpty()) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.FAIL)
-                        .addFailSpecificMessages(
-                                "Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
-                        .build();
-            } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.FAIL)
-                        .addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                        .build();
-
+            if (scoreValue == null && scoreText != null && scoreText.equalsIgnoreCase("positive")) {
+                hasPotentiallyPositiveTest = true;
             }
         }
-        return builder.build();
+
+        if (hasPotentiallyPositiveTest) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedGeneralMessages(
+                            "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
+                    .build();
+        } else if (!ihcTests.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages(
+                            "Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
+                    .build();
+
+        }
     }
 }
