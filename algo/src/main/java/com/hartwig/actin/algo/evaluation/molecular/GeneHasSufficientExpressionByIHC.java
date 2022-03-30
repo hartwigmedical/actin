@@ -40,6 +40,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
+                        .addPassGeneralMessages("Adequate " + gene + " IHC expression level")
                         .build();
             }
 
@@ -54,17 +55,20 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedGeneralMessages(
                             "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
+                    .addUndeterminedGeneralMessages("Unknown " + gene + "exact IHC expression level")
                     .build();
         } else if (!ihcTests.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages(
                             "Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
+                    .addFailGeneralMessages("Insufficient " + gene + "exact IHC expression level")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
+                    .addFailGeneralMessages("No " + gene + "IHC test result")
                     .build();
 
         }
