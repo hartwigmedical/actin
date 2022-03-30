@@ -40,12 +40,14 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasUnresolvableQuestionnaireToxicities = false;
 
+        Set<String> unresolveabletoxicities = Sets.newHashSet();
         Set<String> toxicities = Sets.newHashSet();
         for (Toxicity toxicity : removeIgnored(record.clinical().toxicities())) {
             Integer grade = toxicity.grade();
             if (grade == null && toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
                     hasUnresolvableQuestionnaireToxicities = true;
+                    unresolveabletoxicities.add(toxicity.name());
                 }
                 grade = DEFAULT_QUESTIONNAIRE_GRADE;
             }
@@ -61,20 +63,20 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities))
-                    .addPassGeneralMessages("Toxicities presence")
+                    .addPassGeneralMessages(Format.concat(toxicities))
                     .build();
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("The exact grade (2, 3 or 4) is not known for all toxicities")
-                    .addUndeterminedGeneralMessages("Toxicities presence")
+                    .addUndeterminedGeneralMessages(Format.concat(unresolveabletoxicities))
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No toxicities found with grade " + minGrade + " or higher")
-                .addFailGeneralMessages("Toxicities not present")
+                .addFailGeneralMessages("No grade =>" + minGrade + " toxicities")
                 .build();
     }
 

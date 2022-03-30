@@ -1,11 +1,15 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +32,13 @@ public class HasHadSpecificPriorCondition implements EvaluationFunction {
         for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
+                    Set<String> conditions = Sets.newHashSet();
+                    conditions.add(priorOtherCondition.name());
+
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has other condition belonging to " + doidModel.term(doidToFind))
-                            .addPassGeneralMessages("Non-oncological condition")
+                            .addPassGeneralMessages("Present " + Format.concat(conditions))
                             .build();
                 }
             }
