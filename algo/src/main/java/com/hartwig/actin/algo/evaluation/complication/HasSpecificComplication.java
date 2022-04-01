@@ -36,7 +36,7 @@ public class HasSpecificComplication implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
-                    .addPassGeneralMessages("Presence of " + Format.concat(complications))
+                    .addPassGeneralMessages(Format.concat(complications))
                     .build();
         }
 

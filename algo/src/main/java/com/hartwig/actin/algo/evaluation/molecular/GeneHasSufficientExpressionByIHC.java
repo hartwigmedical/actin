@@ -68,7 +68,7 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                    .addFailGeneralMessages("No " + gene + "IHC test result")
+                    .addFailGeneralMessages("No " + gene + " IHC test result")
                     .build();
 
         }
