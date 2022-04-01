@@ -174,6 +174,7 @@ public enum EligibilityRule {
     HAS_HAD_ORGAN_TRANSPLANT,
     HAS_GILBERT_DISEASE,
     HAS_HYPERTENSION,
+    HAS_HYPOTENSION,
     HAS_DIABETES,
     HAS_POTENTIAL_ABSORPTION_DIFFICULTIES,
     HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES,
@@ -244,6 +245,7 @@ public enum EligibilityRule {
 
     // Rules related to complications
     HAS_COMPLICATION_X,
+    HAS_UNCONTROLLED_TUMOR_RELATED_PAIN,
 
     // Rules related to allergies/toxicities
     HAS_INTOLERANCE_TO_NAME_X,
@@ -258,6 +260,7 @@ public enum EligibilityRule {
 
     // Rules related to vital function measurements
     HAS_SBP_MMHG_OF_AT_LEAST_X,
+    HAS_SBP_MMHG_OF_AT_MOST_X,
     HAS_DBP_MMHG_OF_AT_LEAST_X,
     HAS_PULSE_OXYMETRY_OF_AT_LEAST_X,
     HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,

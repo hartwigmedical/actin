@@ -149,6 +149,7 @@ In addition, 3 following 'Categories' can be assigned:
 - Taxane - Treatment names: Paclitaxel, Docetaxel, Cabazitaxel
 - Fluoropyrimidine - Treatment names: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur
 - Tyrosine kinase inhibitors - Category = 'Targeted therapy' and (T.B.D.)
+- Nonsteroidal anti-androgen - Treatment names: Flutamide, Nilutamide, Bicalutamide, Enzalutamide, Darolutamide, Ketodarolutamide, Apalutamide
 
 2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
@@ -323,6 +324,7 @@ HAS_SEVERE_CONCOMITANT_CONDITION | Won't be evaluated
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
+HAS_HYPOTENSION | Prior other conditions > name like %hypotension%
 HAS_DIABETES | Prior other conditions > any configured doid should be equal or be a child of DOID 9351
 HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to DOID 77, Complication of name %Diarrhea%, %Nausea%, %Small bowel resection%, %Colectomy%, %Vomit%, Toxicity source questionnaire or EHR grade=>2 of name %Diarrhea%, %Nausea%, %Vomit%
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
@@ -422,6 +424,7 @@ ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | complication > Name like %X%
+HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
 
 ##### Rules related to intolerances/toxicities
 
@@ -444,8 +447,9 @@ In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names
 
 Rule | When does a patient pass evaluation? 
 ---|---
-HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent systolic blood pressure AND average value => X
-HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent diastolic blood pressure AND average value => X
+HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average systolic blood pressure value => X
+HAS_SBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average systolic blood pressure value <= X
+HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value => X
 HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND average value => X
 HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND average value between X and Y 
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X

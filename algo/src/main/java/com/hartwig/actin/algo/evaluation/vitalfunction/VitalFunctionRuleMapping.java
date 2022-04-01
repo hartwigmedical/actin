@@ -19,6 +19,7 @@ public final class VitalFunctionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
+        map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, hasLimitedBloodPressureCreator());
         map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
         map.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X, hasSufficientPulseOxymetryCreator());
         map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, hasRestingHeartRateWithinBoundsCreator());
@@ -33,6 +34,11 @@ public final class VitalFunctionRuleMapping {
             double minAvgBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
             return new HasSufficientBloodPressure(category, minAvgBloodPressure);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasLimitedBloodPressureCreator() {
+        return function -> new HasLimitedBloodPressure();
     }
 
     @NotNull

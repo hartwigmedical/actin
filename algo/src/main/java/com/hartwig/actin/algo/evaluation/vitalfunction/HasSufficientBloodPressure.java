@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasSufficientBloodPressure implements EvaluationFunction {
 
     private static final int MAX_BLOOD_PRESSURES_TO_USE = 5;

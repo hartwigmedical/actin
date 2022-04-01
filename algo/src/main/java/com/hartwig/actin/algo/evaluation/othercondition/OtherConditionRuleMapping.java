@@ -54,6 +54,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
+        map.put(EligibilityRule.HAS_HYPOTENSION, hasHypotensionCreator());
         map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
         map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES, hasPotentialAbsorptionDifficultiesCreator(doidModel));
         map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, hasOralMedicationDifficultiesCreator());
@@ -94,6 +95,11 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator hasHadOrganTransplantCreator() {
         return function -> new HasHadOrganTransplant();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHypotensionCreator() {
+        return function -> new HasHypotension();
     }
 
     @NotNull

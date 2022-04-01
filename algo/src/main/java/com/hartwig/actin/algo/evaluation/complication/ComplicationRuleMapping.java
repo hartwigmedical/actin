@@ -19,6 +19,7 @@ public final class ComplicationRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_COMPLICATION_X, hasSpecificComplicationCreator());
+        map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
 
         return map;
     }
@@ -29,5 +30,10 @@ public final class ComplicationRuleMapping {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
             return new HasSpecificComplication(termToFind);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasUncontrolledTumorRelatedPainCreator() {
+        return function -> new HasUncontrolledTumorRelatedPain();
     }
 }
