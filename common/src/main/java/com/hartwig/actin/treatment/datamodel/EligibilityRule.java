@@ -246,6 +246,8 @@ public enum EligibilityRule {
     // Rules related to complications
     HAS_COMPLICATION_X,
     HAS_UNCONTROLLED_TUMOR_RELATED_PAIN,
+    HAS_LEPTOMENINGEAL_DISEASE,
+    HAS_SPINAL_CORD_COMPRESSION,
 
     // Rules related to allergies/toxicities
     HAS_INTOLERANCE_TO_NAME_X,

@@ -20,6 +20,8 @@ public final class ComplicationRuleMapping {
 
         map.put(EligibilityRule.HAS_COMPLICATION_X, hasSpecificComplicationCreator());
         map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
+        map.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, hasLeptomeningealDiseaseCreator());
+        map.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, hasSpinalCordCompressionCreator());
 
         return map;
     }
@@ -36,4 +38,15 @@ public final class ComplicationRuleMapping {
     private static FunctionCreator hasUncontrolledTumorRelatedPainCreator() {
         return function -> new HasUncontrolledTumorRelatedPain();
     }
+
+    @NotNull
+    private static FunctionCreator hasLeptomeningealDiseaseCreator() {
+        return function -> new HasLeptomeningealDisease();
+    }
+
+    @NotNull
+    private static FunctionCreator hasSpinalCordCompressionCreator() {
+        return function -> new HasSpinalCordCompression();
+    }
+
 }

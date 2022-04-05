@@ -105,8 +105,8 @@ HAS_ADVANCED_CANCER | Tumor details > stage III(A/B/C) or IV
 HAS_METASTATIC_CANCER | Tumor details > stage IV 
 HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
-HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1
-HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1
+HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
+HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or hasActiveBrainlesions = 1
 HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
@@ -425,6 +425,8 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | complication > Name like %X%
 HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
+HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | Warn in case of hasCnsLesions=1 or lesionDescription like %leptomeningeal% or %carcinomatous%meningitis%
+HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %Cervical%spondylotic%myelopathy% 
 
 ##### Rules related to intolerances/toxicities
 

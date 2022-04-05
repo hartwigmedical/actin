@@ -241,6 +241,8 @@ final class FunctionInputMapping {
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);

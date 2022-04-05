@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasKnownActiveCnsMetastases implements EvaluationFunction {
 
+    //TODO: Implement according to README
     HasKnownActiveCnsMetastases() {
     }
 
