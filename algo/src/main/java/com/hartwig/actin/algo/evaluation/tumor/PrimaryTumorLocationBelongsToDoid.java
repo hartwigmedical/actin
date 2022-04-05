@@ -48,7 +48,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
             builder.addFailGeneralMessages("Tumor type");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has " + doidModel.term(doidToMatch));
-            builder.addPassGeneralMessages("Tumor type eligibility");
+            builder.addPassGeneralMessages("Tumor type");
         }
 
         return builder.build();
