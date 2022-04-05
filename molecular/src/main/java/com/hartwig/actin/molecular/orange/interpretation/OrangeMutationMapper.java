@@ -64,7 +64,7 @@ class OrangeMutationMapper implements MutationMapper {
         }
 
         if (results.isEmpty()) {
-            throw new IllegalStateException("Could not find SERVE record for hotspot mapping of mutation: " + event);
+            throw new IllegalStateException("Could not find SERVE-bridge record for hotspot mapping of mutation: " + event);
         }
 
         return results;
@@ -81,7 +81,7 @@ class OrangeMutationMapper implements MutationMapper {
         }
 
         if (results.isEmpty()) {
-            throw new IllegalStateException("Could not find SERVE record for codon mapping of mutation: " + gene + " (" + codon + ")");
+            throw new IllegalStateException("Could not find SERVE-bridge record for codon mapping of mutation: " + gene + " (" + codon + ")");
         }
 
         return results;
@@ -107,7 +107,7 @@ class OrangeMutationMapper implements MutationMapper {
         }
 
         if (results.isEmpty()) {
-            throw new IllegalStateException("Could not find SERVE record for exon mapping of mutation: " + gene + " (" + exon + ")");
+            throw new IllegalStateException("Could not find SERVE-bridge record for exon mapping of mutation: " + gene + " (" + exon + ")");
         }
 
         return results;
