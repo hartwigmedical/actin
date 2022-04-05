@@ -10,9 +10,10 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
-import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
+import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,13 +114,16 @@ public final class WashoutRuleMapping {
     @NotNull
     private static FunctionCreator hasRecentlyReceivedAnyCancerTherapyButSomeCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
-            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            OneIntegerManyStrings input = FunctionInputResolver.createManyStringsOneIntegerInput(function);
             LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer());
 
             Set<String> categoriesToConsider = Sets.newHashSet();
             categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
 
-            categoriesToConsider.removeAll(determineCategories(input.string()));
+            for (String categoryToRemove: input.strings()) {
+                categoriesToConsider.removeAll(determineCategories(categoryToRemove));
+            }
+
             return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, minDate);
         };
     }
@@ -128,7 +132,7 @@ public final class WashoutRuleMapping {
     private static FunctionCreator hasRecentlyReceivedAnyCancerTherapyWithHalfLifeCreator(
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
-            TwoIntegers input = FunctionInputResolver.createTwoIntegerInput(function);
+            TwoIntegers input = FunctionInputResolver.createTwoIntegersInput(function);
             LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer1());
 
             return new HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, minDate);
@@ -139,13 +143,16 @@ public final class WashoutRuleMapping {
     private static FunctionCreator hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
-            OneStringTwoIntegers input = FunctionInputResolver.createOneStringTwoIntegerInput(function);
+            TwoIntegersManyStrings input = FunctionInputResolver.createManyStringsTwoIntegersInput(function);
             LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer1());
 
             Set<String> categoriesToConsider = Sets.newHashSet();
             categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
 
-            categoriesToConsider.removeAll(determineCategories(input.string()));
+            for (String categoryToRemove : input.strings()) {
+                categoriesToConsider.removeAll(determineCategories(categoryToRemove));
+            }
+
             return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, minDate);
         };
     }

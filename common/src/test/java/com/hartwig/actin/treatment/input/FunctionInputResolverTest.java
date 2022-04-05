@@ -21,13 +21,14 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
+import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
-import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -105,7 +106,7 @@ public class FunctionInputResolverTest {
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("2", "3"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        assertEquals(ImmutableTwoIntegers.builder().integer1(2).integer2(3).build(), FunctionInputResolver.createTwoIntegerInput(valid));
+        assertEquals(ImmutableTwoIntegers.builder().integer1(2).integer2(3).build(), FunctionInputResolver.createTwoIntegersInput(valid));
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("1"))));
@@ -131,7 +132,7 @@ public class FunctionInputResolverTest {
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("3.1", "3.2"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        assertEquals(ImmutableTwoDoubles.builder().double1(3.1).double2(3.2).build(), FunctionInputResolver.createTwoDoubleInput(valid));
+        assertEquals(ImmutableTwoDoubles.builder().double1(3.1).double2(3.2).build(), FunctionInputResolver.createTwoDoublesInput(valid));
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("3.1"))));
@@ -249,31 +250,46 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneStringTwoIntegerInputs() {
-        EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_TWO_INTEGERS);
-
-        EligibilityFunction valid = create(rule, Lists.newArrayList("doid", "1", "2"));
-        assertTrue(FunctionInputResolver.hasValidInputs(valid));
-        OneStringTwoIntegers inputs = FunctionInputResolver.createOneStringTwoIntegerInput(valid);
-        assertEquals("doid", inputs.string());
-        assertEquals(1, inputs.integer1());
-        assertEquals(2, inputs.integer2());
-
-        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
-        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("1", "2", "doid"))));
-    }
-
-    @Test
     public void canResolveFunctionsWithTwoStringInputs() {
         EligibilityRule rule = firstOfType(FunctionInput.TWO_STRINGS);
 
         EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF", "V600E"));
         assertTrue(FunctionInputResolver.hasValidInputs(valid));
         assertEquals(ImmutableTwoStrings.builder().string1("BRAF").string2("V600E").build(),
-                FunctionInputResolver.createTwoStringInput(valid));
+                FunctionInputResolver.createTwoStringsInput(valid));
 
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("012"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithManyStringsOneIntegerInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_STRINGS_ONE_INTEGER);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF;KRAS", "1"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+        OneIntegerManyStrings expected =
+                ImmutableOneIntegerManyStrings.builder().integer(1).strings(Lists.newArrayList("BRAF", "KRAS")).build();
+        assertEquals(expected, FunctionInputResolver.createManyStringsOneIntegerInput(valid));
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("1", "BRAF;KRAS"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithManyStringsTwoIntegersInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_STRINGS_TWO_INTEGERS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF;KRAS", "1", "2"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+        TwoIntegersManyStrings expected =
+                ImmutableTwoIntegersManyStrings.builder().integer1(1).integer2(2).strings(Lists.newArrayList("BRAF", "KRAS")).build();
+        assertEquals(expected, FunctionInputResolver.createManyStringsTwoIntegersInput(valid));
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("1", "BRAF;KRAS"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("BRAF;KRAS", "1"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("BRAF;KRAS", "1", "not an integer"))));
     }
 
     @Test

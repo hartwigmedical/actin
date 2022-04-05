@@ -78,11 +78,14 @@ public final class TestParameterizedFunctionFactory {
             case ONE_STRING_ONE_INTEGER: {
                 return Lists.newArrayList("string", "1");
             }
-            case ONE_STRING_TWO_INTEGERS: {
-                return Lists.newArrayList("string", "1", "2");
-            }
             case TWO_STRINGS: {
                 return Lists.newArrayList("string", "string");
+            }
+            case MANY_STRINGS_ONE_INTEGER: {
+                return Lists.newArrayList("string1;string2", "1");
+            }
+            case MANY_STRINGS_TWO_INTEGERS: {
+                return Lists.newArrayList("string1;string2", "1", "2");
             }
             case ONE_INTEGER_ONE_STRING: {
                 return Lists.newArrayList("1", "string");

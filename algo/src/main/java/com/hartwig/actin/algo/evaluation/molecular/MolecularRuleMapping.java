@@ -83,7 +83,7 @@ public final class MolecularRuleMapping {
     @NotNull
     private static FunctionCreator geneHasSpecificMutationCreator() {
         return function -> {
-            TwoStrings inputs = FunctionInputResolver.createTwoStringInput(function);
+            TwoStrings inputs = FunctionInputResolver.createTwoStringsInput(function);
             return new GeneHasSpecificMutation(inputs.string1(), inputs.string2());
         };
     }
@@ -115,7 +115,7 @@ public final class MolecularRuleMapping {
     @NotNull
     private static FunctionCreator hasSpecificFusionCreator() {
         return function -> {
-            TwoStrings genes = FunctionInputResolver.createTwoStringInput(function);
+            TwoStrings genes = FunctionInputResolver.createTwoStringsInput(function);
             return new HasSpecificFusionGene(genes.string1(), genes.string2());
         };
     }

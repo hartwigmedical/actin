@@ -16,21 +16,21 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
-import com.hartwig.actin.treatment.input.single.ImmutableOneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
+import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
-import com.hartwig.actin.treatment.input.single.OneStringTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
+import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.TwoStrings;
 
 import org.apache.logging.log4j.LogManager;
@@ -85,7 +85,7 @@ public final class FunctionInputResolver {
                     return true;
                 }
                 case TWO_INTEGERS: {
-                    createTwoIntegerInput(function);
+                    createTwoIntegersInput(function);
                     return true;
                 }
                 case ONE_DOUBLE: {
@@ -93,7 +93,7 @@ public final class FunctionInputResolver {
                     return true;
                 }
                 case TWO_DOUBLES: {
-                    createTwoDoubleInput(function);
+                    createTwoDoublesInput(function);
                     return true;
                 }
                 case ONE_TREATMENT: {
@@ -124,12 +124,16 @@ public final class FunctionInputResolver {
                     createOneStringOneIntegerInput(function);
                     return true;
                 }
-                case ONE_STRING_TWO_INTEGERS: {
-                    createOneStringTwoIntegerInput(function);
+                case TWO_STRINGS: {
+                    createTwoStringsInput(function);
                     return true;
                 }
-                case TWO_STRINGS: {
-                    createTwoStringInput(function);
+                case MANY_STRINGS_ONE_INTEGER: {
+                    createManyStringsOneIntegerInput(function);
+                    return true;
+                }
+                case MANY_STRINGS_TWO_INTEGERS: {
+                    createManyStringsTwoIntegersInput(function);
                     return true;
                 }
                 case ONE_INTEGER_ONE_STRING: {
@@ -161,7 +165,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TwoIntegers createTwoIntegerInput(@NotNull EligibilityFunction function) {
+    public static TwoIntegers createTwoIntegersInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_INTEGERS, 2);
 
         return ImmutableTwoIntegers.builder()
@@ -177,7 +181,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TwoDoubles createTwoDoubleInput(@NotNull EligibilityFunction function) {
+    public static TwoDoubles createTwoDoublesInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_DOUBLES, 2);
 
         return ImmutableTwoDoubles.builder()
@@ -259,23 +263,33 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneStringTwoIntegers createOneStringTwoIntegerInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_STRING_TWO_INTEGERS, 3);
-
-        return ImmutableOneStringTwoIntegers.builder()
-                .string((String) function.parameters().get(0))
-                .integer1(Integer.parseInt((String) function.parameters().get(1)))
-                .integer2(Integer.parseInt((String) function.parameters().get(2)))
-                .build();
-    }
-
-    @NotNull
-    public static TwoStrings createTwoStringInput(@NotNull EligibilityFunction function) {
+    public static TwoStrings createTwoStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2);
 
         return ImmutableTwoStrings.builder()
                 .string1((String) function.parameters().get(0))
                 .string2((String) function.parameters().get(1))
+                .build();
+    }
+
+    @NotNull
+    public static OneIntegerManyStrings createManyStringsOneIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.MANY_STRINGS_ONE_INTEGER, 2);
+
+        return ImmutableOneIntegerManyStrings.builder()
+                .strings(toStringList(function.parameters().get(0)))
+                .integer(Integer.parseInt((String) function.parameters().get(1)))
+                .build();
+    }
+
+    @NotNull
+    public static TwoIntegersManyStrings createManyStringsTwoIntegersInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.MANY_STRINGS_TWO_INTEGERS, 3);
+
+        return ImmutableTwoIntegersManyStrings.builder()
+                .strings(toStringList(function.parameters().get(0)))
+                .integer1(Integer.parseInt((String) function.parameters().get(1)))
+                .integer2(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
     }
 
