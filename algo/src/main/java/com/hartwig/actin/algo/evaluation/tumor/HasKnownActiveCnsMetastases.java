@@ -11,23 +11,32 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasKnownActiveCnsMetastases implements EvaluationFunction {
 
-    //TODO: Implement according to README
     HasKnownActiveCnsMetastases() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasKnownActiveCnsMetastases = record.clinical().tumor().hasActiveCnsLesions();
+        Boolean hasActiveCnsLesions = record.clinical().tumor().hasActiveCnsLesions();
+        Boolean hasActiveBrainLesions = record.clinical().tumor().hasActiveBrainLesions();
 
-        if (hasKnownActiveCnsMetastases == null) {
+        if (hasActiveCnsLesions == null && hasActiveBrainLesions == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Data regarding presence of active CNS metastases is missing")
                     .build();
         }
 
-        EvaluationResult result = hasKnownActiveCnsMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        boolean hasActiveCnsMetastases = false;
+        if (hasActiveCnsLesions != null && hasActiveCnsLesions) {
+            hasActiveCnsMetastases = true;
+        }
+
+        if (hasActiveBrainLesions != null && hasActiveBrainLesions) {
+            hasActiveCnsMetastases = true;
+        }
+
+        EvaluationResult result = hasActiveCnsMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
