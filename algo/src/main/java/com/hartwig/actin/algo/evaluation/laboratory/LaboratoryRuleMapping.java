@@ -243,7 +243,7 @@ public final class LaboratoryRuleMapping {
 
     @NotNull
     private static FunctionCreator undeterminedLabValueCreator(@NotNull String measure) {
-        return function -> record -> EvaluationFactory.unrecoverable()
+        return function -> record -> EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("It is not clear yet under what code '" + measure + "' is measured")
                 .build();

@@ -16,7 +16,7 @@ public class HasLimitedPTT implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
+        return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("PTT cannot be determined yet")
                 .build();

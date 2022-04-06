@@ -17,9 +17,9 @@ public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
+        return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Resting heart rate not captured by ACTIN")
+                .addUndeterminedSpecificMessages("Resting heart rate currently undetermined")
                 .build();
     }
 }

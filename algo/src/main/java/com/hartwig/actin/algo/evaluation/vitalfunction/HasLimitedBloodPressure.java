@@ -17,10 +17,10 @@ public class HasLimitedBloodPressure implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
+        return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Limited blood pressure currently cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined limited blood pressure")
+                .addUndeterminedGeneralMessages("Undetermined blood pressure requirements")
                 .build();
     }
 }

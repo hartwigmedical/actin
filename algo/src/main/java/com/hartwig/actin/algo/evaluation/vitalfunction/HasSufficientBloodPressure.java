@@ -36,9 +36,9 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
         String categoryDisplay = category.display().toLowerCase();
 
         if (relevant.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
+            return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No relevant vital function readout found for " + categoryDisplay)
+                    .addUndeterminedSpecificMessages("No data found for " + categoryDisplay)
                     .build();
         }
 
@@ -51,11 +51,13 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
         EvaluationResult result = Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure);
+            builder.addFailGeneralMessages(categoryDisplay + " requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has average " + categoryDisplay + " blood pressure exceeding " + minAvgBloodPressure);
+            builder.addPassGeneralMessages(categoryDisplay + " requirements");
         }
 
         return builder.build();
