@@ -31,7 +31,7 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
-                        .addPassGeneralMessages("Recent surgeries")
+                        .addPassGeneralMessages("Recent surgery")
                         .build();
             }
         }
@@ -39,7 +39,7 @@ public class HasHadSurgeryInPastWeeks implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had surgery after " + DATE_FORMAT.format(minDate))
-                .addFailGeneralMessages("No recent surgeries")
+                .addFailGeneralMessages("No recent surgery")
                 .build();
     }
 }

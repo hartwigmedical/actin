@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLimitedBloodPressure implements EvaluationFunction {
 
-    //TODO: Implement according to README
+    //TODO: Implement according to README for SBP/DBP
     HasLimitedBloodPressure() {
     }
 
