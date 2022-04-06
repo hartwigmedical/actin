@@ -16,10 +16,9 @@ public final class EvaluationAssert {
 
     public static void assertEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
         assertEquals(expected, actual.result());
-        // TODO Check for existence of general messages
+
         if (actual.result() == EvaluationResult.PASS) {
             assertFalse(actual.passSpecificMessages().isEmpty());
-            //            assertTrue(actual.passGeneralMessages().isEmpty());
             assertTrue(actual.warnSpecificMessages().isEmpty());
             assertTrue(actual.warnGeneralMessages().isEmpty());
             assertTrue(actual.undeterminedSpecificMessages().isEmpty());
@@ -30,7 +29,6 @@ public final class EvaluationAssert {
             assertTrue(actual.passSpecificMessages().isEmpty());
             assertTrue(actual.passGeneralMessages().isEmpty());
             assertFalse(actual.warnSpecificMessages().isEmpty());
-//            assertFalse(actual.warnGeneralMessages().isEmpty());
             assertTrue(actual.undeterminedSpecificMessages().isEmpty());
             assertTrue(actual.undeterminedGeneralMessages().isEmpty());
             assertTrue(actual.failSpecificMessages().isEmpty());
@@ -42,7 +40,6 @@ public final class EvaluationAssert {
             assertTrue(actual.warnSpecificMessages().isEmpty());
             assertTrue(actual.warnGeneralMessages().isEmpty());
             assertFalse(actual.undeterminedSpecificMessages().isEmpty());
-            //            assertFalse(actual.undeterminedGeneralMessages().isEmpty());
             assertTrue(actual.failSpecificMessages().isEmpty());
             assertTrue(actual.failGeneralMessages().isEmpty());
         } else if (actual.result() == EvaluationResult.FAIL) {
@@ -53,7 +50,6 @@ public final class EvaluationAssert {
             assertTrue(actual.undeterminedSpecificMessages().isEmpty());
             assertTrue(actual.undeterminedGeneralMessages().isEmpty());
             assertFalse(actual.failSpecificMessages().isEmpty());
-            //assertFalse(actual.failGeneralMessages().isEmpty());
         }
     }
 }

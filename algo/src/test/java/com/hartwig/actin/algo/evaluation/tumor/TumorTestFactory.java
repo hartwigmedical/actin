@@ -46,6 +46,11 @@ final class TumorTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withBrainAndCnsLesions(@Nullable Boolean hasBrainLesions, @Nullable Boolean hasCnsLesions) {
+        return withTumorDetails(ImmutableTumorDetails.builder().hasBrainLesions(hasBrainLesions).hasCnsLesions(hasCnsLesions).build());
+    }
+
+    @NotNull
     public static PatientRecord withBrainLesions(@Nullable Boolean hasBrainLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasBrainLesions(hasBrainLesions).build());
     }

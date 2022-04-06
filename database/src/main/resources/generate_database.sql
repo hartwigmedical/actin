@@ -1,11 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
-
--- TODO Can be removed per 25th of March 2022
-DROP TABLE IF EXISTS eligibilityReferences;
--- TODO Can be removed per April 1st 2022
-DROP TABLE IF EXISTS allergy;
-
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient

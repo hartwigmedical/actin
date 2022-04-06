@@ -425,8 +425,8 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | complication > Name like %X%
 HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
-HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | Warn in case of hasCnsLesions=1 or lesionDescription like %leptomeningeal% or %carcinomatous%meningitis%
-HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %Cervical%spondylotic%myelopathy% 
+HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | Warn in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
+HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %cervical%spondylotic%myelopathy% 
 
 ##### Rules related to intolerances/toxicities
 
