@@ -20,7 +20,6 @@ public class HasLimitedBloodPressure implements EvaluationFunction {
         return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Limited blood pressure currently cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined blood pressure requirements")
                 .build();
     }
 }
