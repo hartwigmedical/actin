@@ -26,7 +26,8 @@ public enum TreatmentInput {
     GENE_THERAPY(TreatmentCategory.GENE_THERAPY),
     TAXANE(Sets.newHashSet("Paclitaxel", "Docetaxel", "Cabazitaxel")),
     FLUOROPYRIMIDINE(Sets.newHashSet("Capecitabine", "Carmofur", "Doxifluridine", "Fluorouracil", "Tegafur")),
-    TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY);
+    TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
+    NONSTEROIDAL_ANTI_ANDROGEN(Sets.newHashSet("Flutamide", "Nilutamide", "Bicalutamide", "Enzalutamide", "Darolutamide", "Ketodarolutamide", "Apalutamide"));
 
     @Nullable
     private final TreatmentCategory mappedCategory;
