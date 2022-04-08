@@ -336,6 +336,7 @@ HAS_POTENTIAL_ABSORPTION_DIFFICULTIES | Or: Prior other condition belonging to D
 HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES | Or: Has complication of name %tube%, %swallow% (T.B.D.)
 HAS_POTENTIAL_CONTRAINDICATION_TO_CT | > prior other condition > name like %Claustrophobia% or any other condition belonging to DOID 557, or intolerance name like %contrast agent%, or pregnancy, or medication use of name %metformin%, or complication of name %Hyperthyroidism%
 HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or intolerance name like %contrast agent%
+HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI | > Same contraindications as for HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, and: (T.B.D.)
 IS_IN_DIALYSIS | Won't be evaluated
 HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | Currently resolves to undetermined
 
@@ -433,6 +434,8 @@ HAS_COMPLICATION_X | complication > Name like %X%
 HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
 HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | Warn in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
 HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %cervical%spondylotic%myelopathy% 
+HAS_URINARY_INCONTINENCE | complication > Name like %incontinence% or %bladder%control% 
+HAS_BLADDER_OUTFLOW_OBSTRUCTION | complication > Name like %bladder%outflow% or %bladder%outlet% or %bladder%obstruction% or %bladder%retention%, or prior other condition belonging to DOID 13948
 
 ##### Rules related to intolerances/toxicities
 

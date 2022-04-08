@@ -22,6 +22,8 @@ public final class ComplicationRuleMapping {
         map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
         map.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, hasLeptomeningealDiseaseCreator());
         map.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, hasSpinalCordCompressionCreator());
+        map.put(EligibilityRule.HAS_URINARY_INCONTINENCE, hasUrinaryIncontinenceCreator());
+        map.put(EligibilityRule.HAS_BLADDER_OUTFLOW_OBSTRUCTION, hasBladderOutflowObstructionCreator());
 
         return map;
     }
@@ -49,4 +51,13 @@ public final class ComplicationRuleMapping {
         return function -> new HasSpinalCordCompression();
     }
 
+    @NotNull
+    private static FunctionCreator hasUrinaryIncontinenceCreator() {
+        return function -> new HasUrinaryIncontinence();
+    }
+
+    @NotNull
+    private static FunctionCreator hasBladderOutflowObstructionCreator() {
+        return function -> new HasBladderOutflowObstruction();
+    }
 }
