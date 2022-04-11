@@ -17,6 +17,7 @@ public final class OtherConditionRuleMapping {
     private static final String CARDIAC_DISEASE_DOID = "114";
     private static final String VASCULAR_DISEASE_DOID = "114";
     private static final String CARDIOVASCULAR_DISEASE_DOID = "1287";
+    private static final String CENTRAL_NERVOUS_SYSTEM_DOID = "331";
     private static final String LUNG_DISEASE_DOID = "850";
     private static final String LIVER_DISEASE_DOID = "409";
     private static final String TIA_DOID = "224";
@@ -40,6 +41,8 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasSpecificPriorConditionCreator(doidModel, CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
                 hasSpecificPriorConditionCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE,
+                hasSpecificPriorConditionCreator(doidModel, CENTRAL_NERVOUS_SYSTEM_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
                 hasSpecificPriorConditionCreator(doidModel, GASTROINTESTINAL_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,
