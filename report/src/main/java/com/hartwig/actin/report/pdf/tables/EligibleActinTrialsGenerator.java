@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -30,30 +30,30 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularRecord molecular,
+    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull EvidenceAnalysis evidence,
             float contentWidth) {
         List<EvaluatedTrial> openAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, molecular.actinTrials())) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
             if (trial.isPotentiallyEligible() && trial.isOpen()) {
                 openAndEligible.add(trial);
             }
         }
 
-        String title = molecular.actinSource() + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
+        String title = evidence.actinSource() + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
         return create(openAndEligible, title, contentWidth);
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularRecord molecular,
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull EvidenceAnalysis evidence,
             float contentWidth) {
         List<EvaluatedTrial> closedAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, molecular.actinTrials())) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
             if (trial.isPotentiallyEligible() && !trial.isOpen()) {
                 closedAndEligible.add(trial);
             }
         }
 
-        String title = molecular.actinSource() + " trials that are closed but considered eligible (" + closedAndEligible.size() + ")";
+        String title = evidence.actinSource() + " trials that are closed but considered eligible (" + closedAndEligible.size() + ")";
         return create(closedAndEligible, title, contentWidth);
     }
 

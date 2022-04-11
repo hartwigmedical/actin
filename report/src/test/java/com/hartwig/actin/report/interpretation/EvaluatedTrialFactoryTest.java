@@ -10,8 +10,8 @@ import java.util.Objects;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceEntry;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +58,7 @@ public class EvaluatedTrialFactoryTest {
     @Test
     public void canAnnotateWithMolecularEvidence() {
         TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
-        MolecularEvidence evidence = ImmutableMolecularEvidence.builder().event("some event").treatment("TEST-TRIAL-1").build();
+        EvidenceEntry evidence = ImmutableEvidenceEntry.builder().event("some event").treatment("TEST-TRIAL-1").build();
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch, Sets.newHashSet(evidence));
 

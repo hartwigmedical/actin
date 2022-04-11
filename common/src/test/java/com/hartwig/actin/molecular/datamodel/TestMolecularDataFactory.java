@@ -24,10 +24,9 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
-                .hasReliableQuality(false)
-                .actinSource(Strings.EMPTY)
-                .externalTrialSource(Strings.EMPTY)
-                .evidenceSource(Strings.EMPTY)
+                .characteristics(createMinimalTestCharacteristics())
+                .events(ImmutableActinEvents.builder().build())
+                .evidence(createMinimalTestEvidence())
                 .build();
     }
 
@@ -36,37 +35,57 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
-                .hasReliableQuality(true)
+                .characteristics(createTestCharacteristics())
+                .events(createTestEvents())
+                .evidence(createTestEvidence())
+                .build();
+    }
+
+    @NotNull
+    public static MolecularRecord createExhaustiveTestMolecularRecord() {
+        return ImmutableMolecularRecord.builder().from(createProperTestMolecularRecord()).events(createExhaustiveTestEvents()).build();
+    }
+
+    @NotNull
+    private static Characteristics createMinimalTestCharacteristics() {
+        return ImmutableCharacteristics.builder().purity(0D).qc(Strings.EMPTY).build();
+    }
+
+    @NotNull
+    private static EvidenceAnalysis createMinimalTestEvidence() {
+        return ImmutableEvidenceAnalysis.builder()
+                .actinSource(Strings.EMPTY)
+                .externalTrialSource(Strings.EMPTY)
+                .evidenceSource(Strings.EMPTY)
+                .build();
+    }
+
+    @NotNull
+    private static Characteristics createTestCharacteristics() {
+        return ImmutableCharacteristics.builder()
+                .from(createMinimalTestCharacteristics())
+                .predictedTumorOrigin(createTestPredictedTumorOrigin())
+                .isMicrosatelliteUnstable(false)
+                .isHomologousRepairDeficient(false)
+                .tumorMutationalBurden(13.71)
+                .tumorMutationalLoad(185)
+                .build();
+    }
+
+    @NotNull
+    private static PredictedTumorOrigin createTestPredictedTumorOrigin() {
+        return ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build();
+    }
+
+    @NotNull
+    private static ActinEvents createTestEvents() {
+        return ImmutableActinEvents.builder()
                 .mutations(createTestMutations())
                 .activatedGenes(Sets.newHashSet("BRAF"))
                 .inactivatedGenes(createTestInactivatedGenes())
                 .amplifiedGenes(Sets.newHashSet())
                 .wildtypeGenes(Sets.newHashSet())
                 .fusions(Lists.newArrayList())
-                .predictedTumorOrigin(createTestPredictedTumorOrigin())
-                .isMicrosatelliteUnstable(false)
-                .isHomologousRepairDeficient(false)
-                .tumorMutationalBurden(13.71)
-                .tumorMutationalLoad(185)
-                .actinSource("local")
-                .actinTrials(createTestActinTrials())
-                .externalTrialSource("external")
-                .externalTrials(createTestExternalTrials())
-                .evidenceSource("general")
-                .approvedResponsiveEvidence(createTestApprovedResponsiveEvidence())
-                .experimentalResponsiveEvidence(createTestExperimentalResponsiveEvidence())
-                .otherResponsiveEvidence(createTestOtherResponsiveEvidence())
-                .resistanceEvidence(createTestResistanceEvidence())
-                .build();
-    }
-
-    @NotNull
-    public static MolecularRecord createExhaustiveTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder()
-                .from(createProperTestMolecularRecord())
-                .amplifiedGenes(Sets.newHashSet("AMP"))
-                .wildtypeGenes(Sets.newHashSet("WILD"))
-                .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene("FIVE").threeGene("THREE").build()))
                 .build();
     }
 
@@ -90,65 +109,85 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static PredictedTumorOrigin createTestPredictedTumorOrigin() {
-        return ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build();
+    private static EvidenceAnalysis createTestEvidence() {
+        return ImmutableEvidenceAnalysis.builder()
+                .actinSource("local")
+                .actinTrials(createTestActinTrials())
+                .externalTrialSource("external")
+                .externalTrials(createTestExternalTrials())
+                .evidenceSource("general")
+                .approvedResponsiveEvidence(createTestApprovedResponsiveEvidence())
+                .experimentalResponsiveEvidence(createTestExperimentalResponsiveEvidence())
+                .otherResponsiveEvidence(createTestOtherResponsiveEvidence())
+                .resistanceEvidence(createTestResistanceEvidence())
+                .build();
     }
 
     @NotNull
-    private static Set<MolecularEvidence> createTestActinTrials() {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    private static Set<EvidenceEntry> createTestActinTrials() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
-        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trial 1").build());
+        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Trial 1").build());
 
         return result;
     }
 
     @NotNull
-    private static Set<MolecularEvidence> createTestExternalTrials() {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    private static Set<EvidenceEntry> createTestExternalTrials() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
-        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Trial 1").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<MolecularEvidence> createTestApprovedResponsiveEvidence() {
-        Set<MolecularEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
-        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Dabrafenib").build());
-        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Nivolumab").build());
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trial 1").build());
+        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Trial 1").build());
 
         return result;
     }
 
     @NotNull
-    private static Set<MolecularEvidence> createTestExperimentalResponsiveEvidence() {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    private static Set<EvidenceEntry> createTestApprovedResponsiveEvidence() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableMolecularEvidence.builder().event("High TML").treatment("Pembrolizumab").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<MolecularEvidence> createTestOtherResponsiveEvidence() {
-        Set<MolecularEvidence> result =Sets.newHashSet();
-
-        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Trametinib").build());
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Vemurafenib").build());
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Dabrafenib").build());
+        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Nivolumab").build());
 
         return result;
     }
 
     @NotNull
-    private static Set<MolecularEvidence> createTestResistanceEvidence() {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    private static Set<EvidenceEntry> createTestExperimentalResponsiveEvidence() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableMolecularEvidence.builder().event("BRAF V600E").treatment("Erlotinib").build());
+        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Pembrolizumab").build());
 
         return result;
+    }
+
+    @NotNull
+    private static Set<EvidenceEntry> createTestOtherResponsiveEvidence() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
+
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trametinib").build());
+
+        return result;
+    }
+
+    @NotNull
+    private static Set<EvidenceEntry> createTestResistanceEvidence() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
+
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Erlotinib").build());
+
+        return result;
+    }
+
+    @NotNull
+    private static ActinEvents createExhaustiveTestEvents() {
+        return ImmutableActinEvents.builder()
+                .from(createTestEvents())
+                .amplifiedGenes(Sets.newHashSet("AMP"))
+                .wildtypeGenes(Sets.newHashSet("WILD"))
+                .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene("FIVE").threeGene("THREE").build()))
+                .build();
     }
 }

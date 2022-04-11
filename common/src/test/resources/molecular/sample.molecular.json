@@ -6,80 +6,89 @@
     "month": 2,
     "day": 23
   },
-  "hasReliableQuality": true,
-  "mutations": [
-    {
-      "gene": "TP53",
-      "mutation": "exon 1"
-    }
-  ],
-  "activatedGenes": [
-    "ACT"
-  ],
-  "inactivatedGenes": [
-    {
-      "gene": "NF1",
-      "hasBeenDeleted": false
+  "characteristics": {
+    "purity": 0.5,
+    "qc": "PASS",
+    "predictedTumorOrigin": {
+      "tumorType": "Melanoma",
+      "likelihood": 0.99
     },
-    {
-      "gene": "RB1",
-      "hasBeenDeleted": true
-    }
-  ],
-  "amplifiedGenes": [
-    "AMP"
-  ],
-  "wildtypeGenes": [
-    "WILD"
-  ],
-  "fusions": [
-    {
-      "fiveGene": "five",
-      "threeGene": "three"
-    }
-  ],
-  "predictedTumorOrigin": {
-    "tumorType": "Melanoma",
-    "likelihood": 0.99
+    "isMicrosatelliteUnstable": false,
+    "isHomologousRepairDeficient": true,
+    "tumorMutationalBurden": 4.32,
+    "tumorMutationalLoad": 243,
+    "dpyd": "1* HOM"
   },
-  "isMicrosatelliteUnstable": false,
-  "isHomologousRepairDeficient": true,
-  "tumorMutationalBurden": 4.32,
-  "tumorMutationalLoad": 243,
-  "actinSource": "local",
-  "actinTrials": [
-    {
-      "event": "High TML",
-      "treatment": "Trial 1"
-    },
-    {
-      "event": "HR deficiency",
-      "treatment": "Trial 2"
-    },
-    {
-      "event": "NF1 disruption",
-      "treatment": "Trial 3"
-    }
-  ],
-  "externalTrialSource": "trials",
-  "externalTrials": [
-    {
-      "event": "High TML",
-      "treatment": "Trial 1"
-    }
-  ],
-  "evidenceSource": "evidence",
-  "approvedResponsiveEvidence": [
-    {
-      "event": "High TML",
-      "treatment": "Pembrolizumab"
-    },
-    {
-      "event": "High TML",
-      "treatment": "Nivolumab"
-    }
-  ],
-  "experimentalResponsiveEvidence": [],
-  "otherResponsiveEvidence": [],
-  "resistanceEvidence": []
+  "drivers": [],
+  "events": {
+    "mutations": [
+      {
+        "gene": "TP53",
+        "mutation": "exon 1"
+      }
+    ],
+    "activatedGenes": [
+      "ACT"
+    ],
+    "inactivatedGenes": [
+      {
+        "gene": "NF1",
+        "hasBeenDeleted": false
+      },
+      {
+        "gene": "RB1",
+        "hasBeenDeleted": true
+      }
+    ],
+    "amplifiedGenes": [
+      "AMP"
+    ],
+    "wildtypeGenes": [
+      "WILD"
+    ],
+    "fusions": [
+      {
+        "fiveGene": "five",
+        "threeGene": "three"
+      }
+    ]
+  },
+  "evidence": {
+    "actinSource": "local",
+    "actinTrials": [
+      {
+        "event": "High TML",
+        "treatment": "Trial 1"
+      },
+      {
+        "event": "HR deficiency",
+        "treatment": "Trial 2"
+      },
+      {
+        "event": "NF1 disruption",
+        "treatment": "Trial 3"
+      }
+    ],
+    "externalTrialSource": "trials",
+    "externalTrials": [
+      {
+        "event": "High TML",
+        "treatment": "Trial 1"
+      }
+    ],
+    "evidenceSource": "evidence",
+    "approvedResponsiveEvidence": [
+      {
+        "event": "High TML",
+        "treatment": "Pembrolizumab"
+      },
+      {
+        "event": "High TML",
+        "treatment": "Nivolumab"
+      }
+    ],
+    "experimentalResponsiveEvidence": [],
+    "otherResponsiveEvidence": [],
+    "resistanceEvidence": []
+  }
 }

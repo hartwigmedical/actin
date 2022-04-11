@@ -20,7 +20,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Double tumorMutationalBurden = record.molecular().tumorMutationalBurden();
+        Double tumorMutationalBurden = record.molecular().characteristics().tumorMutationalBurden();
         if (tumorMutationalBurden == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

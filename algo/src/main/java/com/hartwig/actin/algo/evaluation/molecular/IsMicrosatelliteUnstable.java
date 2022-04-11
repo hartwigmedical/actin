@@ -17,7 +17,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean isMicrosatelliteUnstable = record.molecular().isMicrosatelliteUnstable();
+        Boolean isMicrosatelliteUnstable = record.molecular().characteristics().isMicrosatelliteUnstable();
 
         if (isMicrosatelliteUnstable == null) {
             return EvaluationFactory.unrecoverable()

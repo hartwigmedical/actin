@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -31,9 +31,9 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull MolecularRecord molecular, float contentWidth) {
+            @NotNull EvidenceAnalysis evidence, float contentWidth) {
         List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, molecular.actinTrials())) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
             if (!trial.isPotentiallyEligible()) {
                 ineligibleTrials.add(trial);
             }
@@ -46,7 +46,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + openColWidth);
 
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
-                molecular.actinSource(),
+                evidence.actinSource(),
                 trialColWidth,
                 acronymColWidth,
                 cohortColWidth,

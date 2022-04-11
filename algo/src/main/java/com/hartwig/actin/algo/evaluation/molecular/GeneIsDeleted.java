@@ -21,7 +21,7 @@ public class GeneIsDeleted implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (InactivatedGene inactivatedGene : record.molecular().inactivatedGenes()) {
+        for (InactivatedGene inactivatedGene : record.molecular().events().inactivatedGenes()) {
             if (inactivatedGene.gene().equals(gene) && inactivatedGene.hasBeenDeleted()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
@@ -24,7 +24,7 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        Set<MolecularEvidence> actinTrials = factory.createActinTrials(evidences);
+        Set<EvidenceEntry> actinTrials = factory.createActinTrials(evidences);
         assertEquals(1, actinTrials.size());
         assertEquals("B responsive actin event", actinTrials.iterator().next().event());
     }
@@ -42,7 +42,7 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        Set<MolecularEvidence> externalTrials = factory.createExternalTrials(evidences);
+        Set<EvidenceEntry> externalTrials = factory.createExternalTrials(evidences);
         assertEquals(1, externalTrials.size());
         assertEquals("B responsive trial event", externalTrials.iterator().next().event());
     }
@@ -51,7 +51,7 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        Set<MolecularEvidence> approvedResponsiveEvidence = factory.createApprovedResponsiveEvidence(evidences);
+        Set<EvidenceEntry> approvedResponsiveEvidence = factory.createApprovedResponsiveEvidence(evidences);
         assertEquals(1, approvedResponsiveEvidence.size());
         assertEquals("A on-label responsive event", approvedResponsiveEvidence.iterator().next().event());
     }
@@ -61,7 +61,7 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        Set<MolecularEvidence> experimentalResponsiveEvidence = factory.createExperimentalResponsiveEvidence(evidences);
+        Set<EvidenceEntry> experimentalResponsiveEvidence = factory.createExperimentalResponsiveEvidence(evidences);
         assertEquals(1, experimentalResponsiveEvidence.size());
         assertEquals("A off-label responsive event", experimentalResponsiveEvidence.iterator().next().event());
     }
@@ -71,7 +71,7 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        Set<MolecularEvidence> otherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
+        Set<EvidenceEntry> otherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
         assertEquals(1, otherResponsiveEvidence.size());
         assertEquals("B off-label responsive event", otherResponsiveEvidence.iterator().next().event());
     }
@@ -81,7 +81,7 @@ public class OrangeEvidenceFactoryTest {
         OrangeEvidenceFactory factory = createTestFactory();
         List<TreatmentEvidence> evidences = createTestEvidences();
 
-        Set<MolecularEvidence> resistanceEvidence = factory.createResistanceEvidence(evidences);
+        Set<EvidenceEntry> resistanceEvidence = factory.createResistanceEvidence(evidences);
         assertEquals(1, resistanceEvidence.size());
         assertEquals("A resistant event", resistanceEvidence.iterator().next().event());
     }

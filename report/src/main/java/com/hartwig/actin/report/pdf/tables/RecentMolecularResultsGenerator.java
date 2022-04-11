@@ -6,7 +6,8 @@ import java.util.StringJoiner;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
@@ -52,35 +53,31 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Biopsy location"));
         table.addCell(Cells.createValue(biopsyLocation(clinical.tumor())));
 
-        if (!molecular.hasReliableQuality()) {
-            table.addCell(Cells.createKey("Results have reliable quality"));
-            table.addCell(Cells.createValue(Formats.yesNoUnknown(molecular.hasReliableQuality())));
-        }
-
         if (TumorDetailsInterpreter.isCUP(clinical.tumor())) {
             table.addCell(Cells.createKey("Predicted tumor origin"));
-            table.addCell(Cells.createValue(predictedTumorOrigin((molecular.predictedTumorOrigin()))));
+            table.addCell(Cells.createValue(predictedTumorOrigin((molecular.characteristics().predictedTumorOrigin()))));
         }
 
-        table.addCell(Cells.createKey("Events with approved treatment evidence in " + molecular.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(molecular))));
+        EvidenceAnalysis evidence = molecular.evidence();
+        table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
 
-        table.addCell(Cells.createKey("Events with trial eligibility in " + molecular.actinSource() + " database"));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithActinEvidence(molecular))));
+        table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithActinEvidence(evidence))));
 
         table.addCell(addIndent(Cells.createKey(
-                "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(molecular))));
+                "Additional events with trial eligibility in NL (" + evidence.externalTrialSource() + ")")));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence))));
 
-        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + molecular.evidenceSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExperimentalEvidence(molecular))));
+        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + evidence.evidenceSource() + ")")));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExperimentalEvidence(evidence))));
 
-        table.addCell(Cells.createKey("Additional events with other responsive evidence in " + molecular.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOtherEvidence(molecular))));
+        table.addCell(Cells.createKey("Additional events with other responsive evidence in " + evidence.evidenceSource()));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOtherEvidence(evidence))));
 
-        Set<MolecularEvidence> resistanceEvidence = molecular.resistanceEvidence();
+        Set<EvidenceEntry> resistanceEvidence = evidence.resistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
-            table.addCell(Cells.createKey("Events with resistance evidence in " + molecular.evidenceSource()));
+            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
             table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));
         }
 
@@ -112,9 +109,9 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String formatResistanceEvidence(@NotNull Iterable<MolecularEvidence> resistanceEvidences) {
+    private static String formatResistanceEvidence(@NotNull Iterable<EvidenceEntry> resistanceEvidences) {
         Set<String> resistanceEvidenceStrings = Sets.newTreeSet();
-        for (MolecularEvidence evidence : resistanceEvidences) {
+        for (EvidenceEntry evidence : resistanceEvidences) {
             resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());
         }
         return concat(resistanceEvidenceStrings);

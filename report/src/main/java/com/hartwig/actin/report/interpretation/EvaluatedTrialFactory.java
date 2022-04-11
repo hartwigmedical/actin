@@ -11,7 +11,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ public final class EvaluatedTrialFactory {
     }
 
     @NotNull
-    public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<MolecularEvidence> actinEvidence) {
+    public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<EvidenceEntry> actinEvidence) {
         List<EvaluatedTrial> trials = Lists.newArrayList();
 
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
@@ -66,8 +66,8 @@ public final class EvaluatedTrialFactory {
         return trials;
     }
 
-    private static boolean hasEvidenceForTreatment(@NotNull Iterable<MolecularEvidence> evidences, @NotNull String treatmentToFind) {
-        for (MolecularEvidence evidence : evidences) {
+    private static boolean hasEvidenceForTreatment(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String treatmentToFind) {
+        for (EvidenceEntry evidence : evidences) {
             if (evidence.treatment().equals(treatmentToFind)) {
                 return true;
             }

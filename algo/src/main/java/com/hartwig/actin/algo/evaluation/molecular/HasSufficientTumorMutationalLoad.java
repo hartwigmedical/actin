@@ -20,7 +20,7 @@ public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Integer tumorMutationalLoad = record.molecular().tumorMutationalLoad();
+        Integer tumorMutationalLoad = record.molecular().characteristics().tumorMutationalLoad();
         if (tumorMutationalLoad == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

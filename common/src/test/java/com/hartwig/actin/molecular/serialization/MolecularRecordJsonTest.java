@@ -10,11 +10,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.molecular.datamodel.ActinEvents;
+import com.hartwig.actin.molecular.datamodel.Characteristics;
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
@@ -53,65 +56,74 @@ public class MolecularRecordJsonTest {
         assertEquals("ACTN01029999T", molecular.sampleId());
         assertEquals(ExperimentType.WGS, molecular.type());
         assertEquals(LocalDate.of(2021, 2, 23), molecular.date());
-        assertTrue(molecular.hasReliableQuality());
 
-        assertEquals(1, molecular.mutations().size());
-        GeneMutation geneMutation = molecular.mutations().iterator().next();
+        Characteristics characteristics = molecular.characteristics();
+
+        assertEquals(0.5, characteristics.purity(), EPSILON);
+        assertEquals("PASS", characteristics.qc());
+
+        assertNotNull(characteristics.predictedTumorOrigin());
+        assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
+        assertEquals(0.99, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
+
+        assertFalse(characteristics.isMicrosatelliteUnstable());
+        assertTrue(characteristics.isHomologousRepairDeficient());
+        assertEquals(4.32, characteristics.tumorMutationalBurden(), EPSILON);
+        assertEquals(243, (int) characteristics.tumorMutationalLoad());
+        assertEquals("1* HOM", characteristics.dpyd());
+
+        assertTrue(molecular.drivers().isEmpty());
+
+        ActinEvents events = molecular.events();
+        assertEquals(1, events.mutations().size());
+        GeneMutation geneMutation = events.mutations().iterator().next();
         assertEquals("TP53", geneMutation.gene());
         assertEquals("exon 1", geneMutation.mutation());
 
-        assertEquals(1, molecular.activatedGenes().size());
-        assertEquals("ACT", molecular.activatedGenes().iterator().next());
+        assertEquals(1, events.activatedGenes().size());
+        assertEquals("ACT", events.activatedGenes().iterator().next());
 
-        assertEquals(2, molecular.inactivatedGenes().size());
-        InactivatedGene nf1 = findInactivatedGene(molecular.inactivatedGenes(), "NF1");
+        assertEquals(2, events.inactivatedGenes().size());
+        InactivatedGene nf1 = findInactivatedGene(events.inactivatedGenes(), "NF1");
         assertFalse(nf1.hasBeenDeleted());
-        InactivatedGene rb1 = findInactivatedGene(molecular.inactivatedGenes(), "RB1");
+        InactivatedGene rb1 = findInactivatedGene(events.inactivatedGenes(), "RB1");
         assertTrue(rb1.hasBeenDeleted());
 
-        assertEquals(1, molecular.amplifiedGenes().size());
-        assertEquals("AMP", molecular.amplifiedGenes().iterator().next());
+        assertEquals(1, events.amplifiedGenes().size());
+        assertEquals("AMP", events.amplifiedGenes().iterator().next());
 
-        assertEquals(1, molecular.wildtypeGenes().size());
-        assertEquals("WILD", molecular.wildtypeGenes().iterator().next());
+        assertEquals(1, events.wildtypeGenes().size());
+        assertEquals("WILD", events.wildtypeGenes().iterator().next());
 
-        assertEquals(1, molecular.fusions().size());
-        FusionGene fusionGene = molecular.fusions().iterator().next();
+        assertEquals(1, events.fusions().size());
+        FusionGene fusionGene = events.fusions().iterator().next();
         assertEquals("five", fusionGene.fiveGene());
         assertEquals("three", fusionGene.threeGene());
 
-        assertNotNull(molecular.predictedTumorOrigin());
-        assertEquals("Melanoma", molecular.predictedTumorOrigin().tumorType());
-        assertEquals(0.99, molecular.predictedTumorOrigin().likelihood(), EPSILON);
-
-        assertFalse(molecular.isMicrosatelliteUnstable());
-        assertTrue(molecular.isHomologousRepairDeficient());
-        assertEquals(4.32, molecular.tumorMutationalBurden(), EPSILON);
-        assertEquals(243, (int) molecular.tumorMutationalLoad());
-
-        assertEquals(3, molecular.actinTrials().size());
-        MolecularEvidence actinTrial1 = findByEvent(molecular.actinTrials(), "High TML");
+        EvidenceAnalysis evidence = molecular.evidence();
+        assertEquals(3, evidence.actinTrials().size());
+        EvidenceEntry actinTrial1 = findByEvent(evidence.actinTrials(), "High TML");
         assertEquals("Trial 1", actinTrial1.treatment());
-        MolecularEvidence actinTrial2 = findByEvent(molecular.actinTrials(), "HR deficiency");
+        EvidenceEntry actinTrial2 = findByEvent(evidence.actinTrials(), "HR deficiency");
         assertEquals("Trial 2", actinTrial2.treatment());
-        MolecularEvidence actinTrial3 = findByEvent(molecular.actinTrials(), "NF1 disruption");
+        EvidenceEntry actinTrial3 = findByEvent(evidence.actinTrials(), "NF1 disruption");
         assertEquals("Trial 3", actinTrial3.treatment());
 
-        assertEquals("trials", molecular.externalTrialSource());
-        assertEquals(1, molecular.externalTrials().size());
-        MolecularEvidence externalTrial = findByEvent(molecular.externalTrials(), "High TML");
+        assertEquals("trials", evidence.externalTrialSource());
+        assertEquals(1, evidence.externalTrials().size());
+        EvidenceEntry externalTrial = findByEvent(evidence.externalTrials(), "High TML");
         assertEquals("Trial 1", externalTrial.treatment());
 
-        assertEquals("evidence", molecular.evidenceSource());
-        assertEquals(2, molecular.approvedResponsiveEvidence().size());
-        MolecularEvidence approvedEvidence1 = findByTreatment(molecular.approvedResponsiveEvidence(), "Pembrolizumab");
+        assertEquals("evidence", evidence.evidenceSource());
+        assertEquals(2, evidence.approvedResponsiveEvidence().size());
+        EvidenceEntry approvedEvidence1 = findByTreatment(evidence.approvedResponsiveEvidence(), "Pembrolizumab");
         assertEquals("High TML", approvedEvidence1.event());
-        MolecularEvidence approvedEvidence2 = findByTreatment(molecular.approvedResponsiveEvidence(), "Nivolumab");
+        EvidenceEntry approvedEvidence2 = findByTreatment(evidence.approvedResponsiveEvidence(), "Nivolumab");
         assertEquals("High TML", approvedEvidence2.event());
 
-        assertTrue(molecular.experimentalResponsiveEvidence().isEmpty());
-        assertTrue(molecular.otherResponsiveEvidence().isEmpty());
-        assertTrue(molecular.resistanceEvidence().isEmpty());
+        assertTrue(evidence.experimentalResponsiveEvidence().isEmpty());
+        assertTrue(evidence.otherResponsiveEvidence().isEmpty());
+        assertTrue(evidence.resistanceEvidence().isEmpty());
     }
 
     @NotNull
@@ -126,8 +138,8 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static MolecularEvidence findByEvent(@NotNull Iterable<MolecularEvidence> evidences, @NotNull String eventToFind) {
-        for (MolecularEvidence evidence : evidences) {
+    private static EvidenceEntry findByEvent(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String eventToFind) {
+        for (EvidenceEntry evidence : evidences) {
             if (evidence.event().equals(eventToFind)) {
                 return evidence;
             }
@@ -137,8 +149,8 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static MolecularEvidence findByTreatment(@NotNull Iterable<MolecularEvidence> evidences, @NotNull String treatmentToFind) {
-        for (MolecularEvidence evidence : evidences) {
+    private static EvidenceEntry findByTreatment(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String treatmentToFind) {
+        for (EvidenceEntry evidence : evidences) {
             if (evidence.treatment().equals(treatmentToFind)) {
                 return evidence;
             }

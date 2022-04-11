@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.Characteristics;
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
@@ -36,36 +38,37 @@ public class OrangeInterpreterTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2022, 1, 20), record.date());
-        assertTrue(record.hasReliableQuality());
 
-        assertEquals("Melanoma", record.predictedTumorOrigin().tumorType());
-        assertEquals(0.996, record.predictedTumorOrigin().likelihood(), EPSILON);
+        Characteristics characteristics = record.characteristics();
+        assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
+        assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
 
-        assertFalse(record.isMicrosatelliteUnstable());
-        assertFalse(record.isHomologousRepairDeficient());
-        assertEquals(8D, record.tumorMutationalBurden(), EPSILON);
-        assertEquals(100, (int) record.tumorMutationalLoad());
+        assertFalse(characteristics.isMicrosatelliteUnstable());
+        assertFalse(characteristics.isHomologousRepairDeficient());
+        assertEquals(8D, characteristics.tumorMutationalBurden(), EPSILON);
+        assertEquals(100, (int) characteristics.tumorMutationalLoad());
 
-        assertEquals(1, record.actinTrials().size());
-        assertEquals(1, record.externalTrials().size());
-        assertEquals(1, record.approvedResponsiveEvidence().size());
-        assertEquals(0, record.resistanceEvidence().size());
+        EvidenceAnalysis evidence = record.evidence();
+        assertEquals(1, evidence.actinTrials().size());
+        assertEquals(1, evidence.externalTrials().size());
+        assertEquals(1, evidence.approvedResponsiveEvidence().size());
+        assertEquals(0, evidence.resistanceEvidence().size());
     }
 
     @Test
     public void canInterpretAllHomologousRepairStates() {
         OrangeInterpreter interpreter = createTestInterpreter();
         MolecularRecord deficient = interpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_DEFICIENT));
-        assertTrue(deficient.isHomologousRepairDeficient());
+        assertTrue(deficient.characteristics().isHomologousRepairDeficient());
 
         MolecularRecord proficient = interpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_PROFICIENT));
-        assertFalse(proficient.isHomologousRepairDeficient());
+        assertFalse(proficient.characteristics().isHomologousRepairDeficient());
 
         MolecularRecord unknown = interpreter.interpret(withHomologousRepairStatus(OrangeInterpreter.HOMOLOGOUS_REPAIR_UNKNOWN));
-        assertNull(unknown.isHomologousRepairDeficient());
+        assertNull(unknown.characteristics().isHomologousRepairDeficient());
 
         MolecularRecord weird = interpreter.interpret(withHomologousRepairStatus("not a valid status"));
-        assertNull(weird.isHomologousRepairDeficient());
+        assertNull(weird.characteristics().isHomologousRepairDeficient());
     }
 
     @NotNull
@@ -80,13 +83,13 @@ public class OrangeInterpreterTest {
     public void canInterpretAllMicrosatelliteInstabilityStates() {
         OrangeInterpreter interpreter = createTestInterpreter();
         MolecularRecord unstable = interpreter.interpret(withMicrosatelliteStatus(OrangeInterpreter.MICROSATELLITE_UNSTABLE));
-        assertTrue(unstable.isMicrosatelliteUnstable());
+        assertTrue(unstable.characteristics().isMicrosatelliteUnstable());
 
         MolecularRecord stable = interpreter.interpret(withMicrosatelliteStatus(OrangeInterpreter.MICROSATELLITE_STABLE));
-        assertFalse(stable.isMicrosatelliteUnstable());
+        assertFalse(stable.characteristics().isMicrosatelliteUnstable());
 
         MolecularRecord weird = interpreter.interpret(withMicrosatelliteStatus("not a valid status"));
-        assertNull(weird.isMicrosatelliteUnstable());
+        assertNull(weird.characteristics().isMicrosatelliteUnstable());
     }
 
     @NotNull

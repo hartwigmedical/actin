@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -20,66 +20,16 @@ public abstract class MolecularRecord {
     @Nullable
     public abstract LocalDate date();
 
-    public abstract boolean hasReliableQuality();
+    @NotNull
+    public abstract Characteristics characteristics();
 
     @NotNull
-    public abstract Set<GeneMutation> mutations();
+    public abstract List<DriverEntry> drivers();
 
     @NotNull
-    public abstract Set<String> activatedGenes();
+    public abstract ActinEvents events();
 
     @NotNull
-    public abstract Set<InactivatedGene> inactivatedGenes();
-
-    @NotNull
-    public abstract Set<String> amplifiedGenes();
-
-    @NotNull
-    public abstract Set<String> wildtypeGenes();
-
-    @NotNull
-    public abstract Set<FusionGene> fusions();
-
-    @Nullable
-    public abstract PredictedTumorOrigin predictedTumorOrigin();
-
-    @Nullable
-    public abstract Boolean isMicrosatelliteUnstable();
-
-    @Nullable
-    public abstract Boolean isHomologousRepairDeficient();
-
-    @Nullable
-    public abstract Double tumorMutationalBurden();
-
-    @Nullable
-    public abstract Integer tumorMutationalLoad();
-
-    @NotNull
-    public abstract String actinSource();
-
-    @NotNull
-    public abstract Set<MolecularEvidence> actinTrials();
-
-    @NotNull
-    public abstract String externalTrialSource();
-
-    @NotNull
-    public abstract Set<MolecularEvidence> externalTrials();
-
-    @NotNull
-    public abstract String evidenceSource();
-
-    @NotNull
-    public abstract Set<MolecularEvidence> approvedResponsiveEvidence();
-
-    @NotNull
-    public abstract Set<MolecularEvidence> experimentalResponsiveEvidence();
-
-    @NotNull
-    public abstract Set<MolecularEvidence> otherResponsiveEvidence();
-
-    @NotNull
-    public abstract Set<MolecularEvidence> resistanceEvidence();
+    public abstract EvidenceAnalysis evidence();
 
 }

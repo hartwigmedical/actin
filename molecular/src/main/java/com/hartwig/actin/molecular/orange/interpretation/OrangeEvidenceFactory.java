@@ -6,8 +6,8 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
@@ -40,8 +40,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<MolecularEvidence> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    public Set<EvidenceEntry> createActinTrials(@NotNull List<TreatmentEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
                 result.add(toMolecularEvidence(evidence));
@@ -54,8 +54,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<MolecularEvidence> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    public Set<EvidenceEntry> createExternalTrials(@NotNull List<TreatmentEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, ICLUSION_SOURCE)) {
             result.add(toMolecularEvidence(evidence));
         }
@@ -63,8 +63,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<MolecularEvidence> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    public Set<EvidenceEntry> createApprovedResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
         for (TreatmentEvidence evidence : reportedApplicableForSource(evidences, CKB_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
                 result.add(toMolecularEvidence(evidence));
@@ -74,8 +74,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<MolecularEvidence> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    public Set<EvidenceEntry> createExperimentalResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
         List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : ckbEvidences) {
@@ -87,8 +87,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<MolecularEvidence> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    public Set<EvidenceEntry> createOtherResponsiveEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
         List<TreatmentEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : ckbEvidences) {
@@ -100,8 +100,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<MolecularEvidence> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
-        Set<MolecularEvidence> result = Sets.newHashSet();
+    public Set<EvidenceEntry> createResistanceEvidence(@NotNull List<TreatmentEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
         List<TreatmentEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
         for (TreatmentEvidence evidence : reportedCkbEvidences) {
@@ -159,7 +159,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private static MolecularEvidence toMolecularEvidence(@NotNull TreatmentEvidence evidence) {
-        return ImmutableMolecularEvidence.builder().event(OrangeUtil.toEvent(evidence)).treatment(evidence.treatment()).build();
+    private static EvidenceEntry toMolecularEvidence(@NotNull TreatmentEvidence evidence) {
+        return ImmutableEvidenceEntry.builder().event(OrangeUtil.toEvent(evidence)).treatment(evidence.treatment()).build();
     }
 }

@@ -39,9 +39,9 @@ public class EligibleApprovedTreatmentGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Treatment"));
 
         boolean isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor());
-        boolean hasConfidentPrediction = TumorOriginInterpreter.hasConfidentPrediction(molecular.predictedTumorOrigin());
+        boolean hasConfidentPrediction = TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics().predictedTumorOrigin());
         if (isCUP && hasConfidentPrediction) {
-            table.addCell(Cells.createContent("Potential SOC for " + molecular.predictedTumorOrigin().tumorType()));
+            table.addCell(Cells.createContent("Potential SOC for " + molecular.characteristics().predictedTumorOrigin().tumorType()));
         } else {
             table.addCell(Cells.createContent("Not yet determined"));
         }

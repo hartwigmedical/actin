@@ -24,7 +24,7 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (GeneMutation geneMutation : record.molecular().mutations()) {
+        for (GeneMutation geneMutation : record.molecular().events().mutations()) {
             if (geneMutation.gene().equals(gene) && geneMutation.mutation().equals(mutation)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)

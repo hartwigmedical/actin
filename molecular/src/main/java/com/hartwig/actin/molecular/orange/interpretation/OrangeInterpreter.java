@@ -3,7 +3,11 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.hartwig.actin.molecular.datamodel.Characteristics;
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.ImmutableCharacteristics;
+import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -11,6 +15,7 @@ import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,24 +48,19 @@ public class OrangeInterpreter {
 
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
-        OrangeEventExtraction extraction = eventExtractor.extract(record);
-
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
                 .date(record.date())
-                .hasReliableQuality(record.hasReliableQuality())
-                .mutations(extraction.mutations())
-                .activatedGenes(extraction.activatedGenes())
-                .inactivatedGenes(extraction.inactivatedGenes())
-                .amplifiedGenes(extraction.amplifiedGenes())
-                .wildtypeGenes(extraction.wildtypeGenes())
-                .fusions(extraction.fusions())
-                .predictedTumorOrigin(record.predictedTumorOrigin())
-                .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
-                .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
-                .tumorMutationalBurden(record.tumorMutationalBurden())
-                .tumorMutationalLoad(record.tumorMutationalLoad())
+                .characteristics(extractCharacteristics(record))
+                .events(eventExtractor.extract(record))
+                .evidence(extractEvidence(record))
+                .build();
+    }
+
+    @NotNull
+    private EvidenceAnalysis extractEvidence(@NotNull OrangeRecord record) {
+        return ImmutableEvidenceAnalysis.builder()
                 .actinSource("Erasmus MC")
                 .actinTrials(evidenceFactory.createActinTrials(record.evidences()))
                 .externalTrialSource("iClusion")
@@ -70,6 +70,21 @@ public class OrangeInterpreter {
                 .experimentalResponsiveEvidence(evidenceFactory.createExperimentalResponsiveEvidence(record.evidences()))
                 .otherResponsiveEvidence(evidenceFactory.createOtherResponsiveEvidence(record.evidences()))
                 .resistanceEvidence(evidenceFactory.createResistanceEvidence(record.evidences()))
+                .build();
+    }
+
+    @NotNull
+    private static Characteristics extractCharacteristics(@NotNull OrangeRecord record) {
+        // TODO Properly implement.
+        return ImmutableCharacteristics.builder()
+                .purity(0)
+                .qc(Strings.EMPTY)
+                .predictedTumorOrigin(record.predictedTumorOrigin())
+                .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
+                .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
+                .tumorMutationalBurden(record.tumorMutationalBurden())
+                .tumorMutationalLoad(record.tumorMutationalLoad())
+                .dpyd(Strings.EMPTY)
                 .build();
     }
 

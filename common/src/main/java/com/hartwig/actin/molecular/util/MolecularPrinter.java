@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.util.DatamodelPrinter;
@@ -40,25 +40,25 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
-        printer.print(" Has reliable quality?: " + toYesNoUnknown(record.hasReliableQuality()));
-        printer.print(" Mutations: " + mutationString(record.mutations()));
-        printer.print(" Activated genes: " + concat(record.activatedGenes()));
-        printer.print(" Inactivated genes: " + inactivatedGeneString(record.inactivatedGenes()));
-        printer.print(" Amplified genes: " + concat(record.amplifiedGenes()));
-        printer.print(" Wildtype genes: " + concat(record.wildtypeGenes()));
-        printer.print(" Fusions: " + fusionString(record.fusions()));
-        printer.print(" Predicted tumor origin: " + predictedTumorString(record.predictedTumorOrigin()));
-        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.isMicrosatelliteUnstable()));
-        printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.isHomologousRepairDeficient()));
-        printer.print(" Tumor mutational burden: " + formatDouble(record.tumorMutationalBurden()));
-        printer.print(" Tumor mutational load: " + formatInteger(record.tumorMutationalLoad()));
+        printer.print(" Purity: " + formatPercentage(record.characteristics().purity()) + " (" + record.characteristics().qc() + ")");
+        printer.print(" Mutations: " + mutationString(record.events().mutations()));
+        printer.print(" Activated genes: " + concat(record.events().activatedGenes()));
+        printer.print(" Inactivated genes: " + inactivatedGeneString(record.events().inactivatedGenes()));
+        printer.print(" Amplified genes: " + concat(record.events().amplifiedGenes()));
+        printer.print(" Wildtype genes: " + concat(record.events().wildtypeGenes()));
+        printer.print(" Fusions: " + fusionString(record.events().fusions()));
+        printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()));
+        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()));
+        printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.characteristics().isHomologousRepairDeficient()));
+        printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics().tumorMutationalBurden()));
+        printer.print(" Tumor mutational load: " + formatInteger(record.characteristics().tumorMutationalLoad()));
 
-        printer.print("Events with evidence for approved treatment: " + toEvents(record.approvedResponsiveEvidence()));
-        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(record.actinTrials()));
-        printer.print("Events associated with external trials: " + toEvents(record.externalTrials()));
-        printer.print("Events with evidence for experimental treatment: " + toEvents(record.experimentalResponsiveEvidence()));
-        printer.print("Other events with evidence: " + toEvents(record.otherResponsiveEvidence()));
-        printer.print("Events with resistance evidence: " + toEvents(record.resistanceEvidence()));
+        printer.print("Events with evidence for approved treatment: " + toEvents(record.evidence().approvedResponsiveEvidence()));
+        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(record.evidence().actinTrials()));
+        printer.print("Events associated with external trials: " + toEvents(record.evidence().externalTrials()));
+        printer.print("Events with evidence for experimental treatment: " + toEvents(record.evidence().experimentalResponsiveEvidence()));
+        printer.print("Other events with evidence: " + toEvents(record.evidence().otherResponsiveEvidence()));
+        printer.print("Events with resistance evidence: " + toEvents(record.evidence().resistanceEvidence()));
     }
 
     @NotNull
@@ -69,6 +69,11 @@ public class MolecularPrinter {
     @NotNull
     private static String formatDouble(@Nullable Double number) {
         return number != null ? NUMBER_FORMAT.format(number) : "unknown";
+    }
+
+    @NotNull
+    private static String formatPercentage(@Nullable Double percentage) {
+        return percentage != null ? PERCENTAGE_FORMAT.format(percentage * 100) : "unknown";
     }
 
     @NotNull
@@ -109,13 +114,13 @@ public class MolecularPrinter {
             return "Not determined";
         }
 
-        return predictedTumorOrigin.tumorType() + " (" + PERCENTAGE_FORMAT.format(predictedTumorOrigin.likelihood() * 100) + ")";
+        return predictedTumorOrigin.tumorType() + " (" + formatPercentage(predictedTumorOrigin.likelihood()) + ")";
     }
 
     @NotNull
-    private static String toEvents(@NotNull Iterable<MolecularEvidence> evidences) {
+    private static String toEvents(@NotNull Iterable<EvidenceEntry> evidences) {
         Set<String> events = Sets.newTreeSet();
-        for (MolecularEvidence evidence : evidences) {
+        for (EvidenceEntry evidence : evidences) {
             events.add(evidence.event());
         }
         return concat(events);

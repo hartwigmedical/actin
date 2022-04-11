@@ -17,7 +17,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean isHomologousRepairDeficient = record.molecular().isHomologousRepairDeficient();
+        Boolean isHomologousRepairDeficient = record.molecular().characteristics().isHomologousRepairDeficient();
 
         if (isHomologousRepairDeficient == null) {
             return EvaluationFactory.unrecoverable()

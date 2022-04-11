@@ -20,7 +20,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().activatedGenes().contains(gene)) {
+        if (record.molecular().events().activatedGenes().contains(gene)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Activating mutation detected in gene " + gene)

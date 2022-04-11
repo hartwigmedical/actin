@@ -1,0 +1,16 @@
+package com.hartwig.actin.molecular.datamodel;
+
+public enum DriverType {
+    BIALLELIC_VUS_MUTATION,
+    VUS_MUTATION,
+    HOTSPOT_MUTATION,
+    INFRAME_MUTATION,
+    AMPLIFICATION,
+    PARTIAL_AMPLIFICATION,
+    LOSS,
+    HOMOZYGOUS_DISRUPTION,
+    NON_HOMOZYGOUS_DISRUPTION,
+    KNOWN_FUSION,
+    PROMISCUOUS_FUSION,
+    VIRUS
+}

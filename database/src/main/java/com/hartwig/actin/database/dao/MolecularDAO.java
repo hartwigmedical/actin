@@ -11,10 +11,11 @@ import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
 
 import java.util.Set;
 
+import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,16 +46,17 @@ class MolecularDAO {
     public void writeMolecularRecord(@NotNull MolecularRecord record) {
         String sampleId = record.sampleId();
         writeMolecularDetails(sampleId, record);
-        writeMutations(sampleId, record.mutations());
-        writeActivatedGenes(sampleId, record.activatedGenes());
-        writeInactivatedGenes(sampleId, record.inactivatedGenes());
-        writeAmplifiedGenes(sampleId, record.amplifiedGenes());
-        writeWildtypeGenes(sampleId, record.wildtypeGenes());
-        writeFusionGenes(sampleId, record.fusions());
-        writeMolecularEvidence(sampleId, record);
+        writeMutations(sampleId, record.events().mutations());
+        writeActivatedGenes(sampleId, record.events().activatedGenes());
+        writeInactivatedGenes(sampleId, record.events().inactivatedGenes());
+        writeAmplifiedGenes(sampleId, record.events().amplifiedGenes());
+        writeWildtypeGenes(sampleId, record.events().wildtypeGenes());
+        writeFusionGenes(sampleId, record.events().fusions());
+        writeMolecularEvidence(sampleId, record.evidence());
     }
 
     private void writeMolecularDetails(@NotNull String sampleId, @NotNull MolecularRecord record) {
+        // TODO Fix hasReliableQuality
         context.insertInto(MOLECULAR,
                 MOLECULAR.SAMPLEID,
                 MOLECULAR.EXPERIMENTTYPE,
@@ -67,11 +69,11 @@ class MolecularDAO {
                 .values(sampleId,
                         record.type().toString(),
                         record.date(),
-                        DataUtil.toByte(record.hasReliableQuality()),
-                        DataUtil.toByte(record.isMicrosatelliteUnstable()),
-                        DataUtil.toByte(record.isHomologousRepairDeficient()),
-                        record.tumorMutationalBurden(),
-                        record.tumorMutationalLoad())
+                        DataUtil.toByte(true),
+                        DataUtil.toByte(record.characteristics().isMicrosatelliteUnstable()),
+                        DataUtil.toByte(record.characteristics().isHomologousRepairDeficient()),
+                        record.characteristics().tumorMutationalBurden(),
+                        record.characteristics().tumorMutationalLoad())
                 .execute();
     }
 
@@ -116,18 +118,18 @@ class MolecularDAO {
         }
     }
 
-    private void writeMolecularEvidence(@NotNull String sampleId, @NotNull MolecularRecord record) {
-        writeEvidenceForTypeAndSource(sampleId, record.actinTrials(), "Experimental", true, "ACTIN");
-        writeEvidenceForTypeAndSource(sampleId, record.externalTrials(), "Experimental", true, record.externalTrialSource());
-        writeEvidenceForTypeAndSource(sampleId, record.approvedResponsiveEvidence(), "Approved", true, record.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, record.experimentalResponsiveEvidence(), "Experimental", true, record.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, record.otherResponsiveEvidence(), "Other", true, record.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, record.resistanceEvidence(), "Resistance", false, record.evidenceSource());
+    private void writeMolecularEvidence(@NotNull String sampleId, @NotNull EvidenceAnalysis evidence) {
+        writeEvidenceForTypeAndSource(sampleId, evidence.actinTrials(), "Experimental", true, "ACTIN");
+        writeEvidenceForTypeAndSource(sampleId, evidence.externalTrials(), "Experimental", true, evidence.externalTrialSource());
+        writeEvidenceForTypeAndSource(sampleId, evidence.approvedResponsiveEvidence(), "Approved", true, evidence.evidenceSource());
+        writeEvidenceForTypeAndSource(sampleId, evidence.experimentalResponsiveEvidence(), "Experimental", true, evidence.evidenceSource());
+        writeEvidenceForTypeAndSource(sampleId, evidence.otherResponsiveEvidence(), "Other", true, evidence.evidenceSource());
+        writeEvidenceForTypeAndSource(sampleId, evidence.resistanceEvidence(), "Resistance", false, evidence.evidenceSource());
     }
 
-    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<MolecularEvidence> evidences,
+    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<EvidenceEntry> evidences,
             @NotNull String type, boolean isResponsive, @NotNull String source) {
-        for (MolecularEvidence evidence : evidences) {
+        for (EvidenceEntry evidence : evidences) {
             context.insertInto(MOLECULAREVIDENCE,
                     MOLECULAREVIDENCE.SAMPLEID,
                     MOLECULAREVIDENCE.TYPE,

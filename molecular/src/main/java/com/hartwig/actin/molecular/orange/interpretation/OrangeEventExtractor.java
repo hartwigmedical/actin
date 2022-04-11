@@ -6,8 +6,10 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.datamodel.ActinEvents;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
+import com.hartwig.actin.molecular.datamodel.ImmutableActinEvents;
 import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
 import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
@@ -45,10 +47,10 @@ class OrangeEventExtractor {
     }
 
     @NotNull
-    public OrangeEventExtraction extract(@NotNull OrangeRecord record) {
+    public ActinEvents extract(@NotNull OrangeRecord record) {
         List<TreatmentEvidence> evidences = reportedFromActinSource(record.evidences());
 
-        return ImmutableOrangeEventExtraction.builder()
+        return ImmutableActinEvents.builder()
                 .mutations(extractMutations(evidences, mutationMapper))
                 .activatedGenes(extractActivatedGenes(evidences))
                 .inactivatedGenes(extractInactivatedGenes(evidences))
