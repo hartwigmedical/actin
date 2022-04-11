@@ -91,6 +91,9 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X,
                 hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE, referenceDateProvider));
 
+        map.put(EligibilityRule.HAS_AMYLASE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.AMYLASE, referenceDateProvider));
+        map.put(EligibilityRule.HAS_LIPASE_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.LIPASE, referenceDateProvider));
+
         map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X,
                 hasLimitedLabValueCreator(LabMeasurement.CALCIUM, LabUnit.MILLIGRAMS_PER_DECILITER, referenceDateProvider));
         map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X,

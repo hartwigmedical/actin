@@ -254,6 +254,13 @@ HAS_BNP_ULN_OF_AT_MOST_X | NT-pro-BNP (BNP) <= X*ULN
 HAS_TROPONIN_IT_ULN_OF_AT_MOST_X | High-sensitivity Troponin T (HSTNT) <= X*ULN
 HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X | Triglyceride (TG) <= X
 
+_Pancreas function_
+
+Rule | When does a patient pass evaluation? | Note
+---|---|---
+HAS_AMYLASE_ULN_OF_AT_MOST_X | Amylase (AMYL) <= X*ULN 
+HAS_LIPASE_ULN_OF_AT_MOST_X | Lipase (LIPA) <= X*ULN 
+
 _Minerals_
 
 Rule | When does a patient pass evaluation? | Note
