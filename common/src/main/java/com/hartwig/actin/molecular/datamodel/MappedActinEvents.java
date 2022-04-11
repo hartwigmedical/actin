@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ActinEvents {
+public abstract class MappedActinEvents {
 
     @NotNull
     public abstract Set<GeneMutation> mutations();

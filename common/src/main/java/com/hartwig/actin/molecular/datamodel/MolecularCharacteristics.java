@@ -6,12 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Characteristics {
+public abstract class MolecularCharacteristics {
 
-    public abstract double purity();
-
-    @NotNull
-    public abstract String qc();
+    @Nullable
+    public abstract Double purity();
 
     @Nullable
     public abstract PredictedTumorOrigin predictedTumorOrigin();
@@ -27,7 +25,4 @@ public abstract class Characteristics {
 
     @Nullable
     public abstract Integer tumorMutationalLoad();
-
-    @Nullable
-    public abstract String dpyd();
 }

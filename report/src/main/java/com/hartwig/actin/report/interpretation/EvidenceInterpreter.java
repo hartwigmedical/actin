@@ -3,8 +3,8 @@ package com.hartwig.actin.report.interpretation;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,17 +14,17 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    public static Set<String> eventsWithApprovedEvidence(@NotNull EvidenceAnalysis evidence) {
+    public static Set<String> eventsWithApprovedEvidence(@NotNull MolecularEvidence evidence) {
         return events(evidence.approvedResponsiveEvidence());
     }
 
     @NotNull
-    public static Set<String> eventsWithActinEvidence(@NotNull EvidenceAnalysis evidence) {
+    public static Set<String> eventsWithActinEvidence(@NotNull MolecularEvidence evidence) {
         return events(evidence.actinTrials());
     }
 
     @NotNull
-    public static Set<EvidenceEntry> additionalEvidenceForExternalTrials(@NotNull EvidenceAnalysis evidence) {
+    public static Set<EvidenceEntry> additionalEvidenceForExternalTrials(@NotNull MolecularEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
@@ -33,12 +33,12 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithExternalTrialEvidence(@NotNull EvidenceAnalysis evidence) {
+    public static Set<String> additionalEventsWithExternalTrialEvidence(@NotNull MolecularEvidence evidence) {
         return events(additionalEvidenceForExternalTrials(evidence));
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithExperimentalEvidence(@NotNull EvidenceAnalysis evidence) {
+    public static Set<String> additionalEventsWithExperimentalEvidence(@NotNull MolecularEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
@@ -47,7 +47,7 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithOtherEvidence(@NotNull EvidenceAnalysis evidence) {
+    public static Set<String> additionalEventsWithOtherEvidence(@NotNull MolecularEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));

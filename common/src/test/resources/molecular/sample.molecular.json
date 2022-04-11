@@ -6,9 +6,9 @@
     "month": 2,
     "day": 23
   },
+  "qc": "PASS",
   "characteristics": {
     "purity": 0.5,
-    "qc": "PASS",
     "predictedTumorOrigin": {
       "tumorType": "Melanoma",
       "likelihood": 0.99
@@ -16,43 +16,10 @@
     "isMicrosatelliteUnstable": false,
     "isHomologousRepairDeficient": true,
     "tumorMutationalBurden": 4.32,
-    "tumorMutationalLoad": 243,
-    "dpyd": "1* HOM"
+    "tumorMutationalLoad": 243
   },
   "drivers": [],
-  "events": {
-    "mutations": [
-      {
-        "gene": "TP53",
-        "mutation": "exon 1"
-      }
-    ],
-    "activatedGenes": [
-      "ACT"
-    ],
-    "inactivatedGenes": [
-      {
-        "gene": "NF1",
-        "hasBeenDeleted": false
-      },
-      {
-        "gene": "RB1",
-        "hasBeenDeleted": true
-      }
-    ],
-    "amplifiedGenes": [
-      "AMP"
-    ],
-    "wildtypeGenes": [
-      "WILD"
-    ],
-    "fusions": [
-      {
-        "fiveGene": "five",
-        "threeGene": "three"
-      }
-    ]
-  },
+  "pharmaco": [],
   "evidence": {
     "actinSource": "local",
     "actinTrials": [
@@ -90,5 +57,38 @@
     "experimentalResponsiveEvidence": [],
     "otherResponsiveEvidence": [],
     "resistanceEvidence": []
+  },
+  "mappedEvents": {
+    "mutations": [
+      {
+        "gene": "TP53",
+        "mutation": "exon 1"
+      }
+    ],
+    "activatedGenes": [
+      "ACT"
+    ],
+    "inactivatedGenes": [
+      {
+        "gene": "NF1",
+        "hasBeenDeleted": false
+      },
+      {
+        "gene": "RB1",
+        "hasBeenDeleted": true
+      }
+    ],
+    "amplifiedGenes": [
+      "AMP"
+    ],
+    "wildtypeGenes": [
+      "WILD"
+    ],
+    "fusions": [
+      {
+        "fiveGene": "five",
+        "threeGene": "three"
+      }
+    ]
   }
 }

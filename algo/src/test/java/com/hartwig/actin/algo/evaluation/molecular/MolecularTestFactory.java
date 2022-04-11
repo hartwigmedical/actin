@@ -8,11 +8,11 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
-import com.hartwig.actin.molecular.datamodel.ImmutableActinEvents;
-import com.hartwig.actin.molecular.datamodel.ImmutableCharacteristics;
 import com.hartwig.actin.molecular.datamodel.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
 import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
+import com.hartwig.actin.molecular.datamodel.ImmutableMappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
@@ -38,7 +38,7 @@ final class MolecularTestFactory {
     public static PatientRecord withGeneMutation(@NotNull String gene, @NotNull String mutation) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .events(ImmutableActinEvents.builder()
+                .mappedEvents(ImmutableMappedActinEvents.builder()
                         .mutations(Sets.newHashSet(ImmutableGeneMutation.builder().gene(gene).mutation(mutation).build()))
                         .build())
                 .build());
@@ -48,7 +48,7 @@ final class MolecularTestFactory {
     public static PatientRecord withActivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .events(ImmutableActinEvents.builder().activatedGenes(Sets.newHashSet(gene)).build())
+                .mappedEvents(ImmutableMappedActinEvents.builder().activatedGenes(Sets.newHashSet(gene)).build())
                 .build());
     }
 
@@ -56,7 +56,7 @@ final class MolecularTestFactory {
     public static PatientRecord withInactivatedGene(@NotNull String gene, boolean hasBeenDeleted) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .events(ImmutableActinEvents.builder()
+                .mappedEvents(ImmutableMappedActinEvents.builder()
                         .inactivatedGenes(Sets.newHashSet(ImmutableInactivatedGene.builder()
                                 .gene(gene)
                                 .hasBeenDeleted(hasBeenDeleted)
@@ -69,7 +69,7 @@ final class MolecularTestFactory {
     public static PatientRecord withAmplifiedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .events(ImmutableActinEvents.builder().amplifiedGenes(Sets.newHashSet(gene)).build())
+                .mappedEvents(ImmutableMappedActinEvents.builder().amplifiedGenes(Sets.newHashSet(gene)).build())
                 .build());
     }
 
@@ -77,7 +77,7 @@ final class MolecularTestFactory {
     public static PatientRecord withWildtypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .events(ImmutableActinEvents.builder().wildtypeGenes(Sets.newHashSet(gene)).build())
+                .mappedEvents(ImmutableMappedActinEvents.builder().wildtypeGenes(Sets.newHashSet(gene)).build())
                 .build());
     }
 
@@ -85,7 +85,7 @@ final class MolecularTestFactory {
     public static PatientRecord withFusionGene(@NotNull String fiveGene, @NotNull String threeGene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .events(ImmutableActinEvents.builder()
+                .mappedEvents(ImmutableMappedActinEvents.builder()
                         .fusions(Sets.newHashSet(ImmutableFusionGene.builder().fiveGene(fiveGene).threeGene(threeGene).build()))
                         .build())
                 .build());
@@ -97,7 +97,7 @@ final class MolecularTestFactory {
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
-                .characteristics(ImmutableCharacteristics.builder()
+                .characteristics(ImmutableMolecularCharacteristics.builder()
                         .from(base.characteristics())
                         .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
                         .build())
@@ -110,7 +110,7 @@ final class MolecularTestFactory {
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
-                .characteristics(ImmutableCharacteristics.builder()
+                .characteristics(ImmutableMolecularCharacteristics.builder()
                         .from(base.characteristics())
                         .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
@@ -123,7 +123,7 @@ final class MolecularTestFactory {
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
-                .characteristics(ImmutableCharacteristics.builder()
+                .characteristics(ImmutableMolecularCharacteristics.builder()
                         .from(base.characteristics())
                         .tumorMutationalBurden(tumorMutationalBurden)
                         .build())
@@ -136,7 +136,7 @@ final class MolecularTestFactory {
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
-                .characteristics(ImmutableCharacteristics.builder()
+                .characteristics(ImmutableMolecularCharacteristics.builder()
                         .from(base.characteristics())
                         .tumorMutationalLoad(tumorMutationalLoad)
                         .build())

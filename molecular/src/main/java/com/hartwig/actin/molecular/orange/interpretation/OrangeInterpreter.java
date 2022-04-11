@@ -3,12 +3,13 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.hartwig.actin.molecular.datamodel.Characteristics;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
-import com.hartwig.actin.molecular.datamodel.ImmutableCharacteristics;
-import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
@@ -31,36 +32,40 @@ public class OrangeInterpreter {
     static final String HOMOLOGOUS_REPAIR_UNKNOWN = "CANNOT_BE_DETERMINED";
 
     @NotNull
-    private final OrangeEventExtractor eventExtractor;
+    private final OrangeEventMapper eventMapper;
     @NotNull
     private final OrangeEvidenceFactory evidenceFactory;
 
     @NotNull
     public static OrangeInterpreter fromServeRecords(@NotNull List<ServeRecord> records) {
-        return new OrangeInterpreter(OrangeEventExtractor.fromServeRecords(records), OrangeEvidenceFactory.fromServeRecords(records));
+        return new OrangeInterpreter(OrangeEventMapper.fromServeRecords(records), OrangeEvidenceFactory.fromServeRecords(records));
     }
 
     @VisibleForTesting
-    OrangeInterpreter(@NotNull final OrangeEventExtractor eventExtractor, @NotNull final OrangeEvidenceFactory evidenceFactory) {
-        this.eventExtractor = eventExtractor;
+    OrangeInterpreter(@NotNull final OrangeEventMapper eventMapper, @NotNull final OrangeEvidenceFactory evidenceFactory) {
+        this.eventMapper = eventMapper;
         this.evidenceFactory = evidenceFactory;
     }
 
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
+        // TODO Add missing items.
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
                 .date(record.date())
+                .qc(Strings.EMPTY)
                 .characteristics(extractCharacteristics(record))
-                .events(eventExtractor.extract(record))
+                .drivers(Lists.newArrayList())
+                .pharmaco(Lists.newArrayList())
                 .evidence(extractEvidence(record))
+                .mappedEvents(eventMapper.map(record))
                 .build();
     }
 
     @NotNull
-    private EvidenceAnalysis extractEvidence(@NotNull OrangeRecord record) {
-        return ImmutableEvidenceAnalysis.builder()
+    private MolecularEvidence extractEvidence(@NotNull OrangeRecord record) {
+        return ImmutableMolecularEvidence.builder()
                 .actinSource("Erasmus MC")
                 .actinTrials(evidenceFactory.createActinTrials(record.evidences()))
                 .externalTrialSource("iClusion")
@@ -74,17 +79,15 @@ public class OrangeInterpreter {
     }
 
     @NotNull
-    private static Characteristics extractCharacteristics(@NotNull OrangeRecord record) {
-        // TODO Properly implement.
-        return ImmutableCharacteristics.builder()
-                .purity(0)
-                .qc(Strings.EMPTY)
+    private static MolecularCharacteristics extractCharacteristics(@NotNull OrangeRecord record) {
+        // TODO Read purity.
+        return ImmutableMolecularCharacteristics.builder()
+                .purity(0D)
                 .predictedTumorOrigin(record.predictedTumorOrigin())
                 .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
                 .tumorMutationalBurden(record.tumorMutationalBurden())
                 .tumorMutationalLoad(record.tumorMutationalLoad())
-                .dpyd(Strings.EMPTY)
                 .build();
     }
 

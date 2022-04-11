@@ -11,11 +11,11 @@ import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
 
 import java.util.Set;
 
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,12 +46,12 @@ class MolecularDAO {
     public void writeMolecularRecord(@NotNull MolecularRecord record) {
         String sampleId = record.sampleId();
         writeMolecularDetails(sampleId, record);
-        writeMutations(sampleId, record.events().mutations());
-        writeActivatedGenes(sampleId, record.events().activatedGenes());
-        writeInactivatedGenes(sampleId, record.events().inactivatedGenes());
-        writeAmplifiedGenes(sampleId, record.events().amplifiedGenes());
-        writeWildtypeGenes(sampleId, record.events().wildtypeGenes());
-        writeFusionGenes(sampleId, record.events().fusions());
+        writeMutations(sampleId, record.mappedEvents().mutations());
+        writeActivatedGenes(sampleId, record.mappedEvents().activatedGenes());
+        writeInactivatedGenes(sampleId, record.mappedEvents().inactivatedGenes());
+        writeAmplifiedGenes(sampleId, record.mappedEvents().amplifiedGenes());
+        writeWildtypeGenes(sampleId, record.mappedEvents().wildtypeGenes());
+        writeFusionGenes(sampleId, record.mappedEvents().fusions());
         writeMolecularEvidence(sampleId, record.evidence());
     }
 
@@ -118,7 +118,7 @@ class MolecularDAO {
         }
     }
 
-    private void writeMolecularEvidence(@NotNull String sampleId, @NotNull EvidenceAnalysis evidence) {
+    private void writeMolecularEvidence(@NotNull String sampleId, @NotNull MolecularEvidence evidence) {
         writeEvidenceForTypeAndSource(sampleId, evidence.actinTrials(), "Experimental", true, "ACTIN");
         writeEvidenceForTypeAndSource(sampleId, evidence.externalTrials(), "Experimental", true, evidence.externalTrialSource());
         writeEvidenceForTypeAndSource(sampleId, evidence.approvedResponsiveEvidence(), "Approved", true, evidence.evidenceSource());

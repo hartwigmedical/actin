@@ -33,27 +33,29 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.molecular.datamodel.ActinEvents;
-import com.hartwig.actin.molecular.datamodel.Characteristics;
 import com.hartwig.actin.molecular.datamodel.DriverEntry;
 import com.hartwig.actin.molecular.datamodel.DriverType;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.ImmutableActinEvents;
-import com.hartwig.actin.molecular.datamodel.ImmutableCharacteristics;
 import com.hartwig.actin.molecular.datamodel.ImmutableDriverEntry;
-import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
 import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
+import com.hartwig.actin.molecular.datamodel.ImmutableMappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
+import com.hartwig.actin.molecular.datamodel.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.PharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
@@ -111,24 +113,24 @@ public class MolecularRecordJson {
                     .sampleId(string(record, "sampleId"))
                     .type(ExperimentType.valueOf(string(record, "type")))
                     .date(nullableDate(record, "date"))
-                    .characteristics(toCharacteristics(object(record, "characteristics")))
+                    .qc(string(record, "qc"))
+                    .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toDriverEntries(array(record, "drivers")))
-                    .events(toActinEvents(object(record, "events")))
-                    .evidence(toEvidenceAnalysis(object(record, "evidence")))
+                    .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
+                    .evidence(toMolecularEvidence(object(record, "evidence")))
+                    .mappedEvents(toActinEvents(object(record, "mappedEvents")))
                     .build();
         }
 
         @NotNull
-        private static Characteristics toCharacteristics(@NotNull JsonObject genome) {
-            return ImmutableCharacteristics.builder()
-                    .purity(number(genome, "purity"))
-                    .qc(string(genome, "qc"))
+        private static MolecularCharacteristics toMolecularCharacteristics(@NotNull JsonObject genome) {
+            return ImmutableMolecularCharacteristics.builder()
+                    .purity(nullableNumber(genome, "purity"))
                     .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(genome, "predictedTumorOrigin")))
                     .isMicrosatelliteUnstable(nullableBool(genome, "isMicrosatelliteUnstable"))
                     .isHomologousRepairDeficient(nullableBool(genome, "isHomologousRepairDeficient"))
                     .tumorMutationalBurden(nullableNumber(genome, "tumorMutationalBurden"))
                     .tumorMutationalLoad(nullableInteger(genome, "tumorMutationalLoad"))
-                    .dpyd(nullableString(genome, "dpyd"))
                     .build();
         }
 
@@ -146,10 +148,10 @@ public class MolecularRecordJson {
 
         @NotNull
         private static List<DriverEntry> toDriverEntries(@NotNull JsonArray driverArray) {
-            List<DriverEntry> drivers = Lists.newArrayList();
+            List<DriverEntry> driverEntries = Lists.newArrayList();
             for (JsonElement element : driverArray) {
                 JsonObject driver = element.getAsJsonObject();
-                drivers.add(ImmutableDriverEntry.builder()
+                driverEntries.add(ImmutableDriverEntry.builder()
                         .type(DriverType.valueOf(string(driver, "type")))
                         .name(string(driver, "name"))
                         .details(string(driver, "details"))
@@ -160,12 +162,25 @@ public class MolecularRecordJson {
                         .highestResistanceEvidenceLevel(nullableString(driver, "highestResistanceEvidenceLevel"))
                         .build());
             }
-            return drivers;
+            return driverEntries;
         }
 
         @NotNull
-        private static ActinEvents toActinEvents(@NotNull JsonObject events) {
-            return ImmutableActinEvents.builder()
+        private static List<PharmacoEntry> toPharmacoEntries(@NotNull JsonArray pharmacoArray) {
+            List<PharmacoEntry> pharmacoEntries = Lists.newArrayList();
+            for (JsonElement element : pharmacoArray) {
+                JsonObject pharmaco = element.getAsJsonObject();
+                pharmacoEntries.add(ImmutablePharmacoEntry.builder()
+                        .gene(string(pharmaco, "gene"))
+                        .result(string(pharmaco, "result"))
+                        .build());
+            }
+            return pharmacoEntries;
+        }
+
+        @NotNull
+        private static MappedActinEvents toActinEvents(@NotNull JsonObject events) {
+            return ImmutableMappedActinEvents.builder()
                     .mutations(toGeneMutations(array(events, "mutations")))
                     .activatedGenes(stringList(events, "activatedGenes"))
                     .inactivatedGenes(toInactivatedGenes(array(events, "inactivatedGenes")))
@@ -215,8 +230,8 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static EvidenceAnalysis toEvidenceAnalysis(@NotNull JsonObject evidence) {
-            return ImmutableEvidenceAnalysis.builder()
+        private static MolecularEvidence toMolecularEvidence(@NotNull JsonObject evidence) {
+            return ImmutableMolecularEvidence.builder()
                     .actinSource(string(evidence, "actinSource"))
                     .actinTrials(toEvidences(array(evidence, "actinTrials")))
                     .externalTrialSource(string(evidence, "externalTrialSource"))

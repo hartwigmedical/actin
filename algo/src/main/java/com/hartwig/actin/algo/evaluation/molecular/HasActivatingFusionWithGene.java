@@ -21,7 +21,7 @@ public class HasActivatingFusionWithGene implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (FusionGene fusion : record.molecular().events().fusions()) {
+        for (FusionGene fusion : record.molecular().mappedEvents().fusions()) {
             if (fusion.fiveGene().equals(gene) || fusion.threeGene().equals(gene)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)

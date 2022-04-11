@@ -40,13 +40,13 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
-        printer.print(" Purity: " + formatPercentage(record.characteristics().purity()) + " (" + record.characteristics().qc() + ")");
-        printer.print(" Mutations: " + mutationString(record.events().mutations()));
-        printer.print(" Activated genes: " + concat(record.events().activatedGenes()));
-        printer.print(" Inactivated genes: " + inactivatedGeneString(record.events().inactivatedGenes()));
-        printer.print(" Amplified genes: " + concat(record.events().amplifiedGenes()));
-        printer.print(" Wildtype genes: " + concat(record.events().wildtypeGenes()));
-        printer.print(" Fusions: " + fusionString(record.events().fusions()));
+        printer.print(" Purity: " + formatPercentage(record.characteristics().purity()) + " (" + record.qc() + ")");
+        printer.print(" Mutations: " + mutationString(record.mappedEvents().mutations()));
+        printer.print(" Activated genes: " + concat(record.mappedEvents().activatedGenes()));
+        printer.print(" Inactivated genes: " + inactivatedGeneString(record.mappedEvents().inactivatedGenes()));
+        printer.print(" Amplified genes: " + concat(record.mappedEvents().amplifiedGenes()));
+        printer.print(" Wildtype genes: " + concat(record.mappedEvents().wildtypeGenes()));
+        printer.print(" Fusions: " + fusionString(record.mappedEvents().fusions()));
         printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()));
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()));
         printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.characteristics().isHomologousRepairDeficient()));

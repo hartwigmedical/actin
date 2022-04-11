@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -31,7 +31,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull EvidenceAnalysis evidence, float contentWidth) {
+            @NotNull MolecularEvidence evidence, float contentWidth) {
         List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
             if (!trial.isPotentiallyEligible()) {

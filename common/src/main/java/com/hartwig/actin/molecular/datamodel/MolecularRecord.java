@@ -21,15 +21,21 @@ public abstract class MolecularRecord {
     public abstract LocalDate date();
 
     @NotNull
-    public abstract Characteristics characteristics();
+    public abstract String qc();
+
+    @NotNull
+    public abstract MolecularCharacteristics characteristics();
 
     @NotNull
     public abstract List<DriverEntry> drivers();
 
     @NotNull
-    public abstract ActinEvents events();
+    public abstract List<PharmacoEntry> pharmaco();
 
     @NotNull
-    public abstract EvidenceAnalysis evidence();
+    public abstract MolecularEvidence evidence();
+
+    @NotNull
+    public abstract MappedActinEvents mappedEvents();
 
 }

@@ -8,17 +8,20 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.google.common.io.Resources;
-import com.hartwig.actin.molecular.datamodel.ActinEvents;
-import com.hartwig.actin.molecular.datamodel.Characteristics;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.DriverEntry;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
+import com.hartwig.actin.molecular.datamodel.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.PharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,11 +59,17 @@ public class MolecularRecordJsonTest {
         assertEquals("ACTN01029999T", molecular.sampleId());
         assertEquals(ExperimentType.WGS, molecular.type());
         assertEquals(LocalDate.of(2021, 2, 23), molecular.date());
+        assertEquals("PASS", molecular.qc());
 
-        Characteristics characteristics = molecular.characteristics();
+        assertCharacteristics(molecular.characteristics());
+        assertDrivers(molecular.drivers());
+        assertPharmaco(molecular.pharmaco());
+        assertEvidence(molecular.evidence());
+        assertMappedEvents(molecular.mappedEvents());
+    }
 
+    private static void assertCharacteristics(@NotNull MolecularCharacteristics characteristics) {
         assertEquals(0.5, characteristics.purity(), EPSILON);
-        assertEquals("PASS", characteristics.qc());
 
         assertNotNull(characteristics.predictedTumorOrigin());
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
@@ -70,37 +79,17 @@ public class MolecularRecordJsonTest {
         assertTrue(characteristics.isHomologousRepairDeficient());
         assertEquals(4.32, characteristics.tumorMutationalBurden(), EPSILON);
         assertEquals(243, (int) characteristics.tumorMutationalLoad());
-        assertEquals("1* HOM", characteristics.dpyd());
+    }
 
-        assertTrue(molecular.drivers().isEmpty());
+    private static void assertDrivers(@NotNull List<DriverEntry> drivers) {
+        assertTrue(drivers.isEmpty());
+    }
 
-        ActinEvents events = molecular.events();
-        assertEquals(1, events.mutations().size());
-        GeneMutation geneMutation = events.mutations().iterator().next();
-        assertEquals("TP53", geneMutation.gene());
-        assertEquals("exon 1", geneMutation.mutation());
+    private static void assertPharmaco(@NotNull List<PharmacoEntry> pharmaco) {
+        assertTrue(pharmaco.isEmpty());
+    }
 
-        assertEquals(1, events.activatedGenes().size());
-        assertEquals("ACT", events.activatedGenes().iterator().next());
-
-        assertEquals(2, events.inactivatedGenes().size());
-        InactivatedGene nf1 = findInactivatedGene(events.inactivatedGenes(), "NF1");
-        assertFalse(nf1.hasBeenDeleted());
-        InactivatedGene rb1 = findInactivatedGene(events.inactivatedGenes(), "RB1");
-        assertTrue(rb1.hasBeenDeleted());
-
-        assertEquals(1, events.amplifiedGenes().size());
-        assertEquals("AMP", events.amplifiedGenes().iterator().next());
-
-        assertEquals(1, events.wildtypeGenes().size());
-        assertEquals("WILD", events.wildtypeGenes().iterator().next());
-
-        assertEquals(1, events.fusions().size());
-        FusionGene fusionGene = events.fusions().iterator().next();
-        assertEquals("five", fusionGene.fiveGene());
-        assertEquals("three", fusionGene.threeGene());
-
-        EvidenceAnalysis evidence = molecular.evidence();
+    private static void assertEvidence(@NotNull MolecularEvidence evidence) {
         assertEquals(3, evidence.actinTrials().size());
         EvidenceEntry actinTrial1 = findByEvent(evidence.actinTrials(), "High TML");
         assertEquals("Trial 1", actinTrial1.treatment());
@@ -127,17 +116,6 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static InactivatedGene findInactivatedGene(@NotNull Iterable<InactivatedGene> inactivatedGenes, @NotNull String geneToFind) {
-        for (InactivatedGene inactivatedGene : inactivatedGenes) {
-            if (inactivatedGene.gene().equals(geneToFind)) {
-                return inactivatedGene;
-            }
-        }
-
-        throw new IllegalStateException("Could not find inactivated gene: " + geneToFind);
-    }
-
-    @NotNull
     private static EvidenceEntry findByEvent(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String eventToFind) {
         for (EvidenceEntry evidence : evidences) {
             if (evidence.event().equals(eventToFind)) {
@@ -157,5 +135,43 @@ public class MolecularRecordJsonTest {
         }
 
         throw new IllegalStateException("Could not find evidence with treatment: " + treatmentToFind);
+    }
+
+    private static void assertMappedEvents(@NotNull MappedActinEvents events) {
+        assertEquals(1, events.mutations().size());
+        GeneMutation geneMutation = events.mutations().iterator().next();
+        assertEquals("TP53", geneMutation.gene());
+        assertEquals("exon 1", geneMutation.mutation());
+
+        assertEquals(1, events.activatedGenes().size());
+        assertEquals("ACT", events.activatedGenes().iterator().next());
+
+        assertEquals(2, events.inactivatedGenes().size());
+        InactivatedGene nf1 = findInactivatedGene(events.inactivatedGenes(), "NF1");
+        assertFalse(nf1.hasBeenDeleted());
+        InactivatedGene rb1 = findInactivatedGene(events.inactivatedGenes(), "RB1");
+        assertTrue(rb1.hasBeenDeleted());
+
+        assertEquals(1, events.amplifiedGenes().size());
+        assertEquals("AMP", events.amplifiedGenes().iterator().next());
+
+        assertEquals(1, events.wildtypeGenes().size());
+        assertEquals("WILD", events.wildtypeGenes().iterator().next());
+
+        assertEquals(1, events.fusions().size());
+        FusionGene fusionGene = events.fusions().iterator().next();
+        assertEquals("five", fusionGene.fiveGene());
+        assertEquals("three", fusionGene.threeGene());
+    }
+
+    @NotNull
+    private static InactivatedGene findInactivatedGene(@NotNull Iterable<InactivatedGene> inactivatedGenes, @NotNull String geneToFind) {
+        for (InactivatedGene inactivatedGene : inactivatedGenes) {
+            if (inactivatedGene.gene().equals(geneToFind)) {
+                return inactivatedGene;
+            }
+        }
+
+        throw new IllegalStateException("Could not find inactivated gene: " + geneToFind);
     }
 }

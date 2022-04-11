@@ -6,8 +6,8 @@ import java.util.StringJoiner;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
@@ -58,7 +58,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
             table.addCell(Cells.createValue(predictedTumorOrigin((molecular.characteristics().predictedTumorOrigin()))));
         }
 
-        EvidenceAnalysis evidence = molecular.evidence();
+        MolecularEvidence evidence = molecular.evidence();
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
 

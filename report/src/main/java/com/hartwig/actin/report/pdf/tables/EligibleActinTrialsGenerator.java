@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -30,7 +30,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull EvidenceAnalysis evidence,
+    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
             float contentWidth) {
         List<EvaluatedTrial> openAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
@@ -44,7 +44,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull EvidenceAnalysis evidence,
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
             float contentWidth) {
         List<EvaluatedTrial> closedAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {

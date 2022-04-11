@@ -20,7 +20,7 @@ public class GeneIsActivatedOrAmplified implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().events().activatedGenes().contains(gene) || record.molecular().events().amplifiedGenes().contains(gene)) {
+        if (record.molecular().mappedEvents().activatedGenes().contains(gene) || record.molecular().mappedEvents().amplifiedGenes().contains(gene)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Activation/amplification detected of gene " + gene)

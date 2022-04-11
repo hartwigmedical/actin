@@ -24,9 +24,10 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
-                .characteristics(createMinimalTestCharacteristics())
-                .events(ImmutableActinEvents.builder().build())
+                .qc(Strings.EMPTY)
+                .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .evidence(createMinimalTestEvidence())
+                .mappedEvents(ImmutableMappedActinEvents.builder().build())
                 .build();
     }
 
@@ -36,24 +37,22 @@ public final class TestMolecularDataFactory {
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
                 .characteristics(createTestCharacteristics())
-                .events(createTestEvents())
                 .evidence(createTestEvidence())
+                .mappedEvents(createTestMappedEvents())
                 .build();
     }
 
     @NotNull
     public static MolecularRecord createExhaustiveTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder().from(createProperTestMolecularRecord()).events(createExhaustiveTestEvents()).build();
+        return ImmutableMolecularRecord.builder()
+                .from(createProperTestMolecularRecord())
+                .mappedEvents(createExhaustiveTestEvents())
+                .build();
     }
 
     @NotNull
-    private static Characteristics createMinimalTestCharacteristics() {
-        return ImmutableCharacteristics.builder().purity(0D).qc(Strings.EMPTY).build();
-    }
-
-    @NotNull
-    private static EvidenceAnalysis createMinimalTestEvidence() {
-        return ImmutableEvidenceAnalysis.builder()
+    private static MolecularEvidence createMinimalTestEvidence() {
+        return ImmutableMolecularEvidence.builder()
                 .actinSource(Strings.EMPTY)
                 .externalTrialSource(Strings.EMPTY)
                 .evidenceSource(Strings.EMPTY)
@@ -61,9 +60,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Characteristics createTestCharacteristics() {
-        return ImmutableCharacteristics.builder()
-                .from(createMinimalTestCharacteristics())
+    private static MolecularCharacteristics createTestCharacteristics() {
+        return ImmutableMolecularCharacteristics.builder()
                 .predictedTumorOrigin(createTestPredictedTumorOrigin())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
@@ -78,8 +76,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static ActinEvents createTestEvents() {
-        return ImmutableActinEvents.builder()
+    private static MappedActinEvents createTestMappedEvents() {
+        return ImmutableMappedActinEvents.builder()
                 .mutations(createTestMutations())
                 .activatedGenes(Sets.newHashSet("BRAF"))
                 .inactivatedGenes(createTestInactivatedGenes())
@@ -109,8 +107,8 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static EvidenceAnalysis createTestEvidence() {
-        return ImmutableEvidenceAnalysis.builder()
+    private static MolecularEvidence createTestEvidence() {
+        return ImmutableMolecularEvidence.builder()
                 .actinSource("local")
                 .actinTrials(createTestActinTrials())
                 .externalTrialSource("external")
@@ -182,9 +180,9 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static ActinEvents createExhaustiveTestEvents() {
-        return ImmutableActinEvents.builder()
-                .from(createTestEvents())
+    private static MappedActinEvents createExhaustiveTestEvents() {
+        return ImmutableMappedActinEvents.builder()
+                .from(createTestMappedEvents())
                 .amplifiedGenes(Sets.newHashSet("AMP"))
                 .wildtypeGenes(Sets.newHashSet("WILD"))
                 .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene("FIVE").threeGene("THREE").build()))

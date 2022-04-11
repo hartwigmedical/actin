@@ -6,10 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.ActinEvents;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.InactivatedGene;
+import com.hartwig.actin.molecular.datamodel.MappedActinEvents;
 import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
@@ -21,12 +21,12 @@ import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class OrangeEventExtractorTest {
+public class OrangeEventMapperTest {
 
     @Test
     public void canExtractHotspotMutations() {
         TreatmentEvidence hotspotEvidence = createTestBuilder().type(EvidenceType.HOTSPOT_MUTATION).gene("gene").event("hotspot").build();
-        ActinEvents hotspotExtraction = createTestEventExtractor().extract(withEvidence(hotspotEvidence));
+        MappedActinEvents hotspotExtraction = createTestEventExtractor().map(withEvidence(hotspotEvidence));
 
         assertEquals(1, hotspotExtraction.mutations().size());
         GeneMutation geneMutation = hotspotExtraction.mutations().iterator().next();
@@ -37,7 +37,7 @@ public class OrangeEventExtractorTest {
     @Test
     public void canExtractCodonMutations() {
         TreatmentEvidence codonEvidence = createTestBuilder().type(EvidenceType.CODON_MUTATION).gene("gene").event("codon 40").build();
-        ActinEvents codonExtraction = createTestEventExtractor().extract(withEvidence(codonEvidence));
+        MappedActinEvents codonExtraction = createTestEventExtractor().map(withEvidence(codonEvidence));
 
         assertEquals(1, codonExtraction.mutations().size());
         GeneMutation geneMutation = codonExtraction.mutations().iterator().next();
@@ -48,7 +48,7 @@ public class OrangeEventExtractorTest {
     @Test
     public void canExtractExonMutations() {
         TreatmentEvidence exonEvidence = createTestBuilder().type(EvidenceType.EXON_MUTATION).gene("gene").event("exon 2-3").build();
-        ActinEvents exonExtraction = createTestEventExtractor().extract(withEvidence(exonEvidence));
+        MappedActinEvents exonExtraction = createTestEventExtractor().map(withEvidence(exonEvidence));
 
         assertEquals(1, exonExtraction.mutations().size());
         GeneMutation geneMutation = exonExtraction.mutations().iterator().next();
@@ -59,7 +59,7 @@ public class OrangeEventExtractorTest {
     @Test
     public void canExtractActivatedGenes() {
         TreatmentEvidence activationEvidence = createTestBuilder().type(EvidenceType.ACTIVATION).gene("gene").build();
-        ActinEvents activationExtraction = createTestEventExtractor().extract(withEvidence(activationEvidence));
+        MappedActinEvents activationExtraction = createTestEventExtractor().map(withEvidence(activationEvidence));
 
         assertEquals(1, activationExtraction.activatedGenes().size());
         assertEquals("gene", activationExtraction.activatedGenes().iterator().next());
@@ -67,10 +67,10 @@ public class OrangeEventExtractorTest {
 
     @Test
     public void canExtractInactivatedGenes() {
-        OrangeEventExtractor extractor = createTestEventExtractor();
+        OrangeEventMapper extractor = createTestEventExtractor();
 
         TreatmentEvidence deletedEvidence = createTestBuilder().type(EvidenceType.INACTIVATION).gene("gene").event("full loss").build();
-        ActinEvents deletedExtraction = extractor.extract(withEvidence(deletedEvidence));
+        MappedActinEvents deletedExtraction = extractor.map(withEvidence(deletedEvidence));
 
         assertEquals(1, deletedExtraction.inactivatedGenes().size());
         InactivatedGene inactivatedGene1 = deletedExtraction.inactivatedGenes().iterator().next();
@@ -79,7 +79,7 @@ public class OrangeEventExtractorTest {
 
         TreatmentEvidence disruptedEvidence =
                 createTestBuilder().type(EvidenceType.INACTIVATION).gene("gene").event("homozygous disruption").build();
-        ActinEvents disruptedExtraction = extractor.extract(withEvidence(disruptedEvidence));
+        MappedActinEvents disruptedExtraction = extractor.map(withEvidence(disruptedEvidence));
 
         assertEquals(1, disruptedExtraction.inactivatedGenes().size());
         InactivatedGene inactivatedGene2 = disruptedExtraction.inactivatedGenes().iterator().next();
@@ -87,7 +87,7 @@ public class OrangeEventExtractorTest {
         assertFalse(inactivatedGene2.hasBeenDeleted());
 
         TreatmentEvidence noEvidence = createTestBuilder().type(EvidenceType.AMPLIFICATION).gene("gene").event("full gain").build();
-        ActinEvents noExtraction = extractor.extract(withEvidence(noEvidence));
+        MappedActinEvents noExtraction = extractor.map(withEvidence(noEvidence));
 
         assertEquals(0, noExtraction.inactivatedGenes().size());
     }
@@ -95,7 +95,7 @@ public class OrangeEventExtractorTest {
     @Test
     public void canExtractAmplifiedGenes() {
         TreatmentEvidence amplificationEvidence = createTestBuilder().type(EvidenceType.AMPLIFICATION).gene("gene").build();
-        ActinEvents amplificationExtraction = createTestEventExtractor().extract(withEvidence(amplificationEvidence));
+        MappedActinEvents amplificationExtraction = createTestEventExtractor().map(withEvidence(amplificationEvidence));
 
         assertEquals(1, amplificationExtraction.amplifiedGenes().size());
         assertEquals("gene", amplificationExtraction.amplifiedGenes().iterator().next());
@@ -103,9 +103,9 @@ public class OrangeEventExtractorTest {
 
     @Test
     public void canExtractFusionGenes() {
-        OrangeEventExtractor extractor = createTestEventExtractor();
+        OrangeEventMapper extractor = createTestEventExtractor();
         TreatmentEvidence fusionEvidence = createTestBuilder().type(EvidenceType.FUSION_PAIR).event("gene1 - gene2 fusion").build();
-        ActinEvents fusionExtraction = extractor.extract(withEvidence(fusionEvidence));
+        MappedActinEvents fusionExtraction = extractor.map(withEvidence(fusionEvidence));
 
         assertEquals(1, fusionExtraction.fusions().size());
         FusionGene fusionGene = fusionExtraction.fusions().iterator().next();
@@ -114,7 +114,7 @@ public class OrangeEventExtractorTest {
 
         TreatmentEvidence promiscuousEvidence =
                 createTestBuilder().type(EvidenceType.PROMISCUOUS_FUSION).event("gene1 - gene2 fusion").build();
-        ActinEvents promiscuousExtraction = extractor.extract(withEvidence(promiscuousEvidence));
+        MappedActinEvents promiscuousExtraction = extractor.map(withEvidence(promiscuousEvidence));
 
         assertEquals(1, promiscuousExtraction.fusions().size());
         FusionGene promiscuous = promiscuousExtraction.fusions().iterator().next();
@@ -134,12 +134,12 @@ public class OrangeEventExtractorTest {
     private static ImmutableTreatmentEvidence.Builder createTestBuilder() {
         return ImmutableTreatmentEvidence.builder()
                 .from(TestTreatmentEvidenceFactory.create())
-                .addSources(OrangeEventExtractor.ACTIN_SOURCE)
+                .addSources(OrangeEventMapper.ACTIN_SOURCE)
                 .reported(true);
     }
 
     @NotNull
-    private static OrangeEventExtractor createTestEventExtractor() {
-        return new OrangeEventExtractor(evidence -> Sets.newHashSet(evidence.event()));
+    private static OrangeEventMapper createTestEventExtractor() {
+        return new OrangeEventMapper(evidence -> Sets.newHashSet(evidence.event()));
     }
 }

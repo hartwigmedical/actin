@@ -11,9 +11,9 @@ import java.time.LocalDate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.Characteristics;
-import com.hartwig.actin.molecular.datamodel.EvidenceAnalysis;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -39,7 +39,7 @@ public class OrangeInterpreterTest {
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2022, 1, 20), record.date());
 
-        Characteristics characteristics = record.characteristics();
+        MolecularCharacteristics characteristics = record.characteristics();
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
         assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
 
@@ -48,7 +48,7 @@ public class OrangeInterpreterTest {
         assertEquals(8D, characteristics.tumorMutationalBurden(), EPSILON);
         assertEquals(100, (int) characteristics.tumorMutationalLoad());
 
-        EvidenceAnalysis evidence = record.evidence();
+        MolecularEvidence evidence = record.evidence();
         assertEquals(1, evidence.actinTrials().size());
         assertEquals(1, evidence.externalTrials().size());
         assertEquals(1, evidence.approvedResponsiveEvidence().size());
@@ -102,7 +102,7 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        OrangeEventExtractor testEventExtractor = new OrangeEventExtractor(evidence -> Sets.newHashSet(evidence.event()));
+        OrangeEventMapper testEventExtractor = new OrangeEventMapper(evidence -> Sets.newHashSet(evidence.event()));
         OrangeEvidenceFactory testEvidenceFactory = new OrangeEvidenceFactory(evidence -> true);
         return new OrangeInterpreter(testEventExtractor, testEvidenceFactory);
     }
