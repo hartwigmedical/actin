@@ -45,7 +45,7 @@ Field | Example Value | Details
 type | AMPLIFICATION | The type of driver (one of `BIALLELIC_VUS_MUTATION`, `VUS_MUTATION`, `HOTSPOT_MUTATION`, `INFRAME_MUTATION`, `AMPLIFICATION`, `PARTIAL_AMPLIFICATION`, `LOSS`, `HOMOZYGOUS_DISRUPTION`, `NON_HOMOZYGOUS_DISRUPTION`, `KNOWN_FUSION`, `PROMISCUOUS_FUSION`, `VIRUS`   
 name | BRAF | The key parameter of the driver, depending on driver type
 details | p.V600E (1/3 copies) | Comprehensive details about the driver, depending on driver type
-driverLikelihood | 0.65 | Likelihood that the driver is actually a driver (only applicable for some driver types such as `VUS_MUTATION`
+driverLikelihood | 65% | Likelihood that the driver is actually a driver (only applicable for some driver types such as `VUS_MUTATION`
 actionableInActinSource | 0 | Boolean indicating whether the driver is related to actionability within ACTIN source
 actionableInExternalSource | 1 | Boolean indicating whether the driver is related to actionability within external source.
 highestResponsiveEvidenceLevel | B | The highest evidence level for this driver with responsive direction
