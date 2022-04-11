@@ -40,7 +40,8 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
-        printer.print(" Purity: " + formatPercentage(record.characteristics().purity()) + " (" + record.qc() + ")");
+        printer.print(" QC: " + record.qc());
+        printer.print(" Purity: " + formatPercentage(record.characteristics().purity()));
         printer.print(" Mutations: " + mutationString(record.mappedEvents().mutations()));
         printer.print(" Activated genes: " + concat(record.mappedEvents().activatedGenes()));
         printer.print(" Inactivated genes: " + inactivatedGeneString(record.mappedEvents().inactivatedGenes()));

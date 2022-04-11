@@ -19,37 +19,49 @@ The following assumptions are made about the inputs:
 
 ## Molecular Datamodel
 
-The following general fields about a molecular experiment can be populated per sample
+Every sample, uniquely defined by their sample ID, has a molecular record with the following data:
+
+1 general fields
 
 Field | Example Value | Details
 ---|---|---
 sampleId | ACTN01029999T | Unique identifier for the sample / biopsy.
 type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
 date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
-hasReliabilityQuality | 1 | Indicates whether the molecular results can be trusted or need to be interpreted with caution. 
+qc | PASS | The QC value of the experiment 
  
-The following data is used for matching against ACTIN's treatment eligibility criteria.
-Do note that ACTIN itself does not make assumptions about the exact definition of the terms below. 
-These decisions are all up to the algorithm interpreting the molecular data and converting this to the datamodel 
-that is described here.
+1 molecular characteristics
 
 Field | Example Value | Details
 ---|---|---
-mutations | BRAF V600E, EGFR exon 19 deletion | A list of gene-specific mutations that should be matchable to the molecular rules as defined in the treatment database.
-activatedGenes | KRAS, NRAS | A list of genes considered to be activated.
-inactivatedGenes | TP53, RB1 | A list of genes considered to be inactivated (along with a boolean whether they have been deleted completely).
-amplifiedGenes | MYC | A list of genes considered to be amplified.
-wildtypeGenes | BRAF | A list of genes considered to be wildtype. 
-fusions | EML4-ALK | A list of genes considered to be fused together.
+purity | 0.65 | The percentage of cells in the sequenced biopsy that originated from the tumor.
 predictedTumorOrigin | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
 isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
 isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
 tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB.
 tumorMutationalLoad | 115 | Number of missense mutations across the genome. Can be left blank in case experiment does not determine TML.
 
-The following data is not used in ACTIN's treatment matching but can be used to provide additional context in the ACTIN report. 
-Along with mutations matched against the ACTIN treatment database, the datamodel can hold additional external trials and 
-evidence from an additional source.
+N drivers  
+
+Field | Example Value | Details
+---|---|---
+type | AMPLIFICATION | The type of driver (one of `BIALLELIC_VUS_MUTATION`, `VUS_MUTATION`, `HOTSPOT_MUTATION`, `INFRAME_MUTATION`, `AMPLIFICATION`, `PARTIAL_AMPLIFICATION`, `LOSS`, `HOMOZYGOUS_DISRUPTION`, `NON_HOMOZYGOUS_DISRUPTION`, `KNOWN_FUSION`, `PROMISCUOUS_FUSION`, `VIRUS`   
+name | BRAF | The key parameter of the driver, depending on driver type
+details | p.V600E (1/3 copies) | Comprehensive details about the driver, depending on driver type
+driverLikelihood | 0.65 | Likelihood that the driver is actually a driver (only applicable for some driver types such as `VUS_MUTATION`
+actionableInActinSource | 0 | Boolean indicating whether the driver is related to actionability within ACTIN source
+actionableInExternalSource | 1 | Boolean indicating whether the driver is related to actionability within external source.
+highestResponsiveEvidenceLevel | B | The highest evidence level for this driver with responsive direction
+highestResistanceEvidenceLevel | C | The highest evidence level for this driver with resistance direction 
+
+N pharmaco
+
+Field | Example Value | Details
+---|---|---
+gene | DPYD | The gene for which the pharmaco entry is applicable
+result | 1* HOM | The haplotypes of the gene found in the germline data of the patient. 
+
+1 evidence
 
 Field | Example Value | Details
 ---|---|---
@@ -62,6 +74,19 @@ experimentalResponsiveEvidence | - | A list of mutations along with experimental
 otherResponsiveEvidence | - | A list of mutations with responsive evidence that is "below experimental" in terms of evidence level yet still potentially relevant, as extracted from the evidence source.
 resistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with resistance evidence for treatment as extracted from the evidence source.  
 
+Finally, the following mapped events are used for matching against ACTIN's treatment eligibility criteria.
+Do note that ACTIN itself does not make assumptions about the exact definition of the terms below. 
+These decisions are all up to the algorithm interpreting the molecular data and mapping this to the datamodel that is described here.
+
+Field | Example Value | Details
+---|---|---
+mutations | BRAF V600E, EGFR exon 19 deletion | A list of gene-specific mutations that should be matchable to the molecular rules as defined in the treatment database.
+activatedGenes | KRAS, NRAS | A list of genes considered to be activated.
+inactivatedGenes | TP53, RB1 | A list of genes considered to be inactivated (along with a boolean whether they have been deleted completely).
+amplifiedGenes | MYC | A list of genes considered to be amplified.
+wildtypeGenes | BRAF | A list of genes considered to be wildtype. 
+fusions | EML4-ALK | A list of genes considered to be fused together.
+
 ### Interpretation of ORANGE results
 
 The ORANGE interpreter application maps the ORANGE output to the molecular datamodel as follows:
@@ -71,7 +96,16 @@ Field | Mapping
 sampleId | The ORANGE field `sampleId`
 type | Hard-coded to WGS 
 date | The ORANGE field `reportedDate`
-hasReliabilityQuality | The PURPLE field `hasReliableQuality` 
+qc | `TODO` 
+
+The evidence is extracted from the PROTECT part of ORANGE as follows:
+ - actinTrials: All reported evidence from the ACTIN source that is defined as an inclusion criterion for at least one trial. 
+ - externalTrials: All reported evidence from the iClusion source, filtered for applicability
+ - approvedResponsiveEvidence: All reported A-level on-label responsive evidence from the CKB source, filtered for applicability.
+ - experimentalResponsiveEvidence: All reported A-level off-label and B-level on-label responsive evidence from the CKB source, filtered for applicability.
+ - otherResponsiveEvidence: All reported B-level off-label responsive evidence from the CKB source, filtered for applicability.
+ - resistanceEvidence: Reported resistance evidence from the CKB source in case reported responsive evidence is found for the same 
+ treatment with lower (or equal) evidence level.    
 
 The events that are used for ACTIN treatment matching are extracted from the PROTECT part of the ORANGE datamodel. It is assumed that PROTECT
 has been run on a SERVE database that includes an ACTIN source generated from the ACTIN treatment database using [serve-bridge](../serve-bridge).
@@ -88,14 +122,6 @@ The following classifications are extracted from the ACTIN-sourced evidence in P
  - wildtype genes: Not implemented yet
  - fusions: Include any fusion with reported evidence of type `FUSION_PAIR` or `PROMISCUOUS_FUSION`
  
-The evidence is extracted from the PROTECT part of ORANGE as follows:
- - actinTrials: All reported evidence from the ACTIN source that is defined as an inclusion criterion for at least one trial. 
- - externalTrials: All reported evidence from the iClusion source, filtered for applicability
- - approvedResponsiveEvidence: All reported A-level on-label responsive evidence from the CKB source, filtered for applicability.
- - experimentalResponsiveEvidence: All reported A-level off-label and B-level on-label responsive evidence from the CKB source, filtered for applicability.
- - otherResponsiveEvidence: All reported B-level off-label responsive evidence from the CKB source, filtered for applicability.
- - resistanceEvidence: Reported resistance evidence from the CKB source in case reported responsive evidence is found for the same 
- treatment with lower (or equal) evidence level.    
 
 ### Version History and Download Links
  - Upcoming (first release) 
