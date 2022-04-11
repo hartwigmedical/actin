@@ -21,8 +21,6 @@ The following assumptions are made about the inputs:
 
 Every sample, uniquely defined by their sample ID, has a molecular record with the following data:
 
-1 general fields
-
 Field | Example Value | Details
 ---|---|---
 sampleId | ACTN01029999T | Unique identifier for the sample / biopsy.
@@ -61,7 +59,7 @@ Field | Example Value | Details
 gene | DPYD | The gene for which the pharmaco entry is applicable
 result | 1* HOM | The haplotypes of the gene found in the germline data of the patient. 
 
-1 evidence
+1 molecular evidence
 
 Field | Example Value | Details
 ---|---|---
@@ -74,7 +72,7 @@ experimentalResponsiveEvidence | - | A list of mutations along with experimental
 otherResponsiveEvidence | - | A list of mutations with responsive evidence that is "below experimental" in terms of evidence level yet still potentially relevant, as extracted from the evidence source.
 resistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with resistance evidence for treatment as extracted from the evidence source.  
 
-Finally, the following mapped events are used for matching against ACTIN's treatment eligibility criteria.
+Finally, the following mapped events are used for actual matching against ACTIN's treatment eligibility criteria.
 Do note that ACTIN itself does not make assumptions about the exact definition of the terms below. 
 These decisions are all up to the algorithm interpreting the molecular data and mapping this to the datamodel that is described here.
 
