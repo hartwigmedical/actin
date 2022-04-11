@@ -23,7 +23,6 @@ Every sample, uniquely defined by their sample ID, has a molecular record with t
 
 Field | Example Value | Details
 ---|---|---
-sampleId | ACTN01029999T | Unique identifier for the sample / biopsy.
 type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
 date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
 qc | PASS | The QC value of the experiment 
