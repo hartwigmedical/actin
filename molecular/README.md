@@ -31,7 +31,7 @@ qc | PASS | The QC value of the experiment
 
 Field | Example Value | Details
 ---|---|---
-purity | 0.65 | The percentage of cells in the sequenced biopsy that originated from the tumor.
+purity | 78% | The percentage of cells in the sequenced biopsy that originated from the tumor.
 predictedTumorOrigin | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
 isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
 isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
