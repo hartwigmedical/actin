@@ -41,6 +41,7 @@ public abstract class MolecularRecord {
     @NotNull
     public abstract MolecularEvidence evidence();
 
+    // TODO Remove mappedEvents. Actin should be able to resolve inclusion based on evidence.
     @NotNull
     public abstract MappedActinEvents mappedEvents();
 

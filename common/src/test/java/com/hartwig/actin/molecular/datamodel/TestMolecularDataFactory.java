@@ -9,8 +9,17 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
@@ -22,6 +31,8 @@ import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +65,8 @@ public final class TestMolecularDataFactory {
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
                 .characteristics(createTestCharacteristics())
+                .drivers(createTestDrivers())
+                .pharmaco(createTestPharmaco())
                 .evidence(createTestEvidence())
                 .mappedEvents(createTestMappedEvents())
                 .build();
@@ -63,7 +76,8 @@ public final class TestMolecularDataFactory {
     public static MolecularRecord createExhaustiveTestMolecularRecord() {
         return ImmutableMolecularRecord.builder()
                 .from(createProperTestMolecularRecord())
-                .mappedEvents(createExhaustiveTestEvents())
+                .drivers(createExhaustiveTestDrivers())
+                .mappedEvents(createExhaustiveTestMappedEvents())
                 .build();
     }
 
@@ -79,7 +93,7 @@ public final class TestMolecularDataFactory {
     @NotNull
     private static MolecularCharacteristics createTestCharacteristics() {
         return ImmutableMolecularCharacteristics.builder()
-                .predictedTumorOrigin(createTestPredictedTumorOrigin())
+                .predictedTumorOrigin(ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
@@ -88,39 +102,24 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static PredictedTumorOrigin createTestPredictedTumorOrigin() {
-        return ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build();
-    }
-
-    @NotNull
-    private static MappedActinEvents createTestMappedEvents() {
-        return ImmutableMappedActinEvents.builder()
-                .mutations(createTestMutations())
-                .activatedGenes(Sets.newHashSet("BRAF"))
-                .inactivatedGenes(createTestInactivatedGenes())
-                .amplifiedGenes(Sets.newHashSet())
-                .wildtypeGenes(Sets.newHashSet())
-                .fusions(Lists.newArrayList())
+    private static MolecularDrivers createTestDrivers() {
+        return ImmutableMolecularDrivers.builder()
+                .addVariants(ImmutableVariant.builder()
+                        .gene("BRAF")
+                        .impact("p.V600E")
+                        .variantCopyNumber(4.1)
+                        .totalCopyNumber(6.0)
+                        .driverType(VariantDriverType.HOTSPOT)
+                        .driverLikelihood(1.0)
+                        .subclonalLikelihood(0.0)
+                        .build())
+                .addLosses(ImmutableLoss.builder().gene("PTEN").isPartial(true).build())
                 .build();
     }
 
     @NotNull
-    private static Set<GeneMutation> createTestMutations() {
-        Set<GeneMutation> mutations = Sets.newHashSet();
-
-        mutations.add(ImmutableGeneMutation.builder().gene("BRAF").mutation("V600E").build());
-
-        return mutations;
-    }
-
-    @NotNull
-    private static Set<InactivatedGene> createTestInactivatedGenes() {
-        Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
-
-        inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("PTEN").hasBeenDeleted(false).build());
-        inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("CDKN2A").hasBeenDeleted(false).build());
-
-        return inactivatedGenes;
+    private static Set<PharmacoEntry> createTestPharmaco() {
+        return Sets.newHashSet(ImmutablePharmacoEntry.builder().gene("DPYD").result("1* HOM").build());
     }
 
     @NotNull
@@ -197,7 +196,59 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static MappedActinEvents createExhaustiveTestEvents() {
+    private static MappedActinEvents createTestMappedEvents() {
+        return ImmutableMappedActinEvents.builder()
+                .mutations(createTestMutations())
+                .activatedGenes(Sets.newHashSet("BRAF"))
+                .inactivatedGenes(createTestInactivatedGenes())
+                .amplifiedGenes(Sets.newHashSet())
+                .wildtypeGenes(Sets.newHashSet())
+                .fusions(Lists.newArrayList())
+                .build();
+    }
+
+    @NotNull
+    private static Set<GeneMutation> createTestMutations() {
+        Set<GeneMutation> mutations = Sets.newHashSet();
+
+        mutations.add(ImmutableGeneMutation.builder().gene("BRAF").mutation("V600E").build());
+
+        return mutations;
+    }
+
+    @NotNull
+    private static Set<InactivatedGene> createTestInactivatedGenes() {
+        Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
+
+        inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("PTEN").hasBeenDeleted(false).build());
+        inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("CDKN2A").hasBeenDeleted(false).build());
+
+        return inactivatedGenes;
+    }
+
+    @NotNull
+    private static MolecularDrivers createExhaustiveTestDrivers() {
+        return ImmutableMolecularDrivers.builder()
+                .from(createTestDrivers())
+                .addAmplifications(ImmutableAmplification.builder().gene("MYC").copies(38).isPartial(false).build())
+                .addDisruptions(ImmutableDisruption.builder().gene("PTEN").details("Intron 1 downstream").isHomozygous(false).build())
+                .addFusions(ImmutableFusion.builder()
+                        .fiveGene("EML4")
+                        .threeGene("ALK")
+                        .details("Exon 2 - Exon 4")
+                        .driverType(FusionDriverType.KNOWN)
+                        .driverLikelihood(DriverLikelihoodType.HIGH)
+                        .build())
+                .addViruses(ImmutableVirus.builder()
+                        .name("HPV 16")
+                        .details("3 integrations detected")
+                        .driverLikelihood(DriverLikelihoodType.HIGH)
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    private static MappedActinEvents createExhaustiveTestMappedEvents() {
         return ImmutableMappedActinEvents.builder()
                 .from(createTestMappedEvents())
                 .amplifiedGenes(Sets.newHashSet("AMP"))
