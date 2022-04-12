@@ -38,18 +38,58 @@ isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair d
 tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB.
 tumorMutationalLoad | 115 | Number of missense mutations across the genome. Can be left blank in case experiment does not determine TML.
 
-N drivers  
+N variants  
 
 Field | Example Value | Details
 ---|---|---
-type | AMPLIFICATION | The type of driver (one of `BIALLELIC_VUS_MUTATION`, `VUS_MUTATION`, `HOTSPOT_MUTATION`, `INFRAME_MUTATION`, `AMPLIFICATION`, `PARTIAL_AMPLIFICATION`, `LOSS`, `HOMOZYGOUS_DISRUPTION`, `NON_HOMOZYGOUS_DISRUPTION`, `KNOWN_FUSION`, `PROMISCUOUS_FUSION`, `VIRUS`   
-name | BRAF | The key parameter of the driver, depending on driver type
-details | p.V600E (1/3 copies) | Comprehensive details about the driver, depending on driver type
-driverLikelihood | 65% | Likelihood that the driver is actually a driver (only applicable for some driver types such as `VUS_MUTATION`
-actionableInActinSource | 0 | Boolean indicating whether the driver is related to actionability within ACTIN source
-actionableInExternalSource | 1 | Boolean indicating whether the driver is related to actionability within external source.
-highestResponsiveEvidenceLevel | B | The highest evidence level for this driver with responsive direction
-highestResistanceEvidenceLevel | C | The highest evidence level for this driver with resistance direction 
+gene | APC | The gene impacted by the variant
+impact | p.D1174fs | The impact of the variant on the gene 
+variantCopyNumber | 3.8 | The number of copies of this variant in the tumor
+totalCopyNumber | 4.0 | The total number of copies in the tumor on the mutated position
+driverType | BIALLELIC | Either `HOTSPOT`, `INFRAME`, `BIALLELIC` or `VUS`
+driverLikelihood | 93% | Likelihood that the combined set of variants on the impacted gene are considered a driver
+subclonalLikelihood | 0% | Likelihood that the variant does not exist in every tumor cell.
+
+N amplifications
+
+Field | Example Value | Details
+---|---|---
+gene | MYC | The gene that has been amplified
+copies | 150 | Number of copies of this gene in the tumor
+isPartial | 0 | Indicates whether only part of the gene is amplified
+
+N losses
+
+Field | Example Value | Details
+---|---|---
+gene | TP53 | The gene that has been lost in the tumor 
+isPartial | 1 | Indicates whether the gene has been partially or fully lost in the tumor 
+
+N disruptions
+
+Field | Example Value | Details
+---|---|---
+gene | BRCA1 | The gene that has been disrupted.
+isHomozygous | 1 | Indicates whether the disruption leads to no wildtypes present anymore.
+details | Intron 12 downstream | Provides additional details about the disruption.
+
+N fusions
+
+Field | Example Value | Details
+---|---|---
+fiveGene | EML4 | The gene that makes up the 5' part of the fusion
+threeGene | ALK | The gene that makes up the 3' part of the fusion
+details | Exon 2 - Exon 5 | Additional details about the fusion
+driverType | KNOWN | Either `KNOWN` or `PROMISCUOUS`
+driverLikelihood | HIGH | Either `HIGH` or `LOW` 
+
+N viruses
+
+Field | Example Value | Details
+---|---|---
+name | Human papillomavirus type 16 | The name of the virus found in the tumor
+details | 3 integrations detected | More details about the virus
+driverLikelihood | HIGH | Either `HIGH` or `LOW`
 
 N pharmaco
 

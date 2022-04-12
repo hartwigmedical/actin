@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.serialization;
 
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.integer;
 import static com.hartwig.actin.util.json.Json.nullableBool;
 import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
@@ -195,6 +196,7 @@ public class MolecularRecordJson {
                 JsonObject amplification = element.getAsJsonObject();
                 amplifications.add(ImmutableAmplification.builder()
                         .gene(string(amplification, "gene"))
+                        .copies(integer(amplification, "copies"))
                         .isPartial(bool(amplification, "isPartial"))
                         .build());
             }
