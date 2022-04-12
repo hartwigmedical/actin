@@ -42,6 +42,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
@@ -181,7 +182,7 @@ public class MolecularRecordJson {
                         .impact(string(variant, "impact"))
                         .variantCopyNumber(number(variant, "variantCopyNumber"))
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
-                        .driverType(VariantDriverType.valueOf(string(variant, "variantDriverType")))
+                        .driverType(VariantDriverType.valueOf(string(variant, "driverType")))
                         .driverLikelihood(number(variant, "driverLikelihood"))
                         .subclonalLikelihood(number(variant, "subclonalLikelihood"))
                         .build());
@@ -236,8 +237,8 @@ public class MolecularRecordJson {
                         .fiveGene(string(fusion, "fiveGene"))
                         .threeGene(string(fusion, "threeGene"))
                         .details(string(fusion, "details"))
-                        .driverType(FusionDriverType.valueOf(string(fusion, "threeGene")))
-                        .driverLikelihood(string(fusion, "driverLikelihood"))
+                        .driverType(FusionDriverType.valueOf(string(fusion, "driverType")))
+                        .driverLikelihood(DriverLikelihoodType.valueOf(string(fusion, "driverLikelihood")))
                         .build());
             }
             return fusions;
@@ -251,7 +252,7 @@ public class MolecularRecordJson {
                 viruses.add(ImmutableVirus.builder()
                         .name(string(virus, "name"))
                         .details(string(virus, "details"))
-                        .driverLikelihood(string(virus, "driverLikelihood"))
+                        .driverLikelihood(DriverLikelihoodType.valueOf(string(virus, "driverLikelihood")))
                         .build());
             }
             return viruses;

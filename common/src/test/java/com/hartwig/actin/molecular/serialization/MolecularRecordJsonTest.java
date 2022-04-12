@@ -15,7 +15,16 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
+import com.hartwig.actin.molecular.datamodel.driver.Fusion;
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
@@ -69,7 +78,7 @@ public class MolecularRecordJsonTest {
     }
 
     private static void assertCharacteristics(@NotNull MolecularCharacteristics characteristics) {
-        assertEquals(0.5, characteristics.purity(), EPSILON);
+        assertEquals(0.98, characteristics.purity(), EPSILON);
 
         assertNotNull(characteristics.predictedTumorOrigin());
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
@@ -82,11 +91,68 @@ public class MolecularRecordJsonTest {
     }
 
     private static void assertDrivers(@NotNull MolecularDrivers drivers) {
-        assertNotNull(drivers);
+        assertEquals(1, drivers.variants().size());
+        Variant variant = drivers.variants().iterator().next();
+        assertEquals("BRAF", variant.gene());
+        assertEquals("p.V600E", variant.impact());
+        assertEquals(4.1, variant.variantCopyNumber(), EPSILON);
+        assertEquals(6.0, variant.totalCopyNumber(), EPSILON);
+        assertEquals(VariantDriverType.HOTSPOT, variant.driverType());
+        assertEquals(1.0, variant.driverLikelihood(), EPSILON);
+        assertEquals(0.0, variant.subclonalLikelihood(), EPSILON);
+
+        assertEquals(1, drivers.amplifications().size());
+        Amplification amplification = drivers.amplifications().iterator().next();
+        assertEquals("MYC", amplification.gene());
+        assertEquals(38, amplification.copies());
+        assertFalse(amplification.isPartial());
+
+        assertEquals(1, drivers.losses().size());
+        Loss loss = drivers.losses().iterator().next();
+        assertEquals("PTEN", loss.gene());
+        assertTrue(loss.isPartial());
+
+        assertEquals(2, drivers.disruptions().size());
+        Disruption disruption1 = findByDetails(drivers.disruptions(), "Intron 1 downstream");
+        assertEquals("NF1", disruption1.gene());
+        assertFalse(disruption1.isHomozygous());
+
+        Disruption disruption2 = findByDetails(drivers.disruptions(), "Intron 2 upstream");
+        assertEquals("NF1", disruption2.gene());
+        assertFalse(disruption2.isHomozygous());
+
+        assertEquals(1, drivers.fusions().size());
+        Fusion fusion = drivers.fusions().iterator().next();
+        assertEquals("EML4", fusion.fiveGene());
+        assertEquals("ALK", fusion.threeGene());
+        assertEquals("Exon 2 - Exon 4", fusion.details());
+        assertEquals(FusionDriverType.KNOWN, fusion.driverType());
+        assertEquals(DriverLikelihoodType.HIGH, fusion.driverLikelihood());
+
+        assertEquals(1, drivers.viruses().size());
+        Virus virus = drivers.viruses().iterator().next();
+        assertEquals("HPV 16", virus.name());
+        assertEquals("3 integrations detected", virus.details());
+        assertEquals(DriverLikelihoodType.HIGH, virus.driverLikelihood());
+    }
+
+    @NotNull
+    private static Disruption findByDetails(@NotNull Iterable<Disruption> disruptions, @NotNull String detailsToFind) {
+        for (Disruption disruption : disruptions) {
+            if (disruption.details().equals(detailsToFind)) {
+                return disruption;
+            }
+        }
+
+        throw new IllegalStateException("Could not find disruption with details: " + detailsToFind);
     }
 
     private static void assertPharmaco(@NotNull Set<PharmacoEntry> pharmaco) {
-        assertTrue(pharmaco.isEmpty());
+        assertEquals(1, pharmaco.size());
+
+        PharmacoEntry entry = pharmaco.iterator().next();
+        assertEquals("DPYD", entry.gene());
+        assertEquals("1* HOM", entry.result());
     }
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {
@@ -110,9 +176,14 @@ public class MolecularRecordJsonTest {
         EvidenceEntry approvedEvidence2 = findByTreatment(evidence.approvedResponsiveEvidence(), "Nivolumab");
         assertEquals("High TML", approvedEvidence2.event());
 
-        assertTrue(evidence.experimentalResponsiveEvidence().isEmpty());
-        assertTrue(evidence.otherResponsiveEvidence().isEmpty());
-        assertTrue(evidence.resistanceEvidence().isEmpty());
+        assertEquals(1, evidence.experimentalResponsiveEvidence().size());
+        assertEquals("experimental", findByTreatment(evidence.experimentalResponsiveEvidence(), "experimental drug").event());
+
+        assertEquals(1, evidence.otherResponsiveEvidence().size());
+        assertEquals("other", findByTreatment(evidence.otherResponsiveEvidence(), "other drug").event());
+
+        assertEquals(1, evidence.resistanceEvidence().size());
+        assertEquals("resistance", findByTreatment(evidence.resistanceEvidence(), "resistant drug").event());
     }
 
     @NotNull
@@ -140,8 +211,8 @@ public class MolecularRecordJsonTest {
     private static void assertMappedEvents(@NotNull MappedActinEvents events) {
         assertEquals(1, events.mutations().size());
         GeneMutation geneMutation = events.mutations().iterator().next();
-        assertEquals("TP53", geneMutation.gene());
-        assertEquals("exon 1", geneMutation.mutation());
+        assertEquals("BRAF", geneMutation.gene());
+        assertEquals("V600E", geneMutation.mutation());
 
         assertEquals(1, events.activatedGenes().size());
         assertEquals("ACT", events.activatedGenes().iterator().next());
@@ -149,19 +220,19 @@ public class MolecularRecordJsonTest {
         assertEquals(2, events.inactivatedGenes().size());
         InactivatedGene nf1 = findInactivatedGene(events.inactivatedGenes(), "NF1");
         assertFalse(nf1.hasBeenDeleted());
-        InactivatedGene rb1 = findInactivatedGene(events.inactivatedGenes(), "RB1");
-        assertTrue(rb1.hasBeenDeleted());
+        InactivatedGene pten = findInactivatedGene(events.inactivatedGenes(), "PTEN");
+        assertTrue(pten.hasBeenDeleted());
 
         assertEquals(1, events.amplifiedGenes().size());
-        assertEquals("AMP", events.amplifiedGenes().iterator().next());
+        assertEquals("MYC", events.amplifiedGenes().iterator().next());
 
         assertEquals(1, events.wildtypeGenes().size());
         assertEquals("WILD", events.wildtypeGenes().iterator().next());
 
         assertEquals(1, events.fusions().size());
         FusionGene fusionGene = events.fusions().iterator().next();
-        assertEquals("five", fusionGene.fiveGene());
-        assertEquals("three", fusionGene.threeGene());
+        assertEquals("EML4", fusionGene.fiveGene());
+        assertEquals("ALK", fusionGene.threeGene());
     }
 
     @NotNull

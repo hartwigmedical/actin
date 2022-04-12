@@ -21,6 +21,6 @@ public abstract class Fusion {
     public abstract FusionDriverType driverType();
 
     @NotNull
-    public abstract String driverLikelihood();
+    public abstract DriverLikelihoodType driverLikelihood();
 
 }
