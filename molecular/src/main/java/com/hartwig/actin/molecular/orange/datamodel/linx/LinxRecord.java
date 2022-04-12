@@ -10,8 +10,12 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class LinxRecord {
 
-    // TODO add hom disruptions and fusions
+    @NotNull
+    public abstract Set<ReportableFusion> fusions();
 
     @NotNull
-    public abstract Set<GeneDisruption> disruptions();
+    public abstract Set<String> homozygousDisruptedGenes();
+    
+    @NotNull
+    public abstract Set<ReportableDisruption> disruptions();
 }

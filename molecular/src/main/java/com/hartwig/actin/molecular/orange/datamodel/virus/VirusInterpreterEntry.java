@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class VirusInterpreterEntry {
 
-    // TODO
-
     @NotNull
     public abstract String name();
+
+    public abstract int integrations();
 }

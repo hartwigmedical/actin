@@ -1,0 +1,218 @@
+{
+  "sampleId": "ACTN01029999T",
+  "reportDate": {
+    "year": 2022,
+    "month": 1,
+    "day": 20
+  },
+  "purple": {
+    "qc": {
+      "method": "NORMAL",
+      "copyNumberSegments": 208,
+      "unsupportedCopyNumberSegments": 0,
+      "deletedGenes": 4,
+      "purity": 0.99,
+      "contamination": 0.0,
+      "amberMeanDepth": 111,
+      "cobaltGender": "MALE",
+      "amberGender": "MALE",
+      "germlineAberrations": [
+        "NONE"
+      ]
+    },
+    "hasReliableQuality": true,
+    "fittedPurityMethod": "NORMAL",
+    "wholeGenomeDuplication": true,
+    "hasReliablePurity": true,
+    "purity": 0.99,
+    "minPurity": 0.97,
+    "maxPurity": 1.0,
+    "ploidy": 3.1,
+    "minPloidy": 3.1,
+    "maxPloidy": 3.15,
+    "microsatelliteIndelsPerMb": 0.11507520111927247,
+    "microsatelliteStatus": "MSS",
+    "tumorMutationalBurdenPerMb": 13.713186428821267,
+    "tumorMutationalLoad": 185,
+    "svTumorMutationalBurden": 73,
+    "tumorMutationalLoadStatus": "HIGH",
+    "reportableSomaticVariants": [
+      {
+        "source": "SOMATIC",
+        "gene": "SF3B1",
+        "chromosome": "2",
+        "position": 198266779,
+        "gDNA": "2:198266779",
+        "ref": "G",
+        "alt": "A",
+        "canonicalTranscript": "ENST00000335508",
+        "canonicalEffect": "missense_variant",
+        "canonicalCodingEffect": "MISSENSE",
+        "canonicalHgvsCodingImpact": "c.2153C\u003eT",
+        "canonicalHgvsProteinImpact": "p.Pro718Leu",
+        "totalReadCount": 111,
+        "alleleReadCount": 74,
+        "totalCopyNumber": 3.02,
+        "alleleCopyNumber": 2.026722,
+        "minorAlleleCopyNumber": 1.0,
+        "tVAF": "67%",
+        "hotspot": "NON_HOTSPOT",
+        "clonalLikelihood": 1.0,
+        "driverLikelihood": 0.1459,
+        "driverLikelihoodInterpretation": "LOW",
+        "biallelic": false,
+        "genotypeStatus": "HOM_REF",
+        "localPhaseSet": null,
+        "type": "SNP"
+      }
+    ],
+    "reportableGermlineVariants": [
+      {
+        "source": "GERMLINE",
+        "gene": "BRCA1",
+        "chromosome": "17",
+        "position": 41209068,
+        "gDNA": "17:41209068",
+        "ref": "C",
+        "alt": "T",
+        "canonicalTranscript": "ENST00000471181",
+        "canonicalEffect": "splice_donor_variant&intron_variant",
+        "canonicalCodingEffect": "SPLICE",
+        "canonicalHgvsCodingImpact": "c.5340+1G>A",
+        "canonicalHgvsProteinImpact": "p.?",
+        "totalReadCount": 12,
+        "alleleReadCount": 22,
+        "totalCopyNumber": 2.0,
+        "alleleCopyNumber": 1.0,
+        "minorAlleleCopyNumber": 0.0,
+        "tVAF": "53%",
+        "hotspot": "HOTSPOT",
+        "clonalLikelihood": 1,
+        "driverLikelihood": 1,
+        "driverLikelihoodInterpretation": "HIGH",
+        "biallelic": false,
+        "genotypeStatus": "HET",
+        "localPhaseSet": null,
+        "type": "SNP"
+      }
+    ],
+    "reportableGainsLosses": [
+      {
+        "interpretation": "FULL_LOSS",
+        "chromosome": "18",
+        "chromosomeBand": "q21.2",
+        "gene": "SMAD4",
+        "minCopies": 0,
+        "maxCopies": 0
+      }
+    ]
+  },
+  "linx": {
+    "reportableFusions": [
+      {
+        "fivePrimeBreakendId": 1,
+        "threePrimeBreakendId": 2,
+        "name": "TMPRSS2_ETV4",
+        "reported": true,
+        "reportedType": "KNOWN_PAIR",
+        "phased": "INFRAME",
+        "likelihood": "HIGH",
+        "chainLength": 0,
+        "chainLinks": 0,
+        "chainTerminated": false,
+        "domainsKept": "Ets domain",
+        "domainsLost": "",
+        "skippedExonsUp": 0,
+        "skippedExonsDown": 0,
+        "fusedExonUp": 1,
+        "fusedExonDown": 2,
+        "geneStart": "TMPRSS2",
+        "geneContextStart": "Exon 1",
+        "geneEnd": "ETV4",
+        "geneContextEnd": "Promoter Region",
+        "geneTranscriptEnd": "ENST00000319349",
+        "junctionCopyNumber": 0.881
+      }
+    ],
+    "geneDisruptions": [
+      {
+        "location": "17q11.2",
+        "gene": "NF1",
+        "range": "Intron 5 -> Intron 8",
+        "type": "DUP",
+        "junctionCopyNumber": 1.1,
+        "undisruptedCopyNumber": 1.0,
+        "firstAffectedExon": 5
+      }
+    ],
+    "homozygousDisruptions": [
+      {
+        "chromosome": "17",
+        "chromosomeBand": "q11.2",
+        "gene": "NF1"
+      }
+    ]
+  },
+  "virusInterpreter": {
+    "reportableViruses": [ {
+      "taxid": 32604,
+      "name": "Human betaherpesvirus 6B",
+      "qcStatus": "NO_ABNORMALITIES",
+      "integrations": 1,
+      "interpretation": null,
+      "percentageCovered": 14.2802,
+      "meanCoverage": 0.176659,
+      "expectedClonalCoverage": 32.17380658988764,
+      "reported": false,
+      "virusDriverLikelihoodType": "HIGH"
+    }]
+  },
+  "chord": {
+    "BRCA1Value": 0.0,
+    "BRCA2Value": 0.0,
+    "hrdValue": 0.0,
+    "hrStatus": "HR_PROFICIENT",
+    "hrdType": "none",
+    "remarksHrStatus": "",
+    "remarksHrdType": ""
+  },
+  "peach": [
+    {
+      "gene": "DPYD",
+      "haplotype": "*1_HOM",
+      "function": "Normal Function",
+      "linkedDrugs": "5-Fluorouracil;Capecitabine;Tegafur",
+      "urlPrescriptionInfo": "https://www.pharmgkb.org/chemical/PA128406956/guidelineAnnotation/PA166104939;https://www.pharmgkb.org/chemical/PA448771/guidelineAnnotation/PA166104963;https://www.pharmgkb.org/chemical/PA452620/guidelineAnnotation/PA166104944",
+      "panelVersion": "PGx_min_DPYD_v1.2",
+      "repoVersion": "1.5"
+    }
+  ],
+  "cuppa": {
+    "predictedCancerType": "Melanoma",
+    "bestPredictionLikelihood": 0.996,
+    "simpleDups32To200B": 3,
+    "maxComplexSize": 8,
+    "telomericSGLs": 0,
+    "LINECount": 1
+  },
+  "protect": [
+    {
+      "gene": "BRAF",
+      "event": "p.Val600Glu",
+      "evidenceType": "HOTSPOT_MUTATION",
+      "rangeRank": null,
+      "germline": false,
+      "reported": true,
+      "treatment": "Cobimetinib + Vemurafenib",
+      "onLabel": true,
+      "level": "A",
+      "direction": "RESPONSIVE",
+      "sources": [
+        "VICC_CGI"
+      ],
+      "urls": [
+        "https://www.google.com/#q\u003dFDA"
+      ]
+    }
+  ]
+}

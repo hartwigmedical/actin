@@ -23,14 +23,30 @@ import org.junit.Test;
 
 public class OrangeJsonTest {
 
-    private static final String PROPER_ORANGE_JSON = Resources.getResource("orange/proper.orange.json").getPath();
     private static final String MINIMAL_ORANGE_JSON = Resources.getResource("orange/minimal.orange.json").getPath();
+    private static final String EXHAUSTIVE_ORANGE_JSON = Resources.getResource("orange/exhaustive.orange.json").getPath();
+    private static final String PROPER_ORANGE_JSON = Resources.getResource("orange/proper.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 
     @Test
     public void canReadMinimalOrangeRecordJson() throws IOException {
         OrangeRecord record = OrangeJson.read(MINIMAL_ORANGE_JSON);
+
+        assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
+        assertNotNull(record.reportDate());
+        assertNotNull(record.purple());
+        assertNotNull(record.linx());
+        assertNotNull(record.peach());
+        assertNotNull(record.cuppa());
+        assertNotNull(record.virusInterpreter());
+        assertNotNull(record.chord());
+        assertNotNull(record.protect());
+    }
+
+    @Test
+    public void canReadExhaustiveOrangeRecordJson() throws IOException {
+        OrangeRecord record = OrangeJson.read(EXHAUSTIVE_ORANGE_JSON);
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertNotNull(record.reportDate());
