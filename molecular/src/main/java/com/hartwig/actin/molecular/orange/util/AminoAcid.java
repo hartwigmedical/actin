@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 
-final class AminoAcid {
+public final class AminoAcid {
 
     private static final Map<String, String> TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER = Maps.newHashMap();
 

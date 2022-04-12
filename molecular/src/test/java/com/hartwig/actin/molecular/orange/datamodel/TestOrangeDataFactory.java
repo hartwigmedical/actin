@@ -2,13 +2,22 @@ package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
@@ -17,8 +26,13 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectReco
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +47,7 @@ public final class TestOrangeDataFactory {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .reportDate(LocalDate.of(2021, 5, 6))
-                .purple(createTestPurpleRecord())
+                .purple(createMinimalTestPurpleRecord())
                 .linx(ImmutableLinxRecord.builder().build())
                 .peach(ImmutablePeachRecord.builder().build())
                 .cuppa(ImmutableCuppaRecord.builder().predictedCancerType("Unknown").bestPredictionLikelihood(0D).build())
@@ -47,14 +61,18 @@ public final class TestOrangeDataFactory {
     public static OrangeRecord createProperTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .from(createMinimalTestOrangeRecord())
+                .purple(createTestPurpleRecord())
+                .linx(createTestLinxRecord())
+                .peach(createTestPeachRecord())
                 .cuppa(ImmutableCuppaRecord.builder().predictedCancerType("Melanoma").bestPredictionLikelihood(0.996).build())
+                .virusInterpreter(createTestVirusInterpreterRecord())
                 .chord(ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build())
                 .protect(createTestProtectRecord())
                 .build();
     }
 
     @NotNull
-    private static PurpleRecord createTestPurpleRecord() {
+    private static PurpleRecord createMinimalTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
                 .hasReliableQuality(true)
                 .purity(0.98)
@@ -62,6 +80,46 @@ public final class TestOrangeDataFactory {
                 .microsatelliteStabilityStatus("MSS")
                 .tumorMutationalBurden(8D)
                 .tumorMutationalLoad(100)
+                .build();
+    }
+
+    @NotNull
+    private static PurpleRecord createTestPurpleRecord() {
+        Set<PurpleVariant> variants = Sets.newHashSet();
+        Set<PurpleGainLoss> gainsLosses = Sets.newHashSet();
+
+        return ImmutablePurpleRecord.builder().from(createMinimalTestPurpleRecord()).variants(variants).gainsLosses(gainsLosses).build();
+    }
+
+    @NotNull
+    private static LinxRecord createTestLinxRecord() {
+        return ImmutableLinxRecord.builder()
+                .addFusions(ImmutableLinxFusion.builder()
+                        .type(FusionType.KNOWN_PAIR)
+                        .geneStart("EML4")
+                        .geneContextStart("Exon 2")
+                        .geneEnd("ALK")
+                        .geneContextEnd("Exon 4")
+                        .driverLikelihood(FusionDriverLikelihood.HIGH)
+                        .build())
+                .addHomozygousDisruptedGenes("TP53")
+                .addDisruptions(ImmutableLinxDisruption.builder().gene("RB1").range("Intron 1 downstream").build())
+                .build();
+    }
+
+    @NotNull
+    private static PeachRecord createTestPeachRecord() {
+        return ImmutablePeachRecord.builder().addEntries(ImmutablePeachEntry.builder().gene("DPYD").haplotype("1* HOM").build()).build();
+    }
+
+    @NotNull
+    private static VirusInterpreterRecord createTestVirusInterpreterRecord() {
+        return ImmutableVirusInterpreterRecord.builder()
+                .addEntries(ImmutableVirusInterpreterEntry.builder()
+                        .name("HPV 16")
+                        .integrations(3)
+                        .driverLikelihood(VirusDriverLikelihood.HIGH)
+                        .build())
                 .build();
     }
 

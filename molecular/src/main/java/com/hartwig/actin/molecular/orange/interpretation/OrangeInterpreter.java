@@ -1,9 +1,10 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -11,11 +12,13 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularC
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
+import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
@@ -60,9 +63,9 @@ public class OrangeInterpreter {
                 .date(record.reportDate())
                 .hasReliableQuality(record.purple().hasReliableQuality())
                 .characteristics(extractCharacteristics(record))
-                .drivers(ImmutableMolecularDrivers.builder().build())
-                .pharmaco(Lists.newArrayList())
-                .evidence(extractEvidence(record))
+                .drivers(DriverExtraction.extract(record))
+                .pharmaco(extractPharmaco(record.peach()))
+                .evidence(extractEvidence(record.protect()))
                 .mappedEvents(eventMapper.map(record.protect()))
                 .build();
     }
@@ -75,21 +78,28 @@ public class OrangeInterpreter {
                 .build();
 
         PurpleRecord purple = record.purple();
-        ChordRecord chord = record.chord();
         return ImmutableMolecularCharacteristics.builder()
                 .purity(purple.purity())
                 .hasReliablePurity(purple.hasReliablePurity())
                 .predictedTumorOrigin(predictedTumorOrigin)
                 .isMicrosatelliteUnstable(isMSI(purple.microsatelliteStabilityStatus()))
-                .isHomologousRepairDeficient(isHRD(chord.hrStatus()))
+                .isHomologousRepairDeficient(isHRD( record.chord().hrStatus()))
                 .tumorMutationalBurden(purple.tumorMutationalBurden())
                 .tumorMutationalLoad(purple.tumorMutationalLoad())
                 .build();
     }
 
     @NotNull
-    private MolecularEvidence extractEvidence(@NotNull OrangeRecord record) {
-        ProtectRecord protect = record.protect();
+    private static Set<PharmacoEntry> extractPharmaco(@NotNull PeachRecord peach) {
+        Set<PharmacoEntry> entries = Sets.newHashSet();
+        for (PeachEntry entry : peach.entries()) {
+            entries.add(ImmutablePharmacoEntry.builder().gene(entry.gene()).haplotype(entry.haplotype()).build());
+        }
+        return entries;
+    }
+
+    @NotNull
+    private MolecularEvidence extractEvidence(@NotNull ProtectRecord protect) {
         return ImmutableMolecularEvidence.builder()
                 .actinSource("Erasmus MC")
                 .actinTrials(evidenceFactory.createActinTrials(protect.evidences()))
