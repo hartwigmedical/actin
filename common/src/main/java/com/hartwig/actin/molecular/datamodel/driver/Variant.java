@@ -23,5 +23,5 @@ public abstract class Variant {
 
     public abstract double driverLikelihood();
 
-    public abstract double subclonalLikelihood();
+    public abstract double clonalLikelihood();
 }

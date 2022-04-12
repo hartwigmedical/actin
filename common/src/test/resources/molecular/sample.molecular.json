@@ -28,7 +28,7 @@
         "totalCopyNumber": 6.0,
         "driverType": "HOTSPOT",
         "driverLikelihood": 1.0,
-        "subclonalLikelihood": 0.0
+        "clonalLikelihood": 1.0
       }
     ],
     "amplifications": [
@@ -76,7 +76,7 @@
   "pharmaco": [
     {
       "gene": "DPYD",
-      "result": "1* HOM"
+      "haplotype": "1* HOM"
     }
   ],
   "evidence": {

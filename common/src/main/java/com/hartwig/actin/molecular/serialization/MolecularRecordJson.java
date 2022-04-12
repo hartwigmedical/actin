@@ -185,7 +185,7 @@ public class MolecularRecordJson {
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
                         .driverType(VariantDriverType.valueOf(string(variant, "driverType")))
                         .driverLikelihood(number(variant, "driverLikelihood"))
-                        .subclonalLikelihood(number(variant, "subclonalLikelihood"))
+                        .clonalLikelihood(number(variant, "clonalLikelihood"))
                         .build());
             }
             return variants;
@@ -266,7 +266,7 @@ public class MolecularRecordJson {
                 JsonObject pharmaco = element.getAsJsonObject();
                 pharmacoEntries.add(ImmutablePharmacoEntry.builder()
                         .gene(string(pharmaco, "gene"))
-                        .result(string(pharmaco, "result"))
+                        .haplotype(string(pharmaco, "haplotype"))
                         .build());
             }
             return pharmacoEntries;

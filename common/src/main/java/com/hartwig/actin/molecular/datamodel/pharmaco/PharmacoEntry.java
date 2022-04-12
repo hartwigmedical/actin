@@ -12,5 +12,5 @@ public abstract class PharmacoEntry {
     public abstract String gene();
 
     @NotNull
-    public abstract String result();
+    public abstract String haplotype();
 }

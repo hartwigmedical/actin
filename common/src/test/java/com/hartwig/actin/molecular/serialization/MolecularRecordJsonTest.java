@@ -100,7 +100,7 @@ public class MolecularRecordJsonTest {
         assertEquals(6.0, variant.totalCopyNumber(), EPSILON);
         assertEquals(VariantDriverType.HOTSPOT, variant.driverType());
         assertEquals(1.0, variant.driverLikelihood(), EPSILON);
-        assertEquals(0.0, variant.subclonalLikelihood(), EPSILON);
+        assertEquals(1.0, variant.clonalLikelihood(), EPSILON);
 
         assertEquals(1, drivers.amplifications().size());
         Amplification amplification = drivers.amplifications().iterator().next();
@@ -153,7 +153,7 @@ public class MolecularRecordJsonTest {
 
         PharmacoEntry entry = pharmaco.iterator().next();
         assertEquals("DPYD", entry.gene());
-        assertEquals("1* HOM", entry.result());
+        assertEquals("1* HOM", entry.haplotype());
     }
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {

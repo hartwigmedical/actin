@@ -113,7 +113,7 @@ public final class TestMolecularDataFactory {
                         .totalCopyNumber(6.0)
                         .driverType(VariantDriverType.HOTSPOT)
                         .driverLikelihood(1.0)
-                        .subclonalLikelihood(0.0)
+                        .clonalLikelihood(1.0)
                         .build())
                 .addLosses(ImmutableLoss.builder().gene("PTEN").isPartial(true).build())
                 .build();
@@ -121,7 +121,7 @@ public final class TestMolecularDataFactory {
 
     @NotNull
     private static Set<PharmacoEntry> createTestPharmaco() {
-        return Sets.newHashSet(ImmutablePharmacoEntry.builder().gene("DPYD").result("1* HOM").build());
+        return Sets.newHashSet(ImmutablePharmacoEntry.builder().gene("DPYD").haplotype("1* HOM").build());
     }
 
     @NotNull
