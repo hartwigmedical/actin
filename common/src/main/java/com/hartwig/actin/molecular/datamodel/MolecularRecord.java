@@ -1,7 +1,9 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
+
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +29,10 @@ public abstract class MolecularRecord {
     public abstract MolecularCharacteristics characteristics();
 
     @NotNull
-    public abstract List<DriverEntry> drivers();
+    public abstract MolecularDrivers drivers();
 
     @NotNull
-    public abstract List<PharmacoEntry> pharmaco();
+    public abstract Set<PharmacoEntry> pharmaco();
 
     @NotNull
     public abstract MolecularEvidence evidence();

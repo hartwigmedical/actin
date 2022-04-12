@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
@@ -56,7 +57,7 @@ public class OrangeInterpreter {
                 .date(record.date())
                 .qc(Strings.EMPTY)
                 .characteristics(extractCharacteristics(record))
-                .drivers(Lists.newArrayList())
+                .drivers(ImmutableMolecularDrivers.builder().build())
                 .pharmaco(Lists.newArrayList())
                 .evidence(extractEvidence(record))
                 .mappedEvents(eventMapper.map(record))

@@ -18,7 +18,14 @@
     "tumorMutationalBurden": 4.32,
     "tumorMutationalLoad": 243
   },
-  "drivers": [],
+  "drivers": {
+    "variants": [],
+    "amplifications": [],
+    "losses": [],
+    "disruptions": [],
+    "fusions": [],
+    "viruses": []
+  },
   "pharmaco": [],
   "evidence": {
     "actinSource": "local",

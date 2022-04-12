@@ -8,10 +8,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.io.Resources;
-import com.hartwig.actin.molecular.datamodel.DriverEntry;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
@@ -23,6 +22,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -81,11 +81,11 @@ public class MolecularRecordJsonTest {
         assertEquals(243, (int) characteristics.tumorMutationalLoad());
     }
 
-    private static void assertDrivers(@NotNull List<DriverEntry> drivers) {
-        assertTrue(drivers.isEmpty());
+    private static void assertDrivers(@NotNull MolecularDrivers drivers) {
+        assertNotNull(drivers);
     }
 
-    private static void assertPharmaco(@NotNull List<PharmacoEntry> pharmaco) {
+    private static void assertPharmaco(@NotNull Set<PharmacoEntry> pharmaco) {
         assertTrue(pharmaco.isEmpty());
     }
 

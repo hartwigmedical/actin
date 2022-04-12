@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ public final class TestMolecularDataFactory {
                 .type(ExperimentType.WGS)
                 .qc(Strings.EMPTY)
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
+                .drivers(ImmutableMolecularDrivers.builder().build())
                 .evidence(createMinimalTestEvidence())
                 .mappedEvents(ImmutableMappedActinEvents.builder().build())
                 .build();

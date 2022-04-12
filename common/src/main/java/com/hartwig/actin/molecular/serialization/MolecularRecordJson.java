@@ -7,7 +7,6 @@ import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableNumber;
 import static com.hartwig.actin.util.json.Json.nullableObject;
-import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
@@ -33,13 +32,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.molecular.datamodel.DriverEntry;
-import com.hartwig.actin.molecular.datamodel.DriverType;
 import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.FusionGene;
 import com.hartwig.actin.molecular.datamodel.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.ImmutableDriverEntry;
 import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
@@ -57,6 +53,22 @@ import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.PharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Fusion;
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
+import com.hartwig.actin.molecular.datamodel.driver.Loss;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -115,7 +127,7 @@ public class MolecularRecordJson {
                     .date(nullableDate(record, "date"))
                     .qc(string(record, "qc"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
-                    .drivers(toDriverEntries(array(record, "drivers")))
+                    .drivers(toDrivers(object(record, "drivers")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
                     .evidence(toMolecularEvidence(object(record, "evidence")))
                     .mappedEvents(toActinEvents(object(record, "mappedEvents")))
@@ -147,22 +159,100 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static List<DriverEntry> toDriverEntries(@NotNull JsonArray driverArray) {
-            List<DriverEntry> driverEntries = Lists.newArrayList();
-            for (JsonElement element : driverArray) {
-                JsonObject driver = element.getAsJsonObject();
-                driverEntries.add(ImmutableDriverEntry.builder()
-                        .type(DriverType.valueOf(string(driver, "type")))
-                        .name(string(driver, "name"))
-                        .details(string(driver, "details"))
-                        .driverLikelihood(nullableNumber(driver, "driverLikelihood"))
-                        .actionableInActinSource(bool(driver, "actionableInActinSource"))
-                        .actionableInExternalSource(bool(driver, "actionableInExternalSource"))
-                        .highestResponsiveEvidenceLevel(nullableString(driver, "highestResponsiveEvidenceLevel"))
-                        .highestResistanceEvidenceLevel(nullableString(driver, "highestResistanceEvidenceLevel"))
+        private static MolecularDrivers toDrivers(@NotNull JsonObject drivers) {
+            return ImmutableMolecularDrivers.builder()
+                    .variants(toVariants(array(drivers, "variants")))
+                    .amplifications(toAmplifications(array(drivers, "amplifications")))
+                    .losses(toLosses(array(drivers, "losses")))
+                    .disruptions(toDisruptions(array(drivers, "disruptions")))
+                    .fusions(toFusions(array(drivers, "fusions")))
+                    .viruses(toViruses(array(drivers, "viruses")))
+                    .build();
+        }
+
+        @NotNull
+        private static Set<Variant> toVariants(@NotNull JsonArray variantArray) {
+            Set<Variant> variants = Sets.newHashSet();
+            for (JsonElement element : variantArray) {
+                JsonObject variant = element.getAsJsonObject();
+                variants.add(ImmutableVariant.builder()
+                        .gene(string(variant, "gene"))
+                        .impact(string(variant, "impact"))
+                        .variantCopyNumber(number(variant, "variantCopyNumber"))
+                        .totalCopyNumber(number(variant, "totalCopyNumber"))
+                        .driverType(VariantDriverType.valueOf(string(variant, "variantDriverType")))
+                        .driverLikelihood(number(variant, "driverLikelihood"))
+                        .subclonalLikelihood(number(variant, "subclonalLikelihood"))
                         .build());
             }
-            return driverEntries;
+            return variants;
+        }
+
+        @NotNull
+        private static Set<Amplification> toAmplifications(@NotNull JsonArray amplificationArray) {
+            Set<Amplification> amplifications = Sets.newHashSet();
+            for (JsonElement element : amplificationArray) {
+                JsonObject amplification = element.getAsJsonObject();
+                amplifications.add(ImmutableAmplification.builder()
+                        .gene(string(amplification, "gene"))
+                        .isPartial(bool(amplification, "isPartial"))
+                        .build());
+            }
+            return amplifications;
+        }
+
+        @NotNull
+        private static Set<Loss> toLosses(@NotNull JsonArray lossArray) {
+            Set<Loss> losses = Sets.newHashSet();
+            for (JsonElement element : lossArray) {
+                JsonObject loss = element.getAsJsonObject();
+                losses.add(ImmutableLoss.builder().gene(string(loss, "gene")).isPartial(bool(loss, "isPartial")).build());
+            }
+            return losses;
+        }
+
+        @NotNull
+        private static Set<Disruption> toDisruptions(@NotNull JsonArray disruptionArray) {
+            Set<Disruption> disruptions = Sets.newHashSet();
+            for (JsonElement element : disruptionArray) {
+                JsonObject disruption = element.getAsJsonObject();
+                disruptions.add(ImmutableDisruption.builder()
+                        .gene(string(disruption, "gene"))
+                        .isHomozygous(bool(disruption, "isHomozygous"))
+                        .details(string(disruption, "details"))
+                        .build());
+            }
+            return disruptions;
+        }
+
+        @NotNull
+        private static Set<Fusion> toFusions(@NotNull JsonArray fusionArray) {
+            Set<Fusion> fusions = Sets.newHashSet();
+            for (JsonElement element : fusionArray) {
+                JsonObject fusion = element.getAsJsonObject();
+                fusions.add(ImmutableFusion.builder()
+                        .fiveGene(string(fusion, "fiveGene"))
+                        .threeGene(string(fusion, "threeGene"))
+                        .details(string(fusion, "details"))
+                        .driverType(FusionDriverType.valueOf(string(fusion, "threeGene")))
+                        .driverLikelihood(string(fusion, "driverLikelihood"))
+                        .build());
+            }
+            return fusions;
+        }
+
+        @NotNull
+        private static Set<Virus> toViruses(@NotNull JsonArray virusArray) {
+            Set<Virus> viruses = Sets.newHashSet();
+            for (JsonElement element : virusArray) {
+                JsonObject virus = element.getAsJsonObject();
+                viruses.add(ImmutableVirus.builder()
+                        .name(string(virus, "name"))
+                        .details(string(virus, "details"))
+                        .driverLikelihood(string(virus, "driverLikelihood"))
+                        .build());
+            }
+            return viruses;
         }
 
         @NotNull
