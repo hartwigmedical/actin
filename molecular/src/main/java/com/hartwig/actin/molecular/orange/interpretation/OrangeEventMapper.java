@@ -13,9 +13,9 @@ import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.util.FusionParser;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
@@ -47,8 +47,8 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    public MappedActinEvents map(@NotNull OrangeRecord record) {
-        List<TreatmentEvidence> evidences = reportedFromActinSource(record.evidences());
+    public MappedActinEvents map(@NotNull ProtectRecord protect) {
+        List<ProtectEvidence> evidences = reportedFromActinSource(protect.evidences());
 
         return ImmutableMappedActinEvents.builder()
                 .mutations(mapMutations(evidences, mutationMapper))
@@ -61,10 +61,10 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static Set<GeneMutation> mapMutations(@NotNull List<TreatmentEvidence> evidences, @NotNull MutationMapper mutationMapper) {
+    private static Set<GeneMutation> mapMutations(@NotNull List<ProtectEvidence> evidences, @NotNull MutationMapper mutationMapper) {
         Set<GeneMutation> geneMutations = Sets.newHashSet();
 
-        for (TreatmentEvidence evidence : evidences) {
+        for (ProtectEvidence evidence : evidences) {
             if (MUTATION_TYPES.contains(evidence.type())) {
                 for (String mutation : mutationMapper.map(evidence)) {
                     geneMutations.add(ImmutableGeneMutation.builder().gene(evidence.gene()).mutation(mutation).build());
@@ -76,9 +76,9 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static Set<String> mapActivatedGenes(@NotNull List<TreatmentEvidence> evidences) {
+    private static Set<String> mapActivatedGenes(@NotNull List<ProtectEvidence> evidences) {
         Set<String> activatedGenes = Sets.newHashSet();
-        for (TreatmentEvidence evidence : evidences) {
+        for (ProtectEvidence evidence : evidences) {
             if (ACTIVATION_TYPES.contains(evidence.type())) {
                 activatedGenes.add(evidence.gene());
             }
@@ -88,9 +88,9 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static Set<InactivatedGene> mapInactivatedGenes(@NotNull List<TreatmentEvidence> evidences) {
+    private static Set<InactivatedGene> mapInactivatedGenes(@NotNull List<ProtectEvidence> evidences) {
         Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
-        for (TreatmentEvidence evidence : evidences) {
+        for (ProtectEvidence evidence : evidences) {
             if (INACTIVATION_TYPES.contains(evidence.type())) {
                 boolean hasBeenDeleted = evidence.event().equals("full loss") || evidence.event().equals("partial loss");
 
@@ -101,10 +101,10 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static Set<String> mapAmplifiedGenes(@NotNull List<TreatmentEvidence> evidences) {
+    private static Set<String> mapAmplifiedGenes(@NotNull List<ProtectEvidence> evidences) {
         Set<String> amplifiedGenes = Sets.newHashSet();
 
-        for (TreatmentEvidence evidence : evidences) {
+        for (ProtectEvidence evidence : evidences) {
             if (AMPLIFICATION_TYPES.contains(evidence.type())) {
                 amplifiedGenes.add(evidence.gene());
             }
@@ -114,17 +114,17 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static Set<String> mapWildtypeGenes(@NotNull List<TreatmentEvidence> evidences) {
+    private static Set<String> mapWildtypeGenes(@NotNull List<ProtectEvidence> evidences) {
         // TODO Implement wildtype genes.
         return Sets.newHashSet();
 
     }
 
     @NotNull
-    private static Set<FusionGene> mapFusions(@NotNull List<TreatmentEvidence> evidences) {
+    private static Set<FusionGene> mapFusions(@NotNull List<ProtectEvidence> evidences) {
         Set<FusionGene> fusionGenes = Sets.newHashSet();
 
-        for (TreatmentEvidence evidence : evidences) {
+        for (ProtectEvidence evidence : evidences) {
             if (FUSION_TYPES.contains(evidence.type())) {
                 fusionGenes.add(FusionParser.fromEvidenceEvent(evidence.event()));
             }
@@ -134,9 +134,9 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static List<TreatmentEvidence> reportedFromActinSource(@NotNull List<TreatmentEvidence> evidences) {
-        List<TreatmentEvidence> filtered = Lists.newArrayList();
-        for (TreatmentEvidence evidence : evidences) {
+    private static List<ProtectEvidence> reportedFromActinSource(@NotNull Iterable<ProtectEvidence> evidences) {
+        List<ProtectEvidence> filtered = Lists.newArrayList();
+        for (ProtectEvidence evidence : evidences) {
             if (evidence.sources().contains(ACTIN_SOURCE) && evidence.reported()) {
                 filtered.add(evidence);
             }

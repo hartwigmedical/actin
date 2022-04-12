@@ -1,16 +1,16 @@
-package com.hartwig.actin.molecular.orange.datamodel;
+package com.hartwig.actin.molecular.orange.datamodel.protect;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestTreatmentEvidenceFactory {
+public final class TestProtectEvidenceFactory {
 
-    private TestTreatmentEvidenceFactory() {
+    private TestProtectEvidenceFactory() {
     }
 
     @NotNull
-    public static TreatmentEvidence create() {
-        return ImmutableTreatmentEvidence.builder()
+    public static ProtectEvidence create() {
+        return ImmutableProtectEvidence.builder()
                 .reported(false)
                 .event(Strings.EMPTY)
                 .treatment(Strings.EMPTY)

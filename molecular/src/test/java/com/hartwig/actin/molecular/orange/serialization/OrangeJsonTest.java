@@ -1,17 +1,24 @@
 package com.hartwig.actin.molecular.orange.serialization;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class OrangeJsonTest {
@@ -26,13 +33,14 @@ public class OrangeJsonTest {
         OrangeRecord record = OrangeJson.read(MINIMAL_ORANGE_JSON);
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertFalse(record.hasReliableQuality());
-
-        assertNotNull(record.predictedTumorOrigin());
-        assertEquals("MSS", record.microsatelliteStabilityStatus());
-        assertEquals("HR_PROFICIENT", record.homologousRepairStatus());
-
-        assertTrue(record.evidences().isEmpty());
+        assertNotNull(record.reportDate());
+        assertNotNull(record.purple());
+        assertNotNull(record.linx());
+        assertNotNull(record.peach());
+        assertNotNull(record.cuppa());
+        assertNotNull(record.virusInterpreter());
+        assertNotNull(record.chord());
+        assertNotNull(record.protect());
     }
 
     @Test
@@ -40,16 +48,46 @@ public class OrangeJsonTest {
         OrangeRecord record = OrangeJson.read(PROPER_ORANGE_JSON);
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertTrue(record.hasReliableQuality());
+        assertEquals(LocalDate.of(2022, 1, 20), record.reportDate());
 
-        PredictedTumorOrigin predictedTumorOrigin = record.predictedTumorOrigin();
-        assertEquals("Melanoma", predictedTumorOrigin.tumorType());
-        assertEquals(0.996, predictedTumorOrigin.likelihood(), EPSILON);
+        assertPurple(record.purple());
+        assertLinx(record.linx());
+        assertPeach(record.peach());
+        assertCuppa(record.cuppa());
+        assertVirusInterpreter(record.virusInterpreter());
+        assertChord(record.chord());
+        assertProtect(record.protect());
+    }
 
-        assertEquals("MSS", record.microsatelliteStabilityStatus());
-        assertEquals("HR_PROFICIENT", record.homologousRepairStatus());
-        assertEquals(13.71, record.tumorMutationalBurden(), EPSILON);
-        assertEquals(185, record.tumorMutationalLoad());
-        assertEquals(138, record.evidences().size());
+    private static void assertPurple(@NotNull PurpleRecord purple) {
+        assertTrue(purple.hasReliableQuality());
+        assertEquals("MSS", purple.microsatelliteStabilityStatus());
+        assertEquals(13.71, purple.tumorMutationalBurden(), EPSILON);
+        assertEquals(185, purple.tumorMutationalLoad());
+    }
+
+    private static void assertLinx(@NotNull LinxRecord linx) {
+        assertNotNull(linx);
+    }
+
+    private static void assertPeach(@NotNull PeachRecord peach) {
+        assertNotNull(peach);
+    }
+
+    private static void assertCuppa(@NotNull CuppaRecord cuppa) {
+        assertEquals("Melanoma", cuppa.predictedCancerType());
+        assertEquals(0.996, cuppa.bestPredictionLikelihood(), EPSILON);
+    }
+
+    private static void assertVirusInterpreter(@NotNull VirusInterpreterRecord virusInterpreter) {
+        assertNotNull(virusInterpreter);
+    }
+
+    private static void assertChord(@NotNull ChordRecord chord) {
+        assertEquals("HR_PROFICIENT", chord.hrStatus());
+    }
+
+    private static void assertProtect(@NotNull ProtectRecord protect) {
+        assertEquals(138, protect.evidences().size());
     }
 }

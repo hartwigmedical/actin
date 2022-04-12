@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -34,7 +34,7 @@ class OrangeMutationMapper implements MutationMapper {
 
     @Override
     @NotNull
-    public Set<String> map(@NotNull TreatmentEvidence evidence) {
+    public Set<String> map(@NotNull ProtectEvidence evidence) {
         switch (evidence.type()) {
             case HOTSPOT_MUTATION: {
                 return mapForHotspotMutation(mutationRecords, evidence.gene(), evidence.event());

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.datamodel;
+package com.hartwig.actin.molecular.orange.datamodel.protect;
 
 import java.util.Set;
 
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentEvidence {
+public abstract class ProtectEvidence {
 
     public abstract boolean reported();
 

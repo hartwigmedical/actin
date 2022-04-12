@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.orange.serialization;
 
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.integer;
-import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
@@ -26,15 +26,27 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,35 +70,65 @@ public final class OrangeJson {
                 @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject record = jsonElement.getAsJsonObject();
 
-            JsonObject purple = object(record, "purple");
-            JsonObject chord = object(record, "chord");
             return ImmutableOrangeRecord.builder()
                     .sampleId(string(record, "sampleId"))
-                    .date(nullableDate(record, "reportDate"))
+                    .reportDate(date(record, "reportDate"))
+                    .purple(toPurpleRecord(object(record, "purple")))
+                    .linx(toLinxRecord(object(record, "linx")))
+                    .peach(toPeachRecord(array(record, "peach")))
+                    .cuppa(toCuppaRecord(object(record, "cuppa")))
+                    .virusInterpreter(toVirusInterpreterRecord(object(record, "virusInterpreter")))
+                    .chord(toChordRecord(object(record, "chord")))
+                    .protect(toProtectRecord(array(record, "protect")))
+                    .build();
+        }
+
+        @NotNull
+        private static PurpleRecord toPurpleRecord(@NotNull JsonObject purple) {
+            return ImmutablePurpleRecord.builder()
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
-                    .predictedTumorOrigin(toPredictedTumorOrigin(object(record, "cuppa")))
+                    .purity(number(purple, "purity"))
+                    .hasReliablePurity(bool(purple, "hasReliablePurity"))
                     .microsatelliteStabilityStatus(string(purple, "microsatelliteStatus"))
-                    .homologousRepairStatus(string(chord, "hrStatus"))
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
-                    .evidences(toEvidences(array(record, "protect")))
                     .build();
         }
 
         @NotNull
-        private static PredictedTumorOrigin toPredictedTumorOrigin(@NotNull JsonObject cuppa) {
-            return ImmutablePredictedTumorOrigin.builder()
-                    .tumorType(string(cuppa, "predictedCancerType"))
-                    .likelihood(number(cuppa, "bestPredictionLikelihood"))
+        private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
+            return ImmutableLinxRecord.builder().build();
+        }
+
+        @NotNull
+        private static PeachRecord toPeachRecord(@NotNull JsonArray peachArray) {
+            return ImmutablePeachRecord.builder().build();
+        }
+
+        @NotNull
+        private static CuppaRecord toCuppaRecord(@NotNull JsonObject cuppa) {
+            return ImmutableCuppaRecord.builder()
+                    .predictedCancerType(string(cuppa, "predictedCancerType"))
+                    .bestPredictionLikelihood(number(cuppa, "bestPredictionLikelihood"))
                     .build();
         }
 
         @NotNull
-        private static List<TreatmentEvidence> toEvidences(@NotNull JsonArray protectArray) {
-            List<TreatmentEvidence> evidences = Lists.newArrayList();
+        private static VirusInterpreterRecord toVirusInterpreterRecord(@NotNull JsonObject virusInterpreter) {
+            return ImmutableVirusInterpreterRecord.builder().build();
+        }
+
+        @NotNull
+        private static ChordRecord toChordRecord(@NotNull JsonObject chord) {
+            return ImmutableChordRecord.builder().hrStatus(string(chord, "hrStatus")).build();
+        }
+
+        @NotNull
+        private static ProtectRecord toProtectRecord(@NotNull JsonArray protectArray) {
+            List<ProtectEvidence> evidences = Lists.newArrayList();
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
-                evidences.add(ImmutableTreatmentEvidence.builder()
+                evidences.add(ImmutableProtectEvidence.builder()
                         .reported(bool(evidence, "reported"))
                         .gene(nullableString(evidence, "gene"))
                         .event(string(evidence, "event"))
@@ -99,7 +141,7 @@ public final class OrangeJson {
                         .sources(stringList(evidence, "sources"))
                         .build());
             }
-            return evidences;
+            return ImmutableProtectRecord.builder().evidences(evidences).build();
         }
     }
 }

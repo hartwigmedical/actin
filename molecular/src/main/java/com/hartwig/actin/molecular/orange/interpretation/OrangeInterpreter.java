@@ -8,11 +8,16 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,46 +54,52 @@ public class OrangeInterpreter {
 
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
-        // TODO Add drivers and pharmaco
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
-                .date(record.date())
-                .hasReliableQuality(record.hasReliableQuality())
+                .date(record.reportDate())
+                .hasReliableQuality(record.purple().hasReliableQuality())
                 .characteristics(extractCharacteristics(record))
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .pharmaco(Lists.newArrayList())
                 .evidence(extractEvidence(record))
-                .mappedEvents(eventMapper.map(record))
-                .build();
-    }
-
-    @NotNull
-    private MolecularEvidence extractEvidence(@NotNull OrangeRecord record) {
-        return ImmutableMolecularEvidence.builder()
-                .actinSource("Erasmus MC")
-                .actinTrials(evidenceFactory.createActinTrials(record.evidences()))
-                .externalTrialSource("iClusion")
-                .externalTrials(evidenceFactory.createExternalTrials(record.evidences()))
-                .evidenceSource("CKB")
-                .approvedResponsiveEvidence(evidenceFactory.createApprovedResponsiveEvidence(record.evidences()))
-                .experimentalResponsiveEvidence(evidenceFactory.createExperimentalResponsiveEvidence(record.evidences()))
-                .otherResponsiveEvidence(evidenceFactory.createOtherResponsiveEvidence(record.evidences()))
-                .resistanceEvidence(evidenceFactory.createResistanceEvidence(record.evidences()))
+                .mappedEvents(eventMapper.map(record.protect()))
                 .build();
     }
 
     @NotNull
     private static MolecularCharacteristics extractCharacteristics(@NotNull OrangeRecord record) {
-        // TODO Read purity & purity reliability
+        PredictedTumorOrigin predictedTumorOrigin = ImmutablePredictedTumorOrigin.builder()
+                .tumorType(record.cuppa().predictedCancerType())
+                .likelihood(record.cuppa().bestPredictionLikelihood())
+                .build();
+
+        PurpleRecord purple = record.purple();
+        ChordRecord chord = record.chord();
         return ImmutableMolecularCharacteristics.builder()
-                .purity(null)
-                .hasReliablePurity(null)
-                .predictedTumorOrigin(record.predictedTumorOrigin())
-                .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
-                .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))
-                .tumorMutationalBurden(record.tumorMutationalBurden())
-                .tumorMutationalLoad(record.tumorMutationalLoad())
+                .purity(purple.purity())
+                .hasReliablePurity(purple.hasReliablePurity())
+                .predictedTumorOrigin(predictedTumorOrigin)
+                .isMicrosatelliteUnstable(isMSI(purple.microsatelliteStabilityStatus()))
+                .isHomologousRepairDeficient(isHRD(chord.hrStatus()))
+                .tumorMutationalBurden(purple.tumorMutationalBurden())
+                .tumorMutationalLoad(purple.tumorMutationalLoad())
+                .build();
+    }
+
+    @NotNull
+    private MolecularEvidence extractEvidence(@NotNull OrangeRecord record) {
+        ProtectRecord protect = record.protect();
+        return ImmutableMolecularEvidence.builder()
+                .actinSource("Erasmus MC")
+                .actinTrials(evidenceFactory.createActinTrials(protect.evidences()))
+                .externalTrialSource("iClusion")
+                .externalTrials(evidenceFactory.createExternalTrials(protect.evidences()))
+                .evidenceSource("CKB")
+                .approvedResponsiveEvidence(evidenceFactory.createApprovedResponsiveEvidence(protect.evidences()))
+                .experimentalResponsiveEvidence(evidenceFactory.createExperimentalResponsiveEvidence(protect.evidences()))
+                .otherResponsiveEvidence(evidenceFactory.createOtherResponsiveEvidence(protect.evidences()))
+                .resistanceEvidence(evidenceFactory.createResistanceEvidence(protect.evidences()))
                 .build();
     }
 
@@ -105,8 +116,8 @@ public class OrangeInterpreter {
     }
 
     @Nullable
-    private static Boolean isHRD(@NotNull String homologousRepairStatus) {
-        switch (homologousRepairStatus) {
+    private static Boolean isHRD(@NotNull String hrStatus) {
+        switch (hrStatus) {
             case HOMOLOGOUS_REPAIR_DEFICIENT:
                 return true;
             case HOMOLOGOUS_REPAIR_PROFICIENT:
@@ -115,7 +126,7 @@ public class OrangeInterpreter {
                 return null;
         }
 
-        LOGGER.warn("Cannot interpret homologous repair status '{}'", homologousRepairStatus);
+        LOGGER.warn("Cannot interpret homologous repair status '{}'", hrStatus);
         return null;
     }
 }

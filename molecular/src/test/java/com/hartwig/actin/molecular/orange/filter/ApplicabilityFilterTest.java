@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.filter;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.TestTreatmentEvidenceFactory;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectEvidenceFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class ApplicabilityFilterTest {
     }
 
     @NotNull
-    private static ImmutableTreatmentEvidence.Builder testBuilder() {
-        return ImmutableTreatmentEvidence.builder().from(TestTreatmentEvidenceFactory.create());
+    private static ImmutableProtectEvidence.Builder testBuilder() {
+        return ImmutableProtectEvidence.builder().from(TestProtectEvidenceFactory.create());
     }
 }

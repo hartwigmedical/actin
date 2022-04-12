@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceType;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ public final class OrangeUtil {
     }
 
     @NotNull
-    public static String toEvent(@NotNull TreatmentEvidence evidence) {
+    public static String toEvent(@NotNull ProtectEvidence evidence) {
         String gene = evidence.gene();
         String event = EventFormatter.format(evidence.event());
 

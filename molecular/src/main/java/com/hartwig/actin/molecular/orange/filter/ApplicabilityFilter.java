@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.filter;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.interpretation.OrangeUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public final class ApplicabilityFilter {
     private ApplicabilityFilter() {
     }
 
-    public static boolean isPotentiallyApplicable(@NotNull TreatmentEvidence evidence) {
+    public static boolean isPotentiallyApplicable(@NotNull ProtectEvidence evidence) {
         String gene = evidence.gene();
         for (String nonApplicableGene : NON_APPLICABLE_GENES) {
             if (gene != null && gene.equals(nonApplicableGene)) {

@@ -5,8 +5,20 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -20,12 +32,14 @@ public final class TestOrangeDataFactory {
     public static OrangeRecord createMinimalTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
-                .hasReliableQuality(false)
-                .predictedTumorOrigin(ImmutablePredictedTumorOrigin.builder().tumorType("Unknown").likelihood(0D).build())
-                .microsatelliteStabilityStatus(Strings.EMPTY)
-                .homologousRepairStatus(Strings.EMPTY)
-                .tumorMutationalBurden(8D)
-                .tumorMutationalLoad(100)
+                .reportDate(LocalDate.of(2021, 5, 6))
+                .purple(createTestPurpleRecord())
+                .linx(ImmutableLinxRecord.builder().build())
+                .peach(ImmutablePeachRecord.builder().build())
+                .cuppa(ImmutableCuppaRecord.builder().predictedCancerType("Unknown").bestPredictionLikelihood(0D).build())
+                .virusInterpreter(ImmutableVirusInterpreterRecord.builder().build())
+                .chord(ImmutableChordRecord.builder().hrStatus(Strings.EMPTY).build())
+                .protect(ImmutableProtectRecord.builder().build())
                 .build();
     }
 
@@ -33,25 +47,29 @@ public final class TestOrangeDataFactory {
     public static OrangeRecord createProperTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .from(createMinimalTestOrangeRecord())
-                .date(LocalDate.of(2022, 1, 20))
-                .hasReliableQuality(true)
-                .predictedTumorOrigin(createTestPredictedTumorOrigin())
-                .microsatelliteStabilityStatus("MSS")
-                .homologousRepairStatus("HR_PROFICIENT")
-                .evidences(createTestEvidences())
+                .cuppa(ImmutableCuppaRecord.builder().predictedCancerType("Melanoma").bestPredictionLikelihood(0.996).build())
+                .chord(ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build())
+                .protect(createTestProtectRecord())
                 .build();
     }
 
     @NotNull
-    private static PredictedTumorOrigin createTestPredictedTumorOrigin() {
-        return ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build();
+    private static PurpleRecord createTestPurpleRecord() {
+        return ImmutablePurpleRecord.builder()
+                .hasReliableQuality(true)
+                .purity(0.98)
+                .hasReliablePurity(true)
+                .microsatelliteStabilityStatus("MSS")
+                .tumorMutationalBurden(8D)
+                .tumorMutationalLoad(100)
+                .build();
     }
 
     @NotNull
-    private static List<TreatmentEvidence> createTestEvidences() {
-        List<TreatmentEvidence> evidences = Lists.newArrayList();
+    private static ProtectRecord createTestProtectRecord() {
+        List<ProtectEvidence> evidences = Lists.newArrayList();
 
-        ImmutableTreatmentEvidence.Builder evidenceBuilder = ImmutableTreatmentEvidence.builder().addSources("CKB").reported(true);
+        ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder().addSources("CKB").reported(true);
         evidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Vemurafenib")
@@ -79,8 +97,7 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        ImmutableTreatmentEvidence.Builder externalTrialBuilder =
-                ImmutableTreatmentEvidence.builder().addSources("ICLUSION").reported(true);
+        ImmutableProtectEvidence.Builder externalTrialBuilder = ImmutableProtectEvidence.builder().addSources("ICLUSION").reported(true);
         evidences.add(externalTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial X")
@@ -90,7 +107,7 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        ImmutableTreatmentEvidence.Builder actinTrialBuilder = ImmutableTreatmentEvidence.builder().addSources("ACTIN").reported(true);
+        ImmutableProtectEvidence.Builder actinTrialBuilder = ImmutableProtectEvidence.builder().addSources("ACTIN").reported(true);
         evidences.add(actinTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial Y")
@@ -100,6 +117,6 @@ public final class TestOrangeDataFactory {
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build());
 
-        return evidences;
+        return ImmutableProtectRecord.builder().evidences(evidences).build();
     }
 }

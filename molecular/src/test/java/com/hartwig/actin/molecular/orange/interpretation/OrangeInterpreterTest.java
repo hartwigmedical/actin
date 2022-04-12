@@ -18,6 +18,8 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -37,7 +39,7 @@ public class OrangeInterpreterTest {
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
-        assertEquals(LocalDate.of(2022, 1, 20), record.date());
+        assertEquals(LocalDate.of(2021, 5, 6), record.date());
 
         MolecularCharacteristics characteristics = record.characteristics();
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
@@ -75,7 +77,7 @@ public class OrangeInterpreterTest {
     private static OrangeRecord withHomologousRepairStatus(@NotNull String hrStatus) {
         return ImmutableOrangeRecord.builder()
                 .from(TestOrangeDataFactory.createMinimalTestOrangeRecord())
-                .homologousRepairStatus(hrStatus)
+                .chord(ImmutableChordRecord.builder().hrStatus(hrStatus).build())
                 .build();
     }
 
@@ -94,9 +96,11 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeRecord withMicrosatelliteStatus(@NotNull String microsatelliteStatus) {
+        OrangeRecord base = TestOrangeDataFactory.createMinimalTestOrangeRecord();
+
         return ImmutableOrangeRecord.builder()
-                .from(TestOrangeDataFactory.createMinimalTestOrangeRecord())
-                .microsatelliteStabilityStatus(microsatelliteStatus)
+                .from(base)
+                .purple(ImmutablePurpleRecord.builder().from(base.purple()).microsatelliteStabilityStatus(microsatelliteStatus).build())
                 .build();
     }
 

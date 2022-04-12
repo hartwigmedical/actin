@@ -8,11 +8,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceDirection;
-import com.hartwig.actin.molecular.orange.datamodel.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableTreatmentEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.TestTreatmentEvidenceFactory;
-import com.hartwig.actin.molecular.orange.datamodel.TreatmentEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectEvidenceFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void canCreateActinTrials() {
         OrangeEvidenceFactory factory = createTestFactory();
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         Set<EvidenceEntry> actinTrials = factory.createActinTrials(evidences);
         assertEquals(1, actinTrials.size());
@@ -32,7 +32,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void filterActinTrialsWithoutInclusion() {
         OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> false);
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         assertTrue(factory.createActinTrials(evidences).isEmpty());
     }
@@ -40,7 +40,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void canCreateExternalTrials() {
         OrangeEvidenceFactory factory = createTestFactory();
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         Set<EvidenceEntry> externalTrials = factory.createExternalTrials(evidences);
         assertEquals(1, externalTrials.size());
@@ -49,7 +49,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void canCreateApprovedEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         Set<EvidenceEntry> approvedResponsiveEvidence = factory.createApprovedResponsiveEvidence(evidences);
         assertEquals(1, approvedResponsiveEvidence.size());
@@ -59,7 +59,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void canCreateExperimentalResponsiveEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         Set<EvidenceEntry> experimentalResponsiveEvidence = factory.createExperimentalResponsiveEvidence(evidences);
         assertEquals(1, experimentalResponsiveEvidence.size());
@@ -69,7 +69,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void canCreateOtherResponsiveEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         Set<EvidenceEntry> otherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
         assertEquals(1, otherResponsiveEvidence.size());
@@ -79,7 +79,7 @@ public class OrangeEvidenceFactoryTest {
     @Test
     public void canCreateResistanceEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
-        List<TreatmentEvidence> evidences = createTestEvidences();
+        List<ProtectEvidence> evidences = createTestEvidences();
 
         Set<EvidenceEntry> resistanceEvidence = factory.createResistanceEvidence(evidences);
         assertEquals(1, resistanceEvidence.size());
@@ -92,11 +92,11 @@ public class OrangeEvidenceFactoryTest {
     }
 
     @NotNull
-    private static List<TreatmentEvidence> createTestEvidences() {
-        List<TreatmentEvidence> evidences = Lists.newArrayList();
+    private static List<ProtectEvidence> createTestEvidences() {
+        List<ProtectEvidence> evidences = Lists.newArrayList();
 
-        ImmutableTreatmentEvidence.Builder evidenceBuilder = ImmutableTreatmentEvidence.builder()
-                .from(TestTreatmentEvidenceFactory.create())
+        ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder()
+                .from(TestProtectEvidenceFactory.create())
                 .reported(true)
                 .addSources(OrangeEvidenceFactory.CKB_SOURCE);
 
@@ -165,8 +165,8 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // Add one general trial event that should be included
-        evidences.add(ImmutableTreatmentEvidence.builder()
-                .from(TestTreatmentEvidenceFactory.create())
+        evidences.add(ImmutableProtectEvidence.builder()
+                .from(TestProtectEvidenceFactory.create())
                 .reported(true)
                 .event("B responsive trial event")
                 .onLabel(true)
@@ -176,8 +176,8 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // And one ACTIN trial that should be included.
-        evidences.add(ImmutableTreatmentEvidence.builder()
-                .from(TestTreatmentEvidenceFactory.create())
+        evidences.add(ImmutableProtectEvidence.builder()
+                .from(TestProtectEvidenceFactory.create())
                 .reported(true)
                 .event("B responsive actin event")
                 .onLabel(true)

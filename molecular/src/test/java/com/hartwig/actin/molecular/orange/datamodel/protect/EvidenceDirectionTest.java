@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.datamodel;
+package com.hartwig.actin.molecular.orange.datamodel.protect;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

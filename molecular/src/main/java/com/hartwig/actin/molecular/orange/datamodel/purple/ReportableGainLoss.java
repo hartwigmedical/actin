@@ -1,6 +1,4 @@
-package com.hartwig.actin.molecular.orange.filter;
-
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+package com.hartwig.actin.molecular.orange.datamodel.purple;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -8,14 +6,13 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ApplicabilityFilterKey {
+public abstract class ReportableGainLoss {
 
     @NotNull
     public abstract String gene();
 
     @NotNull
-    public abstract EvidenceLevel level();
+    public abstract GainLossInterpretation interpretation();
 
-    @NotNull
-    public abstract String treatment();
+    public abstract int minCopies();
 }

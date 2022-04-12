@@ -1,9 +1,14 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -16,25 +21,28 @@ public abstract class OrangeRecord {
     @NotNull
     public abstract String sampleId();
 
-    @Nullable
-    public abstract LocalDate date();
-
-    public abstract boolean hasReliableQuality();
+    @NotNull
+    public abstract LocalDate reportDate();
 
     @NotNull
-    public abstract PredictedTumorOrigin predictedTumorOrigin();
+    public abstract PurpleRecord purple();
 
     @NotNull
-    public abstract String microsatelliteStabilityStatus();
+    public abstract LinxRecord linx();
 
     @NotNull
-    public abstract String homologousRepairStatus();
-
-    public abstract double tumorMutationalBurden();
-
-    public abstract int tumorMutationalLoad();
+    public abstract PeachRecord peach();
 
     @NotNull
-    public abstract List<TreatmentEvidence> evidences();
+    public abstract CuppaRecord cuppa();
+
+    @NotNull
+    public abstract VirusInterpreterRecord virusInterpreter();
+
+    @NotNull
+    public abstract ChordRecord chord();
+
+    @NotNull
+    public abstract ProtectRecord protect();
 
 }
