@@ -74,6 +74,8 @@ public class OrangeJsonTest {
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
         assertTrue(purple.hasReliableQuality());
+        assertEquals(0.99, purple.purity(), EPSILON);
+        assertTrue(purple.hasReliablePurity());
         assertEquals("MSS", purple.microsatelliteStabilityStatus());
         assertEquals(13.71, purple.tumorMutationalBurden(), EPSILON);
         assertEquals(185, purple.tumorMutationalLoad());
