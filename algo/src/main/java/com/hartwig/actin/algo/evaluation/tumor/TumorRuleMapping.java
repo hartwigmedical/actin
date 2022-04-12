@@ -37,6 +37,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_KNOWN_BRAIN_METASTASES, hasKnownBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, hasKnownActiveBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
+        map.put(EligibilityRule.HAS_BONE_METASTASES_ONLY, hasOnlyBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
@@ -145,6 +146,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasBoneMetastasesCreator() {
         return function -> new HasBoneMetastases();
+    }
+
+    @NotNull
+    private static FunctionCreator hasOnlyBoneMetastasesCreator() {
+        return function -> new HasBoneMetastasesOnly();
     }
 
     @NotNull

@@ -33,6 +33,7 @@ public final class WashoutRuleMapping {
                 Sets.newHashSet("Platinum compound", "Pyrimidine antagonist", "Taxane", "Alkylating agent"));
         CATEGORIES_PER_MAIN_CATEGORY.put("Endocrine therapy", Sets.newHashSet("Anti-androgen", "Anti-estrogen"));
         CATEGORIES_PER_MAIN_CATEGORY.put("Gonadorelin", Sets.newHashSet("Gonadorelin agonist", "Gonadorelin antagonist"));
+        CATEGORIES_PER_MAIN_CATEGORY.put("Immunosuppressants", Sets.newHashSet("Immunosuppressants, selective", "Immunosuppressants, other"));
 
         for (Set<String> categories : CATEGORIES_PER_MAIN_CATEGORY.values()) {
             ALL_ANTI_CANCER_CATEGORIES.addAll(categories);
@@ -51,10 +52,12 @@ public final class WashoutRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_RECEIVED_DRUG_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
-                hasRecentlyReceivedCancerTherapyOfNameCreator(referenceDateProvider));
-        map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
-                hasRecentlyReceivedCancerTherapyOfCategoryCreator(referenceDateProvider));
+        map.put(EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
+                hasRecentlyReceivedCancerTherapyOfNamesCreator(referenceDateProvider));
+        map.put(EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES, hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
+                hasRecentlyReceivedCancerTherapyOfCategoriesCreator(referenceDateProvider));
+        map.put(EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES, hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator());
         map.put(EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS, hasRecentlyReceivedRadiotherapyCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS,
                 hasRecentlyReceivedAnyCancerTherapyCreator(referenceDateProvider));
@@ -72,7 +75,7 @@ public final class WashoutRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNameCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNamesCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
             LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer());
@@ -82,7 +85,13 @@ public final class WashoutRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfCategoryCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator() {
+        return function -> new HasRecentlyReceivedCancerTherapyOfNameHalfLife();
+    }
+
+    @NotNull
+    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfCategoriesCreator(
+            @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
             LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer());
@@ -95,6 +104,11 @@ public final class WashoutRuleMapping {
                 return new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate);
             }
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator() {
+        return function -> new HasRecentlyReceivedCancerTherapyOfCategoryHalfLife();
     }
 
     @NotNull

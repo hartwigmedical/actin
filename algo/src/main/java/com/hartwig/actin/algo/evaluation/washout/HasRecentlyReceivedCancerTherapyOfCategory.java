@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFunction {
 
     @NotNull
