@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.linx;
 
-public enum FusionLikelihood {
+public enum FusionDriverLikelihood {
     HIGH,
     LOW
 }

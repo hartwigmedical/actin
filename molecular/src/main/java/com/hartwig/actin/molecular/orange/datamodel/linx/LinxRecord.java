@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 public abstract class LinxRecord {
 
     @NotNull
-    public abstract Set<ReportableFusion> fusions();
+    public abstract Set<LinxFusion> fusions();
 
     @NotNull
     public abstract Set<String> homozygousDisruptedGenes();
     
     @NotNull
-    public abstract Set<ReportableDisruption> disruptions();
+    public abstract Set<LinxDisruption> disruptions();
 }

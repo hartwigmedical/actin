@@ -14,5 +14,5 @@ public abstract class VirusInterpreterEntry {
     public abstract int integrations();
 
     @NotNull
-    public abstract VirusLikelihood likelihood();
+    public abstract VirusDriverLikelihood driverLikelihood();
 }

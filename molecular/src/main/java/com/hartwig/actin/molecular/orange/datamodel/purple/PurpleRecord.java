@@ -24,8 +24,8 @@ public abstract class PurpleRecord {
     public abstract int tumorMutationalLoad();
 
     @NotNull
-    public abstract Set<ReportableVariant> variants();
+    public abstract Set<PurpleVariant> variants();
 
     @NotNull
-    public abstract Set<ReportableGainLoss> gainsLosses();
+    public abstract Set<PurpleGainLoss> gainsLosses();
 }

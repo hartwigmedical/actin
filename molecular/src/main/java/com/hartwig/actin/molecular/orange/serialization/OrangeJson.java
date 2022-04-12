@@ -34,14 +34,14 @@ import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableReportableDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableReportableFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ReportableDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ReportableFusion;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
@@ -54,18 +54,18 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectReco
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutableReportableGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutableReportableVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ReportableGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ReportableVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusLikelihood;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -104,7 +104,7 @@ public final class OrangeJson {
 
         @NotNull
         private static PurpleRecord toPurpleRecord(@NotNull JsonObject purple) {
-            Set<ReportableVariant> variants = Sets.newHashSet();
+            Set<PurpleVariant> variants = Sets.newHashSet();
             variants.addAll(toReportableVariants(array(purple, "reportableSomaticVariants")));
             variants.addAll(toReportableVariants(array(purple, "reportableGermlineVariants")));
 
@@ -121,11 +121,11 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<ReportableGainLoss> toReportableGainsLosses(@NotNull JsonArray reportableGainLossArray) {
-            Set<ReportableGainLoss> reportableGainsLosses = Sets.newHashSet();
+        private static Set<PurpleGainLoss> toReportableGainsLosses(@NotNull JsonArray reportableGainLossArray) {
+            Set<PurpleGainLoss> reportableGainsLosses = Sets.newHashSet();
             for (JsonElement element : reportableGainLossArray) {
                 JsonObject reportableGainLoss = element.getAsJsonObject();
-                reportableGainsLosses.add(ImmutableReportableGainLoss.builder()
+                reportableGainsLosses.add(ImmutablePurpleGainLoss.builder()
                         .gene(string(reportableGainLoss, "gene"))
                         .interpretation(GainLossInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
                         .minCopies(integer(reportableGainLoss, "minCopies"))
@@ -135,11 +135,11 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static List<ReportableVariant> toReportableVariants(@NotNull JsonArray variantArray) {
-            List<ReportableVariant> variants = Lists.newArrayList();
+        private static List<PurpleVariant> toReportableVariants(@NotNull JsonArray variantArray) {
+            List<PurpleVariant> variants = Lists.newArrayList();
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
-                variants.add(ImmutableReportableVariant.builder()
+                variants.add(ImmutablePurpleVariant.builder()
                         .gene(string(variant, "gene"))
                         .hgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
                         .hgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
@@ -165,17 +165,17 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<ReportableFusion> toReportableFusions(@NotNull JsonArray reportableFusionArray) {
-            Set<ReportableFusion> fusions = Sets.newHashSet();
+        private static Set<LinxFusion> toReportableFusions(@NotNull JsonArray reportableFusionArray) {
+            Set<LinxFusion> fusions = Sets.newHashSet();
             for (JsonElement element : reportableFusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
-                fusions.add(ImmutableReportableFusion.builder()
+                fusions.add(ImmutableLinxFusion.builder()
                         .type(FusionType.valueOf(string(fusion, "reportedType")))
                         .geneStart(string(fusion, "geneStart"))
                         .geneContextStart(string(fusion, "geneContextStart"))
                         .geneEnd(string(fusion, "geneEnd"))
                         .geneContextEnd(string(fusion, "geneContextEnd"))
-                        .likelihood(FusionLikelihood.valueOf(string(fusion, "likelihood")))
+                        .driverLikelihood(FusionDriverLikelihood.valueOf(string(fusion, "likelihood")))
                         .build());
             }
             return fusions;
@@ -193,11 +193,11 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<ReportableDisruption> toReportableDisruptions(@NotNull JsonArray geneDisruptionArray) {
-            Set<ReportableDisruption> disruptions = Sets.newHashSet();
+        private static Set<LinxDisruption> toReportableDisruptions(@NotNull JsonArray geneDisruptionArray) {
+            Set<LinxDisruption> disruptions = Sets.newHashSet();
             for (JsonElement element : geneDisruptionArray) {
                 JsonObject geneDisruption = element.getAsJsonObject();
-                disruptions.add(ImmutableReportableDisruption.builder()
+                disruptions.add(ImmutableLinxDisruption.builder()
                         .gene(string(geneDisruption, "gene"))
                         .range(string(geneDisruption, "range"))
                         .build());
@@ -231,7 +231,7 @@ public final class OrangeJson {
                 entries.add(ImmutableVirusInterpreterEntry.builder()
                         .name(string(virus, "name"))
                         .integrations(integer(virus, "integrations"))
-                        .likelihood(VirusLikelihood.valueOf(string(virus, "virusDriverLikelihoodType")))
+                        .driverLikelihood(VirusDriverLikelihood.valueOf(string(virus, "virusDriverLikelihoodType")))
                         .build());
             }
             return ImmutableVirusInterpreterRecord.builder().entries(entries).build();

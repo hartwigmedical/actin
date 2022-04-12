@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.virus;
 
-public enum VirusLikelihood {
+public enum VirusDriverLikelihood {
     HIGH,
     LOW
 }

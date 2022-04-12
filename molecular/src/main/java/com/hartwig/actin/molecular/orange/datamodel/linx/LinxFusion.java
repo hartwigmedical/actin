@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ReportableFusion {
+public abstract class LinxFusion {
 
     @NotNull
     public abstract FusionType type();
@@ -24,6 +24,6 @@ public abstract class ReportableFusion {
     public abstract String geneContextEnd();
 
     @NotNull
-    public abstract FusionLikelihood likelihood();
+    public abstract FusionDriverLikelihood driverLikelihood();
 
 }

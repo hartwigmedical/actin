@@ -14,11 +14,11 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ReportableDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ReportableFusion;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
@@ -27,13 +27,13 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ReportableGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ReportableVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusLikelihood;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class OrangeJsonTest {
         assertEquals(185, purple.tumorMutationalLoad());
 
         assertEquals(2, purple.variants().size());
-        ReportableVariant variant1 = findByGene(purple.variants(), "SF3B1");
+        PurpleVariant variant1 = findByGene(purple.variants(), "SF3B1");
         assertEquals("p.Pro718Leu", variant1.hgvsProteinImpact());
         assertEquals("c.2153C>T", variant1.hgvsCodingImpact());
         assertEquals("missense_variant", variant1.effect());
@@ -92,7 +92,7 @@ public class OrangeJsonTest {
         assertEquals(0.15, variant1.driverLikelihood(), EPSILON);
         assertEquals(1.0, variant1.clonalLikelihood(), EPSILON);
 
-        ReportableVariant variant2 = findByGene(purple.variants(), "BRCA1");
+        PurpleVariant variant2 = findByGene(purple.variants(), "BRCA1");
         assertEquals("p.?", variant2.hgvsProteinImpact());
         assertEquals("c.5340+1G>A", variant2.hgvsCodingImpact());
         assertEquals("splice_donor_variant&intron_variant", variant2.effect());
@@ -104,15 +104,15 @@ public class OrangeJsonTest {
         assertEquals(1.0, variant2.clonalLikelihood(), EPSILON);
 
         assertEquals(1, purple.gainsLosses().size());
-        ReportableGainLoss gainLoss = purple.gainsLosses().iterator().next();
+        PurpleGainLoss gainLoss = purple.gainsLosses().iterator().next();
         assertEquals("SMAD4", gainLoss.gene());
         assertEquals(GainLossInterpretation.FULL_LOSS, gainLoss.interpretation());
         assertEquals(0, gainLoss.minCopies());
     }
 
     @NotNull
-    private static ReportableVariant findByGene(@NotNull Iterable<ReportableVariant> variants, @NotNull String geneToFind) {
-        for (ReportableVariant variant : variants) {
+    private static PurpleVariant findByGene(@NotNull Iterable<PurpleVariant> variants, @NotNull String geneToFind) {
+        for (PurpleVariant variant : variants) {
             if (variant.gene().equals(geneToFind)) {
                 return variant;
             }
@@ -123,19 +123,19 @@ public class OrangeJsonTest {
 
     private static void assertLinx(@NotNull LinxRecord linx) {
         assertEquals(1, linx.fusions().size());
-        ReportableFusion fusion = linx.fusions().iterator().next();
+        LinxFusion fusion = linx.fusions().iterator().next();
         assertEquals(FusionType.KNOWN_PAIR, fusion.type());
         assertEquals("TMPRSS2", fusion.geneStart());
         assertEquals("Exon 1", fusion.geneContextStart());
         assertEquals("ETV4", fusion.geneEnd());
         assertEquals("Promoter Region", fusion.geneContextEnd());
-        assertEquals(FusionLikelihood.HIGH, fusion.likelihood());
+        assertEquals(FusionDriverLikelihood.HIGH, fusion.driverLikelihood());
 
         assertEquals(1, linx.homozygousDisruptedGenes().size());
         assertEquals("NF1", linx.homozygousDisruptedGenes().iterator().next());
 
         assertEquals(1, linx.disruptions().size());
-        ReportableDisruption disruption = linx.disruptions().iterator().next();
+        LinxDisruption disruption = linx.disruptions().iterator().next();
         assertEquals("NF1", disruption.gene());
         assertEquals("Intron 5 -> Intron 8", disruption.range());
     }
@@ -157,7 +157,7 @@ public class OrangeJsonTest {
         VirusInterpreterEntry entry = virusInterpreter.entries().iterator().next();
         assertEquals("Human betaherpesvirus 6B", entry.name());
         assertEquals(1, entry.integrations());
-        assertEquals(VirusLikelihood.HIGH, entry.likelihood());
+        assertEquals(VirusDriverLikelihood.HIGH, entry.driverLikelihood());
     }
 
     private static void assertChord(@NotNull ChordRecord chord) {
