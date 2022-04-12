@@ -47,9 +47,9 @@ gene | APC | The gene impacted by the variant
 impact | p.D1174fs | The impact of the variant on the gene 
 variantCopyNumber | 3.8 | The number of copies of this variant in the tumor
 totalCopyNumber | 4.0 | The total number of copies in the tumor on the mutated position
-driverType | BIALLELIC | Either `HOTSPOT`, `INFRAME`, `BIALLELIC` or `VUS`
+driverType | BIALLELIC | Either `HOTSPOT`, `BIALLELIC` or `VUS`
 driverLikelihood | 93% | Likelihood that the combined set of variants on the impacted gene are considered a driver.
-subclonalLikelihood | 0% | Likelihood that the variant does not exist in every tumor cell (is subclonal).
+clonalLikelihood | 100% | Likelihood that the variant exists in every tumor cell (is clonal).
 
 N amplifications
 
@@ -97,7 +97,7 @@ N pharmaco
 Field | Example Value | Details
 ---|---|---
 gene | DPYD | The gene for which the pharmaco entry is applicable
-result | 1* HOM | The haplotypes of the gene found in the germline data of the patient. 
+haplotype | 1* HOM | The haplotype of the gene found in the germline data of the patient. 
 
 1 molecular evidence
 
