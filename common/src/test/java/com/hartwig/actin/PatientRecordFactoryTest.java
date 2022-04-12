@@ -3,11 +3,12 @@ package com.hartwig.actin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 
 import org.junit.Test;
@@ -36,8 +37,18 @@ public class PatientRecordFactoryTest {
     }
 
     @Test
-    public void canConcatSets() {
-        assertEquals("-", PatientRecordFactory.concat(Sets.newHashSet()));
-        assertEquals("hi, there", PatientRecordFactory.concat(Sets.newHashSet("hi", "there")));
+    public void clinicalSampleBeatsMolecularSample() {
+        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
+                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .sampleId("clinical")
+                .build();
+
+        MolecularRecord molecular = ImmutableMolecularRecord.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .sampleId("molecular")
+                .build();
+
+        PatientRecord patient = PatientRecordFactory.fromInputs(clinical, molecular);
+        assertEquals("clinical", patient.sampleId());
     }
 }

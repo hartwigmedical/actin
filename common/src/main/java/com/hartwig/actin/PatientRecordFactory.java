@@ -1,9 +1,5 @@
 package com.hartwig.actin;
 
-import java.util.Set;
-import java.util.StringJoiner;
-
-import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
@@ -27,19 +23,5 @@ public final class PatientRecordFactory {
         }
 
         return ImmutablePatientRecord.builder().sampleId(clinical.sampleId()).clinical(clinical).molecular(molecular).build();
-    }
-
-    @NotNull
-    @VisibleForTesting
-    static String concat(@NotNull Set<String> strings) {
-        if (strings.isEmpty()) {
-            return "-";
-        }
-
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return joiner.toString();
     }
 }
