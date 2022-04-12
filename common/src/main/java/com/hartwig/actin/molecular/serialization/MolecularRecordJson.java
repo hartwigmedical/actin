@@ -127,7 +127,7 @@ public class MolecularRecordJson {
                     .sampleId(string(record, "sampleId"))
                     .type(ExperimentType.valueOf(string(record, "type")))
                     .date(nullableDate(record, "date"))
-                    .qc(string(record, "qc"))
+                    .hasReliableQuality(bool(record, "hasReliableQuality"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toMolecularDrivers(object(record, "drivers")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
@@ -137,14 +137,15 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static MolecularCharacteristics toMolecularCharacteristics(@NotNull JsonObject genome) {
+        private static MolecularCharacteristics toMolecularCharacteristics(@NotNull JsonObject characteristics) {
             return ImmutableMolecularCharacteristics.builder()
-                    .purity(nullableNumber(genome, "purity"))
-                    .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(genome, "predictedTumorOrigin")))
-                    .isMicrosatelliteUnstable(nullableBool(genome, "isMicrosatelliteUnstable"))
-                    .isHomologousRepairDeficient(nullableBool(genome, "isHomologousRepairDeficient"))
-                    .tumorMutationalBurden(nullableNumber(genome, "tumorMutationalBurden"))
-                    .tumorMutationalLoad(nullableInteger(genome, "tumorMutationalLoad"))
+                    .purity(nullableNumber(characteristics, "purity"))
+                    .hasReliablePurity(nullableBool(characteristics, "hasReliablePurity"))
+                    .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(characteristics, "predictedTumorOrigin")))
+                    .isMicrosatelliteUnstable(nullableBool(characteristics, "isMicrosatelliteUnstable"))
+                    .isHomologousRepairDeficient(nullableBool(characteristics, "isHomologousRepairDeficient"))
+                    .tumorMutationalBurden(nullableNumber(characteristics, "tumorMutationalBurden"))
+                    .tumorMutationalLoad(nullableInteger(characteristics, "tumorMutationalLoad"))
                     .build();
         }
 
@@ -284,29 +285,29 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static Set<GeneMutation> toGeneMutations(@NotNull JsonArray mutations) {
-            Set<GeneMutation> geneMutationSet = Sets.newHashSet();
-            for (JsonElement element : mutations) {
-                JsonObject object = element.getAsJsonObject();
-                geneMutationSet.add(ImmutableGeneMutation.builder()
-                        .gene(string(object, "gene"))
-                        .mutation(string(object, "mutation"))
+        private static Set<GeneMutation> toGeneMutations(@NotNull JsonArray mutationArray) {
+            Set<GeneMutation> geneMutations = Sets.newHashSet();
+            for (JsonElement element : mutationArray) {
+                JsonObject geneMutation = element.getAsJsonObject();
+                geneMutations.add(ImmutableGeneMutation.builder()
+                        .gene(string(geneMutation, "gene"))
+                        .mutation(string(geneMutation, "mutation"))
                         .build());
             }
-            return geneMutationSet;
+            return geneMutations;
         }
 
         @NotNull
-        private static Set<InactivatedGene> toInactivatedGenes(@NotNull JsonArray inactivatedGenes) {
-            Set<InactivatedGene> inactivatedGeneSet = Sets.newHashSet();
-            for (JsonElement element : inactivatedGenes) {
-                JsonObject object = element.getAsJsonObject();
-                inactivatedGeneSet.add(ImmutableInactivatedGene.builder()
-                        .gene(string(object, "gene"))
-                        .hasBeenDeleted(bool(object, "hasBeenDeleted"))
+        private static Set<InactivatedGene> toInactivatedGenes(@NotNull JsonArray inactivatedGeneArray) {
+            Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
+            for (JsonElement element : inactivatedGeneArray) {
+                JsonObject inactivatedGene = element.getAsJsonObject();
+                inactivatedGenes.add(ImmutableInactivatedGene.builder()
+                        .gene(string(inactivatedGene, "gene"))
+                        .hasBeenDeleted(bool(inactivatedGene, "hasBeenDeleted"))
                         .build());
             }
-            return inactivatedGeneSet;
+            return inactivatedGenes;
         }
 
         @NotNull

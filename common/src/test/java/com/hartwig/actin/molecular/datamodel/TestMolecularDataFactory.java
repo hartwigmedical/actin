@@ -51,7 +51,7 @@ public final class TestMolecularDataFactory {
         return ImmutableMolecularRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
-                .qc(Strings.EMPTY)
+                .hasReliableQuality(true)
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .evidence(createMinimalTestEvidence())
@@ -93,6 +93,8 @@ public final class TestMolecularDataFactory {
     @NotNull
     private static MolecularCharacteristics createTestCharacteristics() {
         return ImmutableMolecularCharacteristics.builder()
+                .purity(0.98)
+                .hasReliablePurity(true)
                 .predictedTumorOrigin(ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)

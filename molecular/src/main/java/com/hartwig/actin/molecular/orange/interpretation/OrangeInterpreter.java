@@ -17,7 +17,6 @@ import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,12 +49,12 @@ public class OrangeInterpreter {
 
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
-        // TODO Add missing items.
+        // TODO Add drivers and pharmaco
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
                 .date(record.date())
-                .qc(Strings.EMPTY)
+                .hasReliableQuality(record.hasReliableQuality())
                 .characteristics(extractCharacteristics(record))
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .pharmaco(Lists.newArrayList())
@@ -81,9 +80,10 @@ public class OrangeInterpreter {
 
     @NotNull
     private static MolecularCharacteristics extractCharacteristics(@NotNull OrangeRecord record) {
-        // TODO Read purity.
+        // TODO Read purity & purity reliability
         return ImmutableMolecularCharacteristics.builder()
-                .purity(0D)
+                .purity(null)
+                .hasReliablePurity(null)
                 .predictedTumorOrigin(record.predictedTumorOrigin())
                 .isMicrosatelliteUnstable(isMSI(record.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.homologousRepairStatus()))

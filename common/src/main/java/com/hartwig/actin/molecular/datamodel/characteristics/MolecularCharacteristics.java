@@ -12,6 +12,9 @@ public abstract class MolecularCharacteristics {
     public abstract Double purity();
 
     @Nullable
+    public abstract Boolean hasReliablePurity();
+
+    @Nullable
     public abstract PredictedTumorOrigin predictedTumorOrigin();
 
     @Nullable

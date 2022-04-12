@@ -25,13 +25,14 @@ Field | Example Value | Details
 ---|---|---
 type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
 date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
-qc | PASS | The QC value of the experiment 
+hasReliableQuality | 1 | Whether the molecular results have reliable quality. 
  
 1 molecular characteristics
 
 Field | Example Value | Details
 ---|---|---
 purity | 78% | The percentage of cells in the sequenced biopsy that originated from the tumor.
+hasReliablePurity | 1 | Indicates whether the purity estimate can be trusted.
 predictedTumorOrigin | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
 isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
 isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
@@ -133,7 +134,7 @@ Field | Mapping
 sampleId | The ORANGE field `sampleId`
 type | Hard-coded to WGS 
 date | The ORANGE field `reportedDate`
-qc | `TODO` 
+hasReliableQuality | The ORANGE field `hasReliableQuality` 
 
 The evidence is extracted from the PROTECT part of ORANGE as follows:
  - actinTrials: All reported evidence from the ACTIN source that is defined as an inclusion criterion for at least one trial. 

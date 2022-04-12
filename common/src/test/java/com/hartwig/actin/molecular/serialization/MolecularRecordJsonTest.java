@@ -68,7 +68,7 @@ public class MolecularRecordJsonTest {
         assertEquals("ACTN01029999T", molecular.sampleId());
         assertEquals(ExperimentType.WGS, molecular.type());
         assertEquals(LocalDate.of(2021, 2, 23), molecular.date());
-        assertEquals("PASS", molecular.qc());
+        assertTrue(molecular.hasReliableQuality());
 
         assertCharacteristics(molecular.characteristics());
         assertDrivers(molecular.drivers());
@@ -79,6 +79,7 @@ public class MolecularRecordJsonTest {
 
     private static void assertCharacteristics(@NotNull MolecularCharacteristics characteristics) {
         assertEquals(0.98, characteristics.purity(), EPSILON);
+        assertTrue(characteristics.hasReliablePurity());
 
         assertNotNull(characteristics.predictedTumorOrigin());
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());

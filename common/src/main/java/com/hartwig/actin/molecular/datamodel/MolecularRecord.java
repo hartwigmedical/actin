@@ -26,8 +26,7 @@ public abstract class MolecularRecord {
     @Nullable
     public abstract LocalDate date();
 
-    @NotNull
-    public abstract String qc();
+    public abstract boolean hasReliableQuality();
 
     @NotNull
     public abstract MolecularCharacteristics characteristics();
