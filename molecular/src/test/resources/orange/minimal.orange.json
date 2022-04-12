@@ -11,7 +11,10 @@
     "purity": 0.1,
     "microsatelliteStatus": "MSS",
     "tumorMutationalBurdenPerMb": 0,
-    "tumorMutationalLoad": 0
+    "tumorMutationalLoad": 0,
+    "reportableSomaticVariants": [],
+    "reportableGermlineVariants": [],
+    "reportableGainsLosses": []
   },
   "linx": {
     "geneDisruptions": []

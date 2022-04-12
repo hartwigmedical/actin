@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -43,8 +45,14 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvid
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutableReportableGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutableReportableVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ReportableGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ReportableVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
@@ -85,6 +93,10 @@ public final class OrangeJson {
 
         @NotNull
         private static PurpleRecord toPurpleRecord(@NotNull JsonObject purple) {
+            Set<ReportableVariant> variants = Sets.newHashSet();
+            variants.addAll(toReportableVariants(array(purple, "reportableSomaticVariants")));
+            variants.addAll(toReportableVariants(array(purple, "reportableGermlineVariants")));
+
             return ImmutablePurpleRecord.builder()
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
                     .purity(number(purple, "purity"))
@@ -92,7 +104,44 @@ public final class OrangeJson {
                     .microsatelliteStabilityStatus(string(purple, "microsatelliteStatus"))
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
+                    .variants(variants)
+                    .gainsLosses(toReportableGainsLosses(array(purple, "reportableGainsLosses")))
                     .build();
+        }
+
+        @NotNull
+        private static Set<ReportableGainLoss> toReportableGainsLosses(@NotNull JsonArray reportableGainLossArray) {
+            Set<ReportableGainLoss> reportableGainsLosses = Sets.newHashSet();
+            for (JsonElement element : reportableGainLossArray) {
+                JsonObject reportableGainLoss = element.getAsJsonObject();
+                reportableGainsLosses.add(ImmutableReportableGainLoss.builder()
+                        .gene(string(reportableGainLoss, "gene"))
+                        .interpretation(GainLossInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
+                        .minCopies(integer(reportableGainLoss, "minCopies"))
+                        .build());
+            }
+            return reportableGainsLosses;
+        }
+
+        @NotNull
+        private static List<ReportableVariant> toReportableVariants(@NotNull JsonArray variantArray) {
+            List<ReportableVariant> variants = Lists.newArrayList();
+            for (JsonElement element : variantArray) {
+                JsonObject variant = element.getAsJsonObject();
+                variants.add(ImmutableReportableVariant.builder()
+                        .gene(string(variant, "gene"))
+                        .hgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
+                        .hgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
+                        .effect(string(variant, "canonicalEffect"))
+                        .alleleCopyNumber(number(variant, "alleleCopyNumber"))
+                        .totalCopyNumber(number(variant, "totalCopyNumber"))
+                        .hotspot(VariantHotspot.valueOf(string(variant, "hotspot")))
+                        .biallelic(bool(variant, "biallelic"))
+                        .driverLikelihood(number(variant, "driverLikelihood"))
+                        .clonalLikelihood(number(variant, "clonalLikelihood"))
+                        .build());
+            }
+            return variants;
         }
 
         @NotNull

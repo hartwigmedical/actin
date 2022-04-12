@@ -12,7 +12,13 @@ public abstract class ReportableVariant {
     public abstract String gene();
 
     @NotNull
-    public abstract String impact();
+    public abstract String hgvsProteinImpact();
+
+    @NotNull
+    public abstract String hgvsCodingImpact();
+
+    @NotNull
+    public abstract String effect();
 
     public abstract double alleleCopyNumber();
 
