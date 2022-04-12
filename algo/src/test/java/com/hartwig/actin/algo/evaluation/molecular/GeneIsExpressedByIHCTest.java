@@ -21,7 +21,7 @@ public class GeneIsExpressedByIHCTest {
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with no result
         priorTests.add(ihcBuilder(gene).build());

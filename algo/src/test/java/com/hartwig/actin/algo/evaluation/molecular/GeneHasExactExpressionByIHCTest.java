@@ -21,7 +21,7 @@ public class GeneHasExactExpressionByIHCTest {
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with no result
         priorTests.add(ihcBuilder(gene).build());

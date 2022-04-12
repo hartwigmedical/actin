@@ -47,16 +47,18 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
             }
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
-
         if (!ihcTests.isEmpty()) {
-            builder.addFailSpecificMessages("No expression of gene " + gene + " detected by prior IHC test(s)");
-            builder.addFailGeneralMessages("No " + gene + " expression by IHC");
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("No expression of gene " + gene + " detected by prior IHC test(s)")
+                    .addFailGeneralMessages("No " + gene + " expression by IHC")
+                    .build();
         } else {
-            builder.addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC");
-            builder.addFailGeneralMessages("No " + gene + " test by IHC");
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
+                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .build();
         }
-
-        return builder.build();
     }
 }

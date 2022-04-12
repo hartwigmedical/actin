@@ -44,14 +44,18 @@ public class GeneHasExactExpressionByIHC implements EvaluationFunction {
             }
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL);
-
         if (!ihcTests.isEmpty()) {
-            builder.addFailSpecificMessages("Gene " + gene + " does not have exact expression level " + expressionLevel + " (by IHC)");
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Gene " + gene + " does not have exact expression level " + expressionLevel + " (by IHC)")
+                    .addFailGeneralMessages("No " + gene + " expression by IHC")
+                    .build();
         } else {
-            builder.addFailSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC");
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
+                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .build();
         }
-
-        return builder.build();
     }
 }
