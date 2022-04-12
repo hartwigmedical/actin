@@ -12,16 +12,16 @@ public abstract class ReportableFusion {
     public abstract FusionType type();
 
     @NotNull
-    public abstract String fiveGene();
+    public abstract String geneStart();
 
     @NotNull
-    public abstract String fiveContextStart();
+    public abstract String geneContextStart();
 
     @NotNull
-    public abstract String threeGene();
+    public abstract String geneEnd();
 
     @NotNull
-    public abstract String threeContextEnd();
+    public abstract String geneContextEnd();
 
     @NotNull
     public abstract FusionLikelihood likelihood();

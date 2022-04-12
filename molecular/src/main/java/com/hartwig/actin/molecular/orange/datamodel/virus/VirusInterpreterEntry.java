@@ -12,4 +12,7 @@ public abstract class VirusInterpreterEntry {
     public abstract String name();
 
     public abstract int integrations();
+
+    @NotNull
+    public abstract VirusLikelihood likelihood();
 }

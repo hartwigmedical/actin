@@ -23,45 +23,25 @@ import org.junit.Test;
 
 public class OrangeJsonTest {
 
-    private static final String MINIMAL_ORANGE_JSON = Resources.getResource("orange/minimal.orange.json").getPath();
-    private static final String EXHAUSTIVE_ORANGE_JSON = Resources.getResource("orange/exhaustive.orange.json").getPath();
-    private static final String PROPER_ORANGE_JSON = Resources.getResource("orange/proper.orange.json").getPath();
+    private static final String MINIMALLY_EMPTY_ORANGE_JSON = Resources.getResource("orange/minimally.empty.orange.json").getPath();
+    private static final String MINIMALLY_POPULATED_ORANGE_JSON = Resources.getResource("orange/minimally.populated.orange.json").getPath();
+    private static final String REAL_ORANGE_JSON = Resources.getResource("orange/real.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 
     @Test
-    public void canReadMinimalOrangeRecordJson() throws IOException {
-        OrangeRecord record = OrangeJson.read(MINIMAL_ORANGE_JSON);
-
-        assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertNotNull(record.reportDate());
-        assertNotNull(record.purple());
-        assertNotNull(record.linx());
-        assertNotNull(record.peach());
-        assertNotNull(record.cuppa());
-        assertNotNull(record.virusInterpreter());
-        assertNotNull(record.chord());
-        assertNotNull(record.protect());
+    public void canReadMinimallyEmptyOrangeRecordJson() throws IOException {
+        assertNotNull(OrangeJson.read(MINIMALLY_EMPTY_ORANGE_JSON));
     }
 
     @Test
-    public void canReadExhaustiveOrangeRecordJson() throws IOException {
-        OrangeRecord record = OrangeJson.read(EXHAUSTIVE_ORANGE_JSON);
-
-        assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertNotNull(record.reportDate());
-        assertNotNull(record.purple());
-        assertNotNull(record.linx());
-        assertNotNull(record.peach());
-        assertNotNull(record.cuppa());
-        assertNotNull(record.virusInterpreter());
-        assertNotNull(record.chord());
-        assertNotNull(record.protect());
+    public void canReadRealOrangeRecordJson() throws IOException {
+        assertNotNull(OrangeJson.read(REAL_ORANGE_JSON));
     }
 
     @Test
-    public void canReadProperOrangeRecordJson() throws IOException {
-        OrangeRecord record = OrangeJson.read(PROPER_ORANGE_JSON);
+    public void canReadMinimallyPopulatedOrangeRecordJson() throws IOException {
+        OrangeRecord record = OrangeJson.read(MINIMALLY_POPULATED_ORANGE_JSON);
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(LocalDate.of(2022, 1, 20), record.reportDate());
@@ -80,14 +60,20 @@ public class OrangeJsonTest {
         assertEquals("MSS", purple.microsatelliteStabilityStatus());
         assertEquals(13.71, purple.tumorMutationalBurden(), EPSILON);
         assertEquals(185, purple.tumorMutationalLoad());
+
+        assertEquals(2, purple.variants().size());
+
+        assertEquals(1, purple.gainsLosses().size());
     }
 
     private static void assertLinx(@NotNull LinxRecord linx) {
-        assertNotNull(linx);
+        assertEquals(1, linx.fusions().size());
+        assertEquals(1, linx.homozygousDisruptedGenes().size());
+        assertEquals(1, linx.disruptions().size());
     }
 
     private static void assertPeach(@NotNull PeachRecord peach) {
-        assertNotNull(peach);
+        assertEquals(1, peach.entries().size());
     }
 
     private static void assertCuppa(@NotNull CuppaRecord cuppa) {
@@ -96,7 +82,7 @@ public class OrangeJsonTest {
     }
 
     private static void assertVirusInterpreter(@NotNull VirusInterpreterRecord virusInterpreter) {
-        assertNotNull(virusInterpreter);
+        assertEquals(1, virusInterpreter.entries().size());
     }
 
     private static void assertChord(@NotNull ChordRecord chord) {
@@ -104,6 +90,6 @@ public class OrangeJsonTest {
     }
 
     private static void assertProtect(@NotNull ProtectRecord protect) {
-        assertEquals(138, protect.evidences().size());
+        assertEquals(1, protect.evidences().size());
     }
 }

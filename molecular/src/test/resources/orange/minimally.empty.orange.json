@@ -17,7 +17,9 @@
     "reportableGainsLosses": []
   },
   "linx": {
-    "geneDisruptions": []
+    "reportableFusions": [],
+    "geneDisruptions": [],
+    "homozygousDisruptions": []
   },
   "virusInterpreter": {
     "reportableViruses": []
