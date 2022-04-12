@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.datamodel.characteristics;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

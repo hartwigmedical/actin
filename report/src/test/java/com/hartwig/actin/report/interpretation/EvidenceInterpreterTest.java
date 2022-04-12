@@ -4,11 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

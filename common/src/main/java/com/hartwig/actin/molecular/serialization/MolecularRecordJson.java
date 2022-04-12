@@ -32,27 +32,13 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
-import com.hartwig.actin.molecular.datamodel.FusionGene;
-import com.hartwig.actin.molecular.datamodel.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.ImmutableEvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.ImmutableFusionGene;
-import com.hartwig.actin.molecular.datamodel.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.datamodel.ImmutableInactivatedGene;
-import com.hartwig.actin.molecular.datamodel.ImmutableMappedActinEvents;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
-import com.hartwig.actin.molecular.datamodel.ImmutablePharmacoEntry;
-import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.InactivatedGene;
-import com.hartwig.actin.molecular.datamodel.MappedActinEvents;
-import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.PharmacoEntry;
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
@@ -69,6 +55,20 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
+import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
+import com.hartwig.actin.molecular.datamodel.mapping.ImmutableFusionGene;
+import com.hartwig.actin.molecular.datamodel.mapping.ImmutableGeneMutation;
+import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
+import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
+import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -127,10 +127,10 @@ public class MolecularRecordJson {
                     .date(nullableDate(record, "date"))
                     .qc(string(record, "qc"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
-                    .drivers(toDrivers(object(record, "drivers")))
+                    .drivers(toMolecularDrivers(object(record, "drivers")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
                     .evidence(toMolecularEvidence(object(record, "evidence")))
-                    .mappedEvents(toActinEvents(object(record, "mappedEvents")))
+                    .mappedEvents(toMappedActinEvents(object(record, "mappedEvents")))
                     .build();
         }
 
@@ -159,7 +159,7 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static MolecularDrivers toDrivers(@NotNull JsonObject drivers) {
+        private static MolecularDrivers toMolecularDrivers(@NotNull JsonObject drivers) {
             return ImmutableMolecularDrivers.builder()
                     .variants(toVariants(array(drivers, "variants")))
                     .amplifications(toAmplifications(array(drivers, "amplifications")))
@@ -269,14 +269,14 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static MappedActinEvents toActinEvents(@NotNull JsonObject events) {
+        private static MappedActinEvents toMappedActinEvents(@NotNull JsonObject mappedEvents) {
             return ImmutableMappedActinEvents.builder()
-                    .mutations(toGeneMutations(array(events, "mutations")))
-                    .activatedGenes(stringList(events, "activatedGenes"))
-                    .inactivatedGenes(toInactivatedGenes(array(events, "inactivatedGenes")))
-                    .amplifiedGenes(stringList(events, "amplifiedGenes"))
-                    .wildtypeGenes(stringList(events, "wildtypeGenes"))
-                    .fusions(toFusionGenes(array(events, "fusions")))
+                    .mutations(toGeneMutations(array(mappedEvents, "mutations")))
+                    .activatedGenes(stringList(mappedEvents, "activatedGenes"))
+                    .inactivatedGenes(toInactivatedGenes(array(mappedEvents, "inactivatedGenes")))
+                    .amplifiedGenes(stringList(mappedEvents, "amplifiedGenes"))
+                    .wildtypeGenes(stringList(mappedEvents, "wildtypeGenes"))
+                    .fusions(toFusionGenes(array(mappedEvents, "fusions")))
                     .build();
         }
 

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.datamodel.mapping;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -6,10 +6,12 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PredictedTumorOrigin {
+public abstract class GeneMutation {
 
     @NotNull
-    public abstract String tumorType();
+    public abstract String gene();
 
-    public abstract double likelihood();
+    @NotNull
+    public abstract String mutation();
+
 }

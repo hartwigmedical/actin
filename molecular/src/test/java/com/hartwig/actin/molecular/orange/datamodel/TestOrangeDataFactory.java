@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

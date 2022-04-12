@@ -3,7 +3,11 @@ package com.hartwig.actin.molecular.datamodel;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

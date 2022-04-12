@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation;
 
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 
 import org.jetbrains.annotations.Nullable;
 

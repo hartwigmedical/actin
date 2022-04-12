@@ -11,12 +11,12 @@ import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
 
 import java.util.Set;
 
-import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.FusionGene;
-import com.hartwig.actin.molecular.datamodel.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.InactivatedGene;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
+import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
+import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;

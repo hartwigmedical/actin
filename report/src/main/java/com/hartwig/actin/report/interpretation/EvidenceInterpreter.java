@@ -3,8 +3,8 @@ package com.hartwig.actin.report.interpretation;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 
 import org.jetbrains.annotations.NotNull;
 

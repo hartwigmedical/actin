@@ -3,8 +3,8 @@ package com.hartwig.actin.report.interpretation;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.molecular.datamodel.ImmutablePredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

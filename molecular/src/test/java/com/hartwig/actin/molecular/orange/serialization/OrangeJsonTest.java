@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 
 import org.junit.Test;

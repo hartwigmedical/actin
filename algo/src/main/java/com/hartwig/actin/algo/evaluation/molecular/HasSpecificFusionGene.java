@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.molecular.datamodel.FusionGene;
+import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 
 import org.jetbrains.annotations.NotNull;
 

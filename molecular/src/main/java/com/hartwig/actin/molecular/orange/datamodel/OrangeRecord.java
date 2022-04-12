@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.datamodel;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

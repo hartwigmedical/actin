@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.datamodel.evidence;
 
 import java.util.Set;
 

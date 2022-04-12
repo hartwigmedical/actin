@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.datamodel.mapping;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -6,11 +6,12 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class EvidenceEntry {
+public abstract class FusionGene {
 
     @NotNull
-    public abstract String event();
+    public abstract String fiveGene();
 
     @NotNull
-    public abstract String treatment();
+    public abstract String threeGene();
+
 }
