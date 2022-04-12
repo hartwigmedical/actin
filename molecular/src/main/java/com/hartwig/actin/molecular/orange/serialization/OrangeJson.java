@@ -9,7 +9,6 @@ import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
-import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.File;
 import java.io.IOException;
@@ -247,17 +246,30 @@ public final class OrangeJson {
             List<ProtectEvidence> evidences = Lists.newArrayList();
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
+
+                // TODO Properly support new protect model
+                Integer rangeRank = null;
+                EvidenceType type = null;
+                Set<String> sources = Sets.newHashSet();
+                for (JsonElement sourceElement : array(evidence, "protectSources")) {
+                    JsonObject source = sourceElement.getAsJsonObject();
+
+                    rangeRank = nullableInteger(source, "rangeRank");
+                    type = EvidenceType.valueOf(string(source, "evidenceType"));
+                    sources.add(string(source, "source"));
+                }
+
                 evidences.add(ImmutableProtectEvidence.builder()
                         .reported(bool(evidence, "reported"))
                         .gene(nullableString(evidence, "gene"))
                         .event(string(evidence, "event"))
-                        .rangeRank(nullableInteger(evidence, "rangeRank"))
+                        .rangeRank(rangeRank)
                         .treatment(string(evidence, "treatment"))
                         .onLabel(bool(evidence, "onLabel"))
-                        .type(EvidenceType.valueOf(string(evidence, "evidenceType")))
+                        .type(type)
                         .level(EvidenceLevel.valueOf(string(evidence, "level")))
                         .direction(EvidenceDirection.valueOf(string(evidence, "direction")))
-                        .sources(stringList(evidence, "sources"))
+                        .sources(sources)
                         .build());
             }
             return ImmutableProtectRecord.builder().evidences(evidences).build();

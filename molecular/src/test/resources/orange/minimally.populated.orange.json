@@ -154,18 +154,20 @@
     ]
   },
   "virusInterpreter": {
-    "reportableViruses": [ {
-      "taxid": 32604,
-      "name": "Human betaherpesvirus 6B",
-      "qcStatus": "NO_ABNORMALITIES",
-      "integrations": 1,
-      "interpretation": null,
-      "percentageCovered": 14.2802,
-      "meanCoverage": 0.176659,
-      "expectedClonalCoverage": 32.17380658988764,
-      "reported": false,
-      "virusDriverLikelihoodType": "HIGH"
-    }]
+    "reportableViruses": [
+      {
+        "taxid": 32604,
+        "name": "Human betaherpesvirus 6B",
+        "qcStatus": "NO_ABNORMALITIES",
+        "integrations": 1,
+        "interpretation": null,
+        "percentageCovered": 14.2802,
+        "meanCoverage": 0.176659,
+        "expectedClonalCoverage": 32.17380658988764,
+        "reported": false,
+        "virusDriverLikelihoodType": "HIGH"
+      }
+    ]
   },
   "chord": {
     "BRCA1Value": 0.0,
@@ -199,19 +201,25 @@
     {
       "gene": "BRAF",
       "event": "p.Val600Glu",
-      "evidenceType": "HOTSPOT_MUTATION",
-      "rangeRank": null,
       "germline": false,
       "reported": true,
       "treatment": "Cobimetinib + Vemurafenib",
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "sources": [
-        "VICC_CGI"
-      ],
-      "urls": [
-        "https://www.google.com/#q\u003dFDA"
+      "protectSources": [
+        {
+          "source": "VICC_CGI",
+          "sourceEvent": "hotspot",
+          "sourceUrls": [
+            ""
+          ],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            ""
+          ]
+        }
       ]
     }
   ]
