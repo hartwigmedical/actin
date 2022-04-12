@@ -47,8 +47,8 @@ impact | p.D1174fs | The impact of the variant on the gene
 variantCopyNumber | 3.8 | The number of copies of this variant in the tumor
 totalCopyNumber | 4.0 | The total number of copies in the tumor on the mutated position
 driverType | BIALLELIC | Either `HOTSPOT`, `INFRAME`, `BIALLELIC` or `VUS`
-driverLikelihood | 93% | Likelihood that the combined set of variants on the impacted gene are considered a driver
-subclonalLikelihood | 0% | Likelihood that the variant does not exist in every tumor cell.
+driverLikelihood | 93% | Likelihood that the combined set of variants on the impacted gene are considered a driver.
+subclonalLikelihood | 0% | Likelihood that the variant does not exist in every tumor cell (is subclonal).
 
 N amplifications
 
@@ -56,7 +56,7 @@ Field | Example Value | Details
 ---|---|---
 gene | MYC | The gene that has been amplified
 copies | 150 | Number of copies of this gene in the tumor
-isPartial | 0 | Indicates whether only part of the gene is amplified
+isPartial | 0 | Indicates whether the gene has been partially or fully amplified in the tumor
 
 N losses
 
