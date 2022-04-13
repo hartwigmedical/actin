@@ -22,7 +22,8 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     private static final Logger LOGGER = LogManager.getLogger(OrangeEvidenceEvaluator.class);
 
-    static final String ORANGE_HIGH_TMB = "High tumor mutation load";
+    static final String ORANGE_HIGH_TML = "High tumor mutation load";
+    static final String ORANGE_HIGH_TMB = "High tumor mutation burden";
     static final String ORANGE_MSI = "Microsatellite unstable";
     static final String ORANGE_HRD = "HR deficiency";
 
@@ -97,7 +98,8 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     private static boolean hasInclusiveSignatureRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
         switch (event) {
-            case ORANGE_HIGH_TMB: {
+            case ORANGE_HIGH_TMB:
+            case ORANGE_HIGH_TML: {
                 return hasInclusiveTumorLoadRecord(inclusionRecords);
             }
             case ORANGE_MSI: {

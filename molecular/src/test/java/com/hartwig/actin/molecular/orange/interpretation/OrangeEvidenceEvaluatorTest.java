@@ -52,6 +52,9 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForSignatures() {
         EvidenceEvaluator evaluator = withRecord(withRule(EligibilityRule.TML_OF_AT_LEAST_X));
 
+        ProtectEvidence tmlHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HIGH_TML).build();
+        assertTrue(evaluator.isPotentiallyForTrialInclusion(tmlHigh));
+
         ProtectEvidence tmbHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HIGH_TMB).build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(tmbHigh));
 
