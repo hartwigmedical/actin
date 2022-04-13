@@ -47,8 +47,8 @@ public class OrangeInterpreterTest {
 
         assertFalse(characteristics.isMicrosatelliteUnstable());
         assertFalse(characteristics.isHomologousRepairDeficient());
-        assertEquals(8D, characteristics.tumorMutationalBurden(), EPSILON);
-        assertEquals(100, (int) characteristics.tumorMutationalLoad());
+        assertEquals(13D, characteristics.tumorMutationalBurden(), EPSILON);
+        assertEquals(189, (int) characteristics.tumorMutationalLoad());
 
         MolecularEvidence evidence = record.evidence();
         assertEquals(1, evidence.actinTrials().size());
