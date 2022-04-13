@@ -24,6 +24,7 @@ public class HasKnownActiveCnsMetastases implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Data regarding presence of active CNS metastases is missing")
+                    .addFailGeneralMessages("Missing active CNS metastases data")
                     .build();
         }
 

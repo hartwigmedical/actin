@@ -38,6 +38,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor type known for patient")
+                    .addUndeterminedGeneralMessages("Unknown tumor type")
                     .build();
         }
 

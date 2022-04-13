@@ -32,6 +32,7 @@ public class HasAnyLesion implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data about lesions is missing")
+                    .addUndeterminedGeneralMessages("Missing lesions details")
                     .build();
         }
 
@@ -43,8 +44,10 @@ public class HasAnyLesion implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient does not have any lesions");
+            builder.addFailGeneralMessages("Lesion presence");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has at least one lesion");
+            builder.addPassGeneralMessages("Lesion presence");
         }
 
         return builder.build();

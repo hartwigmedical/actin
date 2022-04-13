@@ -27,6 +27,7 @@ public class HasTumorStage implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Tumor stage details are missing")
+                    .addUndeterminedGeneralMessages("Missing tumor stage details")
                     .build();
         }
 
@@ -35,8 +36,10 @@ public class HasTumorStage implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient tumor stage is not exact stage " + stageToMatch.display());
+            builder.addFailGeneralMessages("Inadequate tumor stage");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient tumor stage is exact stage " + stageToMatch.display());
+            builder.addPassGeneralMessages("Adequate tumor stage");
         }
 
         return builder.build();

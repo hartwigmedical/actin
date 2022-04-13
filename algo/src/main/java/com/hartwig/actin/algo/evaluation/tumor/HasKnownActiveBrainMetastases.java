@@ -23,6 +23,7 @@ public class HasKnownActiveBrainMetastases implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Data regarding presence of active brain metastases is missing")
+                    .addFailGeneralMessages("Missing active brain metastases data")
                     .build();
         }
 
@@ -31,8 +32,10 @@ public class HasKnownActiveBrainMetastases implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No known active brain metastases present");
+            builder.addFailGeneralMessages("No active brain metastases");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Active brain metastases are present");
+            builder.addPassGeneralMessages("Active brain metastases");
         }
 
         return builder.build();

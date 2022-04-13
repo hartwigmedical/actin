@@ -19,6 +19,7 @@ public class HasIntratumoralHemorrhageByMRI implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Intratumoral hemorrhage by MRI is currently not determined yet")
+                .addUndeterminedGeneralMessages("Undetermined intratumoral hemorrhage by MRI")
                 .build();
     }
 }

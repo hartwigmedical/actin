@@ -38,6 +38,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor type known for patient")
+                    .addUndeterminedGeneralMessages("Unknown tumor type")
                     .build();
         }
 
@@ -45,6 +46,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient has tumor type 'cancer' configured")
+                    .addWarnGeneralMessages("Unknown if CUP")
                     .build();
         }
 
@@ -63,8 +65,10 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no cancer of unknown primary of category " + categoryOfCUP.display());
+            builder.addFailGeneralMessages("Tumor type is no CUP");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has cancer of unknown primary of category " + categoryOfCUP.display());
+            builder.addPassGeneralMessages("Tumor type is CUP");
         }
 
         return builder.build();

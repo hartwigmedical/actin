@@ -33,6 +33,7 @@ public class HasMetastaticCancer implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Tumor stage details are missing")
+                    .addUndeterminedGeneralMessages("Missing tumor stage details")
                     .build();
         }
 
@@ -40,8 +41,10 @@ public class HasMetastaticCancer implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor stage " + stage.display() + " is not considered metastatic (IV)");
+            builder.addFailGeneralMessages("No metastatic disease");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor stage " + stage.display() + " is considered metastatic (IV)");
+            builder.addPassGeneralMessages("Metastatic disease");
         }
 
         return builder.build();

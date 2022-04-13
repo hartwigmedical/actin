@@ -22,6 +22,7 @@ public class HasMeasurableDisease implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data regarding measurable disease is missing")
+                    .addUndeterminedGeneralMessages("Missing measurable disease details")
                     .build();
         }
 
@@ -30,8 +31,10 @@ public class HasMeasurableDisease implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no measurable disease");
+            builder.addFailGeneralMessages("No measurable disease");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has measurable disease");
+            builder.addPassGeneralMessages("Measurable disease");
         }
 
         return builder.build();

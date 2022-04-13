@@ -19,6 +19,7 @@ public class HasSuperScanBoneScan implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently it is assumed that super scan bone scan is not present")
+                .addPassGeneralMessages("Super scan bone scan")
                 .build();
     }
 }

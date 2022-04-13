@@ -19,6 +19,7 @@ public class HasHistologicalDocumentationOfTumorType implements EvaluationFuncti
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently it is assumed that histological documentation of tumor type has been done or can be done")
+                .addPassGeneralMessages("Histological documentation")
                 .build();
     }
 }

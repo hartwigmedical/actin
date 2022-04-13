@@ -37,6 +37,7 @@ public class HasAdvancedCancer implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Tumor stage details are missing")
+                    .addUndeterminedGeneralMessages("Missing tumor stage details")
                     .build();
         }
 
@@ -44,8 +45,10 @@ public class HasAdvancedCancer implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered advanced (III/IV)");
+            builder.addFailGeneralMessages("Tumor stage");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor stage " + stage + " is considered advanced (III/IV)");
+            builder.addPassGeneralMessages("Tumor stage");
         }
 
         return builder.build();

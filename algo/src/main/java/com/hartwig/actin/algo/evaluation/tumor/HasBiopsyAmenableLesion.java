@@ -21,12 +21,14 @@ public class HasBiopsyAmenableLesion implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Currently biopsy-amenability of lesions cannot be determined without WGS")
+                    .addUndeterminedGeneralMessages("Biopsy amenability")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("It is assumed that patient will have biopsy-amenable lesions (presence of WGS analysis)")
+                .addPassGeneralMessages("Biopsy amenability")
                 .build();
     }
 }

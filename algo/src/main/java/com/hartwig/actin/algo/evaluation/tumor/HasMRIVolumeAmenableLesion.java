@@ -19,6 +19,7 @@ public class HasMRIVolumeAmenableLesion implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("MRI volume measurement amenability of lesions currently cannot be automatically determined")
+                .addUndeterminedGeneralMessages("Undetermined MRI volume measurement amenability")
                 .build();
     }
 }
