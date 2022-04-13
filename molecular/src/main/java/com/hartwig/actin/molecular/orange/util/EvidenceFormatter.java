@@ -14,6 +14,6 @@ public final class EvidenceFormatter {
         String gene = evidence.gene();
         String event = gene != null ? gene + " " + evidence.event() : evidence.event();
 
-        return event + ": " + evidence.treatment() + " (" + evidence.type() + ")";
+        return event + ": " + evidence.treatment();
     }
 }

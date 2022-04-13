@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -35,15 +36,20 @@ class OrangeMutationMapper implements MutationMapper {
     @Override
     @NotNull
     public Set<String> map(@NotNull ProtectEvidence evidence) {
-        switch (evidence.type()) {
+        if (evidence.sources().size() != 1) {
+            throw new IllegalStateException("Should never map mutations for evidence without single source: " + evidence);
+        }
+
+        ProtectSource source = evidence.sources().iterator().next();
+        switch (source.type()) {
             case HOTSPOT_MUTATION: {
                 return mapForHotspotMutation(mutationRecords, evidence.gene(), evidence.event());
             }
             case CODON_MUTATION: {
-                return mapForCodonMutation(mutationRecords, evidence.gene(), evidence.rangeRank());
+                return mapForCodonMutation(mutationRecords, evidence.gene(), source.rangeRank());
             }
             case EXON_MUTATION: {
-                return mapForExonMutation(mutationRecords, evidence.gene(), evidence.rangeRank());
+                return mapForExonMutation(mutationRecords, evidence.gene(), source.rangeRank());
             }
             default: {
                 throw new IllegalArgumentException("Should never have to map mutation for this evidence: " + evidence);

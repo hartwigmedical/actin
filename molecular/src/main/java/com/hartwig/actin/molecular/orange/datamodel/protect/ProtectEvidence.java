@@ -19,15 +19,12 @@ public abstract class ProtectEvidence {
     public abstract String event();
 
     @Nullable
-    public abstract Integer rangeRank();
+    public abstract Boolean eventIsHighDriver();
 
     @NotNull
     public abstract String treatment();
 
     public abstract boolean onLabel();
-
-    @NotNull
-    public abstract EvidenceType type();
 
     @NotNull
     public abstract EvidenceLevel level();
@@ -36,6 +33,6 @@ public abstract class ProtectEvidence {
     public abstract EvidenceDirection direction();
 
     @NotNull
-    public abstract Set<String> sources();
+    public abstract Set<ProtectSource> sources();
 
 }

@@ -9,7 +9,9 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
 import com.hartwig.actin.serve.datamodel.ImmutableServeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -39,10 +41,10 @@ public class OrangeEvidenceEvaluatorTest {
 
         OrangeEvidenceEvaluator evaluator = OrangeEvidenceEvaluator.fromServeRecords(Lists.newArrayList(inclusion, exclusion));
 
-        ProtectEvidence amplificationY = testBuilder().type(EvidenceType.AMPLIFICATION).gene("Y").build();
+        ProtectEvidence amplificationY = testBuilder(EvidenceType.AMPLIFICATION).gene("Y").build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(amplificationY));
 
-        ProtectEvidence amplificationX = testBuilder().type(EvidenceType.AMPLIFICATION).gene("X").build();
+        ProtectEvidence amplificationX = testBuilder(EvidenceType.AMPLIFICATION).gene("X").build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(amplificationX));
     }
 
@@ -50,13 +52,13 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForSignatures() {
         EvidenceEvaluator evaluator = withRecord(withRule(EligibilityRule.TML_OF_AT_LEAST_X));
 
-        ProtectEvidence tmbHigh = testBuilder().type(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HIGH_TMB).build();
+        ProtectEvidence tmbHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HIGH_TMB).build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(tmbHigh));
 
-        ProtectEvidence msi = testBuilder().type(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_MSI).build();
+        ProtectEvidence msi = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_MSI).build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(msi));
 
-        ProtectEvidence hrd = testBuilder().type(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HRD).build();
+        ProtectEvidence hrd = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HRD).build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(hrd));
     }
 
@@ -64,10 +66,10 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForActivation() {
         EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, "X"));
 
-        ProtectEvidence activation = testBuilder().type(EvidenceType.ACTIVATION).gene("X").build();
+        ProtectEvidence activation = testBuilder(EvidenceType.ACTIVATION).gene("X").build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(activation));
 
-        ProtectEvidence inactivation = testBuilder().type(EvidenceType.INACTIVATION).gene("X").build();
+        ProtectEvidence inactivation = testBuilder(EvidenceType.INACTIVATION).gene("X").build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(inactivation));
     }
 
@@ -75,10 +77,10 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForInactivation() {
         EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.INACTIVATION_OF_GENE_X, "X"));
 
-        ProtectEvidence inactivation = testBuilder().type(EvidenceType.INACTIVATION).gene("X").build();
+        ProtectEvidence inactivation = testBuilder(EvidenceType.INACTIVATION).gene("X").build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(inactivation));
 
-        ProtectEvidence activation = testBuilder().type(EvidenceType.ACTIVATION).gene("X").build();
+        ProtectEvidence activation = testBuilder(EvidenceType.ACTIVATION).gene("X").build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(activation));
     }
 
@@ -86,10 +88,10 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForAmplification() {
         EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.AMPLIFICATION_OF_GENE_X, "X"));
 
-        ProtectEvidence amplification = testBuilder().type(EvidenceType.AMPLIFICATION).gene("X").build();
+        ProtectEvidence amplification = testBuilder(EvidenceType.AMPLIFICATION).gene("X").build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(amplification));
 
-        ProtectEvidence deletion = testBuilder().type(EvidenceType.DELETION).gene("X").build();
+        ProtectEvidence deletion = testBuilder(EvidenceType.DELETION).gene("X").build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(deletion));
     }
 
@@ -97,10 +99,10 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForDeletion() {
         EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.DELETION_OF_GENE_X, "X"));
 
-        ProtectEvidence deletion = testBuilder().type(EvidenceType.DELETION).gene("X").build();
+        ProtectEvidence deletion = testBuilder(EvidenceType.DELETION).gene("X").build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(deletion));
 
-        ProtectEvidence amplification = testBuilder().type(EvidenceType.AMPLIFICATION).gene("X").build();
+        ProtectEvidence amplification = testBuilder(EvidenceType.AMPLIFICATION).gene("X").build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(amplification));
     }
 
@@ -108,18 +110,18 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForFusions() {
         EvidenceEvaluator promiscuousEvaluator = withRecord(withRuleOnGene(EligibilityRule.FUSION_IN_GENE_X, "X"));
 
-        ProtectEvidence fusionFive = testBuilder().type(EvidenceType.PROMISCUOUS_FUSION).gene("X").event("X - Y fusion").build();
+        ProtectEvidence fusionFive = testBuilder(EvidenceType.PROMISCUOUS_FUSION).gene("X").event("X - Y fusion").build();
         assertTrue(promiscuousEvaluator.isPotentiallyForTrialInclusion(fusionFive));
 
-        ProtectEvidence fusionThree = testBuilder().type(EvidenceType.PROMISCUOUS_FUSION).gene("Y").event("Y - X fusion").build();
+        ProtectEvidence fusionThree = testBuilder(EvidenceType.PROMISCUOUS_FUSION).gene("Y").event("Y - X fusion").build();
         assertTrue(promiscuousEvaluator.isPotentiallyForTrialInclusion(fusionThree));
 
         EvidenceEvaluator exactEvaluator = withRecord(withRuleAndMutation(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, "X-Y"));
 
-        ProtectEvidence fusionCorrect = testBuilder().type(EvidenceType.FUSION_PAIR).event("X - Y fusion").build();
+        ProtectEvidence fusionCorrect = testBuilder(EvidenceType.FUSION_PAIR).event("X - Y fusion").build();
         assertTrue(exactEvaluator.isPotentiallyForTrialInclusion(fusionCorrect));
 
-        ProtectEvidence fusionIncorrect = testBuilder().type(EvidenceType.FUSION_PAIR).event("Y - X fusion").build();
+        ProtectEvidence fusionIncorrect = testBuilder(EvidenceType.FUSION_PAIR).event("Y - X fusion").build();
         assertFalse(exactEvaluator.isPotentiallyForTrialInclusion(fusionIncorrect));
     }
 
@@ -128,28 +130,29 @@ public class OrangeEvidenceEvaluatorTest {
         EvidenceEvaluator mutationEvaluator =
                 withRecord(withRuleAndGeneAndMutation(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, "X", "Y"));
 
-        ProtectEvidence hotspotCorrect = testBuilder().type(EvidenceType.HOTSPOT_MUTATION).gene("X").event("Y").build();
+        ProtectEvidence hotspotCorrect = testBuilder(EvidenceType.HOTSPOT_MUTATION).gene("X").event("Y").build();
         assertTrue(mutationEvaluator.isPotentiallyForTrialInclusion(hotspotCorrect));
 
-        ProtectEvidence hotspotWrong = testBuilder().type(EvidenceType.HOTSPOT_MUTATION).gene("X").event("Z").build();
+        ProtectEvidence hotspotWrong = testBuilder(EvidenceType.HOTSPOT_MUTATION).gene("X").event("Z").build();
         assertFalse(mutationEvaluator.isPotentiallyForTrialInclusion(hotspotWrong));
 
-        ProtectEvidence codon = testBuilder().type(EvidenceType.CODON_MUTATION).gene("X").event("Y").build();
+        ProtectEvidence codon = testBuilder(EvidenceType.CODON_MUTATION).gene("X").event("Y").build();
         assertTrue(mutationEvaluator.isPotentiallyForTrialInclusion(codon));
 
-        ProtectEvidence exon = testBuilder().type(EvidenceType.EXON_MUTATION).gene("X").event("Y").build();
+        ProtectEvidence exon = testBuilder(EvidenceType.EXON_MUTATION).gene("X").event("Y").build();
         assertTrue(mutationEvaluator.isPotentiallyForTrialInclusion(exon));
     }
 
     @NotNull
-    private static ImmutableProtectEvidence.Builder testBuilder() {
+    private static ImmutableProtectEvidence.Builder testBuilder(@NotNull EvidenceType type) {
         return ImmutableProtectEvidence.builder()
                 .reported(true)
                 .event(Strings.EMPTY)
                 .treatment(Strings.EMPTY)
                 .onLabel(true)
                 .level(EvidenceLevel.A)
-                .direction(EvidenceDirection.RESPONSIVE);
+                .direction(EvidenceDirection.RESPONSIVE)
+                .addSources(ImmutableProtectSource.builder().from(TestProtectDataFactory.createSource()).type(type).build());
     }
 
     @NotNull

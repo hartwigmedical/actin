@@ -50,8 +50,10 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
@@ -247,32 +249,34 @@ public final class OrangeJson {
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
 
-                // TODO Properly support new protect model
-                Integer rangeRank = null;
-                EvidenceType type = null;
-                Set<String> sources = Sets.newHashSet();
-                for (JsonElement sourceElement : array(evidence, "protectSources")) {
-                    JsonObject source = sourceElement.getAsJsonObject();
-
-                    rangeRank = nullableInteger(source, "rangeRank");
-                    type = EvidenceType.valueOf(string(source, "evidenceType"));
-                    sources.add(string(source, "source"));
-                }
-
                 evidences.add(ImmutableProtectEvidence.builder()
                         .reported(bool(evidence, "reported"))
                         .gene(nullableString(evidence, "gene"))
                         .event(string(evidence, "event"))
-                        .rangeRank(rangeRank)
                         .treatment(string(evidence, "treatment"))
                         .onLabel(bool(evidence, "onLabel"))
-                        .type(type)
                         .level(EvidenceLevel.valueOf(string(evidence, "level")))
                         .direction(EvidenceDirection.valueOf(string(evidence, "direction")))
-                        .sources(sources)
+                        .sources(toSources(array(evidence, "protectSources")))
                         .build());
             }
             return ImmutableProtectRecord.builder().evidences(evidences).build();
+        }
+
+        @NotNull
+        private static Set<ProtectSource> toSources(@NotNull JsonArray sourceArray) {
+            Set<ProtectSource> sources = Sets.newHashSet();
+            for (JsonElement element : sourceArray) {
+                JsonObject source = element.getAsJsonObject();
+
+                sources.add(ImmutableProtectSource.builder()
+                        .name(string(source, "source"))
+                        .event(string(source, "sourceEvent"))
+                        .type(EvidenceType.valueOf(string(source, "evidenceType")))
+                        .rangeRank(nullableInteger(source, "rangeRank"))
+                        .build());
+            }
+            return sources;
         }
     }
 }

@@ -14,8 +14,10 @@ import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.util.FusionParser;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
@@ -65,7 +67,7 @@ class OrangeEventMapper {
         Set<GeneMutation> geneMutations = Sets.newHashSet();
 
         for (ProtectEvidence evidence : evidences) {
-            if (MUTATION_TYPES.contains(evidence.type())) {
+            if (MUTATION_TYPES.contains(evidence.sources().iterator().next().type())) {
                 for (String mutation : mutationMapper.map(evidence)) {
                     geneMutations.add(ImmutableGeneMutation.builder().gene(evidence.gene()).mutation(mutation).build());
                 }
@@ -79,7 +81,7 @@ class OrangeEventMapper {
     private static Set<String> mapActivatedGenes(@NotNull List<ProtectEvidence> evidences) {
         Set<String> activatedGenes = Sets.newHashSet();
         for (ProtectEvidence evidence : evidences) {
-            if (ACTIVATION_TYPES.contains(evidence.type())) {
+            if (ACTIVATION_TYPES.contains(evidence.sources().iterator().next().type())) {
                 activatedGenes.add(evidence.gene());
             }
         }
@@ -91,7 +93,7 @@ class OrangeEventMapper {
     private static Set<InactivatedGene> mapInactivatedGenes(@NotNull List<ProtectEvidence> evidences) {
         Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
         for (ProtectEvidence evidence : evidences) {
-            if (INACTIVATION_TYPES.contains(evidence.type())) {
+            if (INACTIVATION_TYPES.contains(evidence.sources().iterator().next().type())) {
                 boolean hasBeenDeleted = evidence.event().equals("full loss") || evidence.event().equals("partial loss");
 
                 inactivatedGenes.add(ImmutableInactivatedGene.builder().gene(evidence.gene()).hasBeenDeleted(hasBeenDeleted).build());
@@ -105,7 +107,7 @@ class OrangeEventMapper {
         Set<String> amplifiedGenes = Sets.newHashSet();
 
         for (ProtectEvidence evidence : evidences) {
-            if (AMPLIFICATION_TYPES.contains(evidence.type())) {
+            if (AMPLIFICATION_TYPES.contains(evidence.sources().iterator().next().type())) {
                 amplifiedGenes.add(evidence.gene());
             }
         }
@@ -125,7 +127,7 @@ class OrangeEventMapper {
         Set<FusionGene> fusionGenes = Sets.newHashSet();
 
         for (ProtectEvidence evidence : evidences) {
-            if (FUSION_TYPES.contains(evidence.type())) {
+            if (FUSION_TYPES.contains(evidence.sources().iterator().next().type())) {
                 fusionGenes.add(FusionParser.fromEvidenceEvent(evidence.event()));
             }
         }
@@ -136,9 +138,16 @@ class OrangeEventMapper {
     @NotNull
     private static List<ProtectEvidence> reportedFromActinSource(@NotNull Iterable<ProtectEvidence> evidences) {
         List<ProtectEvidence> filtered = Lists.newArrayList();
+
         for (ProtectEvidence evidence : evidences) {
-            if (evidence.sources().contains(ACTIN_SOURCE) && evidence.reported()) {
-                filtered.add(evidence);
+            ProtectSource actinSource = null;
+            for (ProtectSource source : evidence.sources()) {
+                if (source.name().equals(ACTIN_SOURCE)) {
+                    actinSource = source;
+                }
+            }
+            if (evidence.reported() && actinSource != null) {
+                filtered.add(ImmutableProtectEvidence.builder().from(evidence).sources(Sets.newHashSet(actinSource)).build());
             }
         }
         return filtered;

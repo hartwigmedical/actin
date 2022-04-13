@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.orange.datamodel.protect;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestProtectEvidenceFactory {
+public final class TestProtectDataFactory {
 
-    private TestProtectEvidenceFactory() {
+    private TestProtectDataFactory() {
     }
 
     @NotNull
@@ -15,9 +15,13 @@ public final class TestProtectEvidenceFactory {
                 .event(Strings.EMPTY)
                 .treatment(Strings.EMPTY)
                 .onLabel(false)
-                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .build();
+    }
+
+    @NotNull
+    public static ProtectSource createSource() {
+        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(EvidenceType.HOTSPOT_MUTATION).build();
     }
 }

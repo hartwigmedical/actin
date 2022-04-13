@@ -26,6 +26,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
@@ -170,12 +171,16 @@ public class OrangeJsonTest {
         assertTrue(evidence.reported());
         assertEquals("BRAF", evidence.gene());
         assertEquals("p.Val600Glu", evidence.event());
-        assertNull(evidence.rangeRank());
         assertEquals("Cobimetinib + Vemurafenib", evidence.treatment());
         assertTrue(evidence.onLabel());
-        assertEquals(EvidenceType.HOTSPOT_MUTATION, evidence.type());
         assertEquals(EvidenceLevel.A, evidence.level());
         assertEquals(EvidenceDirection.RESPONSIVE, evidence.direction());
-        assertTrue(evidence.sources().contains("VICC_CGI"));
+
+        assertEquals(1, evidence.sources().size());
+        ProtectSource source = evidence.sources().iterator().next();
+        assertEquals("VICC_CGI", source.name());
+        assertEquals("hotspot", source.event());
+        assertEquals(EvidenceType.HOTSPOT_MUTATION, source.type());
+        assertNull(source.rangeRank());
     }
 }

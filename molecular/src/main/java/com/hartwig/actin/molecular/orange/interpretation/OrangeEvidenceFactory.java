@@ -9,7 +9,9 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
 import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
@@ -129,11 +131,18 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private static List<ProtectEvidence> reportedApplicableForSource(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String source) {
+    private static List<ProtectEvidence> reportedApplicableForSource(@NotNull Iterable<ProtectEvidence> evidences,
+            @NotNull String sourceName) {
         List<ProtectEvidence> filtered = Lists.newArrayList();
         for (ProtectEvidence evidence : evidences) {
-            if (evidence.reported() && evidence.sources().contains(source) && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
-                filtered.add(evidence);
+            ProtectSource applicableSource = null;
+            for (ProtectSource source : evidence.sources()) {
+                if (source.name().equals(sourceName)) {
+                    applicableSource = source;
+                }
+            }
+            if (evidence.reported() && applicableSource != null && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
+                filtered.add(ImmutableProtectEvidence.builder().from(evidence).sources(Sets.newHashSet(applicableSource)).build());
             }
         }
         return filtered;

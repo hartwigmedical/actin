@@ -21,6 +21,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
@@ -148,52 +149,55 @@ public final class TestOrangeDataFactory {
     private static ProtectRecord createTestProtectRecord() {
         List<ProtectEvidence> evidences = Lists.newArrayList();
 
-        ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder().addSources("CKB").reported(true);
+        ImmutableProtectSource.Builder evidenceSourceBuilder = ImmutableProtectSource.builder().name("CKB").event(Strings.EMPTY);
+        ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder().reported(true);
         evidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
-                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
+                .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         evidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
-                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
+                .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         evidences.add(evidenceBuilder.gene("PTEN")
                 .event("partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
-                .type(EvidenceType.INACTIVATION)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
+                .addSources(evidenceSourceBuilder.type(EvidenceType.INACTIVATION).build())
                 .build());
 
-        ImmutableProtectEvidence.Builder externalTrialBuilder = ImmutableProtectEvidence.builder().addSources("ICLUSION").reported(true);
+        ImmutableProtectSource.Builder externalSourceBuilder = ImmutableProtectSource.builder().name("ICLUSION").event(Strings.EMPTY);
+        ImmutableProtectEvidence.Builder externalTrialBuilder = ImmutableProtectEvidence.builder().reported(true);
         evidences.add(externalTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial X")
                 .onLabel(true)
-                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
+                .addSources(externalSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
-        ImmutableProtectEvidence.Builder actinTrialBuilder = ImmutableProtectEvidence.builder().addSources("ACTIN").reported(true);
+        ImmutableProtectSource.Builder actinSourceBuilder = ImmutableProtectSource.builder().name("ACTIN").event(Strings.EMPTY);
+        ImmutableProtectEvidence.Builder actinTrialBuilder = ImmutableProtectEvidence.builder().reported(true);
         evidences.add(actinTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial Y")
                 .onLabel(true)
-                .type(EvidenceType.HOTSPOT_MUTATION)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
+                .addSources(actinSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         return ImmutableProtectRecord.builder().evidences(evidences).build();

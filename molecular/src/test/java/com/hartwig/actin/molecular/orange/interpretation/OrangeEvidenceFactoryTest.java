@@ -11,8 +11,10 @@ import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectEvidenceFactory;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
+import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -96,9 +98,9 @@ public class OrangeEvidenceFactoryTest {
         List<ProtectEvidence> evidences = Lists.newArrayList();
 
         ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder()
-                .from(TestProtectEvidenceFactory.create())
+                .from(TestProtectDataFactory.create())
                 .reported(true)
-                .addSources(OrangeEvidenceFactory.CKB_SOURCE);
+                .addSources(withName(OrangeEvidenceFactory.CKB_SOURCE));
 
         String treatmentWithResponsiveEvidenceA = "treatment A on-label";
         // Should be approved treatment
@@ -166,26 +168,31 @@ public class OrangeEvidenceFactoryTest {
 
         // Add one general trial event that should be included
         evidences.add(ImmutableProtectEvidence.builder()
-                .from(TestProtectEvidenceFactory.create())
+                .from(TestProtectDataFactory.create())
                 .reported(true)
                 .event("B responsive trial event")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(OrangeEvidenceFactory.ICLUSION_SOURCE)
+                .addSources(withName(OrangeEvidenceFactory.ICLUSION_SOURCE))
                 .build());
 
         // And one ACTIN trial that should be included.
         evidences.add(ImmutableProtectEvidence.builder()
-                .from(TestProtectEvidenceFactory.create())
+                .from(TestProtectDataFactory.create())
                 .reported(true)
                 .event("B responsive actin event")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(OrangeEvidenceFactory.ACTIN_SOURCE)
+                .addSources(withName(OrangeEvidenceFactory.ACTIN_SOURCE))
                 .build());
 
         return evidences;
+    }
+
+    @NotNull
+    private static ProtectSource withName(@NotNull String name) {
+        return ImmutableProtectSource.builder().from(TestProtectDataFactory.createSource()).name(name).build();
     }
 }

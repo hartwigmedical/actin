@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectEvidenceFactory;
+import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -46,6 +46,6 @@ public class ApplicabilityFilterTest {
 
     @NotNull
     private static ImmutableProtectEvidence.Builder testBuilder() {
-        return ImmutableProtectEvidence.builder().from(TestProtectEvidenceFactory.create());
+        return ImmutableProtectEvidence.builder().from(TestProtectDataFactory.create());
     }
 }

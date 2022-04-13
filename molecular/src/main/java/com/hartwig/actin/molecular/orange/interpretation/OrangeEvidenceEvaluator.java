@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
 import com.hartwig.actin.molecular.orange.util.FusionParser;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
@@ -49,7 +50,12 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     @Override
     public boolean isPotentiallyForTrialInclusion(@NotNull ProtectEvidence evidence) {
-        switch (evidence.type()) {
+        if (evidence.sources().size() != 1) {
+            throw new IllegalStateException("Evidence should be filtered down to single source: " + evidence);
+        }
+
+        ProtectSource source = evidence.sources().iterator().next();
+        switch (source.type()) {
             case VIRAL_PRESENCE: {
                 LOGGER.warn("No trial inclusion evaluation is implemented for viral presence: {}", EvidenceFormatter.format(evidence));
                 return false;
@@ -84,7 +90,7 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
                 return false;
             }
             default: {
-                throw new IllegalArgumentException("Evidence of unrecognized type detected: " + evidence.type());
+                throw new IllegalArgumentException("Evidence of unrecognized type detected: " + source.type());
             }
         }
     }
