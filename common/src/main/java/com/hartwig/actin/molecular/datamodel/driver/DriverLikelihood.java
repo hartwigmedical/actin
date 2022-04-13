@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.driver;
 
-public enum DriverLikelihoodType {
+public enum DriverLikelihood {
     HIGH,
     LOW
 }

@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 final class DriverExtraction {
 
-    private static final String UPSTREAM_GENE_VARIANT = "upstream_gene_variant";
+    static final String UPSTREAM_GENE_VARIANT = "upstream_gene_variant";
 
     private DriverExtraction() {
     }
@@ -159,7 +159,8 @@ final class DriverExtraction {
     }
 
     @NotNull
-    private static FusionDriverType extractFusionDriverType(@NotNull LinxFusion fusion) {
+    @VisibleForTesting
+    static FusionDriverType extractFusionDriverType(@NotNull LinxFusion fusion) {
         switch (fusion.type()) {
             case PROMISCUOUS_3:
             case PROMISCUOUS_5:
@@ -179,13 +180,14 @@ final class DriverExtraction {
     }
 
     @NotNull
-    private static DriverLikelihoodType extractFusionDriverLikelihood(@NotNull LinxFusion fusion) {
+    @VisibleForTesting
+    static DriverLikelihood extractFusionDriverLikelihood(@NotNull LinxFusion fusion) {
         switch (fusion.driverLikelihood()) {
             case HIGH: {
-                return DriverLikelihoodType.HIGH;
+                return DriverLikelihood.HIGH;
             }
             case LOW: {
-                return DriverLikelihoodType.LOW;
+                return DriverLikelihood.LOW;
             }
             default: {
                 throw new IllegalStateException(
@@ -208,13 +210,14 @@ final class DriverExtraction {
     }
 
     @NotNull
-    private static DriverLikelihoodType extractVirusDriverLikelihood(@NotNull VirusInterpreterEntry virus) {
+    @VisibleForTesting
+    static DriverLikelihood extractVirusDriverLikelihood(@NotNull VirusInterpreterEntry virus) {
         switch (virus.driverLikelihood()) {
             case HIGH: {
-                return DriverLikelihoodType.HIGH;
+                return DriverLikelihood.HIGH;
             }
             case LOW: {
-                return DriverLikelihoodType.LOW;
+                return DriverLikelihood.LOW;
             }
             default: {
                 throw new IllegalStateException(

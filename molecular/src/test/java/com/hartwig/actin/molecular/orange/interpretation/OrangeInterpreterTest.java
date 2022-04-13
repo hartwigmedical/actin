@@ -14,6 +14,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -40,15 +41,27 @@ public class OrangeInterpreterTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
+        assertTrue(record.hasReliableQuality());
 
         MolecularCharacteristics characteristics = record.characteristics();
+        assertEquals(0.98, characteristics.purity(), EPSILON);
+        assertTrue(characteristics.hasReliablePurity());
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
         assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
-
         assertFalse(characteristics.isMicrosatelliteUnstable());
         assertFalse(characteristics.isHomologousRepairDeficient());
         assertEquals(13D, characteristics.tumorMutationalBurden(), EPSILON);
         assertEquals(189, (int) characteristics.tumorMutationalLoad());
+
+        MolecularDrivers drivers = record.drivers();
+        assertEquals(1, drivers.variants().size());
+        assertEquals(1, drivers.amplifications().size());
+        assertEquals(1, drivers.losses().size());
+        assertEquals(2, drivers.disruptions().size());
+        assertEquals(1, drivers.fusions().size());
+        assertEquals(1, drivers.viruses().size());
+
+        assertEquals(1, record.pharmaco().size());
 
         MolecularEvidence evidence = record.evidence();
         assertEquals(1, evidence.actinTrials().size());

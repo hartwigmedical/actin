@@ -15,5 +15,5 @@ public abstract class Virus {
     public abstract String details();
 
     @NotNull
-    public abstract DriverLikelihoodType driverLikelihood();
+    public abstract DriverLikelihood driverLikelihood();
 }

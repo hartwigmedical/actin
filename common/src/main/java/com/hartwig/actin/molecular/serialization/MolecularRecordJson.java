@@ -42,7 +42,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
@@ -239,7 +239,7 @@ public class MolecularRecordJson {
                         .threeGene(string(fusion, "threeGene"))
                         .details(string(fusion, "details"))
                         .driverType(FusionDriverType.valueOf(string(fusion, "driverType")))
-                        .driverLikelihood(DriverLikelihoodType.valueOf(string(fusion, "driverLikelihood")))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(fusion, "driverLikelihood")))
                         .build());
             }
             return fusions;
@@ -253,7 +253,7 @@ public class MolecularRecordJson {
                 viruses.add(ImmutableVirus.builder()
                         .name(string(virus, "name"))
                         .details(string(virus, "details"))
-                        .driverLikelihood(DriverLikelihoodType.valueOf(string(virus, "driverLikelihood")))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(virus, "driverLikelihood")))
                         .build());
             }
             return viruses;

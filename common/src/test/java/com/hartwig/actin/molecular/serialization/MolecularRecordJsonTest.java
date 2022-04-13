@@ -17,7 +17,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
@@ -128,13 +128,13 @@ public class MolecularRecordJsonTest {
         assertEquals("ALK", fusion.threeGene());
         assertEquals("Exon 2 - Exon 4", fusion.details());
         assertEquals(FusionDriverType.KNOWN, fusion.driverType());
-        assertEquals(DriverLikelihoodType.HIGH, fusion.driverLikelihood());
+        assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
 
         assertEquals(1, drivers.viruses().size());
         Virus virus = drivers.viruses().iterator().next();
         assertEquals("HPV 16", virus.name());
         assertEquals("3 integrations detected", virus.details());
-        assertEquals(DriverLikelihoodType.HIGH, virus.driverLikelihood());
+        assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
     }
 
     @NotNull

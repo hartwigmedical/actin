@@ -9,7 +9,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihoodType;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
@@ -239,12 +239,12 @@ public final class TestMolecularDataFactory {
                         .threeGene("ALK")
                         .details("Exon 2 - Exon 4")
                         .driverType(FusionDriverType.KNOWN)
-                        .driverLikelihood(DriverLikelihoodType.HIGH)
+                        .driverLikelihood(DriverLikelihood.HIGH)
                         .build())
                 .addViruses(ImmutableVirus.builder()
                         .name("HPV 16")
                         .details("3 integrations detected")
-                        .driverLikelihood(DriverLikelihoodType.HIGH)
+                        .driverLikelihood(DriverLikelihood.HIGH)
                         .build())
                 .build();
     }
