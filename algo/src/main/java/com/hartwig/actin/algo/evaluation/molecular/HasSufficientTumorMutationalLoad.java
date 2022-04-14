@@ -23,8 +23,9 @@ public class HasSufficientTumorMutationalLoad implements EvaluationFunction {
         Integer tumorMutationalLoad = record.molecular().characteristics().tumorMutationalLoad();
         if (tumorMutationalLoad == null) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor mutational load is known")
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Unknown tumor mutational load (TML)")
+                    .addFailGeneralMessages("Unknown TML")
                     .build();
         }
 

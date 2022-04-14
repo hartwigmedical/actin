@@ -23,8 +23,9 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
         Double tumorMutationalBurden = record.molecular().characteristics().tumorMutationalBurden();
         if (tumorMutationalBurden == null) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor mutational burden is known")
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Unknown tumor mutational burden (TMB)")
+                    .addFailGeneralMessages("Unknown TMB")
                     .build();
         }
 

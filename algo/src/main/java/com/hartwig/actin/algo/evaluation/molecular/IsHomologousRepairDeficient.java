@@ -21,8 +21,9 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
 
         if (isHomologousRepairDeficient == null) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No homologous repair deficiency status is known")
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Unknown homologous repair deficiency (HRD) status")
+                    .addFailGeneralMessages("Unknown HRD status")
                     .build();
         }
 

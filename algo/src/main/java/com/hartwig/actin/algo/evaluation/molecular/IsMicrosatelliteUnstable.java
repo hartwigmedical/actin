@@ -21,8 +21,9 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
 
         if (isMicrosatelliteUnstable == null) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No microsatellite status is known")
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Unknown microsatellite stability status")
+                    .addFailGeneralMessages("Unknown MS status")
                     .build();
         }
 

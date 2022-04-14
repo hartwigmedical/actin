@@ -12,7 +12,7 @@ public class IsMicrosatelliteUnstableTest {
     public void canEvaluate() {
         IsMicrosatelliteUnstable function = new IsMicrosatelliteUnstable();
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(null)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(null)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(true)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstability(false)));
     }

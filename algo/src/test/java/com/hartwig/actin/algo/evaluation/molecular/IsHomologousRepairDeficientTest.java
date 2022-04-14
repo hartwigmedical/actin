@@ -12,7 +12,7 @@ public class IsHomologousRepairDeficientTest {
     public void canEvaluate() {
         IsHomologousRepairDeficient function = new IsHomologousRepairDeficient();
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(null)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(null)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(true)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withHomologousRepairDeficiency(false)));
     }
