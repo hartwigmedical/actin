@@ -29,7 +29,6 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.DELETION_OF_GENE_X, geneIsDeletedCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasActivatingFusionInGeneCreator());
-        map.put(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, hasSpecificFusionCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildtypeCreator());
         map.put(EligibilityRule.MSI_SIGNATURE, isMicrosatelliteUnstableCreator());
         map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
@@ -109,14 +108,6 @@ public final class MolecularRuleMapping {
         return function -> {
             String gene = FunctionInputResolver.createOneStringInput(function);
             return new HasActivatingFusionWithGene(gene);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasSpecificFusionCreator() {
-        return function -> {
-            TwoStrings genes = FunctionInputResolver.createTwoStringsInput(function);
-            return new HasSpecificFusionGene(genes.string1(), genes.string2());
         };
     }
 

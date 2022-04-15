@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasActivatingFusionWithGene implements EvaluationFunction {
 
     @NotNull

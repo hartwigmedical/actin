@@ -178,8 +178,7 @@ ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
 MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 DELETION_OF_GENE_X | Deletion is found in gene X
-FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found 
-SPECIFIC_FUSION_OF_X_TO_Y | Driver fusion with 2 specified fusion partner genes is found
+FUSION_IN_GENE_X | High driver fusion with fusion partner gene X is found
 WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
