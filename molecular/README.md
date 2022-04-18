@@ -103,6 +103,7 @@ haplotype | 1* HOM | The haplotype of the gene found in the germline data of the
 
 Field | Example Value | Details
 ---|---|---
+actinSource | ACTIN | The name of the ACTIN source.
 actinTrials | BRAF V600E -> Trial A | A list of mutations along with the trial they are associated with within the ACTIN treatment database.
 externalTrialSource | CKB | The name of the source that has been used for external trials
 externalTrials | High TMB -> Trial B | A list of mutations along with the trial they are associated with.
