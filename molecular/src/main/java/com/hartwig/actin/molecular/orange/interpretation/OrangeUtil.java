@@ -18,7 +18,7 @@ public final class OrangeUtil {
         String event = EventFormatter.format(evidence.event());
 
         // Promiscuous fusions have the gene embedded in the event.
-        return gene != null && isPromiscuousFusion(evidence) ? gene + " " + event : event;
+        return gene != null && !isPromiscuousFusion(evidence) ? gene + " " + event : event;
     }
 
     private static boolean isPromiscuousFusion(@NotNull ProtectEvidence evidence) {
