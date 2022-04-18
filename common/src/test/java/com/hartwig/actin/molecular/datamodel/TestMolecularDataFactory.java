@@ -132,10 +132,10 @@ public final class TestMolecularDataFactory {
                 .externalTrialSource("external")
                 .externalTrials(createTestExternalTrials())
                 .evidenceSource("general")
-                .approvedResponsiveEvidence(createTestApprovedResponsiveEvidence())
-                .experimentalResponsiveEvidence(createTestExperimentalResponsiveEvidence())
-                .offLabelExperimentalResponsiveEvidence(createTestOffLabelExperimentalResponsiveEvidence())
-                .preClinicalResponsiveEvidence(createTestPreClinicalResponsiveEvidence())
+                .approvedEvidence(createTestApprovedEvidence())
+                .onLabelExperimentalEvidence(createTestOnLabelExperimentalEvidence())
+                .offLabelExperimentalEvidence(createTestOffLabelExperimentalEvidence())
+                .preClinicalEvidence(createTestPreClinicalEvidence())
                 .knownResistanceEvidence(createTestKnownResistanceEvidence())
                 .suspectResistanceEvidence(createTestSuspectResistanceEvidence())
                 .build();
@@ -162,7 +162,7 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestApprovedResponsiveEvidence() {
+    private static Set<EvidenceEntry> createTestApprovedEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Vemurafenib").build());
@@ -173,7 +173,7 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestExperimentalResponsiveEvidence() {
+    private static Set<EvidenceEntry> createTestOnLabelExperimentalEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Pembrolizumab").build());
@@ -182,7 +182,7 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestOffLabelExperimentalResponsiveEvidence() {
+    private static Set<EvidenceEntry> createTestOffLabelExperimentalEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trametinib").build());
@@ -191,7 +191,7 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestPreClinicalResponsiveEvidence() {
+    private static Set<EvidenceEntry> createTestPreClinicalEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Pre-clinical treatment").build());

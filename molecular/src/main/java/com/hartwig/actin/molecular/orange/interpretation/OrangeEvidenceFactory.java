@@ -34,8 +34,6 @@ class OrangeEvidenceFactory {
     static final String EXTERNAL_SOURCE_NAME = "iClusion";
     static final String EVIDENCE_SOURCE_NAME = "CKB";
 
-
-
     @NotNull
     private final EvidenceEvaluator evidenceEvaluator;
 
@@ -59,10 +57,10 @@ class OrangeEvidenceFactory {
                 .externalTrialSource(EXTERNAL_SOURCE_NAME)
                 .externalTrials(createExternalTrials(evidences))
                 .evidenceSource(EVIDENCE_SOURCE_NAME)
-                .approvedResponsiveEvidence(createApprovedResponsiveEvidence(evidences))
-                .experimentalResponsiveEvidence(createExperimentalResponsiveEvidence(evidences))
-                .offLabelExperimentalResponsiveEvidence(createOffLabelExperimentalResponsiveEvidence(evidences))
-                .preClinicalResponsiveEvidence(createPreClinicalResponsiveEvidence(evidences))
+                .approvedEvidence(createApprovedEvidence(evidences))
+                .onLabelExperimentalEvidence(createOnLabelExperimentalEvidence(evidences))
+                .offLabelExperimentalEvidence(createOffLabelExperimentalEvidence(evidences))
+                .preClinicalEvidence(createPreClinicalEvidence(evidences))
                 .knownResistanceEvidence(createKnownResistanceEvidence(evidences))
                 .suspectResistanceEvidence(createSuspectResistanceEvidence(evidences))
                 .build();
@@ -92,7 +90,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<EvidenceEntry> createApprovedResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createApprovedEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EVIDENCE_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
@@ -103,12 +101,12 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<EvidenceEntry> createExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createOnLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
-            if (evidence.direction().isResponsive() && isExperimental(evidence)) {
+            if (evidence.direction().isResponsive() && isOnLabelExperimental(evidence)) {
                 result.add(toEvidenceEntry(evidence));
             }
         }
@@ -116,7 +114,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<EvidenceEntry> createOffLabelExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createOffLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
@@ -129,7 +127,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<EvidenceEntry> createPreClinicalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
@@ -210,7 +208,7 @@ class OrangeEvidenceFactory {
         return evidence.onLabel() && evidence.level() == EvidenceLevel.A && !evidence.direction().isPredicted();
     }
 
-    private static boolean isExperimental(@NotNull ProtectEvidence evidence) {
+    private static boolean isOnLabelExperimental(@NotNull ProtectEvidence evidence) {
         boolean isOffLabelA = !evidence.onLabel() && evidence.level() == EvidenceLevel.A;
         boolean isOnLabelB = evidence.onLabel() && evidence.level() == EvidenceLevel.B && !evidence.direction().isPredicted();
 
@@ -222,7 +220,7 @@ class OrangeEvidenceFactory {
     }
 
     private static boolean isPreClinical(@NotNull ProtectEvidence evidence) {
-        return !(isApproved(evidence) || isExperimental(evidence) || isOffLabelExperimental(evidence));
+        return !(isApproved(evidence) || isOnLabelExperimental(evidence) || isOffLabelExperimental(evidence));
     }
 
     @NotNull

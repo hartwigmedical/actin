@@ -31,11 +31,11 @@ public class EvidenceInterpreterTest {
     private static MolecularEvidence createTestEvidence() {
         return ImmutableMolecularEvidence.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord().evidence())
-                .approvedResponsiveEvidence(Sets.newHashSet(create("event 1", "treatment 1")))
+                .approvedEvidence(Sets.newHashSet(create("event 1", "treatment 1")))
                 .actinTrials(Sets.newHashSet(create("event 2", "trial 1")))
                 .externalTrials(Sets.newHashSet(create("event 1", "trial 1"), create("event 2", "trial 1"), create("event 3", "trial 3")))
-                .experimentalResponsiveEvidence(Sets.newHashSet(create("event 2", "trial 1")))
-                .offLabelExperimentalResponsiveEvidence(Sets.newHashSet(create("event 1", "treatment 1"), create("event 3", "treatment 3")))
+                .onLabelExperimentalEvidence(Sets.newHashSet(create("event 2", "trial 1")))
+                .offLabelExperimentalEvidence(Sets.newHashSet(create("event 1", "treatment 1"), create("event 3", "treatment 3")))
                 .build();
     }
 

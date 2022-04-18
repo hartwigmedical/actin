@@ -15,7 +15,7 @@ public final class EvidenceInterpreter {
 
     @NotNull
     public static Set<String> eventsWithApprovedEvidence(@NotNull MolecularEvidence evidence) {
-        return events(evidence.approvedResponsiveEvidence());
+        return events(evidence.approvedEvidence());
     }
 
     @NotNull
@@ -43,7 +43,7 @@ public final class EvidenceInterpreter {
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
 
-        return events(filter(evidence.experimentalResponsiveEvidence(), eventsToFilter));
+        return events(filter(evidence.onLabelExperimentalEvidence(), eventsToFilter));
     }
 
     @NotNull
@@ -53,7 +53,7 @@ public final class EvidenceInterpreter {
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
         eventsToFilter.addAll(additionalEventsWithExperimentalEvidence(evidence));
 
-        return events(filter(evidence.offLabelExperimentalResponsiveEvidence(), eventsToFilter));
+        return events(filter(evidence.offLabelExperimentalEvidence(), eventsToFilter));
     }
 
     @NotNull

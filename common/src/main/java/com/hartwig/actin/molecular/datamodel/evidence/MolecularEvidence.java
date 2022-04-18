@@ -26,16 +26,16 @@ public abstract class MolecularEvidence {
     public abstract String evidenceSource();
 
     @NotNull
-    public abstract Set<EvidenceEntry> approvedResponsiveEvidence();
+    public abstract Set<EvidenceEntry> approvedEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> experimentalResponsiveEvidence();
+    public abstract Set<EvidenceEntry> onLabelExperimentalEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> offLabelExperimentalResponsiveEvidence();
+    public abstract Set<EvidenceEntry> offLabelExperimentalEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> preClinicalResponsiveEvidence();
+    public abstract Set<EvidenceEntry> preClinicalEvidence();
 
     @NotNull
     public abstract Set<EvidenceEntry> knownResistanceEvidence();

@@ -66,7 +66,7 @@ public class OrangeInterpreterTest {
         MolecularEvidence evidence = record.evidence();
         assertEquals(1, evidence.actinTrials().size());
         assertEquals(1, evidence.externalTrials().size());
-        assertEquals(1, evidence.approvedResponsiveEvidence().size());
+        assertEquals(1, evidence.approvedEvidence().size());
         assertEquals(0, evidence.knownResistanceEvidence().size());
     }
 

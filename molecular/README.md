@@ -107,10 +107,10 @@ actinTrials | BRAF V600E -> Trial A | A list of mutations along with the trial t
 externalTrialSource | CKB | The name of the source that has been used for external trials
 externalTrials | High TMB -> Trial B | A list of mutations along with the trial they are associated with.
 evidenceSource | CKB | The name of the source used for general evidence
-approvedResponsiveEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with approved responsive evidence for treatment based on data from `evidenceSource`
-experimentalResponsiveEvidence | - | A list of mutations along with experimental responsive evidence for treatment based on data from `evidenceSource`
-offLabelExperimentalResponsiveEvidence | - | A list of mutations with responsive evidence that is experimental for a different tumor type based on data from `evidenceSource`.
-preClinicalResponsiveEvidence | - | A list of mutations with evidence that is pre-clinical based on data from `evidenceSource`.
+approvedEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with approved evidence for treatment based on data from `evidenceSource`
+onLabelExperimentalEvidence | - | A list of mutations along with on-label experimental evidence for treatment based on data from `evidenceSource`
+offLabelExperimentalEvidence | - | A list of mutations with evidence that is experimental for a different tumor type based on data from `evidenceSource`.
+preClinicalEvidence | - | A list of mutations with evidence that is pre-clinical based on data from `evidenceSource`.
 knownResistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with known resistance evidence for treatment based on data from `evidenceSource`.
 suspectResistanceEvidence | - | A list of mutations along with suspect resistance evidence for treatment based on data from `evidenceSource`.
 

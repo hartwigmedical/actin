@@ -103,7 +103,7 @@
       }
     ],
     "evidenceSource": "evidence",
-    "approvedResponsiveEvidence": [
+    "approvedEvidence": [
       {
         "event": "High TML",
         "treatment": "Pembrolizumab"
@@ -113,19 +113,19 @@
         "treatment": "Nivolumab"
       }
     ],
-    "experimentalResponsiveEvidence": [
+    "onLabelExperimentalEvidence": [
       {
-        "event": "experimental",
-        "treatment": "experimental drug"
+        "event": "on-label experimental",
+        "treatment": "on-label experimental drug"
       }
     ],
-    "offLabelExperimentalResponsiveEvidence": [
+    "offLabelExperimentalEvidence": [
       {
         "event": "off-label experimental",
         "treatment": "off-label experimental drug"
       }
     ],
-    "preClinicalResponsiveEvidence": [
+    "preClinicalEvidence": [
       {
         "event": "pre clinical",
         "treatment": "no drug yet"

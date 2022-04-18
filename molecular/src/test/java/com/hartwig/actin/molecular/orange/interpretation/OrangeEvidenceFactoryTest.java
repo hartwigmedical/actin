@@ -50,17 +50,17 @@ public class OrangeEvidenceFactoryTest {
         assertEquals("B responsive external event", evidence.externalTrials().iterator().next().event());
 
         assertEquals(OrangeEvidenceFactory.EVIDENCE_SOURCE_NAME, evidence.evidenceSource());
-        assertEquals(1, evidence.approvedResponsiveEvidence().size());
-        assertEquals("A on-label responsive event", evidence.approvedResponsiveEvidence().iterator().next().event());
+        assertEquals(1, evidence.approvedEvidence().size());
+        assertEquals("A on-label responsive event", evidence.approvedEvidence().iterator().next().event());
 
-        assertEquals(1, evidence.experimentalResponsiveEvidence().size());
-        assertEquals("A off-label responsive event", evidence.experimentalResponsiveEvidence().iterator().next().event());
+        assertEquals(1, evidence.onLabelExperimentalEvidence().size());
+        assertEquals("A off-label responsive event", evidence.onLabelExperimentalEvidence().iterator().next().event());
 
-        assertEquals(1, evidence.offLabelExperimentalResponsiveEvidence().size());
-        assertEquals("B off-label responsive event", evidence.offLabelExperimentalResponsiveEvidence().iterator().next().event());
+        assertEquals(1, evidence.offLabelExperimentalEvidence().size());
+        assertEquals("B off-label responsive event", evidence.offLabelExperimentalEvidence().iterator().next().event());
 
-        assertEquals(1, evidence.preClinicalResponsiveEvidence().size());
-        assertEquals("D off-label responsive event", evidence.preClinicalResponsiveEvidence().iterator().next().event());
+        assertEquals(1, evidence.preClinicalEvidence().size());
+        assertEquals("D off-label responsive event", evidence.preClinicalEvidence().iterator().next().event());
 
         assertEquals(1, evidence.knownResistanceEvidence().size());
         assertEquals("A resistant event", evidence.knownResistanceEvidence().iterator().next().event());

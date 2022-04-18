@@ -171,21 +171,22 @@ public class MolecularRecordJsonTest {
         assertEquals("Trial 1", externalTrial.treatment());
 
         assertEquals("evidence", evidence.evidenceSource());
-        assertEquals(2, evidence.approvedResponsiveEvidence().size());
-        EvidenceEntry approvedEvidence1 = findByTreatment(evidence.approvedResponsiveEvidence(), "Pembrolizumab");
+        assertEquals(2, evidence.approvedEvidence().size());
+        EvidenceEntry approvedEvidence1 = findByTreatment(evidence.approvedEvidence(), "Pembrolizumab");
         assertEquals("High TML", approvedEvidence1.event());
-        EvidenceEntry approvedEvidence2 = findByTreatment(evidence.approvedResponsiveEvidence(), "Nivolumab");
+        EvidenceEntry approvedEvidence2 = findByTreatment(evidence.approvedEvidence(), "Nivolumab");
         assertEquals("High TML", approvedEvidence2.event());
 
-        assertEquals(1, evidence.experimentalResponsiveEvidence().size());
-        assertEquals("experimental", findByTreatment(evidence.experimentalResponsiveEvidence(), "experimental drug").event());
+        assertEquals(1, evidence.onLabelExperimentalEvidence().size());
+        assertEquals("on-label experimental",
+                findByTreatment(evidence.onLabelExperimentalEvidence(), "on-label experimental drug").event());
 
-        assertEquals(1, evidence.offLabelExperimentalResponsiveEvidence().size());
+        assertEquals(1, evidence.offLabelExperimentalEvidence().size());
         assertEquals("off-label experimental",
-                findByTreatment(evidence.offLabelExperimentalResponsiveEvidence(), "off-label experimental drug").event());
+                findByTreatment(evidence.offLabelExperimentalEvidence(), "off-label experimental drug").event());
 
-        assertEquals(1, evidence.preClinicalResponsiveEvidence().size());
-        assertEquals("pre clinical", findByTreatment(evidence.preClinicalResponsiveEvidence(), "no drug yet").event());
+        assertEquals(1, evidence.preClinicalEvidence().size());
+        assertEquals("pre clinical", findByTreatment(evidence.preClinicalEvidence(), "no drug yet").event());
 
         assertEquals(1, evidence.knownResistanceEvidence().size());
         assertEquals("known resistance", findByTreatment(evidence.knownResistanceEvidence(), "known resistant drug").event());
