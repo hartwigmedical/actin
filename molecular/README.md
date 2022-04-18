@@ -135,7 +135,7 @@ The ORANGE interpreter application maps the ORANGE output to the molecular datam
 Field | Mapping
 ---|---
 sampleId | The ORANGE field `sampleId`
-type | Hard-coded to WGS 
+type | Hard-coded to `WGS` 
 date | The ORANGE field `reportedDate`
 hasReliableQuality | The PURPLE field `hasReliableQuality` 
 
@@ -164,20 +164,20 @@ viruses | VirusInterpreter | All reportable viruses.
 The pharmaco entries are extracted from PEACH.
 
 The evidence is extracted from PROTECT in the following steps:
- 1. Evidence is filtered for applicability
- 1. Reported evidence is used exclusively for all following steps
- 1. Evidence is categorized using below table
+ 1. Evidence is filtered for applicability based on ACTIN's internal applicability model. This applicability model removes evidence from any source that is never considered to be applicable. 
+ 1. Reported evidence is used exclusively for the inputs to the filters defined below
+ 1. Evidence is categorized according to the filters. Every evidence item can belong to only one category. 
  
 Field | Source | Filter
 ---|---|---
-actinTrials | ACTIN | Evidence is filtered that is used exclusively in exclusion rules within ACTIN  
+actinTrials | ACTIN | Evidence is filtered that is used exclusively in inclusion eligibility rules within ACTIN  
 externalTrials | ICLUSION | -
 approvedEvidence | CKB | A-level on-label non-predicted responsive evidence.
-onLabelExperimentalEvidence | CKB | A-level that is either predicted or off-label responsive and B-level on-label non-predicted responsive evidence.
+onLabelExperimentalEvidence | CKB | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence.
 offLabelExperimentalEvidence | CKB | B-level off-label non-predicted responsive evidence.
-preClinicalEvidence | CKB | All responsive evidence that is not approved or experimental. 
+preClinicalEvidence | CKB | All responsive evidence that is neither approved nor experimental. 
 knownResistanceEvidence | CKB | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level.  
-suspectResistanceEvidence | CKB | Any not-known resistance for a treatment with evidence with equal or lower evidence level.    
+suspectResistanceEvidence | CKB | Any other resistance for a treatment with evidence with equal or lower evidence level.    
 
 The events that are used for ACTIN treatment matching are extracted from the PROTECT part of the ORANGE datamodel. It is assumed that PROTECT
 has been run on a SERVE database that includes an ACTIN source generated from the ACTIN treatment database using [serve-bridge](../serve-bridge).
