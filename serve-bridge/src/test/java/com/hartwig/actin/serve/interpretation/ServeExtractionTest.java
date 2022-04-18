@@ -48,12 +48,6 @@ public class ServeExtractionTest {
                 .build();
         assertEquals("mutation", ServeExtraction.mutation(mutationFunction));
 
-        EligibilityFunction fusionFunction = ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y)
-                .parameters(Lists.newArrayList("gene1", "gene2"))
-                .build();
-        assertEquals("gene1-gene2", ServeExtraction.mutation(fusionFunction));
-
         EligibilityFunction msiFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.MSI_SIGNATURE).build();
         assertEquals("MSI high", ServeExtraction.mutation(msiFunction));
 
@@ -92,13 +86,6 @@ public class ServeExtractionTest {
     public void crashOnInvalidMutationForMutationExtraction() {
         EligibilityFunction invalidFunction =
                 ImmutableEligibilityFunction.builder().rule(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y).build();
-        ServeExtraction.mutation(invalidFunction);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void crashOnInvalidFusionForMutationExtraction() {
-        EligibilityFunction invalidFunction =
-                ImmutableEligibilityFunction.builder().rule(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y).build();
         ServeExtraction.mutation(invalidFunction);
     }
 }

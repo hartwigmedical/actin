@@ -111,21 +111,13 @@ public class OrangeEvidenceEvaluatorTest {
 
     @Test
     public void canDetermineInclusionForFusions() {
-        EvidenceEvaluator promiscuousEvaluator = withRecord(withRuleOnGene(EligibilityRule.FUSION_IN_GENE_X, "X"));
+        EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.FUSION_IN_GENE_X, "X"));
 
         ProtectEvidence fusionFive = testBuilder(EvidenceType.PROMISCUOUS_FUSION).gene("X").event("X - Y fusion").build();
-        assertTrue(promiscuousEvaluator.isPotentiallyForTrialInclusion(fusionFive));
+        assertTrue(evaluator.isPotentiallyForTrialInclusion(fusionFive));
 
-        ProtectEvidence fusionThree = testBuilder(EvidenceType.PROMISCUOUS_FUSION).gene("Y").event("Y - X fusion").build();
-        assertTrue(promiscuousEvaluator.isPotentiallyForTrialInclusion(fusionThree));
-
-        EvidenceEvaluator exactEvaluator = withRecord(withRuleAndMutation(EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y, "X-Y"));
-
-        ProtectEvidence fusionCorrect = testBuilder(EvidenceType.FUSION_PAIR).event("X - Y fusion").build();
-        assertTrue(exactEvaluator.isPotentiallyForTrialInclusion(fusionCorrect));
-
-        ProtectEvidence fusionIncorrect = testBuilder(EvidenceType.FUSION_PAIR).event("Y - X fusion").build();
-        assertFalse(exactEvaluator.isPotentiallyForTrialInclusion(fusionIncorrect));
+        ProtectEvidence fusionThree = testBuilder(EvidenceType.FUSION_PAIR).gene("Y").event("Y - X fusion").build();
+        assertTrue(evaluator.isPotentiallyForTrialInclusion(fusionThree));
     }
 
     @Test

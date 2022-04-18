@@ -13,8 +13,6 @@ public final class ServeExtraction {
 
     static final Set<EligibilityRule> RULES_WITH_GENE_AS_FIRST_PARAM = Sets.newHashSet();
 
-    private static final String FUSION_GENE_SEPARATOR = "-";
-
     private ServeExtraction() {
     }
 
@@ -58,12 +56,6 @@ public final class ServeExtraction {
                     throw new IllegalStateException("Cannot determine mutation for rule: " + function);
                 }
                 return (String) function.parameters().get(1);
-            }
-            case SPECIFIC_FUSION_OF_X_TO_Y: {
-                if (function.parameters().size() != 2) {
-                    throw new IllegalStateException("Cannot determine fusion for rule: " + function);
-                }
-                return function.parameters().get(0) + FUSION_GENE_SEPARATOR + function.parameters().get(1);
             }
             case MSI_SIGNATURE: {
                 return "MSI high";

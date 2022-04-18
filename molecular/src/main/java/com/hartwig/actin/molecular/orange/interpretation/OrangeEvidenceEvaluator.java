@@ -148,12 +148,10 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
     private static boolean hasInclusiveFusionRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
         FusionGene fusion = FusionParser.fromEvidenceEvent(event);
 
-        String exactFusion = fusion.fiveGene() + "-" + fusion.threeGene();
-        boolean hasExact = containsRecordWithMutationAndRule(inclusionRecords, exactFusion, EligibilityRule.SPECIFIC_FUSION_OF_X_TO_Y);
         boolean hasPromiscuousFive = containsRecordWithGeneAndRule(inclusionRecords, fusion.fiveGene(), EligibilityRule.FUSION_IN_GENE_X);
         boolean hasPromiscuousThree = containsRecordWithGeneAndRule(inclusionRecords, fusion.threeGene(), EligibilityRule.FUSION_IN_GENE_X);
 
-        return hasExact || hasPromiscuousFive || hasPromiscuousThree;
+        return hasPromiscuousFive || hasPromiscuousThree;
     }
 
     private static boolean hasInclusiveMutationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene,
