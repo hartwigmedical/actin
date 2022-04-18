@@ -106,8 +106,8 @@ public final class OrangeJson {
         @NotNull
         private static PurpleRecord toPurpleRecord(@NotNull JsonObject purple) {
             Set<PurpleVariant> variants = Sets.newHashSet();
-            variants.addAll(toReportableVariants(array(purple, "reportableSomaticVariants")));
-            variants.addAll(toReportableVariants(array(purple, "reportableGermlineVariants")));
+            variants.addAll(toPurpleVariants(array(purple, "reportableSomaticVariants")));
+            variants.addAll(toPurpleVariants(array(purple, "reportableGermlineVariants")));
 
             return ImmutablePurpleRecord.builder()
                     .hasReliableQuality(bool(purple, "hasReliableQuality"))
@@ -117,12 +117,12 @@ public final class OrangeJson {
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
                     .variants(variants)
-                    .gainsLosses(toReportableGainsLosses(array(purple, "reportableGainsLosses")))
+                    .gainsLosses(toPurpleGainsLosses(array(purple, "reportableGainsLosses")))
                     .build();
         }
 
         @NotNull
-        private static Set<PurpleGainLoss> toReportableGainsLosses(@NotNull JsonArray reportableGainLossArray) {
+        private static Set<PurpleGainLoss> toPurpleGainsLosses(@NotNull JsonArray reportableGainLossArray) {
             Set<PurpleGainLoss> reportableGainsLosses = Sets.newHashSet();
             for (JsonElement element : reportableGainLossArray) {
                 JsonObject reportableGainLoss = element.getAsJsonObject();
@@ -136,7 +136,7 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static List<PurpleVariant> toReportableVariants(@NotNull JsonArray variantArray) {
+        private static List<PurpleVariant> toPurpleVariants(@NotNull JsonArray variantArray) {
             List<PurpleVariant> variants = Lists.newArrayList();
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
@@ -159,14 +159,14 @@ public final class OrangeJson {
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             return ImmutableLinxRecord.builder()
-                    .fusions(toReportableFusions(array(linx, "reportableFusions")))
+                    .fusions(toLinxFusions(array(linx, "reportableFusions")))
                     .homozygousDisruptedGenes(toHomozygousDisruptedGenes(array(linx, "homozygousDisruptions")))
-                    .disruptions(toReportableDisruptions(array(linx, "geneDisruptions")))
+                    .disruptions(toLinxDisruptions(array(linx, "geneDisruptions")))
                     .build();
         }
 
         @NotNull
-        private static Set<LinxFusion> toReportableFusions(@NotNull JsonArray reportableFusionArray) {
+        private static Set<LinxFusion> toLinxFusions(@NotNull JsonArray reportableFusionArray) {
             Set<LinxFusion> fusions = Sets.newHashSet();
             for (JsonElement element : reportableFusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
@@ -194,7 +194,7 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<LinxDisruption> toReportableDisruptions(@NotNull JsonArray geneDisruptionArray) {
+        private static Set<LinxDisruption> toLinxDisruptions(@NotNull JsonArray geneDisruptionArray) {
             Set<LinxDisruption> disruptions = Sets.newHashSet();
             for (JsonElement element : geneDisruptionArray) {
                 JsonObject geneDisruption = element.getAsJsonObject();

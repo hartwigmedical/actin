@@ -136,16 +136,47 @@ Field | Mapping
 sampleId | The ORANGE field `sampleId`
 type | Hard-coded to WGS 
 date | The ORANGE field `reportedDate`
-hasReliableQuality | The ORANGE field `hasReliableQuality` 
+hasReliableQuality | The PURPLE field `hasReliableQuality` 
 
-The evidence is extracted from the PROTECT part of ORANGE as follows:
- - actinTrials: All reported evidence from the ACTIN source that is defined as an inclusion criterion for at least one trial. 
- - externalTrials: All reported evidence from the iClusion source, filtered for applicability
- - approvedResponsiveEvidence: All reported A-level on-label responsive evidence from the CKB source, filtered for applicability.
- - experimentalResponsiveEvidence: All reported A-level off-label and B-level on-label responsive evidence from the CKB source, filtered for applicability.
- - otherResponsiveEvidence: All reported B-level off-label responsive evidence from the CKB source, filtered for applicability.
- - resistanceEvidence: Reported resistance evidence from the CKB source in case reported responsive evidence is found for the same 
- treatment with lower (or equal) evidence level.    
+The characteristics are extracted as follows:
+
+Field | Mapping
+---|---
+purity | The PURPLE field `purity`
+hasReliablePurity | The PURPLE field `hasReliablePurity`
+predictedTumorOrigin | The CUPPA best cancer-type prediction along with the likelihood
+isMicrosatelliteUnstable | The interpretation of PURPLE `microsatelliteStabilityStatus`
+isHomologousRepairDeficient | The interpretation of CHORD `hrStatus`
+tumorMutationalBurden | The PURPLE field `tumorMutationalBurden`
+tumorMutationalLoad | The PURPLE field `tumorMutationalLoad`
+
+The drivers are extracted from the following algorithms:
+Driver Type | Algo | Details
+---|---|---
+variants | PURPLE | Union of reportable somatic variants and reportable germline variants.
+amplifications | PURPLE | Union of reportable somatic full gains and reportable somatic partial gains.
+losses | PURPLE | Union of reportable somatic full losses and reportable somatic partial losses.
+disruptions | LINX | Union of reportable somatic gene disruptions and reportable somatic homozygous disruptions.
+fusions | LINX | All reportable fusions with driver type mapped to either `KNOWN` or `PROMISCUOUS`.
+viruses | VirusInterpreter | All reportable viruses.
+
+The pharmaco entries are extracted from PEACH.
+
+The evidence is extracted from PROTECT in the following steps:
+ 1. Evidence is filtered for applicability
+ 1. Reported evidence is used exclusively for all following steps
+ 1. Evidence is categorized using below table
+ 
+Field | Source | Filter
+---|---|---
+actinTrials | ACTIN | Evidence is filtered that is used exclusively in exclusion rules within ACTIN  
+externalTrials | ICLUSION | -
+approvedEvidence | CKB | A-level on-label non-predicted responsive evidence.
+onLabelExperimentalEvidence | CKB | A-level that is either predicted or off-label responsive and B-level on-label non-predicted responsive evidence.
+offLabelExperimentalEvidence | CKB | B-level off-label non-predicted responsive evidence.
+preClinicalEvidence | CKB | All responsive evidence that is not approved or experimental. 
+knownResistanceEvidence | CKB | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level.  
+suspectResistanceEvidence | CKB | Any not-known resistance for a treatment with evidence with equal or lower evidence level.    
 
 The events that are used for ACTIN treatment matching are extracted from the PROTECT part of the ORANGE datamodel. It is assumed that PROTECT
 has been run on a SERVE database that includes an ACTIN source generated from the ACTIN treatment database using [serve-bridge](../serve-bridge).

@@ -141,26 +141,15 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        return createResistanceEvidence(evidences, Sets.newHashSet(EvidenceLevel.A, EvidenceLevel.B), false);
-    }
-
-    @NotNull
-    private Set<EvidenceEntry> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        return createResistanceEvidence(evidences, Sets.newHashSet(EvidenceLevel.C, EvidenceLevel.D), true);
-    }
-
-    private static Set<EvidenceEntry> createResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences,
-            @NotNull Set<EvidenceLevel> allowedLevels, boolean alwaysIncludePredicted) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : reportedCkbEvidences) {
             if (evidence.direction().isResistant()) {
-                boolean hasEqualOrWorseResponsive = hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level());
-                boolean hasValidEvidenceLevel = allowedLevels.contains(evidence.level());
-                if (alwaysIncludePredicted) {
-                    hasValidEvidenceLevel = hasValidEvidenceLevel || evidence.direction().isPredicted();
-                }
+                boolean hasEqualOrWorseResponsive =
+                        hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level(), true);
+                boolean hasValidEvidenceLevel =
+                        (evidence.level() == EvidenceLevel.A || evidence.level() == EvidenceLevel.B) && !evidence.direction().isPredicted();
 
                 if (hasEqualOrWorseResponsive && hasValidEvidenceLevel) {
                     result.add(toEvidenceEntry(evidence));
@@ -171,14 +160,36 @@ class OrangeEvidenceFactory {
         return result;
     }
 
+    @NotNull
+    private Set<EvidenceEntry> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
+
+        Set<EvidenceEntry> known = createKnownResistanceEvidence(evidences);
+
+        Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        for (ProtectEvidence evidence : reportedCkbEvidences) {
+            if (evidence.direction().isResistant()) {
+                if (hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level(), false)) {
+                    EvidenceEntry entry = toEvidenceEntry(evidence);
+                    if (!known.contains(entry)) {
+                        result.add(entry);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     private static boolean hasEqualOrWorseResponsive(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String treatment,
-            @NotNull EvidenceLevel resistanceLevel) {
+            @NotNull EvidenceLevel resistanceLevel, boolean filterPreClinical) {
         for (ProtectEvidence evidence : evidences) {
             boolean isResponsive = evidence.direction().isResponsive();
-            boolean hasEqualTreatment = evidence.treatment().equals(treatment);
+            boolean isValidResponsiveLevel = !filterPreClinical || !isPreClinical(evidence);
+            boolean isEvidenceForSameTreatment = evidence.treatment().equals(treatment);
             boolean hasBetterOrEqualResistanceLevel = resistanceLevel.isBetterOrEqual(evidence.level());
 
-            if (isResponsive && hasEqualTreatment && hasBetterOrEqualResistanceLevel) {
+            if (isResponsive && isValidResponsiveLevel && isEvidenceForSameTreatment && hasBetterOrEqualResistanceLevel) {
                 return true;
             }
         }
@@ -209,7 +220,7 @@ class OrangeEvidenceFactory {
     }
 
     private static boolean isOnLabelExperimental(@NotNull ProtectEvidence evidence) {
-        boolean isOffLabelA = !evidence.onLabel() && evidence.level() == EvidenceLevel.A;
+        boolean isOffLabelA = evidence.level() == EvidenceLevel.A && (!evidence.onLabel() || evidence.direction().isPredicted());
         boolean isOnLabelB = evidence.onLabel() && evidence.level() == EvidenceLevel.B && !evidence.direction().isPredicted();
 
         return isOffLabelA || isOnLabelB;
