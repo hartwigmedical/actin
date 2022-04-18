@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
@@ -28,8 +27,14 @@ class OrangeEvidenceFactory {
     private static final Logger LOGGER = LogManager.getLogger(OrangeEvidenceFactory.class);
 
     static final String ACTIN_SOURCE = "ACTIN";
-    static final String ICLUSION_SOURCE = "ICLUSION";
-    static final String CKB_SOURCE = "CKB";
+    static final String EXTERNAL_SOURCE = "ICLUSION";
+    static final String EVIDENCE_SOURCE = "CKB";
+
+    static final String ACTIN_SOURCE_NAME = "Erasmus MC";
+    static final String EXTERNAL_SOURCE_NAME = "iClusion";
+    static final String EVIDENCE_SOURCE_NAME = "CKB";
+
+
 
     @NotNull
     private final EvidenceEvaluator evidenceEvaluator;
@@ -47,12 +52,13 @@ class OrangeEvidenceFactory {
     @NotNull
     public MolecularEvidence create(@NotNull ProtectRecord protect) {
         Set<ProtectEvidence> evidences = protect.evidences();
+
         return ImmutableMolecularEvidence.builder()
-                .actinSource("Erasmus MC")
+                .actinSource(ACTIN_SOURCE_NAME)
                 .actinTrials(createActinTrials(evidences))
-                .externalTrialSource("iClusion")
+                .externalTrialSource(EXTERNAL_SOURCE_NAME)
                 .externalTrials(createExternalTrials(evidences))
-                .evidenceSource("CKB")
+                .evidenceSource(EVIDENCE_SOURCE_NAME)
                 .approvedResponsiveEvidence(createApprovedResponsiveEvidence(evidences))
                 .experimentalResponsiveEvidence(createExperimentalResponsiveEvidence(evidences))
                 .offLabelExperimentalResponsiveEvidence(createOffLabelExperimentalResponsiveEvidence(evidences))
@@ -63,12 +69,11 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
-                result.add(toMolecularEvidence(evidence));
+                result.add(toEvidenceEntry(evidence));
             } else {
                 String evidenceString = EvidenceFormatter.format(evidence);
                 LOGGER.debug("Filtered evidence from ACTIN trials because it is not used as inclusion criteria: {}", evidenceString);
@@ -78,84 +83,92 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
-        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ICLUSION_SOURCE)) {
-            result.add(toMolecularEvidence(evidence));
+        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EXTERNAL_SOURCE)) {
+            result.add(toEvidenceEntry(evidence));
         }
         return result;
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createApprovedResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createApprovedResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
-        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, CKB_SOURCE)) {
+        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EVIDENCE_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
-                result.add(toMolecularEvidence(evidence));
+                result.add(toEvidenceEntry(evidence));
             }
         }
         return result;
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        List<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
+        Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
             if (evidence.direction().isResponsive() && isExperimental(evidence)) {
-                result.add(toMolecularEvidence(evidence));
+                result.add(toEvidenceEntry(evidence));
             }
         }
         return result;
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createOffLabelExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createOffLabelExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        List<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
+        Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
-            if (evidence.direction().isResponsive() && isOther(evidence)) {
-                result.add(toMolecularEvidence(evidence));
+            if (evidence.direction().isResponsive() && isOffLabelExperimental(evidence)) {
+                result.add(toEvidenceEntry(evidence));
             }
         }
         return result;
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createPreClinicalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createPreClinicalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
+        Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        for (ProtectEvidence evidence : ckbEvidences) {
+            if (evidence.direction().isResponsive() && isPreClinical(evidence)) {
+                result.add(toEvidenceEntry(evidence));
+            }
+        }
         return result;
     }
 
     @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<EvidenceEntry> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+        return createResistanceEvidence(evidences, Sets.newHashSet(EvidenceLevel.A, EvidenceLevel.B), false);
+    }
+
+    @NotNull
+    private Set<EvidenceEntry> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+        return createResistanceEvidence(evidences, Sets.newHashSet(EvidenceLevel.C, EvidenceLevel.D), true);
+    }
+
+    private static Set<EvidenceEntry> createResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences,
+            @NotNull Set<EvidenceLevel> allowedLevels, boolean alwaysIncludePredicted) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        List<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
+        Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : reportedCkbEvidences) {
-            boolean hasEqualOrWorseResponsive = hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level());
+            if (evidence.direction().isResistant()) {
+                boolean hasEqualOrWorseResponsive = hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level());
+                boolean hasValidEvidenceLevel = allowedLevels.contains(evidence.level());
+                if (alwaysIncludePredicted) {
+                    hasValidEvidenceLevel = hasValidEvidenceLevel || evidence.direction().isPredicted();
+                }
 
-            if (evidence.direction().isResistant() && !evidence.direction().isPredicted() && hasEqualOrWorseResponsive) {
-                result.add(toMolecularEvidence(evidence));
+                if (hasEqualOrWorseResponsive && hasValidEvidenceLevel) {
+                    result.add(toEvidenceEntry(evidence));
+                }
             }
         }
-
-        return result;
-    }
-
-    @NotNull
-    @VisibleForTesting
-    Set<EvidenceEntry> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
 
         return result;
     }
@@ -163,10 +176,11 @@ class OrangeEvidenceFactory {
     private static boolean hasEqualOrWorseResponsive(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String treatment,
             @NotNull EvidenceLevel resistanceLevel) {
         for (ProtectEvidence evidence : evidences) {
-            boolean isRelevant = isApproved(evidence) || isExperimental(evidence) || isOther(evidence);
+            boolean isResponsive = evidence.direction().isResponsive();
+            boolean hasEqualTreatment = evidence.treatment().equals(treatment);
+            boolean hasBetterOrEqualResistanceLevel = resistanceLevel.isBetterOrEqual(evidence.level());
 
-            if (evidence.direction().isResponsive() && evidence.treatment().equals(treatment) && isRelevant
-                    && resistanceLevel.isBetterOrEqual(evidence.level())) {
+            if (isResponsive && hasEqualTreatment && hasBetterOrEqualResistanceLevel) {
                 return true;
             }
         }
@@ -174,9 +188,9 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private static List<ProtectEvidence> reportedApplicableForSource(@NotNull Iterable<ProtectEvidence> evidences,
+    private static Set<ProtectEvidence> reportedApplicableForSource(@NotNull Iterable<ProtectEvidence> evidences,
             @NotNull String sourceName) {
-        List<ProtectEvidence> filtered = Lists.newArrayList();
+        Set<ProtectEvidence> filtered = Sets.newHashSet();
         for (ProtectEvidence evidence : evidences) {
             ProtectSource applicableSource = null;
             for (ProtectSource source : evidence.sources()) {
@@ -184,6 +198,7 @@ class OrangeEvidenceFactory {
                     applicableSource = source;
                 }
             }
+
             if (evidence.reported() && applicableSource != null && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
                 filtered.add(ImmutableProtectEvidence.builder().from(evidence).sources(Sets.newHashSet(applicableSource)).build());
             }
@@ -202,16 +217,16 @@ class OrangeEvidenceFactory {
         return isOffLabelA || isOnLabelB;
     }
 
-    private static boolean isOther(@NotNull ProtectEvidence evidence) {
-        if (isApproved(evidence) || isExperimental(evidence)) {
-            return false;
-        }
+    private static boolean isOffLabelExperimental(@NotNull ProtectEvidence evidence) {
+        return evidence.level() == EvidenceLevel.B && !evidence.direction().isPredicted() && !evidence.onLabel();
+    }
 
-        return evidence.level() != EvidenceLevel.D && evidence.level() != EvidenceLevel.C && !evidence.direction().isPredicted();
+    private static boolean isPreClinical(@NotNull ProtectEvidence evidence) {
+        return !(isApproved(evidence) || isExperimental(evidence) || isOffLabelExperimental(evidence));
     }
 
     @NotNull
-    private static EvidenceEntry toMolecularEvidence(@NotNull ProtectEvidence evidence) {
+    private static EvidenceEntry toEvidenceEntry(@NotNull ProtectEvidence evidence) {
         return ImmutableEvidenceEntry.builder().event(OrangeUtil.toEvent(evidence)).treatment(evidence.treatment()).build();
     }
 }

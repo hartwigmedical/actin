@@ -15,6 +15,8 @@ public class EventFormatterTest {
 
         assertEquals("EML4-ALK", EventFormatter.format("EML4 - ALK"));
 
+        assertEquals("splice", EventFormatter.format("p.?"));
+
         assertEquals("p", EventFormatter.format("p.p.p"));
     }
 }

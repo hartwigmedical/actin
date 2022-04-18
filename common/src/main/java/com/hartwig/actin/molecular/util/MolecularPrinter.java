@@ -58,8 +58,9 @@ public class MolecularPrinter {
         printer.print("Events associated with ACTIN trial eligibility: " + toEvents(record.evidence().actinTrials()));
         printer.print("Events associated with external trials: " + toEvents(record.evidence().externalTrials()));
         printer.print("Events with evidence for experimental treatment: " + toEvents(record.evidence().experimentalResponsiveEvidence()));
-        printer.print("Other events with evidence: " + toEvents(record.evidence().offLabelExperimentalResponsiveEvidence()));
-        printer.print("Events with resistance evidence: " + toEvents(record.evidence().knownResistanceEvidence()));
+        printer.print("Events with evidence for off-label experimental treatment: " + toEvents(record.evidence()
+                .offLabelExperimentalResponsiveEvidence()));
+        printer.print("Events with known resistance evidence: " + toEvents(record.evidence().knownResistanceEvidence()));
     }
 
     @NotNull
