@@ -35,7 +35,7 @@ public class EvidenceInterpreterTest {
                 .actinTrials(Sets.newHashSet(create("event 2", "trial 1")))
                 .externalTrials(Sets.newHashSet(create("event 1", "trial 1"), create("event 2", "trial 1"), create("event 3", "trial 3")))
                 .experimentalResponsiveEvidence(Sets.newHashSet(create("event 2", "trial 1")))
-                .otherResponsiveEvidence(Sets.newHashSet(create("event 1", "treatment 1"), create("event 3", "treatment 3")))
+                .offLabelExperimentalResponsiveEvidence(Sets.newHashSet(create("event 1", "treatment 1"), create("event 3", "treatment 3")))
                 .build();
     }
 

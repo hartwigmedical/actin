@@ -180,11 +180,18 @@ public class MolecularRecordJsonTest {
         assertEquals(1, evidence.experimentalResponsiveEvidence().size());
         assertEquals("experimental", findByTreatment(evidence.experimentalResponsiveEvidence(), "experimental drug").event());
 
-        assertEquals(1, evidence.otherResponsiveEvidence().size());
-        assertEquals("other", findByTreatment(evidence.otherResponsiveEvidence(), "other drug").event());
+        assertEquals(1, evidence.offLabelExperimentalResponsiveEvidence().size());
+        assertEquals("off-label experimental",
+                findByTreatment(evidence.offLabelExperimentalResponsiveEvidence(), "off-label experimental drug").event());
 
-        assertEquals(1, evidence.resistanceEvidence().size());
-        assertEquals("resistance", findByTreatment(evidence.resistanceEvidence(), "resistant drug").event());
+        assertEquals(1, evidence.preClinicalResponsiveEvidence().size());
+        assertEquals("pre clinical", findByTreatment(evidence.preClinicalResponsiveEvidence(), "no drug yet").event());
+
+        assertEquals(1, evidence.knownResistanceEvidence().size());
+        assertEquals("known resistance", findByTreatment(evidence.knownResistanceEvidence(), "known resistant drug").event());
+
+        assertEquals(1, evidence.suspectResistanceEvidence().size());
+        assertEquals("suspect resistance", findByTreatment(evidence.suspectResistanceEvidence(), "suspect resistant drug").event());
     }
 
     @NotNull

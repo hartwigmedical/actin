@@ -53,7 +53,7 @@ public final class EvidenceInterpreter {
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
         eventsToFilter.addAll(additionalEventsWithExperimentalEvidence(evidence));
 
-        return events(filter(evidence.otherResponsiveEvidence(), eventsToFilter));
+        return events(filter(evidence.offLabelExperimentalResponsiveEvidence(), eventsToFilter));
     }
 
     @NotNull

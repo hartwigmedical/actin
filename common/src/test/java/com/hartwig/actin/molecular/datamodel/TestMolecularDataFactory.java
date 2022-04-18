@@ -134,8 +134,10 @@ public final class TestMolecularDataFactory {
                 .evidenceSource("general")
                 .approvedResponsiveEvidence(createTestApprovedResponsiveEvidence())
                 .experimentalResponsiveEvidence(createTestExperimentalResponsiveEvidence())
-                .otherResponsiveEvidence(createTestOtherResponsiveEvidence())
-                .resistanceEvidence(createTestResistanceEvidence())
+                .offLabelExperimentalResponsiveEvidence(createTestOffLabelExperimentalResponsiveEvidence())
+                .preClinicalResponsiveEvidence(createTestPreClinicalResponsiveEvidence())
+                .knownResistanceEvidence(createTestKnownResistanceEvidence())
+                .suspectResistanceEvidence(createTestSuspectResistanceEvidence())
                 .build();
     }
 
@@ -180,7 +182,7 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestOtherResponsiveEvidence() {
+    private static Set<EvidenceEntry> createTestOffLabelExperimentalResponsiveEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trametinib").build());
@@ -189,10 +191,28 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestResistanceEvidence() {
+    private static Set<EvidenceEntry> createTestPreClinicalResponsiveEvidence() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
+
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Pre-clinical treatment").build());
+
+        return result;
+    }
+
+    @NotNull
+    private static Set<EvidenceEntry> createTestKnownResistanceEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Erlotinib").build());
+
+        return result;
+    }
+
+    @NotNull
+    private static Set<EvidenceEntry> createTestSuspectResistanceEvidence() {
+        Set<EvidenceEntry> result = Sets.newHashSet();
+
+        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Some treatment").build());
 
         return result;
     }

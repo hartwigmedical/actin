@@ -107,10 +107,12 @@ actinTrials | BRAF V600E -> Trial A | A list of mutations along with the trial t
 externalTrialSource | CKB | The name of the source that has been used for external trials
 externalTrials | High TMB -> Trial B | A list of mutations along with the trial they are associated with.
 evidenceSource | CKB | The name of the source used for general evidence
-approvedResponsiveEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with approved responsive evidence for treatment as extracted from the evidence source.
-experimentalResponsiveEvidence | - | A list of mutations along with experimental responsive evidence for treatment as extracted from the evidence source.
-otherResponsiveEvidence | - | A list of mutations with responsive evidence that is "below experimental" in terms of evidence level yet still potentially relevant, as extracted from the evidence source.
-resistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with resistance evidence for treatment as extracted from the evidence source.  
+approvedResponsiveEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with approved responsive evidence for treatment based on data from `evidenceSource`
+experimentalResponsiveEvidence | - | A list of mutations along with experimental responsive evidence for treatment based on data from `evidenceSource`
+offLabelExperimentalResponsiveEvidence | - | A list of mutations with responsive evidence that is experimental for a different tumor type based on data from `evidenceSource`.
+preClinicalResponsiveEvidence | - | A list of mutations with evidence that is pre-clinical based on data from `evidenceSource`.
+knownResistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with known resistance evidence for treatment based on data from `evidenceSource`.
+suspectResistanceEvidence | - | A list of mutations along with suspect resistance evidence for treatment based on data from `evidenceSource`.
 
 Finally, the following mapped events are used for actual matching against ACTIN's treatment eligibility criteria.
 Do note that ACTIN itself does not make assumptions about the exact definition of the terms below. 

@@ -75,7 +75,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Additional events with other responsive evidence in " + evidence.evidenceSource()));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOtherEvidence(evidence))));
 
-        Set<EvidenceEntry> resistanceEvidence = evidence.resistanceEvidence();
+        Set<EvidenceEntry> resistanceEvidence = evidence.knownResistanceEvidence();
         if (!resistanceEvidence.isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
             table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));

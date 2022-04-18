@@ -67,7 +67,7 @@ public class OrangeInterpreterTest {
         assertEquals(1, evidence.actinTrials().size());
         assertEquals(1, evidence.externalTrials().size());
         assertEquals(1, evidence.approvedResponsiveEvidence().size());
-        assertEquals(0, evidence.resistanceEvidence().size());
+        assertEquals(0, evidence.knownResistanceEvidence().size());
     }
 
     @Test

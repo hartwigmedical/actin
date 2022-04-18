@@ -69,23 +69,23 @@ public class OrangeEvidenceFactoryTest {
     }
 
     @Test
-    public void canCreateOtherResponsiveEvidence() {
+    public void canCreateOffLabelExperimentalResponsiveEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
         List<ProtectEvidence> evidences = createTestEvidences();
 
-        Set<EvidenceEntry> otherResponsiveEvidence = factory.createOtherResponsiveEvidence(evidences);
-        assertEquals(1, otherResponsiveEvidence.size());
-        assertEquals("B off-label responsive event", otherResponsiveEvidence.iterator().next().event());
+        Set<EvidenceEntry> offLabelExperimentalResponsiveEvidence = factory.createOffLabelExperimentalResponsiveEvidence(evidences);
+        assertEquals(1, offLabelExperimentalResponsiveEvidence.size());
+        assertEquals("B off-label responsive event", offLabelExperimentalResponsiveEvidence.iterator().next().event());
     }
 
     @Test
-    public void canCreateResistanceEvidence() {
+    public void canCreateKnownResistanceEvidence() {
         OrangeEvidenceFactory factory = createTestFactory();
         List<ProtectEvidence> evidences = createTestEvidences();
 
-        Set<EvidenceEntry> resistanceEvidence = factory.createResistanceEvidence(evidences);
-        assertEquals(1, resistanceEvidence.size());
-        assertEquals("A resistant event", resistanceEvidence.iterator().next().event());
+        Set<EvidenceEntry> knownResistanceEvidence = factory.createKnownResistanceEvidence(evidences);
+        assertEquals(1, knownResistanceEvidence.size());
+        assertEquals("A resistant event", knownResistanceEvidence.iterator().next().event());
     }
 
     @NotNull

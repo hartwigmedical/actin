@@ -119,16 +119,28 @@
         "treatment": "experimental drug"
       }
     ],
-    "otherResponsiveEvidence": [
+    "offLabelExperimentalResponsiveEvidence": [
       {
-        "event": "other",
-        "treatment": "other drug"
+        "event": "off-label experimental",
+        "treatment": "off-label experimental drug"
       }
     ],
-    "resistanceEvidence": [
+    "preClinicalResponsiveEvidence": [
       {
-        "event": "resistance",
-        "treatment": "resistant drug"
+        "event": "pre clinical",
+        "treatment": "no drug yet"
+      }
+    ],
+    "knownResistanceEvidence": [
+      {
+        "event": "known resistance",
+        "treatment": "known resistant drug"
+      }
+    ],
+    "suspectResistanceEvidence": [
+      {
+        "event": "suspect resistance",
+        "treatment": "suspect resistant drug"
       }
     ]
   },

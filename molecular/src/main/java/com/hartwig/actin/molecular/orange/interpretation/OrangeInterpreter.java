@@ -12,14 +12,11 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularC
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
@@ -65,7 +62,7 @@ public class OrangeInterpreter {
                 .characteristics(extractCharacteristics(record))
                 .drivers(DriverExtraction.extract(record))
                 .pharmaco(extractPharmaco(record.peach()))
-                .evidence(extractEvidence(record.protect()))
+                .evidence(evidenceFactory.create(record.protect()))
                 .mappedEvents(eventMapper.map(record.protect()))
                 .build();
     }
@@ -96,21 +93,6 @@ public class OrangeInterpreter {
             entries.add(ImmutablePharmacoEntry.builder().gene(entry.gene()).haplotype(entry.haplotype()).build());
         }
         return entries;
-    }
-
-    @NotNull
-    private MolecularEvidence extractEvidence(@NotNull ProtectRecord protect) {
-        return ImmutableMolecularEvidence.builder()
-                .actinSource("Erasmus MC")
-                .actinTrials(evidenceFactory.createActinTrials(protect.evidences()))
-                .externalTrialSource("iClusion")
-                .externalTrials(evidenceFactory.createExternalTrials(protect.evidences()))
-                .evidenceSource("CKB")
-                .approvedResponsiveEvidence(evidenceFactory.createApprovedResponsiveEvidence(protect.evidences()))
-                .experimentalResponsiveEvidence(evidenceFactory.createExperimentalResponsiveEvidence(protect.evidences()))
-                .otherResponsiveEvidence(evidenceFactory.createOtherResponsiveEvidence(protect.evidences()))
-                .resistanceEvidence(evidenceFactory.createResistanceEvidence(protect.evidences()))
-                .build();
     }
 
     @Nullable

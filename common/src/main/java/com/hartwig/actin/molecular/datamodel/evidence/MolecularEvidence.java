@@ -32,8 +32,14 @@ public abstract class MolecularEvidence {
     public abstract Set<EvidenceEntry> experimentalResponsiveEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> otherResponsiveEvidence();
+    public abstract Set<EvidenceEntry> offLabelExperimentalResponsiveEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> resistanceEvidence();
+    public abstract Set<EvidenceEntry> preClinicalResponsiveEvidence();
+
+    @NotNull
+    public abstract Set<EvidenceEntry> knownResistanceEvidence();
+
+    @NotNull
+    public abstract Set<EvidenceEntry> suspectResistanceEvidence();
 }

@@ -123,8 +123,8 @@ class MolecularDAO {
         writeEvidenceForTypeAndSource(sampleId, evidence.externalTrials(), "Experimental", true, evidence.externalTrialSource());
         writeEvidenceForTypeAndSource(sampleId, evidence.approvedResponsiveEvidence(), "Approved", true, evidence.evidenceSource());
         writeEvidenceForTypeAndSource(sampleId, evidence.experimentalResponsiveEvidence(), "Experimental", true, evidence.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, evidence.otherResponsiveEvidence(), "Other", true, evidence.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, evidence.resistanceEvidence(), "Resistance", false, evidence.evidenceSource());
+        writeEvidenceForTypeAndSource(sampleId, evidence.offLabelExperimentalResponsiveEvidence(), "Other", true, evidence.evidenceSource());
+        writeEvidenceForTypeAndSource(sampleId, evidence.knownResistanceEvidence(), "Resistance", false, evidence.evidenceSource());
     }
 
     private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<EvidenceEntry> evidences,

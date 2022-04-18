@@ -333,8 +333,10 @@ public class MolecularRecordJson {
                     .evidenceSource(string(evidence, "evidenceSource"))
                     .approvedResponsiveEvidence(toEvidences(array(evidence, "approvedResponsiveEvidence")))
                     .experimentalResponsiveEvidence(toEvidences(array(evidence, "experimentalResponsiveEvidence")))
-                    .otherResponsiveEvidence(toEvidences(array(evidence, "otherResponsiveEvidence")))
-                    .resistanceEvidence(toEvidences(array(evidence, "resistanceEvidence")))
+                    .offLabelExperimentalResponsiveEvidence(toEvidences(array(evidence, "offLabelExperimentalResponsiveEvidence")))
+                    .preClinicalResponsiveEvidence(toEvidences(array(evidence, "preClinicalResponsiveEvidence")))
+                    .knownResistanceEvidence(toEvidences(array(evidence, "knownResistanceEvidence")))
+                    .suspectResistanceEvidence(toEvidences(array(evidence, "suspectResistanceEvidence")))
                     .build();
         }
 

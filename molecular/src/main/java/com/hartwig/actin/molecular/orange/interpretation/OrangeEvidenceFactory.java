@@ -8,9 +8,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
 import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
@@ -42,7 +45,26 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<EvidenceEntry> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    public MolecularEvidence create(@NotNull ProtectRecord protect) {
+        Set<ProtectEvidence> evidences = protect.evidences();
+        return ImmutableMolecularEvidence.builder()
+                .actinSource("Erasmus MC")
+                .actinTrials(createActinTrials(evidences))
+                .externalTrialSource("iClusion")
+                .externalTrials(createExternalTrials(evidences))
+                .evidenceSource("CKB")
+                .approvedResponsiveEvidence(createApprovedResponsiveEvidence(evidences))
+                .experimentalResponsiveEvidence(createExperimentalResponsiveEvidence(evidences))
+                .offLabelExperimentalResponsiveEvidence(createOffLabelExperimentalResponsiveEvidence(evidences))
+                .preClinicalResponsiveEvidence(createPreClinicalResponsiveEvidence(evidences))
+                .knownResistanceEvidence(createKnownResistanceEvidence(evidences))
+                .suspectResistanceEvidence(createSuspectResistanceEvidence(evidences))
+                .build();
+    }
+
+    @NotNull
+    @VisibleForTesting
+    Set<EvidenceEntry> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
@@ -56,7 +78,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<EvidenceEntry> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    @VisibleForTesting
+    Set<EvidenceEntry> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ICLUSION_SOURCE)) {
             result.add(toMolecularEvidence(evidence));
@@ -65,7 +88,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<EvidenceEntry> createApprovedResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    @VisibleForTesting
+    Set<EvidenceEntry> createApprovedResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, CKB_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
@@ -76,7 +100,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<EvidenceEntry> createExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    @VisibleForTesting
+    Set<EvidenceEntry> createExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         List<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
@@ -89,7 +114,8 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<EvidenceEntry> createOtherResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    @VisibleForTesting
+    Set<EvidenceEntry> createOffLabelExperimentalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         List<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
@@ -102,7 +128,16 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    public Set<EvidenceEntry> createResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    @VisibleForTesting
+    Set<EvidenceEntry> createPreClinicalResponsiveEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
+
+        return result;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    Set<EvidenceEntry> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
         List<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, CKB_SOURCE);
@@ -113,6 +148,14 @@ class OrangeEvidenceFactory {
                 result.add(toMolecularEvidence(evidence));
             }
         }
+
+        return result;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    Set<EvidenceEntry> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+        Set<EvidenceEntry> result = Sets.newHashSet();
 
         return result;
     }
