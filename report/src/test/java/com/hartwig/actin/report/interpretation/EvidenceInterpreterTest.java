@@ -23,8 +23,8 @@ public class EvidenceInterpreterTest {
         assertEquals(Sets.newHashSet("event 2"), EvidenceInterpreter.eventsWithActinEvidence(evidence));
         assertEquals(Sets.newHashSet("event 3"), EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence));
         assertEquals(Sets.newHashSet(create("event 3", "trial 3")), EvidenceInterpreter.additionalEvidenceForExternalTrials(evidence));
-        assertTrue(EvidenceInterpreter.additionalEventsWithExperimentalEvidence(evidence).isEmpty());
-        assertEquals(Sets.newHashSet("event 3"), EvidenceInterpreter.additionalEventsWithOtherEvidence(evidence));
+        assertTrue(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence).isEmpty());
+        assertEquals(Sets.newHashSet("event 3"), EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence));
     }
 
     @NotNull

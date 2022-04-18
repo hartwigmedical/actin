@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter;
+import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter;
 import com.hartwig.actin.report.pdf.chapters.ReportChapter;
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter;
@@ -39,8 +40,8 @@ public class ReportWriter {
 
     public void write(@NotNull Report report) throws IOException {
         ReportChapter[] chapters =
-                new ReportChapter[] { new SummaryChapter(report), new ClinicalDetailsChapter(report), new TrialMatchingChapter(report),
-                        new TrialMatchingDetailsChapter(report) };
+                new ReportChapter[] { new SummaryChapter(report), new MolecularDetailsChapter(report), new ClinicalDetailsChapter(report),
+                        new TrialMatchingChapter(report), new TrialMatchingDetailsChapter(report) };
 
         writePdfChapters(report.sampleId(), chapters);
     }

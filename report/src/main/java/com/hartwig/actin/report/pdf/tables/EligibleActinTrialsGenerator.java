@@ -31,7 +31,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
-            float contentWidth) {
+            float width) {
         List<EvaluatedTrial> openAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
             if (trial.isPotentiallyEligible() && trial.isOpen()) {
@@ -40,7 +40,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         }
 
         String title = evidence.actinSource() + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
-        return create(openAndEligible, title, contentWidth);
+        return create(openAndEligible, title, width);
     }
 
     @NotNull
@@ -58,12 +58,12 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedTrial> trials, @NotNull String title, float contentWidth) {
-        float trialColWidth = contentWidth / 10;
-        float acronymColWidth = contentWidth / 10;
-        float cohortColWidth = contentWidth / 3;
-        float molecularColWidth = contentWidth / 10;
-        float checksColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth);
+    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedTrial> trials, @NotNull String title, float width) {
+        float trialColWidth = width / 10;
+        float acronymColWidth = width / 10;
+        float cohortColWidth = width / 3;
+        float molecularColWidth = width / 10;
+        float checksColWidth = width - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth);
 
         return new EligibleActinTrialsGenerator(trials,
                 title,

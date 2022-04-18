@@ -16,6 +16,6 @@ public final class TumorDetailsInterpreter {
         String location = tumor.primaryTumorLocation();
         String subLocation = tumor.primaryTumorSubLocation();
 
-        return (location != null && subLocation != null && location.equals(CUP_LOCATION) && subLocation.equals(CUP_SUB_LOCATION));
+        return location != null && subLocation != null && location.equals(CUP_LOCATION) && subLocation.equals(CUP_SUB_LOCATION);
     }
 }

@@ -179,10 +179,10 @@ public class SummaryChapter implements ReportChapter {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
         float keyWidth = 210;
-        float valueWidth = contentWidth() - keyWidth - 10;
+        float valueWidth = contentWidth() - keyWidth;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
                 new MolecularResultsGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
-                new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth() - 10),
+                new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
                 EligibleActinTrialsGenerator.forOpenTrials(report.treatmentMatch(), report.molecular().evidence(), contentWidth()));
 
         if (!report.molecular().evidence().externalTrials().isEmpty()) {

@@ -70,15 +70,15 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence))));
 
         table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + evidence.evidenceSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExperimentalEvidence(evidence))));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence))));
 
-        table.addCell(Cells.createKey("Additional events with other responsive evidence in " + evidence.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOtherEvidence(evidence))));
+        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + evidence.evidenceSource()));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence))));
 
-        Set<EvidenceEntry> resistanceEvidence = evidence.knownResistanceEvidence();
-        if (!resistanceEvidence.isEmpty()) {
+        Set<EvidenceEntry> knownResistanceEvidence = evidence.knownResistanceEvidence();
+        if (!knownResistanceEvidence.isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
-            table.addCell(Cells.createValue(formatResistanceEvidence(resistanceEvidence)));
+            table.addCell(Cells.createValue(formatResistanceEvidence(knownResistanceEvidence)));
         }
 
         return table;

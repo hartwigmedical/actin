@@ -1,8 +1,9 @@
-package com.hartwig.actin.report.pdf.tables;
+package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
+import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;

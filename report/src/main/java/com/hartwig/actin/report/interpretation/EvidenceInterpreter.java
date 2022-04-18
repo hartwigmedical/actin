@@ -38,7 +38,7 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithExperimentalEvidence(@NotNull MolecularEvidence evidence) {
+    public static Set<String> additionalEventsWithOnLabelExperimentalEvidence(@NotNull MolecularEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
@@ -47,11 +47,11 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithOtherEvidence(@NotNull MolecularEvidence evidence) {
+    public static Set<String> additionalEventsWithOffLabelExperimentalEvidence(@NotNull MolecularEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
         eventsToFilter.addAll(eventsWithActinEvidence(evidence));
-        eventsToFilter.addAll(additionalEventsWithExperimentalEvidence(evidence));
+        eventsToFilter.addAll(additionalEventsWithOnLabelExperimentalEvidence(evidence));
 
         return events(filter(evidence.offLabelExperimentalEvidence(), eventsToFilter));
     }
