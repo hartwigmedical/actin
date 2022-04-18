@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables;
+package com.hartwig.actin.report.pdf.tables.treatment;
 
 import java.util.List;
 import java.util.Set;
@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
+import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;

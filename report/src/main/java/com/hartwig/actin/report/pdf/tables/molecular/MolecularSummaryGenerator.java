@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables;
+package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.sort.PriorMolecularTestComparator;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -17,9 +18,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class MolecularResultsGenerator implements TableGenerator {
+public class MolecularSummaryGenerator implements TableGenerator {
 
-    private static final Logger LOGGER = LogManager.getLogger(MolecularResultsGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(MolecularSummaryGenerator.class);
 
     @NotNull
     private final ClinicalRecord clinical;
@@ -28,7 +29,7 @@ public class MolecularResultsGenerator implements TableGenerator {
     private final float keyWidth;
     private final float valueWidth;
 
-    public MolecularResultsGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular, final float keyWidth,
+    public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular, final float keyWidth,
             final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
@@ -50,7 +51,7 @@ public class MolecularResultsGenerator implements TableGenerator {
         table.addCell(Cells.create(prior()));
         table.addCell(Cells.createEmpty());
 
-        TableGenerator recentGenerator = new RecentMolecularResultsGenerator(clinical, molecular, keyWidth, valueWidth);
+        TableGenerator recentGenerator = new RecentMolecularSummaryGenerator(clinical, molecular, keyWidth, valueWidth);
         table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
         table.addCell(Cells.create(recentGenerator.contents()));
 

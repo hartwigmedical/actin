@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables;
+package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
 import java.util.Set;
@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator;
+import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;

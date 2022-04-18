@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.pdf.tables.EligibleActinTrialsGenerator;
-import com.hartwig.actin.report.pdf.tables.IneligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator;
+import com.hartwig.actin.report.pdf.tables.treatment.IneligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;

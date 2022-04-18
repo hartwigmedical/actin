@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables;
+package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Set;
 import java.util.StringJoiner;
@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
+import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -22,7 +23,7 @@ import com.itextpdf.layout.element.Table;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RecentMolecularResultsGenerator implements TableGenerator {
+public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private final ClinicalRecord clinical;
@@ -31,7 +32,7 @@ public class RecentMolecularResultsGenerator implements TableGenerator {
     private final float keyWidth;
     private final float valueWidth;
 
-    public RecentMolecularResultsGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
+    public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
             final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;

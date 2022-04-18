@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.pdf.tables.LabResultsGenerator;
-import com.hartwig.actin.report.pdf.tables.MedicationGenerator;
-import com.hartwig.actin.report.pdf.tables.PatientCurrentDetailsGenerator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.tables.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator;
+import com.hartwig.actin.report.pdf.tables.clinical.LabResultsGenerator;
+import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator;
+import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator;
+import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;

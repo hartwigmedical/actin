@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables;
+package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpreter;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
+import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
