@@ -180,18 +180,6 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         return false;
     }
 
-    private static boolean containsRecordWithMutationAndRule(@NotNull List<ServeRecord> records, @NotNull String mutation,
-            @NotNull EligibilityRule... rules) {
-        Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);
-        for (ServeRecord record : records) {
-            if (mutation.equals(record.mutation()) && ruleSet.contains(record.rule())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static boolean containsRecordWithGeneAndRule(@NotNull List<ServeRecord> records, @NotNull String gene,
             @NotNull EligibilityRule... rules) {
         Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);

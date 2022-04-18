@@ -12,5 +12,4 @@ public interface DatabaseLoaderConfig {
 
     @NotNull
     String dbUrl();
-
 }

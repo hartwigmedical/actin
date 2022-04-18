@@ -17,7 +17,6 @@ public final class MedicationRuleMapping {
 
     // Medication categories
     private static final String ANTICOAGULANTS = "Anticoagulants";
-    private static final String CORTICOSTEROIDS = "Corticosteroids";
     private static final String VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists";
     private static final String TRIAZOLES = "Triazoles";
     private static final String CUTANEOUS_IMIDAZOLES = "Imidazoles, cutaneous";
@@ -108,11 +107,6 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsBoneResorptiveMedicationCreator() {
         return getsActiveMedicationWithExactCategoryCreator(BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION);
-    }
-
-    @NotNull
-    private static FunctionCreator getsCorticosteroidMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(CORTICOSTEROIDS);
     }
 
     @NotNull
