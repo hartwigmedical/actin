@@ -83,9 +83,13 @@ public final class Cells {
 
     @NotNull
     public static Cell createContent(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Styles.tableContentStyle());
-        cell.setBorderBottom(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
+        return createContent(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentWarn(@NotNull String text) {
+        Cell cell =  createContent(text);
+        cell.setFontColor(Styles.PALETTE_WARN);
         return cell;
     }
 
