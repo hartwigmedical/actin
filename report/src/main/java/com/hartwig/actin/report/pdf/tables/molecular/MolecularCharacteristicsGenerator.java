@@ -1,6 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.Set;
+
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -36,34 +40,90 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
 
         table.addHeaderCell(Cells.createHeader("Purity"));
         table.addHeaderCell(Cells.createHeader("Reliable Quality"));
-        table.addHeaderCell(Cells.createHeader("CUPPA Cancer type prediction"));
+        table.addHeaderCell(Cells.createHeader("Predicted tumor origin"));
         table.addHeaderCell(Cells.createHeader("TML Status"));
         table.addHeaderCell(Cells.createHeader("MS Stability"));
         table.addHeaderCell(Cells.createHeader("HR Status"));
         table.addHeaderCell(Cells.createHeader("DPYD"));
 
         table.addCell(createPurityCell(molecular.characteristics().purity()));
-        table.addCell(Cells.createContent("TODO"));
-        table.addCell(Cells.createContent("TODO"));
-        table.addCell(Cells.createContent("TODO"));
-        table.addCell(Cells.createContent("TODO"));
-        table.addCell(Cells.createContent("TODO"));
-        table.addCell(Cells.createContent("TODO"));
+        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasReliableQuality())));
+        table.addCell(Cells.createContent(createPredictedTumorOriginString(molecular.characteristics().predictedTumorOrigin())));
+        table.addCell(Cells.createContent(createTMLStatusString(molecular.characteristics().tumorMutationalLoad())));
+        table.addCell(createMSStabilityCell(molecular.characteristics().isMicrosatelliteUnstable()));
+        table.addCell(createHRStatusCell(molecular.characteristics().isHomologousRepairDeficient()));
+        table.addCell(Cells.createContent(createDPYDString(molecular.pharmaco())));
 
         return table;
     }
 
     @NotNull
     private static Cell createPurityCell(@Nullable Double purity) {
-        if (purity == null){
+        if (purity == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+        }
+
+        String purityString = Formats.percentage(purity);
+        if (purity < 0.2) {
+            return Cells.createContentWarn(purityString);
         } else {
-            String purityString = Formats.percentage(purity);
-            if (purity < 0.2) {
-                return Cells.createContentWarn(purityString);
-            } else {
-                return Cells.createContent(purityString);
+            return Cells.createContent(purityString);
+        }
+    }
+
+    @NotNull
+    private static String createPredictedTumorOriginString(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
+        if (predictedTumorOrigin == null) {
+            return Formats.VALUE_UNKNOWN;
+        }
+
+        return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
+    }
+
+    @NotNull
+    private static String createTMLStatusString(@Nullable Integer tumorMutationalLoad) {
+        if (tumorMutationalLoad == null) {
+            return Formats.VALUE_UNKNOWN;
+        }
+
+        String interpretation = tumorMutationalLoad >= 140 ? "High" : "Low";
+        return interpretation + " (" + tumorMutationalLoad + ")";
+    }
+
+    @NotNull
+    private static Cell createMSStabilityCell(@Nullable Boolean isMicrosatelliteUnstable) {
+        if (isMicrosatelliteUnstable == null) {
+            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+        }
+
+        String status = isMicrosatelliteUnstable ? "Unstable" : "Stable";
+        return Cells.createContent(status);
+    }
+
+    @NotNull
+    private static Cell createHRStatusCell(@Nullable Boolean isHomologousRepairDeficient) {
+        if (isHomologousRepairDeficient == null) {
+            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+        }
+
+        String status = isHomologousRepairDeficient ? "Deficient" : "Proficient";
+        return Cells.createContent(status);
+    }
+
+    @NotNull
+    private static String createDPYDString(@NotNull Set<PharmacoEntry> pharmaco) {
+        PharmacoEntry dpyd = findPharmacoEntry(pharmaco, "DPYD");
+        return dpyd != null ? dpyd.haplotype() : Formats.VALUE_UNKNOWN;
+    }
+
+    @Nullable
+    private static PharmacoEntry findPharmacoEntry(@NotNull Set<PharmacoEntry> pharmaco, @NotNull String geneToFind) {
+        for (PharmacoEntry entry : pharmaco) {
+            if (entry.gene().equals(geneToFind)) {
+                return entry;
             }
         }
+
+        return null;
     }
 }
