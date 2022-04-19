@@ -107,6 +107,7 @@ public final class TestMolecularDataFactory {
     private static MolecularDrivers createTestDrivers() {
         return ImmutableMolecularDrivers.builder()
                 .addVariants(ImmutableVariant.builder()
+                        .event("BRAF V600E")
                         .gene("BRAF")
                         .impact("p.V600E")
                         .variantCopyNumber(4.1)
@@ -115,7 +116,7 @@ public final class TestMolecularDataFactory {
                         .driverLikelihood(1.0)
                         .clonalLikelihood(1.0)
                         .build())
-                .addLosses(ImmutableLoss.builder().gene("PTEN").isPartial(true).build())
+                .addLosses(ImmutableLoss.builder().event("PTEN del").gene("PTEN").isPartial(true).build())
                 .build();
     }
 
@@ -252,9 +253,15 @@ public final class TestMolecularDataFactory {
     private static MolecularDrivers createExhaustiveTestDrivers() {
         return ImmutableMolecularDrivers.builder()
                 .from(createTestDrivers())
-                .addAmplifications(ImmutableAmplification.builder().gene("MYC").copies(38).isPartial(false).build())
-                .addDisruptions(ImmutableDisruption.builder().gene("PTEN").details("Intron 1 downstream").isHomozygous(false).build())
+                .addAmplifications(ImmutableAmplification.builder().event("MYC amp").gene("MYC").copies(38).isPartial(false).build())
+                .addDisruptions(ImmutableDisruption.builder()
+                        .event(Strings.EMPTY)
+                        .gene("PTEN")
+                        .details("Intron 1 downstream")
+                        .isHomozygous(false)
+                        .build())
                 .addFusions(ImmutableFusion.builder()
+                        .event("EML4-ALK fusion")
                         .fiveGene("EML4")
                         .threeGene("ALK")
                         .details("Exon 2 - Exon 4")
@@ -262,7 +269,8 @@ public final class TestMolecularDataFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .build())
                 .addViruses(ImmutableVirus.builder()
-                        .name("HPV 16")
+                        .event("HPV positive")
+                        .name("Human papillomavirus type 16d")
                         .details("3 integrations detected")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .build())

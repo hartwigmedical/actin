@@ -138,7 +138,8 @@ public final class TestOrangeDataFactory {
     private static VirusInterpreterRecord createTestVirusInterpreterRecord() {
         return ImmutableVirusInterpreterRecord.builder()
                 .addEntries(ImmutableVirusInterpreterEntry.builder()
-                        .name("HPV 16")
+                        .name("Human papillomavirus type 16")
+                        .interpretation("HPV")
                         .integrations(3)
                         .driverLikelihood(VirusDriverLikelihood.HIGH)
                         .build())

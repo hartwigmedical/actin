@@ -160,7 +160,7 @@
         "name": "Human betaherpesvirus 6B",
         "qcStatus": "NO_ABNORMALITIES",
         "integrations": 1,
-        "interpretation": null,
+        "interpretation": "EBV",
         "percentageCovered": 14.2802,
         "meanCoverage": 0.176659,
         "expectedClonalCoverage": 32.17380658988764,

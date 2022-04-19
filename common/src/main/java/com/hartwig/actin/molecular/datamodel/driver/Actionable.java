@@ -2,10 +2,8 @@ package com.hartwig.actin.molecular.datamodel.driver;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface CopyNumberDriver extends Actionable {
+public interface Actionable {
 
     @NotNull
-    String gene();
-
-    boolean isPartial();
+    String event();
 }

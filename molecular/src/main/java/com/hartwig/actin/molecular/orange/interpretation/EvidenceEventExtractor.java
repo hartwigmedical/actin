@@ -7,9 +7,9 @@ import com.hartwig.actin.molecular.orange.util.EventFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class OrangeUtil {
+public final class EvidenceEventExtractor {
 
-    private OrangeUtil() {
+    private EvidenceEventExtractor() {
     }
 
     @NotNull

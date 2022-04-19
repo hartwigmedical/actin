@@ -11,15 +11,19 @@ import org.jetbrains.annotations.NotNull;
 
 public final class EventFormatter {
 
+    public static final String GAIN_EVENT = "amp";
+    public static final String LOSS_EVENT = "del";
+    public static final String DISRUPTION_EVENT = "disruption";
+
     private static final Map<String, String> STRING_REPLACEMENTS = Maps.newHashMap();
     private static final Set<String> STRING_REMOVALS = Sets.newHashSet();
 
     static {
-        STRING_REPLACEMENTS.put("full gain", "amp");
-        STRING_REPLACEMENTS.put("partial gain", "amp");
-        STRING_REPLACEMENTS.put("full loss", "del");
-        STRING_REPLACEMENTS.put("partial loss", "del");
-        STRING_REPLACEMENTS.put("homozygous disruption", "disruption");
+        STRING_REPLACEMENTS.put("full gain", GAIN_EVENT);
+        STRING_REPLACEMENTS.put("partial gain", GAIN_EVENT);
+        STRING_REPLACEMENTS.put("full loss", LOSS_EVENT);
+        STRING_REPLACEMENTS.put("partial loss", LOSS_EVENT);
+        STRING_REPLACEMENTS.put("homozygous disruption", DISRUPTION_EVENT);
         STRING_REPLACEMENTS.put("Microsatellite unstable", "MSI");
         STRING_REPLACEMENTS.put("High tumor mutation load", "High TML");
         STRING_REPLACEMENTS.put(" - ", "-");

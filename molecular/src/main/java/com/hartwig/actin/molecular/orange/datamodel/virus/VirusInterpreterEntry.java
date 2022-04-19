@@ -11,6 +11,9 @@ public abstract class VirusInterpreterEntry {
     @NotNull
     public abstract String name();
 
+    @Nullable
+    public abstract String interpretation();
+
     public abstract int integrations();
 
     @NotNull

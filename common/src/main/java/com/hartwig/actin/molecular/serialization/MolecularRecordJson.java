@@ -179,6 +179,7 @@ public class MolecularRecordJson {
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutableVariant.builder()
+                        .event(string(variant, "event"))
                         .gene(string(variant, "gene"))
                         .impact(string(variant, "impact"))
                         .variantCopyNumber(number(variant, "variantCopyNumber"))
@@ -197,6 +198,7 @@ public class MolecularRecordJson {
             for (JsonElement element : amplificationArray) {
                 JsonObject amplification = element.getAsJsonObject();
                 amplifications.add(ImmutableAmplification.builder()
+                        .event(string(amplification, "event"))
                         .gene(string(amplification, "gene"))
                         .copies(integer(amplification, "copies"))
                         .isPartial(bool(amplification, "isPartial"))
@@ -210,7 +212,11 @@ public class MolecularRecordJson {
             Set<Loss> losses = Sets.newHashSet();
             for (JsonElement element : lossArray) {
                 JsonObject loss = element.getAsJsonObject();
-                losses.add(ImmutableLoss.builder().gene(string(loss, "gene")).isPartial(bool(loss, "isPartial")).build());
+                losses.add(ImmutableLoss.builder()
+                        .event(string(loss, "event"))
+                        .gene(string(loss, "gene"))
+                        .isPartial(bool(loss, "isPartial"))
+                        .build());
             }
             return losses;
         }
@@ -221,6 +227,7 @@ public class MolecularRecordJson {
             for (JsonElement element : disruptionArray) {
                 JsonObject disruption = element.getAsJsonObject();
                 disruptions.add(ImmutableDisruption.builder()
+                        .event(string(disruption, "event"))
                         .gene(string(disruption, "gene"))
                         .isHomozygous(bool(disruption, "isHomozygous"))
                         .details(string(disruption, "details"))
@@ -235,6 +242,7 @@ public class MolecularRecordJson {
             for (JsonElement element : fusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableFusion.builder()
+                        .event(string(fusion, "event"))
                         .fiveGene(string(fusion, "fiveGene"))
                         .threeGene(string(fusion, "threeGene"))
                         .details(string(fusion, "details"))
@@ -251,6 +259,7 @@ public class MolecularRecordJson {
             for (JsonElement element : virusArray) {
                 JsonObject virus = element.getAsJsonObject();
                 viruses.add(ImmutableVirus.builder()
+                        .event(string(virus, "event"))
                         .name(string(virus, "name"))
                         .details(string(virus, "details"))
                         .driverLikelihood(DriverLikelihood.valueOf(string(virus, "driverLikelihood")))

@@ -53,6 +53,7 @@ public class DriverExtractionTest {
         assertEquals(1, variants.size());
 
         Variant variant = variants.iterator().next();
+        assertEquals("BRAF V600E", variant.event());
         assertEquals("BRAF", variant.gene());
         assertEquals("p.V600E", variant.impact());
         assertEquals(4.1, variant.variantCopyNumber(), EPSILON);
@@ -66,6 +67,7 @@ public class DriverExtractionTest {
         assertEquals(1, amplifications.size());
 
         Amplification amplification = amplifications.iterator().next();
+        assertEquals("MYC amp", amplification.event());
         assertEquals("MYC", amplification.gene());
         assertFalse(amplification.isPartial());
         assertEquals(38, amplification.copies());
@@ -75,6 +77,7 @@ public class DriverExtractionTest {
         assertEquals(1, losses.size());
 
         Loss loss = losses.iterator().next();
+        assertEquals("PTEN del", loss.event());
         assertEquals("PTEN", loss.gene());
         assertTrue(loss.isPartial());
     }
@@ -83,10 +86,12 @@ public class DriverExtractionTest {
         assertEquals(2, disruptions.size());
 
         Disruption disruption1 = findByGene(disruptions, "TP53");
+        assertEquals("TP53 disruption", disruption1.event());
         assertTrue(disruption1.isHomozygous());
         assertTrue(disruption1.details().isEmpty());
 
         Disruption disruption2 = findByGene(disruptions, "RB1");
+        assertTrue(disruption2.event().isEmpty());
         assertFalse(disruption2.isHomozygous());
         assertEquals("Intron 1 downstream", disruption2.details());
     }
@@ -106,9 +111,10 @@ public class DriverExtractionTest {
         assertEquals(1, fusions.size());
 
         Fusion fusion = fusions.iterator().next();
+        assertEquals("EML4-ALK fusion", fusion.event());
         assertEquals("EML4", fusion.fiveGene());
         assertEquals("ALK", fusion.threeGene());
-        assertEquals("Exon 2 - Exon 4", fusion.details());
+        assertEquals("Exon 2 -> Exon 4", fusion.details());
         assertEquals(FusionDriverType.KNOWN, fusion.driverType());
         assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
     }
@@ -117,7 +123,8 @@ public class DriverExtractionTest {
         assertEquals(1, viruses.size());
 
         Virus virus = viruses.iterator().next();
-        assertEquals("HPV 16", virus.name());
+        assertEquals("HPV positive", virus.event());
+        assertEquals("Human papillomavirus type 16", virus.name());
         assertEquals("3 integrations detected", virus.details());
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
     }

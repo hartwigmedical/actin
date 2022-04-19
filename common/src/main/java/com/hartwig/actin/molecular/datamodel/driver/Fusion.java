@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Fusion {
+public abstract class Fusion implements Actionable {
 
     @NotNull
     public abstract String fiveGene();

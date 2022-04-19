@@ -157,6 +157,7 @@ public class OrangeJsonTest {
         assertEquals(1, virusInterpreter.entries().size());
         VirusInterpreterEntry entry = virusInterpreter.entries().iterator().next();
         assertEquals("Human betaherpesvirus 6B", entry.name());
+        assertEquals("EBV", entry.interpretation());
         assertEquals(1, entry.integrations());
         assertEquals(VirusDriverLikelihood.HIGH, entry.driverLikelihood());
     }

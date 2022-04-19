@@ -33,6 +33,7 @@ import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -94,6 +95,7 @@ public class MolecularRecordJsonTest {
     private static void assertDrivers(@NotNull MolecularDrivers drivers) {
         assertEquals(1, drivers.variants().size());
         Variant variant = drivers.variants().iterator().next();
+        assertEquals("BRAF V600E", variant.event());
         assertEquals("BRAF", variant.gene());
         assertEquals("p.V600E", variant.impact());
         assertEquals(4.1, variant.variantCopyNumber(), EPSILON);
@@ -104,26 +106,31 @@ public class MolecularRecordJsonTest {
 
         assertEquals(1, drivers.amplifications().size());
         Amplification amplification = drivers.amplifications().iterator().next();
+        assertEquals("MYC amp", amplification.event());
         assertEquals("MYC", amplification.gene());
         assertEquals(38, amplification.copies());
         assertFalse(amplification.isPartial());
 
         assertEquals(1, drivers.losses().size());
         Loss loss = drivers.losses().iterator().next();
+        assertEquals("PTEN del", loss.event());
         assertEquals("PTEN", loss.gene());
         assertTrue(loss.isPartial());
 
         assertEquals(2, drivers.disruptions().size());
         Disruption disruption1 = findByDetails(drivers.disruptions(), "Intron 1 downstream");
+        assertEquals(Strings.EMPTY, disruption1.event());
         assertEquals("NF1", disruption1.gene());
         assertFalse(disruption1.isHomozygous());
 
         Disruption disruption2 = findByDetails(drivers.disruptions(), "Intron 2 upstream");
+        assertEquals(Strings.EMPTY, disruption2.event());
         assertEquals("NF1", disruption2.gene());
         assertFalse(disruption2.isHomozygous());
 
         assertEquals(1, drivers.fusions().size());
         Fusion fusion = drivers.fusions().iterator().next();
+        assertEquals("EML4-ALK fusion", fusion.event());
         assertEquals("EML4", fusion.fiveGene());
         assertEquals("ALK", fusion.threeGene());
         assertEquals("Exon 2 - Exon 4", fusion.details());
@@ -132,7 +139,8 @@ public class MolecularRecordJsonTest {
 
         assertEquals(1, drivers.viruses().size());
         Virus virus = drivers.viruses().iterator().next();
-        assertEquals("HPV 16", virus.name());
+        assertEquals("HPV positive", virus.event());
+        assertEquals("Human papillomavirus type 16", virus.name());
         assertEquals("3 integrations detected", virus.details());
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
     }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Virus {
+public abstract class Virus implements Actionable {
 
     @NotNull
     public abstract String name();

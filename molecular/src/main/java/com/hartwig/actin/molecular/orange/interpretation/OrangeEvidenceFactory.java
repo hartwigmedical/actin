@@ -236,6 +236,6 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private static EvidenceEntry toEvidenceEntry(@NotNull ProtectEvidence evidence) {
-        return ImmutableEvidenceEntry.builder().event(OrangeUtil.toEvent(evidence)).treatment(evidence.treatment()).build();
+        return ImmutableEvidenceEntry.builder().event(EvidenceEventExtractor.toEvent(evidence)).treatment(evidence.treatment()).build();
     }
 }

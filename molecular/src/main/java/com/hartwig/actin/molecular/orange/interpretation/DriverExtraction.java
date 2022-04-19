@@ -33,6 +33,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
+import com.hartwig.actin.molecular.orange.util.EventFormatter;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -60,9 +61,11 @@ final class DriverExtraction {
     private static Set<Variant> extractVariants(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newHashSet();
         for (PurpleVariant variant : purple.variants()) {
+            String impact = extractImpact(variant);
             variants.add(ImmutableVariant.builder()
+                    .event(variant.gene() + " " + EventFormatter.format(impact))
                     .gene(variant.gene())
-                    .impact(extractImpact(variant))
+                    .impact(impact)
                     .variantCopyNumber(variant.alleleCopyNumber())
                     .totalCopyNumber(variant.totalCopyNumber())
                     .driverType(extractVariantDriverType(variant))
@@ -106,6 +109,7 @@ final class DriverExtraction {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN) {
                 amplifications.add(ImmutableAmplification.builder()
+                        .event(gainLoss.gene() + " " + EventFormatter.GAIN_EVENT)
                         .gene(gainLoss.gene())
                         .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN)
                         .copies(gainLoss.minCopies())
@@ -122,6 +126,7 @@ final class DriverExtraction {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_LOSS) {
                 losses.add(ImmutableLoss.builder()
+                        .event(gainLoss.gene() + " " + EventFormatter.LOSS_EVENT)
                         .gene(gainLoss.gene())
                         .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS)
                         .build());
@@ -134,11 +139,21 @@ final class DriverExtraction {
     private static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx) {
         Set<Disruption> disruptions = Sets.newHashSet();
         for (LinxDisruption disruption : linx.disruptions()) {
-            disruptions.add(ImmutableDisruption.builder().gene(disruption.gene()).isHomozygous(false).details(disruption.range()).build());
+            disruptions.add(ImmutableDisruption.builder()
+                    .event(Strings.EMPTY)
+                    .gene(disruption.gene())
+                    .isHomozygous(false)
+                    .details(disruption.range())
+                    .build());
         }
 
         for (String homozygous : linx.homozygousDisruptedGenes()) {
-            disruptions.add(ImmutableDisruption.builder().gene(homozygous).isHomozygous(true).details(Strings.EMPTY).build());
+            disruptions.add(ImmutableDisruption.builder()
+                    .event(homozygous + " " + EventFormatter.DISRUPTION_EVENT)
+                    .gene(homozygous)
+                    .isHomozygous(true)
+                    .details(Strings.EMPTY)
+                    .build());
         }
         return disruptions;
     }
@@ -148,9 +163,10 @@ final class DriverExtraction {
         Set<Fusion> fusions = Sets.newHashSet();
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()
+                    .event(fusion.geneStart() + "-" + fusion.geneEnd() + " fusion")
                     .fiveGene(fusion.geneStart())
                     .threeGene(fusion.geneEnd())
-                    .details(fusion.geneContextStart() + " - " + fusion.geneContextEnd())
+                    .details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
                     .driverType(extractFusionDriverType(fusion))
                     .driverLikelihood(extractFusionDriverLikelihood(fusion))
                     .build());
@@ -200,7 +216,9 @@ final class DriverExtraction {
     private static Set<Virus> extractViruses(@NotNull VirusInterpreterRecord virusInterpreter) {
         Set<Virus> viruses = Sets.newHashSet();
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
+            String event = virus.interpretation() != null ? virus.interpretation() + " positive" : Strings.EMPTY;
             viruses.add(ImmutableVirus.builder()
+                    .event(event)
                     .name(virus.name())
                     .details(virus.integrations() + " integrations detected")
                     .driverLikelihood(extractVirusDriverLikelihood(virus))

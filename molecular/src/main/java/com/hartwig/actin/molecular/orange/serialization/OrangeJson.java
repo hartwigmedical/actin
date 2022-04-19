@@ -231,6 +231,7 @@ public final class OrangeJson {
                 JsonObject virus = element.getAsJsonObject();
                 entries.add(ImmutableVirusInterpreterEntry.builder()
                         .name(string(virus, "name"))
+                        .interpretation(nullableString(virus, "interpretation"))
                         .integrations(integer(virus, "integrations"))
                         .driverLikelihood(VirusDriverLikelihood.valueOf(string(virus, "virusDriverLikelihoodType")))
                         .build());
