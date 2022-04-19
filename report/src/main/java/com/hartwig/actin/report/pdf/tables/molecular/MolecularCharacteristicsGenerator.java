@@ -3,8 +3,8 @@ package com.hartwig.actin.report.pdf.tables.molecular;
 import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -48,7 +48,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
 
         table.addCell(createPurityCell(molecular.characteristics().purity()));
         table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasReliableQuality())));
-        table.addCell(Cells.createContent(createPredictedTumorOriginString(molecular.characteristics().predictedTumorOrigin())));
+        table.addCell(Cells.createContent(TumorOriginInterpreter.interpret(molecular.characteristics().predictedTumorOrigin())));
         table.addCell(Cells.createContent(createTMLStatusString(molecular.characteristics().tumorMutationalLoad())));
         table.addCell(createMSStabilityCell(molecular.characteristics().isMicrosatelliteUnstable()));
         table.addCell(createHRStatusCell(molecular.characteristics().isHomologousRepairDeficient()));
@@ -69,15 +69,6 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         } else {
             return Cells.createContent(purityString);
         }
-    }
-
-    @NotNull
-    private static String createPredictedTumorOriginString(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
-        if (predictedTumorOrigin == null) {
-            return Formats.VALUE_UNKNOWN;
-        }
-
-        return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
     }
 
     @NotNull

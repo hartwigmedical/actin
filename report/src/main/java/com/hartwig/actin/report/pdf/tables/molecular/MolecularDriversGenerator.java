@@ -63,6 +63,37 @@ public class MolecularDriversGenerator implements TableGenerator {
         return Tables.makeWrapping(table);
     }
 
+    private boolean addVariants(@NotNull Table table) {
+        boolean hasSubclonal = false;
+        for (Variant variant : molecular.drivers().variants()) {
+            table.addCell(Cells.createContent("Mutation (" + variant.driverType().display() + ")"));
+
+            long variantCopies = Math.round(Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
+            long totalCopies = Math.round(variant.totalCopyNumber());
+            String driver = variant.gene() + " " + variant.impact() + " (" + variantCopies + "/" + totalCopies + " copies)";
+            if (variant.clonalLikelihood() <= 0.5) {
+                hasSubclonal = true;
+                driver = driver + "*";
+            }
+            table.addCell(Cells.createContent(driver));
+            table.addCell(Cells.createContent(interpretLikelihood(variant.driverLikelihood())));
+
+            addActionability(table, variant);
+        }
+        return hasSubclonal;
+    }
+
+    @NotNull
+    private static String interpretLikelihood(double driverLikelihood) {
+        if (driverLikelihood >= 0.8) {
+            return "High";
+        } else if (driverLikelihood >= 0.2) {
+            return "Medium";
+        } else {
+            return "Low";
+        }
+    }
+
     private void addAmplifications(@NotNull Table table) {
         for (Amplification amplification : molecular.drivers().amplifications()) {
             String addon = amplification.isPartial() ? " (partial)" : Strings.EMPTY;
@@ -121,26 +152,6 @@ public class MolecularDriversGenerator implements TableGenerator {
 
             addActionability(table, virus);
         }
-    }
-
-    private boolean addVariants(@NotNull Table table) {
-        boolean hasSubclonal = false;
-        for (Variant variant : molecular.drivers().variants()) {
-            table.addCell(Cells.createContent("Mutation (" + variant.driverType().display() + ")"));
-
-            long variantCopies = Math.round(Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
-            long totalCopies = Math.round(variant.totalCopyNumber());
-            String driver = variant.gene() + " " + variant.impact() + " (" + variantCopies + "/" + totalCopies + " copies)";
-            if (variant.clonalLikelihood() < 0.5) {
-                hasSubclonal = true;
-                driver = driver + "*";
-            }
-            table.addCell(Cells.createContent(driver));
-            table.addCell(Cells.createContent(Formats.percentage(variant.driverLikelihood())));
-
-            addActionability(table, variant);
-        }
-        return hasSubclonal;
     }
 
     private void addActionability(@NotNull Table table, @NotNull Actionable actionable) {

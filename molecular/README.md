@@ -43,6 +43,7 @@ N variants
 
 Field | Example Value | Details
 ---|---|---
+event | APC D1174fs | A single representation of the event, expected to match with the event string from evidence section.
 gene | APC | The gene impacted by the variant
 impact | p.D1174fs | The impact of the variant on the gene 
 variantCopyNumber | 3.8 | The number of copies of this variant in the tumor
@@ -55,6 +56,7 @@ N amplifications
 
 Field | Example Value | Details
 ---|---|---
+event | MYC amp | A single representation of the event, expected to match with the event string from evidence section.
 gene | MYC | The gene that has been amplified
 copies | 150 | Number of copies of this gene in the tumor
 isPartial | 0 | Indicates whether the gene has been partially or fully amplified in the tumor
@@ -63,6 +65,7 @@ N losses
 
 Field | Example Value | Details
 ---|---|---
+event | TPS del | A single representation of the event, expected to match with the event string from evidence section.
 gene | TP53 | The gene that has been lost in the tumor 
 isPartial | 1 | Indicates whether the gene has been partially or fully lost in the tumor 
 
@@ -70,6 +73,7 @@ N disruptions
 
 Field | Example Value | Details
 ---|---|---
+event | BRCA1 disruption | A single representation of the event, expected to match with the event string from evidence section.
 gene | BRCA1 | The gene that has been disrupted.
 isHomozygous | 1 | Indicates whether the disruption leads to no wildtypes present anymore.
 details | Intron 12 downstream | Provides additional details about the disruption.
@@ -78,6 +82,7 @@ N fusions
 
 Field | Example Value | Details
 ---|---|---
+event | EML4-ALK fusion | A single representation of the event, expected to match with the event string from evidence section.
 fiveGene | EML4 | The gene that makes up the 5' part of the fusion
 threeGene | ALK | The gene that makes up the 3' part of the fusion
 details | Exon 2 - Exon 5 | Additional details about the fusion
@@ -88,6 +93,7 @@ N viruses
 
 Field | Example Value | Details
 ---|---|---
+event | HPV positive | A single representation of the event, expected to match with the event string from evidence section.
 name | Human papillomavirus type 16 | The name of the virus found in the tumor
 details | 3 integrations detected | More details about the virus
 driverLikelihood | HIGH | Either `HIGH` or `LOW`
