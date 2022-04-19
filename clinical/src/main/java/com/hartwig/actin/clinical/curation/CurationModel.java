@@ -228,7 +228,7 @@ public class CurationModel {
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         for (String input : inputs) {
             Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), input);
-            if (configs.isEmpty()) {
+            if (configs.isEmpty() && !input.trim().isEmpty()) {
                 LOGGER.warn(" Could not find oncological history config for input '{}'", input);
             }
 
