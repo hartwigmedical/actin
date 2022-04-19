@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.driver.Actionable;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
@@ -46,7 +47,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Actionable in " + molecular.evidence().actinSource()));
         table.addHeaderCell(Cells.createHeader("Actionable in " + molecular.evidence().externalTrialSource()));
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidence().evidenceSource()));
-        table.addHeaderCell(Cells.createHeader("Resistant in " + molecular.evidence().evidenceSource()));
+        table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidence().evidenceSource()));
 
         boolean hasSubclonal = addVariants(table);
         addAmplifications(table);
@@ -69,7 +70,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(amplification.gene() + " ampl, " + amplification.copies() + " copies"));
             table.addCell(Cells.createContent(Strings.EMPTY));
 
-            addActionability(table, amplification.gene() + " amp");
+            addActionability(table, amplification);
         }
     }
 
@@ -79,7 +80,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(loss.gene() + " del"));
             table.addCell(Cells.createContent(Strings.EMPTY));
 
-            addActionability(table, loss.gene() + " del");
+            addActionability(table, loss);
         }
     }
 
@@ -91,7 +92,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createEmpty());
 
             if (disruption.isHomozygous()) {
-                addActionability(table, disruption.gene() + " disruption");
+                addActionability(table, disruption);
             } else {
                 table.addCell(Cells.createContent(Strings.EMPTY));
                 table.addCell(Cells.createContent(Strings.EMPTY));
@@ -108,7 +109,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(name + ", " + fusion.details()));
             table.addCell(Cells.createContent(fusion.driverLikelihood().display()));
 
-            addActionability(table, name);
+            addActionability(table, fusion);
         }
     }
 
@@ -118,8 +119,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(virus.name() + ", " + virus.details()));
             table.addCell(Cells.createContent(virus.driverLikelihood().display()));
 
-            // TODO : Add interpretation to generate something like 'HPV Positive'
-            addActionability(table, virus.name());
+            addActionability(table, virus);
         }
     }
 
@@ -138,42 +138,34 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(driver));
             table.addCell(Cells.createContent(Formats.percentage(variant.driverLikelihood())));
 
-            String event = variant.impact();
-            if (event.startsWith("p\\.")) {
-                event = event.substring(2);
-            }
-
-            if (event.equals("\\?")) {
-                event = "splice";
-            }
-            addActionability(table, event);
+            addActionability(table, variant);
         }
         return hasSubclonal;
     }
 
-    private void addActionability(@NotNull Table table, @NotNull String event) {
-        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(isActionableInActin(event))));
-        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(isActionableInExternal(event))));
-        table.addCell(Cells.createContent(bestEvidence(event)));
-        table.addCell(Cells.createContent(highestResistance(event)));
+    private void addActionability(@NotNull Table table, @NotNull Actionable actionable) {
+        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(isActionableInActin(actionable))));
+        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(isActionableInExternal(actionable))));
+        table.addCell(Cells.createContent(bestEvidence(actionable)));
+        table.addCell(Cells.createContent(highestResistance(actionable)));
     }
 
-    private boolean isActionableInActin(@NotNull String event) {
-        return hasEvidenceWithEvent(molecular.evidence().actinTrials(), event);
+    private boolean isActionableInActin(@NotNull Actionable actionable) {
+        return hasEvidence(molecular.evidence().actinTrials(), actionable);
     }
 
-    private boolean isActionableInExternal(@NotNull String event) {
-        return hasEvidenceWithEvent(molecular.evidence().externalTrials(), event);
+    private boolean isActionableInExternal(@NotNull Actionable actionable) {
+        return hasEvidence(molecular.evidence().externalTrials(), actionable);
     }
 
     @NotNull
-    private String bestEvidence(@NotNull String event) {
-        if (hasEvidenceWithEvent(molecular.evidence().approvedEvidence(), event)) {
+    private String bestEvidence(@NotNull Actionable actionable) {
+        if (hasEvidence(molecular.evidence().approvedEvidence(), actionable)) {
             return "Approved";
-        } else if (hasEvidenceWithEvent(molecular.evidence().onLabelExperimentalEvidence(), event)
-                || hasEvidenceWithEvent(molecular.evidence().offLabelExperimentalEvidence(), event)) {
+        } else if (hasEvidence(molecular.evidence().onLabelExperimentalEvidence(), actionable)
+                || hasEvidence(molecular.evidence().offLabelExperimentalEvidence(), actionable)) {
             return "Experimental";
-        } else if (hasEvidenceWithEvent(molecular.evidence().preClinicalEvidence(), event)) {
+        } else if (hasEvidence(molecular.evidence().preClinicalEvidence(), actionable)) {
             return "Pre-clinical";
         }
 
@@ -181,19 +173,19 @@ public class MolecularDriversGenerator implements TableGenerator {
     }
 
     @NotNull
-    private String highestResistance(@NotNull String event) {
-        if (hasEvidenceWithEvent(molecular.evidence().knownResistanceEvidence(), event)) {
+    private String highestResistance(@NotNull Actionable actionable) {
+        if (hasEvidence(molecular.evidence().knownResistanceEvidence(), actionable)) {
             return "Known";
-        } else if (hasEvidenceWithEvent(molecular.evidence().suspectResistanceEvidence(), event)) {
+        } else if (hasEvidence(molecular.evidence().suspectResistanceEvidence(), actionable)) {
             return "Suspect";
         }
 
         return Strings.EMPTY;
     }
 
-    private static boolean hasEvidenceWithEvent(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String eventToFind) {
+    private static boolean hasEvidence(@NotNull Iterable<EvidenceEntry> evidences, @NotNull Actionable actionable) {
         for (EvidenceEntry evidence : evidences) {
-            if (evidence.event().equals(eventToFind)) {
+            if (evidence.event().equals(actionable.event())) {
                 return true;
             }
         }
