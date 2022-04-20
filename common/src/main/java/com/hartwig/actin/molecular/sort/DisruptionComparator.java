@@ -15,6 +15,11 @@ public class DisruptionComparator implements Comparator<Disruption> {
             return homozygousCompare;
         }
 
-        return disruption1.gene().compareTo(disruption2.gene());
+        int geneCompare = disruption1.gene().compareTo(disruption2.gene());
+        if (geneCompare != 0) {
+            return geneCompare;
+        }
+
+        return disruption1.details().compareTo(disruption2.details());
     }
 }

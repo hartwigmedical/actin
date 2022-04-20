@@ -16,21 +16,23 @@ public class DisruptionComparatorTest {
 
     @Test
     public void canCompareDisruptions() {
-        Disruption disruption1 = create("NF1", false);
-        Disruption disruption2 = create("NF1", true);
-        Disruption disruption3 = create("APC", false);
+        Disruption disruption1 = create("NF1", false, "intron 1");
+        Disruption disruption2 = create("NF1", false, "intron 3");
+        Disruption disruption3 = create("NF1", true, "intron 2");
+        Disruption disruption4 = create("APC", false, "intron 5");
 
-        List<Disruption> disruptions = Lists.newArrayList(disruption1, disruption2, disruption3);
+        List<Disruption> disruptions = Lists.newArrayList(disruption1, disruption2, disruption3, disruption4);
         disruptions.sort(new DisruptionComparator());
 
-        assertEquals(disruption2, disruptions.get(0));
-        assertEquals(disruption3, disruptions.get(1));
+        assertEquals(disruption3, disruptions.get(0));
+        assertEquals(disruption4, disruptions.get(1));
         assertEquals(disruption1, disruptions.get(2));
+        assertEquals(disruption2, disruptions.get(3));
     }
 
     @NotNull
-    private static Disruption create(@NotNull String gene, boolean isHomozygous) {
-        return ImmutableDisruption.builder().event(Strings.EMPTY).gene(gene).isHomozygous(isHomozygous).details(Strings.EMPTY).build();
+    private static Disruption create(@NotNull String gene, boolean isHomozygous, @NotNull String details) {
+        return ImmutableDisruption.builder().event(Strings.EMPTY).gene(gene).isHomozygous(isHomozygous).details(details).build();
     }
 
 }

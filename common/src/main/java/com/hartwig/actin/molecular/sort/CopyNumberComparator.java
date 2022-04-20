@@ -10,6 +10,11 @@ public class CopyNumberComparator implements Comparator<CopyNumberDriver> {
 
     @Override
     public int compare(@NotNull CopyNumberDriver copyNumberDriver1, @NotNull CopyNumberDriver copyNumberDriver2) {
-        return copyNumberDriver1.gene().compareTo(copyNumberDriver2.gene());
+        int geneCompare = copyNumberDriver1.gene().compareTo(copyNumberDriver2.gene());
+        if (geneCompare != 0) {
+            return geneCompare;
+        }
+
+        return copyNumberDriver1.event().compareTo(copyNumberDriver2.event());
     }
 }

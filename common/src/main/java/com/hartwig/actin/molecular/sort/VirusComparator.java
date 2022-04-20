@@ -19,6 +19,11 @@ public class VirusComparator implements Comparator<Virus> {
             return driverLikelihoodCompare;
         }
 
-        return virus1.name().compareTo(virus2.name());
+        int nameCompare = virus1.name().compareTo(virus2.name());
+        if (nameCompare != 0) {
+            return nameCompare;
+        }
+
+        return virus1.event().compareTo(virus2.event());
     }
 }
