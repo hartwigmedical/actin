@@ -16,6 +16,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
@@ -30,8 +31,8 @@ public class OrangeInterpreterTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canCreateInterpreterFromEmptyServeRecords() {
-        assertNotNull(OrangeInterpreter.fromServeRecords(Lists.newArrayList()));
+    public void canCreateInterpreterFromEmptyServeRecordsAndMappings() {
+        assertNotNull(OrangeInterpreter.create(Lists.newArrayList(), Lists.newArrayList()));
     }
 
     @Test
@@ -119,8 +120,9 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        OrangeEventMapper testEventExtractor = new OrangeEventMapper(evidence -> Sets.newHashSet(evidence.event()));
-        OrangeEvidenceFactory testEvidenceFactory = new OrangeEvidenceFactory(evidence -> true);
-        return new OrangeInterpreter(testEventExtractor, testEvidenceFactory);
+        OrangeEventMapper testEventMapper = new OrangeEventMapper(evidence -> Sets.newHashSet(evidence.event()));
+        OrangeEvidenceFactory testEvidenceFactory =
+                new OrangeEvidenceFactory(evidence -> true, ExternalTreatmentMapperTestFactory.create());
+        return new OrangeInterpreter(testEventMapper, testEvidenceFactory);
     }
 }

@@ -9,6 +9,8 @@ import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapper;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
@@ -37,15 +39,19 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private final EvidenceEvaluator evidenceEvaluator;
+    @NotNull
+    private final ExternalTreatmentMapper externalTreatmentMapper;
 
     @NotNull
-    public static OrangeEvidenceFactory fromServeRecords(@NotNull List<ServeRecord> records) {
-        return new OrangeEvidenceFactory(OrangeEvidenceEvaluator.fromServeRecords(records));
+    public static OrangeEvidenceFactory create(@NotNull List<ServeRecord> records, @NotNull List<ExternalTreatmentMapping> mappings) {
+        return new OrangeEvidenceFactory(OrangeEvidenceEvaluator.fromServeRecords(records), new ExternalTreatmentMapper(mappings));
     }
 
     @VisibleForTesting
-    OrangeEvidenceFactory(@NotNull final EvidenceEvaluator evidenceEvaluator) {
+    OrangeEvidenceFactory(@NotNull final EvidenceEvaluator evidenceEvaluator,
+            @NotNull final ExternalTreatmentMapper externalTreatmentMapper) {
         this.evidenceEvaluator = evidenceEvaluator;
+        this.externalTreatmentMapper = externalTreatmentMapper;
     }
 
     @NotNull
@@ -85,9 +91,14 @@ class OrangeEvidenceFactory {
     private Set<EvidenceEntry> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EXTERNAL_SOURCE)) {
-            result.add(toEvidenceEntry(evidence));
+            result.add(mapExternalToActinTreatment(toEvidenceEntry(evidence)));
         }
         return result;
+    }
+
+    @NotNull
+    private EvidenceEntry mapExternalToActinTreatment(@NotNull EvidenceEntry entry) {
+        return ImmutableEvidenceEntry.builder().from(entry).treatment(externalTreatmentMapper.map(entry.treatment())).build();
     }
 
     @NotNull

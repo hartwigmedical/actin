@@ -1,0 +1,16 @@
+package com.hartwig.actin.molecular.orange.curation;
+
+import org.immutables.value.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@Value.Immutable
+@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
+public abstract class ExternalTreatmentMapping {
+
+    @NotNull
+    public abstract String externalTreatment();
+
+    @NotNull
+    public abstract String actinTreatment();
+}

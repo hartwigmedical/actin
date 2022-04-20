@@ -21,6 +21,7 @@ public interface OrangeInterpreterConfig {
 
     String ORANGE_JSON = "orange_json";
     String SERVE_BRIDGE_TSV = "serve_bridge_tsv";
+    String EXTERNAL_TREATMENT_MAPPING_TSV = "external_treatment_mapping_tsv";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -32,6 +33,7 @@ public interface OrangeInterpreterConfig {
 
         options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted");
         options.addOption(SERVE_BRIDGE_TSV, true, "The output of SERVE-bridge");
+        options.addOption(EXTERNAL_TREATMENT_MAPPING_TSV, true, "A mapping from external treatment names to ACTIN treatments");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
 
@@ -47,6 +49,9 @@ public interface OrangeInterpreterConfig {
     String serveBridgeTsv();
 
     @NotNull
+    String externalTreatmentMappingTsv();
+
+    @NotNull
     String outputDirectory();
 
     @NotNull
@@ -59,6 +64,7 @@ public interface OrangeInterpreterConfig {
         return ImmutableOrangeInterpreterConfig.builder()
                 .orangeJson(ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON))
                 .serveBridgeTsv(ApplicationConfig.nonOptionalFile(cmd, SERVE_BRIDGE_TSV))
+                .externalTreatmentMappingTsv(ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TREATMENT_MAPPING_TSV))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

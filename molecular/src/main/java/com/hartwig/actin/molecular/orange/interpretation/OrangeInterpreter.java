@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
@@ -42,8 +43,9 @@ public class OrangeInterpreter {
     private final OrangeEvidenceFactory evidenceFactory;
 
     @NotNull
-    public static OrangeInterpreter fromServeRecords(@NotNull List<ServeRecord> records) {
-        return new OrangeInterpreter(OrangeEventMapper.fromServeRecords(records), OrangeEvidenceFactory.fromServeRecords(records));
+    public static OrangeInterpreter create(@NotNull List<ServeRecord> records, @NotNull List<ExternalTreatmentMapping> mappings) {
+        return new OrangeInterpreter(OrangeEventMapper.fromServeRecords(records),
+                OrangeEvidenceFactory.create(records, mappings));
     }
 
     @VisibleForTesting
@@ -80,7 +82,7 @@ public class OrangeInterpreter {
                 .hasReliablePurity(purple.hasReliablePurity())
                 .predictedTumorOrigin(predictedTumorOrigin)
                 .isMicrosatelliteUnstable(isMSI(purple.microsatelliteStabilityStatus()))
-                .isHomologousRepairDeficient(isHRD( record.chord().hrStatus()))
+                .isHomologousRepairDeficient(isHRD(record.chord().hrStatus()))
                 .tumorMutationalBurden(purple.tumorMutationalBurden())
                 .tumorMutationalLoad(purple.tumorMutationalLoad())
                 .build();

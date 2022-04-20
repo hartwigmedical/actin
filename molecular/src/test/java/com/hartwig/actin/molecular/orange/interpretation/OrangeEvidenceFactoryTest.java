@@ -7,6 +7,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapper;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
@@ -24,7 +26,7 @@ public class OrangeEvidenceFactoryTest {
 
     @Test
     public void canCreateMolecularEvidence() {
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> true);
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> true, ExternalTreatmentMapperTestFactory.create());
         ProtectRecord protect = createTestProtectRecord();
 
         MolecularEvidence evidence = factory.create(protect);
@@ -34,10 +36,21 @@ public class OrangeEvidenceFactoryTest {
 
     @Test
     public void filterActinTrialsWithoutInclusion() {
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> false);
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> false, ExternalTreatmentMapperTestFactory.create());
         ProtectRecord protect = createTestProtectRecord();
 
         assertTrue(factory.create(protect).actinTrials().isEmpty());
+    }
+
+    @Test
+    public void canMapExternalTreatmentsToActin() {
+        ExternalTreatmentMapper mapper = ExternalTreatmentMapperTestFactory.create("B responsive external treatment", "mapped!");
+
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> true, mapper);
+        ProtectRecord protect = createTestProtectRecord();
+
+        MolecularEvidence evidence = factory.create(protect);
+        assertEquals("mapped!", evidence.externalTrials().iterator().next().treatment());
     }
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {
@@ -157,6 +170,7 @@ public class OrangeEvidenceFactoryTest {
                 .from(TestProtectDataFactory.create())
                 .reported(true)
                 .event("B responsive external event")
+                .treatment("B responsive external treatment")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
@@ -168,6 +182,7 @@ public class OrangeEvidenceFactoryTest {
                 .from(TestProtectDataFactory.create())
                 .reported(true)
                 .event("B responsive actin event")
+                .treatment("B responsive actin treatment")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)

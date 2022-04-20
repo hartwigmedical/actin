@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
+import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMappingTsv;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
@@ -59,8 +61,12 @@ public class OrangeInterpreterApplication {
         List<ServeRecord> records = ServeRecordTsv.read(config.serveBridgeTsv());
         LOGGER.info(" Loaded {} records", records.size());
 
+        LOGGER.info("Loading ACTIN to external treatment mapping TSV from {}", config.externalTreatmentMappingTsv());
+        List<ExternalTreatmentMapping> mappings = ExternalTreatmentMappingTsv.read(config.externalTreatmentMappingTsv());
+        LOGGER.info(" Loaded {} mappings", mappings.size());
+
         LOGGER.info("Interpreting ORANGE record");
-        MolecularRecord molecular = OrangeInterpreter.fromServeRecords(records).interpret(orange);
+        MolecularRecord molecular = OrangeInterpreter.create(records, mappings).interpret(orange);
         MolecularPrinter.printRecord(molecular);
 
         MolecularRecordJson.write(molecular, config.outputDirectory());
