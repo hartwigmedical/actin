@@ -18,17 +18,17 @@ public enum EvaluationResult {
             case FAIL: {
                 return this == NOT_IMPLEMENTED;
             }
-            case UNDETERMINED: {
+            case WARN: {
                 return this == NOT_IMPLEMENTED || this == FAIL;
             }
-            case WARN: {
-                return this == NOT_IMPLEMENTED || this == FAIL || this == UNDETERMINED;
-            }
-            case NOT_EVALUATED: {
-                return this == NOT_IMPLEMENTED || this == FAIL || this == UNDETERMINED || this == WARN;
+            case UNDETERMINED: {
+                return this == NOT_IMPLEMENTED || this == FAIL || this == WARN;
             }
             case PASS: {
-                return this == NOT_IMPLEMENTED || this == FAIL || this == UNDETERMINED || this == WARN || this == NOT_EVALUATED;
+                return this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED;
+            }
+            case NOT_EVALUATED: {
+                return this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED || this == PASS;
             }
             default: {
                 throw new IllegalStateException("Cannot compare evaluation result with " + otherResult);

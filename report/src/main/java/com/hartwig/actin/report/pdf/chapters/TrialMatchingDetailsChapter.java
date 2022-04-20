@@ -257,11 +257,11 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         Set<CriterionReference> references = Sets.newTreeSet(new CriterionReferenceComparator());
         references.addAll(evaluations.keySet());
 
+        addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
         addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL);
         if (!displayFailOnly) {
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED);
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED);
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.WARN);
+            addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED);
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS);
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_EVALUATED);
         }
@@ -282,11 +282,10 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                     for (String passMessage : evaluation.passSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(passMessage)));
                     }
-                } else if (evaluation.result() == EvaluationResult.WARN) {
+                } else if (evaluation.result() == EvaluationResult.WARN || evaluation.result() == EvaluationResult.UNDETERMINED) {
                     for (String warnMessage : evaluation.warnSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(warnMessage)));
                     }
-                } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
                     for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
                     }

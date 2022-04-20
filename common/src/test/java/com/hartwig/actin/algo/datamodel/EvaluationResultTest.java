@@ -10,7 +10,7 @@ public class EvaluationResultTest {
     @Test
     public void canCompareEvaluationResults() {
         assertTrue(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS));
-        assertTrue(EvaluationResult.UNDETERMINED.isWorseThan(EvaluationResult.WARN));
+        assertTrue(EvaluationResult.WARN.isWorseThan(EvaluationResult.UNDETERMINED));
 
         assertFalse(EvaluationResult.NOT_EVALUATED.isWorseThan(EvaluationResult.NOT_IMPLEMENTED));
     }
