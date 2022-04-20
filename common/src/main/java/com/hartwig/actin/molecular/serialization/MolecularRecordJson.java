@@ -69,11 +69,12 @@ import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.sort.CopyNumberComparator;
-import com.hartwig.actin.molecular.sort.DisruptionComparator;
-import com.hartwig.actin.molecular.sort.FusionComparator;
-import com.hartwig.actin.molecular.sort.VariantComparator;
-import com.hartwig.actin.molecular.sort.VirusComparator;
+import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
+import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
+import com.hartwig.actin.molecular.sort.driver.FusionComparator;
+import com.hartwig.actin.molecular.sort.driver.VariantComparator;
+import com.hartwig.actin.molecular.sort.driver.VirusComparator;
+import com.hartwig.actin.molecular.sort.evidence.EvidenceEntryComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -354,7 +355,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<EvidenceEntry> toEvidences(@NotNull JsonArray evidenceArray) {
-            Set<EvidenceEntry> evidences = Sets.newHashSet();
+            Set<EvidenceEntry> evidences = Sets.newTreeSet(new EvidenceEntryComparator());
             for (JsonElement element : evidenceArray) {
                 JsonObject object = element.getAsJsonObject();
                 evidences.add(ImmutableEvidenceEntry.builder()

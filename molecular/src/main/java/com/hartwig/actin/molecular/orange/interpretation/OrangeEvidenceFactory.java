@@ -16,6 +16,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
 import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
+import com.hartwig.actin.molecular.sort.evidence.EvidenceEntryComparator;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +69,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             if (evidenceEvaluator.isPotentiallyForTrialInclusion(evidence)) {
                 result.add(toEvidenceEntry(evidence));
@@ -82,7 +83,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EXTERNAL_SOURCE)) {
             result.add(toEvidenceEntry(evidence));
         }
@@ -91,7 +92,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createApprovedEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EVIDENCE_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
                 result.add(toEvidenceEntry(evidence));
@@ -102,7 +103,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createOnLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
@@ -128,7 +129,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
@@ -141,7 +142,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
 
         Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : reportedCkbEvidences) {
@@ -162,7 +163,7 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private Set<EvidenceEntry> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+        Set<EvidenceEntry> result = Sets.newTreeSet(new EvidenceEntryComparator());
 
         Set<EvidenceEntry> known = createKnownResistanceEvidence(evidences);
 

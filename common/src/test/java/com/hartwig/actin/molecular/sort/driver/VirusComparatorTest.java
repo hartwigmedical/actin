@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.sort;
+package com.hartwig.actin.molecular.sort.driver;
 
 import static org.junit.Assert.assertEquals;
 

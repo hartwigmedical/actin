@@ -34,11 +34,11 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
-import com.hartwig.actin.molecular.sort.CopyNumberComparator;
-import com.hartwig.actin.molecular.sort.DisruptionComparator;
-import com.hartwig.actin.molecular.sort.FusionComparator;
-import com.hartwig.actin.molecular.sort.VariantComparator;
-import com.hartwig.actin.molecular.sort.VirusComparator;
+import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
+import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
+import com.hartwig.actin.molecular.sort.driver.FusionComparator;
+import com.hartwig.actin.molecular.sort.driver.VariantComparator;
+import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
