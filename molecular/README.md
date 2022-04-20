@@ -10,6 +10,7 @@ The ORANGE interpreter application requires Java 11+ and can be run as follows:
 java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplication \
    -orange_json /path/to/orange.json \
    -serve_bridge_tsv /path/to/serve_bridge_output_tsv \
+   -external_treatment_mapping_tsv /path/to/external_treatment_mapping.tsv \
    -output_directory /path/to/where/molecular_json_file_is_written
 ```
 
@@ -174,16 +175,16 @@ The evidence is extracted from PROTECT in the following steps:
  1. Reported evidence is used exclusively for the inputs to the filters defined below
  1. Evidence is categorized according to the filters. Every evidence item can belong to only one category. 
  
-Field | Source | Filter
+Field | Source | Filter | Notes
 ---|---|---
-actinTrials | ACTIN | Evidence is filtered that is used exclusively in inclusion eligibility rules within ACTIN  
-externalTrials | ICLUSION | -
-approvedEvidence | CKB | A-level on-label non-predicted responsive evidence.
-onLabelExperimentalEvidence | CKB | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence.
-offLabelExperimentalEvidence | CKB | B-level off-label non-predicted responsive evidence.
-preClinicalEvidence | CKB | All responsive evidence that is neither approved nor experimental. 
-knownResistanceEvidence | CKB | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level.  
-suspectResistanceEvidence | CKB | Any other resistance for a treatment with evidence with equal or lower evidence level.    
+actinTrials | ACTIN | Evidence is filtered that is used exclusively in inclusion eligibility rules within ACTIN |  
+externalTrials | ICLUSION | - | External trials are mapped to ACTIN trials in case a mapping exists in `external_treatment_mapping_tsv`
+approvedEvidence | CKB | A-level on-label non-predicted responsive evidence. | 
+onLabelExperimentalEvidence | CKB | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence. |
+offLabelExperimentalEvidence | CKB | B-level off-label non-predicted responsive evidence. |
+preClinicalEvidence | CKB | All responsive evidence that is neither approved nor experimental. | 
+knownResistanceEvidence | CKB | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level. |  
+suspectResistanceEvidence | CKB | Any other resistance for a treatment with evidence with equal or lower evidence level. |
 
 The events that are used for ACTIN treatment matching are extracted from the PROTECT part of the ORANGE datamodel. It is assumed that PROTECT
 has been run on a SERVE database that includes an ACTIN source generated from the ACTIN treatment database using [serve-bridge](../serve-bridge).
