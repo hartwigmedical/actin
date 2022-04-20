@@ -19,11 +19,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,6 +69,11 @@ import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.molecular.sort.CopyNumberComparator;
+import com.hartwig.actin.molecular.sort.DisruptionComparator;
+import com.hartwig.actin.molecular.sort.FusionComparator;
+import com.hartwig.actin.molecular.sort.VariantComparator;
+import com.hartwig.actin.molecular.sort.VirusComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -175,7 +178,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<Variant> toVariants(@NotNull JsonArray variantArray) {
-            Set<Variant> variants = Sets.newHashSet();
+            Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutableVariant.builder()
@@ -194,7 +197,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<Amplification> toAmplifications(@NotNull JsonArray amplificationArray) {
-            Set<Amplification> amplifications = Sets.newHashSet();
+            Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
             for (JsonElement element : amplificationArray) {
                 JsonObject amplification = element.getAsJsonObject();
                 amplifications.add(ImmutableAmplification.builder()
@@ -209,7 +212,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<Loss> toLosses(@NotNull JsonArray lossArray) {
-            Set<Loss> losses = Sets.newHashSet();
+            Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
             for (JsonElement element : lossArray) {
                 JsonObject loss = element.getAsJsonObject();
                 losses.add(ImmutableLoss.builder()
@@ -223,7 +226,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<Disruption> toDisruptions(@NotNull JsonArray disruptionArray) {
-            Set<Disruption> disruptions = Sets.newHashSet();
+            Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
             for (JsonElement element : disruptionArray) {
                 JsonObject disruption = element.getAsJsonObject();
                 disruptions.add(ImmutableDisruption.builder()
@@ -238,7 +241,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<Fusion> toFusions(@NotNull JsonArray fusionArray) {
-            Set<Fusion> fusions = Sets.newHashSet();
+            Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
             for (JsonElement element : fusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableFusion.builder()
@@ -255,7 +258,7 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<Virus> toViruses(@NotNull JsonArray virusArray) {
-            Set<Virus> viruses = Sets.newHashSet();
+            Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
             for (JsonElement element : virusArray) {
                 JsonObject virus = element.getAsJsonObject();
                 viruses.add(ImmutableVirus.builder()
@@ -269,8 +272,8 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static List<PharmacoEntry> toPharmacoEntries(@NotNull JsonArray pharmacoArray) {
-            List<PharmacoEntry> pharmacoEntries = Lists.newArrayList();
+        private static Set<PharmacoEntry> toPharmacoEntries(@NotNull JsonArray pharmacoArray) {
+            Set<PharmacoEntry> pharmacoEntries = Sets.newHashSet();
             for (JsonElement element : pharmacoArray) {
                 JsonObject pharmaco = element.getAsJsonObject();
                 pharmacoEntries.add(ImmutablePharmacoEntry.builder()

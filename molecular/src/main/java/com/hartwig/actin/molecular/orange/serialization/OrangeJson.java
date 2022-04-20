@@ -14,10 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -136,8 +134,8 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static List<PurpleVariant> toPurpleVariants(@NotNull JsonArray variantArray) {
-            List<PurpleVariant> variants = Lists.newArrayList();
+        private static Set<PurpleVariant> toPurpleVariants(@NotNull JsonArray variantArray) {
+            Set<PurpleVariant> variants = Sets.newHashSet();
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutablePurpleVariant.builder()
@@ -246,7 +244,7 @@ public final class OrangeJson {
 
         @NotNull
         private static ProtectRecord toProtectRecord(@NotNull JsonArray protectArray) {
-            List<ProtectEvidence> evidences = Lists.newArrayList();
+            Set<ProtectEvidence> evidences = Sets.newHashSet();
             for (JsonElement element : protectArray) {
                 JsonObject evidence = element.getAsJsonObject();
 

@@ -34,6 +34,11 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
+import com.hartwig.actin.molecular.sort.CopyNumberComparator;
+import com.hartwig.actin.molecular.sort.DisruptionComparator;
+import com.hartwig.actin.molecular.sort.FusionComparator;
+import com.hartwig.actin.molecular.sort.VariantComparator;
+import com.hartwig.actin.molecular.sort.VirusComparator;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +64,7 @@ final class DriverExtraction {
 
     @NotNull
     private static Set<Variant> extractVariants(@NotNull PurpleRecord purple) {
-        Set<Variant> variants = Sets.newHashSet();
+        Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
         for (PurpleVariant variant : purple.variants()) {
             String impact = extractImpact(variant);
             variants.add(ImmutableVariant.builder()
@@ -104,7 +109,7 @@ final class DriverExtraction {
 
     @NotNull
     private static Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
-        Set<Amplification> amplifications = Sets.newHashSet();
+        Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN) {
@@ -121,7 +126,7 @@ final class DriverExtraction {
 
     @NotNull
     private static Set<Loss> extractLosses(@NotNull PurpleRecord purple) {
-        Set<Loss> losses = Sets.newHashSet();
+        Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_LOSS) {
@@ -137,7 +142,7 @@ final class DriverExtraction {
 
     @NotNull
     private static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx) {
-        Set<Disruption> disruptions = Sets.newHashSet();
+        Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
             disruptions.add(ImmutableDisruption.builder()
                     .event(Strings.EMPTY)
@@ -160,7 +165,7 @@ final class DriverExtraction {
 
     @NotNull
     private static Set<Fusion> extractFusions(@NotNull LinxRecord linx) {
-        Set<Fusion> fusions = Sets.newHashSet();
+        Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()
                     .event(fusion.geneStart() + "-" + fusion.geneEnd() + " fusion")
@@ -214,7 +219,7 @@ final class DriverExtraction {
 
     @NotNull
     private static Set<Virus> extractViruses(@NotNull VirusInterpreterRecord virusInterpreter) {
-        Set<Virus> viruses = Sets.newHashSet();
+        Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
             String event = virus.interpretation() != null ? virus.interpretation() + " positive" : Strings.EMPTY;
             viruses.add(ImmutableVirus.builder()
