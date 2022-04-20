@@ -27,15 +27,27 @@ public final class Formats {
     public static final String DATE_UNKNOWN = "Date unknown";
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final DecimalFormat TWO_DIGIT_FORMAT = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final DecimalFormat SINGLE_DIGIT_FORMAT = new DecimalFormat("#.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final DecimalFormat NO_DIGIT_FORMAT = new DecimalFormat("#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     private static final DecimalFormat PERCENTAGE_FORMAT = new DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     private Formats() {
     }
 
     @NotNull
-    public static String number(double number) {
-        return NUMBER_FORMAT.format(number);
+    public static String twoDigitNumber(double number) {
+        return TWO_DIGIT_FORMAT.format(number);
+    }
+
+    @NotNull
+    public static String singleDigitNumber(double number) {
+        return SINGLE_DIGIT_FORMAT.format(number);
+    }
+
+    @NotNull
+    public static String noDigitNumber(double number) {
+        return NO_DIGIT_FORMAT.format(number);
     }
 
     @NotNull

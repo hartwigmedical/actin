@@ -68,9 +68,16 @@ public class MolecularDriversGenerator implements TableGenerator {
         for (Variant variant : molecular.drivers().variants()) {
             table.addCell(Cells.createContent("Mutation (" + variant.driverType().display() + ")"));
 
-            long variantCopies = Math.round(Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
-            long totalCopies = Math.round(variant.totalCopyNumber());
-            String driver = variant.gene() + " " + variant.impact() + " (" + variantCopies + "/" + totalCopies + " copies)";
+            double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
+            String variantCopyString = boundedVariantCopies < 1
+                    ? Formats.singleDigitNumber(boundedVariantCopies)
+                    : Formats.noDigitNumber(boundedVariantCopies);
+
+            double boundedTotalCopies = Math.max(0, variant.totalCopyNumber());
+            String totalCopyString =
+                    boundedTotalCopies < 1 ? Formats.singleDigitNumber(boundedTotalCopies) : Formats.noDigitNumber(boundedTotalCopies);
+
+            String driver = variant.gene() + " " + variant.impact() + " (" + variantCopyString + "/" + totalCopyString + " copies)";
             if (variant.clonalLikelihood() <= 0.5) {
                 hasSubclonal = true;
                 driver = driver + "*";
@@ -120,7 +127,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(disruption.isHomozygous() ? "Homozygous disruption" : "Non-homozygous disruption"));
             String addon = !disruption.details().isEmpty() ? ", " + disruption.details() : Strings.EMPTY;
             table.addCell(Cells.createContent(disruption.gene() + addon));
-            table.addCell(Cells.createEmpty());
+            table.addCell(Cells.createContent(Strings.EMPTY));
 
             if (disruption.isHomozygous()) {
                 addActionability(table, disruption);
@@ -173,8 +180,8 @@ public class MolecularDriversGenerator implements TableGenerator {
     private String bestEvidence(@NotNull Actionable actionable) {
         if (hasEvidence(molecular.evidence().approvedEvidence(), actionable)) {
             return "Approved";
-        } else if (hasEvidence(molecular.evidence().onLabelExperimentalEvidence(), actionable)
-                || hasEvidence(molecular.evidence().offLabelExperimentalEvidence(), actionable)) {
+        } else if (hasEvidence(molecular.evidence().onLabelExperimentalEvidence(), actionable) || hasEvidence(molecular.evidence()
+                .offLabelExperimentalEvidence(), actionable)) {
             return "Experimental";
         } else if (hasEvidence(molecular.evidence().preClinicalEvidence(), actionable)) {
             return "Pre-clinical";

@@ -8,9 +8,9 @@ public class FormatsTest {
 
     @Test
     public void canFormatNumbers() {
-        assertEquals("2.12", Formats.number(2.123));
-        assertEquals("2.12", Formats.number(2.12));
-        assertEquals("2.1", Formats.number(2.1));
-        assertEquals("2", Formats.number(2.0));
+        assertEquals("2.12", Formats.twoDigitNumber(2.123));
+        assertEquals("2.12", Formats.twoDigitNumber(2.12));
+        assertEquals("2.1", Formats.twoDigitNumber(2.1));
+        assertEquals("2", Formats.twoDigitNumber(2.0));
     }
 }

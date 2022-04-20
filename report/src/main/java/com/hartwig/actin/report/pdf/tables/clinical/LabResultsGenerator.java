@@ -102,7 +102,7 @@ public class LabResultsGenerator implements TableGenerator {
 
         Style style = Styles.tableValueHighlightStyle();
         if (lab != null) {
-            value = Formats.number(lab.value()) + " " + lab.unit().display();
+            value = Formats.twoDigitNumber(lab.value()) + " " + lab.unit().display();
             if (!lab.comparator().isEmpty()) {
                 value = lab.comparator() + " " + value;
             }
@@ -136,11 +136,11 @@ public class LabResultsGenerator implements TableGenerator {
 
         String limit;
         if (refLimitLow == null) {
-            limit = "< " + Formats.number(refLimitUp);
+            limit = "< " + Formats.twoDigitNumber(refLimitUp);
         } else if (refLimitUp == null) {
-            limit = "> " + Formats.number(refLimitLow);
+            limit = "> " + Formats.twoDigitNumber(refLimitLow);
         } else {
-            limit = Formats.number(refLimitLow) + " - " + Formats.number(refLimitUp);
+            limit = Formats.twoDigitNumber(refLimitLow) + " - " + Formats.twoDigitNumber(refLimitUp);
         }
 
         return "(" + limit + " " + lab.unit().display() + ")";

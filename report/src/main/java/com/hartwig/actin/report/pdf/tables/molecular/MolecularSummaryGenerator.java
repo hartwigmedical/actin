@@ -83,7 +83,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
             if (priorMolecularTest.scoreText() != null) {
                 entry += (" " + priorMolecularTest.scoreText());
             } else if (priorMolecularTest.scoreValue() != null) {
-                entry += (" " + Formats.number(priorMolecularTest.scoreValue()));
+                entry += (" " + Formats.twoDigitNumber(priorMolecularTest.scoreValue()));
                 if (priorMolecularTest.unit() != null) {
                     entry += (" " + priorMolecularTest.unit());
                 }

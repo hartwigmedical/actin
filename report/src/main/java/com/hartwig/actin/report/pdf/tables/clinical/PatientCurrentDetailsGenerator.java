@@ -62,7 +62,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
             if (ecg.qtcfValue() != null && ecg.qtcfUnit() != null) {
                 table.addCell(Cells.createKey("QTcF"));
-                table.addCell(Cells.createValue(Formats.number(ecg.qtcfValue()) + " " + ecg.qtcfUnit()));
+                table.addCell(Cells.createValue(Formats.twoDigitNumber(ecg.qtcfValue()) + " " + ecg.qtcfUnit()));
             }
         }
 
