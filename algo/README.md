@@ -19,7 +19,7 @@ The following assumptions are made about the inputs:
  - The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
  
 An optional flag `run_historically` can be added in which case the treatment matcher sets the date to 3 weeks after the 
-patient's registration date. If this flag is not set, the treatment matcher using the current date as reference date.
+patient's registration date. If this flag is not set, the treatment matcher uses the current date as reference date.
  
 ### Treatment matching
 
