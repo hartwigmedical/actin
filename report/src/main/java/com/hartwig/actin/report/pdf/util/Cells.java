@@ -115,6 +115,13 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createValueWarn(@NotNull String text) {
+        Cell cell = createValue(text);
+        cell.setFontColor(Styles.PALETTE_WARN);
+        return cell;
+    }
+
+    @NotNull
     public static Cell createValueYesNo(@NotNull String yesNo) {
         Cell cell = createValue(yesNo);
         cell.setFontColor(Formats.fontColorForYesNo(yesNo));

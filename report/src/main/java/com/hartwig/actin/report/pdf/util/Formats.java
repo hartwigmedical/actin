@@ -20,9 +20,8 @@ public final class Formats {
 
     public static final String VALUE_UNKNOWN = "Unknown";
     public static final String VALUE_COMING_SOON = "Coming soon";
-    public static final String VALUE_INCONCLUSIVE = "Inconclusive";
 
-    private static final Set<String> NON_HIGHLIGHT_VALUES = Sets.newHashSet(VALUE_UNKNOWN, VALUE_COMING_SOON, VALUE_INCONCLUSIVE);
+    private static final Set<String> NON_HIGHLIGHT_VALUES = Sets.newHashSet(VALUE_UNKNOWN, VALUE_COMING_SOON);
 
     public static final String DATE_UNKNOWN = "Date unknown";
 

@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
@@ -20,6 +21,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RecentMolecularSummaryGenerator implements TableGenerator {
 
@@ -54,7 +56,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
         if (TumorDetailsInterpreter.isCUP(clinical.tumor())) {
             table.addCell(Cells.createKey("Predicted tumor origin"));
-            table.addCell(Cells.createValue(TumorOriginInterpreter.interpret(molecular.characteristics().predictedTumorOrigin())));
+            table.addCell(createPredictedTumorOriginValue(molecular.characteristics().predictedTumorOrigin()));
         }
 
         MolecularEvidence evidence = molecular.evidence();
@@ -87,6 +89,16 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     private static String biopsyLocation(@NotNull TumorDetails tumor) {
         String biopsyLocation = tumor.biopsyLocation();
         return biopsyLocation != null ? biopsyLocation : Formats.VALUE_UNKNOWN;
+    }
+
+    @NotNull
+    private static Cell createPredictedTumorOriginValue(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
+        String interpretation = TumorOriginInterpreter.interpret(predictedTumorOrigin);
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin)) {
+            return Cells.createValue(interpretation);
+        } else {
+            return Cells.createValueWarn(interpretation);
+        }
     }
 
     @NotNull

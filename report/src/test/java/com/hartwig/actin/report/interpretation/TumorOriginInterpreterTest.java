@@ -26,11 +26,8 @@ public class TumorOriginInterpreterTest {
     public void canInterpretPredictedTumorOrigins() {
         assertEquals(Formats.VALUE_UNKNOWN, TumorOriginInterpreter.interpret(null));
 
-        PredictedTumorOrigin lowConfidence = ImmutablePredictedTumorOrigin.builder().tumorType("something").likelihood(0.4).build();
-        assertEquals(TumorOriginInterpreter.INCONCLUSIVE_STRING, TumorOriginInterpreter.interpret(lowConfidence));
-
-        PredictedTumorOrigin highConfidence = ImmutablePredictedTumorOrigin.builder().tumorType("something").likelihood(0.9).build();
-        assertEquals("something (90%)", TumorOriginInterpreter.interpret(highConfidence));
+        PredictedTumorOrigin origin = ImmutablePredictedTumorOrigin.builder().tumorType("something").likelihood(0.9).build();
+        assertEquals("something (90%)", TumorOriginInterpreter.interpret(origin));
     }
 
     @NotNull

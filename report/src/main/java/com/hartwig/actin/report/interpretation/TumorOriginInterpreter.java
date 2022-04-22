@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TumorOriginInterpreter {
 
-    static final String INCONCLUSIVE_STRING = "Inconclusive";
-
     private TumorOriginInterpreter() {
     }
 
@@ -23,10 +21,6 @@ public final class TumorOriginInterpreter {
             return Formats.VALUE_UNKNOWN;
         }
 
-        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin)) {
-            return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
-        } else {
-            return INCONCLUSIVE_STRING;
-        }
+        return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
     }
 }
