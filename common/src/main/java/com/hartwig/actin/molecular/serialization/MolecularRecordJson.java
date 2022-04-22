@@ -184,12 +184,12 @@ public class MolecularRecordJson {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutableVariant.builder()
                         .event(string(variant, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(variant, "driverLikelihood")))
                         .gene(string(variant, "gene"))
                         .impact(string(variant, "impact"))
                         .variantCopyNumber(number(variant, "variantCopyNumber"))
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
                         .driverType(VariantDriverType.valueOf(string(variant, "driverType")))
-                        .driverLikelihood(number(variant, "driverLikelihood"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
                         .build());
             }
@@ -203,6 +203,7 @@ public class MolecularRecordJson {
                 JsonObject amplification = element.getAsJsonObject();
                 amplifications.add(ImmutableAmplification.builder()
                         .event(string(amplification, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(amplification, "driverLikelihood")))
                         .gene(string(amplification, "gene"))
                         .copies(integer(amplification, "copies"))
                         .isPartial(bool(amplification, "isPartial"))
@@ -218,6 +219,7 @@ public class MolecularRecordJson {
                 JsonObject loss = element.getAsJsonObject();
                 losses.add(ImmutableLoss.builder()
                         .event(string(loss, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(loss, "driverLikelihood")))
                         .gene(string(loss, "gene"))
                         .isPartial(bool(loss, "isPartial"))
                         .build());
@@ -232,6 +234,7 @@ public class MolecularRecordJson {
                 JsonObject disruption = element.getAsJsonObject();
                 disruptions.add(ImmutableDisruption.builder()
                         .event(string(disruption, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(disruption, "driverLikelihood")))
                         .gene(string(disruption, "gene"))
                         .isHomozygous(bool(disruption, "isHomozygous"))
                         .details(string(disruption, "details"))
@@ -247,11 +250,11 @@ public class MolecularRecordJson {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableFusion.builder()
                         .event(string(fusion, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(fusion, "driverLikelihood")))
                         .fiveGene(string(fusion, "fiveGene"))
                         .threeGene(string(fusion, "threeGene"))
                         .details(string(fusion, "details"))
                         .driverType(FusionDriverType.valueOf(string(fusion, "driverType")))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(fusion, "driverLikelihood")))
                         .build());
             }
             return fusions;
@@ -264,9 +267,9 @@ public class MolecularRecordJson {
                 JsonObject virus = element.getAsJsonObject();
                 viruses.add(ImmutableVirus.builder()
                         .event(string(virus, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(virus, "driverLikelihood")))
                         .name(string(virus, "name"))
                         .details(string(virus, "details"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(virus, "driverLikelihood")))
                         .build());
             }
             return viruses;

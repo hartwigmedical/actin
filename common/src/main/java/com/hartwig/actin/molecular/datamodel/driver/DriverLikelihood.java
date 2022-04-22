@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum DriverLikelihood {
     HIGH("High"),
+    MEDIUM("Medium"),
     LOW("Low");
 
     @NotNull

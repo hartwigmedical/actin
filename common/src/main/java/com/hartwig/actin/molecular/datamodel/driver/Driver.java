@@ -2,8 +2,11 @@ package com.hartwig.actin.molecular.datamodel.driver;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Actionable {
+public interface Driver {
 
     @NotNull
     String event();
+
+    @NotNull
+    DriverLikelihood driverLikelihood();
 }

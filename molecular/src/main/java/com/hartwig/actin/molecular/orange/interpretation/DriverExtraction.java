@@ -69,12 +69,12 @@ final class DriverExtraction {
             String impact = extractImpact(variant);
             variants.add(ImmutableVariant.builder()
                     .event(variant.gene() + " " + EventFormatter.format(impact))
+                    .driverLikelihood(interpretDriverLikelihood(variant))
                     .gene(variant.gene())
                     .impact(impact)
                     .variantCopyNumber(variant.alleleCopyNumber())
                     .totalCopyNumber(variant.totalCopyNumber())
                     .driverType(extractVariantDriverType(variant))
-                    .driverLikelihood(variant.driverLikelihood())
                     .clonalLikelihood(variant.clonalLikelihood())
                     .build());
         }
@@ -97,6 +97,18 @@ final class DriverExtraction {
 
     @NotNull
     @VisibleForTesting
+    static DriverLikelihood interpretDriverLikelihood(@NotNull PurpleVariant variant) {
+        if (variant.driverLikelihood() >= 0.8) {
+            return DriverLikelihood.HIGH;
+        } else if (variant.driverLikelihood() >= 0.2) {
+            return DriverLikelihood.MEDIUM;
+        } else {
+            return DriverLikelihood.LOW;
+        }
+    }
+
+    @NotNull
+    @VisibleForTesting
     static VariantDriverType extractVariantDriverType(@NotNull PurpleVariant variant) {
         if (variant.hotspot() == VariantHotspot.HOTSPOT) {
             return VariantDriverType.HOTSPOT;
@@ -113,10 +125,12 @@ final class DriverExtraction {
         for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN) {
+                boolean isPartial = gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN;
                 amplifications.add(ImmutableAmplification.builder()
                         .event(gainLoss.gene() + " " + EventFormatter.GAIN_EVENT)
+                        .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
                         .gene(gainLoss.gene())
-                        .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN)
+                        .isPartial(isPartial)
                         .copies(gainLoss.minCopies())
                         .build());
             }
@@ -132,6 +146,7 @@ final class DriverExtraction {
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_LOSS) {
                 losses.add(ImmutableLoss.builder()
                         .event(gainLoss.gene() + " " + EventFormatter.LOSS_EVENT)
+                        .driverLikelihood(DriverLikelihood.HIGH)
                         .gene(gainLoss.gene())
                         .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS)
                         .build());
@@ -146,6 +161,7 @@ final class DriverExtraction {
         for (LinxDisruption disruption : linx.disruptions()) {
             disruptions.add(ImmutableDisruption.builder()
                     .event(Strings.EMPTY)
+                    .driverLikelihood(DriverLikelihood.LOW)
                     .gene(disruption.gene())
                     .isHomozygous(false)
                     .details(disruption.range())
@@ -155,6 +171,7 @@ final class DriverExtraction {
         for (String homozygous : linx.homozygousDisruptedGenes()) {
             disruptions.add(ImmutableDisruption.builder()
                     .event(homozygous + " " + EventFormatter.DISRUPTION_EVENT)
+                    .driverLikelihood(DriverLikelihood.HIGH)
                     .gene(homozygous)
                     .isHomozygous(true)
                     .details(Strings.EMPTY)
@@ -169,11 +186,11 @@ final class DriverExtraction {
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()
                     .event(fusion.geneStart() + "-" + fusion.geneEnd() + " fusion")
+                    .driverLikelihood(extractFusionDriverLikelihood(fusion))
                     .fiveGene(fusion.geneStart())
                     .threeGene(fusion.geneEnd())
                     .details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
                     .driverType(extractFusionDriverType(fusion))
-                    .driverLikelihood(extractFusionDriverLikelihood(fusion))
                     .build());
         }
         return fusions;
@@ -224,9 +241,9 @@ final class DriverExtraction {
             String event = virus.interpretation() != null ? virus.interpretation() + " positive" : Strings.EMPTY;
             viruses.add(ImmutableVirus.builder()
                     .event(event)
+                    .driverLikelihood(extractVirusDriverLikelihood(virus))
                     .name(virus.name())
                     .details(virus.integrations() + " integrations detected")
-                    .driverLikelihood(extractVirusDriverLikelihood(virus))
                     .build());
         }
         return viruses;

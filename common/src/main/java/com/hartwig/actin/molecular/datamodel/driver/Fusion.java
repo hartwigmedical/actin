@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Fusion implements Actionable {
+public abstract class Fusion implements Driver {
 
     @NotNull
     public abstract String fiveGene();
@@ -19,8 +19,5 @@ public abstract class Fusion implements Actionable {
 
     @NotNull
     public abstract FusionDriverType driverType();
-
-    @NotNull
-    public abstract DriverLikelihood driverLikelihood();
 
 }

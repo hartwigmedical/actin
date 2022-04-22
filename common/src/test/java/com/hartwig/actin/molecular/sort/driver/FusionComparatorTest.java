@@ -39,11 +39,11 @@ public class FusionComparatorTest {
             @NotNull String details) {
         return ImmutableFusion.builder()
                 .event(Strings.EMPTY)
+                .driverLikelihood(driverLikelihood)
                 .fiveGene(fiveGene)
                 .threeGene(threeGene)
                 .details(details)
                 .driverType(FusionDriverType.KNOWN)
-                .driverLikelihood(driverLikelihood)
                 .build();
     }
 }

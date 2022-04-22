@@ -8,9 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class VariantComparator implements Comparator<Variant> {
 
+    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
+
     @Override
     public int compare(@NotNull Variant variant1, @NotNull Variant variant2) {
-        int driverCompare = Double.compare(variant2.driverLikelihood(), variant1.driverLikelihood());
+        int driverCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(variant1.driverLikelihood(), variant2.driverLikelihood());
         if (driverCompare != 0) {
             return driverCompare;
         }

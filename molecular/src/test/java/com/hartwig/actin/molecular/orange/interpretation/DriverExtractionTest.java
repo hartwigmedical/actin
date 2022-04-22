@@ -54,12 +54,12 @@ public class DriverExtractionTest {
 
         Variant variant = variants.iterator().next();
         assertEquals("BRAF V600E", variant.event());
+        assertEquals(DriverLikelihood.HIGH, variant.driverLikelihood());
         assertEquals("BRAF", variant.gene());
         assertEquals("p.V600E", variant.impact());
         assertEquals(4.1, variant.variantCopyNumber(), EPSILON);
         assertEquals(6.0, variant.totalCopyNumber(), EPSILON);
         assertEquals(VariantDriverType.HOTSPOT, variant.driverType());
-        assertEquals(1.0, variant.driverLikelihood(), EPSILON);
         assertEquals(0.98, variant.clonalLikelihood(), EPSILON);
     }
 
@@ -68,6 +68,7 @@ public class DriverExtractionTest {
 
         Amplification amplification = amplifications.iterator().next();
         assertEquals("MYC amp", amplification.event());
+        assertEquals(DriverLikelihood.HIGH, amplification.driverLikelihood());
         assertEquals("MYC", amplification.gene());
         assertFalse(amplification.isPartial());
         assertEquals(38, amplification.copies());
@@ -78,6 +79,7 @@ public class DriverExtractionTest {
 
         Loss loss = losses.iterator().next();
         assertEquals("PTEN del", loss.event());
+        assertEquals(DriverLikelihood.HIGH, loss.driverLikelihood());
         assertEquals("PTEN", loss.gene());
         assertTrue(loss.isPartial());
     }
@@ -87,11 +89,13 @@ public class DriverExtractionTest {
 
         Disruption disruption1 = findByGene(disruptions, "TP53");
         assertEquals("TP53 disruption", disruption1.event());
+        assertEquals(DriverLikelihood.HIGH, disruption1.driverLikelihood());
         assertTrue(disruption1.isHomozygous());
         assertTrue(disruption1.details().isEmpty());
 
         Disruption disruption2 = findByGene(disruptions, "RB1");
         assertTrue(disruption2.event().isEmpty());
+        assertEquals(DriverLikelihood.LOW, disruption2.driverLikelihood());
         assertFalse(disruption2.isHomozygous());
         assertEquals("Intron 1 downstream", disruption2.details());
     }
@@ -112,11 +116,11 @@ public class DriverExtractionTest {
 
         Fusion fusion = fusions.iterator().next();
         assertEquals("EML4-ALK fusion", fusion.event());
+        assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
         assertEquals("EML4", fusion.fiveGene());
         assertEquals("ALK", fusion.threeGene());
         assertEquals("Exon 2 -> Exon 4", fusion.details());
         assertEquals(FusionDriverType.KNOWN, fusion.driverType());
-        assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
     }
 
     private static void assertViruses(@NotNull Set<Virus> viruses) {
@@ -124,9 +128,9 @@ public class DriverExtractionTest {
 
         Virus virus = viruses.iterator().next();
         assertEquals("HPV positive", virus.event());
+        assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals("Human papillomavirus type 16", virus.name());
         assertEquals("3 integrations detected", virus.details());
-        assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
     }
 
     @Test
@@ -162,6 +166,18 @@ public class DriverExtractionTest {
                 .effect(DriverExtraction.UPSTREAM_GENE_VARIANT)
                 .build();
         assertEquals("upstream", DriverExtraction.extractImpact(upstream));
+    }
+
+    @Test
+    public void canInterpretDriverLikelihoods() {
+        PurpleVariant high = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(1D).build();
+        assertEquals(DriverLikelihood.HIGH, DriverExtraction.interpretDriverLikelihood(high));
+
+        PurpleVariant medium = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(0.5).build();
+        assertEquals(DriverLikelihood.MEDIUM, DriverExtraction.interpretDriverLikelihood(medium));
+
+        PurpleVariant low = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(0D).build();
+        assertEquals(DriverLikelihood.LOW, DriverExtraction.interpretDriverLikelihood(low));
     }
 
     @Test

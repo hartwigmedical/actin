@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
@@ -17,11 +18,11 @@ public class VariantComparatorTest {
 
     @Test
     public void canSortVariants() {
-        Variant variant1 = create(0.5, "ATM", "ATM variant 1");
-        Variant variant2 = create(0.5, "ATM", "ATM variant 2");
-        Variant variant3 = create(0.5, "APC", "APC frameshift");
-        Variant variant4 = create(1D, "BRAF", "BRAF variant 1");
-        Variant variant5 = create(1D, "BRAF", "BRAF variant 2");
+        Variant variant1 = create(DriverLikelihood.MEDIUM, "ATM", "ATM variant 1");
+        Variant variant2 = create(DriverLikelihood.MEDIUM, "ATM", "ATM variant 2");
+        Variant variant3 = create(DriverLikelihood.MEDIUM, "APC", "APC frameshift");
+        Variant variant4 = create(DriverLikelihood.HIGH, "BRAF", "BRAF variant 1");
+        Variant variant5 = create(DriverLikelihood.HIGH, "BRAF", "BRAF variant 2");
 
         List<Variant> variants = Lists.newArrayList(variant1, variant2, variant3, variant4, variant5);
         variants.sort(new VariantComparator());
@@ -34,15 +35,15 @@ public class VariantComparatorTest {
     }
 
     @NotNull
-    private static Variant create(double driverLikelihood, @NotNull String gene, @NotNull String event) {
+    private static Variant create(@NotNull DriverLikelihood driverLikelihood, @NotNull String gene, @NotNull String event) {
         return ImmutableVariant.builder()
                 .event(event)
+                .driverLikelihood(driverLikelihood)
                 .gene(gene)
                 .impact(Strings.EMPTY)
                 .variantCopyNumber(0D)
                 .totalCopyNumber(0D)
                 .driverType(VariantDriverType.VUS)
-                .driverLikelihood(driverLikelihood)
                 .clonalLikelihood(0D)
                 .build();
     }

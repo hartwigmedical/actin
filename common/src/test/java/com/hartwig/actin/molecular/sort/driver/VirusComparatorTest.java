@@ -33,5 +33,4 @@ public class VirusComparatorTest {
     private static Virus create(@NotNull DriverLikelihood driverLikelihood, @NotNull String name) {
         return ImmutableVirus.builder().event(Strings.EMPTY).driverLikelihood(driverLikelihood).name(name).details(Strings.EMPTY).build();
     }
-
 }

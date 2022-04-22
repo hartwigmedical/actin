@@ -23,18 +23,19 @@
     "variants": [
       {
         "event": "BRAF V600E",
+        "driverLikelihood": "HIGH",
         "gene": "BRAF",
         "impact": "p.V600E",
         "variantCopyNumber": 4.1,
         "totalCopyNumber": 6.0,
         "driverType": "HOTSPOT",
-        "driverLikelihood": 1.0,
         "clonalLikelihood": 1.0
       }
     ],
     "amplifications": [
       {
         "event": "MYC amp",
+        "driverLikelihood": "HIGH",
         "gene": "MYC",
         "copies": 38,
         "isPartial": false
@@ -43,6 +44,7 @@
     "losses": [
       {
         "event": "PTEN del",
+        "driverLikelihood": "HIGH",
         "gene": "PTEN",
         "isPartial": true
       }
@@ -50,12 +52,14 @@
     "disruptions": [
       {
         "event": "",
+        "driverLikelihood": "LOW",
         "gene": "NF1",
         "isHomozygous": false,
         "details": "Intron 1 downstream"
       },
       {
         "event": "",
+        "driverLikelihood": "LOW",
         "gene": "NF1",
         "isHomozygous": false,
         "details": "Intron 2 upstream"
@@ -64,19 +68,19 @@
     "fusions": [
       {
         "event": "EML4-ALK fusion",
+        "driverLikelihood": "HIGH",
         "fiveGene": "EML4",
         "threeGene": "ALK",
         "details": "Exon 2 - Exon 4",
-        "driverType": "KNOWN",
-        "driverLikelihood": "HIGH"
+        "driverType": "KNOWN"
       }
     ],
     "viruses": [
       {
         "event": "HPV positive",
+        "driverLikelihood": "HIGH",
         "name": "Human papillomavirus type 16",
-        "details": "3 integrations detected",
-        "driverLikelihood": "HIGH"
+        "details": "3 integrations detected"
       }
     ]
   },

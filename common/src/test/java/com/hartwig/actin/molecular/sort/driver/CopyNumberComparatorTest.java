@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberDriver;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,12 @@ public class CopyNumberComparatorTest {
             public String event() {
                 return Strings.EMPTY;
             }
+
+            @NotNull
+            @Override
+            public DriverLikelihood driverLikelihood() {
+                return DriverLikelihood.HIGH;
+            }
         };
     }
-
 }

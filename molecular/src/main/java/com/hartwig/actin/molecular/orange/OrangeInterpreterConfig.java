@@ -35,7 +35,7 @@ public interface OrangeInterpreterConfig {
         options.addOption(SERVE_BRIDGE_TSV, true, "The output of SERVE-bridge");
         options.addOption(EXTERNAL_TREATMENT_MAPPING_TSV, true, "A mapping from external treatment names to ACTIN treatments");
 
-        options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
+                options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
 
         options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled");
 
