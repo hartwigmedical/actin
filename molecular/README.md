@@ -104,7 +104,7 @@ N pharmaco
 Field | Example Value | Details
 ---|---|---
 gene | DPYD | The gene for which the pharmaco entry is applicable
-haplotype | 1* HOM | The haplotype of the gene found in the germline data of the patient. 
+haplotypes | 1* HOM, Normal function | A list of haplotypes found for the gene along with their predicted function. 
 
 1 molecular evidence
 
