@@ -40,7 +40,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @Override
     public Table contents() {
         float colWidth = width / 12;
-        Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth * 2, colWidth, colWidth, colWidth, colWidth, colWidth * 4);
+        Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth * 3, colWidth, colWidth, colWidth, colWidth, colWidth * 3);
 
         table.addHeaderCell(Cells.createHeader("Purity"));
         table.addHeaderCell(Cells.createHeader("Reliable Quality"));
