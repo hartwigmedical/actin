@@ -19,6 +19,11 @@ public class MolecularDriverEntryComparator implements Comparator<MolecularDrive
             return driverCompare;
         }
 
+        int driverTypeCompare = molecularDriverEntry1.driverType().compareTo(molecularDriverEntry2.driverType());
+        if (driverTypeCompare != 0) {
+            return driverTypeCompare;
+        }
+
         return molecularDriverEntry1.driver().compareTo(molecularDriverEntry2.driver());
     }
 }

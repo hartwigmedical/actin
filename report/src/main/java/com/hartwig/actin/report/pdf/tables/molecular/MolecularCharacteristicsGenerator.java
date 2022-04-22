@@ -101,7 +101,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         String interpretation = tumorMutationalBurden >= 10 ? "High" : "Low";
-        return interpretation + " (" + tumorMutationalBurden + ")";
+        return interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")";
     }
 
     @NotNull
