@@ -1,14 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.Set;
+import java.util.StringJoiner;
+
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
-import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
-import com.hartwig.actin.molecular.datamodel.driver.Fusion;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.Virus;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
+import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
+import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -17,6 +16,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MolecularDriversGenerator implements TableGenerator {
 
@@ -44,158 +44,55 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Type"));
         table.addHeaderCell(Cells.createHeader("Driver"));
         table.addHeaderCell(Cells.createHeader("Driver likelihood"));
-        table.addHeaderCell(Cells.createHeader("Actionable in " + molecular.evidence().actinSource()));
-        table.addHeaderCell(Cells.createHeader("Actionable in " + molecular.evidence().externalTrialSource()));
+        table.addHeaderCell(Cells.createHeader("Trials in " + molecular.evidence().actinSource()));
+        table.addHeaderCell(Cells.createHeader("Trials in " + molecular.evidence().externalTrialSource()));
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidence().evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidence().evidenceSource()));
 
-        boolean hasSubclonal = addVariants(table);
-        addAmplifications(table);
-        addLosses(table);
-        addDisruptions(table);
-        addFusions(table);
-        addViruses(table);
+        Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(molecular.drivers(), molecular.evidence());
 
-        if (hasSubclonal) {
-            table.addCell(Cells.createSpanningSubNote("* Variant has > 50% likelihood of being sub-clonal", table));
+        for (MolecularDriverEntry entry : entries) {
+            table.addCell(Cells.createContent(entry.driverType()));
+            table.addCell(Cells.createContent(entry.driver()));
+            table.addCell(Cells.createContent(entry.driverLikelihood().display()));
+            table.addCell(Cells.createContent(concat(entry.actinTreatments())));
+            table.addCell(Cells.createContent(concat(entry.externalTreatments())));
+            table.addCell(Cells.createContent(nullToEmpty(entry.bestResponsiveEvidence())));
+            table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
+        }
+
+        if (hasPotentiallySubclonalVariants(molecular.drivers().variants())) {
+            String note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal";
+            table.addCell(Cells.createSpanningSubNote(note, table));
         }
 
         return Tables.makeWrapping(table);
     }
 
-    private boolean addVariants(@NotNull Table table) {
-        boolean hasSubclonal = false;
-        for (Variant variant : molecular.drivers().variants()) {
-            table.addCell(Cells.createContent("Mutation (" + variant.driverType().display() + ")"));
-
-            double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
-            String variantCopyString = boundedVariantCopies < 1
-                    ? Formats.singleDigitNumber(boundedVariantCopies)
-                    : Formats.noDigitNumber(boundedVariantCopies);
-
-            double boundedTotalCopies = Math.max(0, variant.totalCopyNumber());
-            String totalCopyString =
-                    boundedTotalCopies < 1 ? Formats.singleDigitNumber(boundedTotalCopies) : Formats.noDigitNumber(boundedTotalCopies);
-
-            String driver = variant.gene() + " " + variant.impact() + " (" + variantCopyString + "/" + totalCopyString + " copies)";
-            if (variant.clonalLikelihood() <= 0.5) {
-                hasSubclonal = true;
-                driver = driver + "*";
-            }
-            table.addCell(Cells.createContent(driver));
-            table.addCell(Cells.createContent(variant.driverLikelihood().display()));
-
-            addActionability(table, variant);
+    @NotNull
+    private static String concat(@NotNull Set<String> treatments) {
+        if (treatments.isEmpty()) {
+            return Strings.EMPTY;
         }
-        return hasSubclonal;
-    }
-
-    private void addAmplifications(@NotNull Table table) {
-        for (Amplification amplification : molecular.drivers().amplifications()) {
-            String addon = amplification.isPartial() ? " (partial)" : Strings.EMPTY;
-            table.addCell(Cells.createContent("Amplification" + addon));
-            table.addCell(Cells.createContent(amplification.gene() + " amp, " + amplification.copies() + " copies"));
-            table.addCell(Cells.createContent(amplification.driverLikelihood().display()));
-
-            addActionability(table, amplification);
+        StringJoiner joiner = Formats.commaJoiner();
+        for (String treatment : treatments) {
+            joiner.add(treatment);
         }
-    }
-
-    private void addLosses(@NotNull Table table) {
-        for (Loss loss : molecular.drivers().losses()) {
-            table.addCell(Cells.createContent("Loss"));
-            table.addCell(Cells.createContent(loss.gene() + " del"));
-            table.addCell(Cells.createContent(loss.driverLikelihood().display()));
-
-            addActionability(table, loss);
-        }
-    }
-
-    private void addDisruptions(@NotNull Table table) {
-        for (Disruption disruption : molecular.drivers().disruptions()) {
-            table.addCell(Cells.createContent(disruption.isHomozygous() ? "Homozygous disruption" : "Non-homozygous disruption"));
-            String addon = !disruption.details().isEmpty() ? ", " + disruption.details() : Strings.EMPTY;
-            table.addCell(Cells.createContent(disruption.gene() + addon));
-            table.addCell(Cells.createContent(disruption.driverLikelihood().display()));
-
-            if (disruption.isHomozygous()) {
-                addActionability(table, disruption);
-            } else {
-                table.addCell(Cells.createContent(Strings.EMPTY));
-                table.addCell(Cells.createContent(Strings.EMPTY));
-                table.addCell(Cells.createContent(Strings.EMPTY));
-                table.addCell(Cells.createContent(Strings.EMPTY));
-            }
-        }
-    }
-
-    private void addFusions(@NotNull Table table) {
-        for (Fusion fusion : molecular.drivers().fusions()) {
-            table.addCell(Cells.createContent(fusion.driverType().display()));
-            String name = fusion.fiveGene() + "-" + fusion.threeGene() + " fusion";
-            table.addCell(Cells.createContent(name + ", " + fusion.details()));
-            table.addCell(Cells.createContent(fusion.driverLikelihood().display()));
-
-            addActionability(table, fusion);
-        }
-    }
-
-    private void addViruses(@NotNull Table table) {
-        for (Virus virus : molecular.drivers().viruses()) {
-            table.addCell(Cells.createContent("Virus"));
-            table.addCell(Cells.createContent(virus.name() + ", " + virus.details()));
-            table.addCell(Cells.createContent(virus.driverLikelihood().display()));
-
-            addActionability(table, virus);
-        }
-    }
-
-    private void addActionability(@NotNull Table table, @NotNull Driver driver) {
-        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(isActionableInActin(driver))));
-        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(isActionableInExternal(driver))));
-        table.addCell(Cells.createContent(bestEvidence(driver)));
-        table.addCell(Cells.createContent(highestResistance(driver)));
-    }
-
-    private boolean isActionableInActin(@NotNull Driver driver) {
-        return hasEvidence(molecular.evidence().actinTrials(), driver);
-    }
-
-    private boolean isActionableInExternal(@NotNull Driver driver) {
-        return hasEvidence(molecular.evidence().externalTrials(), driver);
+        return joiner.toString();
     }
 
     @NotNull
-    private String bestEvidence(@NotNull Driver driver) {
-        if (hasEvidence(molecular.evidence().approvedEvidence(), driver)) {
-            return "Approved";
-        } else if (hasEvidence(molecular.evidence().onLabelExperimentalEvidence(), driver) || hasEvidence(molecular.evidence()
-                .offLabelExperimentalEvidence(), driver)) {
-            return "Experimental";
-        } else if (hasEvidence(molecular.evidence().preClinicalEvidence(), driver)) {
-            return "Pre-clinical";
-        }
-
-        return Strings.EMPTY;
+    private static String nullToEmpty(@Nullable String string) {
+        return string != null ? string : Strings.EMPTY;
     }
 
-    @NotNull
-    private String highestResistance(@NotNull Driver driver) {
-        if (hasEvidence(molecular.evidence().knownResistanceEvidence(), driver)) {
-            return "Known";
-        } else if (hasEvidence(molecular.evidence().suspectResistanceEvidence(), driver)) {
-            return "Suspect";
-        }
-
-        return Strings.EMPTY;
-    }
-
-    private static boolean hasEvidence(@NotNull Iterable<EvidenceEntry> evidences, @NotNull Driver driver) {
-        for (EvidenceEntry evidence : evidences) {
-            if (evidence.event().equals(driver.event())) {
+    private static boolean hasPotentiallySubclonalVariants(@NotNull Set<Variant> variants) {
+        for (Variant variant : variants) {
+            if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
                 return true;
             }
         }
+
         return false;
     }
 }

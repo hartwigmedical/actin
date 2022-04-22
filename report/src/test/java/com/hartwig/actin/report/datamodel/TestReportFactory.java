@@ -31,4 +31,14 @@ public final class TestReportFactory {
                 .treatmentMatch(TestTreatmentMatchFactory.createProperTreatmentMatch())
                 .build();
     }
+
+    @NotNull
+    public static Report createExhaustiveTestReport() {
+        return ImmutableReport.builder()
+                .from(createMinimalTestReport())
+                .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
+                .molecular(TestMolecularDataFactory.createExhaustiveTestMolecularRecord())
+                .treatmentMatch(TestTreatmentMatchFactory.createProperTreatmentMatch())
+                .build();
+    }
 }
