@@ -24,7 +24,6 @@ public class MolecularDriverEntryComparatorTest {
         MolecularDriverEntry entry8 = create(DriverLikelihood.HIGH, "disruption", "driver 7");
         MolecularDriverEntry entry9 = create(DriverLikelihood.HIGH, "fusion", "driver 7");
 
-
         List<MolecularDriverEntry> entries = Lists.newArrayList(entry1, entry2, entry3, entry4, entry5, entry6, entry7, entry8, entry9);
         entries.sort(new MolecularDriverEntryComparator());
 

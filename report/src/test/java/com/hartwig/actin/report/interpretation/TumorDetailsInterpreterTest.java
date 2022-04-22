@@ -12,7 +12,10 @@ public class TumorDetailsInterpreterTest {
     @Test
     public void canDetermineIfTumorIsCUP() {
         assertFalse(TumorDetailsInterpreter.isCUP(ImmutableTumorDetails.builder().build()));
-        assertFalse(TumorDetailsInterpreter.isCUP(ImmutableTumorDetails.builder().primaryTumorLocation(TumorDetailsInterpreter.CUP_LOCATION).build()));
+        assertFalse(TumorDetailsInterpreter.isCUP(ImmutableTumorDetails.builder()
+                .primaryTumorLocation(TumorDetailsInterpreter.CUP_LOCATION)
+                .build()));
+
         assertTrue(TumorDetailsInterpreter.isCUP(ImmutableTumorDetails.builder()
                 .primaryTumorLocation(TumorDetailsInterpreter.CUP_LOCATION)
                 .primaryTumorSubLocation(TumorDetailsInterpreter.CUP_SUB_LOCATION)
