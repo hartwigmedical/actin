@@ -85,7 +85,7 @@ public final class Formats {
 
     @NotNull
     public static Style styleForTableValue(@NotNull String value) {
-        return !NON_HIGHLIGHT_VALUES.contains(value) ? Styles.tableValueHighlightStyle() : Styles.tableValueUnknownStyle();
+        return !NON_HIGHLIGHT_VALUES.contains(value) ? Styles.tableHighlightStyle() : Styles.tableUnknownStyle();
     }
 
     @NotNull

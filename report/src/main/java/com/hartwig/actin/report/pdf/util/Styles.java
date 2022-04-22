@@ -70,27 +70,27 @@ public final class Styles {
     }
 
     @NotNull
-    public static Style tableValueUnknownStyle() {
+    public static Style tableUnknownStyle() {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
     }
 
     @NotNull
-    public static Style tableValueHighlightStyle() {
+    public static Style tableHighlightStyle() {
         return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
     }
 
     @NotNull
-    public static Style tableValueWarnStyle() {
+    public static Style tableWarnStyle() {
         return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_RED);
     }
 
     @NotNull
-    public static Style labelStyle() {
+    public static Style reportHeaderLabelStyle() {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
     }
 
     @NotNull
-    public static Style highlightStyle() {
+    public static Style reportHeaderValueStyle() {
         return new Style().setFont(fontBold()).setFontSize(8).setFontColor(Styles.PALETTE_BLUE);
     }
 

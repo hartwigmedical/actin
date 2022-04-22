@@ -100,7 +100,7 @@ public class LabResultsGenerator implements TableGenerator {
         LabValue lab = labInterpretation.mostRecentValue(measurement);
         String value = Strings.EMPTY;
 
-        Style style = Styles.tableValueHighlightStyle();
+        Style style = Styles.tableHighlightStyle();
         if (lab != null) {
             value = Formats.twoDigitNumber(lab.value()) + " " + lab.unit().display();
             if (!lab.comparator().isEmpty()) {
@@ -112,7 +112,7 @@ public class LabResultsGenerator implements TableGenerator {
             }
 
             if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
-                style = Styles.tableValueWarnStyle();
+                style = Styles.tableWarnStyle();
                 value = value + " (" + buildOutOfRangeAddition(labInterpretation.allValues(measurement)) + ")";
             }
         }

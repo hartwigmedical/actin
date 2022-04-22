@@ -60,23 +60,23 @@ public class SummaryChapter implements ReportChapter {
 
     private void addPatientDetails(@NotNull Document document) {
         Paragraph patientDetailsLine = new Paragraph();
-        patientDetailsLine.add(new Text("Sample ID: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(report.sampleId()).addStyle(Styles.highlightStyle()));
-        patientDetailsLine.add(new Text(" | Gender: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.highlightStyle()));
-        patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.highlightStyle()));
-        patientDetailsLine.add(new Text(" | WHO: ").addStyle(Styles.labelStyle()));
-        patientDetailsLine.add(new Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.highlightStyle()));
+        patientDetailsLine.add(new Text("Sample ID: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(report.sampleId()).addStyle(Styles.reportHeaderValueStyle()));
+        patientDetailsLine.add(new Text(" | Gender: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.reportHeaderValueStyle()));
+        patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.reportHeaderValueStyle()));
+        patientDetailsLine.add(new Text(" | WHO: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.reportHeaderValueStyle()));
         document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
 
         Paragraph tumorDetailsLine = new Paragraph();
-        tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
-        tumorDetailsLine.add(new Text(" | Lesions: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(lesions(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
-        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.labelStyle()));
-        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.highlightStyle()));
+        tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.reportHeaderLabelStyle()));
+        tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
+        tumorDetailsLine.add(new Text(" | Lesions: ").addStyle(Styles.reportHeaderLabelStyle()));
+        tumorDetailsLine.add(new Text(lesions(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
+        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.reportHeaderLabelStyle()));
+        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
         document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 

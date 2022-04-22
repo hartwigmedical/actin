@@ -11,6 +11,7 @@ import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
@@ -53,8 +54,8 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         table.addCell(createPurityCell(molecular.characteristics().purity()));
         table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasReliableQuality())));
         table.addCell(createPredictedTumorOriginCell(molecular.characteristics().predictedTumorOrigin()));
-        table.addCell(Cells.createContent(createTMLStatusString(molecular.characteristics().tumorMutationalLoad())));
-        table.addCell(Cells.createContent(createTMBStatusString(molecular.characteristics().tumorMutationalBurden())));
+        table.addCell(createTMLStatusCell(molecular.characteristics().tumorMutationalLoad()));
+        table.addCell(createTMBStatusCell(molecular.characteristics().tumorMutationalBurden()));
         table.addCell(createMSStabilityCell(molecular.characteristics().isMicrosatelliteUnstable()));
         table.addCell(createHRStatusCell(molecular.characteristics().isHomologousRepairDeficient()));
         table.addCell(Cells.createContent(createDPYDString(molecular.pharmaco())));
@@ -87,23 +88,31 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String createTMLStatusString(@Nullable Integer tumorMutationalLoad) {
+    private static Cell createTMLStatusCell(@Nullable Integer tumorMutationalLoad) {
         if (tumorMutationalLoad == null) {
-            return Formats.VALUE_UNKNOWN;
+            return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
         }
 
         String interpretation = tumorMutationalLoad >= 140 ? "High" : "Low";
-        return interpretation + " (" + tumorMutationalLoad + ")";
+        Cell cell = Cells.createContent(interpretation + " (" + tumorMutationalLoad + ")");
+        if (interpretation.equals("High")) {
+            cell.addStyle(Styles.tableHighlightStyle());
+        }
+        return cell;
     }
 
     @NotNull
-    private static String createTMBStatusString(@Nullable Double tumorMutationalBurden) {
+    private static Cell createTMBStatusCell(@Nullable Double tumorMutationalBurden) {
         if (tumorMutationalBurden == null) {
-            return Formats.VALUE_UNKNOWN;
+            return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
         }
 
         String interpretation = tumorMutationalBurden >= 10 ? "High" : "Low";
-        return interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")";
+        Cell cell = Cells.createContent(interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")");
+        if (interpretation.equals("High")) {
+            cell.addStyle(Styles.tableHighlightStyle());
+        }
+        return cell;
     }
 
     @NotNull
@@ -113,7 +122,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         String status = isMicrosatelliteUnstable ? "Unstable" : "Stable";
-        return Cells.createContent(status);
+        Cell cell = Cells.createContent(status);
+        if (isMicrosatelliteUnstable) {
+            cell.addStyle(Styles.tableHighlightStyle());
+        }
+        return cell;
     }
 
     @NotNull
@@ -123,7 +136,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         String status = isHomologousRepairDeficient ? "Deficient" : "Proficient";
-        return Cells.createContent(status);
+        Cell cell = Cells.createContent(status);
+        if (isHomologousRepairDeficient) {
+            cell.addStyle(Styles.tableHighlightStyle());
+        }
+        return cell;
     }
 
     @NotNull
