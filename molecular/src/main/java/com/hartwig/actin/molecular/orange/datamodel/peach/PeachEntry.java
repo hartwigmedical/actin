@@ -13,4 +13,7 @@ public abstract class PeachEntry {
 
     @NotNull
     public abstract String haplotype();
+
+    @NotNull
+    public abstract String function();
 }

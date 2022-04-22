@@ -1,18 +1,17 @@
 package com.hartwig.actin.molecular.datamodel.pharmaco;
 
-import java.util.Set;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PharmacoEntry {
+public abstract class Haplotype {
 
     @NotNull
-    public abstract String gene();
+    public abstract String name();
 
     @NotNull
-    public abstract Set<Haplotype> haplotypes();
+    public abstract String function();
+
 }

@@ -1,9 +1,12 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
@@ -12,6 +15,8 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularC
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
+import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
@@ -90,9 +95,24 @@ public class OrangeInterpreter {
 
     @NotNull
     private static Set<PharmacoEntry> extractPharmaco(@NotNull PeachRecord peach) {
-        Set<PharmacoEntry> entries = Sets.newHashSet();
+        Map<String, List<PeachEntry>> peachEntryPerGene = Maps.newHashMap();
+
         for (PeachEntry entry : peach.entries()) {
-            entries.add(ImmutablePharmacoEntry.builder().gene(entry.gene()).haplotype(entry.haplotype()).build());
+            List<PeachEntry> entries = peachEntryPerGene.get(entry.gene());
+            if (entries == null) {
+                entries = Lists.newArrayList();
+            }
+            entries.add(entry);
+            peachEntryPerGene.put(entry.gene(), entries);
+        }
+
+        Set<PharmacoEntry> entries = Sets.newHashSet();
+        for (Map.Entry<String, List<PeachEntry>> mapEntry : peachEntryPerGene.entrySet()) {
+            Set<Haplotype> haplotypes = Sets.newHashSet();
+            for (PeachEntry entry : mapEntry.getValue()) {
+                haplotypes.add(ImmutableHaplotype.builder().name(entry.haplotype()).function(entry.function()).build());
+            }
+            entries.add(ImmutablePharmacoEntry.builder().gene(mapEntry.getKey()).haplotypes(haplotypes).build());
         }
         return entries;
     }

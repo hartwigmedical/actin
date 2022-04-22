@@ -209,7 +209,11 @@ public final class OrangeJson {
             Set<PeachEntry> entries = Sets.newHashSet();
             for (JsonElement element : peachArray) {
                 JsonObject peach = element.getAsJsonObject();
-                entries.add(ImmutablePeachEntry.builder().gene(string(peach, "gene")).haplotype(string(peach, "haplotype")).build());
+                entries.add(ImmutablePeachEntry.builder()
+                        .gene(string(peach, "gene"))
+                        .haplotype(string(peach, "haplotype"))
+                        .function(string(peach, "function"))
+                        .build());
             }
             return ImmutablePeachRecord.builder().entries(entries).build();
         }

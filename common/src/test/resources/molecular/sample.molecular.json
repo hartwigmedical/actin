@@ -87,7 +87,12 @@
   "pharmaco": [
     {
       "gene": "DPYD",
-      "haplotype": "1* HOM"
+      "haplotypes": [
+        {
+          "name": "1* HOM",
+          "function": "Normal function"
+        }
+      ]
     }
   ],
   "evidence": {

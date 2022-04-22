@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.apache.logging.log4j.util.Strings;
@@ -165,7 +166,11 @@ public class MolecularRecordJsonTest {
 
         PharmacoEntry entry = pharmaco.iterator().next();
         assertEquals("DPYD", entry.gene());
-        assertEquals("1* HOM", entry.haplotype());
+        assertEquals(1, entry.haplotypes().size());
+
+        Haplotype haplotype = entry.haplotypes().iterator().next();
+        assertEquals("1* HOM", haplotype.name());
+        assertEquals("Normal function", haplotype.function());
     }
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {

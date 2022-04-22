@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
@@ -127,7 +128,10 @@ public final class TestMolecularDataFactory {
 
     @NotNull
     private static Set<PharmacoEntry> createTestPharmaco() {
-        return Sets.newHashSet(ImmutablePharmacoEntry.builder().gene("DPYD").haplotype("1* HOM").build());
+        return Sets.newHashSet(ImmutablePharmacoEntry.builder()
+                .gene("DPYD")
+                .addHaplotypes(ImmutableHaplotype.builder().name("1* HOM").function("Normal function").build())
+                .build());
     }
 
     @NotNull

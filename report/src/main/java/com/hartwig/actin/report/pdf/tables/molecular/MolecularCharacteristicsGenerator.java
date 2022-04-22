@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Set;
+import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -36,8 +38,8 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        float colWidth = width / 8;
-        Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth);
+        float colWidth = width / 12;
+        Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth * 2, colWidth, colWidth, colWidth, colWidth, colWidth * 4);
 
         table.addHeaderCell(Cells.createHeader("Purity"));
         table.addHeaderCell(Cells.createHeader("Reliable Quality"));
@@ -127,7 +129,14 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     private static String createDPYDString(@NotNull Set<PharmacoEntry> pharmaco) {
         PharmacoEntry dpyd = findPharmacoEntry(pharmaco, "DPYD");
-        return dpyd != null ? dpyd.haplotype() : Formats.VALUE_UNKNOWN;
+        if (dpyd == null) {
+            return Formats.VALUE_UNKNOWN;
+        }
+        StringJoiner joiner = Formats.commaJoiner();
+        for (Haplotype haplotype : dpyd.haplotypes()) {
+            joiner.add(haplotype.name() + " (" + haplotype.function() + ")");
+        }
+        return joiner.toString();
     }
 
     @Nullable

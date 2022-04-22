@@ -67,6 +67,8 @@ import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
+import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
@@ -282,10 +284,23 @@ public class MolecularRecordJson {
                 JsonObject pharmaco = element.getAsJsonObject();
                 pharmacoEntries.add(ImmutablePharmacoEntry.builder()
                         .gene(string(pharmaco, "gene"))
-                        .haplotype(string(pharmaco, "haplotype"))
+                        .haplotypes(toHaplotypes(array(pharmaco, "haplotypes")))
                         .build());
             }
             return pharmacoEntries;
+        }
+
+        @NotNull
+        private static Set<Haplotype> toHaplotypes(@NotNull JsonArray haplotypeArray) {
+            Set<Haplotype> haplotypes = Sets.newHashSet();
+            for (JsonElement element : haplotypeArray) {
+                JsonObject haplotype = element.getAsJsonObject();
+                haplotypes.add(ImmutableHaplotype.builder()
+                        .name(string(haplotype, "name"))
+                        .function(string(haplotype, "function"))
+                        .build());
+            }
+            return haplotypes;
         }
 
         @NotNull

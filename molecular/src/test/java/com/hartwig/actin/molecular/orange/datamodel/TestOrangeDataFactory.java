@@ -131,7 +131,9 @@ public final class TestOrangeDataFactory {
 
     @NotNull
     private static PeachRecord createTestPeachRecord() {
-        return ImmutablePeachRecord.builder().addEntries(ImmutablePeachEntry.builder().gene("DPYD").haplotype("1* HOM").build()).build();
+        return ImmutablePeachRecord.builder()
+                .addEntries(ImmutablePeachEntry.builder().gene("DPYD").haplotype("1* HOM").function("Normal function").build())
+                .build();
     }
 
     @NotNull
