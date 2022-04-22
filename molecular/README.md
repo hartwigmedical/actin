@@ -176,7 +176,7 @@ The evidence is extracted from PROTECT in the following steps:
  1. Evidence is categorized according to the filters. Every evidence item can belong to only one category. 
  
 Field | Source | Filter | Notes
----|---|---
+---|---|---|---
 actinTrials | ACTIN | Evidence is filtered that is used exclusively in inclusion eligibility rules within ACTIN |  
 externalTrials | ICLUSION | - | External trials are mapped to ACTIN trials in case a mapping exists in `external_treatment_mapping_tsv`
 approvedEvidence | CKB | A-level on-label non-predicted responsive evidence. | 
