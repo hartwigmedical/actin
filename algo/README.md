@@ -101,8 +101,6 @@ IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X
-HAS_PRIMARY_TUMOR_LOCATION_BELONGING_ONLY_TO_DOID_X | ALL configured DOIDs should be equal or be a child of DOID X
-HAS_PRIMARY_TUMOR_LOCATION_EQUAL_TO_DOID_X | ALL configured DOIDs should be exactly equal to DOID X
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to WARN in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
 HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated

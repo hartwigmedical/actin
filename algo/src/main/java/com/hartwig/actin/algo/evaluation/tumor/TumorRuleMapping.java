@@ -22,8 +22,6 @@ public final class TumorRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_ONLY_TO_DOID_X, hasPrimaryTumorExclusivelyBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_EQUAL_TO_DOID_X, hasPrimaryTumorHasExactDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
@@ -61,21 +59,6 @@ public final class TumorRuleMapping {
         };
     }
 
-    @NotNull
-    private static FunctionCreator hasPrimaryTumorExclusivelyBelongsToDoidCreator(@NotNull DoidModel doidModel) {
-        return function -> {
-            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel, doidToMatch, true, false);
-        };
-    }
-
-    @NotNull
-    private static FunctionCreator hasPrimaryTumorHasExactDoidCreator(@NotNull DoidModel doidModel) {
-        return function -> {
-            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel, doidToMatch, true, true);
-        };
-    }
 
     @NotNull
     private static FunctionCreator hasCancerOfUnknownPrimaryCreator(@NotNull DoidModel doidModel) {
