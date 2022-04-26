@@ -20,6 +20,9 @@ public abstract class Intolerance {
     public abstract String category();
 
     @NotNull
+    public abstract Set<String> subcategories();
+
+    @NotNull
     public abstract String type();
 
     @NotNull

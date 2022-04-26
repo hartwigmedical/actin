@@ -175,6 +175,9 @@
         "123"
       ],
       "category": "medication",
+      "subcategories": [
+        "Drug category"
+      ],
       "type": "allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
@@ -184,6 +187,7 @@
       "name": "Condition",
       "doids": [],
       "category": "environment",
+      "subcategories": [],
       "type": "allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",

@@ -503,18 +503,22 @@ public class CurationModel {
 
     @NotNull
     public Medication annotateWithMedicationCategory(@NotNull Medication medication) {
-        Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), medication.name());
+        return ImmutableMedication.builder().from(medication).categories(lookupCategories(medication.name())).build();
+    }
+
+    @NotNull
+    private Set<String> lookupCategories(@NotNull String medication) {
+        Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), medication);
 
         if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find medication category config for '{}'", medication.name());
-            return medication;
+            LOGGER.warn(" Could not find medication category config for '{}'", medication);
+            return Sets.newHashSet();
         } else if (configs.size() > 1) {
-            LOGGER.warn(" Multiple category configs found for medication with name '{}'", medication.name());
-            return medication;
+            LOGGER.warn(" Multiple category configs found for medication with name '{}'", medication);
+            return Sets.newHashSet();
         }
 
-        MedicationCategoryConfig config = configs.iterator().next();
-        return ImmutableMedication.builder().from(medication).categories(config.categories()).build();
+        return configs.iterator().next().categories();
     }
 
     @NotNull
@@ -523,16 +527,23 @@ public class CurationModel {
 
         Set<IntoleranceConfig> configs = find(database.intoleranceConfigs(), reformatted);
 
+        String name = reformatted;
+        ImmutableIntolerance.Builder builder = ImmutableIntolerance.builder().from(intolerance);
         if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find allergy config for '{}'", reformatted);
-            return intolerance;
+            LOGGER.warn(" Could not find intolerance config for '{}'", reformatted);
         } else if (configs.size() > 1) {
-            LOGGER.warn(" Multiple allergy configs for allergy with name '{}'", reformatted);
-            return intolerance;
+            LOGGER.warn(" Multiple intolerance configs for intolerance with name '{}'", reformatted);
+        } else {
+            IntoleranceConfig config = configs.iterator().next();
+            name = config.name();
+            builder.name(name).doids(config.doids());
         }
 
-        IntoleranceConfig config = configs.iterator().next();
-        return ImmutableIntolerance.builder().from(intolerance).name(config.name()).doids(config.doids()).build();
+        if (intolerance.category().equalsIgnoreCase("medication")) {
+            builder.subcategories(lookupCategories(name));
+        }
+
+        return builder.build();
     }
 
     @NotNull

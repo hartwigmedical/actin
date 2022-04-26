@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
@@ -347,6 +348,7 @@ public final class TestClinicalDataFactory {
         intolerances.add(ImmutableIntolerance.builder()
                 .name("Pembrolizumab")
                 .category("Medication")
+                .subcategories(Sets.newHashSet("Immunotherapy"))
                 .type("Allergy")
                 .clinicalStatus("Active")
                 .verificationStatus("Confirmed")

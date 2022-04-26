@@ -343,6 +343,9 @@ public class CurationModelTest {
         Intolerance passThrough = ImmutableIntolerance.builder().from(proper).name("don't curate me").build();
         assertEquals(passThrough, model.curateIntolerance(passThrough));
 
+        Intolerance withSubCategory = ImmutableIntolerance.builder().from(proper).name("Paracetamol").category("Medication").build();
+        assertTrue(model.curateIntolerance(withSubCategory).subcategories().contains("Acetanilide derivatives"));
+
         model.evaluate();
     }
 

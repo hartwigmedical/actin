@@ -385,6 +385,7 @@ public final class ClinicalRecordJson {
                         .name(string(object, "name"))
                         .doids(stringList(object, "doids"))
                         .category(string(object, "category"))
+                        .subcategories(stringList(object, "subcategories"))
                         .type(string(object, "type"))
                         .clinicalStatus(string(object, "clinicalStatus"))
                         .verificationStatus(string(object, "verificationStatus"))
