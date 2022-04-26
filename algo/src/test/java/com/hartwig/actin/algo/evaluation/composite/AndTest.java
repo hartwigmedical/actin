@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.composite;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
@@ -105,6 +106,15 @@ public class AndTest {
         assertEquals(2, result.undeterminedGeneralMessages().size());
         assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 1"));
         assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"));
+    }
+
+    @Test
+    public void properlyDeterminesRecoverable() {
+        EvaluationFunction recoverable = record -> CompositeTestFactory.create(true);
+        EvaluationFunction unrecoverable = record -> CompositeTestFactory.create(false);
+
+        Evaluation result = new And(Lists.newArrayList(recoverable, unrecoverable)).evaluate(TEST_PATIENT);
+        assertFalse(result.recoverable());
     }
 
     @Test(expected = IllegalStateException.class)

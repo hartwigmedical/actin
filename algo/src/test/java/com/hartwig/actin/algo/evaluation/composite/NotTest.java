@@ -32,6 +32,8 @@ public class NotTest {
 
         Evaluation result = new Not(record -> passed).evaluate(TEST_PATIENT);
 
+        assertEquals(result.recoverable(), passed.recoverable());
+
         assertEquals(passed.passSpecificMessages(), result.failSpecificMessages());
         assertEquals(passed.passGeneralMessages(), result.failGeneralMessages());
         assertEquals(passed.failSpecificMessages(), result.passSpecificMessages());
@@ -49,6 +51,8 @@ public class NotTest {
 
         Evaluation result = new Not(record -> failed).evaluate(TEST_PATIENT);
 
+        assertEquals(result.recoverable(), failed.recoverable());
+
         assertEquals(failed.passSpecificMessages(), result.failSpecificMessages());
         assertEquals(failed.passGeneralMessages(), result.failGeneralMessages());
         assertEquals(failed.failSpecificMessages(), result.passSpecificMessages());
@@ -65,6 +69,8 @@ public class NotTest {
         Evaluation undetermined = CompositeTestFactory.create(EvaluationResult.UNDETERMINED);
 
         Evaluation result = new Not(record -> undetermined).evaluate(TEST_PATIENT);
+
+        assertEquals(result.recoverable(), undetermined.recoverable());
 
         assertEquals(undetermined.passSpecificMessages(), result.passSpecificMessages());
         assertEquals(undetermined.passGeneralMessages(), result.passGeneralMessages());

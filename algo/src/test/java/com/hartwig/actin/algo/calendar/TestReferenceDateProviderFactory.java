@@ -10,7 +10,7 @@ public final class TestReferenceDateProviderFactory {
     }
 
     @NotNull
-    public static ReferenceDateProvider createCurrentDate() {
+    public static ReferenceDateProvider createCurrentDateProvider() {
         LocalDate date = LocalDate.now();
 
         return new ReferenceDateProvider() {

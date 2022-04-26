@@ -48,11 +48,11 @@ public class TrialMatcher {
             Map<Eligibility, Evaluation> trialEvaluations = evaluateEligibility(patient, trial.generalEligibility());
 
             List<CohortMatch> cohortMatching = Lists.newArrayList();
-            boolean passesAllTrialEvaluations = isEligible(trialEvaluations);
+            boolean passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values());
             boolean hasEligibleCohort = false;
             for (Cohort cohort : trial.cohorts()) {
                 Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
-                boolean isPotentiallyEligible = isEligible(cohortEvaluations) && !cohort.metadata().blacklist();
+                boolean isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values()) && !cohort.metadata().blacklist();
 
                 if (isPotentiallyEligible) {
                     hasEligibleCohort = true;
@@ -91,8 +91,9 @@ public class TrialMatcher {
         return evaluations;
     }
 
-    private static boolean isEligible(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        for (Evaluation evaluation : evaluations.values()) {
+    @VisibleForTesting
+    static boolean isPotentiallyEligible(@NotNull Iterable<Evaluation> evaluations) {
+        for (Evaluation evaluation : evaluations) {
             if (!evaluation.recoverable() && (evaluation.result() == EvaluationResult.FAIL
                     || evaluation.result() == EvaluationResult.NOT_IMPLEMENTED)) {
                 return false;

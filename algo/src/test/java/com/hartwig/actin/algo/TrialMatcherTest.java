@@ -14,6 +14,8 @@ import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
 import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.datamodel.TestEvaluationFactory;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
@@ -43,14 +45,13 @@ public class TrialMatcherTest {
     @NotNull
     private static EvaluationFunctionFactory createTestEvaluationFunctionFactory() {
         return EvaluationFunctionFactory.create(TestDoidModelFactory.createMinimalTestDoidModel(),
-                TestReferenceDateProviderFactory.createCurrentDate());
+                TestReferenceDateProviderFactory.createCurrentDateProvider());
     }
 
     private static void assertTrialMatch(@NotNull TrialMatch trialMatch) {
         assertEquals(1, trialMatch.evaluations().size());
         assertTrue(trialMatch.isPotentiallyEligible());
-        assertEquals(EvaluationResult.PASS,
-                findEvaluationResultForRule(trialMatch.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
+        assertEquals(EvaluationResult.PASS, findEvaluationResultForRule(trialMatch.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD));
 
         assertEquals(3, trialMatch.cohorts().size());
 
@@ -90,5 +91,25 @@ public class TrialMatcherTest {
         }
 
         throw new IllegalStateException("Cannot find cohort with id '" + cohortIdToFind + "'");
+    }
+
+    @Test
+    public void canDeterminePotentialEligibility() {
+        List<Evaluation> evaluations = Lists.newArrayList();
+
+        evaluations.add(TestEvaluationFactory.withResult(EvaluationResult.PASS));
+        assertTrue(TrialMatcher.isPotentiallyEligible(evaluations));
+
+        evaluations.add(ImmutableEvaluation.builder()
+                .from(TestEvaluationFactory.withResult(EvaluationResult.FAIL))
+                .recoverable(true)
+                .build());
+        assertTrue(TrialMatcher.isPotentiallyEligible(evaluations));
+
+        evaluations.add(ImmutableEvaluation.builder()
+                .from(TestEvaluationFactory.withResult(EvaluationResult.FAIL))
+                .recoverable(false)
+                .build());
+        assertFalse(TrialMatcher.isPotentiallyEligible(evaluations));
     }
 }

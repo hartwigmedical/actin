@@ -20,7 +20,7 @@ public class FunctionCreatorFactoryTest {
     @Test
     public void everyFunctionCanBeCreated() {
         DoidModel doidModel = TestDoidModelFactory.createMinimalTestDoidModel();
-        ReferenceDateProvider referenceDateProvider = TestReferenceDateProviderFactory.createCurrentDate();
+        ReferenceDateProvider referenceDateProvider = TestReferenceDateProviderFactory.createCurrentDateProvider();
         Map<EligibilityRule, FunctionCreator> map = FunctionCreatorFactory.create(doidModel, referenceDateProvider);
 
         for (EligibilityRule rule : EligibilityRule.values()) {

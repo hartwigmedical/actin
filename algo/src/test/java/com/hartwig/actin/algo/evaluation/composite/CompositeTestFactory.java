@@ -8,19 +8,33 @@ import org.jetbrains.annotations.NotNull;
 
 final class CompositeTestFactory {
 
+    private static final EvaluationResult DEFAULT_RESULT = EvaluationResult.PASS;
+    private static final boolean DEFAULT_RECOVERABLE = false;
+    private static final int DEFAULT_INDEX = 1;
+
     private CompositeTestFactory() {
     }
 
     @NotNull
     public static Evaluation create(@NotNull EvaluationResult result) {
-        return create(result, 1);
+        return create(result, DEFAULT_RECOVERABLE, DEFAULT_INDEX);
+    }
+
+    @NotNull
+    public static Evaluation create(boolean recoverable) {
+        return create(DEFAULT_RESULT, recoverable, DEFAULT_INDEX);
     }
 
     @NotNull
     public static Evaluation create(@NotNull EvaluationResult result, int index) {
+        return create(result, DEFAULT_RECOVERABLE, index);
+    }
+
+    @NotNull
+    private static Evaluation create(@NotNull EvaluationResult result, boolean recoverable, int index) {
         return ImmutableEvaluation.builder()
                 .result(result)
-                .recoverable(false)
+                .recoverable(recoverable)
                 .addPassSpecificMessages("pass specific " + index)
                 .addPassGeneralMessages("pass general " + index)
                 .addWarnSpecificMessages("warn specific " + index)

@@ -107,6 +107,15 @@ public class OrTest {
         assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 4"));
     }
 
+    @Test
+    public void properlyDeterminesRecoverable() {
+        EvaluationFunction recoverable = record -> CompositeTestFactory.create(true);
+        EvaluationFunction unrecoverable = record -> CompositeTestFactory.create(false);
+
+        Evaluation result = new Or(Lists.newArrayList(recoverable, unrecoverable)).evaluate(TEST_PATIENT);
+        assertTrue(result.recoverable());
+    }
+
     @Test(expected = IllegalStateException.class)
     public void crashOnNoFunctionsToEvaluate() {
         new Or(Lists.newArrayList()).evaluate(TEST_PATIENT);
