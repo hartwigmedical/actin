@@ -59,6 +59,7 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -499,6 +500,24 @@ public class CurationModel {
 
         MedicationNameConfig config = configs.iterator().next();
         return !config.ignore() ? config.name() : null;
+    }
+
+    @Nullable
+    public MedicationStatus curateMedicationStatus(@NotNull String status) {
+        if (status.isEmpty()) {
+            return null;
+        }
+
+        if (status.equalsIgnoreCase("active")) {
+            return MedicationStatus.ACTIVE;
+        } else if (status.equalsIgnoreCase("on-hold")) {
+            return MedicationStatus.ON_HOLD;
+        } else if (status.equalsIgnoreCase("kuur geannuleerd")) {
+            return MedicationStatus.CANCELLED;
+        } else {
+            LOGGER.warn(" Could not interpret medication status: {}", status);
+            return MedicationStatus.UNKNOWN;
+        }
     }
 
     @NotNull

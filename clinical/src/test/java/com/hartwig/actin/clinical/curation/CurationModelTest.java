@@ -28,6 +28,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -306,6 +307,17 @@ public class CurationModelTest {
         assertEquals("A and B", model.curateMedicationName("A en B"));
 
         model.evaluate();
+    }
+
+    @Test
+    public void canCurateMedicationStatus() {
+        CurationModel model = TestCurationFactory.createMinimalTestCurationModel();
+
+        assertNull(model.curateMedicationStatus(Strings.EMPTY));
+        assertEquals(MedicationStatus.ACTIVE, model.curateMedicationStatus("active"));
+        assertEquals(MedicationStatus.ON_HOLD, model.curateMedicationStatus("on-hold"));
+        assertEquals(MedicationStatus.CANCELLED, model.curateMedicationStatus("Kuur geannuleerd"));
+        assertEquals(MedicationStatus.UNKNOWN, model.curateMedicationStatus("not a status"));
     }
 
     @Test

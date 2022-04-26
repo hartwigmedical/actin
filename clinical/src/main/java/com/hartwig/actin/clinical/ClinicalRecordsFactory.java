@@ -26,7 +26,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -383,7 +382,7 @@ public class ClinicalRecordsFactory {
 
             if (name != null && !name.isEmpty()) {
                 Medication medication = builder.name(name)
-                        .status(toMedicationStatus(entry.status()))
+                        .status(curation.curateMedicationStatus(entry.status()))
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
                         .active(entry.active())
@@ -396,24 +395,5 @@ public class ClinicalRecordsFactory {
         medications.sort(new MedicationByNameComparator());
 
         return medications;
-    }
-
-    @Nullable
-    @VisibleForTesting
-    static MedicationStatus toMedicationStatus(@NotNull String status) {
-        if (status.isEmpty()) {
-            return null;
-        }
-
-        if (status.equalsIgnoreCase("active")) {
-            return MedicationStatus.ACTIVE;
-        } else if (status.equalsIgnoreCase("on-hold")) {
-            return MedicationStatus.ON_HOLD;
-        } else if (status.equalsIgnoreCase("kuur geannuleerd")) {
-            return MedicationStatus.CANCELLED;
-        } else {
-            LOGGER.warn(" Could not interpret medication status: {}", status);
-            return MedicationStatus.UNKNOWN;
-        }
     }
 }
