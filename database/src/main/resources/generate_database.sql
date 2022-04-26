@@ -220,7 +220,6 @@ CREATE TABLE medication
     ifNeeded BOOLEAN,
     startDate DATE,
     stopDate DATE,
-    active BOOLEAN,
     PRIMARY KEY (id)
 );
 

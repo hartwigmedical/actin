@@ -403,8 +403,7 @@ class ClinicalDAO {
                     MEDICATION.FREQUENCYUNIT,
                     MEDICATION.IFNEEDED,
                     MEDICATION.STARTDATE,
-                    MEDICATION.STOPDATE,
-                    MEDICATION.ACTIVE)
+                    MEDICATION.STOPDATE)
                     .values(sampleId,
                             medication.name(),
                             DataUtil.concat(medication.categories()),
@@ -416,8 +415,7 @@ class ClinicalDAO {
                             medication.frequencyUnit(),
                             DataUtil.toByte(medication.ifNeeded()),
                             medication.startDate(),
-                            medication.stopDate(),
-                            DataUtil.toByte(medication.active()))
+                            medication.stopDate())
                     .execute();
         }
     }

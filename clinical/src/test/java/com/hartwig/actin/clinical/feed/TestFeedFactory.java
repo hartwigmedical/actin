@@ -125,13 +125,13 @@ public final class TestFeedFactory {
                 .dosageInstructionAsNeededDisplay(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesUnit(Strings.EMPTY)
                 .dosageInstructionPeriodBetweenDosagesValue(0D)
-                .status(Strings.EMPTY)
                 .dosageDoseValue(Strings.EMPTY)
                 .dosageRateQuantityUnit(Strings.EMPTY)
                 .dosageDoseUnitDisplayOriginal(Strings.EMPTY)
                 .stopTypeDisplay(Strings.EMPTY);
 
         entries.add(builder.code5ATCDisplay("PARACETAMOL")
+                .status("active")
                 .dosageInstructionText("50-60 mg per day")
                 .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
                 .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))
@@ -139,6 +139,7 @@ public final class TestFeedFactory {
                 .build());
 
         entries.add(builder.code5ATCDisplay(Strings.EMPTY)
+                .status(Strings.EMPTY)
                 .dosageInstructionText("Irrelevant")
                 .periodOfUseValuePeriodStart(LocalDate.of(2019, 2, 2))
                 .periodOfUseValuePeriodEnd(LocalDate.of(2019, 4, 4))

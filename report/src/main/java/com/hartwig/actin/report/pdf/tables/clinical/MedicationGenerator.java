@@ -40,7 +40,7 @@ public class MedicationGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Categories"));
         table.addHeaderCell(Cells.createHeader("Start date"));
         table.addHeaderCell(Cells.createHeader("Stop date"));
-        table.addHeaderCell(Cells.createHeader("Active?"));
+        table.addHeaderCell(Cells.createHeader("Status"));
         table.addHeaderCell(Cells.createHeader("Dosage"));
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
@@ -49,7 +49,7 @@ public class MedicationGenerator implements TableGenerator {
             table.addCell(Cells.createContent(concat(medication.categories())));
             table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
             table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-            table.addCell(Cells.createContent(Formats.yesNoUnknown(medication.active())));
+            table.addCell(Cells.createContent(medication.status() != null ? medication.status().display() : Strings.EMPTY));
             table.addCell(Cells.createContent(dosage(medication)));
             table.addCell(Cells.createContent(frequency(medication)));
         }

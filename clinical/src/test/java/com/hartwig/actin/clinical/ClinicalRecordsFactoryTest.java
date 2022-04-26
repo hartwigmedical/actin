@@ -22,6 +22,7 @@ import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -196,6 +197,7 @@ public class ClinicalRecordsFactoryTest {
         Medication medication = medications.get(0);
         assertEquals("Paracetamol", medication.name());
         assertEquals(Sets.newHashSet("Acetanilide derivatives"), medication.categories());
+        assertEquals(MedicationStatus.ACTIVE, medication.status());
         assertEquals(50, medication.dosageMin(), EPSILON);
         assertEquals(60, medication.dosageMax(), EPSILON);
         assertEquals("mg", medication.dosageUnit());
@@ -203,7 +205,6 @@ public class ClinicalRecordsFactoryTest {
         assertFalse(medication.ifNeeded());
         assertEquals(LocalDate.of(2019, 2, 2), medication.startDate());
         assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate());
-        assertTrue(medication.active());
     }
 
     @NotNull
