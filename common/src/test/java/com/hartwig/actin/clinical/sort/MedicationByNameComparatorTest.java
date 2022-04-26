@@ -8,14 +8,13 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
-import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class MedicationByNameComparatorTest {
 
     @Test
     public void canSortMedications() {
-        ImmutableMedication.Builder builder = ImmutableMedication.builder().status(Strings.EMPTY);
+        ImmutableMedication.Builder builder = ImmutableMedication.builder();
 
         Medication medication1 = builder.name("X").build();
         Medication medication2 = builder.name("X").build();

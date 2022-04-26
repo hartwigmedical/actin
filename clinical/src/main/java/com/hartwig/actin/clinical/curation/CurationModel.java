@@ -473,7 +473,6 @@ public class CurationModel {
         MedicationDosageConfig config = configs.iterator().next();
         return ImmutableMedication.builder()
                 .name(Strings.EMPTY)
-                .status(Strings.EMPTY)
                 .dosageMin(config.dosageMin())
                 .dosageMax(config.dosageMax())
                 .dosageUnit(config.dosageUnit())

@@ -211,7 +211,7 @@ CREATE TABLE medication
     sampleId varchar(50) NOT NULL,
     name varchar(100) NOT NULL,
     categories varchar(100) NOT NULL,
-    status varchar(50) NOT NULL,
+    status varchar(50),
     dosageMin double precision,
     dosageMax double precision,
     dosageUnit varchar(50),

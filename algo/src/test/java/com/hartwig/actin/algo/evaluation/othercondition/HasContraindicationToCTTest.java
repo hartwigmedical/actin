@@ -82,12 +82,12 @@ public class HasContraindicationToCTTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)));
 
         // Test no relevant medication
-        medications.add(ImmutableMedication.builder().name("no relevant medication").status(Strings.EMPTY).build());
+        medications.add(ImmutableMedication.builder().name("no relevant medication").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)));
 
         // Test relevant medication
         String relevantMedication = HasContraindicationToCT.MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT.iterator().next();
-        medications.add(ImmutableMedication.builder().name(relevantMedication).status(Strings.EMPTY).build());
+        medications.add(ImmutableMedication.builder().name(relevantMedication).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withMedications(medications)));
     }
 

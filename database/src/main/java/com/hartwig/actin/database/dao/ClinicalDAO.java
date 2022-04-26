@@ -408,7 +408,7 @@ class ClinicalDAO {
                     .values(sampleId,
                             medication.name(),
                             DataUtil.concat(medication.categories()),
-                            medication.status(),
+                            medication.status() != null ? medication.status().toString() : null,
                             medication.dosageMin(),
                             medication.dosageMax(),
                             medication.dosageUnit(),

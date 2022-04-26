@@ -67,6 +67,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -456,7 +457,7 @@ public final class ClinicalRecordJson {
                 medicationList.add(ImmutableMedication.builder()
                         .name(string(object, "name"))
                         .categories(stringList(object, "categories"))
-                        .status(string(object, "status"))
+                        .status(MedicationStatus.valueOf(string(object, "status")))
                         .dosageMin(nullableNumber(object, "dosageMin"))
                         .dosageMax(nullableNumber(object, "dosageMax"))
                         .dosageUnit(nullableString(object, "dosageUnit"))

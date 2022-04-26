@@ -20,7 +20,7 @@ final class WashoutTestFactory {
 
     @NotNull
     public static ImmutableMedication.Builder builder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).status(Strings.EMPTY);
+        return ImmutableMedication.builder().name(Strings.EMPTY);
     }
 
     @NotNull

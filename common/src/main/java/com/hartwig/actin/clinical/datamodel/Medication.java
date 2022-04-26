@@ -17,8 +17,8 @@ public abstract class Medication {
     @NotNull
     public abstract Set<String> categories();
 
-    @NotNull
-    public abstract String status();
+    @Nullable
+    public abstract MedicationStatus status();
 
     @Nullable
     public abstract Double dosageMin();

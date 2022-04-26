@@ -312,11 +312,11 @@ public class CurationModelTest {
     public void canAnnotateWithMedicationCategory() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Medication proper = ImmutableMedication.builder().name("Paracetamol").status(Strings.EMPTY).build();
+        Medication proper = ImmutableMedication.builder().name("Paracetamol").build();
         Medication annotatedProper = model.annotateWithMedicationCategory(proper);
         assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories());
 
-        Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).status(Strings.EMPTY).build();
+        Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).build();
         Medication annotatedEmpty = model.annotateWithMedicationCategory(empty);
         assertEquals(empty, annotatedEmpty);
 
