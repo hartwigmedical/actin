@@ -22,6 +22,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableIntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
@@ -33,6 +34,7 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -480,6 +482,25 @@ public class CurationModel {
                 .build();
     }
 
+    @Nullable
+    public String curateMedicationName(@NotNull String input) {
+        if (input.isEmpty()) {
+            return null;
+        }
+
+        Set<MedicationNameConfig> configs = find(database.medicationNameConfigs(), input);
+        if (configs.isEmpty()) {
+            LOGGER.warn(" Could not find medication name config for '{}'", input);
+            return null;
+        } else if (configs.size() > 1) {
+            LOGGER.warn(" Multiple medication name configs founds for medication input '{}'", input);
+            return null;
+        }
+
+        MedicationNameConfig config = configs.iterator().next();
+        return !config.ignore() ? config.name() : null;
+    }
+
     @NotNull
     public Medication annotateWithMedicationCategory(@NotNull Medication medication) {
         Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), medication.name());
@@ -609,6 +630,8 @@ public class CurationModel {
             return database.toxicityConfigs();
         } else if (classToLookUp == ImmutableMolecularTestConfig.class) {
             return database.molecularTestConfigs();
+        } else if (classToLookUp == ImmutableMedicationNameConfig.class) {
+            return database.medicationNameConfigs();
         } else if (classToLookUp == ImmutableMedicationDosageConfig.class) {
             return database.medicationDosageConfigs();
         } else if (classToLookUp == ImmutableMedicationCategoryConfig.class) {

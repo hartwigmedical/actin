@@ -296,6 +296,19 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateMedicationName() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertNull(model.curateMedicationName(Strings.EMPTY));
+        assertNull(model.curateMedicationName("does not exist"));
+        assertNull(model.curateMedicationName("No medication"));
+
+        assertEquals("A and B", model.curateMedicationName("A en B"));
+
+        model.evaluate();
+    }
+
+    @Test
     public void canAnnotateWithMedicationCategory() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 

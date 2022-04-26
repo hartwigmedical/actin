@@ -17,14 +17,16 @@ public class MedicationByNameComparatorTest {
         ImmutableMedication.Builder builder = ImmutableMedication.builder();
 
         Medication medication1 = builder.name("X").build();
-        Medication medication2 = builder.name("Z").build();
-        Medication medication3 = builder.name("Y").build();
-        List<Medication> values = Lists.newArrayList(medication1, medication2, medication3);
+        Medication medication2 = builder.name("X").build();
+        Medication medication3 = builder.name("Z").build();
+        Medication medication4 = builder.name("Y").build();
+        List<Medication> values = Lists.newArrayList(medication1, medication2, medication3, medication4);
 
         values.sort(new MedicationByNameComparator());
 
         assertEquals(medication1, values.get(0));
-        assertEquals(medication3, values.get(1));
-        assertEquals(medication2, values.get(2));
+        assertEquals(medication2, values.get(1));
+        assertEquals(medication4, values.get(2));
+        assertEquals(medication3, values.get(3));
     }
 }

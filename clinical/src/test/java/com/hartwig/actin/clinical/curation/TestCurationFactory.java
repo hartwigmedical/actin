@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableIntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableMedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
@@ -23,6 +24,7 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -69,6 +71,7 @@ public final class TestCurationFactory {
                 .complicationConfigs(createTestComplicationConfigs())
                 .toxicityConfigs(createTestToxicityConfigs())
                 .molecularTestConfigs(createTestMolecularTestConfigs())
+                .medicationNameConfigs(createTestMedicationNameConfigs())
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
                 .medicationCategoryConfigs(createTestMedicationCategoryConfigs())
                 .intoleranceConfigs(createTestIntoleranceConfigs())
@@ -256,6 +259,16 @@ public final class TestCurationFactory {
                         .unit("+")
                         .build())
                 .build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<MedicationNameConfig> createTestMedicationNameConfigs() {
+        List<MedicationNameConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableMedicationNameConfig.builder().input("A en B").ignore(false).name("A and B").build());
+        configs.add(ImmutableMedicationNameConfig.builder().input("No medication").ignore(true).name(Strings.EMPTY).build());
 
         return configs;
     }
