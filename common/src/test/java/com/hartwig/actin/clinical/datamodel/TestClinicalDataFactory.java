@@ -420,7 +420,6 @@ public final class TestClinicalDataFactory {
                 .ifNeeded(false)
                 .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
-                .active(true)
                 .build());
 
         return medications;

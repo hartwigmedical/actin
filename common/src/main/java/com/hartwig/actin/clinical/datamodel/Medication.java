@@ -44,7 +44,4 @@ public abstract class Medication {
     @Nullable
     public abstract LocalDate stopDate();
 
-    @Nullable
-    public abstract Boolean active();
-
 }

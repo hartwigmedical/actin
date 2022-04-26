@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -15,11 +16,11 @@ final class MedicationFilter {
     }
 
     @NotNull
-    public static List<Medication> active(@NotNull List<Medication> medications) {
+    public static List<Medication> active(@NotNull List<Medication> medications, @NotNull LocalDate evaluationDate) {
         List<Medication> filtered = Lists.newArrayList();
         for (Medication medication : medications) {
-            Boolean active = medication.active();
-            if (active != null && active) {
+            MedicationStatusInterpretation status = MedicationStatusInterpreter.interpret(medication, evaluationDate);
+            if (status == MedicationStatusInterpretation.ACTIVE) {
                 filtered.add(medication);
             }
         }
@@ -27,14 +28,16 @@ final class MedicationFilter {
     }
 
     @NotNull
-    public static List<Medication> withTermInName(@NotNull List<Medication> medications, @NotNull String termToFind) {
-        return withAnyTermInName(medications, Sets.newHashSet(termToFind));
+    public static List<Medication> withTermInName(@NotNull List<Medication> medications, @NotNull LocalDate evaluationDate,
+            @NotNull String termToFind) {
+        return withAnyTermInName(medications, evaluationDate, Sets.newHashSet(termToFind));
     }
 
     @NotNull
-    public static List<Medication> withAnyTermInName(@NotNull List<Medication> medications, @NotNull Set<String> termsToFind) {
+    public static List<Medication> withAnyTermInName(@NotNull List<Medication> medications, @NotNull LocalDate evaluationDate,
+            @NotNull Set<String> termsToFind) {
         List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : active(medications)) {
+        for (Medication medication : active(medications, evaluationDate)) {
             for (String termToFind : termsToFind) {
                 if (medication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                     filtered.add(medication);
@@ -45,14 +48,16 @@ final class MedicationFilter {
     }
 
     @NotNull
-    public static List<Medication> withExactCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind) {
-        return withAnyExactCategory(medications, Sets.newHashSet(categoryToFind));
+    public static List<Medication> withExactCategory(@NotNull List<Medication> medications, @NotNull LocalDate evaluationDate,
+            @NotNull String categoryToFind) {
+        return withAnyExactCategory(medications, evaluationDate, Sets.newHashSet(categoryToFind));
     }
 
     @NotNull
-    public static List<Medication> withAnyExactCategory(@NotNull List<Medication> medications, @NotNull Set<String> categoriesToFind) {
+    public static List<Medication> withAnyExactCategory(@NotNull List<Medication> medications, @NotNull LocalDate evaluationDate,
+            @NotNull Set<String> categoriesToFind) {
         List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : active(medications)) {
+        for (Medication medication : active(medications, evaluationDate)) {
             for (String category : medication.categories()) {
                 for (String categoryToFind : categoriesToFind) {
                     if (category.equalsIgnoreCase(categoryToFind)) {

@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -17,16 +18,20 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentlyGetsMedicationOfExactCategory implements EvaluationFunction {
 
     @NotNull
+    private final LocalDate evaluationDate;
+    @NotNull
     private final Set<String> categoriesToFind;
 
-    CurrentlyGetsMedicationOfExactCategory(@NotNull final Set<String> categoriesToFind) {
+    CurrentlyGetsMedicationOfExactCategory(@NotNull final LocalDate evaluationDate, @NotNull final Set<String> categoriesToFind) {
+        this.evaluationDate = evaluationDate;
         this.categoriesToFind = categoriesToFind;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<Medication> medications = MedicationFilter.withAnyExactCategory(record.clinical().medications(), categoriesToFind);
+        List<Medication> medications =
+                MedicationFilter.withAnyExactCategory(record.clinical().medications(), evaluationDate, categoriesToFind);
 
         if (!medications.isEmpty()) {
             Set<String> names = Sets.newHashSet();

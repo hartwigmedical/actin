@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -16,9 +17,12 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationFunction {
 
     @NotNull
+    private final LocalDate evaluationDate;
+    @NotNull
     private final String categoryTermToFind;
 
-    CurrentlyGetsMedicationOfApproximateCategory(@NotNull final String categoryTermToFind) {
+    CurrentlyGetsMedicationOfApproximateCategory(@NotNull final LocalDate evaluationDate, @NotNull final String categoryTermToFind) {
+        this.evaluationDate = evaluationDate;
         this.categoryTermToFind = categoryTermToFind;
     }
 
@@ -26,7 +30,7 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> medications = Sets.newHashSet();
-        for (Medication medication : MedicationFilter.active(record.clinical().medications())) {
+        for (Medication medication : MedicationFilter.active(record.clinical().medications(), evaluationDate)) {
             for (String category : medication.categories()) {
                 if (category.toLowerCase().contains(categoryTermToFind.toLowerCase())) {
                     medications.add(medication.name());
@@ -37,8 +41,9 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
         if (!medications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
-                            + categoryTermToFind)
+                    .addPassSpecificMessages(
+                            "Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
+                                    + categoryTermToFind)
                     .addPassGeneralMessages(categoryTermToFind + " medication")
                     .build();
         }

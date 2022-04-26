@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.time.LocalDate;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -11,14 +13,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class CurrentlyGetsMetabolizingEnzymeInhibitingMedication implements EvaluationFunction {
 
-    CurrentlyGetsMetabolizingEnzymeInhibitingMedication() {
+    @NotNull
+    private final LocalDate evaluationDate;
 
+    CurrentlyGetsMetabolizingEnzymeInhibitingMedication(@NotNull final LocalDate evaluationDate) {
+        this.evaluationDate = evaluationDate;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasReceivedMedication = !MedicationFilter.active(record.clinical().medications()).isEmpty();
+        boolean hasReceivedMedication = !MedicationFilter.active(record.clinical().medications(), evaluationDate).isEmpty();
 
         EvaluationResult result = hasReceivedMedication ? EvaluationResult.WARN : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);

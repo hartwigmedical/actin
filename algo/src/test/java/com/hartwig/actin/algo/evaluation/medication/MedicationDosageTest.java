@@ -11,7 +11,7 @@ public class MedicationDosageTest {
 
     @Test
     public void canAssessDosingStability() {
-        Medication dosing1 = MedicationTestFactory.active()
+        Medication dosing1 = MedicationTestFactory.builder()
                 .dosageMin(1D)
                 .dosageMax(2D)
                 .dosageUnit("unit 1")
@@ -20,7 +20,7 @@ public class MedicationDosageTest {
                 .ifNeeded(false)
                 .build();
 
-        Medication dosing2 = MedicationTestFactory.active()
+        Medication dosing2 = MedicationTestFactory.builder()
                 .dosageMin(2D)
                 .dosageMax(3D)
                 .dosageUnit("unit 2")

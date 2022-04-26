@@ -467,7 +467,6 @@ public final class ClinicalRecordJson {
                         .ifNeeded(nullableBool(object, "ifNeeded"))
                         .startDate(nullableDate(object, "startDate"))
                         .stopDate(nullableDate(object, "stopDate"))
-                        .active(nullableBool(object, "active"))
                         .build());
             }
             return medicationList;

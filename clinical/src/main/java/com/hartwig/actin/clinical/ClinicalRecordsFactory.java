@@ -385,7 +385,6 @@ public class ClinicalRecordsFactory {
                         .status(curation.curateMedicationStatus(entry.status()))
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
-                        .active(entry.active())
                         .build();
 
                 medications.add(curation.annotateWithMedicationCategory(medication));
