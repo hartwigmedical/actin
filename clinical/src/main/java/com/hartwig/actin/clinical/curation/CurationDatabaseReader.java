@@ -18,6 +18,8 @@ import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory;
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory;
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
@@ -52,6 +54,7 @@ public final class CurationDatabaseReader {
     private static final String COMPLICATION_TSV = "complication.tsv";
     private static final String TOXICITY_TSV = "toxicity.tsv";
     private static final String MOLECULAR_TEST_TSV = "molecular_test.tsv";
+    private static final String MEDICATION_NAME_TSV = "medication_name.tsv";
     private static final String MEDICATION_DOSAGE_TSV = "medication_dosage.tsv";
     private static final String MEDICATION_CATEGORY_TSV = "medication_category.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
@@ -78,6 +81,7 @@ public final class CurationDatabaseReader {
                 .complicationConfigs(readComplicationConfigs(basePath + COMPLICATION_TSV))
                 .toxicityConfigs(readToxicityConfigs(basePath + TOXICITY_TSV))
                 .molecularTestConfigs(readMolecularTestConfigs(basePath + MOLECULAR_TEST_TSV))
+                .medicationNameConfigs(readMedicationNameConfigs(basePath + MEDICATION_NAME_TSV))
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
                 .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
                 .intoleranceConfigs(readIntoleranceConfigs(basePath + INTOLERANCE_TSV))
@@ -146,6 +150,13 @@ public final class CurationDatabaseReader {
     private static List<MolecularTestConfig> readMolecularTestConfigs(@NotNull  String tsv) throws IOException {
         List<MolecularTestConfig> configs = CurationConfigFile.read(tsv, new MolecularTestConfigFactory());
         LOGGER.info(" Read {} molecular test configs from {}", configs.size(), tsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<MedicationNameConfig> readMedicationNameConfigs(@NotNull String tsv) throws IOException {
+        List<MedicationNameConfig> configs = CurationConfigFile.read(tsv, new MedicationNameConfigFactory());
+        LOGGER.info(" Read {} medication name configs from {}", configs.size(), tsv);
         return configs;
     }
 

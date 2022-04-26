@@ -18,6 +18,7 @@ import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -54,6 +55,7 @@ public class CurationDatabaseReaderTest {
         assertComplicationConfigs(database.complicationConfigs());
         assertToxicityConfigs(database.toxicityConfigs());
         assertMolecularTestConfigs(database.molecularTestConfigs());
+        assertMedicationNameConfigs(database.medicationNameConfigs());
         assertMedicationDosageConfigs(database.medicationDosageConfigs());
         assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
         assertAllergyConfigs(database.intoleranceConfigs());
@@ -206,6 +208,17 @@ public class CurationDatabaseReaderTest {
                 .scoreValue(3D)
                 .unit("+")
                 .build(), config.curated());
+    }
+
+    private static void assertMedicationNameConfigs(@NotNull List<MedicationNameConfig> configs) {
+        assertEquals(2, configs.size());
+
+        MedicationNameConfig config1 = find(configs, "A en B");
+        assertEquals("A and B", config1.name());
+        assertFalse(config1.ignore());
+
+        MedicationNameConfig config2 = find(configs, "No medication");
+        assertTrue(config2.ignore());
     }
 
     private static void assertMedicationDosageConfigs(@NotNull List<MedicationDosageConfig> configs) {

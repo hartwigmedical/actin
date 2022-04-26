@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig;
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig;
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
@@ -51,6 +52,9 @@ public abstract class CurationDatabase {
 
     @NotNull
     public abstract List<MolecularTestConfig> molecularTestConfigs();
+
+    @NotNull
+    public abstract List<MedicationNameConfig> medicationNameConfigs();
 
     @NotNull
     public abstract List<MedicationDosageConfig> medicationDosageConfigs();
