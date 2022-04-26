@@ -411,6 +411,7 @@ public final class TestClinicalDataFactory {
         medications.add(ImmutableMedication.builder()
                 .name("Ibuprofen")
                 .addCategories("NSAIDs")
+                .status("Active")
                 .dosageMin(750D)
                 .dosageMax(1000D)
                 .dosageUnit("mg")

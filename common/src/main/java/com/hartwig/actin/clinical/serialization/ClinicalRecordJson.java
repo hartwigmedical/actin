@@ -456,6 +456,7 @@ public final class ClinicalRecordJson {
                 medicationList.add(ImmutableMedication.builder()
                         .name(string(object, "name"))
                         .categories(stringList(object, "categories"))
+                        .status(string(object, "status"))
                         .dosageMin(nullableNumber(object, "dosageMin"))
                         .dosageMax(nullableNumber(object, "dosageMax"))
                         .dosageUnit(nullableString(object, "dosageUnit"))

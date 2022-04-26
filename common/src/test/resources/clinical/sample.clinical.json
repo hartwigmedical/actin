@@ -242,6 +242,7 @@
       "name": "Medication 1",
       "categories": [
       ],
+      "status": "on-hold",
       "dosageMin": 10,
       "dosageMax": 20,
       "dosageUnit": "mg",
@@ -264,6 +265,7 @@
       "name": "Medication 2",
       "categories": [
       ],
+      "status": "unknown",
       "dosageMin": null,
       "dosageMax": null,
       "dosageUnit": null,

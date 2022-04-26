@@ -382,6 +382,7 @@ public class ClinicalRecordsFactory {
 
             if (name != null && !name.isEmpty()) {
                 Medication medication = builder.name(name)
+                        .status(entry.status())
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
                         .active(entry.active())
