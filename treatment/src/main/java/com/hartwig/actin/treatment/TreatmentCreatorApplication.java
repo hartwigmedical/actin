@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
+import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
 import com.hartwig.actin.treatment.trial.TrialFactory;
 
 import org.apache.commons.cli.DefaultParser;
@@ -49,6 +50,9 @@ public class TreatmentCreatorApplication {
     public void run() throws IOException {
         LOGGER.info("Creating trial database");
         List<Trial> trials = TrialFactory.fromTrialConfigDirectory(config.trialConfigDirectory());
+
+        LOGGER.info("Evaluating usage of eligibility rules");
+        EligibilityRuleUsageEvaluator.evaluate(trials);
 
         String outputDirectory = config.outputDirectory();
         LOGGER.info("Writing {} trials to {}", trials.size(), outputDirectory);
