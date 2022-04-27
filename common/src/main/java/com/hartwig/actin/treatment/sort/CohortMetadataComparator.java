@@ -20,14 +20,16 @@ public class CohortMetadataComparator implements Comparator<CohortMetadata> {
             return descriptionCompare;
         }
 
-        if (metadata1.open() == metadata2.open()) {
-            if (metadata1.blacklist() == metadata2.blacklist()) {
-                return 0;
-            } else {
-                return metadata1.blacklist() ? 1 : -1;
-            }
-        } else {
-            return metadata1.open() ? -1 : 1;
+        int openCompare = Boolean.compare(metadata2.open(), metadata1.open());
+        if (openCompare != 0) {
+            return openCompare;
         }
+
+        int slotsAvailableCompare = Boolean.compare(metadata2.slotsAvailable(), metadata1.slotsAvailable());
+        if (slotsAvailableCompare != 0) {
+            return slotsAvailableCompare;
+        }
+
+        return Boolean.compare(metadata1.blacklist(), metadata2.blacklist());
     }
 }

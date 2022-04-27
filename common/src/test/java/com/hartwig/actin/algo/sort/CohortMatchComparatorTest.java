@@ -30,7 +30,13 @@ public class CohortMatchComparatorTest {
     @NotNull
     private static CohortMatch withId(@NotNull String id) {
         return ImmutableCohortMatch.builder()
-                .metadata(ImmutableCohortMetadata.builder().cohortId(id).open(true).blacklist(false).description(Strings.EMPTY).build())
+                .metadata(ImmutableCohortMetadata.builder()
+                        .cohortId(id)
+                        .open(true)
+                        .slotsAvailable(true)
+                        .blacklist(false)
+                        .description(Strings.EMPTY)
+                        .build())
                 .isPotentiallyEligible(true)
                 .build();
     }

@@ -58,9 +58,9 @@ public final class TestTrialConfigFactory {
 
         ImmutableCohortDefinitionConfig.Builder builder = ImmutableCohortDefinitionConfig.builder().trialId(TEST_TRIAL_ID_1);
 
-        configs.add(builder.cohortId("A").open(true).blacklist(false).description("Cohort A").build());
-        configs.add(builder.cohortId("B").open(true).blacklist(true).description("Cohort B").build());
-        configs.add(builder.cohortId("C").open(false).blacklist(false).description("Cohort C").build());
+        configs.add(builder.cohortId("A").open(true).slotsAvailable(true).blacklist(false).description("Cohort A").build());
+        configs.add(builder.cohortId("B").open(true).slotsAvailable(false).blacklist(true).description("Cohort B").build());
+        configs.add(builder.cohortId("C").open(false).slotsAvailable(false).blacklist(false).description("Cohort C").build());
 
         return configs;
     }

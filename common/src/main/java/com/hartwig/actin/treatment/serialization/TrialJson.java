@@ -185,6 +185,7 @@ public final class TrialJson {
             return ImmutableCohortMetadata.builder()
                     .cohortId(string(cohort, "cohortId"))
                     .open(bool(cohort, "open"))
+                    .slotsAvailable(bool(cohort, "slotsAvailable"))
                     .blacklist(bool(cohort, "blacklist"))
                     .description(string(cohort, "description"))
                     .build();

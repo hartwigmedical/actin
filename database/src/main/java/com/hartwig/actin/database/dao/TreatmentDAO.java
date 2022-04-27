@@ -94,10 +94,17 @@ class TreatmentDAO {
     }
 
     private int writeCohortMetadata(int trialId, @NotNull CohortMetadata metadata) {
-        return context.insertInto(COHORT, COHORT.TRIALID, COHORT.CODE, COHORT.OPEN, COHORT.BLACKLIST, COHORT.DESCRIPTION)
+        return context.insertInto(COHORT,
+                COHORT.TRIALID,
+                COHORT.CODE,
+                COHORT.OPEN,
+                COHORT.SLOTSAVAILABLE,
+                COHORT.BLACKLIST,
+                COHORT.DESCRIPTION)
                 .values(trialId,
                         metadata.cohortId(),
                         DataUtil.toByte(metadata.open()),
+                        DataUtil.toByte(metadata.slotsAvailable()),
                         DataUtil.toByte(metadata.blacklist()),
                         metadata.description())
                 .returning(COHORT.ID)

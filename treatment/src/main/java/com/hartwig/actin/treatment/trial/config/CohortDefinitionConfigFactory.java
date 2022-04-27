@@ -15,6 +15,7 @@ public class CohortDefinitionConfigFactory implements TrialConfigFactory<CohortD
                 .trialId(parts[fields.get("trialId")])
                 .cohortId(parts[fields.get("cohortId")])
                 .open(ResourceFile.bool(parts[fields.get("open")]))
+                .slotsAvailable(ResourceFile.bool(parts[fields.get("slotsAvailable")]))
                 .blacklist(ResourceFile.bool(parts[fields.get("blacklist")]))
                 .description(parts[fields.get("description")])
                 .build();

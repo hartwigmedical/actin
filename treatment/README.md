@@ -43,6 +43,8 @@ Field | Example
 trialId | ACTN 2021
 cohortId | A
 open | 1
+slotsAvailable | 1
+blacklist | 0
 description | First evaluation phase
 
 The following checks are done on the level of cohort definitions:

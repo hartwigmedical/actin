@@ -104,21 +104,28 @@ public final class TestTreatmentMatchFactory {
         List<CohortMatch> cohorts = Lists.newArrayList();
 
         cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("A", true, false))
+                .metadata(createTestMetadata("A", true, true, false))
                 .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluations())
                 .build());
-        cohorts.add(ImmutableCohortMatch.builder().metadata(createTestMetadata("B", true, false)).isPotentiallyEligible(true).build());
-        cohorts.add(ImmutableCohortMatch.builder().metadata(createTestMetadata("C", true, true)).isPotentiallyEligible(false).build());
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("B", true, true, false))
+                .isPotentiallyEligible(true)
+                .build());
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("C", true, true, true))
+                .isPotentiallyEligible(false)
+                .build());
 
         return cohorts;
     }
 
     @NotNull
-    private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean open, boolean blacklist) {
+    private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean open, boolean slotsAvailable, boolean blacklist) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortId)
                 .open(open)
+                .slotsAvailable(slotsAvailable)
                 .blacklist(blacklist)
                 .description("Cohort " + cohortId)
                 .build();

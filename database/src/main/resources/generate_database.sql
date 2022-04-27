@@ -321,6 +321,7 @@ CREATE TABLE cohort
     trialId int NOT NULL,
     code varchar(50) NOT NULL,
     open BOOLEAN NOT NULL,
+    slotsAvailable BOOLEAN NOT NULL,
     blacklist BOOLEAN NOT NULL,
     description varchar(500) NOT NULL,
     PRIMARY KEY (id)

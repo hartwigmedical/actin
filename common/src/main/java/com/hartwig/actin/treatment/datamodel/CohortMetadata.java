@@ -13,6 +13,8 @@ public abstract class CohortMetadata {
 
     public abstract boolean open();
 
+    public abstract boolean slotsAvailable();
+
     public abstract boolean blacklist();
 
     @NotNull

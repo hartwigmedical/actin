@@ -69,7 +69,8 @@ public final class TestTreatmentFactory {
                                 .id("E-01")
                                 .text("Has no active CNS metastases and has exhausted SOC")
                                 .build())
-                        .build()).build());
+                        .build())
+                .build());
 
         cohorts.add(ImmutableCohort.builder()
                 .metadata(createTestMetadata("B"))
@@ -89,6 +90,12 @@ public final class TestTreatmentFactory {
 
     @NotNull
     private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
-        return ImmutableCohortMetadata.builder().cohortId(cohortId).open(true).blacklist(false).description("Cohort " + cohortId).build();
+        return ImmutableCohortMetadata.builder()
+                .cohortId(cohortId)
+                .open(true)
+                .slotsAvailable(true)
+                .blacklist(false)
+                .description("Cohort " + cohortId)
+                .build();
     }
 }

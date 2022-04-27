@@ -25,6 +25,7 @@
       "metadata": {
         "cohortId": "A",
         "open": true,
+        "slotsAvailable": true,
         "blacklist": false,
         "description": "Cohort A"
       },
@@ -52,6 +53,7 @@
       "metadata": {
         "cohortId": "B",
         "open": true,
+        "slotsAvailable": true,
         "blacklist": false,
         "description": "Cohort B"
       },
@@ -61,6 +63,7 @@
       "metadata": {
         "cohortId": "C",
         "open": false,
+        "slotsAvailable": false,
         "blacklist": false,
         "description": "Cohort C"
       },
