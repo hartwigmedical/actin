@@ -1,8 +1,9 @@
 CREATE OR REPLACE VIEW trialEvaluation
 AS (
 SELECT  referenceDate, referenceDateIsLive, sampleId, trialMatch.code AS trialId, trial.acronym AS trialAcronym,
-        IF(trial.id IN (SELECT trialId FROM cohort),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial, cohortMatch.code AS cohortId,
-        description AS cohortDescription, open AS cohortOpen, blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
+        IF(trial.id IN (SELECT trialId FROM cohort),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
+        cohortMatch.code AS cohortId, description AS cohortDescription, cohortMatch.open AS cohortOpen, blacklist AS cohortBlacklist,
+        cohortMatch.isEligible AS isEligibleCohort,
         eligibility AS eligibilityRule, result, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages,
         undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages
 FROM evaluation
