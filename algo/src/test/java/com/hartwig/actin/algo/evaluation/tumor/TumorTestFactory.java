@@ -21,6 +21,22 @@ final class TumorTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withTumorTypeAndDoids(@Nullable String primaryTumorType, @Nullable String primaryTumorSubType,
+            @NotNull String... doids) {
+        return withTumorTypeAndDoids(primaryTumorType, primaryTumorSubType, Lists.newArrayList(doids));
+    }
+
+    @NotNull
+    public static PatientRecord withTumorTypeAndDoids(@Nullable String primaryTumorType, @Nullable String primaryTumorSubType,
+            @Nullable List<String> doids) {
+        return withTumorDetails(ImmutableTumorDetails.builder()
+                .primaryTumorType(primaryTumorType)
+                .primaryTumorSubType(primaryTumorSubType)
+                .doids(doids)
+                .build());
+    }
+
+    @NotNull
     public static PatientRecord withDoids(@NotNull String... doids) {
         return withDoids(Lists.newArrayList(doids));
     }
@@ -73,7 +89,7 @@ final class TumorTestFactory {
     public static PatientRecord withCnsLesions(@Nullable Boolean hasCnsLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasCnsLesions(hasCnsLesions).build());
     }
-    
+
     @NotNull
     public static PatientRecord withBoneLesions(@Nullable Boolean hasBoneLesions) {
         return withTumorDetails(ImmutableTumorDetails.builder().hasBoneLesions(hasBoneLesions).build());

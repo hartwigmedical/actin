@@ -43,6 +43,21 @@ public class DoidModelTest {
     }
 
     @Test
+    public void canResolveMainCancerTypes() {
+        String firstMainCancerType = DoidMainCancerTypesConfig.MAIN_CANCER_TYPES.iterator().next();
+        String child = "012345";
+        assertFalse(DoidMainCancerTypesConfig.MAIN_CANCER_TYPES.contains(child));
+
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(firstMainCancerType, child);
+
+        Set<String> mainCancerTypes = doidModel.mainCancerTypes(child);
+        assertFalse(mainCancerTypes.isEmpty());
+        assertTrue(mainCancerTypes.contains(firstMainCancerType));
+
+        assertTrue(doidModel.mainCancerTypes("does not exist").isEmpty());
+    }
+
+    @Test
     public void canResolveTerms() {
         DoidModel model = createTestModel();
 

@@ -5,14 +5,16 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.TumorDetails;
 
 import org.jetbrains.annotations.NotNull;
 
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
+
+    private static final String UNCLEAR_TUMOR_TYPE = "carcinoma";
 
     @NotNull
     private final DoidModel doidModel;
@@ -42,17 +44,47 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = isDoidMatch(doids, doidToMatch) ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no " + doidModel.term(doidToMatch));
-            builder.addFailGeneralMessages("Tumor type");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has " + doidModel.term(doidToMatch));
-            builder.addPassGeneralMessages("Tumor type");
+        if (isDoidMatch(doids, doidToMatch)) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has " + doidModel.term(doidToMatch))
+                    .addPassGeneralMessages("Tumor type")
+                    .build();
         }
 
-        return builder.build();
+        if (isPotentialMatch(record.clinical().tumor(), doids, doidToMatch)) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Could not determine if patient has " + doidModel.term(doidToMatch))
+                    .addUndeterminedGeneralMessages("Tumor type")
+                    .build();
+        }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient has no " + doidModel.term(doidToMatch))
+                .addFailGeneralMessages("Tumor type")
+                .build();
+    }
+
+    private boolean isPotentialMatch(@NotNull TumorDetails tumor, @NotNull Set<String> doids, @NotNull String doidToMatch) {
+        String primaryTumorType = tumor.primaryTumorType();
+        String primaryTumorSubType = tumor.primaryTumorSubType();
+
+        if (primaryTumorType != null && primaryTumorSubType != null && !(
+                (primaryTumorType.equalsIgnoreCase(UNCLEAR_TUMOR_TYPE) || primaryTumorType.isEmpty()) && primaryTumorSubType.isEmpty())) {
+            return false;
+        }
+
+        Set<String> mainCancerTypesToMatch = doidModel.mainCancerTypes(doidToMatch);
+        for (String doid : doids) {
+            for (String entry : doidModel.doidWithParents(doid)) {
+                if (mainCancerTypesToMatch.contains(entry)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {

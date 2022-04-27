@@ -41,6 +41,18 @@ public class DoidModel {
         return doids;
     }
 
+    @NotNull
+    public Set<String> mainCancerTypes(@NotNull String doid) {
+        Set<String> doids = doidWithParents(doid);
+        Set<String> matches = Sets.newHashSet();
+        for (String mainCancerType : DoidMainCancerTypesConfig.MAIN_CANCER_TYPES) {
+            if (doids.contains(mainCancerType)) {
+                matches.add(mainCancerType);
+            }
+        }
+        return matches;
+    }
+
     private void addParents(@NotNull String child, @NotNull Set<String> result) {
         if (!relationship.containsKey(child)) {
             return;
