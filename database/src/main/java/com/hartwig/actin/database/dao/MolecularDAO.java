@@ -120,14 +120,18 @@ class MolecularDAO {
     private void writeMolecularEvidence(@NotNull String sampleId, @NotNull MolecularEvidence evidence) {
         writeEvidenceForTypeAndSource(sampleId, evidence.actinTrials(), "Experimental", true, "ACTIN");
         writeEvidenceForTypeAndSource(sampleId, evidence.externalTrials(), "Experimental", true, evidence.externalTrialSource());
-        writeEvidenceForTypeAndSource(sampleId, evidence.approvedEvidence(), "Approved", true, evidence.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, evidence.onLabelExperimentalEvidence(), "Experimental", true, evidence.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, evidence.offLabelExperimentalEvidence(), "Other", true, evidence.evidenceSource());
-        writeEvidenceForTypeAndSource(sampleId, evidence.knownResistanceEvidence(), "Resistance", false, evidence.evidenceSource());
+
+        String evidenceSource = evidence.evidenceSource();
+        writeEvidenceForTypeAndSource(sampleId, evidence.approvedEvidence(), "Approved", true, evidenceSource);
+        writeEvidenceForTypeAndSource(sampleId, evidence.onLabelExperimentalEvidence(), "Experimental (on-label)", true, evidenceSource);
+        writeEvidenceForTypeAndSource(sampleId, evidence.offLabelExperimentalEvidence(), "Experimental (off-label)", true, evidenceSource);
+        writeEvidenceForTypeAndSource(sampleId, evidence.preClinicalEvidence(), "Pre-clinical", true, evidenceSource);
+        writeEvidenceForTypeAndSource(sampleId, evidence.knownResistanceEvidence(), "Resistance (known)", false, evidenceSource);
+        writeEvidenceForTypeAndSource(sampleId, evidence.suspectResistanceEvidence(), "Resistance (suspected)", false, evidenceSource);
     }
 
-    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<EvidenceEntry> evidences,
-            @NotNull String type, boolean isResponsive, @NotNull String source) {
+    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<EvidenceEntry> evidences, @NotNull String type,
+            boolean isResponsive, @NotNull String source) {
         for (EvidenceEntry evidence : evidences) {
             context.insertInto(MOLECULAREVIDENCE,
                     MOLECULAREVIDENCE.SAMPLEID,
