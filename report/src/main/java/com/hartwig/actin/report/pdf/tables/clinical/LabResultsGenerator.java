@@ -66,13 +66,17 @@ public class LabResultsGenerator implements TableGenerator {
     public Table contents() {
         Set<LocalDate> dates = selectDates(labInterpretation.allDates());
 
-        Table table = Tables.createFixedWidthCols(defineWidths(dates));
+        Table table = Tables.createFixedWidthCols(defineWidths());
 
         table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
         table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
         table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
         for (LocalDate date : dates) {
             table.addHeaderCell(Cells.createHeader(Formats.date(date)));
+        }
+
+        for (int i = dates.size(); i < MAX_LAB_DATES; i++) {
+            table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
         }
 
         table.addCell(Cells.createKey("Liver function"));
@@ -130,15 +134,13 @@ public class LabResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private float[] defineWidths(@NotNull Set<LocalDate> dates) {
-        int valuesCount = dates.size();
-
-        float[] widths = new float[3 + valuesCount];
+    private float[] defineWidths() {
+        float[] widths = new float[3 + MAX_LAB_DATES];
         widths[0] = key1Width;
         widths[1] = key2Width;
         widths[2] = key3Width;
-        for (int i = 0; i < valuesCount; i++) {
-            widths[3 + i] = valueWidth / valuesCount;
+        for (int i = 0; i < MAX_LAB_DATES; i++) {
+            widths[3 + i] = valueWidth / MAX_LAB_DATES;
         }
         return widths;
     }
@@ -161,6 +163,10 @@ public class LabResultsGenerator implements TableGenerator {
                 }
             }
             table.addCell(Cells.create(new Paragraph(joiner.toString()).addStyle(style)));
+        }
+
+        for (int i = dates.size(); i < MAX_LAB_DATES; i++) {
+            table.addCell(Cells.createEmpty());
         }
     }
 
