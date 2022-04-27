@@ -1,13 +1,17 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.StringJoiner;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpreter;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
-import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -22,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class LabResultsGenerator implements TableGenerator {
+
+    private static final int MAX_LAB_DATES = 5;
 
     @NotNull
     private final LabInterpretation labInterpretation;
@@ -52,73 +58,110 @@ public class LabResultsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Laboratory results (" + Formats.date(labInterpretation.mostRecentRelevantDate()) + ")";
+        return "Laboratory results";
     }
 
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(key1Width, key2Width, key3Width, valueWidth);
+        Set<LocalDate> dates = selectDates(labInterpretation.allDates());
+
+        Table table = Tables.createFixedWidthCols(defineWidths(dates));
+
+        table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
+        table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
+        table.addHeaderCell(Cells.createHeader(Strings.EMPTY));
+        for (LocalDate date : dates) {
+            table.addHeaderCell(Cells.createHeader(Formats.date(date)));
+        }
 
         table.addCell(Cells.createKey("Liver function"));
         table.addCell(Cells.createKey("Total bilirubin"));
-        addLabMeasurement(table, LabMeasurement.TOTAL_BILIRUBIN);
+        addLabMeasurements(table, dates, LabMeasurement.TOTAL_BILIRUBIN);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("ASAT"));
-        addLabMeasurement(table, LabMeasurement.ASPARTATE_AMINOTRANSFERASE);
+        addLabMeasurements(table, dates, LabMeasurement.ASPARTATE_AMINOTRANSFERASE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("ALAT"));
-        addLabMeasurement(table, LabMeasurement.ALANINE_AMINOTRANSFERASE);
+        addLabMeasurements(table, dates, LabMeasurement.ALANINE_AMINOTRANSFERASE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("ALP"));
-        addLabMeasurement(table, LabMeasurement.ALKALINE_PHOSPHATASE);
+        addLabMeasurements(table, dates, LabMeasurement.ALKALINE_PHOSPHATASE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Albumin"));
-        addLabMeasurement(table, LabMeasurement.ALBUMIN);
+        addLabMeasurements(table, dates, LabMeasurement.ALBUMIN);
 
         table.addCell(Cells.createKey("Kidney function"));
         table.addCell(Cells.createKey("Creatinine"));
-        addLabMeasurement(table, LabMeasurement.CREATININE);
+        addLabMeasurements(table, dates, LabMeasurement.CREATININE);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("CKD-EPI eGFR"));
-        addLabMeasurement(table, LabMeasurement.EGFR_CKD_EPI);
+        addLabMeasurements(table, dates, LabMeasurement.EGFR_CKD_EPI);
 
         table.addCell(Cells.createKey("Other"));
         table.addCell(Cells.createKey("Hemoglobin"));
-        addLabMeasurement(table, LabMeasurement.HEMOGLOBIN);
+        addLabMeasurements(table, dates, LabMeasurement.HEMOGLOBIN);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Thrombocytes"));
-        addLabMeasurement(table, LabMeasurement.THROMBOCYTES_ABS);
+        addLabMeasurements(table, dates, LabMeasurement.THROMBOCYTES_ABS);
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("LDH"));
-        addLabMeasurement(table, LabMeasurement.LACTATE_DEHYDROGENASE);
+        addLabMeasurements(table, dates, LabMeasurement.LACTATE_DEHYDROGENASE);
+
+        if (labInterpretation.allDates().size() > MAX_LAB_DATES) {
+            String note = "Note: Only the most recent " + MAX_LAB_DATES + " lab results have been displayed";
+            table.addCell(Cells.createSpanningSubNote(note, table));
+        }
 
         return table;
     }
 
-    private void addLabMeasurement(@NotNull Table table, @NotNull LabMeasurement measurement) {
-        LabValue lab = labInterpretation.mostRecentValue(measurement);
-        String value = Strings.EMPTY;
+    @NotNull
+    private static Set<LocalDate> selectDates(@NotNull Set<LocalDate> allDates) {
+        Set<LocalDate> selected = Sets.newTreeSet(Comparator.reverseOrder());
 
-        Style style = Styles.tableHighlightStyle();
-        if (lab != null) {
-            value = Formats.twoDigitNumber(lab.value()) + " " + lab.unit().display();
-            if (!lab.comparator().isEmpty()) {
-                value = lab.comparator() + " " + value;
-            }
-
-            if (!labInterpretation.mostRecentRelevantDate().equals(lab.date())) {
-                value = value + " (" + Formats.date(lab.date()) + ")";
-            }
-
-            if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
-                style = Styles.tableWarnStyle();
-                value = value + " (" + buildOutOfRangeAddition(labInterpretation.allValues(measurement)) + ")";
+        Iterator<LocalDate> iterator = allDates.iterator();
+        for (int i = 0; i < MAX_LAB_DATES; i++) {
+            if (iterator.hasNext()) {
+                selected.add(iterator.next());
             }
         }
+        return selected;
+    }
 
-        table.addCell(Cells.createKey(buildLimitString(lab)));
-        table.addCell(Cells.create(new Paragraph(value).addStyle(style)));
+    @NotNull
+    private float[] defineWidths(@NotNull Set<LocalDate> dates) {
+        int valuesCount = dates.size();
+
+        float[] widths = new float[3 + valuesCount];
+        widths[0] = key1Width;
+        widths[1] = key2Width;
+        widths[2] = key3Width;
+        for (int i = 0; i < valuesCount; i++) {
+            widths[3 + i] = valueWidth / valuesCount;
+        }
+        return widths;
+    }
+
+    private void addLabMeasurements(@NotNull Table table, @NotNull Set<LocalDate> dates, @NotNull LabMeasurement measurement) {
+        table.addCell(Cells.createKey(buildLimitString(labInterpretation.mostRecentValue(measurement))));
+
+        for (LocalDate date : dates) {
+            StringJoiner joiner = Formats.commaJoiner();
+            Style style = Styles.tableHighlightStyle();
+            for (LabValue lab : labInterpretation.valuesOnDate(measurement, date)) {
+                String value = Formats.twoDigitNumber(lab.value()) + " " + lab.unit().display();
+                if (!lab.comparator().isEmpty()) {
+                    value = lab.comparator() + " " + value;
+                }
+                joiner.add(value);
+
+                if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
+                    style = Styles.tableWarnStyle();
+                }
+            }
+            table.addCell(Cells.create(new Paragraph(joiner.toString()).addStyle(style)));
+        }
     }
 
     @NotNull
@@ -144,55 +187,5 @@ public class LabResultsGenerator implements TableGenerator {
         }
 
         return "(" + limit + " " + lab.unit().display() + ")";
-    }
-
-    @NotNull
-    private static String buildOutOfRangeAddition(@NotNull List<LabValue> values) {
-        values.sort(new LabValueDescendingDateComparator());
-
-        assert values.get(0).isOutsideRef();
-
-        int outOfRangeCount = 1;
-        double moreRecentValue = values.get(0).value();
-        boolean trendIsUp = true;
-        boolean trendIsDown = true;
-
-        boolean inOutOfRefChain = true;
-        int index = 1;
-        while (inOutOfRefChain && index < values.size()) {
-            LabValue lab = values.get(index);
-
-            Boolean isOutsideRef = lab.isOutsideRef();
-            if (isOutsideRef != null && isOutsideRef) {
-                outOfRangeCount++;
-                if (moreRecentValue > lab.value()) {
-                    trendIsDown = false;
-                } else {
-                    trendIsUp = false;
-                }
-                moreRecentValue = lab.value();
-            } else {
-                inOutOfRefChain = false;
-            }
-
-            index++;
-        }
-
-        if (outOfRangeCount > 1) {
-            assert !(trendIsUp && trendIsDown);
-
-            String trend;
-            if (trendIsUp) {
-                trend = "trend is up";
-            } else if (trendIsDown) {
-                trend = "trend down";
-            } else {
-                trend = "no trend detected";
-            }
-
-            return "out of range for " + outOfRangeCount + " cons. measurements, " + trend;
-        } else {
-            return "no trend information available";
-        }
     }
 }

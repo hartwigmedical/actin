@@ -1,12 +1,15 @@
 package com.hartwig.actin.clinical.interpretation;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
 
@@ -51,6 +54,19 @@ public class LabInterpretation {
         return mostRecentDate;
     }
 
+    @NotNull
+    public Set<LocalDate> allDates() {
+        Set<LocalDate> dates = Sets.newTreeSet(Comparator.reverseOrder());
+
+        for (Map.Entry<LabMeasurement, List<LabValue>> entry : measurements.entrySet()) {
+            for (LabValue lab : entry.getValue()) {
+                dates.add(lab.date());
+            }
+        }
+
+        return dates;
+    }
+
     @Nullable
     public List<LabValue> allValues(@NotNull LabMeasurement measurement) {
         List<LabValue> values = measurements.get(measurement);
@@ -70,5 +86,20 @@ public class LabInterpretation {
     public LabValue secondMostRecentValue(@NotNull LabMeasurement measurement) {
         List<LabValue> values = measurements.get(measurement);
         return values != null && values.size() >= 2 ? values.get(1) : null;
+    }
+
+    @Nullable
+    public List<LabValue> valuesOnDate(@NotNull LabMeasurement measurement, @NotNull LocalDate dateToFind) {
+        if (!measurements.containsKey(measurement)) {
+            return Lists.newArrayList();
+        }
+
+        List<LabValue> filtered = Lists.newArrayList();
+        for (LabValue lab : measurements.get(measurement)) {
+            if (lab.date().equals(dateToFind)) {
+                filtered.add(lab);
+            }
+        }
+        return filtered;
     }
 }

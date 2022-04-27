@@ -2,8 +2,10 @@ package com.hartwig.actin.clinical.interpretation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -20,10 +22,13 @@ public class LabInterpretationTest {
         LabInterpretation empty = LabInterpretation.fromMeasurements(ArrayListMultimap.create());
 
         assertNull(empty.mostRecentRelevantDate());
+        assertTrue(empty.allDates().isEmpty());
 
         assertNull(empty.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         assertNull(empty.secondMostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         assertNull(empty.allValues(LabMeasurement.ALANINE_AMINOTRANSFERASE));
+
+        assertTrue(empty.valuesOnDate(LabMeasurement.ALANINE_AMINOTRANSFERASE, TEST_DATE).isEmpty());
     }
 
     @Test
@@ -41,11 +46,19 @@ public class LabInterpretationTest {
 
         LabInterpretation interpretation = LabInterpretation.fromMeasurements(measurements);
 
-        assertEquals(TEST_DATE.minusDays(1), interpretation.mostRecentRelevantDate());
+        LocalDate mostRecent = interpretation.mostRecentRelevantDate();
+        assertEquals(TEST_DATE.minusDays(1), mostRecent);
+
+        Set<LocalDate> allDates = interpretation.allDates();
+        assertEquals(5, allDates.size());
+        assertEquals(mostRecent, allDates.iterator().next());
 
         assertEquals(6, interpretation.allValues(LabMeasurement.ALBUMIN).size());
         assertEquals(TEST_DATE.minusDays(1), interpretation.mostRecentValue(LabMeasurement.ALBUMIN).date());
         assertEquals(TEST_DATE.minusDays(2), interpretation.secondMostRecentValue(LabMeasurement.ALBUMIN).date());
+        assertEquals(1, interpretation.valuesOnDate(LabMeasurement.ALBUMIN, TEST_DATE.minusDays(3)).size());
+        assertEquals(2, interpretation.valuesOnDate(LabMeasurement.ALBUMIN, TEST_DATE.minusDays(4)).size());
+        assertEquals(0, interpretation.valuesOnDate(LabMeasurement.ALBUMIN, TEST_DATE.minusDays(6)).size());
 
         assertEquals(2, interpretation.allValues(LabMeasurement.THROMBOCYTES_ABS).size());
         assertEquals(TEST_DATE.minusDays(2), interpretation.mostRecentValue(LabMeasurement.THROMBOCYTES_ABS).date());
@@ -54,5 +67,6 @@ public class LabInterpretationTest {
         assertNull(interpretation.mostRecentValue(LabMeasurement.LEUKOCYTES_ABS));
         assertNull(interpretation.secondMostRecentValue(LabMeasurement.LEUKOCYTES_ABS));
         assertNull(interpretation.allValues(LabMeasurement.LEUKOCYTES_ABS));
+        assertTrue(interpretation.valuesOnDate(LabMeasurement.LEUKOCYTES_ABS, mostRecent).isEmpty());
     }
 }
