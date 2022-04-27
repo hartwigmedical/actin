@@ -310,6 +310,7 @@ DROP TABLE IF EXISTS trial;
 CREATE TABLE trial
 (   id int NOT NULL AUTO_INCREMENT,
     code varchar(50) UNIQUE,
+    open BOOLEAN NOT NULL,
     acronym varchar(50) NOT NULL,
     title varchar(2500) NOT NULL,
     PRIMARY KEY (id)
@@ -370,6 +371,7 @@ CREATE TABLE trialMatch
 (   id int NOT NULL AUTO_INCREMENT,
     treatmentMatchId int NOT NULL,
     code varchar(50) NOT NULL,
+    open BOOLEAN NOT NULL,
     acronym varchar(50) NOT NULL,
     title varchar(2500) NOT NULL,
     isEligible BOOLEAN NOT NULL,

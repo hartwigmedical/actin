@@ -133,6 +133,7 @@ public final class TreatmentMatchJson {
         private static TrialIdentification toIdentification(@NotNull JsonObject identification) {
             return ImmutableTrialIdentification.builder()
                     .trialId(string(identification, "trialId"))
+                    .open(bool(identification, "open"))
                     .acronym(string(identification, "acronym"))
                     .title(string(identification, "title"))
                     .build();

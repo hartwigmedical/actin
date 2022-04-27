@@ -142,7 +142,7 @@ public class ServeRecordExtractorTest {
 
     @NotNull
     private static TrialIdentification withTrialAcronym(@NotNull String trialAcronym) {
-        return ImmutableTrialIdentification.builder().trialId(Strings.EMPTY).acronym(trialAcronym).title(Strings.EMPTY).build();
+        return ImmutableTrialIdentification.builder().trialId(Strings.EMPTY).open(true).acronym(trialAcronym).title(Strings.EMPTY).build();
     }
 
     @NotNull

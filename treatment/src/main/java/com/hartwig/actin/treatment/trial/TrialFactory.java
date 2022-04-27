@@ -66,6 +66,7 @@ public class TrialFactory {
     private static TrialIdentification toIdentification(final TrialDefinitionConfig trialConfig) {
         return ImmutableTrialIdentification.builder()
                 .trialId(trialConfig.trialId())
+                .open(trialConfig.open())
                 .acronym(trialConfig.acronym())
                 .title(trialConfig.title())
                 .build();

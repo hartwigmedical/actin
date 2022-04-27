@@ -75,11 +75,13 @@ public class TreatmentMatchDAO {
         return context.insertInto(TRIALMATCH,
                 TRIALMATCH.TREATMENTMATCHID,
                 TRIALMATCH.CODE,
+                TRIALMATCH.OPEN,
                 TRIALMATCH.ACRONYM,
                 TRIALMATCH.TITLE,
                 TRIALMATCH.ISELIGIBLE)
                 .values(treatmentMatchId,
                         trialMatch.identification().trialId(),
+                        DataUtil.toByte(trialMatch.identification().open()),
                         trialMatch.identification().acronym(),
                         trialMatch.identification().title(),
                         DataUtil.toByte(trialMatch.isPotentiallyEligible()))

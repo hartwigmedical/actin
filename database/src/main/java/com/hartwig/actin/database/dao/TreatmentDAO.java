@@ -59,8 +59,8 @@ class TreatmentDAO {
     }
 
     private int writeTrialIdentification(@NotNull TrialIdentification identification) {
-        return context.insertInto(TRIAL, TRIAL.CODE, TRIAL.ACRONYM, TRIAL.TITLE)
-                .values(identification.trialId(), identification.acronym(), identification.title())
+        return context.insertInto(TRIAL, TRIAL.CODE, TRIAL.OPEN, TRIAL.ACRONYM, TRIAL.TITLE)
+                .values(identification.trialId(), DataUtil.toByte(identification.open()), identification.acronym(), identification.title())
                 .returning(TRIAL.ID)
                 .fetchOne()
                 .getValue(TRIAL.ID);

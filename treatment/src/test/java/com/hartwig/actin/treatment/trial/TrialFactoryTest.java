@@ -35,6 +35,7 @@ public class TrialFactoryTest {
         assertEquals(2, trials.size());
 
         Trial trial = findTrial(trials, "TEST-1");
+        assertTrue(trial.identification().open());
         assertEquals("Acronym-TEST-1", trial.identification().acronym());
         assertEquals("Title for TEST-1", trial.identification().title());
 

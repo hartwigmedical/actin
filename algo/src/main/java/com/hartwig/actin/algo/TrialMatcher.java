@@ -47,9 +47,10 @@ public class TrialMatcher {
         for (Trial trial : trials) {
             Map<Eligibility, Evaluation> trialEvaluations = evaluateEligibility(patient, trial.generalEligibility());
 
-            List<CohortMatch> cohortMatching = Lists.newArrayList();
             boolean passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values());
+
             boolean hasEligibleCohort = false;
+            List<CohortMatch> cohortMatching = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
                 Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
                 boolean isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values()) && !cohort.metadata().blacklist();

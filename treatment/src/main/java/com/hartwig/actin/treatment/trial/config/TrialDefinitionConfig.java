@@ -12,6 +12,8 @@ public abstract class TrialDefinitionConfig implements TrialConfig {
     @Override
     public abstract String trialId();
 
+    public abstract boolean open();
+
     @NotNull
     public abstract String acronym();
 

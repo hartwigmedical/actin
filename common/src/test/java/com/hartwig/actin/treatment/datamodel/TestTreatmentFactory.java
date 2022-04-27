@@ -19,6 +19,7 @@ public final class TestTreatmentFactory {
         return ImmutableTrial.builder()
                 .identification(ImmutableTrialIdentification.builder()
                         .trialId(TEST_TRIAL)
+                        .open(true)
                         .acronym(Strings.EMPTY)
                         .title(Strings.EMPTY)
                         .build())

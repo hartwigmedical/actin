@@ -162,6 +162,7 @@ public final class TrialJson {
         private static TrialIdentification toTrialIdentification(@NotNull JsonObject trial) {
             return ImmutableTrialIdentification.builder()
                     .trialId(string(trial, "trialId"))
+                    .open(bool(trial, "open"))
                     .acronym(string(trial, "acronym"))
                     .title(string(trial, "title"))
                     .build();

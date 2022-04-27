@@ -1,6 +1,7 @@
 {
   "identification": {
     "trialId": "test trial",
+    "open": true,
     "acronym": "TEST-TRIAL",
     "title": "This is a trial to test ACTIN"
   },

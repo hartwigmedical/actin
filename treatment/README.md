@@ -29,6 +29,7 @@ An example trial configuration database can be found [here](src/test/resources/t
 Field | Example
 ---|---
 trialId	| ACTN 2021
+open | 1
 acronym	| ACTIN
 title | ACTIN is a study to evaluate a new treatment decision system  
  

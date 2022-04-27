@@ -15,13 +15,15 @@ public class TrialIdentificationComparatorTest {
     @Test
     public void canSortTrialIdentifications() {
         TrialIdentification identification1 =
-                ImmutableTrialIdentification.builder().trialId("1").acronym("First").title("Real First").build();
+                ImmutableTrialIdentification.builder().trialId("1").open(true).acronym("First").title("Real First").build();
         TrialIdentification identification2 =
-                ImmutableTrialIdentification.builder().trialId("1").acronym("First").title("Wants to be first").build();
-        TrialIdentification identification3 = ImmutableTrialIdentification.builder().trialId("1").acronym("Second").title("Second").build();
-        TrialIdentification identification4 = ImmutableTrialIdentification.builder().trialId("2").acronym("Third").title("Third").build();
+                ImmutableTrialIdentification.builder().trialId("1").open(true).acronym("First").title("Wants to be first").build();
+        TrialIdentification identification3 =
+                ImmutableTrialIdentification.builder().trialId("1").open(true).acronym("Second").title("Second").build();
+        TrialIdentification identification4 =
+                ImmutableTrialIdentification.builder().trialId("2").open(true).acronym("Third").title("Third").build();
 
-        List<TrialIdentification> identifications = Lists.newArrayList(identification3, identification1, identification4, identification2);
+        List<TrialIdentification> identifications = Lists.newArrayList(identification1, identification2, identification3, identification4);
         identifications.sort(new TrialIdentificationComparator());
 
         assertEquals(identification1, identifications.get(0));

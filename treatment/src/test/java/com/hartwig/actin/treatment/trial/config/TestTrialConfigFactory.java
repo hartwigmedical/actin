@@ -39,12 +39,14 @@ public final class TestTrialConfigFactory {
 
         configs.add(ImmutableTrialDefinitionConfig.builder()
                 .trialId(TEST_TRIAL_ID_1)
+                .open(true)
                 .acronym("Acronym-" + TEST_TRIAL_ID_1)
                 .title("Title for " + TEST_TRIAL_ID_1)
                 .build());
 
         configs.add(ImmutableTrialDefinitionConfig.builder()
                 .trialId(TEST_TRIAL_ID_2)
+                .open(true)
                 .acronym("Acronym-" + TEST_TRIAL_ID_2)
                 .title("Title for " + TEST_TRIAL_ID_2)
                 .build());

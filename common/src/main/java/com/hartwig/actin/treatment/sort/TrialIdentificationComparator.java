@@ -20,6 +20,11 @@ public class TrialIdentificationComparator implements Comparator<TrialIdentifica
             return acronymCompare;
         }
 
+        int openCompare = Boolean.compare(identification2.open(), identification1.open());
+        if (openCompare != 0) {
+            return openCompare;
+        }
+
         return identification1.title().compareTo(identification2.title());
     }
 }

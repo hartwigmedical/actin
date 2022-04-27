@@ -34,6 +34,7 @@ public final class EvaluatedTrialFactory {
                     .acronym(trialMatch.identification().acronym())
                     .hasMolecularEvidence(hasEvidenceForTreatment(actinEvidence, trialMatch.identification().acronym()));
 
+            boolean trialIsOpen = trialMatch.identification().open();
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
@@ -44,7 +45,7 @@ public final class EvaluatedTrialFactory {
 
                 trials.add(builder.cohort(cohortMatch.metadata().description())
                         .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
-                        .isOpenAndHasSlotsAvailable(cohortMatch.metadata().open() && cohortMatch.metadata().slotsAvailable())
+                        .isOpenAndHasSlotsAvailable(trialIsOpen && cohortMatch.metadata().open() && cohortMatch.metadata().slotsAvailable())
                         .warnings(Sets.union(cohortWarnings, trialWarnings))
                         .fails(Sets.union(cohortFails, trialFails))
                         .build());
@@ -54,7 +55,7 @@ public final class EvaluatedTrialFactory {
             if (trialMatch.cohorts().isEmpty()) {
                 trials.add(builder.cohort(null)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
-                        .isOpenAndHasSlotsAvailable(true)
+                        .isOpenAndHasSlotsAvailable(trialIsOpen)
                         .warnings(trialWarnings)
                         .fails(trialFails)
                         .build());

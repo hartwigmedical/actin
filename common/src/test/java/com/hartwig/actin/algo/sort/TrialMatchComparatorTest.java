@@ -30,7 +30,12 @@ public class TrialMatchComparatorTest {
     @NotNull
     private static TrialMatch withId(@NotNull String id) {
         return ImmutableTrialMatch.builder()
-                .identification(ImmutableTrialIdentification.builder().trialId(id).acronym(Strings.EMPTY).title(Strings.EMPTY).build())
+                .identification(ImmutableTrialIdentification.builder()
+                        .trialId(id)
+                        .open(true)
+                        .acronym(Strings.EMPTY)
+                        .title(Strings.EMPTY)
+                        .build())
                 .isPotentiallyEligible(true)
                 .build();
     }

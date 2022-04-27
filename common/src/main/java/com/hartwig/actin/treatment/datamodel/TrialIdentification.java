@@ -11,6 +11,8 @@ public abstract class TrialIdentification {
     @NotNull
     public abstract String trialId();
 
+    public abstract boolean open();
+
     @NotNull
     public abstract String acronym();
 

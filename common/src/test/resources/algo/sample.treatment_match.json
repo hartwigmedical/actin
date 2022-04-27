@@ -10,6 +10,7 @@
     {
       "identification": {
         "trialId": "test trial",
+        "open": true,
         "acronym": "TEST-TRIAL",
         "title": "This is an ACTIN test trial"
       },
