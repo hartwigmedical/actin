@@ -56,7 +56,6 @@ class MolecularDAO {
     }
 
     private void writeMolecularDetails(@NotNull String sampleId, @NotNull MolecularRecord record) {
-        // TODO Fix hasReliableQuality
         context.insertInto(MOLECULAR,
                 MOLECULAR.SAMPLEID,
                 MOLECULAR.EXPERIMENTTYPE,
@@ -69,7 +68,7 @@ class MolecularDAO {
                 .values(sampleId,
                         record.type().toString(),
                         record.date(),
-                        DataUtil.toByte(true),
+                        DataUtil.toByte(record.hasReliableQuality()),
                         DataUtil.toByte(record.characteristics().isMicrosatelliteUnstable()),
                         DataUtil.toByte(record.characteristics().isHomologousRepairDeficient()),
                         record.characteristics().tumorMutationalBurden(),
