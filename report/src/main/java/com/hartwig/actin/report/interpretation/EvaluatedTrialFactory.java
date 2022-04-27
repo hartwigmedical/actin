@@ -44,7 +44,7 @@ public final class EvaluatedTrialFactory {
 
                 trials.add(builder.cohort(cohortMatch.metadata().description())
                         .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
-                        .isOpen(cohortMatch.metadata().open())
+                        .isOpenAndHasSlotsAvailable(cohortMatch.metadata().open() && cohortMatch.metadata().slotsAvailable())
                         .warnings(Sets.union(cohortWarnings, trialWarnings))
                         .fails(Sets.union(cohortFails, trialFails))
                         .build());
@@ -54,7 +54,7 @@ public final class EvaluatedTrialFactory {
             if (trialMatch.cohorts().isEmpty()) {
                 trials.add(builder.cohort(null)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
-                        .isOpen(true)
+                        .isOpenAndHasSlotsAvailable(true)
                         .warnings(trialWarnings)
                         .fails(trialFails)
                         .build());

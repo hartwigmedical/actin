@@ -31,31 +31,33 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
-            float width) {
-        List<EvaluatedTrial> openAndEligible = Lists.newArrayList();
+    public static EligibleActinTrialsGenerator forRecruitingTrials(@NotNull TreatmentMatch treatmentMatch,
+            @NotNull MolecularEvidence evidence, float width) {
+        List<EvaluatedTrial> recruitingAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (trial.isPotentiallyEligible() && trial.isOpen()) {
-                openAndEligible.add(trial);
+            if (trial.isPotentiallyEligible() && trial.isOpenAndHasSlotsAvailable()) {
+                recruitingAndEligible.add(trial);
             }
         }
 
-        String title = evidence.actinSource() + " trials that are open and considered eligible (" + openAndEligible.size() + ")";
-        return create(openAndEligible, title, width);
+        String title =
+                evidence.actinSource() + " trials that are recruiting and considered eligible (" + recruitingAndEligible.size() + ")";
+        return create(recruitingAndEligible, title, width);
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
-            float contentWidth) {
-        List<EvaluatedTrial> closedAndEligible = Lists.newArrayList();
+    public static EligibleActinTrialsGenerator forUnavailableTrials(@NotNull TreatmentMatch treatmentMatch,
+            @NotNull MolecularEvidence evidence, float contentWidth) {
+        List<EvaluatedTrial> unavailableAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (trial.isPotentiallyEligible() && !trial.isOpen()) {
-                closedAndEligible.add(trial);
+            if (trial.isPotentiallyEligible() && !trial.isOpenAndHasSlotsAvailable()) {
+                unavailableAndEligible.add(trial);
             }
         }
 
-        String title = evidence.actinSource() + " trials that are closed but considered eligible (" + closedAndEligible.size() + ")";
-        return create(closedAndEligible, title, contentWidth);
+        String title =
+                evidence.actinSource() + " trials that are not recruiting but considered eligible (" + unavailableAndEligible.size() + ")";
+        return create(unavailableAndEligible, title, contentWidth);
     }
 
     @NotNull

@@ -229,12 +229,16 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         table.addCell(Cells.createValue(metadata.cohortId()));
 
         table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createKey("Potentially eligible"));
+        table.addCell(Cells.createKey("Potentially eligible?"));
         table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)));
 
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createKey("Open for inclusion?"));
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.open())));
+
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("Has slots available?"));
+        table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.slotsAvailable())));
 
         if (metadata.blacklist()) {
             table.addCell(Cells.createEmpty());

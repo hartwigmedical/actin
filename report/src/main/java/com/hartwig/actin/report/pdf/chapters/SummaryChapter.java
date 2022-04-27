@@ -183,7 +183,7 @@ public class SummaryChapter implements ReportChapter {
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
                 new MolecularSummaryGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
-                EligibleActinTrialsGenerator.forOpenTrials(report.treatmentMatch(), report.molecular().evidence(), contentWidth()));
+                EligibleActinTrialsGenerator.forRecruitingTrials(report.treatmentMatch(), report.molecular().evidence(), contentWidth()));
 
         if (!report.molecular().evidence().externalTrials().isEmpty()) {
             generators.add(new EligibleExternalTrialsGenerator(report.molecular().evidence().externalTrialSource(),

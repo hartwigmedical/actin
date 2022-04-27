@@ -93,12 +93,14 @@ public class TreatmentMatchDAO {
                 COHORTMATCH.TRIALMATCHID,
                 COHORTMATCH.CODE,
                 COHORTMATCH.OPEN,
+                COHORTMATCH.SLOTSAVAILABLE,
                 COHORTMATCH.BLACKLIST,
                 COHORTMATCH.DESCRIPTION,
                 TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
                         cohortMatch.metadata().cohortId(),
                         DataUtil.toByte(cohortMatch.metadata().open()),
+                        DataUtil.toByte(cohortMatch.metadata().slotsAvailable()),
                         DataUtil.toByte(cohortMatch.metadata().blacklist()),
                         cohortMatch.metadata().description(),
                         DataUtil.toByte(cohortMatch.isPotentiallyEligible()))

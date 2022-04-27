@@ -39,7 +39,7 @@ public class EvaluatedTrialComparatorTest {
                 .hasMolecularEvidence(hasMolecularEvidence)
                 .cohort(cohort)
                 .isPotentiallyEligible(false)
-                .isOpen(false)
+                .isOpenAndHasSlotsAvailable(false)
                 .build();
     }
 }

@@ -51,7 +51,7 @@ public class TrialMatchingChapter implements ReportChapter {
     private void addTrialMatchingOverview(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(report.treatmentMatch(),
+        List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forUnavailableTrials(report.treatmentMatch(),
                 report.molecular().evidence(),
                 contentWidth()),
                 IneligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), report.molecular().evidence(), contentWidth()));

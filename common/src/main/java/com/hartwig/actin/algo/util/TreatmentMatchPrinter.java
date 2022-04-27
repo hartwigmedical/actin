@@ -39,7 +39,7 @@ public class TreatmentMatchPrinter {
         printer.print("Eligible trials: " + trialString(matchSummary.eligibleTrialMap()));
         printer.print("Cohorts: " + matchSummary.cohortCount());
         printer.print("Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap()));
-        printer.print("Eligible and open cohorts: " + openCohortString(matchSummary.eligibleTrialMap()));
+        printer.print("Eligible and recruiting cohorts: " + recruitingCohortString(matchSummary.eligibleTrialMap()));
 
         List<EvaluationSummary> summaries = Lists.newArrayList();
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
@@ -92,19 +92,19 @@ public class TreatmentMatchPrinter {
     }
 
     @NotNull
-    private static String openCohortString(@NotNull Map<TrialIdentification, List<CohortMetadata>> eligibleTrialMap) {
-        int openCohortCount = 0;
+    private static String recruitingCohortString(@NotNull Map<TrialIdentification, List<CohortMetadata>> eligibleTrialMap) {
+        int recruitingCohortCount = 0;
         StringJoiner joiner = new StringJoiner(", ");
         for (Map.Entry<TrialIdentification, List<CohortMetadata>> entry : eligibleTrialMap.entrySet()) {
             for (CohortMetadata cohort : entry.getValue()) {
-                if (cohort.open()) {
-                    openCohortCount++;
+                if (cohort.open() && cohort.slotsAvailable()) {
+                    recruitingCohortCount++;
                     joiner.add(cohortName(entry.getKey(), cohort));
                 }
             }
         }
 
-        return openCohortCount > 0 ? openCohortCount + " (" + joiner + ")" : "None";
+        return recruitingCohortCount > 0 ? recruitingCohortCount + " (" + joiner + ")" : "None";
     }
 
     @NotNull

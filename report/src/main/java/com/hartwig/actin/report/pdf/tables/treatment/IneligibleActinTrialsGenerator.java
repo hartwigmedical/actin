@@ -27,7 +27,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final float trialColWidth;
     private final float acronymColWidth;
     private final float cohortColWidth;
-    private final float openColWidth;
+    private final float recruitingColWidth;
     private final float ineligibilityReasonColWith;
 
     @NotNull
@@ -43,27 +43,27 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         float trialColWidth = contentWidth / 10;
         float acronymColWidth = contentWidth / 10;
         float cohortColWidth = contentWidth / 3;
-        float openColWidth = contentWidth / 10;
-        float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + openColWidth);
+        float recruitingColWidth = contentWidth / 10;
+        float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + recruitingColWidth);
 
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
                 evidence.actinSource(),
                 trialColWidth,
                 acronymColWidth,
                 cohortColWidth,
-                openColWidth,
+                recruitingColWidth,
                 ineligibilityReasonColWidth);
     }
 
     private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
-            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float openColWidth,
+            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float recruitingColWidth,
             final float ineligibilityReasonColWith) {
         this.trials = trials;
         this.source = source;
         this.trialColWidth = trialColWidth;
         this.acronymColWidth = acronymColWidth;
         this.cohortColWidth = cohortColWidth;
-        this.openColWidth = openColWidth;
+        this.recruitingColWidth = recruitingColWidth;
         this.ineligibilityReasonColWith = ineligibilityReasonColWith;
     }
 
@@ -76,19 +76,20 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, openColWidth, ineligibilityReasonColWith);
+        Table table =
+                Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, recruitingColWidth, ineligibilityReasonColWith);
 
         table.addHeaderCell(Cells.createHeader("Trial"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
-        table.addHeaderCell(Cells.createHeader("Open"));
+        table.addHeaderCell(Cells.createHeader("Recruiting"));
         table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
 
         for (EvaluatedTrial trial : trials) {
             table.addCell(Cells.createContent(trial.trialId()));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
+            table.addCell(Cells.createContentYesNo(trial.isOpenAndHasSlotsAvailable() ? "Yes" : "No"));
             table.addCell(Cells.createContent(concat(trial.fails())));
         }
 
