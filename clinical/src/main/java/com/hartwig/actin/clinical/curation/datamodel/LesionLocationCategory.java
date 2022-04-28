@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.datamodel;
 
 public enum LesionLocationCategory {
     BONE,

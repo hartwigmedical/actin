@@ -2,6 +2,8 @@ package com.hartwig.actin.clinical.curation.config;
 
 import java.util.Map;
 
+import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

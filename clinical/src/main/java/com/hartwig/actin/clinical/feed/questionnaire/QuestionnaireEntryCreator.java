@@ -13,7 +13,8 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
     @NotNull
     @Override
     public QuestionnaireEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableQuestionnaireEntry.builder().subject(line.trimmed("subject"))
+        return ImmutableQuestionnaireEntry.builder()
+                .subject(line.trimmed("subject"))
                 .authored(line.date("authored"))
                 .description(line.string("description"))
                 .itemText(line.string("item_text"))

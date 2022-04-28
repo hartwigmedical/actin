@@ -147,7 +147,7 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<MolecularTestConfig> readMolecularTestConfigs(@NotNull  String tsv) throws IOException {
+    private static List<MolecularTestConfig> readMolecularTestConfigs(@NotNull String tsv) throws IOException {
         List<MolecularTestConfig> configs = CurationConfigFile.read(tsv, new MolecularTestConfigFactory());
         LOGGER.info(" Read {} molecular test configs from {}", configs.size(), tsv);
         return configs;

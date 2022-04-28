@@ -85,7 +85,7 @@ public final class QuestionnaireExtraction {
     @Nullable
     private static List<String> toSecondaryPrimaries(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping,
             @NotNull QuestionnaireKey secondaryPrimaryKey) {
-        String secondaryPrimary =value(entry, mapping.get(secondaryPrimaryKey));
+        String secondaryPrimary = value(entry, mapping.get(secondaryPrimaryKey));
         if (secondaryPrimary == null) {
             return null;
         }

@@ -13,7 +13,8 @@ public class EncounterEntryCreator implements FeedEntryCreator<EncounterEntry> {
     @NotNull
     @Override
     public EncounterEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableEncounterEntry.builder().subject(line.trimmed("subject"))
+        return ImmutableEncounterEntry.builder()
+                .subject(line.trimmed("subject"))
                 .classDisplay(line.string("class_display"))
                 .periodStart(line.date("period_start"))
                 .periodEnd(line.date("period_end"))

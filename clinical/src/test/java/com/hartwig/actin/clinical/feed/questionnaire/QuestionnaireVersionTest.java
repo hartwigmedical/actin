@@ -30,7 +30,8 @@ public class QuestionnaireVersionTest {
 
     @NotNull
     private static QuestionnaireEntry entry(@NotNull String questionnaire) {
-        return ImmutableQuestionnaireEntry.builder().from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
+        return ImmutableQuestionnaireEntry.builder()
+                .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
                 .itemAnswerValueValueString(questionnaire)
                 .build();
     }

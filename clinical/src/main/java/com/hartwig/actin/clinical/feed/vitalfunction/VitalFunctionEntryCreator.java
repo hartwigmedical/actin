@@ -17,7 +17,8 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
     @NotNull
     @Override
     public VitalFunctionEntry fromLine(@NotNull final FeedLine line) {
-        return ImmutableVitalFunctionEntry.builder().subject(line.trimmed("subject"))
+        return ImmutableVitalFunctionEntry.builder()
+                .subject(line.trimmed("subject"))
                 .effectiveDateTime(line.date("effectiveDateTime"))
                 .codeDisplayOriginal(line.string("code_display_original"))
                 .componentCodeDisplay(line.string("component_code_display"))
