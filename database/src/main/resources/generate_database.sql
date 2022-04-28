@@ -233,6 +233,7 @@ CREATE TABLE molecular
     experimentType varchar(50) NOT NULL,
     experimentDate DATE,
     hasReliableQuality BOOLEAN NOT NULL,
+    purity double precision,
     isMicrosatelliteUnstable BOOLEAN,
     isHomologousRepairDeficient BOOLEAN,
     tumorMutationalBurden double precision,
