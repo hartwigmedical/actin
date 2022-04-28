@@ -34,15 +34,15 @@ public class LabInterpretationTest {
     @Test
     public void canInterpretLabValues() {
         Multimap<LabMeasurement, LabValue> measurements = ArrayListMultimap.create();
-        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(1)).build());
-        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(5)).build());
-        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(3)).build());
-        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(2)).build());
-        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(4)).build());
-        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(4)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(1)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(5)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(3)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(2)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(4)).build());
+        measurements.put(LabMeasurement.ALBUMIN, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(4)).build());
 
-        measurements.put(LabMeasurement.THROMBOCYTES_ABS, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(2)).build());
-        measurements.put(LabMeasurement.THROMBOCYTES_ABS, LabInterpretationTestUtil.builder().date(TEST_DATE.minusDays(3)).build());
+        measurements.put(LabMeasurement.THROMBOCYTES_ABS, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(2)).build());
+        measurements.put(LabMeasurement.THROMBOCYTES_ABS, LabInterpretationTestFactory.builder().date(TEST_DATE.minusDays(3)).build());
 
         LabInterpretation interpretation = LabInterpretation.fromMeasurements(measurements);
 

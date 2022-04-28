@@ -87,7 +87,8 @@ class OrangeMutationMapper implements MutationMapper {
         }
 
         if (results.isEmpty()) {
-            throw new IllegalStateException("Could not find SERVE-bridge record for codon mapping of mutation: " + gene + " (" + codon + ")");
+            throw new IllegalStateException(
+                    "Could not find SERVE-bridge record for codon mapping of mutation: " + gene + " (" + codon + ")");
         }
 
         return results;

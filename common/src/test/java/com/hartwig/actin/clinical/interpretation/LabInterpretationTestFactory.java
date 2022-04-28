@@ -8,9 +8,9 @@ import com.hartwig.actin.clinical.datamodel.LabUnit;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-final class LabInterpretationTestUtil {
+final class LabInterpretationTestFactory {
 
-    private LabInterpretationTestUtil() {
+    private LabInterpretationTestFactory() {
     }
 
     @NotNull

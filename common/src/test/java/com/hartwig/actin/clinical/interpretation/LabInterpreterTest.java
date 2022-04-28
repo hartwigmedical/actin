@@ -26,8 +26,8 @@ public class LabInterpreterTest {
         LabMeasurement firstValue = LabInterpreter.MAPPINGS.get(firstKey);
 
         List<LabValue> values = Lists.newArrayList();
-        values.add(LabInterpretationTestUtil.builder().code(firstKey.code()).unit(firstKey.defaultUnit()).build());
-        values.add(LabInterpretationTestUtil.builder().code(firstValue.code()).unit(firstValue.defaultUnit()).build());
+        values.add(LabInterpretationTestFactory.builder().code(firstKey.code()).unit(firstKey.defaultUnit()).build());
+        values.add(LabInterpretationTestFactory.builder().code(firstValue.code()).unit(firstValue.defaultUnit()).build());
 
         LabInterpretation interpretation = LabInterpreter.interpret(values);
 

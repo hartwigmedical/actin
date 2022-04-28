@@ -42,5 +42,4 @@ public class DisruptionComparatorTest {
                 .details(details)
                 .build();
     }
-
 }

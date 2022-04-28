@@ -164,7 +164,7 @@ public class OrangeEvidenceEvaluatorTest {
     private static ServeRecord withRuleOnGene(@NotNull EligibilityRule rule, @Nullable String gene) {
         return withRuleAndGeneAndMutation(rule, gene, null);
     }
-    
+
     @NotNull
     private static ServeRecord withRuleAndGeneAndMutation(@NotNull EligibilityRule rule, @Nullable String gene, @Nullable String mutation) {
         return ImmutableServeRecord.builder().trial(Strings.EMPTY).rule(rule).gene(gene).mutation(mutation).isUsedAsInclusion(true).build();

@@ -12,7 +12,7 @@ public class DriverLikelihoodComparator implements Comparator<DriverLikelihood> 
     public int compare(@NotNull DriverLikelihood driverLikelihood1, @NotNull DriverLikelihood driverLikelihood2) {
         switch (driverLikelihood1) {
             case HIGH: {
-                return  driverLikelihood2 == DriverLikelihood.HIGH ? 0 : -1;
+                return driverLikelihood2 == DriverLikelihood.HIGH ? 0 : -1;
             }
             case MEDIUM: {
                 if (driverLikelihood2 == DriverLikelihood.HIGH) {
@@ -22,9 +22,11 @@ public class DriverLikelihoodComparator implements Comparator<DriverLikelihood> 
                 } else {
                     return -1;
                 }
-            } case LOW: {
+            }
+            case LOW: {
                 return driverLikelihood2 == DriverLikelihood.LOW ? 0 : 1;
-            } default: {
+            }
+            default: {
                 throw new IllegalStateException("Cannot compare driverLikelihood: " + driverLikelihood1);
             }
         }

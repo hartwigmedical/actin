@@ -49,8 +49,7 @@ public class OrangeInterpreter {
 
     @NotNull
     public static OrangeInterpreter create(@NotNull List<ServeRecord> records, @NotNull List<ExternalTreatmentMapping> mappings) {
-        return new OrangeInterpreter(OrangeEventMapper.fromServeRecords(records),
-                OrangeEvidenceFactory.create(records, mappings));
+        return new OrangeInterpreter(OrangeEventMapper.fromServeRecords(records), OrangeEvidenceFactory.create(records, mappings));
     }
 
     @VisibleForTesting
