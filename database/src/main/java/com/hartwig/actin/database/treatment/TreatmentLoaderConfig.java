@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface TreatmentLoaderConfig extends DatabaseLoaderConfig  {
+public interface TreatmentLoaderConfig extends DatabaseLoaderConfig {
 
     Logger LOGGER = LogManager.getLogger(TreatmentLoaderConfig.class);
 
