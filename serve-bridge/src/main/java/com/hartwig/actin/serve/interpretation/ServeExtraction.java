@@ -59,24 +59,29 @@ public final class ServeExtraction {
             }
             case MSI_SIGNATURE: {
                 return "MSI high";
-            } case HRD_SIGNATURE: {
+            }
+            case HRD_SIGNATURE: {
                 return "HRD pos";
-            } case TMB_OF_AT_LEAST_X: {
+            }
+            case TMB_OF_AT_LEAST_X: {
                 if (function.parameters().size() != 1) {
                     throw new IllegalStateException("Cannot determine TMB cutoff for rule: " + function);
                 }
                 return "TMB >= " + function.parameters().get(0);
-            } case TML_OF_AT_LEAST_X: {
+            }
+            case TML_OF_AT_LEAST_X: {
                 if (function.parameters().size() != 1) {
                     throw new IllegalStateException("Cannot determine TML cutoff for rule: " + function);
                 }
                 return "TML >= " + function.parameters().get(0);
-            } case TML_OF_AT_MOST_X: {
+            }
+            case TML_OF_AT_MOST_X: {
                 if (function.parameters().size() != 1) {
                     throw new IllegalStateException("Cannot determine TML cutoff for rule: " + function);
                 }
                 return "TML <= " + function.parameters().get(0);
-            } case HAS_HLA_A_TYPE_X: {
+            }
+            case HAS_HLA_A_TYPE_X: {
                 if (function.parameters().size() != 1) {
                     throw new IllegalStateException("Cannot determine required HLA type for rule: " + function);
                 }
