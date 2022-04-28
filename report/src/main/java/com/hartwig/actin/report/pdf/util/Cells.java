@@ -88,7 +88,7 @@ public final class Cells {
 
     @NotNull
     public static Cell createContentWarn(@NotNull String text) {
-        Cell cell =  createContent(text);
+        Cell cell = createContent(text);
         cell.setFontColor(Styles.PALETTE_WARN);
         return cell;
     }

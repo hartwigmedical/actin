@@ -58,7 +58,7 @@ public class MedicationGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String dosage(@NotNull  Medication medication) {
+    private static String dosage(@NotNull Medication medication) {
         String dosageMin = medication.dosageMin() != null ? Formats.twoDigitNumber(medication.dosageMin()) : "?";
         String dosageMax = medication.dosageMax() != null ? Formats.twoDigitNumber(medication.dosageMax()) : "?";
 
@@ -70,7 +70,7 @@ public class MedicationGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String frequency(@NotNull  Medication medication) {
+    private static String frequency(@NotNull Medication medication) {
         String result = medication.frequency() != null ? Formats.twoDigitNumber(medication.frequency()) : "?";
         if (medication.frequencyUnit() != null) {
             result += (" / " + medication.frequencyUnit());
