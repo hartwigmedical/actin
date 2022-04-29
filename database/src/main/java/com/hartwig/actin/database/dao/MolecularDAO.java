@@ -16,7 +16,6 @@ import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -92,11 +91,9 @@ class MolecularDAO {
         }
     }
 
-    private void writeInactivatedGenes(@NotNull String sampleId, @NotNull Set<InactivatedGene> inactivatedGenes) {
-        for (InactivatedGene inactivatedGene : inactivatedGenes) {
-            context.insertInto(INACTIVATEDGENE, INACTIVATEDGENE.SAMPLEID, INACTIVATEDGENE.GENE, INACTIVATEDGENE.HASBEENDELETED)
-                    .values(sampleId, inactivatedGene.gene(), DataUtil.toByte(inactivatedGene.hasBeenDeleted()))
-                    .execute();
+    private void writeInactivatedGenes(@NotNull String sampleId, @NotNull Set<String> inactivatedGenes) {
+        for (String inactivatedGene : inactivatedGenes) {
+            context.insertInto(INACTIVATEDGENE, INACTIVATEDGENE.SAMPLEID, INACTIVATEDGENE.GENE).values(sampleId, inactivatedGene).execute();
         }
     }
 

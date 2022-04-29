@@ -15,7 +15,6 @@ import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +44,7 @@ public class MolecularPrinter {
         printer.print(" Purity: " + formatPercentage(record.characteristics().purity()));
         printer.print(" Mutations: " + mutationString(record.mappedEvents().mutations()));
         printer.print(" Activated genes: " + concat(record.mappedEvents().activatedGenes()));
-        printer.print(" Inactivated genes: " + inactivatedGeneString(record.mappedEvents().inactivatedGenes()));
+        printer.print(" Inactivated genes: " + concat(record.mappedEvents().inactivatedGenes()));
         printer.print(" Amplified genes: " + concat(record.mappedEvents().amplifiedGenes()));
         printer.print(" Wildtype genes: " + concat(record.mappedEvents().wildtypeGenes()));
         printer.print(" Fusions: " + fusionString(record.mappedEvents().fusions()));
@@ -91,15 +90,6 @@ public class MolecularPrinter {
         Set<String> strings = Sets.newHashSet();
         for (GeneMutation mutation : mutations) {
             strings.add(mutation.gene() + " " + mutation.mutation());
-        }
-        return concat(strings);
-    }
-
-    @NotNull
-    private static String inactivatedGeneString(@NotNull Iterable<InactivatedGene> inactivatedGenes) {
-        Set<String> strings = Sets.newHashSet();
-        for (InactivatedGene inactivatedGene : inactivatedGenes) {
-            strings.add(inactivatedGene.gene());
         }
         return concat(strings);
     }

@@ -63,9 +63,7 @@ import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
@@ -308,7 +306,7 @@ public class MolecularRecordJson {
             return ImmutableMappedActinEvents.builder()
                     .mutations(toGeneMutations(array(mappedEvents, "mutations")))
                     .activatedGenes(stringList(mappedEvents, "activatedGenes"))
-                    .inactivatedGenes(toInactivatedGenes(array(mappedEvents, "inactivatedGenes")))
+                    .inactivatedGenes(stringList(mappedEvents, "inactivatedGenes"))
                     .amplifiedGenes(stringList(mappedEvents, "amplifiedGenes"))
                     .wildtypeGenes(stringList(mappedEvents, "wildtypeGenes"))
                     .fusions(toFusionGenes(array(mappedEvents, "fusions")))
@@ -326,19 +324,6 @@ public class MolecularRecordJson {
                         .build());
             }
             return geneMutations;
-        }
-
-        @NotNull
-        private static Set<InactivatedGene> toInactivatedGenes(@NotNull JsonArray inactivatedGeneArray) {
-            Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
-            for (JsonElement element : inactivatedGeneArray) {
-                JsonObject inactivatedGene = element.getAsJsonObject();
-                inactivatedGenes.add(ImmutableInactivatedGene.builder()
-                        .gene(string(inactivatedGene, "gene"))
-                        .hasBeenDeleted(bool(inactivatedGene, "hasBeenDeleted"))
-                        .build());
-            }
-            return inactivatedGenes;
         }
 
         @NotNull

@@ -9,9 +9,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
@@ -90,13 +88,11 @@ class OrangeEventMapper {
     }
 
     @NotNull
-    private static Set<InactivatedGene> mapInactivatedGenes(@NotNull List<ProtectEvidence> evidences) {
-        Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
+    private static Set<String> mapInactivatedGenes(@NotNull List<ProtectEvidence> evidences) {
+        Set<String> inactivatedGenes = Sets.newHashSet();
         for (ProtectEvidence evidence : evidences) {
             if (INACTIVATION_TYPES.contains(evidence.sources().iterator().next().type())) {
-                boolean hasBeenDeleted = evidence.event().equals("full loss") || evidence.event().equals("partial loss");
-
-                inactivatedGenes.add(ImmutableInactivatedGene.builder().gene(evidence.gene()).hasBeenDeleted(hasBeenDeleted).build());
+                inactivatedGenes.add(evidence.gene());
             }
         }
         return inactivatedGenes;

@@ -171,14 +171,8 @@
       "ACT"
     ],
     "inactivatedGenes": [
-      {
-        "gene": "NF1",
-        "hasBeenDeleted": false
-      },
-      {
-        "gene": "PTEN",
-        "hasBeenDeleted": true
-      }
+      "NF1",
+      "PTEN"
     ],
     "amplifiedGenes": [
       "MYC"

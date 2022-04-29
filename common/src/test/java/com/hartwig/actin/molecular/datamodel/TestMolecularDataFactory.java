@@ -27,9 +27,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
@@ -232,7 +230,7 @@ public final class TestMolecularDataFactory {
         return ImmutableMappedActinEvents.builder()
                 .mutations(createTestMutations())
                 .activatedGenes(Sets.newHashSet("BRAF"))
-                .inactivatedGenes(createTestInactivatedGenes())
+                .inactivatedGenes(Sets.newHashSet("PTEN", "CDKN2A"))
                 .amplifiedGenes(Sets.newHashSet())
                 .wildtypeGenes(Sets.newHashSet())
                 .fusions(Lists.newArrayList())
@@ -246,16 +244,6 @@ public final class TestMolecularDataFactory {
         mutations.add(ImmutableGeneMutation.builder().gene("BRAF").mutation("V600E").build());
 
         return mutations;
-    }
-
-    @NotNull
-    private static Set<InactivatedGene> createTestInactivatedGenes() {
-        Set<InactivatedGene> inactivatedGenes = Sets.newHashSet();
-
-        inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("PTEN").hasBeenDeleted(false).build());
-        inactivatedGenes.add(ImmutableInactivatedGene.builder().gene("CDKN2A").hasBeenDeleted(false).build());
-
-        return inactivatedGenes;
     }
 
     @NotNull

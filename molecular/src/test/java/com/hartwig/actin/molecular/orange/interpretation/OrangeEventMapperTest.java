@@ -1,14 +1,11 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
@@ -73,26 +70,13 @@ public class OrangeEventMapperTest {
     public void canExtractInactivatedGenes() {
         OrangeEventMapper extractor = createTestEventExtractor();
 
-        ProtectEvidence deletedEvidence =
-                createTestBuilder().gene("gene").event("full loss").addSources(withType(EvidenceType.INACTIVATION)).build();
+        ProtectEvidence deletedEvidence = createTestBuilder().gene("gene").addSources(withType(EvidenceType.INACTIVATION)).build();
         MappedActinEvents deletedExtraction = extractor.map(withEvidence(deletedEvidence));
 
         assertEquals(1, deletedExtraction.inactivatedGenes().size());
-        InactivatedGene inactivatedGene1 = deletedExtraction.inactivatedGenes().iterator().next();
-        assertEquals("gene", inactivatedGene1.gene());
-        assertTrue(inactivatedGene1.hasBeenDeleted());
+        assertEquals("gene", deletedExtraction.inactivatedGenes().iterator().next());
 
-        ProtectEvidence disruptedEvidence =
-                createTestBuilder().gene("gene").event("homozygous disruption").addSources(withType(EvidenceType.INACTIVATION)).build();
-        MappedActinEvents disruptedExtraction = extractor.map(withEvidence(disruptedEvidence));
-
-        assertEquals(1, disruptedExtraction.inactivatedGenes().size());
-        InactivatedGene inactivatedGene2 = disruptedExtraction.inactivatedGenes().iterator().next();
-        assertEquals("gene", inactivatedGene2.gene());
-        assertFalse(inactivatedGene2.hasBeenDeleted());
-
-        ProtectEvidence noEvidence =
-                createTestBuilder().gene("gene").event("full gain").addSources(withType(EvidenceType.AMPLIFICATION)).build();
+        ProtectEvidence noEvidence = createTestBuilder().gene("gene").addSources(withType(EvidenceType.AMPLIFICATION)).build();
         MappedActinEvents noExtraction = extractor.map(withEvidence(noEvidence));
 
         assertEquals(0, noExtraction.inactivatedGenes().size());

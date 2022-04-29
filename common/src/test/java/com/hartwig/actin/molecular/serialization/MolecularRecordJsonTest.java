@@ -29,7 +29,6 @@ import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.InactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
@@ -244,10 +243,8 @@ public class MolecularRecordJsonTest {
         assertEquals("ACT", events.activatedGenes().iterator().next());
 
         assertEquals(2, events.inactivatedGenes().size());
-        InactivatedGene nf1 = findInactivatedGene(events.inactivatedGenes(), "NF1");
-        assertFalse(nf1.hasBeenDeleted());
-        InactivatedGene pten = findInactivatedGene(events.inactivatedGenes(), "PTEN");
-        assertTrue(pten.hasBeenDeleted());
+        assertTrue(events.inactivatedGenes().contains("NF1"));
+        assertTrue(events.inactivatedGenes().contains("PTEN"));
 
         assertEquals(1, events.amplifiedGenes().size());
         assertEquals("MYC", events.amplifiedGenes().iterator().next());
@@ -259,16 +256,5 @@ public class MolecularRecordJsonTest {
         FusionGene fusionGene = events.fusions().iterator().next();
         assertEquals("EML4", fusionGene.fiveGene());
         assertEquals("ALK", fusionGene.threeGene());
-    }
-
-    @NotNull
-    private static InactivatedGene findInactivatedGene(@NotNull Iterable<InactivatedGene> inactivatedGenes, @NotNull String geneToFind) {
-        for (InactivatedGene inactivatedGene : inactivatedGenes) {
-            if (inactivatedGene.gene().equals(geneToFind)) {
-                return inactivatedGene;
-            }
-        }
-
-        throw new IllegalStateException("Could not find inactivated gene: " + geneToFind);
     }
 }

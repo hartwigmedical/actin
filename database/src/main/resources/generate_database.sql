@@ -263,7 +263,6 @@ CREATE TABLE inactivatedGene
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     gene varchar(50) NOT NULL,
-    hasBeenDeleted BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 

@@ -14,7 +14,6 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableFusionGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableInactivatedGene;
 import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,15 +52,10 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withInactivatedGene(@NotNull String gene, boolean hasBeenDeleted) {
+    public static PatientRecord withInactivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder()
-                        .inactivatedGenes(Sets.newHashSet(ImmutableInactivatedGene.builder()
-                                .gene(gene)
-                                .hasBeenDeleted(hasBeenDeleted)
-                                .build()))
-                        .build())
+                .mappedEvents(ImmutableMappedActinEvents.builder().inactivatedGenes(Sets.newHashSet(gene)).build())
                 .build());
     }
 

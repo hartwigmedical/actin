@@ -17,7 +17,7 @@ public abstract class MappedActinEvents {
     public abstract Set<String> activatedGenes();
 
     @NotNull
-    public abstract Set<InactivatedGene> inactivatedGenes();
+    public abstract Set<String> inactivatedGenes();
 
     @NotNull
     public abstract Set<String> amplifiedGenes();
