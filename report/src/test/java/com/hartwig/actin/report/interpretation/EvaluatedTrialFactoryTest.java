@@ -43,9 +43,9 @@ public class EvaluatedTrialFactoryTest {
         EvaluatedTrial cohortC = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C");
         assertFalse(cohortC.hasMolecularEvidence());
         assertFalse(cohortC.isPotentiallyEligible());
-        assertTrue(cohortC.isOpenAndHasSlotsAvailable());
+        assertFalse(cohortC.isOpenAndHasSlotsAvailable());
         assertTrue(cohortC.warnings().isEmpty());
-        assertFalse(cohortC.fails().isEmpty());
+        assertTrue(cohortC.fails().isEmpty());
 
         EvaluatedTrial trial2 = findByTrialAndCohort(trials, "TEST-TRIAL-2", null);
         assertFalse(trial2.hasMolecularEvidence());

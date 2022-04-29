@@ -50,30 +50,30 @@ public class TrialMatcher {
             boolean passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values());
 
             boolean hasEligibleCohort = false;
-            List<CohortMatch> cohortMatching = Lists.newArrayList();
+            List<CohortMatch> cohortMatches = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
                 Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
-                boolean isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values()) && !cohort.metadata().blacklist();
+                boolean isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values());
 
                 if (isPotentiallyEligible) {
                     hasEligibleCohort = true;
                 }
 
-                cohortMatching.add(ImmutableCohortMatch.builder()
+                cohortMatches.add(ImmutableCohortMatch.builder()
                         .metadata(cohort.metadata())
                         .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations)
                         .evaluations(cohortEvaluations)
                         .build());
             }
 
-            cohortMatching.sort(new CohortMatchComparator());
+            cohortMatches.sort(new CohortMatchComparator());
 
             boolean isEligible = passesAllTrialEvaluations && (trial.cohorts().isEmpty() || hasEligibleCohort);
             trialMatches.add(ImmutableTrialMatch.builder()
                     .identification(trial.identification())
                     .isPotentiallyEligible(isEligible)
                     .evaluations(trialEvaluations)
-                    .cohorts(cohortMatching)
+                    .cohorts(cohortMatches)
                     .build());
         }
 
