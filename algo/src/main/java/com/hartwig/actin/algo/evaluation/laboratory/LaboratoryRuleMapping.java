@@ -96,8 +96,6 @@ public final class LaboratoryRuleMapping {
 
         map.put(EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X,
                 hasLimitedLabValueCreator(LabMeasurement.CALCIUM, LabUnit.MILLIGRAMS_PER_DECILITER, referenceDateProvider));
-        map.put(EligibilityRule.HAS_CALCIUM_MMOL_PER_L_OF_AT_MOST_X,
-                hasLimitedLabValueCreator(LabMeasurement.CALCIUM, LabUnit.MILLIMOLES_PER_LITER, referenceDateProvider));
         map.put(EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X,
                 hasLimitedLabValueCreator(LabMeasurement.IONIZED_CALCIUM, referenceDateProvider));
         map.put(EligibilityRule.HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X,

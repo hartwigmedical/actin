@@ -57,7 +57,6 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator(evaluationDate));
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator(evaluationDate));
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_PAIN_MEDICATION, getsPainMedicationCreator(evaluationDate));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
@@ -125,21 +124,6 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsImmunosuppressantMedicationCreator(@NotNull LocalDate evaluationDate) {
         return getsActiveMedicationWithExactCategoryCreator(evaluationDate, SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS);
-    }
-
-    @NotNull
-    private static FunctionCreator getsPainMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return function -> {
-            EvaluationFunction categoryFunction = getsActiveMedicationWithExactCategoryCreator(evaluationDate,
-                    PAIN_MEDICATION_CATEGORY_1,
-                    PAIN_MEDICATION_CATEGORY_2).create(function);
-            EvaluationFunction nameFunction = getsActiveMedicationWithNamesCreator(evaluationDate,
-                    PAIN_MEDICATION_NAME_1,
-                    PAIN_MEDICATION_NAME_2,
-                    PAIN_MEDICATION_NAME_3,
-                    PAIN_MEDICATION_NAME_4).create(function);
-            return new Or(Lists.newArrayList(categoryFunction, nameFunction));
-        };
     }
 
     @NotNull
