@@ -23,7 +23,9 @@ public abstract class EvaluatedTrial {
 
     public abstract boolean isPotentiallyEligible();
 
-    public abstract boolean isOpenAndHasSlotsAvailable();
+    public abstract boolean isOpen();
+
+    public abstract boolean hasSlotsAvailable();
 
     @NotNull
     public abstract Set<String> warnings();

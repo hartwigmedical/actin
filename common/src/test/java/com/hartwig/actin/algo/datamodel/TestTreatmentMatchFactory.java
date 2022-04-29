@@ -111,7 +111,7 @@ public final class TestTreatmentMatchFactory {
                 .evaluations(createTestCohortEvaluations())
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("B", true, true, false))
+                .metadata(createTestMetadata("B", true, false, false))
                 .isPotentiallyEligible(true)
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()

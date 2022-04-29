@@ -24,6 +24,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final List<EvaluatedTrial> trials;
     @NotNull
     private final String title;
+
     private final float trialColWidth;
     private final float acronymColWidth;
     private final float cohortColWidth;
@@ -31,32 +32,30 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forRecruitingTrials(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull MolecularEvidence evidence, float width) {
+    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
+            float width) {
         List<EvaluatedTrial> recruitingAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (trial.isPotentiallyEligible() && trial.isOpenAndHasSlotsAvailable()) {
+            if (trial.isPotentiallyEligible() && trial.isOpen()) {
                 recruitingAndEligible.add(trial);
             }
         }
 
-        String title =
-                evidence.actinSource() + " trials that are recruiting and considered eligible (" + recruitingAndEligible.size() + ")";
+        String title = evidence.actinSource() + " trials that are open and considered eligible (" + recruitingAndEligible.size() + ")";
         return create(recruitingAndEligible, title, width);
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forUnavailableTrials(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull MolecularEvidence evidence, float contentWidth) {
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
+            float contentWidth) {
         List<EvaluatedTrial> unavailableAndEligible = Lists.newArrayList();
         for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (trial.isPotentiallyEligible() && !trial.isOpenAndHasSlotsAvailable()) {
+            if (trial.isPotentiallyEligible() && !trial.isOpen()) {
                 unavailableAndEligible.add(trial);
             }
         }
 
-        String title =
-                evidence.actinSource() + " trials that are not recruiting but considered eligible (" + unavailableAndEligible.size() + ")";
+        String title = evidence.actinSource() + " trials that are closed but considered eligible (" + unavailableAndEligible.size() + ")";
         return create(unavailableAndEligible, title, contentWidth);
     }
 
@@ -105,12 +104,22 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Molecular"));
         table.addHeaderCell(Cells.createHeader("Warnings"));
 
+        boolean hasTrialWithNoSlots = false;
         for (EvaluatedTrial trial : trials) {
-            table.addCell(Cells.createContent(trial.trialId()));
+            String addon = Strings.EMPTY;
+            if (trial.isOpen() && !trial.hasSlotsAvailable()) {
+                addon = " *";
+                hasTrialWithNoSlots = true;
+            }
+            table.addCell(Cells.createContent(trial.trialId() + addon));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
             table.addCell(Cells.createContentYesNo(trial.hasMolecularEvidence() ? "Yes" : "No"));
             table.addCell(Cells.createContent(concat(trial.warnings())));
+        }
+
+        if (hasTrialWithNoSlots) {
+            table.addCell(Cells.createSpanningSubNote(" * Cohort has no available slots", table));
         }
 
         return Tables.makeWrapping(table);

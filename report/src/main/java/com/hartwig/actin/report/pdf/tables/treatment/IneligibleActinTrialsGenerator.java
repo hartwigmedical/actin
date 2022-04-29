@@ -82,15 +82,25 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Trial"));
         table.addHeaderCell(Cells.createHeader("Acronym"));
         table.addHeaderCell(Cells.createHeader("Cohort"));
-        table.addHeaderCell(Cells.createHeader("Recruiting"));
+        table.addHeaderCell(Cells.createHeader("Open"));
         table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
 
+        boolean hasTrialWithNoSlots = false;
         for (EvaluatedTrial trial : trials) {
-            table.addCell(Cells.createContent(trial.trialId()));
+            String addon = Strings.EMPTY;
+            if (trial.isOpen() && !trial.hasSlotsAvailable()) {
+                addon = " *";
+                hasTrialWithNoSlots = true;
+            }
+            table.addCell(Cells.createContent(trial.trialId() + addon));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContentYesNo(trial.isOpenAndHasSlotsAvailable() ? "Yes" : "No"));
+            table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
             table.addCell(Cells.createContent(concat(trial.fails())));
+        }
+
+        if (hasTrialWithNoSlots) {
+            table.addCell(Cells.createSpanningSubNote(" * Cohort has no available slots", table));
         }
 
         return Tables.makeWrapping(table);

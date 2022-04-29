@@ -39,10 +39,10 @@ public final class EvaluatedTrialFactory {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
 
-                boolean cohortIsRecruiting = cohortMatch.metadata().open() && cohortMatch.metadata().slotsAvailable();
                 trials.add(builder.cohort(cohortMatch.metadata().description())
                         .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
-                        .isOpenAndHasSlotsAvailable(trialIsOpen && cohortIsRecruiting && !cohortMatch.metadata().blacklist())
+                        .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
+                        .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
                         .warnings(Sets.union(cohortWarnings, trialWarnings))
                         .fails(Sets.union(cohortFails, trialFails))
                         .build());
@@ -52,7 +52,8 @@ public final class EvaluatedTrialFactory {
             if (trialMatch.cohorts().isEmpty()) {
                 trials.add(builder.cohort(null)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
-                        .isOpenAndHasSlotsAvailable(trialIsOpen)
+                        .isOpen(trialIsOpen)
+                        .hasSlotsAvailable(trialIsOpen)
                         .warnings(trialWarnings)
                         .fails(trialFails)
                         .build());

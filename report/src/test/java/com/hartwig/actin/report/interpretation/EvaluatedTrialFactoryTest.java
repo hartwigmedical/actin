@@ -29,28 +29,32 @@ public class EvaluatedTrialFactoryTest {
         EvaluatedTrial cohortA = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort A");
         assertFalse(cohortA.hasMolecularEvidence());
         assertFalse(cohortA.isPotentiallyEligible());
-        assertTrue(cohortA.isOpenAndHasSlotsAvailable());
+        assertTrue(cohortA.isOpen());
+        assertTrue(cohortA.hasSlotsAvailable());
         assertTrue(cohortA.warnings().isEmpty());
         assertFalse(cohortA.fails().isEmpty());
 
         EvaluatedTrial cohortB = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort B");
         assertFalse(cohortB.hasMolecularEvidence());
         assertTrue(cohortB.isPotentiallyEligible());
-        assertTrue(cohortB.isOpenAndHasSlotsAvailable());
+        assertTrue(cohortB.isOpen());
+        assertFalse(cohortB.hasSlotsAvailable());
         assertTrue(cohortB.warnings().isEmpty());
         assertTrue(cohortB.fails().isEmpty());
 
         EvaluatedTrial cohortC = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C");
         assertFalse(cohortC.hasMolecularEvidence());
         assertFalse(cohortC.isPotentiallyEligible());
-        assertFalse(cohortC.isOpenAndHasSlotsAvailable());
+        assertFalse(cohortC.isOpen());
+        assertTrue(cohortC.hasSlotsAvailable());
         assertTrue(cohortC.warnings().isEmpty());
         assertTrue(cohortC.fails().isEmpty());
 
         EvaluatedTrial trial2 = findByTrialAndCohort(trials, "TEST-TRIAL-2", null);
         assertFalse(trial2.hasMolecularEvidence());
         assertFalse(trial2.isPotentiallyEligible());
-        assertTrue(trial2.isOpenAndHasSlotsAvailable());
+        assertTrue(trial2.isOpen());
+        assertTrue(trial2.hasSlotsAvailable());
         assertFalse(trial2.warnings().isEmpty());
         assertFalse(trial2.fails().isEmpty());
     }
