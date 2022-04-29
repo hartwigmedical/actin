@@ -17,7 +17,6 @@ public final class ServeRules {
         MOLECULAR_RULES.add(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
         MOLECULAR_RULES.add(EligibilityRule.AMPLIFICATION_OF_GENE_X);
-        MOLECULAR_RULES.add(EligibilityRule.DELETION_OF_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.FUSION_IN_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.WILDTYPE_OF_GENE_X);
         MOLECULAR_RULES.add(EligibilityRule.MSI_SIGNATURE);

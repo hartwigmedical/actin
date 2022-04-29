@@ -99,17 +99,6 @@ public class OrangeEvidenceEvaluatorTest {
     }
 
     @Test
-    public void canDetermineInclusionForDeletion() {
-        EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.DELETION_OF_GENE_X, "X"));
-
-        ProtectEvidence deletion = testBuilder(EvidenceType.DELETION).gene("X").build();
-        assertTrue(evaluator.isPotentiallyForTrialInclusion(deletion));
-
-        ProtectEvidence amplification = testBuilder(EvidenceType.AMPLIFICATION).gene("X").build();
-        assertFalse(evaluator.isPotentiallyForTrialInclusion(amplification));
-    }
-
-    @Test
     public void canDetermineInclusionForFusions() {
         EvidenceEvaluator evaluator = withRecord(withRuleOnGene(EligibilityRule.FUSION_IN_GENE_X, "X"));
 

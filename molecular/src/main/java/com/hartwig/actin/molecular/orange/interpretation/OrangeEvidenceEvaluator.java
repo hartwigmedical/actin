@@ -74,7 +74,8 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
                 return hasInclusiveAmplificationRecord(inclusionRecords, evidence.gene());
             }
             case DELETION: {
-                return hasInclusiveDeletionRecord(inclusionRecords, evidence.gene());
+                LOGGER.warn("No trial inclusion evaluation is implemented for deletion: {}", EvidenceFormatter.format(evidence));
+                return false;
             }
             case PROMISCUOUS_FUSION:
             case FUSION_PAIR: {
@@ -141,9 +142,6 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         return containsRecordWithGeneAndRule(inclusionRecords, gene, EligibilityRule.AMPLIFICATION_OF_GENE_X);
     }
 
-    private static boolean hasInclusiveDeletionRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene) {
-        return containsRecordWithGeneAndRule(inclusionRecords, gene, EligibilityRule.DELETION_OF_GENE_X);
-    }
 
     private static boolean hasInclusiveFusionRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
         FusionGene fusion = FusionParser.fromEvidenceEvent(event);

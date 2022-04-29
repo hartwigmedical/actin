@@ -22,7 +22,6 @@ public final class ServeExtraction {
         RULES_WITH_GENE_AS_FIRST_PARAM.add(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X);
         RULES_WITH_GENE_AS_FIRST_PARAM.add(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
         RULES_WITH_GENE_AS_FIRST_PARAM.add(EligibilityRule.AMPLIFICATION_OF_GENE_X);
-        RULES_WITH_GENE_AS_FIRST_PARAM.add(EligibilityRule.DELETION_OF_GENE_X);
         RULES_WITH_GENE_AS_FIRST_PARAM.add(EligibilityRule.FUSION_IN_GENE_X);
         RULES_WITH_GENE_AS_FIRST_PARAM.add(EligibilityRule.WILDTYPE_OF_GENE_X);
     }
