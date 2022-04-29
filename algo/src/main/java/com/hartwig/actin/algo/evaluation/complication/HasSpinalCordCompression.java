@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.complication;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
@@ -18,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSpinalCordCompression implements EvaluationFunction {
 
-    @VisibleForTesting
-    static final Set<List<String>> SPINAL_CORD_COMPRESSION_PATTERNS = Sets.newHashSet();
+    private static final Set<List<String>> SPINAL_CORD_COMPRESSION_PATTERNS = Sets.newHashSet();
 
     static {
         SPINAL_CORD_COMPRESSION_PATTERNS.add(Lists.newArrayList("spinal", "cord", "compression"));

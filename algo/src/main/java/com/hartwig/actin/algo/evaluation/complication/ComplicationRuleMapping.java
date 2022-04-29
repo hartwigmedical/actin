@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
@@ -15,11 +17,11 @@ public final class ComplicationRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_COMPLICATION_X, hasSpecificComplicationCreator());
-        map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
+        map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator(referenceDateProvider.date()));
         map.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, hasLeptomeningealDiseaseCreator());
         map.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, hasSpinalCordCompressionCreator());
         map.put(EligibilityRule.HAS_URINARY_INCONTINENCE, hasUrinaryIncontinenceCreator());
@@ -37,8 +39,8 @@ public final class ComplicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasUncontrolledTumorRelatedPainCreator() {
-        return function -> new HasUncontrolledTumorRelatedPain();
+    private static FunctionCreator hasUncontrolledTumorRelatedPainCreator(@NotNull LocalDate evaluationDate) {
+        return function -> new HasUncontrolledTumorRelatedPain(evaluationDate);
     }
 
     @NotNull

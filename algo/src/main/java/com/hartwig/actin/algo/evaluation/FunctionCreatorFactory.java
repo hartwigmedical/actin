@@ -49,7 +49,7 @@ final class FunctionCreatorFactory {
         map.putAll(MedicationRuleMapping.create(referenceDateProvider));
         map.putAll(WashoutRuleMapping.create(referenceDateProvider));
         map.putAll(ReproductionRuleMapping.create());
-        map.putAll(ComplicationRuleMapping.create());
+        map.putAll(ComplicationRuleMapping.create(referenceDateProvider));
         map.putAll(ToxicityRuleMapping.create(doidModel));
         map.putAll(VitalFunctionRuleMapping.create());
         map.putAll(BloodTransfusionRuleMapping.create(referenceDateProvider));

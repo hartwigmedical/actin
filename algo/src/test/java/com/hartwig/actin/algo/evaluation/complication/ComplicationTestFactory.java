@@ -9,6 +9,8 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +31,29 @@ final class ComplicationTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(base)
                 .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).complications(complications).build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withPriorOtherCondition(@NotNull PriorOtherCondition condition) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(base.clinical())
+                        .priorOtherConditions(Lists.newArrayList(condition))
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withMedication(@NotNull Medication medication) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).medications(Lists.newArrayList(medication)).build())
                 .build();
     }
 

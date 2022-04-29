@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.complication;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
@@ -18,10 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLeptomeningealDisease implements EvaluationFunction {
 
-    @VisibleForTesting
-    static final Set<List<String>> LEPTOMENINGEAL_DISEASE_PATTERNS = Sets.newHashSet();
-    @VisibleForTesting
-    static final Set<List<String>> LESION_WARNING_PATTERNS = Sets.newHashSet();
+    private static final Set<List<String>> LEPTOMENINGEAL_DISEASE_PATTERNS = Sets.newHashSet();
+    private static final Set<List<String>> LESION_WARNING_PATTERNS = Sets.newHashSet();
 
     static {
         LEPTOMENINGEAL_DISEASE_PATTERNS.add(Lists.newArrayList("leptomeningeal", "disease"));
