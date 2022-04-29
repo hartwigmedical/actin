@@ -55,7 +55,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isPotentialMatch(record.clinical().tumor(), doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine if patient has " + doidModel.term(doidToMatch))
+                    .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidModel.term(doidToMatch))
                     .addUndeterminedGeneralMessages("Tumor type")
                     .build();
         }
