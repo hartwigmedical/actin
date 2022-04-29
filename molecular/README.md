@@ -130,7 +130,7 @@ Field | Example Value | Details
 ---|---|---
 mutations | BRAF V600E, EGFR exon 19 deletion | A list of gene-specific mutations that should be matchable to the molecular rules as defined in the treatment database.
 activatedGenes | KRAS, NRAS | A list of genes considered to be activated.
-inactivatedGenes | TP53, RB1 | A list of genes considered to be inactivated (along with a boolean whether they have been deleted completely).
+inactivatedGenes | TP53, RB1 | A list of genes considered to be inactivated.
 amplifiedGenes | MYC | A list of genes considered to be amplified.
 wildtypeGenes | BRAF | A list of genes considered to be wildtype. 
 fusions | EML4-ALK | A list of genes considered to be fused together.
@@ -195,8 +195,7 @@ The following classifications are extracted from the ACTIN-sourced evidence in P
  A mapping is performed from the PROTECT evidence to a mutation string that matches with the input mutation string in the ACTIN treatment 
  database. 
  - activated genes: Includes any gene with reported evidence of type `ACTIVATION`.
- - inactivated genes: Includes any gene with reported evidence of type `INACTIVATION`. Based on the actual PROTECT event it is 
- determined whether the gene has been deleted or not.
+ - inactivated genes: Includes any gene with reported evidence of type `INACTIVATION`. 
  - amplified genes: Includes any gene with reported evidence of type `AMPLIFICATION`
  - wildtype genes: Not implemented yet
  - fusions: Include any fusion with reported evidence of type `FUSION_PAIR` or `PROMISCUOUS_FUSION`
