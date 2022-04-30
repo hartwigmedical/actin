@@ -256,7 +256,8 @@ final class DriverExtraction {
             case HIGH: {
                 return DriverLikelihood.HIGH;
             }
-            case LOW: {
+            case LOW:
+            case UNKNOWN: {
                 return DriverLikelihood.LOW;
             }
             default: {

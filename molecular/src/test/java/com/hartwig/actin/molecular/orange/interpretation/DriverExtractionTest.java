@@ -223,6 +223,10 @@ public class DriverExtractionTest {
         VirusInterpreterEntry low =
                 ImmutableVirusInterpreterEntry.builder().from(createTestVirus()).driverLikelihood(VirusDriverLikelihood.LOW).build();
         assertEquals(DriverLikelihood.LOW, DriverExtraction.extractVirusDriverLikelihood(low));
+
+        VirusInterpreterEntry unknown =
+                ImmutableVirusInterpreterEntry.builder().from(createTestVirus()).driverLikelihood(VirusDriverLikelihood.UNKNOWN).build();
+        assertEquals(DriverLikelihood.LOW, DriverExtraction.extractVirusDriverLikelihood(unknown));
     }
 
     @NotNull
