@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 class MedicationSelector {
 
     @NotNull
-    public final MedicationStatusInterpreter interpreter;
+    private final MedicationStatusInterpreter interpreter;
 
     public MedicationSelector(@NotNull final MedicationStatusInterpreter interpreter) {
         this.interpreter = interpreter;

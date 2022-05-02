@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -10,6 +11,7 @@ import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +35,8 @@ public final class MedicationRuleMapping {
 
     @NotNull
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
-        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider.date());
+        LocalDate evaluationDate = referenceDateProvider.date();
+        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(evaluationDate);
         MedicationSelector selector = new MedicationSelector(interpreter);
 
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
@@ -41,7 +44,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator(selector));
         map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator(selector));
         map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS,
-                hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator());
+                hasRecentlyReceivedMedicationOfApproximateCategoryCreator(selector, evaluationDate));
         map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator(selector));
         map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator(selector));
         map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator(selector));
@@ -70,11 +73,6 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationWithNamesCreator(@NotNull MedicationSelector selector, @NotNull String... termsToFind) {
-        return function -> new CurrentlyGetsMedicationOfName(selector, Sets.newHashSet(termsToFind));
-    }
-
-    @NotNull
     private static FunctionCreator getsActiveMedicationWithApproximateCategoryCreator(@NotNull MedicationSelector selector) {
         return function -> {
             String categoryTermToFind = FunctionInputResolver.createOneStringInput(function);
@@ -83,8 +81,13 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator() {
-        return function -> new HasReceivedMedicationWithApproximateCategoryWithinWeeks();
+    private static FunctionCreator hasRecentlyReceivedMedicationOfApproximateCategoryCreator(@NotNull MedicationSelector selector,
+            @NotNull LocalDate evaluationDate) {
+        return function -> {
+            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            LocalDate maxStopDate = evaluationDate.minusWeeks(input.integer());
+            return new HasRecentlyReceivedMedicationOfApproximateCategory(selector, input.string(), maxStopDate);
+        };
     }
 
     @NotNull

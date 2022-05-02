@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.hartwig.actin.ImmutablePatientRecord;
@@ -10,7 +9,6 @@ import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
 
 import org.apache.logging.log4j.util.Strings;
@@ -25,15 +23,9 @@ final class MedicationTestFactory {
     public static MedicationSelector alwaysActive() {
         return new MedicationSelector(medication -> MedicationStatusInterpretation.ACTIVE);
     }
-
     @NotNull
-    public static ImmutableMedication.Builder inactive(@NotNull LocalDate referenceDate) {
-        return builder().status(MedicationStatus.ON_HOLD).startDate(referenceDate.minusDays(1));
-    }
-
-    @NotNull
-    public static ImmutableMedication.Builder active(@NotNull LocalDate referenceDate) {
-        return builder().status(MedicationStatus.ACTIVE).startDate(referenceDate.minusDays(1));
+    public static MedicationSelector alwaysStopped() {
+        return new MedicationSelector(medication -> MedicationStatusInterpretation.STOPPED);
     }
 
     @NotNull
