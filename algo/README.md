@@ -398,8 +398,8 @@ HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "A
 
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
-HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > any names like %X% within Y weeks | 
-HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES | medication > any names like %X% within Y weeks and Z half lives | Half-lives is currently ignored.
+HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > any names like %X% and active Y weeks prior to evaluation date | 
+HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES | medication > any names like %X% and active Y weeks prior to evaluation date and Z half lives | Half-lives is currently ignored.
 HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > any categories like %X% OR if category name is present in category list **, use category config ; within Y weeks | 
 HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES | medication > any categories like %X% OR if category name is present in category list **, use category config ; within Y weeks and Z half lives | Half-lives is currently ignored.
 HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month | 

@@ -8,10 +8,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
-import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
 
@@ -33,7 +34,8 @@ public final class WashoutRuleMapping {
                 Sets.newHashSet("Platinum compound", "Pyrimidine antagonist", "Taxane", "Alkylating agent"));
         CATEGORIES_PER_MAIN_CATEGORY.put("Endocrine therapy", Sets.newHashSet("Anti-androgen", "Anti-estrogen"));
         CATEGORIES_PER_MAIN_CATEGORY.put("Gonadorelin", Sets.newHashSet("Gonadorelin agonist", "Gonadorelin antagonist"));
-        CATEGORIES_PER_MAIN_CATEGORY.put("Immunosuppressants", Sets.newHashSet("Immunosuppressants, selective", "Immunosuppressants, other"));
+        CATEGORIES_PER_MAIN_CATEGORY.put("Immunosuppressants",
+                Sets.newHashSet("Immunosuppressants, selective", "Immunosuppressants, other"));
 
         for (Set<String> categories : CATEGORIES_PER_MAIN_CATEGORY.values()) {
             ALL_ANTI_CANCER_CATEGORIES.addAll(categories);
@@ -54,10 +56,12 @@ public final class WashoutRuleMapping {
 
         map.put(EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
                 hasRecentlyReceivedCancerTherapyOfNamesCreator(referenceDateProvider));
-        map.put(EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES, hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES,
+                hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
                 hasRecentlyReceivedCancerTherapyOfCategoriesCreator(referenceDateProvider));
-        map.put(EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES, hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES,
+                hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS, hasRecentlyReceivedRadiotherapyCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS,
                 hasRecentlyReceivedAnyCancerTherapyCreator(referenceDateProvider));
@@ -77,37 +81,45 @@ public final class WashoutRuleMapping {
     @NotNull
     private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNamesCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
-            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
-            LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer());
+            OneIntegerManyStrings input = FunctionInputResolver.createManyStringsOneIntegerInput(function);
+            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer());
 
-            return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.string()), minDate);
+            return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.strings()), interpreter);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator() {
-        return function -> new HasRecentlyReceivedCancerTherapyOfNameHalfLife();
+    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(
+            @NotNull ReferenceDateProvider referenceDateProvider) {
+        return function -> {
+            TwoIntegersManyStrings input = FunctionInputResolver.createManyStringsTwoIntegersInput(function);
+            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer1());
+
+            return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.strings()), interpreter);
+        };
     }
 
     @NotNull
     private static FunctionCreator hasRecentlyReceivedCancerTherapyOfCategoriesCreator(
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
-            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            OneIntegerManyStrings input = FunctionInputResolver.createManyStringsOneIntegerInput(function);
             LocalDate minDate = determineMinDateForWashout(referenceDateProvider, input.integer());
 
-            Set<String> names = determineNames(input.string());
+            Set<String> names = determineNames(input.strings().get(0));
             if (names != null) {
-                return new HasRecentlyReceivedCancerTherapyOfName(names, minDate);
+                MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer());
+                return new HasRecentlyReceivedCancerTherapyOfName(names, interpreter);
             } else {
-                Set<String> categories = determineCategories(input.string());
+                Set<String> categories = determineCategories(input.strings().get(0));
                 return new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate);
             }
         };
     }
 
     @NotNull
-    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator() {
+    private static FunctionCreator hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(
+            @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> new HasRecentlyReceivedCancerTherapyOfCategoryHalfLife();
     }
 
@@ -134,7 +146,7 @@ public final class WashoutRuleMapping {
             Set<String> categoriesToConsider = Sets.newHashSet();
             categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
 
-            for (String categoryToRemove: input.strings()) {
+            for (String categoryToRemove : input.strings()) {
                 categoriesToConsider.removeAll(determineCategories(categoryToRemove));
             }
 
@@ -185,6 +197,12 @@ public final class WashoutRuleMapping {
             Set<String> categories = Sets.newHashSet("Supplement", "Herbal remedy");
             return new HasRecentlyReceivedCancerTherapyOfCategory(categories, minDate);
         };
+    }
+
+    @NotNull
+    private static MedicationStatusInterpreter createInterpreterForWashout(@NotNull ReferenceDateProvider referenceDateProvider,
+            int inputWeeks) {
+        return new MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider.date().minusWeeks(inputWeeks).plusWeeks(2));
     }
 
     @NotNull
