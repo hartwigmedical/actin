@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.medication;
 
 public enum MedicationStatusInterpretation {
     ACTIVE,

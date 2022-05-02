@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.medication;
 
 import java.time.LocalDate;
 
@@ -7,13 +7,18 @@ import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class MedicationStatusInterpreter {
+public class MedicationStatusInterpreterOnEvaluationDate implements MedicationStatusInterpreter {
 
-    private MedicationStatusInterpreter() {
+    @NotNull
+    private final LocalDate evaluationDate;
+
+    public MedicationStatusInterpreterOnEvaluationDate(@NotNull final LocalDate evaluationDate) {
+        this.evaluationDate = evaluationDate;
     }
 
     @NotNull
-    public static MedicationStatusInterpretation interpret(@NotNull Medication medication, @NotNull LocalDate evaluationDate) {
+    @Override
+    public MedicationStatusInterpretation interpret(@NotNull Medication medication) {
         MedicationStatus status = medication.status();
         if (status == null) {
             return MedicationStatusInterpretation.UNKNOWN;

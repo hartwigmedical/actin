@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -18,12 +17,12 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentlyGetsStableMedicationOfCategory implements EvaluationFunction {
 
     @NotNull
-    private final LocalDate evaluationDate;
+    private final MedicationSelector selector;
     @NotNull
     private final Set<String> categoriesToFind;
 
-    CurrentlyGetsStableMedicationOfCategory(@NotNull final LocalDate evaluationDate, @NotNull final Set<String> categoriesToFind) {
-        this.evaluationDate = evaluationDate;
+    CurrentlyGetsStableMedicationOfCategory(@NotNull final MedicationSelector selector, @NotNull final Set<String> categoriesToFind) {
+        this.selector = selector;
         this.categoriesToFind = categoriesToFind;
     }
 
@@ -34,7 +33,7 @@ public class CurrentlyGetsStableMedicationOfCategory implements EvaluationFuncti
         for (String categoryToFind : categoriesToFind) {
             boolean hasActiveAndStableMedication = false;
             Medication referenceDosing = null;
-            List<Medication> filtered = MedicationFilter.withExactCategory(record.clinical().medications(), evaluationDate, categoryToFind);
+            List<Medication> filtered = selector.withExactCategory(record.clinical().medications(), categoryToFind);
             for (Medication medication : filtered) {
                 if (referenceDosing != null) {
                     if (!MedicationDosage.hasMatchingDosing(medication, referenceDosing)) {

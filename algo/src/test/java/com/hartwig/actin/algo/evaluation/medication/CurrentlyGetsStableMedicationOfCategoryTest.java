@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.medication;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -15,13 +14,11 @@ import org.junit.Test;
 
 public class CurrentlyGetsStableMedicationOfCategoryTest {
 
-    private static final LocalDate EVALUATION_DATE = LocalDate.of(2020, 4, 20);
-
     @Test
     public void canEvaluateOnOneTerm() {
         String category1 = "category 1";
         CurrentlyGetsStableMedicationOfCategory function =
-                new CurrentlyGetsStableMedicationOfCategory(EVALUATION_DATE, Sets.newHashSet(category1));
+                new CurrentlyGetsStableMedicationOfCategory(MedicationTestFactory.alwaysActive(), Sets.newHashSet(category1));
 
         // Fails on no medication
         List<Medication> medications = Lists.newArrayList();
@@ -44,7 +41,7 @@ public class CurrentlyGetsStableMedicationOfCategoryTest {
                 function.evaluate(MedicationTestFactory.withMedications(Lists.newArrayList(MedicationTestFactory.builder()
                         .from(fixedDosing())
                         .addCategories(category1)
-                        .build(), MedicationTestFactory.active(EVALUATION_DATE).addCategories(category1).build()))));
+                        .build(), MedicationTestFactory.builder().addCategories(category1).build()))));
     }
 
     @Test
@@ -52,7 +49,7 @@ public class CurrentlyGetsStableMedicationOfCategoryTest {
         String category1 = "category 1";
         String category2 = "category 2";
         CurrentlyGetsStableMedicationOfCategory function =
-                new CurrentlyGetsStableMedicationOfCategory(EVALUATION_DATE, Sets.newHashSet(category1, category2));
+                new CurrentlyGetsStableMedicationOfCategory(MedicationTestFactory.alwaysActive(), Sets.newHashSet(category1, category2));
 
         // Passes with single medication with dosing.
         List<Medication> medications = Lists.newArrayList();
@@ -71,7 +68,7 @@ public class CurrentlyGetsStableMedicationOfCategoryTest {
 
     @NotNull
     private static Medication fixedDosing() {
-        return MedicationTestFactory.active(EVALUATION_DATE)
+        return MedicationTestFactory.builder()
                 .dosageMin(1D)
                 .dosageMax(2D)
                 .dosageUnit("unit 1")

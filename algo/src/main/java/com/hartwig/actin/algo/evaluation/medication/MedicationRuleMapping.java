@@ -1,15 +1,13 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import java.time.LocalDate;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.composite.Or;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -30,33 +28,26 @@ public final class MedicationRuleMapping {
     private static final String SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective";
     private static final String OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other";
 
-    private static final String PAIN_MEDICATION_CATEGORY_1 = "NSAIDs";
-    private static final String PAIN_MEDICATION_CATEGORY_2 = "Opioids";
-
-    // Medication names
-    private static final String PAIN_MEDICATION_NAME_1 = "Paracetamol";
-    private static final String PAIN_MEDICATION_NAME_2 = "Amitriptyline";
-    private static final String PAIN_MEDICATION_NAME_3 = "Pregabalin";
-    private static final String PAIN_MEDICATION_NAME_4 = "Gabapentin";
-
     private MedicationRuleMapping() {
     }
 
     @NotNull
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
-        LocalDate evaluationDate = referenceDateProvider.date();
+        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider.date());
+        MedicationSelector selector = new MedicationSelector(interpreter);
+
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator(evaluationDate));
+        map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator(selector));
+        map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator(selector));
         map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS,
                 hasReceivedMedicationWithApproximateCategoryWithinWeeksCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator(evaluationDate));
+        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator(selector));
+        map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator(selector));
+        map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator(selector));
+        map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator(selector));
+        map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator(selector));
+        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator(selector));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
@@ -64,30 +55,30 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES,
-                getsDrugMetabolizingEnzymeInhibitingMedicationCreator(evaluationDate));
-        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator(evaluationDate));
+                getsDrugMetabolizingEnzymeInhibitingMedicationCreator(selector));
+        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator(selector));
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationWithConfiguredNameCreator(@NotNull LocalDate evaluationDate) {
+    private static FunctionCreator getsActiveMedicationWithConfiguredNameCreator(@NotNull MedicationSelector selector) {
         return function -> {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
-            return new CurrentlyGetsMedicationOfName(evaluationDate, Sets.newHashSet(termToFind));
+            return new CurrentlyGetsMedicationOfName(selector, Sets.newHashSet(termToFind));
         };
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationWithNamesCreator(@NotNull LocalDate evaluationDate, @NotNull String... termsToFind) {
-        return function -> new CurrentlyGetsMedicationOfName(evaluationDate, Sets.newHashSet(termsToFind));
+    private static FunctionCreator getsActiveMedicationWithNamesCreator(@NotNull MedicationSelector selector, @NotNull String... termsToFind) {
+        return function -> new CurrentlyGetsMedicationOfName(selector, Sets.newHashSet(termsToFind));
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationWithApproximateCategoryCreator(@NotNull LocalDate evaluationDate) {
+    private static FunctionCreator getsActiveMedicationWithApproximateCategoryCreator(@NotNull MedicationSelector selector) {
         return function -> {
             String categoryTermToFind = FunctionInputResolver.createOneStringInput(function);
-            return new CurrentlyGetsMedicationOfApproximateCategory(evaluationDate, categoryTermToFind);
+            return new CurrentlyGetsMedicationOfApproximateCategory(selector, categoryTermToFind);
         };
     }
 
@@ -97,33 +88,33 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsAnticoagulantMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsActiveMedicationWithExactCategoryCreator(evaluationDate, ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS);
+    private static FunctionCreator getsAnticoagulantMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsActiveMedicationWithExactCategoryCreator(selector, ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS);
     }
 
     @NotNull
-    private static FunctionCreator getsAzoleMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsActiveMedicationWithExactCategoryCreator(evaluationDate, TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES);
+    private static FunctionCreator getsAzoleMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsActiveMedicationWithExactCategoryCreator(selector, TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES);
     }
 
     @NotNull
-    private static FunctionCreator getsBoneResorptiveMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsActiveMedicationWithExactCategoryCreator(evaluationDate, BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION);
+    private static FunctionCreator getsBoneResorptiveMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsActiveMedicationWithExactCategoryCreator(selector, BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION);
     }
 
     @NotNull
-    private static FunctionCreator getsCoumarinDerivativeMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsActiveMedicationWithExactCategoryCreator(evaluationDate, VITAMIN_K_ANTAGONISTS);
+    private static FunctionCreator getsCoumarinDerivativeMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsActiveMedicationWithExactCategoryCreator(selector, VITAMIN_K_ANTAGONISTS);
     }
 
     @NotNull
-    private static FunctionCreator getsGonadorelinMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsActiveMedicationWithExactCategoryCreator(evaluationDate, GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS);
+    private static FunctionCreator getsGonadorelinMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsActiveMedicationWithExactCategoryCreator(selector, GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS);
     }
 
     @NotNull
-    private static FunctionCreator getsImmunosuppressantMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsActiveMedicationWithExactCategoryCreator(evaluationDate, SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS);
+    private static FunctionCreator getsImmunosuppressantMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsActiveMedicationWithExactCategoryCreator(selector, SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS);
     }
 
     @NotNull
@@ -163,24 +154,24 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator getsDrugMetabolizingEnzymeInhibitingMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return function -> new CurrentlyGetsMetabolizingEnzymeInhibitingMedication(evaluationDate);
+    private static FunctionCreator getsDrugMetabolizingEnzymeInhibitingMedicationCreator(@NotNull MedicationSelector selector) {
+        return function -> new CurrentlyGetsMetabolizingEnzymeInhibitingMedication(selector);
     }
 
     @NotNull
-    private static FunctionCreator getsStableDosingAnticoagulantMedicationCreator(@NotNull LocalDate evaluationDate) {
-        return getsStableMedicationOfCategoryCreator(evaluationDate, ANTICOAGULANTS);
+    private static FunctionCreator getsStableDosingAnticoagulantMedicationCreator(@NotNull MedicationSelector selector) {
+        return getsStableMedicationOfCategoryCreator(selector, ANTICOAGULANTS);
     }
 
     @NotNull
-    private static FunctionCreator getsStableMedicationOfCategoryCreator(@NotNull LocalDate evaluationDate,
+    private static FunctionCreator getsStableMedicationOfCategoryCreator(@NotNull MedicationSelector selector,
             @NotNull String... categoriesToFind) {
-        return function -> new CurrentlyGetsStableMedicationOfCategory(evaluationDate, Sets.newHashSet(categoriesToFind));
+        return function -> new CurrentlyGetsStableMedicationOfCategory(selector, Sets.newHashSet(categoriesToFind));
     }
 
     @NotNull
-    private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull LocalDate evaluationDate,
+    private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull MedicationSelector selector,
             @NotNull String... categoriesToFind) {
-        return function -> new CurrentlyGetsMedicationOfExactCategory(evaluationDate, Sets.newHashSet(categoriesToFind));
+        return function -> new CurrentlyGetsMedicationOfExactCategory(selector, Sets.newHashSet(categoriesToFind));
     }
 }

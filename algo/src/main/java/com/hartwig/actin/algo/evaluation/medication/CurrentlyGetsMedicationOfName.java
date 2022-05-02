@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
@@ -16,20 +15,19 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentlyGetsMedicationOfName implements EvaluationFunction {
 
     @NotNull
-    private final LocalDate evaluationDate;
+    private final MedicationSelector selector;
     @NotNull
     private final Set<String> termsToFind;
 
-    CurrentlyGetsMedicationOfName(@NotNull final LocalDate evaluationDate, @NotNull final Set<String> termsToFind) {
-        this.evaluationDate = evaluationDate;
+    CurrentlyGetsMedicationOfName(@NotNull final MedicationSelector selector, @NotNull final Set<String> termsToFind) {
+        this.selector = selector;
         this.termsToFind = termsToFind;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasReceivedMedication =
-                !MedicationFilter.withAnyTermInName(record.clinical().medications(), evaluationDate, termsToFind).isEmpty();
+        boolean hasReceivedMedication = !selector.withAnyTermInName(record.clinical().medications(), termsToFind).isEmpty();
 
         EvaluationResult result = hasReceivedMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);

@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -10,9 +9,9 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.medication.MedicationStatusInterpretation;
-import com.hartwig.actin.algo.evaluation.medication.MedicationStatusInterpreter;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
@@ -26,10 +25,10 @@ public class HasUncontrolledTumorRelatedPain implements EvaluationFunction {
     static final String SEVERE_PAIN_MEDICATION = "hydromorphone";
 
     @NotNull
-    private final LocalDate evaluationDate;
+    private final MedicationStatusInterpreter interpreter;
 
-    HasUncontrolledTumorRelatedPain(@NotNull final LocalDate evaluationDate) {
-        this.evaluationDate = evaluationDate;
+    HasUncontrolledTumorRelatedPain(@NotNull final MedicationStatusInterpreter interpreter) {
+        this.interpreter = interpreter;
     }
 
     @NotNull
@@ -53,7 +52,7 @@ public class HasUncontrolledTumorRelatedPain implements EvaluationFunction {
         Set<String> activePainMedications = Sets.newHashSet();
         for (Medication medication : record.clinical().medications()) {
             if (medication.name().equalsIgnoreCase(SEVERE_PAIN_MEDICATION)
-                    && MedicationStatusInterpreter.interpret(medication, evaluationDate) == MedicationStatusInterpretation.ACTIVE) {
+                    && interpreter.interpret(medication) == MedicationStatusInterpretation.ACTIVE) {
                 activePainMedications.add(medication.name());
             }
         }

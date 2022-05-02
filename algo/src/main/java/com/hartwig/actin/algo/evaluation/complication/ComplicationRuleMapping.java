@@ -6,6 +6,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -40,7 +42,8 @@ public final class ComplicationRuleMapping {
 
     @NotNull
     private static FunctionCreator hasUncontrolledTumorRelatedPainCreator(@NotNull LocalDate evaluationDate) {
-        return function -> new HasUncontrolledTumorRelatedPain(evaluationDate);
+        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(evaluationDate);
+        return function -> new HasUncontrolledTumorRelatedPain(interpreter);
     }
 
     @NotNull
