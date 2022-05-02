@@ -143,15 +143,21 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
             }
 
-            String date = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth());
-            String dateAddition = Strings.EMPTY;
-            if (date != null) {
-                dateAddition = date + ", ";
+            String dateDiagnosis = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth());
+            String dateAdditionDiagnosis = Strings.EMPTY;
+            if (dateDiagnosis != null) {
+                dateAdditionDiagnosis = "diagnosed " + dateDiagnosis + ", ";
+            }
+
+            String dateLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth());
+            String dateAdditionLastTreatment = Strings.EMPTY;
+            if (dateLastTreatment != null) {
+                dateAdditionLastTreatment = "last treatment " + dateLastTreatment + ", ";
             }
 
             String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
 
-            joiner.add(tumorDetails + " (" + dateAddition + active + ")");
+            joiner.add(tumorDetails + " (" + dateAdditionDiagnosis + dateAdditionLastTreatment + active + ")");
         }
 
         if (record.priorSecondPrimaries().size() > 1) {
