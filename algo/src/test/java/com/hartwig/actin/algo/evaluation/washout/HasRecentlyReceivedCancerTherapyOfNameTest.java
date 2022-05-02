@@ -18,7 +18,7 @@ public class HasRecentlyReceivedCancerTherapyOfNameTest {
     @Test
     public void canEvaluate() {
         LocalDate minDate = LocalDate.of(2020, 6, 6);
-        MedicationStatusInterpreter interpreter = WashoutTestFactory.testInterpreter(minDate);
+        MedicationStatusInterpreter interpreter = WashoutTestFactory.activeFromDate(minDate);
         HasRecentlyReceivedCancerTherapyOfName function =
                 new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet("correct"), interpreter);
 

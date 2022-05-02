@@ -23,7 +23,7 @@ final class WashoutTestFactory {
     }
 
     @NotNull
-    public static MedicationStatusInterpreter testInterpreter(@NotNull LocalDate referenceDate) {
+    public static MedicationStatusInterpreter activeFromDate(@NotNull LocalDate referenceDate) {
         return medication -> {
             LocalDate stopDate = medication.stopDate();
             if (stopDate == null || !referenceDate.isAfter(stopDate)) {

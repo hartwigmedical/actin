@@ -17,8 +17,8 @@ public class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
     @Test
     public void canEvaluate() {
-        LocalDate minDate = LocalDate.of(2020, 6, 6);
-        MedicationStatusInterpreter interpreter = WashoutTestFactory.testInterpreter(minDate);
+        LocalDate referenceDate = LocalDate.of(2020, 6, 6);
+        MedicationStatusInterpreter interpreter = WashoutTestFactory.activeFromDate(referenceDate);
         HasRecentlyReceivedCancerTherapyOfCategory function =
                 new HasRecentlyReceivedCancerTherapyOfCategory(Sets.newHashSet("correct"), interpreter);
 
@@ -27,15 +27,15 @@ public class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)));
 
         // Fail on medication with wrong category
-        medications.add(WashoutTestFactory.builder().addCategories("other").stopDate(minDate.plusDays(1)).build());
+        medications.add(WashoutTestFactory.builder().addCategories("other").stopDate(referenceDate.plusDays(1)).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)));
 
         // Fail on medication with old date
-        medications.add(WashoutTestFactory.builder().addCategories("correct").stopDate(minDate.minusDays(1)).build());
+        medications.add(WashoutTestFactory.builder().addCategories("correct").stopDate(referenceDate.minusDays(1)).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)));
 
         // Pass on medication with recent date
-        medications.add(WashoutTestFactory.builder().addCategories("correct").stopDate(minDate.plusDays(1)).build());
+        medications.add(WashoutTestFactory.builder().addCategories("correct").stopDate(referenceDate.plusDays(1)).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)));
     }
 }
