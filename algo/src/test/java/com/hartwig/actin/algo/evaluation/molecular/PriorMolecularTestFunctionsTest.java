@@ -14,13 +14,13 @@ import org.junit.Test;
 public class PriorMolecularTestFunctionsTest {
 
     @Test
-    public void canFilterPriorMolecularTestsForPDL1WithCPSMeasure() {
+    public void canFilterPriorMolecularTestsForPDL1WithSpecificMeasure() {
         PriorMolecularTest test1 = ImmutablePriorMolecularTest.builder().test("Archer").item("PD-L1").build();
         PriorMolecularTest test2 = ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure("CPS").build();
         PriorMolecularTest test3 = ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure("wrong").build();
         PriorMolecularTest test4 = ImmutablePriorMolecularTest.builder().test("IHC").item("BRAF").build();
 
-        List<PriorMolecularTest> filtered = PriorMolecularTestFunctions.allPDL1TestsByCPS(Lists.newArrayList(test1, test2, test3, test4));
+        List<PriorMolecularTest> filtered = PriorMolecularTestFunctions.allPDL1Tests(Lists.newArrayList(test1, test2, test3, test4), "CPS");
 
         assertEquals(1, filtered.size());
         assertTrue(filtered.contains(test2));

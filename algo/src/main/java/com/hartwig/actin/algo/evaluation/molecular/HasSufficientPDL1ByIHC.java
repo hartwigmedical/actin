@@ -14,16 +14,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSufficientPDL1ByIHC implements EvaluationFunction {
 
-    private final int minPDL1;
+    @NotNull
+    private final String measure;
+    private final double minPDL1;
 
-    HasSufficientPDL1ByIHC(final int minPDL1) {
+    HasSufficientPDL1ByIHC(@NotNull final String measure, final double minPDL1) {
+        this.measure = measure;
         this.minPDL1 = minPDL1;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorMolecularTest> pdl1Tests = PriorMolecularTestFunctions.allPDL1TestsByCPS(record.clinical().priorMolecularTests());
+        List<PriorMolecularTest> pdl1Tests = PriorMolecularTestFunctions.allPDL1Tests(record.clinical().priorMolecularTests(), measure);
         for (PriorMolecularTest ihcTest : pdl1Tests) {
             boolean hasSufficientPDL1 = false;
 
@@ -35,7 +38,7 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
             if (hasSufficientPDL1) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("PD-L1 expression measured by CPS meets at least desired level of " + minPDL1)
+                        .addPassSpecificMessages("PD-L1 expression measured by " + measure + " meets at least desired level of " + minPDL1)
                         .build();
             }
         }

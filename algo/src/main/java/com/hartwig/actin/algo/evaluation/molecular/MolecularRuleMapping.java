@@ -40,7 +40,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneHasExactExpressionByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneHasSufficientExpressionByIHCCreator());
-        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByIHCCreator());
+        map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
         map.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, hasPSMAPositivePETScanCreator());
@@ -184,10 +184,10 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientPDL1ByIHCCreator() {
+    private static FunctionCreator hasSufficientPDL1ByCPSByIHCCreator() {
         return function -> {
             int minPDL1 = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasSufficientPDL1ByIHC(minPDL1);
+            return new HasSufficientPDL1ByIHC("CPS", minPDL1);
         };
     }
 

@@ -14,9 +14,11 @@ import org.junit.Test;
 
 public class HasSufficientPDL1ByIHCTest {
 
+    private static final String MEASURE = "measure";
+
     @Test
     public void canEvaluate() {
-        HasSufficientPDL1ByIHC function = new HasSufficientPDL1ByIHC(2);
+        HasSufficientPDL1ByIHC function = new HasSufficientPDL1ByIHC(MEASURE, 2);
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
@@ -37,6 +39,6 @@ public class HasSufficientPDL1ByIHCTest {
 
     @NotNull
     private static ImmutablePriorMolecularTest.Builder pdl1Builder() {
-        return ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure("CPS");
+        return ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure(MEASURE);
     }
 }
