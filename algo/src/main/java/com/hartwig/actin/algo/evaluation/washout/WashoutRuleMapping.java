@@ -87,9 +87,7 @@ public final class WashoutRuleMapping {
     private static FunctionCreator hasRecentlyReceivedCancerTherapyOfNamesCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             OneIntegerManyStrings input = FunctionInputResolver.createManyStringsOneIntegerInput(function);
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer());
-
-            return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.strings()), interpreter);
+            return createReceivedCancerTherapyOfNameFunction(input.strings(), referenceDateProvider, input.integer());
         };
     }
 
@@ -98,10 +96,16 @@ public final class WashoutRuleMapping {
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             TwoIntegersManyStrings input = FunctionInputResolver.createManyStringsTwoIntegersInput(function);
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer1());
-
-            return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(input.strings()), interpreter);
+            return createReceivedCancerTherapyOfNameFunction(input.strings(), referenceDateProvider, input.integer1());
         };
+    }
+
+    @NotNull
+    private static EvaluationFunction createReceivedCancerTherapyOfNameFunction(@NotNull List<String> names,
+            @NotNull ReferenceDateProvider referenceDateProvider, int minWeeks) {
+        MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, minWeeks);
+
+        return new HasRecentlyReceivedCancerTherapyOfName(Sets.newHashSet(names), interpreter);
     }
 
     @NotNull
@@ -109,15 +113,7 @@ public final class WashoutRuleMapping {
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             OneIntegerManyStrings input = FunctionInputResolver.createManyStringsOneIntegerInput(function);
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer());
-
-            Set<String> names = determineNames(input.strings());
-            if (names != null) {
-                return new HasRecentlyReceivedCancerTherapyOfName(names, interpreter);
-            } else {
-                Set<String> categories = determineCategories(input.strings());
-                return new HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter);
-            }
+            return createReceivedCancerTherapyOfCategoryFunction(input.strings(), referenceDateProvider, input.integer());
         };
     }
 
@@ -126,16 +122,22 @@ public final class WashoutRuleMapping {
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             TwoIntegersManyStrings input = FunctionInputResolver.createManyStringsTwoIntegersInput(function);
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer1());
-
-            Set<String> names = determineNames(input.strings());
-            if (names != null) {
-                return new HasRecentlyReceivedCancerTherapyOfName(names, interpreter);
-            } else {
-                Set<String> categories = determineCategories(input.strings());
-                return new HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter);
-            }
+            return createReceivedCancerTherapyOfCategoryFunction(input.strings(), referenceDateProvider, input.integer1());
         };
+    }
+
+    @NotNull
+    private static EvaluationFunction createReceivedCancerTherapyOfCategoryFunction(@NotNull List<String> categoryInputs,
+            @NotNull ReferenceDateProvider referenceDateProvider, int minWeeks) {
+        MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, minWeeks);
+
+        Set<String> names = determineNames(categoryInputs);
+        if (names != null) {
+            return new HasRecentlyReceivedCancerTherapyOfName(names, interpreter);
+        } else {
+            Set<String> categories = determineCategories(categoryInputs);
+            return new HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter);
+        }
     }
 
     @NotNull
@@ -172,13 +174,7 @@ public final class WashoutRuleMapping {
     private static FunctionCreator hasRecentlyReceivedAnyCancerTherapyButSomeCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             OneIntegerManyStrings input = FunctionInputResolver.createManyStringsOneIntegerInput(function);
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer());
-
-            Set<String> categoriesToConsider = Sets.newHashSet();
-            categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
-            categoriesToConsider.removeAll(determineCategories(input.strings()));
-
-            return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, interpreter);
+            return createReceivedAnyCancerTherapyButSomeFunction(input.strings(), referenceDateProvider, input.integer());
         };
     }
 
@@ -187,14 +183,20 @@ public final class WashoutRuleMapping {
             @NotNull ReferenceDateProvider referenceDateProvider) {
         return function -> {
             TwoIntegersManyStrings input = FunctionInputResolver.createManyStringsTwoIntegersInput(function);
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, input.integer1());
-
-            Set<String> categoriesToConsider = Sets.newHashSet();
-            categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
-            categoriesToConsider.removeAll(determineCategories(input.strings()));
-
-            return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, interpreter);
+            return createReceivedAnyCancerTherapyButSomeFunction(input.strings(), referenceDateProvider, input.integer1());
         };
+    }
+
+    @NotNull
+    private static EvaluationFunction createReceivedAnyCancerTherapyButSomeFunction(@NotNull List<String> categoriesToIgnore,
+            @NotNull ReferenceDateProvider referenceDateProvider, int minWeeks) {
+        MedicationStatusInterpreter interpreter = createInterpreterForWashout(referenceDateProvider, minWeeks);
+
+        Set<String> categoriesToConsider = Sets.newHashSet();
+        categoriesToConsider.addAll(ALL_ANTI_CANCER_CATEGORIES);
+        categoriesToConsider.removeAll(determineCategories(categoriesToIgnore));
+
+        return new HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, interpreter);
     }
 
     @NotNull
