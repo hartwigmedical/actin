@@ -14,14 +14,14 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSpecificPriorCondition implements EvaluationFunction {
+public class HasHadPriorConditionWithDoid implements EvaluationFunction {
 
     @NotNull
     private final DoidModel doidModel;
     @NotNull
     private final String doidToFind;
 
-    HasHadSpecificPriorCondition(@NotNull final DoidModel doidModel, @NotNull final String doidToFind) {
+    HasHadPriorConditionWithDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToFind) {
         this.doidModel = doidModel;
         this.doidToFind = doidToFind;
     }

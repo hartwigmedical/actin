@@ -28,6 +28,8 @@ public final class OtherConditionRuleMapping {
     private static final String GASTROINTESTINAL_DISEASE_DOID = "77";
     private static final String IMMUNE_SYSTEM_DISEASE_DOID = "2914";
 
+    private static final String HYPOTENSION_NAME = "hypotension";
+
     private OtherConditionRuleMapping() {
     }
 
@@ -36,29 +38,29 @@ public final class OtherConditionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
-        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithNameCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasSpecificPriorConditionCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasSpecificPriorConditionCreator(doidModel, CARDIAC_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithConfiguredNameCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasPriorConditionWithDoidCreator(doidModel, CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
-                hasSpecificPriorConditionCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
+                hasPriorConditionWithDoidCreator(doidModel, CARDIOVASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE,
-                hasSpecificPriorConditionCreator(doidModel, CENTRAL_NERVOUS_SYSTEM_DOID));
+                hasPriorConditionWithDoidCreator(doidModel, CENTRAL_NERVOUS_SYSTEM_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
-                hasSpecificPriorConditionCreator(doidModel, GASTROINTESTINAL_DISEASE_DOID));
+                hasPriorConditionWithDoidCreator(doidModel, GASTROINTESTINAL_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,
-                hasSpecificPriorConditionCreator(doidModel, IMMUNE_SYSTEM_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasSpecificPriorConditionCreator(doidModel, LIVER_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasSpecificPriorConditionCreator(doidModel, LUNG_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasSpecificPriorConditionCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasSpecificPriorConditionCreator(doidModel, STROKE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasSpecificPriorConditionCreator(doidModel, TIA_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasSpecificPriorConditionCreator(doidModel, VASCULAR_DISEASE_DOID));
+                hasPriorConditionWithDoidCreator(doidModel, IMMUNE_SYSTEM_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasPriorConditionWithDoidCreator(doidModel, LIVER_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasPriorConditionWithDoidCreator(doidModel, LUNG_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasPriorConditionWithDoidCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasPriorConditionWithDoidCreator(doidModel, STROKE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasPriorConditionWithDoidCreator(doidModel, TIA_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionWithDoidCreator(doidModel, VASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
-        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasSpecificPriorConditionCreator(doidModel, GILBERT_DISEASE_DOID));
-        map.put(EligibilityRule.HAS_HYPERTENSION, hasSpecificPriorConditionCreator(doidModel, HYPERTENSION_DOID));
-        map.put(EligibilityRule.HAS_HYPOTENSION, hasHypotensionCreator());
-        map.put(EligibilityRule.HAS_DIABETES, hasSpecificPriorConditionCreator(doidModel, DIABETES_DOID));
+        map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasPriorConditionWithDoidCreator(doidModel, GILBERT_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HYPERTENSION, hasPriorConditionWithDoidCreator(doidModel, HYPERTENSION_DOID));
+        map.put(EligibilityRule.HAS_HYPOTENSION, hasPriorConditionWithNameCreator(HYPOTENSION_NAME));
+        map.put(EligibilityRule.HAS_DIABETES, hasPriorConditionWithDoidCreator(doidModel, DIABETES_DOID));
         map.put(EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES, hasPotentialAbsorptionDifficultiesCreator(doidModel));
         map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, hasOralMedicationDifficultiesCreator());
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT, hasContraindicationToCTCreator(doidModel));
@@ -74,12 +76,12 @@ public final class OtherConditionRuleMapping {
     private static FunctionCreator hasPriorConditionWithConfiguredDOIDCreator(@NotNull DoidModel doidModel) {
         return function -> {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
-            return new HasHadSpecificPriorCondition(doidModel, doidToFind);
+            return new HasHadPriorConditionWithDoid(doidModel, doidToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasPriorConditionWithNameCreator() {
+    private static FunctionCreator hasPriorConditionWithConfiguredNameCreator() {
         return function -> {
             String nameToFind = FunctionInputResolver.createOneStringInput(function);
             return new HasHadPriorConditionWithName(nameToFind);
@@ -87,8 +89,13 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSpecificPriorConditionCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
-        return function -> new HasHadSpecificPriorCondition(doidModel, doidToFind);
+    private static FunctionCreator hasPriorConditionWithDoidCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
+        return function -> new HasHadPriorConditionWithDoid(doidModel, doidToFind);
+    }
+
+    @NotNull
+    private static FunctionCreator hasPriorConditionWithNameCreator(@NotNull String nameToFind) {
+        return function -> new HasHadPriorConditionWithName(nameToFind);
     }
 
     @NotNull
@@ -99,11 +106,6 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator hasHadOrganTransplantCreator() {
         return function -> new HasHadOrganTransplant();
-    }
-
-    @NotNull
-    private static FunctionCreator hasHypotensionCreator() {
-        return function -> new HasHypotension();
     }
 
     @NotNull
