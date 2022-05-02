@@ -14,51 +14,51 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class HasSufficientBloodPressureTest {
+public class HasLimitedBloodPressureTest {
 
     @Test
     public void canEvaluate() {
         LocalDate referenceDate = LocalDate.of(2020, 11, 19);
-        HasSufficientBloodPressure function = new HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100);
+        HasLimitedBloodPressure function = new HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 100);
 
         List<VitalFunction> bloodPressures = Lists.newArrayList();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
-        bloodPressures.add(systolic().date(referenceDate).value(110).build());
+        bloodPressures.add(systolic().date(referenceDate).value(90).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
-        // Undetermined when the average falls below 100 but one measure above 100
-        bloodPressures.add(systolic().date(referenceDate.minusDays(1)).value(70).build());
+        // Undetermined when the average raises above 100 but one measure below 100
+        bloodPressures.add(systolic().date(referenceDate.minusDays(1)).value(120).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
-        // Succeed again when the average goes above 100
-        bloodPressures.add(systolic().date(referenceDate.minusDays(2)).value(110).build());
-        bloodPressures.add(systolic().date(referenceDate.minusDays(3)).value(110).build());
-        bloodPressures.add(systolic().date(referenceDate.minusDays(4)).value(110).build());
+        // Succeed again when the average drops below 100
+        bloodPressures.add(systolic().date(referenceDate.minusDays(2)).value(90).build());
+        bloodPressures.add(systolic().date(referenceDate.minusDays(3)).value(90).build());
+        bloodPressures.add(systolic().date(referenceDate.minusDays(4)).value(90).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
         // Still succeed since we only take X most recent measures.
-        bloodPressures.add(systolic().date(referenceDate.minusDays(5)).value(20).build());
-        bloodPressures.add(systolic().date(referenceDate.minusDays(6)).value(20).build());
-        bloodPressures.add(systolic().date(referenceDate.minusDays(7)).value(20).build());
+        bloodPressures.add(systolic().date(referenceDate.minusDays(5)).value(200).build());
+        bloodPressures.add(systolic().date(referenceDate.minusDays(6)).value(200).build());
+        bloodPressures.add(systolic().date(referenceDate.minusDays(7)).value(200).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
-        // Fail when we have lots of low measures prior to evaluation
-        bloodPressures.add(systolic().date(referenceDate.plusDays(1)).value(90).build());
-        bloodPressures.add(systolic().date(referenceDate.plusDays(2)).value(90).build());
-        bloodPressures.add(systolic().date(referenceDate.plusDays(3)).value(90).build());
-        bloodPressures.add(systolic().date(referenceDate.plusDays(4)).value(90).build());
-        bloodPressures.add(systolic().date(referenceDate.plusDays(5)).value(90).build());
+        // Fail when we have lots of high measures prior to evaluation
+        bloodPressures.add(systolic().date(referenceDate.plusDays(1)).value(110).build());
+        bloodPressures.add(systolic().date(referenceDate.plusDays(2)).value(110).build());
+        bloodPressures.add(systolic().date(referenceDate.plusDays(3)).value(110).build());
+        bloodPressures.add(systolic().date(referenceDate.plusDays(4)).value(110).build());
+        bloodPressures.add(systolic().date(referenceDate.plusDays(5)).value(110).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
     }
 
     @Test
     public void canFilterOnCategory() {
         LocalDate referenceDate = LocalDate.of(2020, 11, 19);
-        HasSufficientBloodPressure function = new HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100);
+        HasLimitedBloodPressure function = new HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 100);
 
         List<VitalFunction> bloodPressures = Lists.newArrayList();
-        bloodPressures.add(diastolic().date(referenceDate).value(110).build());
+        bloodPressures.add(diastolic().date(referenceDate).value(90).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
     }
 

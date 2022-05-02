@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -10,15 +9,10 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasSufficientBloodPressure implements EvaluationFunction {
-
-    private static final int MAX_BLOOD_PRESSURES_TO_USE = 5;
 
     @NotNull
     private final BloodPressureCategory category;
@@ -32,7 +26,7 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> relevant = selectRelevant(record.clinical().vitalFunctions());
+        List<VitalFunction> relevant = VitalFunctionSelector.selectRelevant(record.clinical().vitalFunctions(), category);
         String categoryDisplay = category.display().toLowerCase();
 
         if (relevant.isEmpty()) {
@@ -51,6 +45,20 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
         EvaluationResult result = Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
+        if (result == EvaluationResult.FAIL) {
+            for (VitalFunction vitalFunction : relevant) {
+                if (Double.compare(vitalFunction.value(), minAvgBloodPressure) >= 0) {
+                    return EvaluationFactory.recoverable()
+                            .result(EvaluationResult.UNDETERMINED)
+                            .addUndeterminedSpecificMessages(
+                                    "Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure
+                                            + " but also at least one measure above " + minAvgBloodPressure)
+                            .addUndeterminedGeneralMessages(categoryDisplay + " requirements")
+                            .build();
+                }
+            }
+        }
+
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure);
@@ -61,24 +69,5 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
         }
 
         return builder.build();
-    }
-
-    @NotNull
-    private List<VitalFunction> selectRelevant(@NotNull List<VitalFunction> vitalFunctions) {
-        List<VitalFunction> filtered = Lists.newArrayList();
-        for (VitalFunction vitalFunction : vitalFunctions) {
-            if (isBloodPressure(vitalFunction) && vitalFunction.subcategory().equalsIgnoreCase(category.display())) {
-                filtered.add(vitalFunction);
-            }
-        }
-
-        filtered.sort(new VitalFunctionDescendingDateComparator());
-
-        return filtered.subList(0, Math.min(filtered.size(), MAX_BLOOD_PRESSURES_TO_USE));
-    }
-
-    private static boolean isBloodPressure(@NotNull VitalFunction vitalFunction) {
-        return vitalFunction.category() == VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
-                || vitalFunction.category() == VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
     }
 }
