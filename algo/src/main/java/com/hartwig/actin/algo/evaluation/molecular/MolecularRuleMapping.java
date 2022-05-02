@@ -195,13 +195,16 @@ public final class MolecularRuleMapping {
     private static FunctionCreator hasLimitedPDL1ByCPSByIHCCreator() {
         return function -> {
             int maxPDL1 = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasLimitedPDL1ByCPSByIHC(maxPDL1);
+            return new HasLimitedPDL1ByIHC("CPS", maxPDL1);
         };
     }
 
     @NotNull
     private static FunctionCreator hasLimitedPDL1ByTPSByIHCCreator() {
-        return function -> new HasLimitedPDL1ByTPSByIHC();
+        return function -> {
+            double maxPDL1Percentage = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasLimitedPDL1ByIHC("TPS", maxPDL1Percentage);
+        };
     }
 
     @NotNull

@@ -13,11 +13,22 @@ final class PriorMolecularTestFunctions {
     }
 
     @NotNull
+    public static List<PriorMolecularTest> allPDL1TestsByTPS(@NotNull List<PriorMolecularTest> priorMolecularTests) {
+        return allPDL1Tests(priorMolecularTests, "TPS");
+    }
+
+    @NotNull
     public static List<PriorMolecularTest> allPDL1TestsByCPS(@NotNull List<PriorMolecularTest> priorMolecularTests) {
+        return allPDL1Tests(priorMolecularTests, "CPS");
+    }
+
+    @NotNull
+    public static List<PriorMolecularTest> allPDL1Tests(@NotNull List<PriorMolecularTest> priorMolecularTests,
+            @NotNull String measureToFind) {
         List<PriorMolecularTest> filtered = Lists.newArrayList();
         for (PriorMolecularTest priorMolecularTest : allIHCTests(priorMolecularTests)) {
             String measure = priorMolecularTest.measure();
-            if (priorMolecularTest.item().equals("PD-L1") && measure != null && measure.equals("CPS")) {
+            if (priorMolecularTest.item().equals("PD-L1") && measure != null && measure.equals(measureToFind)) {
                 filtered.add(priorMolecularTest);
             }
         }

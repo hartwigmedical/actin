@@ -12,11 +12,13 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class HasLimitedPDL1ByCPSByIHCTest {
+public class HasLimitedPDL1ByIHCTest {
+
+    private static final String MEASURE = "measure";
 
     @Test
     public void canEvaluate() {
-        HasLimitedPDL1ByCPSByIHC function = new HasLimitedPDL1ByCPSByIHC(2);
+        HasLimitedPDL1ByIHC function = new HasLimitedPDL1ByIHC(MEASURE, 2);
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
@@ -37,6 +39,7 @@ public class HasLimitedPDL1ByCPSByIHCTest {
 
     @NotNull
     private static ImmutablePriorMolecularTest.Builder pdl1Builder() {
-        return ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure("CPS");
+        return ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure(MEASURE);
     }
+
 }
