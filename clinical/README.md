@@ -153,6 +153,7 @@ Field | Example Value | Details
 name | Pembrolizumab | Name of intolerance
 doids | | if applicable
 category | Medication | Category of intolerance
+subcategories | Monoclonal antibody | Subcategory of category, when category = medication
 type | Allergy | 'Allergy', 'Side effect' or 'Not specified'
 clinicalStatus | Active | Clinical applicability
 verificationStatus | Confirmed | Confirmation status
@@ -203,7 +204,7 @@ frequencyUnit | day | Frequency unit
 ifNeeded | 0 | Determines whether the medication should be taken according to dosage prescription or only "if needed"
 startDate | 2021-07-01 | Assigned start date of medication
 stopDate | 2021-10-01 | Assigned stop date of medication (if applicable)
-active | 1 | Medication is prescribed at time of latest EHR evaluation?
+status | ON_HOLD | Status of medication 
 
 ### Version History and Download Links
  - Upcoming (first release) 
