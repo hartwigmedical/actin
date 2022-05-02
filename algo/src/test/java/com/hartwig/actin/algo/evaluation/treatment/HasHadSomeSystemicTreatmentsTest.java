@@ -25,11 +25,22 @@ public class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one systemic
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one more systemic
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment 2").isSystemic(true).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    }
+
+    @Test
+    public void cantDetermineInCaseOfAmbiguousTimeline() {
+        HasHadSomeSystemicTreatments function = new HasHadSomeSystemicTreatments(2);
+
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        treatments.add(TreatmentTestFactory.builder().name("treatment").isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment").isSystemic(true).build());
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }
