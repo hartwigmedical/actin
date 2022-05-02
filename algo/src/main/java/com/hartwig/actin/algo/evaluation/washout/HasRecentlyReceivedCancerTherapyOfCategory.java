@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.washout;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
@@ -10,21 +9,23 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFunction {
 
     @NotNull
     private final Set<String> categoriesToFind;
     @NotNull
-    private final LocalDate minDate;
+    private final MedicationStatusInterpreter interpreter;
 
-    HasRecentlyReceivedCancerTherapyOfCategory(@NotNull final Set<String> categoriesToFind, @NotNull final LocalDate minDate) {
+    HasRecentlyReceivedCancerTherapyOfCategory(@NotNull final Set<String> categoriesToFind,
+            @NotNull final MedicationStatusInterpreter interpreter) {
         this.categoriesToFind = categoriesToFind;
-        this.minDate = minDate;
+        this.interpreter = interpreter;
     }
 
     @NotNull
@@ -36,9 +37,9 @@ public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFun
             for (String categoryToFind : categoriesToFind) {
                 for (String category : medication.categories()) {
                     boolean categoryIsMatch = category.toLowerCase().contains(categoryToFind.toLowerCase());
-                    boolean dateIsMatch = MedicationDateEvaluation.hasBeenGivenAfterDate(medication, minDate);
+                    boolean activeOnDate = interpreter.interpret(medication) == MedicationStatusInterpretation.ACTIVE;
 
-                    if (categoryIsMatch && dateIsMatch) {
+                    if (categoryIsMatch && activeOnDate) {
                         hasTreatmentOfCategory = true;
                         categoryFound = categoryToFind;
                     }

@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.junit.Test;
@@ -17,8 +18,9 @@ public class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
     public void canEvaluate() {
         LocalDate minDate = LocalDate.of(2020, 6, 6);
+        MedicationStatusInterpreter interpreter = WashoutTestFactory.testInterpreter(minDate);
         HasRecentlyReceivedCancerTherapyOfCategory function =
-                new HasRecentlyReceivedCancerTherapyOfCategory(Sets.newHashSet("correct"), minDate);
+                new HasRecentlyReceivedCancerTherapyOfCategory(Sets.newHashSet("correct"), interpreter);
 
         // Fail on no medications
         List<Medication> medications = Lists.newArrayList();

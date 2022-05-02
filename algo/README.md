@@ -400,25 +400,25 @@ Rule | When does a patient pass evaluation?| Note
 ---|---|---
 HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > any names like %X% and active Y weeks prior to evaluation date | 
 HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES | medication > any names like %X% and active Y weeks prior to evaluation date and Z half lives | Half-lives is currently ignored.
-HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > any categories like %X% OR if category name is present in category list **, use category config ; within Y weeks | 
-HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES | medication > any categories like %X% OR if category name is present in category list **, use category config ; within Y weeks and Z half lives | Half-lives is currently ignored.
+HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS | medication > any categories like %X% OR if category name is present in category list **, use category config ; active Y weeks prior to evaluation | 
+HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES | medication > any categories like %X% OR if category name is present in category list **, use category config ; active Y weeks prior to evaluation and Z half lives | Half-lives is currently ignored.
 HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month | 
-HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Does not include radiotherapy or surgery, these are separate rules.
-HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Does not include radiotherapy or surgery, these are separate rules. Multiple categories can be specified within 1 rule, separated by ";"
-HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list* within X weeks compared to current date (check note) | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules.
-HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules. Multiple categories can be specified within 1 rule, separated by ";"
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS | Any medication corresponding to categories in anti-cancer medication list* active X weeks prior to evaluation date | Does not include radiotherapy or surgery, these are separate rules.
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Does not include radiotherapy or surgery, these are separate rules.
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list* active X weeks prior to evaluation | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules.
+HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.
 WILL_REQUIRE_ANY_ANTICANCER_THERAPY_ DURING_TRIAL | won't be evaluated.
-HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medication > categories like %supplements% or herbal remedies within X weeks
+HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medication > categories like %supplements% or %herbal remedy% active X weeks prior to evaluation date
 
 *Anti-cancer medication list includes the following categories: categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane%, %Alkylating agent%, %Cytotoxic antibiotics%, %Gonadorelin agonist%, %Gonadorelin antagonist%, %Monoclonal antibody for malignancies%, %Protein kinase inhibitor%, %Anti-androgen%, %Anti-estrogen%, '%Oncolytics, other%'. 
 
-**Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:
-1] Chemotherapy: includes all medication categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane% and %Alkylating agent%
-2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab
-3] Endocrine therapy: includes all medication categories like %Anti-androgen%, %Anti-estrogen%
-4] PARP inhibitors: medication drug names Olaparib, Rucaparib
-5] Gonadorelin: includes medication categories like %Gonadorelin agonist%, %Gonadorelin antagonist% 
-6] Immunosuppressants: includes medication categories like %Immunosuppressants, selective%, %Immunosuppressants, other% 
+**Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:<br>
+1] Chemotherapy: includes all medication categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane% and %Alkylating agent%  
+2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab  
+3] Endocrine therapy: includes all medication categories like %Anti-androgen%, %Anti-estrogen%  
+4] PARP inhibitors: medication drug names Olaparib, Rucaparib  
+5] Gonadorelin: includes medication categories like %Gonadorelin agonist%, %Gonadorelin antagonist%   
+6] Immunosuppressants: includes medication categories like %Immunosuppressants, selective%, %Immunosuppressants, other%   
 
 Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway. 
 
