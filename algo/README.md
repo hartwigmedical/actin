@@ -114,7 +114,7 @@ HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or has
 HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
-HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 | WARN in case all are 0 or empty.
+HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 or missing | WARN in case hasBoneLesions = 1 while all others are missing
 HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)

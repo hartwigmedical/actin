@@ -65,7 +65,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES, hasOralMedicationDifficultiesCreator());
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT, hasContraindicationToCTCreator(doidModel));
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, hasContraindicationToMRICreator(doidModel));
-        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI, hasContraindicationToPETMRICreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI, hasContraindicationToMRICreator(doidModel));
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
 
@@ -126,11 +126,6 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator hasContraindicationToMRICreator(@NotNull DoidModel doidModel) {
         return function -> new HasContraindicationToMRI(doidModel);
-    }
-
-    @NotNull
-    private static FunctionCreator hasContraindicationToPETMRICreator() {
-        return function -> new HasContraindicationToPETMRI();
     }
 
     @NotNull

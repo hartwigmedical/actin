@@ -20,14 +20,14 @@ public class HasAnyLesionTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLiverLesions(true)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withCnsLesions(true)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(true)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withHasLungLesions(true)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLungLesions(true)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(Lists.newArrayList("other"))));
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBoneLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLiverLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withCnsLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(false)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withHasLungLesions(false)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLungLesions(false)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withOtherLesions(Lists.newArrayList())));
     }
 }
