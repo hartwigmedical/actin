@@ -29,6 +29,7 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasMeasurableDisease = record.clinical().tumor().hasMeasurableDisease();
+
         if (hasMeasurableDisease == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
@@ -66,8 +67,9 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
         }
 
         for (String doid : doids) {
+            Set<String> doidTree = doidModel.doidWithParents(doid);
             for (String doidToMatch : NON_RECIST_TUMOR_DOIDS) {
-                if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
+                if (doidTree.contains(doidToMatch)) {
                     return true;
                 }
             }

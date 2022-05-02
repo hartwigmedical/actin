@@ -19,6 +19,7 @@ public class HasBoneMetastasesOnly implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasBoneMetastases = record.clinical().tumor().hasBoneLesions();
+
         if (hasBoneMetastases == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

@@ -18,6 +18,7 @@ public class HasMeasurableDisease implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Boolean hasMeasurableDisease = record.clinical().tumor().hasMeasurableDisease();
+
         if (hasMeasurableDisease == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

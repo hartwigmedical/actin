@@ -52,11 +52,12 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
 
         boolean isMatch = true;
         for (String doid : doids) {
-            if (doidModel.doidWithParents(doid).contains(ORGAN_SYSTEM_CANCER_DOID)) {
+            Set<String> doidTree = doidModel.doidWithParents(doid);
+            if (doidTree.contains(ORGAN_SYSTEM_CANCER_DOID)) {
                 isMatch = false;
             }
 
-            if (!doidModel.doidWithParents(doid).contains(categoryOfCUP.doid())) {
+            if (!doidTree.contains(categoryOfCUP.doid())) {
                 isMatch = false;
             }
         }
