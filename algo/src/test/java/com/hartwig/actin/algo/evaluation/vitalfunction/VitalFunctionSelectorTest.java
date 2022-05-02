@@ -34,6 +34,9 @@ public class VitalFunctionSelectorTest {
 
         vitalFunctions.add(VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE).unit("unit1").build());
         assertEquals(2, VitalFunctionSelector.select(vitalFunctions, VitalFunctionCategory.HEART_RATE, "unit1", 2).size());
+
+        vitalFunctions.add(VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE).unit("unit1").build());
+        assertEquals(2, VitalFunctionSelector.select(vitalFunctions, VitalFunctionCategory.HEART_RATE, null, 2).size());
     }
 
     @Test

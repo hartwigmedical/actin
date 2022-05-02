@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -11,7 +10,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +26,10 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> pulseOxymetries = selectPulseOxymetries(record.clinical().vitalFunctions());
+        List<VitalFunction> pulseOxymetries = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
+                VitalFunctionCategory.SPO2,
+                null,
+                MAX_PULSE_OXYMETRY_TO_USE);
 
         if (pulseOxymetries.isEmpty()) {
             return EvaluationFactory.recoverable()
@@ -46,6 +47,18 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
 
         EvaluationResult result = Double.compare(avg, minAvgPulseOxymetry) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
+        if (result == EvaluationResult.FAIL) {
+            for (VitalFunction pulseOxymetry : pulseOxymetries) {
+                if (Double.compare(pulseOxymetry.value(), minAvgPulseOxymetry) >= 0) {
+                    return EvaluationFactory.recoverable()
+                            .result(EvaluationResult.UNDETERMINED)
+                            .addUndeterminedSpecificMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry
+                                    + " but also at least one measure above " + minAvgPulseOxymetry)
+                            .build();
+                }
+            }
+        }
+
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry);
@@ -54,19 +67,5 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
         }
 
         return builder.build();
-    }
-
-    @NotNull
-    private static List<VitalFunction> selectPulseOxymetries(@NotNull List<VitalFunction> vitalFunctions) {
-        List<VitalFunction> filtered = Lists.newArrayList();
-        for (VitalFunction vitalFunction : vitalFunctions) {
-            if (vitalFunction.category() == VitalFunctionCategory.SPO2) {
-                filtered.add(vitalFunction);
-            }
-        }
-
-        filtered.sort(new VitalFunctionDescendingDateComparator());
-
-        return filtered.subList(0, Math.min(filtered.size(), MAX_PULSE_OXYMETRY_TO_USE));
     }
 }

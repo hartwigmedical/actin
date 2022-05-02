@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class VitalFunctionSelector {
 
@@ -20,10 +21,10 @@ final class VitalFunctionSelector {
 
     @NotNull
     public static List<VitalFunction> select(@NotNull List<VitalFunction> vitalFunctions, @NotNull VitalFunctionCategory categoryToFind,
-            @NotNull String unitToFind, int maxEntries) {
+            @Nullable String unitToFind, int maxEntries) {
         List<VitalFunction> result = Lists.newArrayList();
         for (VitalFunction vitalFunction : vitalFunctions) {
-            if (vitalFunction.category() == categoryToFind && vitalFunction.unit().equalsIgnoreCase(unitToFind)) {
+            if (vitalFunction.category() == categoryToFind && (unitToFind == null || vitalFunction.unit().equalsIgnoreCase(unitToFind))) {
                 result.add(vitalFunction);
             }
         }

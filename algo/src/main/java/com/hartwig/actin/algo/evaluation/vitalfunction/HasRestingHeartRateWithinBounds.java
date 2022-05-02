@@ -15,8 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
 
+    static final String UNIT_TO_SELECT = "BPM";
+
     private static final int MAX_HEART_RATES_TO_USE = 5;
-    private static final String UNIT_TO_SELECT = "BPM";
 
     private final double minAvgRestingHeartRate;
     private final double maxAvgRestingHeartRate;
@@ -29,12 +30,12 @@ public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> relevant = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
+        List<VitalFunction> heartRates = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
                 VitalFunctionCategory.HEART_RATE,
                 UNIT_TO_SELECT,
                 MAX_HEART_RATES_TO_USE);
 
-        if (relevant.isEmpty()) {
+        if (heartRates.isEmpty()) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No heart rate data found")
@@ -42,11 +43,11 @@ public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
         }
 
         double sum = 0;
-        for (VitalFunction vitalFunction : relevant) {
-            sum += vitalFunction.value();
+        for (VitalFunction heartRate : heartRates) {
+            sum += heartRate.value();
         }
 
-        double avg = sum / relevant.size();
+        double avg = sum / heartRates.size();
 
         EvaluationResult result = Double.compare(avg, minAvgRestingHeartRate) >= 0 && Double.compare(avg, maxAvgRestingHeartRate) <= 0
                 ? EvaluationResult.PASS

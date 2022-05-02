@@ -27,9 +27,9 @@ public class HasSufficientPulseOxymetryTest {
         pulses.add(pulse().date(referenceDate).value(95).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
 
-        // Fail when the average falls below 90
+        // Undetermined when the average falls below 90 but one measure above 90.
         pulses.add(pulse().date(referenceDate.minusDays(1)).value(80).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
 
         // Succeed again when the average goes above 90
         pulses.add(pulse().date(referenceDate.minusDays(2)).value(98).build());
@@ -42,6 +42,14 @@ public class HasSufficientPulseOxymetryTest {
         pulses.add(pulse().date(referenceDate.minusDays(6)).value(20).build());
         pulses.add(pulse().date(referenceDate.minusDays(7)).value(20).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
+
+        // Fail if we add more recent measures that are too low
+        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20).build());
+        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20).build());
+        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20).build());
+        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20).build());
+        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20).build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
     }
 
     @NotNull
