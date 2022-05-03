@@ -70,7 +70,7 @@ class OrangeMutationMapper implements MutationMapper {
         }
 
         if (results.isEmpty()) {
-            throw new IllegalStateException("Could not find SERVE-bridge record for hotspot mapping of mutation: " + event);
+            throw new IllegalStateException("Could not find SERVE-bridge record for hotspot mapping of mutation: " + formattedEvent);
         }
 
         return results;
