@@ -65,7 +65,7 @@ public class ReporterApplication {
         Report report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch);
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory());
 
-        writer.write(report);
+        writer.write(report, config.skipTrialMatchingDetails());
 
         LOGGER.info("Done!");
     }

@@ -25,6 +25,8 @@ public interface ReporterConfig {
 
     String OUTPUT_DIRECTORY = "output_directory";
 
+    String SKIP_TRIAL_MATCHING_DETAILS = "skip_trial_matching_details";
+
     String LOG_DEBUG = "log_debug";
 
     @NotNull
@@ -36,6 +38,8 @@ public interface ReporterConfig {
         options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the sample");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to");
+
+        options.addOption(SKIP_TRIAL_MATCHING_DETAILS, false, "If set, skips trial matching details");
 
         options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled");
 
@@ -54,6 +58,8 @@ public interface ReporterConfig {
     @NotNull
     String outputDirectory();
 
+    boolean skipTrialMatchingDetails();
+
     @NotNull
     static ReporterConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         if (cmd.hasOption(LOG_DEBUG)) {
@@ -66,6 +72,7 @@ public interface ReporterConfig {
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
                 .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
+                .skipTrialMatchingDetails(cmd.hasOption(SKIP_TRIAL_MATCHING_DETAILS))
                 .build();
     }
 }

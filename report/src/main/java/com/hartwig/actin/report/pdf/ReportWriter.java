@@ -39,9 +39,21 @@ public class ReportWriter {
     }
 
     public void write(@NotNull Report report) throws IOException {
-        ReportChapter[] chapters =
-                new ReportChapter[] { new SummaryChapter(report), new MolecularDetailsChapter(report), new ClinicalDetailsChapter(report),
-                        new TrialMatchingChapter(report), new TrialMatchingDetailsChapter(report) };
+        write(report, false);
+    }
+
+    public void write(@NotNull Report report, boolean skipTrialMatchingDetails) throws IOException {
+        ReportChapter[] chapters;
+
+        if (skipTrialMatchingDetails) {
+            LOGGER.info("Skipping trial matching details");
+
+            chapters = new ReportChapter[] { new SummaryChapter(report), new MolecularDetailsChapter(report),
+                    new ClinicalDetailsChapter(report), new TrialMatchingChapter(report) };
+        } else {
+            chapters = new ReportChapter[] { new SummaryChapter(report), new MolecularDetailsChapter(report),
+                    new ClinicalDetailsChapter(report), new TrialMatchingChapter(report), new TrialMatchingDetailsChapter(report) };
+        }
 
         writePdfChapters(report.sampleId(), chapters);
     }
