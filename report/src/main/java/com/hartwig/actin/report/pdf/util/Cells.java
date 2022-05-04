@@ -133,7 +133,7 @@ public final class Cells {
     public static Cell createEvaluation(@NotNull Evaluation evaluation) {
         String addon = Strings.EMPTY;
         if (evaluation.result() == EvaluationResult.FAIL && evaluation.recoverable()) {
-            addon = " (recoverable)";
+            addon = " (potentially recoverable)";
         }
         Cell cell = create(new Paragraph(evaluation.result() + addon));
         cell.setFontColor(Formats.fontColorForEvaluation(evaluation.result()));
