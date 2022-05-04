@@ -61,10 +61,10 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure);
-            builder.addFailGeneralMessages(categoryDisplay + " requirements");
+            builder.addFailSpecificMessages("Patient has average " + categoryDisplay + " below " + minAvgBloodPressure);
+            builder.addFailGeneralMessages("Low " + categoryDisplay);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has average " + categoryDisplay + " blood pressure exceeding " + minAvgBloodPressure);
+            builder.addPassSpecificMessages("Patient has average " + categoryDisplay + " exceeding " + minAvgBloodPressure);
             builder.addPassGeneralMessages(categoryDisplay + " requirements");
         }
 
