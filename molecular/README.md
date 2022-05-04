@@ -45,12 +45,12 @@ N variants
 Field | Example Value | Details
 ---|---|---
 event | APC D1174fs | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 gene | APC | The gene impacted by the variant
 impact | p.D1174fs | The impact of the variant on the gene 
 variantCopyNumber | 3.8 | The number of copies of this variant in the tumor
 totalCopyNumber | 4.0 | The total number of copies in the tumor on the mutated position
 driverType | BIALLELIC | Either `HOTSPOT`, `BIALLELIC` or `VUS`
-driverLikelihood | 93% | Likelihood that the combined set of variants on the impacted gene are considered a driver.
 clonalLikelihood | 100% | Likelihood that the variant exists in every tumor cell (is clonal).
 
 N amplifications
@@ -58,6 +58,7 @@ N amplifications
 Field | Example Value | Details
 ---|---|---
 event | MYC amp | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 gene | MYC | The gene that has been amplified
 copies | 150 | Number of copies of this gene in the tumor
 isPartial | 0 | Indicates whether the gene has been partially or fully amplified in the tumor
@@ -67,37 +68,49 @@ N losses
 Field | Example Value | Details
 ---|---|---
 event | TPS del | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 gene | TP53 | The gene that has been lost in the tumor 
 isPartial | 1 | Indicates whether the gene has been partially or fully lost in the tumor 
+
+N homozygous disruptions
+
+Field | Example Value | Details
+---|---|---
+event | PTEN disruption | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
+gene | PTEN | The gene that has been homozygously disrupted in the tumor  
 
 N disruptions
 
 Field | Example Value | Details
 ---|---|---
 event | BRCA1 disruption | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | LOW | Either `HIGH`, `MEDIUM` or `LOW`
 gene | BRCA1 | The gene that has been disrupted.
-isHomozygous | 1 | Indicates whether the disruption leads to no wildtypes present anymore.
-details | Intron 12 downstream | Provides additional details about the disruption.
+type | DUP | Type of disruption
+junctionCopyNumber | 1.1 | Number of copies affected by this disruption
+undisruptedCopyNumber | 1.8 | Remaining number of copies not impacted by this disruption
+range | Intron 12 downstream | Provides additional details about the range impacted by the disruption.
 
 N fusions
 
 Field | Example Value | Details
 ---|---|---
 event | EML4-ALK fusion | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 fiveGene | EML4 | The gene that makes up the 5' part of the fusion
 threeGene | ALK | The gene that makes up the 3' part of the fusion
 details | Exon 2 - Exon 5 | Additional details about the fusion
 driverType | KNOWN | Either `KNOWN` or `PROMISCUOUS`
-driverLikelihood | HIGH | Either `HIGH` or `LOW` 
 
 N viruses
 
 Field | Example Value | Details
 ---|---|---
 event | HPV positive | A single representation of the event, expected to match with the event string from evidence section.
+driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 name | Human papillomavirus type 16 | The name of the virus found in the tumor
-details | 3 integrations detected | More details about the virus
-driverLikelihood | HIGH | Either `HIGH` or `LOW`
+integrations | 3 | Number of integrations of this virus into the tumor sample detected
 
 N pharmaco
 
@@ -164,7 +177,8 @@ Driver Type | Algo | Details
 variants | PURPLE | Union of reportable somatic variants and reportable germline variants.
 amplifications | PURPLE | Union of reportable somatic full gains and reportable somatic partial gains.
 losses | PURPLE | Union of reportable somatic full losses and reportable somatic partial losses.
-disruptions | LINX | Union of reportable somatic gene disruptions and reportable somatic homozygous disruptions.
+homozygousDisruptions | LINX | All reported homozygous disruptions. 
+disruptions | LINX | All reportable somatic gene disruptions.
 fusions | LINX | All reportable fusions with driver type mapped to either `KNOWN` or `PROMISCUOUS`.
 viruses | VirusInterpreter | All reportable viruses.
 
