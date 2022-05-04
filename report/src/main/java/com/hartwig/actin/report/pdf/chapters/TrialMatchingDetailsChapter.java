@@ -281,7 +281,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                 table.addCell(Cells.createContent(reference.id()));
                 table.addCell(Cells.createContent(reference.text()));
                 Table evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true);
-                evalTable.addCell(Cells.createEvaluation(evaluation.result()));
+                evalTable.addCell(Cells.createEvaluation(evaluation));
                 if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.NOT_EVALUATED) {
                     for (String passMessage : evaluation.passSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(passMessage)));

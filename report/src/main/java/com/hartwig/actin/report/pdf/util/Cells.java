@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.util;
 
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -129,9 +130,13 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createEvaluation(@NotNull EvaluationResult evaluation) {
-        Cell cell = create(new Paragraph(evaluation.toString()));
-        cell.setFontColor(Formats.fontColorForEvaluation(evaluation));
+    public static Cell createEvaluation(@NotNull Evaluation evaluation) {
+        String addon = Strings.EMPTY;
+        if (evaluation.result() == EvaluationResult.FAIL && evaluation.recoverable()) {
+            addon = " (recoverable)";
+        }
+        Cell cell = create(new Paragraph(evaluation.result() + addon));
+        cell.setFontColor(Formats.fontColorForEvaluation(evaluation.result()));
         return cell;
     }
 
