@@ -17,16 +17,26 @@ public class DisruptionComparator implements Comparator<Disruption> {
             return driverCompare;
         }
 
-        int homozygousCompare = Boolean.compare(disruption2.isHomozygous(), disruption1.isHomozygous());
-        if (homozygousCompare != 0) {
-            return homozygousCompare;
-        }
-
         int geneCompare = disruption1.gene().compareTo(disruption2.gene());
         if (geneCompare != 0) {
             return geneCompare;
         }
 
-        return disruption1.details().compareTo(disruption2.details());
+        int typeCompare = disruption1.type().compareTo(disruption2.type());
+        if (typeCompare != 0) {
+            return typeCompare;
+        }
+
+        int junctionCompare = Double.compare(disruption1.junctionCopyNumber(), disruption2.junctionCopyNumber());
+        if (junctionCompare != 0) {
+            return junctionCompare;
+        }
+
+        int undisruptedCompare = Double.compare(disruption1.undisruptedCopyNumber(), disruption2.undisruptedCopyNumber());
+        if (undisruptedCompare != 0) {
+            return undisruptedCompare;
+        }
+
+        return disruption1.range().compareTo(disruption2.range());
     }
 }

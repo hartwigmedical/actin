@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
@@ -44,6 +45,7 @@ public class DriverExtractionTest {
         assertVariants(drivers.variants());
         assertAmplifications(drivers.amplifications());
         assertLosses(drivers.losses());
+        assertHomozygousDisruptions(drivers.homozygousDisruptions());
         assertDisruptions(drivers.disruptions());
         assertFusions(drivers.fusions());
         assertViruses(drivers.viruses());
@@ -84,31 +86,26 @@ public class DriverExtractionTest {
         assertTrue(loss.isPartial());
     }
 
-    private static void assertDisruptions(@NotNull Set<Disruption> disruptions) {
-        assertEquals(2, disruptions.size());
+    private static void assertHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
+        assertEquals(1, homozygousDisruptions.size());
 
-        Disruption disruption1 = findByGene(disruptions, "TP53");
-        assertEquals("TP53 disruption", disruption1.event());
-        assertEquals(DriverLikelihood.HIGH, disruption1.driverLikelihood());
-        assertTrue(disruption1.isHomozygous());
-        assertTrue(disruption1.details().isEmpty());
-
-        Disruption disruption2 = findByGene(disruptions, "RB1");
-        assertTrue(disruption2.event().isEmpty());
-        assertEquals(DriverLikelihood.LOW, disruption2.driverLikelihood());
-        assertFalse(disruption2.isHomozygous());
-        assertEquals("Intron 1 downstream", disruption2.details());
+        HomozygousDisruption homozygousDisruption = homozygousDisruptions.iterator().next();
+        assertEquals("TP53 disruption", homozygousDisruption.event());
+        assertEquals(DriverLikelihood.HIGH, homozygousDisruption.driverLikelihood());
+        assertEquals("TP53", homozygousDisruption.gene());
     }
 
-    @NotNull
-    private static Disruption findByGene(@NotNull Iterable<Disruption> disruptions, @NotNull String geneToFind) {
-        for (Disruption disruption : disruptions) {
-            if (disruption.gene().equals(geneToFind)) {
-                return disruption;
-            }
-        }
+    private static void assertDisruptions(@NotNull Set<Disruption> disruptions) {
+        assertEquals(1, disruptions.size());
 
-        throw new IllegalStateException("Could not find disruption with gene: " + geneToFind);
+        Disruption disruption = disruptions.iterator().next();
+        assertTrue(disruption.event().isEmpty());
+        assertEquals(DriverLikelihood.LOW, disruption.driverLikelihood());
+        assertEquals("RB1", disruption.gene());
+        assertEquals("DEL", disruption.type());
+        assertEquals(0.8, disruption.junctionCopyNumber(), EPSILON);
+        assertEquals(2.1, disruption.undisruptedCopyNumber(), EPSILON);
+        assertEquals("Intron 1 downstream", disruption.range());
     }
 
     private static void assertFusions(@NotNull Set<Fusion> fusions) {
@@ -130,7 +127,7 @@ public class DriverExtractionTest {
         assertEquals("HPV positive", virus.event());
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals("Human papillomavirus type 16", virus.name());
-        assertEquals("3 integrations detected", virus.details());
+        assertEquals(3, virus.integrations());
     }
 
     @Test

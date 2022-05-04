@@ -17,6 +17,6 @@ public class MolecularDriverEntryFactoryTest {
 
         Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(record.drivers(), record.evidence());
 
-        assertEquals(6, entries.size());
+        assertEquals(7, entries.size());
     }
 }

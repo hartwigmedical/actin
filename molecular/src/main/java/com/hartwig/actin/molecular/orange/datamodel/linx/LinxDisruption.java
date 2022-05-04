@@ -12,5 +12,12 @@ public abstract class LinxDisruption {
     public abstract String gene();
 
     @NotNull
+    public abstract String type();
+
+    public abstract double junctionCopyNumber();
+
+    public abstract double undisruptedCopyNumber();
+
+    @NotNull
     public abstract String range();
 }

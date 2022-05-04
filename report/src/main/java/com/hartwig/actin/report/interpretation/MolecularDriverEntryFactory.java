@@ -1,5 +1,8 @@
 package com.hartwig.actin.report.interpretation;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Set;
 
 import com.google.common.collect.Ordering;
@@ -8,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
@@ -22,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class MolecularDriverEntryFactory {
 
+    private static final DecimalFormat SINGLE_DIGIT_FORMAT = new DecimalFormat("#.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
     private MolecularDriverEntryFactory() {
     }
 
@@ -32,6 +38,7 @@ public final class MolecularDriverEntryFactory {
         entries.addAll(fromVariants(drivers.variants(), evidence));
         entries.addAll(fromAmplifications(drivers.amplifications(), evidence));
         entries.addAll(fromLosses(drivers.losses(), evidence));
+        entries.addAll(fromHomozygousDisruptions(drivers.homozygousDisruptions(), evidence));
         entries.addAll(fromDisruptions(drivers.disruptions(), evidence));
         entries.addAll(fromFusions(drivers.fusions(), evidence));
         entries.addAll(fromViruses(drivers.viruses(), evidence));
@@ -111,14 +118,34 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
+    private static Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions,
+            @NotNull MolecularEvidence evidence) {
+        Set<MolecularDriverEntry> entries = Sets.newHashSet();
+
+        for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
+            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
+            entryBuilder.driverType("Homozygous disruption");
+            entryBuilder.driver(homozygousDisruption.gene());
+            entryBuilder.driverLikelihood(homozygousDisruption.driverLikelihood());
+
+            addActionability(entryBuilder, homozygousDisruption, evidence);
+
+            entries.add(entryBuilder.build());
+        }
+
+        return entries;
+    }
+
+    @NotNull
     private static Set<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions, @NotNull MolecularEvidence evidence) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Disruption disruption : disruptions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType(disruption.isHomozygous() ? "Homozygous disruption" : "Non-homozygous disruption");
-            String addon = !disruption.details().isEmpty() ? ", " + disruption.details() : Strings.EMPTY;
-            entryBuilder.driver(disruption.gene() + addon);
+            entryBuilder.driverType("Non-homozygous disruption");
+            String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disrupted copies, " + Formats.singleDigitNumber(
+                    disruption.undisruptedCopyNumber()) + " undisrupted copies";
+            entryBuilder.driver(disruption.gene() + ", " + disruption.type() + " (" + addon + ")");
             entryBuilder.driverLikelihood(disruption.driverLikelihood());
 
             addActionability(entryBuilder, disruption, evidence);
@@ -155,7 +182,7 @@ public final class MolecularDriverEntryFactory {
         for (Virus virus : viruses) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Virus");
-            entryBuilder.driver(virus.name() + ", " + virus.details());
+            entryBuilder.driver(virus.name() + ", " + virus.integrations() + " integrations detected");
             entryBuilder.driverLikelihood(virus.driverLikelihood());
 
             addActionability(entryBuilder, virus, evidence);

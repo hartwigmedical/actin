@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
@@ -257,12 +258,19 @@ public final class TestMolecularDataFactory {
                         .copies(38)
                         .isPartial(false)
                         .build())
+                .addHomozygousDisruptions(ImmutableHomozygousDisruption.builder()
+                        .event("PTEN disruption")
+                        .driverLikelihood(DriverLikelihood.HIGH)
+                        .gene("PTEN")
+                        .build())
                 .addDisruptions(ImmutableDisruption.builder()
                         .event(Strings.EMPTY)
                         .driverLikelihood(DriverLikelihood.LOW)
                         .gene("PTEN")
-                        .details("Intron 1 downstream")
-                        .isHomozygous(false)
+                        .type("DEL")
+                        .junctionCopyNumber(1.1)
+                        .undisruptedCopyNumber(1.8)
+                        .range("Intron 1 downstream")
                         .build())
                 .addFusions(ImmutableFusion.builder()
                         .event("EML4-ALK fusion")
@@ -276,7 +284,7 @@ public final class TestMolecularDataFactory {
                         .event("HPV positive")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .name("Human papillomavirus type 16d")
-                        .details("3 integrations detected")
+                        .integrations(3)
                         .build())
                 .build();
     }

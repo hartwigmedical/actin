@@ -20,6 +20,9 @@ public abstract class MolecularDrivers {
     public abstract Set<Loss> losses();
 
     @NotNull
+    public abstract Set<HomozygousDisruption> homozygousDisruptions();
+
+    @NotNull
     public abstract Set<Disruption> disruptions();
 
     @NotNull

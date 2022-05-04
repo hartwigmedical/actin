@@ -125,7 +125,13 @@ public final class TestOrangeDataFactory {
                         .driverLikelihood(FusionDriverLikelihood.HIGH)
                         .build())
                 .addHomozygousDisruptedGenes("TP53")
-                .addDisruptions(ImmutableLinxDisruption.builder().gene("RB1").range("Intron 1 downstream").build())
+                .addDisruptions(ImmutableLinxDisruption.builder()
+                        .gene("RB1")
+                        .type("DEL")
+                        .junctionCopyNumber(0.8)
+                        .undisruptedCopyNumber(2.1)
+                        .range("Intron 1 downstream")
+                        .build())
                 .build();
     }
 

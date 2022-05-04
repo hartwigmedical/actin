@@ -20,6 +20,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
@@ -119,18 +120,28 @@ public class MolecularRecordJsonTest {
         assertEquals("PTEN", loss.gene());
         assertTrue(loss.isPartial());
 
+        assertEquals(1, drivers.homozygousDisruptions().size());
+        HomozygousDisruption homozygousDisruption = drivers.homozygousDisruptions().iterator().next();
+        assertEquals("PTEN disruption", homozygousDisruption.event());
+        assertEquals(DriverLikelihood.HIGH, homozygousDisruption.driverLikelihood());
+        assertEquals("PTEN", homozygousDisruption.gene());
+
         assertEquals(2, drivers.disruptions().size());
-        Disruption disruption1 = findByDetails(drivers.disruptions(), "Intron 1 downstream");
+        Disruption disruption1 = findByRange(drivers.disruptions(), "Intron 1 downstream");
         assertEquals(Strings.EMPTY, disruption1.event());
         assertEquals(DriverLikelihood.LOW, disruption1.driverLikelihood());
         assertEquals("NF1", disruption1.gene());
-        assertFalse(disruption1.isHomozygous());
+        assertEquals("DEL", disruption1.type());
+        assertEquals(1.1, disruption1.junctionCopyNumber(), EPSILON);
+        assertEquals(2.0, disruption1.undisruptedCopyNumber(), EPSILON);
 
-        Disruption disruption2 = findByDetails(drivers.disruptions(), "Intron 2 upstream");
+        Disruption disruption2 = findByRange(drivers.disruptions(), "Intron 2 upstream");
         assertEquals(Strings.EMPTY, disruption2.event());
         assertEquals(DriverLikelihood.LOW, disruption2.driverLikelihood());
         assertEquals("NF1", disruption2.gene());
-        assertFalse(disruption2.isHomozygous());
+        assertEquals("DUP", disruption2.type());
+        assertEquals(0.3, disruption2.junctionCopyNumber(), EPSILON);
+        assertEquals(2.8, disruption2.undisruptedCopyNumber(), EPSILON);
 
         assertEquals(1, drivers.fusions().size());
         Fusion fusion = drivers.fusions().iterator().next();
@@ -146,13 +157,13 @@ public class MolecularRecordJsonTest {
         assertEquals("HPV positive", virus.event());
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals("Human papillomavirus type 16", virus.name());
-        assertEquals("3 integrations detected", virus.details());
+        assertEquals(3, virus.integrations());
     }
 
     @NotNull
-    private static Disruption findByDetails(@NotNull Iterable<Disruption> disruptions, @NotNull String detailsToFind) {
+    private static Disruption findByRange(@NotNull Iterable<Disruption> disruptions, @NotNull String detailsToFind) {
         for (Disruption disruption : disruptions) {
-            if (disruption.details().equals(detailsToFind)) {
+            if (disruption.range().equals(detailsToFind)) {
                 return disruption;
             }
         }

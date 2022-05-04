@@ -49,20 +49,31 @@
         "isPartial": true
       }
     ],
+    "homozygousDisruptions": [
+      {
+        "event": "PTEN disruption",
+        "driverLikelihood": "HIGH",
+        "gene": "PTEN"
+      }
+    ],
     "disruptions": [
       {
         "event": "",
         "driverLikelihood": "LOW",
         "gene": "NF1",
-        "isHomozygous": false,
-        "details": "Intron 1 downstream"
+        "type": "DEL",
+        "junctionCopyNumber": 1.1,
+        "undisruptedCopyNumber": 2.0,
+        "range": "Intron 1 downstream"
       },
       {
         "event": "",
         "driverLikelihood": "LOW",
         "gene": "NF1",
-        "isHomozygous": false,
-        "details": "Intron 2 upstream"
+        "type": "DUP",
+        "junctionCopyNumber": 0.3,
+        "undisruptedCopyNumber": 2.8,
+        "range": "Intron 2 upstream"
       }
     ],
     "fusions": [
@@ -80,7 +91,7 @@
         "event": "HPV positive",
         "driverLikelihood": "HIGH",
         "name": "Human papillomavirus type 16",
-        "details": "3 integrations detected"
+        "integrations": 3
       }
     ]
   },

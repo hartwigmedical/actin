@@ -43,9 +43,11 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
@@ -72,6 +74,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
+import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 import com.hartwig.actin.molecular.sort.evidence.EvidenceEntryComparator;
@@ -171,6 +174,7 @@ public class MolecularRecordJson {
                     .variants(toVariants(array(drivers, "variants")))
                     .amplifications(toAmplifications(array(drivers, "amplifications")))
                     .losses(toLosses(array(drivers, "losses")))
+                    .homozygousDisruptions(toHomozygousDisruptions(array(drivers, "homozygousDisruptions")))
                     .disruptions(toDisruptions(array(drivers, "disruptions")))
                     .fusions(toFusions(array(drivers, "fusions")))
                     .viruses(toViruses(array(drivers, "viruses")))
@@ -228,6 +232,20 @@ public class MolecularRecordJson {
         }
 
         @NotNull
+        private static Set<HomozygousDisruption> toHomozygousDisruptions(@NotNull JsonArray homozygousDisruptionArray) {
+            Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
+            for (JsonElement element : homozygousDisruptionArray) {
+                JsonObject homozygousDisruption = element.getAsJsonObject();
+                homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
+                        .event(string(homozygousDisruption, "event"))
+                        .driverLikelihood(DriverLikelihood.valueOf(string(homozygousDisruption, "driverLikelihood")))
+                        .gene(string(homozygousDisruption, "gene"))
+                        .build());
+            }
+            return homozygousDisruptions;
+        }
+
+        @NotNull
         private static Set<Disruption> toDisruptions(@NotNull JsonArray disruptionArray) {
             Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
             for (JsonElement element : disruptionArray) {
@@ -236,8 +254,10 @@ public class MolecularRecordJson {
                         .event(string(disruption, "event"))
                         .driverLikelihood(DriverLikelihood.valueOf(string(disruption, "driverLikelihood")))
                         .gene(string(disruption, "gene"))
-                        .isHomozygous(bool(disruption, "isHomozygous"))
-                        .details(string(disruption, "details"))
+                        .type(string(disruption, "type"))
+                        .junctionCopyNumber(number(disruption, "junctionCopyNumber"))
+                        .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
+                        .range(string(disruption, "range"))
                         .build());
             }
             return disruptions;
@@ -269,7 +289,7 @@ public class MolecularRecordJson {
                         .event(string(virus, "event"))
                         .driverLikelihood(DriverLikelihood.valueOf(string(virus, "driverLikelihood")))
                         .name(string(virus, "name"))
-                        .details(string(virus, "details"))
+                        .integrations(integer(virus, "integrations"))
                         .build());
             }
             return viruses;

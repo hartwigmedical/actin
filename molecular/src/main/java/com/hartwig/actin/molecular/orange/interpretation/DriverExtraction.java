@@ -9,9 +9,11 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
@@ -37,6 +39,7 @@ import com.hartwig.actin.molecular.orange.util.EventFormatter;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
+import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
@@ -56,6 +59,7 @@ final class DriverExtraction {
                 .variants(extractVariants(record.purple()))
                 .amplifications(extractAmplifications(record.purple()))
                 .losses(extractLosses(record.purple()))
+                .homozygousDisruptions(extractHomozygousDisruptions(record.linx()))
                 .disruptions(extractDisruptions(record.linx()))
                 .fusions(extractFusions(record.linx()))
                 .viruses(extractViruses(record.virusInterpreter()))
@@ -156,6 +160,19 @@ final class DriverExtraction {
     }
 
     @NotNull
+    private static Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
+        Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
+        for (String homozygous : linx.homozygousDisruptedGenes()) {
+            homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
+                    .event(homozygous + " " + EventFormatter.DISRUPTION_EVENT)
+                    .driverLikelihood(DriverLikelihood.HIGH)
+                    .gene(homozygous)
+                    .build());
+        }
+        return homozygousDisruptions;
+    }
+
+    @NotNull
     private static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
@@ -163,18 +180,10 @@ final class DriverExtraction {
                     .event(Strings.EMPTY)
                     .driverLikelihood(DriverLikelihood.LOW)
                     .gene(disruption.gene())
-                    .isHomozygous(false)
-                    .details(disruption.range())
-                    .build());
-        }
-
-        for (String homozygous : linx.homozygousDisruptedGenes()) {
-            disruptions.add(ImmutableDisruption.builder()
-                    .event(homozygous + " " + EventFormatter.DISRUPTION_EVENT)
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .gene(homozygous)
-                    .isHomozygous(true)
-                    .details(Strings.EMPTY)
+                    .type(disruption.type())
+                    .junctionCopyNumber(disruption.junctionCopyNumber())
+                    .undisruptedCopyNumber(disruption.undisruptedCopyNumber())
+                    .range(disruption.range())
                     .build());
         }
         return disruptions;
@@ -243,7 +252,7 @@ final class DriverExtraction {
                     .event(event)
                     .driverLikelihood(extractVirusDriverLikelihood(virus))
                     .name(virus.name())
-                    .details(virus.integrations() + " integrations detected")
+                    .integrations(virus.integrations())
                     .build());
         }
         return viruses;

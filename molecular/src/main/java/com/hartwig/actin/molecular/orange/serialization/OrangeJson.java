@@ -198,6 +198,9 @@ public final class OrangeJson {
                 JsonObject geneDisruption = element.getAsJsonObject();
                 disruptions.add(ImmutableLinxDisruption.builder()
                         .gene(string(geneDisruption, "gene"))
+                        .type(string(geneDisruption, "type"))
+                        .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
+                        .undisruptedCopyNumber(number(geneDisruption, "undisruptedCopyNumber"))
                         .range(string(geneDisruption, "range"))
                         .build());
             }
