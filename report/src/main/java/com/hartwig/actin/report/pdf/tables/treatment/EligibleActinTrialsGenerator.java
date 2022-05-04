@@ -61,10 +61,10 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedTrial> trials, @NotNull String title, float width) {
-        float trialColWidth = width / 10;
-        float acronymColWidth = width / 10;
+        float trialColWidth = width / 9;
+        float acronymColWidth = width / 11;
         float cohortColWidth = width / 3;
-        float molecularColWidth = width / 10;
+        float molecularColWidth = width / 11;
         float checksColWidth = width - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth);
 
         return new EligibleActinTrialsGenerator(trials,
@@ -119,7 +119,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         }
 
         if (hasTrialWithNoSlots) {
-            table.addCell(Cells.createSpanningSubNote(" * Cohort has no available slots", table));
+            table.addCell(Cells.createSpanningSubNote(" * Cohort currently has no slots available", table));
         }
 
         return Tables.makeWrapping(table);
