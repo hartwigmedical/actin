@@ -377,7 +377,7 @@ ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated
 Rule | When does a patient pass evaluation?| Note
 ---|---|---
 CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X% and status is active
-CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like %X% and status is active
+CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like %X% and status is active | For corticosteroids: ignore Betamethasone
 HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS | Medication > categories like %X% and active OR stopDate within Y weeks | Undetermined in case Y would require stop dates to be prior to ACTIN registration date.
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
