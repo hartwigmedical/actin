@@ -13,7 +13,6 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Ignore betamethasone in case of corticosteroids
 public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationFunction {
 
     @NotNull
