@@ -62,16 +62,16 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
                 return false;
             }
             case SIGNATURE: {
-                return hasInclusiveSignatureRecord(inclusionRecords, evidence.event());
+                return hasInclusiveSignatureRecord(inclusionRecords, evidence.treatment(), evidence.event());
             }
             case ACTIVATION: {
-                return hasInclusiveActivationRecord(inclusionRecords, evidence.gene());
+                return hasInclusiveActivationRecord(inclusionRecords, evidence.treatment(), evidence.gene());
             }
             case INACTIVATION: {
-                return hasInclusiveInactivationRecord(inclusionRecords, evidence.gene());
+                return hasInclusiveInactivationRecord(inclusionRecords, evidence.treatment(), evidence.gene());
             }
             case AMPLIFICATION: {
-                return hasInclusiveAmplificationRecord(inclusionRecords, evidence.gene());
+                return hasInclusiveAmplificationRecord(inclusionRecords, evidence.treatment(), evidence.gene());
             }
             case DELETION: {
                 LOGGER.warn("No trial inclusion evaluation is implemented for deletion: {}", EvidenceFormatter.format(evidence));
@@ -79,13 +79,13 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
             }
             case PROMISCUOUS_FUSION:
             case FUSION_PAIR: {
-                return hasInclusiveFusionRecord(inclusionRecords, evidence.event());
+                return hasInclusiveFusionRecord(inclusionRecords, evidence.treatment(), evidence.event());
             }
             case HOTSPOT_MUTATION:
             case CODON_MUTATION:
             case EXON_MUTATION: {
                 Set<String> mappedMutations = mutationMapper.map(evidence);
-                return hasInclusiveMutationRecord(inclusionRecords, evidence.gene(), mappedMutations);
+                return hasInclusiveMutationRecord(inclusionRecords, evidence.treatment(), evidence.gene(), mappedMutations);
             }
             case ANY_MUTATION: {
                 LOGGER.warn("No trial inclusion evaluation is implemented for any mutation: {}", EvidenceFormatter.format(evidence));
@@ -97,17 +97,18 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         }
     }
 
-    private static boolean hasInclusiveSignatureRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
+    private static boolean hasInclusiveSignatureRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
+            @NotNull String event) {
         switch (event) {
             case ORANGE_HIGH_TMB:
             case ORANGE_HIGH_TML: {
-                return hasInclusiveTumorLoadRecord(inclusionRecords);
+                return hasInclusiveTumorLoadRecord(inclusionRecords, treatment);
             }
             case ORANGE_MSI: {
-                return hasInclusiveMicrosatelliteRecord(inclusionRecords);
+                return hasInclusiveMicrosatelliteRecord(inclusionRecords, treatment);
             }
             case ORANGE_HRD: {
-                return hasInclusiveHRDeficiencyRecord(inclusionRecords);
+                return hasInclusiveHRDeficiencyRecord(inclusionRecords, treatment);
             }
             default: {
                 throw new IllegalStateException("Unrecognized signature evidence detected: " + event);
@@ -115,47 +116,54 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         }
     }
 
-    private static boolean hasInclusiveTumorLoadRecord(@NotNull List<ServeRecord> inclusionRecords) {
-        return containsRecordWithRule(inclusionRecords, EligibilityRule.TMB_OF_AT_LEAST_X, EligibilityRule.TML_OF_AT_LEAST_X);
+    private static boolean hasInclusiveTumorLoadRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment) {
+        return containsTreatmentWithRule(inclusionRecords, treatment, EligibilityRule.TMB_OF_AT_LEAST_X, EligibilityRule.TML_OF_AT_LEAST_X);
     }
 
-    private static boolean hasInclusiveMicrosatelliteRecord(@NotNull List<ServeRecord> inclusionRecords) {
-        return containsRecordWithRule(inclusionRecords, EligibilityRule.MSI_SIGNATURE);
+    private static boolean hasInclusiveMicrosatelliteRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment) {
+        return containsTreatmentWithRule(inclusionRecords, treatment, EligibilityRule.MSI_SIGNATURE);
     }
 
-    private static boolean hasInclusiveHRDeficiencyRecord(@NotNull List<ServeRecord> inclusionRecords) {
-        return containsRecordWithRule(inclusionRecords, EligibilityRule.HRD_SIGNATURE);
+    private static boolean hasInclusiveHRDeficiencyRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment) {
+        return containsTreatmentWithRule(inclusionRecords, treatment, EligibilityRule.HRD_SIGNATURE);
     }
 
-    private static boolean hasInclusiveActivationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene) {
-        return containsRecordWithGeneAndRule(inclusionRecords,
+    private static boolean hasInclusiveActivationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
+            @NotNull String gene) {
+        return containsTreatmentWithGeneAndRule(inclusionRecords,
+                treatment,
                 gene,
                 EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X,
                 EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X);
     }
 
-    private static boolean hasInclusiveInactivationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene) {
-        return containsRecordWithGeneAndRule(inclusionRecords, gene, EligibilityRule.INACTIVATION_OF_GENE_X);
+    private static boolean hasInclusiveInactivationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
+            @NotNull String gene) {
+        return containsTreatmentWithGeneAndRule(inclusionRecords, treatment, gene, EligibilityRule.INACTIVATION_OF_GENE_X);
     }
 
-    private static boolean hasInclusiveAmplificationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene) {
-        return containsRecordWithGeneAndRule(inclusionRecords, gene, EligibilityRule.AMPLIFICATION_OF_GENE_X);
+    private static boolean hasInclusiveAmplificationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
+            @NotNull String gene) {
+        return containsTreatmentWithGeneAndRule(inclusionRecords, treatment, gene, EligibilityRule.AMPLIFICATION_OF_GENE_X);
     }
 
-
-    private static boolean hasInclusiveFusionRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String event) {
+    private static boolean hasInclusiveFusionRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
+            @NotNull String event) {
         FusionGene fusion = FusionParser.fromEvidenceEvent(event);
 
-        boolean hasPromiscuousFive = containsRecordWithGeneAndRule(inclusionRecords, fusion.fiveGene(), EligibilityRule.FUSION_IN_GENE_X);
-        boolean hasPromiscuousThree = containsRecordWithGeneAndRule(inclusionRecords, fusion.threeGene(), EligibilityRule.FUSION_IN_GENE_X);
+        boolean hasPromiscuousFive =
+                containsTreatmentWithGeneAndRule(inclusionRecords, treatment, fusion.fiveGene(), EligibilityRule.FUSION_IN_GENE_X);
+        boolean hasPromiscuousThree =
+                containsTreatmentWithGeneAndRule(inclusionRecords, treatment, fusion.threeGene(), EligibilityRule.FUSION_IN_GENE_X);
 
         return hasPromiscuousFive || hasPromiscuousThree;
     }
 
-    private static boolean hasInclusiveMutationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String gene,
-            @NotNull Set<String> mappedMutations) {
+    private static boolean hasInclusiveMutationRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
+            @NotNull String gene, @NotNull Set<String> mappedMutations) {
         for (String mappedMutation : mappedMutations) {
-            if (containsRecordWithMutationOnGeneAndRule(inclusionRecords,
+            if (containsTreatmentWithMutationOnGeneAndRule(inclusionRecords,
+                    treatment,
                     gene,
                     mappedMutation,
                     EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)) {
@@ -166,11 +174,12 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         return false;
     }
 
-    private static boolean containsRecordWithMutationOnGeneAndRule(@NotNull List<ServeRecord> records, @NotNull String gene,
-            @NotNull String mutation, @NotNull EligibilityRule... rules) {
+    private static boolean containsTreatmentWithMutationOnGeneAndRule(@NotNull List<ServeRecord> records, @NotNull String treatment,
+            @NotNull String gene, @NotNull String mutation, @NotNull EligibilityRule... rules) {
         Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);
         for (ServeRecord record : records) {
-            if (gene.equals(record.gene()) && mutation.equals(record.mutation()) && ruleSet.contains(record.rule())) {
+            if (treatment.equals(record.trial()) && gene.equals(record.gene()) && mutation.equals(record.mutation()) && ruleSet.contains(
+                    record.rule())) {
                 return true;
             }
         }
@@ -178,22 +187,23 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
         return false;
     }
 
-    private static boolean containsRecordWithGeneAndRule(@NotNull List<ServeRecord> records, @NotNull String gene,
+    private static boolean containsTreatmentWithGeneAndRule(@NotNull List<ServeRecord> records, @NotNull String treatment,
+            @NotNull String gene, @NotNull EligibilityRule... rules) {
+        Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);
+        for (ServeRecord record : records) {
+            if (treatment.equals(record.trial()) && gene.equals(record.gene()) && ruleSet.contains(record.rule())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean containsTreatmentWithRule(@NotNull List<ServeRecord> records, @NotNull String treatment,
             @NotNull EligibilityRule... rules) {
         Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);
         for (ServeRecord record : records) {
-            if (gene.equals(record.gene()) && ruleSet.contains(record.rule())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean containsRecordWithRule(@NotNull List<ServeRecord> records, @NotNull EligibilityRule... rules) {
-        Set<EligibilityRule> ruleSet = Sets.newHashSet(rules);
-        for (ServeRecord record : records) {
-            if (ruleSet.contains(record.rule())) {
+            if (treatment.equals(record.trial()) && ruleSet.contains(record.rule())) {
                 return true;
             }
         }

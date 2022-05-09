@@ -24,7 +24,7 @@ import org.junit.Test;
 public class OrangeEvidenceEvaluatorTest {
 
     @Test
-    public void ignoreExclusionRecords() {
+    public void canIgnoreExclusionRecords() {
         ServeRecord inclusion = ImmutableServeRecord.builder()
                 .trial(Strings.EMPTY)
                 .rule(EligibilityRule.AMPLIFICATION_OF_GENE_X)
@@ -46,6 +46,31 @@ public class OrangeEvidenceEvaluatorTest {
 
         ProtectEvidence amplificationX = testBuilder(EvidenceType.AMPLIFICATION).gene("X").build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(amplificationX));
+    }
+
+    @Test
+    public void picksOneTrialInCaseOfInclusionExclusion() {
+        ServeRecord inclusion = ImmutableServeRecord.builder()
+                .trial("trial 1")
+                .rule(EligibilityRule.AMPLIFICATION_OF_GENE_X)
+                .gene("Y")
+                .isUsedAsInclusion(true)
+                .build();
+
+        ServeRecord exclusion = ImmutableServeRecord.builder()
+                .trial("trial 2")
+                .rule(EligibilityRule.AMPLIFICATION_OF_GENE_X)
+                .gene("Y")
+                .isUsedAsInclusion(false)
+                .build();
+
+        OrangeEvidenceEvaluator evaluator = OrangeEvidenceEvaluator.fromServeRecords(Lists.newArrayList(inclusion, exclusion));
+
+        ProtectEvidence trial1Evidence = testBuilder(EvidenceType.AMPLIFICATION).treatment("trial 1").gene("Y").build();
+        assertTrue(evaluator.isPotentiallyForTrialInclusion(trial1Evidence));
+
+        ProtectEvidence trial2Evidence = testBuilder(EvidenceType.AMPLIFICATION).treatment("trial 2").gene("Y").build();
+        assertFalse(evaluator.isPotentiallyForTrialInclusion(trial2Evidence));
     }
 
     @Test
