@@ -26,18 +26,21 @@ public class ServeRecordTsvTest {
         assertEquals(3, records.size());
         ServeRecord record1 = findByGene(records, "X");
         assertEquals("TRIAL 1", record1.trial());
+        assertEquals("A", record1.cohort());
         assertEquals(EligibilityRule.AMPLIFICATION_OF_GENE_X, record1.rule());
         assertNull(record1.mutation());
         assertTrue(record1.isUsedAsInclusion());
 
         ServeRecord record2 = findByGene(records, "Y");
         assertEquals("TRIAL 1", record2.trial());
+        assertEquals("B", record2.cohort());
         assertEquals(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, record2.rule());
         assertEquals("some mutation", record2.mutation());
         assertFalse(record2.isUsedAsInclusion());
 
         ServeRecord record3 = findByMutation(records, "TMB >= 8");
         assertEquals("TRIAL 2", record3.trial());
+        assertNull(record3.cohort());
         assertEquals(EligibilityRule.TMB_OF_AT_LEAST_X, record3.rule());
         assertNull(record3.gene());
         assertTrue(record3.isUsedAsInclusion());

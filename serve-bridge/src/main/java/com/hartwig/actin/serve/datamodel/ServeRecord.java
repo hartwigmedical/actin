@@ -13,6 +13,9 @@ public abstract class ServeRecord {
     @NotNull
     public abstract String trial();
 
+    @Nullable
+    public abstract String cohort();
+
     @NotNull
     public abstract EligibilityRule rule();
 

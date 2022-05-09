@@ -47,7 +47,7 @@ public final class ServeRecordTsv {
 
     @NotNull
     private static String header() {
-        return new StringJoiner(FIELD_DELIMITER).add("trial").add("rule").add("gene").add("mutation").add("isUsedAsInclusion").toString();
+        return new StringJoiner(FIELD_DELIMITER).add("trial").add("cohort").add("rule").add("gene").add("mutation").add("isUsedAsInclusion").toString();
     }
 
     @NotNull
@@ -55,6 +55,7 @@ public final class ServeRecordTsv {
         String[] values = line.split(FIELD_DELIMITER, -1);
         return ImmutableServeRecord.builder()
                 .trial(values[fields.get("trial")])
+                .cohort(emptyToNull(values[fields.get("cohort")]))
                 .rule(EligibilityRule.valueOf(values[fields.get("rule")]))
                 .gene(emptyToNull(values[fields.get("gene")]))
                 .mutation(emptyToNull(values[fields.get("mutation")]))
@@ -65,6 +66,7 @@ public final class ServeRecordTsv {
     @NotNull
     private static String toLine(@NotNull ServeRecord record) {
         return new StringJoiner(FIELD_DELIMITER).add(record.trial())
+                .add(nullToEmpty(record.cohort()))
                 .add(record.rule().toString())
                 .add(nullToEmpty(record.gene()))
                 .add(nullToEmpty(record.mutation()))

@@ -34,35 +34,40 @@ public class ServeRecordExtractorTest {
 
         assertEquals(5, records.size());
 
-        ServeRecord first = find(records, EligibilityRule.FUSION_IN_GENE_X);
-        assertEquals("trial 1", first.trial());
-        assertEquals("gene 1", first.gene());
-        assertNull(first.mutation());
-        assertTrue(first.isUsedAsInclusion());
+        ServeRecord trial1Rule1 = find(records, EligibilityRule.FUSION_IN_GENE_X);
+        assertEquals("trial 1", trial1Rule1.trial());
+        assertNull(trial1Rule1.cohort());
+        assertEquals("gene 1", trial1Rule1.gene());
+        assertNull(trial1Rule1.mutation());
+        assertTrue(trial1Rule1.isUsedAsInclusion());
 
-        ServeRecord second = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
-        assertEquals("trial 2", second.trial());
-        assertEquals("gene 2", second.gene());
-        assertEquals("coding", second.mutation());
-        assertFalse(second.isUsedAsInclusion());
+        ServeRecord trial1Rule2 = find(records, EligibilityRule.TMB_OF_AT_LEAST_X);
+        assertEquals("trial 1", trial1Rule2.trial());
+        assertNull(trial1Rule2.cohort());
+        assertNull(trial1Rule2.gene());
+        assertEquals("TMB >= 10", trial1Rule2.mutation());
+        assertTrue(trial1Rule2.isUsedAsInclusion());
 
-        ServeRecord third = find(records, EligibilityRule.INACTIVATION_OF_GENE_X);
-        assertEquals("trial 2", third.trial());
-        assertEquals("gene 3", third.gene());
-        assertNull(third.mutation());
-        assertTrue(third.isUsedAsInclusion());
+        ServeRecord trial2Rule1 = find(records, EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y);
+        assertEquals("trial 2", trial2Rule1.trial());
+        assertNull(trial2Rule1.cohort());
+        assertEquals("gene 2", trial2Rule1.gene());
+        assertEquals("coding", trial2Rule1.mutation());
+        assertFalse(trial2Rule1.isUsedAsInclusion());
 
-        ServeRecord fourth = find(records, EligibilityRule.TMB_OF_AT_LEAST_X);
-        assertEquals("trial 1", fourth.trial());
-        assertNull(fourth.gene());
-        assertEquals("TMB >= 10", fourth.mutation());
-        assertTrue(fourth.isUsedAsInclusion());
+        ServeRecord trial2Rule2 = find(records, EligibilityRule.INACTIVATION_OF_GENE_X);
+        assertEquals("trial 2", trial2Rule2.trial());
+        assertEquals("cohort 2", trial2Rule2.cohort());
+        assertEquals("gene 3", trial2Rule2.gene());
+        assertNull(trial2Rule2.mutation());
+        assertTrue(trial2Rule2.isUsedAsInclusion());
 
-        ServeRecord fifth = find(records, EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X);
-        assertEquals("trial 3", fifth.trial());
-        assertEquals("gene 3", fifth.gene());
-        assertNull(fifth.mutation());
-        assertFalse(fifth.isUsedAsInclusion());
+        ServeRecord trail3Rule1 = find(records, EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X);
+        assertEquals("trial 3", trail3Rule1.trial());
+        assertNull(trail3Rule1.cohort());
+        assertEquals("gene 3", trail3Rule1.gene());
+        assertNull(trail3Rule1.mutation());
+        assertFalse(trail3Rule1.isUsedAsInclusion());
     }
 
     @NotNull
