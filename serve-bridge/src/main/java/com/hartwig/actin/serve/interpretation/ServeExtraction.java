@@ -56,12 +56,6 @@ public final class ServeExtraction {
                 }
                 return (String) function.parameters().get(1);
             }
-            case MSI_SIGNATURE: {
-                return "MSI high";
-            }
-            case HRD_SIGNATURE: {
-                return "HRD pos";
-            }
             case TMB_OF_AT_LEAST_X: {
                 if (function.parameters().size() != 1) {
                     throw new IllegalStateException("Cannot determine TMB cutoff for rule: " + function);

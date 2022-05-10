@@ -48,12 +48,6 @@ public class ServeExtractionTest {
                 .build();
         assertEquals("mutation", ServeExtraction.mutation(mutationFunction));
 
-        EligibilityFunction msiFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.MSI_SIGNATURE).build();
-        assertEquals("MSI high", ServeExtraction.mutation(msiFunction));
-
-        EligibilityFunction hrdFunction = ImmutableEligibilityFunction.builder().rule(EligibilityRule.HRD_SIGNATURE).build();
-        assertEquals("HRD pos", ServeExtraction.mutation(hrdFunction));
-
         EligibilityFunction tmbHighFunction =
                 ImmutableEligibilityFunction.builder().rule(EligibilityRule.TMB_OF_AT_LEAST_X).addParameters("20").build();
         assertEquals("TMB >= 20", ServeExtraction.mutation(tmbHighFunction));

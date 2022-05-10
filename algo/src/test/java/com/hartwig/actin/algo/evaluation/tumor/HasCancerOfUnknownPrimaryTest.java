@@ -21,7 +21,8 @@ public class HasCancerOfUnknownPrimaryTest {
         HasCancerOfUnknownPrimary function = new HasCancerOfUnknownPrimary(doidModel, category);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((List<String>) null)));
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(HasCancerOfUnknownPrimary.CANCER_DOID)));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TumorTestFactory.withDoids(HasCancerOfUnknownPrimary.CANCER_DOID)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("random doid")));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(category.doid(), "other doid")));
 
