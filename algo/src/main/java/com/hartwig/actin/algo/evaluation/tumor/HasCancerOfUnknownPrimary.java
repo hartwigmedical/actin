@@ -37,16 +37,16 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor type known for patient")
-                    .addUndeterminedGeneralMessages("Unknown tumor type")
+                    .addUndeterminedSpecificMessages("No tumor type configured for patient, unknown if CUP")
+                    .addUndeterminedGeneralMessages("Unconfigured tumor type")
                     .build();
         }
 
         if (doids.equals(Sets.newHashSet(CANCER_DOID))) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient has tumor type 'cancer' configured")
-                    .addWarnGeneralMessages("Unknown if CUP")
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has tumor type 'cancer' configured, unknown if actually CUP")
+                    .addUndeterminedGeneralMessages("Undetermined if actual CUP")
                     .build();
         }
 
@@ -65,11 +65,11 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         EvaluationResult result = isMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no cancer of unknown primary of category " + categoryOfCUP.display());
-            builder.addFailGeneralMessages("Tumor type is no CUP");
+            builder.addFailSpecificMessages("Patient has no cancer of unknown primary (CUP) of category " + categoryOfCUP.display());
+            builder.addFailGeneralMessages("Tumor type is no CUP (" + categoryOfCUP.display() + ")");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has cancer of unknown primary of category " + categoryOfCUP.display());
-            builder.addPassGeneralMessages("Tumor type is CUP");
+            builder.addPassSpecificMessages("Patient has cancer of unknown primary (CUP) of category " + categoryOfCUP.display());
+            builder.addPassGeneralMessages("Tumor type is CUP (" + categoryOfCUP.display() + ")");
         }
 
         return builder.build();
