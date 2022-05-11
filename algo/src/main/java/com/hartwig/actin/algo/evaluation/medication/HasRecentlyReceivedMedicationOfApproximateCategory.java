@@ -39,7 +39,7 @@ public class HasRecentlyReceivedMedicationOfApproximateCategory implements Evalu
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Max stop date prior to registration date for recent medication usage evaluation of " + categoryToFind)
-                    .addUndeterminedGeneralMessages("recent " + categoryToFind + " medication")
+                    .addUndeterminedGeneralMessages("Recent " + categoryToFind + " medication")
                     .build();
         }
 
@@ -54,7 +54,7 @@ public class HasRecentlyReceivedMedicationOfApproximateCategory implements Evalu
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(
                             "Patient currently gets medication " + Format.concat(names) + ", which belong(s) to category " + categoryToFind)
-                    .addPassGeneralMessages("recent " + categoryToFind + " medication")
+                    .addPassGeneralMessages("Recent " + categoryToFind + " medication")
                     .build();
         }
 
@@ -71,7 +71,7 @@ public class HasRecentlyReceivedMedicationOfApproximateCategory implements Evalu
                     .addPassSpecificMessages(
                             "Patient recently received medication " + Format.concat(recentlyStopped) + ", which belong(s) to category "
                                     + categoryToFind)
-                    .addPassGeneralMessages("recent " + categoryToFind + " medication")
+                    .addPassGeneralMessages("Recent " + categoryToFind + " medication")
                     .build();
         }
 
