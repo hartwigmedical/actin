@@ -218,6 +218,7 @@ HAS_INR_ULN_OF_AT_MOST_X | International normalized ratio (INR/POCT_INR) <= X*UL
 HAS_PT_ULN_OF_AT_MOST_X | Prothrombin time (PT/POCT_PT) <= X*ULN 
 HAS_APTT_ULN_OF_AT_MOST_X | Activated partial thromboplastin time (APTT) <= X*ULN 
 HAS_PTT_ULN_OF_AT_MOST_X | T.B.D. 
+HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT | D-dimer (DDIM) > refLimitUp
 
 _Liver function_
 
