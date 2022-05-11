@@ -30,6 +30,7 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("ECG details are missing, assumed there are none")
+                    .addFailGeneralMessages("Assumed no ECG abnormalities")
                     .build();
         }
 
@@ -46,14 +47,18 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             if (type == null) {
                 builder.addFailSpecificMessages("No known ECG abnormalities");
+                builder.addFailGeneralMessages("No known ECG abnormalities");
             } else {
                 builder.addFailSpecificMessages("No known ECG abnormalities of type " + type);
+                builder.addFailGeneralMessages("No known ECG abnormalities");
             }
         } else if (result == EvaluationResult.PASS) {
             if (type == null) {
                 builder.addPassSpecificMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
+                builder.addPassGeneralMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
             } else {
                 builder.addPassSpecificMessages("Known ECG abnormalities of type " + type + ": " + ecg.aberrationDescription());
+                builder.addPassGeneralMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
             }
         }
 
