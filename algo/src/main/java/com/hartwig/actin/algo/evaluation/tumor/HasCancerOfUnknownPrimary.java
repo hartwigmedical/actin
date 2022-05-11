@@ -37,16 +37,16 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor type configured for patient, unknown if CUP")
-                    .addUndeterminedGeneralMessages("Unconfigured tumor type")
+                    .addUndeterminedSpecificMessages("No tumor location/type configured for patient, unknown if CUP")
+                    .addUndeterminedGeneralMessages("Unconfigured tumor location/type")
                     .build();
         }
 
         if (doids.equals(Sets.newHashSet(CANCER_DOID))) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has tumor type 'cancer' configured, unknown if actually CUP")
-                    .addUndeterminedGeneralMessages("Undetermined if actual CUP")
+                    .addUndeterminedSpecificMessages("Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
+                    .addUndeterminedGeneralMessages("Undetermined CUP tumor type / if actually CUP")
                     .build();
         }
 
