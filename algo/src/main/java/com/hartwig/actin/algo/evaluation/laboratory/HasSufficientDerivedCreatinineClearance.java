@@ -182,6 +182,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(code + " is insufficient");
+            builder.addFailGeneralMessages(code + " insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(code + " evaluation led to ambiguous results");
         } else if (result == EvaluationResult.PASS) {

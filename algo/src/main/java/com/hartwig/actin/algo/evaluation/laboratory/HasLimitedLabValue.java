@@ -41,9 +41,9 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is insufficient");
+            builder.addFailGeneralMessages(labValue.code() + " insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated");
-            builder.addUndeterminedGeneralMessages("Lab evaluation undetermined");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " is sufficient");
         }

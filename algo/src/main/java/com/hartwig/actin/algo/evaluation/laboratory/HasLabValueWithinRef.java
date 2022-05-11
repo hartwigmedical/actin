@@ -29,6 +29,7 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " is not within reference values");
+            builder.addFailGeneralMessages(labValue.code() + " out of range");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " is within reference values");
         }

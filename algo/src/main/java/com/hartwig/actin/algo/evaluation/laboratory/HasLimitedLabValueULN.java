@@ -25,9 +25,9 @@ public class HasLimitedLabValueULN implements LabEvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(labValue.code() + " exceeds maximum ULN");
+            builder.addFailGeneralMessages(labValue.code() + " exceeds maximum ULN");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated against maximum ULN");
-            builder.addUndeterminedGeneralMessages("Lab evaluation undetermined");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " does not exceed maximum ULN");
         }
