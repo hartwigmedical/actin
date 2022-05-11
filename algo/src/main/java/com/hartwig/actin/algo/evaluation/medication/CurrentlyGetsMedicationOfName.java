@@ -27,7 +27,7 @@ public class CurrentlyGetsMedicationOfName implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasReceivedMedication = !selector.withAnyTermInName(record.clinical().medications(), termsToFind).isEmpty();
+        boolean hasReceivedMedication = !selector.activeWithAnyTermInName(record.clinical().medications(), termsToFind).isEmpty();
 
         EvaluationResult result = hasReceivedMedication ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);

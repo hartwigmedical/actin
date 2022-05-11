@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -21,7 +22,7 @@ public class MedicationSelectorTest {
 
         medications.add(MedicationTestFactory.builder().name("active").build());
 
-        List<Medication> filtered = createTestSelector().active(medications);
+        List<Medication> filtered = createAlwaysActiveSelector().active(medications);
 
         assertEquals(1, filtered.size());
         assertEquals("active", filtered.get(0).name());
@@ -36,7 +37,7 @@ public class MedicationSelectorTest {
         medications.add(MedicationTestFactory.builder().name("name 2").build());
         medications.add(MedicationTestFactory.builder().name("name 3").build());
 
-        List<Medication> filtered = createTestSelector().withAnyTermInName(medications, Sets.newHashSet("Name 1", "2"));
+        List<Medication> filtered = createAlwaysActiveSelector().activeWithAnyTermInName(medications, Sets.newHashSet("Name 1", "2"));
 
         assertEquals(3, filtered.size());
         assertNotNull(findByName(filtered, "name 1"));
@@ -52,7 +53,7 @@ public class MedicationSelectorTest {
         medications.add(MedicationTestFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
         medications.add(MedicationTestFactory.builder().name("right categories").addCategories("category 1", "category 2").build());
 
-        List<Medication> filtered = createTestSelector().withExactCategory(medications, "Category 1");
+        List<Medication> filtered = createAlwaysActiveSelector().activeWithExactCategory(medications, "Category 1");
 
         assertEquals(1, filtered.size());
         assertEquals("right categories", filtered.get(0).name());
@@ -67,11 +68,39 @@ public class MedicationSelectorTest {
         medications.add(MedicationTestFactory.builder().name("right category 1").addCategories("category 1", "category 2").build());
         medications.add(MedicationTestFactory.builder().name("right category 2").addCategories("category 3").build());
 
-        List<Medication> filtered = createTestSelector().withAnyExactCategory(medications, Sets.newHashSet("Category 1", "Category 3"));
+        List<Medication> filtered =
+                createAlwaysActiveSelector().activeWithAnyExactCategory(medications, Sets.newHashSet("Category 1", "Category 3"));
 
         assertEquals(2, filtered.size());
         assertNotNull(findByName(medications, "right category 1"));
         assertNotNull(findByName(medications, "right category 2"));
+    }
+
+    @Test
+    public void canFilterOnActiveOrRecentlyStopped() {
+        List<Medication> medications = Lists.newArrayList();
+
+        LocalDate minStopDate = LocalDate.of(2019, 11, 20);
+
+        medications.add(MedicationTestFactory.builder().name("no categories").build());
+        medications.add(MedicationTestFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
+        medications.add(MedicationTestFactory.builder()
+                .name("right category 1 recently stopped")
+                .addCategories("category 1")
+                .stopDate(minStopDate.plusDays(1))
+                .build());
+
+        medications.add(MedicationTestFactory.builder()
+                .name("right category 1 stopped long ago")
+                .addCategories("category 1")
+                .stopDate(minStopDate.minusDays(1))
+                .build());
+
+        List<Medication> filtered =
+                createAlwaysInactiveSelector().activeOrRecentlyStoppedWithCategory(medications, "Category 1", minStopDate);
+
+        assertEquals(1, filtered.size());
+        assertNotNull(findByName(medications, "right category 1 recently stopped"));
     }
 
     @NotNull
@@ -86,7 +115,12 @@ public class MedicationSelectorTest {
     }
 
     @NotNull
-    private static MedicationSelector createTestSelector() {
-        return new MedicationSelector(Medication -> MedicationStatusInterpretation.ACTIVE);
+    private static MedicationSelector createAlwaysActiveSelector() {
+        return new MedicationSelector(medication -> MedicationStatusInterpretation.ACTIVE);
+    }
+
+    @NotNull
+    private static MedicationSelector createAlwaysInactiveSelector() {
+        return new MedicationSelector(medication -> MedicationStatusInterpretation.CANCELLED);
     }
 }

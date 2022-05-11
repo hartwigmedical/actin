@@ -29,7 +29,7 @@ public class CurrentlyGetsMedicationOfExactCategory implements EvaluationFunctio
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<Medication> medications = selector.withAnyExactCategory(record.clinical().medications(), categoriesToFind);
+        List<Medication> medications = selector.activeWithAnyExactCategory(record.clinical().medications(), categoriesToFind);
 
         if (!medications.isEmpty()) {
             Set<String> names = Sets.newHashSet();

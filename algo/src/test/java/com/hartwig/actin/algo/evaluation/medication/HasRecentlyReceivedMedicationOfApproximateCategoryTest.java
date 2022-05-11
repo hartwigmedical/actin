@@ -44,8 +44,8 @@ public class HasRecentlyReceivedMedicationOfApproximateCategoryTest {
                 "category to find",
                 EVALUATION_DATE.minusDays(1));
 
-        // Medication stopped prior to max stop date
-        Medication medication = MedicationTestFactory.builder().addCategories("categories to find").stopDate(EVALUATION_DATE).build();
+        // Medication stopped after min stop date
+        Medication medication = MedicationTestFactory.builder().addCategories("category to find").stopDate(EVALUATION_DATE).build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(Lists.newArrayList(medication))));
     }
 
@@ -56,8 +56,8 @@ public class HasRecentlyReceivedMedicationOfApproximateCategoryTest {
                 "category to find",
                 EVALUATION_DATE.minusWeeks(2));
 
-        // Medication stopped prior to max stop date
-        Medication medication = MedicationTestFactory.builder().addCategories("categories to find").stopDate(EVALUATION_DATE).build();
+        // Medication stopped after min stop date
+        Medication medication = MedicationTestFactory.builder().addCategories("category to find").stopDate(EVALUATION_DATE).build();
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MedicationTestFactory.withMedications(Lists.newArrayList(medication))));
     }

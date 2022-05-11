@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -33,33 +34,64 @@ class MedicationSelector {
     }
 
     @NotNull
-    public List<Medication> withAnyTermInName(@NotNull List<Medication> medications, @NotNull Set<String> termsToFind) {
+    public List<Medication> activeWithAnyTermInName(@NotNull List<Medication> medications, @NotNull Set<String> termsToFind) {
         List<Medication> filtered = Lists.newArrayList();
         for (Medication medication : active(medications)) {
+            boolean isMatch = false;
             for (String termToFind : termsToFind) {
                 if (medication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    filtered.add(medication);
+                    isMatch = true;
                 }
+            }
+            if (isMatch) {
+                filtered.add(medication);
             }
         }
         return filtered;
     }
 
     @NotNull
-    public List<Medication> withExactCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind) {
-        return withAnyExactCategory(medications, Sets.newHashSet(categoryToFind));
+    public List<Medication> activeWithExactCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind) {
+        return activeWithAnyExactCategory(medications, Sets.newHashSet(categoryToFind));
     }
 
     @NotNull
-    public List<Medication> withAnyExactCategory(@NotNull List<Medication> medications, @NotNull Set<String> categoriesToFind) {
+    public List<Medication> activeWithAnyExactCategory(@NotNull List<Medication> medications, @NotNull Set<String> categoriesToFind) {
         List<Medication> filtered = Lists.newArrayList();
         for (Medication medication : active(medications)) {
+            boolean isMatch = false;
             for (String category : medication.categories()) {
                 for (String categoryToFind : categoriesToFind) {
                     if (category.equalsIgnoreCase(categoryToFind)) {
-                        filtered.add(medication);
+                        isMatch = true;
+                        break;
                     }
                 }
+            }
+            if (isMatch) {
+                filtered.add(medication);
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
+    public List<Medication> activeOrRecentlyStoppedWithCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind,
+            @NotNull LocalDate minStopDate) {
+        List<Medication> filtered = Lists.newArrayList();
+        for (Medication medication : medications) {
+            boolean isMatch = false;
+            for (String category : medication.categories()) {
+                if (category.equalsIgnoreCase(categoryToFind)) {
+                    boolean isActive = interpreter.interpret(medication) == MedicationStatusInterpretation.ACTIVE;
+                    boolean isRecentlyStopped = medication.stopDate() != null && medication.stopDate().isAfter(minStopDate);
+                    if (isActive || isRecentlyStopped) {
+                        isMatch = true;
+                    }
+                }
+            }
+            if (isMatch) {
+                filtered.add(medication);
             }
         }
         return filtered;

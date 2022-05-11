@@ -22,28 +22,29 @@ public class HasRecentlyReceivedMedicationOfApproximateCategory implements Evalu
     @NotNull
     private final String categoryToFind;
     @NotNull
-    private final LocalDate maxStopDate;
+    private final LocalDate minStopDate;
 
     HasRecentlyReceivedMedicationOfApproximateCategory(@NotNull final MedicationSelector selector, @NotNull final String categoryToFind,
-            @NotNull final LocalDate maxStopDate) {
+            @NotNull final LocalDate minStopDate) {
         this.selector = selector;
         this.categoryToFind = categoryToFind;
-        this.maxStopDate = maxStopDate;
+        this.minStopDate = minStopDate;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (maxStopDate.isBefore(record.clinical().patient().registrationDate())) {
+        if (minStopDate.isBefore(record.clinical().patient().registrationDate())) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                            "Max stop date prior to registration date for recent medication usage evaluation of " + categoryToFind)
+                            "Required stop date prior to registration date for recent medication usage evaluation of " + categoryToFind)
                     .addUndeterminedGeneralMessages("Recent " + categoryToFind + " medication")
                     .build();
         }
 
-        List<Medication> medications = selector.withAnyExactCategory(record.clinical().medications(), Sets.newHashSet(categoryToFind));
+        List<Medication> medications =
+                selector.activeOrRecentlyStoppedWithCategory(record.clinical().medications(), categoryToFind, minStopDate);
         if (!medications.isEmpty()) {
             Set<String> names = Sets.newHashSet();
             for (Medication medication : medications) {
@@ -53,23 +54,7 @@ public class HasRecentlyReceivedMedicationOfApproximateCategory implements Evalu
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(
-                            "Patient currently gets medication " + Format.concat(names) + ", which belong(s) to category " + categoryToFind)
-                    .addPassGeneralMessages("Recent " + categoryToFind + " medication")
-                    .build();
-        }
-
-        Set<String> recentlyStopped = Sets.newHashSet();
-        for (Medication medication : record.clinical().medications()) {
-            if (medication.stopDate() != null && medication.stopDate().isAfter(maxStopDate)) {
-                recentlyStopped.add(medication.name());
-            }
-        }
-
-        if (!recentlyStopped.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                            "Patient recently received medication " + Format.concat(recentlyStopped) + ", which belong(s) to category "
+                            "Patient recently received medication " + Format.concat(names) + ", which belong(s) to category "
                                     + categoryToFind)
                     .addPassGeneralMessages("Recent " + categoryToFind + " medication")
                     .build();

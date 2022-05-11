@@ -33,7 +33,7 @@ public class CurrentlyGetsStableMedicationOfCategory implements EvaluationFuncti
         for (String categoryToFind : categoriesToFind) {
             boolean hasActiveAndStableMedication = false;
             Medication referenceDosing = null;
-            List<Medication> filtered = selector.withExactCategory(record.clinical().medications(), categoryToFind);
+            List<Medication> filtered = selector.activeWithExactCategory(record.clinical().medications(), categoryToFind);
             for (Medication medication : filtered) {
                 if (referenceDosing != null) {
                     if (!MedicationDosage.hasMatchingDosing(medication, referenceDosing)) {
