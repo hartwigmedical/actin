@@ -207,9 +207,9 @@
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "hotspot",
           "sourceUrls": [
             ""

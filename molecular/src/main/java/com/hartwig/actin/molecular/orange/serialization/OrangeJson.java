@@ -263,7 +263,7 @@ public final class OrangeJson {
                         .onLabel(bool(evidence, "onLabel"))
                         .level(EvidenceLevel.valueOf(string(evidence, "level")))
                         .direction(EvidenceDirection.valueOf(string(evidence, "direction")))
-                        .sources(toSources(array(evidence, "protectSources")))
+                        .sources(toSources(array(evidence, "sources")))
                         .build());
             }
             return ImmutableProtectRecord.builder().evidences(evidences).build();
@@ -276,7 +276,7 @@ public final class OrangeJson {
                 JsonObject source = element.getAsJsonObject();
 
                 sources.add(ImmutableProtectSource.builder()
-                        .name(string(source, "source"))
+                        .name(string(source, "name"))
                         .event(string(source, "sourceEvent"))
                         .type(EvidenceType.valueOf(string(source, "evidenceType")))
                         .rangeRank(nullableInteger(source, "rangeRank"))

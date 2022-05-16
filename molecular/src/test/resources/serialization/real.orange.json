@@ -1,9 +1,9 @@
 {
-  "sampleId": "ACTN01029999T",
+  "sampleId": "Test",
   "reportDate": {
     "year": 2022,
-    "month": 4,
-    "day": 28
+    "month": 5,
+    "day": 16
   },
   "configuredPrimaryTumor": [
     {
@@ -483,7 +483,6 @@
     },
     "hasReliableQuality": true,
     "fittedPurityMethod": "NORMAL",
-    "wholeGenomeDuplication": true,
     "hasReliablePurity": true,
     "purity": 0.99,
     "minPurity": 0.97,
@@ -491,12 +490,13 @@
     "ploidy": 3.1,
     "minPloidy": 3.1,
     "maxPloidy": 3.15,
+    "wholeGenomeDuplication": true,
     "microsatelliteIndelsPerMb": 0.1172,
     "microsatelliteStatus": "MSS",
     "tumorMutationalBurdenPerMb": 13.7205,
     "tumorMutationalLoad": 186,
-    "svTumorMutationalBurden": 72,
     "tumorMutationalLoadStatus": "HIGH",
+    "svTumorMutationalBurden": 72,
     "reportableSomaticVariants": [
       {
         "source": "SOMATIC",
@@ -783,13 +783,11 @@
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -810,13 +808,11 @@
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -837,13 +833,11 @@
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -851,11 +845,9 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -876,13 +868,11 @@
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -903,13 +893,21 @@
       "onLabel": true,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/21639808"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600G",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -917,27 +915,13 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dFDA"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21639808"
           ]
         }
       ]
@@ -954,13 +938,11 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -981,18 +963,16 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19571295",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
+            "http://www.ncbi.nlm.nih.gov/pubmed/19603024",
+            "http://www.ncbi.nlm.nih.gov/pubmed/19571295"
           ]
         }
       ]
@@ -1009,18 +989,16 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21882184",
-            "http://www.ncbi.nlm.nih.gov/pubmed/18682506"
+            "http://www.ncbi.nlm.nih.gov/pubmed/18682506",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21882184"
           ]
         }
       ]
@@ -1037,34 +1015,30 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19001320",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19884556",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25666295"
+            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
           ]
         },
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23325582"
+            "http://www.ncbi.nlm.nih.gov/pubmed/19884556",
+            "http://www.ncbi.nlm.nih.gov/pubmed/19001320",
+            "http://www.ncbi.nlm.nih.gov/pubmed/25666295",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
           ]
         }
       ]
@@ -1081,13 +1055,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1108,13 +1080,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1135,13 +1105,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1162,13 +1130,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1189,13 +1155,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1203,11 +1167,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1215,17 +1177,15 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739",
             "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23325582"
+            "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
           ]
         }
       ]
@@ -1242,13 +1202,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1269,18 +1227,16 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21882184",
-            "http://www.ncbi.nlm.nih.gov/pubmed/18682506"
+            "http://www.ncbi.nlm.nih.gov/pubmed/18682506",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21882184"
           ]
         }
       ]
@@ -1297,13 +1253,11 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1324,13 +1278,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1339,11 +1291,9 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1365,13 +1315,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1392,13 +1340,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1419,13 +1365,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1446,13 +1390,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1473,13 +1415,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1487,11 +1427,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1512,13 +1450,11 @@
       "onLabel": false,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1539,13 +1475,11 @@
       "onLabel": false,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1553,11 +1487,9 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1578,13 +1510,11 @@
       "onLabel": false,
       "level": "A",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600G",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1592,11 +1522,9 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1617,13 +1545,11 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1644,13 +1570,11 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1658,27 +1582,23 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22735384"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/21343559"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22735384"
           ]
         }
       ]
@@ -1695,13 +1615,11 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1709,11 +1627,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1734,13 +1650,11 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1748,11 +1662,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1773,13 +1685,21 @@
       "onLabel": true,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22356324"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1789,18 +1709,6 @@
             "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
             "http://www.ncbi.nlm.nih.gov/pubmed/23569304",
             "http://www.ncbi.nlm.nih.gov/pubmed/25399551"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22356324"
           ]
         }
       ]
@@ -1817,13 +1725,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1844,39 +1750,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27460442"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21274720",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22492957",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20068183"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1884,11 +1762,21 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22492957",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20068183",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21274720"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -1896,15 +1784,23 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/26200454"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/27460442"
           ]
         }
       ]
@@ -1921,13 +1817,11 @@
       "onLabel": false,
       "level": "B",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1948,13 +1842,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -1975,13 +1867,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2002,19 +1892,17 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
+            "https://www.google.com/#q\u003dESMO 2015 (abstract 300)",
             "https://www.google.com/#q\u003dAACR 2017 (abstr  CT002)",
-            "https://www.google.com/#q\u003dAACR 2016 (abstr CT005)",
-            "https://www.google.com/#q\u003dESMO 2015 (abstract 300)"
+            "https://www.google.com/#q\u003dAACR 2016 (abstr CT005)"
           ]
         }
       ]
@@ -2031,13 +1919,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2059,18 +1945,16 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 9029)",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22241789"
+            "http://www.ncbi.nlm.nih.gov/pubmed/22241789",
+            "https://www.google.com/#q\u003dASCO 2013 (abstr 9029)"
           ]
         }
       ]
@@ -2087,13 +1971,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2114,13 +1996,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2143,13 +2023,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF (V600)",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -2170,26 +2048,22 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23470635",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
+            "http://www.ncbi.nlm.nih.gov/pubmed/22608338",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23470635"
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2216,13 +2090,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2243,13 +2115,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF (V600)",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -2270,18 +2140,16 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2015 (abstr 103)",
-            "https://www.google.com/#q\u003dASCO 2014 (abstr 3515)"
+            "https://www.google.com/#q\u003dASCO 2014 (abstr 3515)",
+            "https://www.google.com/#q\u003dASCO 2015 (abstr 103)"
           ]
         }
       ]
@@ -2298,26 +2166,22 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2015 (abstr 8006)",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26392102"
+            "http://www.ncbi.nlm.nih.gov/pubmed/26392102",
+            "https://www.google.com/#q\u003dASCO 2015 (abstr 8006)"
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2338,13 +2202,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2365,13 +2227,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2392,13 +2252,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2419,13 +2277,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2446,13 +2302,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF (V600)",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
           "rangeRank": 600,
           "evidenceUrls": [
@@ -2473,13 +2327,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2500,13 +2352,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2527,13 +2377,25 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23300174",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23278307",
+            "http://www.ncbi.nlm.nih.gov/pubmed/25815361",
+            "http://www.ncbi.nlm.nih.gov/pubmed/27116997"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2541,162 +2403,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23278307",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25815361",
-            "http://www.ncbi.nlm.nih.gov/pubmed/27116997",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23300174"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24821190"
-          ]
-        },
-        {
-          "source": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23612012",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22743296"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24335681"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24725538"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25092772"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25209580"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26490654"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26286452"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26579623",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25524464"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27520988"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24997557"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2704,11 +2413,21 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23612012",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22743296"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2718,31 +2437,128 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/26490654"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/24821190"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/25092772"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/25524464",
+            "http://www.ncbi.nlm.nih.gov/pubmed/26579623"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/24725538"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/26286452"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/25209580"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/24997557"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/24335681"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/27520988"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
             "http://www.ncbi.nlm.nih.gov/pubmed/24987354",
             "http://www.ncbi.nlm.nih.gov/pubmed/25353071"
-          ]
-        },
-        {
-          "source": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844"
           ]
         }
       ]
@@ -2759,13 +2575,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2787,13 +2601,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2815,13 +2627,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2842,13 +2652,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2869,13 +2677,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2896,20 +2702,18 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21107323",
             "http://www.ncbi.nlm.nih.gov/pubmed/21107320",
             "http://www.ncbi.nlm.nih.gov/pubmed/16424035",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844"
+            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21107323"
           ]
         }
       ]
@@ -2926,13 +2730,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2953,13 +2755,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -2980,13 +2780,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3008,13 +2806,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3035,13 +2831,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3063,13 +2857,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3091,13 +2883,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF MUTATION",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "ACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3105,11 +2895,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3130,13 +2918,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3164,13 +2950,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3191,13 +2975,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3218,13 +3000,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3245,13 +3025,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3272,13 +3050,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3299,13 +3075,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3326,13 +3100,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3353,18 +3125,16 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22038996"
+            "http://www.ncbi.nlm.nih.gov/pubmed/22038996",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22586120"
           ]
         }
       ]
@@ -3381,13 +3151,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF MUTATION",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "ACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3408,13 +3176,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3435,13 +3201,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3462,13 +3226,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3489,13 +3251,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3516,13 +3276,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3543,13 +3301,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3570,13 +3326,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3597,13 +3351,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3624,13 +3376,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3651,13 +3401,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3678,49 +3426,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22038996"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25706985"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/18458053"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3729,17 +3439,45 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/21185263",
             "http://www.ncbi.nlm.nih.gov/pubmed/26456083"
           ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/25706985"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22038996"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/18458053"
+          ]
         }
       ]
     },
@@ -3755,13 +3493,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3782,13 +3518,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3809,18 +3543,16 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
           ]
         }
@@ -3838,18 +3570,16 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
           ]
         }
@@ -3867,13 +3597,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3894,13 +3622,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -3921,18 +3647,16 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
           ]
         }
@@ -3950,18 +3674,16 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
             "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
           ]
         }
@@ -3979,13 +3701,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "HDAC2 HDAC2 biallelic inactivation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4006,13 +3726,11 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4020,11 +3738,9 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4045,26 +3761,22 @@
       "onLabel": true,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "DELETION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2013 (abstr 2532)"
           ]
         },
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN deletion",
+          "sourceUrls": [],
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2013 (abstr 2532)"
@@ -4084,26 +3796,22 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "DELETION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/22025163"
           ]
         },
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN deletion",
+          "sourceUrls": [],
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/22025163"
@@ -4123,13 +3831,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4150,13 +3856,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN biallelic inactivation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4177,13 +3881,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN biallelic inactivation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4204,37 +3906,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
-          ]
-        },
-        {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
-          ]
-        },
-        {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN DELETION",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4242,15 +3918,33 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN deletion",
+          "sourceUrls": [],
+          "evidenceType": "DELETION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/27091708"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
           ]
         }
       ]
@@ -4267,13 +3961,11 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN biallelic inactivation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4294,31 +3986,27 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21468130",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20944090"
+            "http://www.ncbi.nlm.nih.gov/pubmed/20944090",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21468130"
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21468130",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20944090"
+            "http://www.ncbi.nlm.nih.gov/pubmed/20944090",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21468130"
           ]
         }
       ]
@@ -4335,26 +4023,22 @@
       "onLabel": false,
       "level": "C",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN deletion",
+          "sourceUrls": [],
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2014 (abstr 2514)"
           ]
         },
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "DELETION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2014 (abstr 2514)"
@@ -4374,13 +4058,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4401,13 +4083,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN MUTATION",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4428,50 +4108,46 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
-            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
-          ]
-        },
-        {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
             "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
             "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
             "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
             "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
             "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
             "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
             "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
             "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
+            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
             "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
           ]
         }
@@ -4489,13 +4165,11 @@
       "onLabel": true,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4516,13 +4190,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4543,26 +4215,22 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN deletion",
+          "sourceUrls": [],
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/21632463"
           ]
         },
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "DELETION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/21632463"
@@ -4582,13 +4250,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4609,13 +4275,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4636,13 +4300,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN MUTATION",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4663,13 +4325,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4690,13 +4350,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4717,13 +4375,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4744,13 +4400,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN MUTATION",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4771,13 +4425,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4785,11 +4437,9 @@
           ]
         },
         {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4810,50 +4460,46 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
-            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
-          ]
-        },
-        {
-          "source": "VICC_CGI",
+          "name": "VICC_CGI",
           "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
             "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
             "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
             "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
             "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
             "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
             "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
             "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceUrls": [],
+          "evidenceType": "INACTIVATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
             "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
+            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
+            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
             "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
           ]
         }
@@ -4871,13 +4517,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESPONSIVE",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4885,11 +4529,9 @@
           ]
         },
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4910,13 +4552,11 @@
       "onLabel": false,
       "level": "D",
       "direction": "RESISTANT",
-      "protectSources": [
+      "sources": [
         {
-          "source": "VICC_CIVIC",
+          "name": "VICC_CIVIC",
           "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [
-            ""
-          ],
+          "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
@@ -4934,21 +4574,21 @@
     }
   },
   "plots": {
-    "sageReferenceBQRPlot": "test_run/sage_somatic/ref_sample.sage.bqr.png",
-    "sageTumorBQRPlot": "test_run/sage_somatic/tumor_sample.sage.bqr.png",
-    "purpleInputPlot": "test_run/purple/plot/tumor_sample.input.png",
-    "purpleFinalCircosPlot": "test_run/purple/plot/tumor_sample.circos.png",
-    "purpleClonalityPlot": "test_run/purple/plot/tumor_sample.somatic.clonality.png",
-    "purpleCopyNumberPlot": "test_run/purple/plot/tumor_sample.copynumber.png",
-    "purpleVariantCopyNumberPlot": "test_run/purple/plot/tumor_sample.somatic.png",
-    "purplePurityRangePlot": "test_run/purple/plot/tumor_sample.purity.range.png",
-    "purpleKataegisPlot": "test_run/purple/plot/tumor_sample.somatic.rainfall.png",
+    "sageReferenceBQRPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/sage_somatic/ref_sample.sage.bqr.png",
+    "sageTumorBQRPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/sage_somatic/tumor_sample.sage.bqr.png",
+    "purpleInputPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.input.png",
+    "purpleFinalCircosPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.circos.png",
+    "purpleClonalityPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.somatic.clonality.png",
+    "purpleCopyNumberPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.copynumber.png",
+    "purpleVariantCopyNumberPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.somatic.png",
+    "purplePurityRangePlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.purity.range.png",
+    "purpleKataegisPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.somatic.rainfall.png",
     "linxDriverPlots": [
-      "test_run/linx/plot/tumor_sample.cluster3.png",
-      "test_run/linx/plot/tumor_sample.cluster2.png",
-      "test_run/linx/plot/tumor_sample.cluster1.png"
+      "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/linx/plot/tumor_sample.cluster3.png",
+      "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/linx/plot/tumor_sample.cluster2.png",
+      "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/linx/plot/tumor_sample.cluster1.png"
     ],
-    "cuppaSummaryPlot": "test_run/cuppa/tumor_sample.cup.report.summary.png",
+    "cuppaSummaryPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/cuppa/tumor_sample.cup.report.summary.png",
     "cuppaFeaturePlot": null
   }
 }
