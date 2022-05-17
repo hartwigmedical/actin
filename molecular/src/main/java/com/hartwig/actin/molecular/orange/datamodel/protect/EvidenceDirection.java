@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.datamodel.protect;
 public enum EvidenceDirection {
     RESPONSIVE,
     PREDICTED_RESPONSIVE,
+    NO_BENEFIT,
     RESISTANT,
     PREDICTED_RESISTANT;
 

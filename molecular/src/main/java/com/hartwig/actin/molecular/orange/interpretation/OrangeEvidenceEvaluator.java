@@ -22,8 +22,8 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     private static final Logger LOGGER = LogManager.getLogger(OrangeEvidenceEvaluator.class);
 
-    static final String ORANGE_HIGH_TML = "High tumor mutation load";
-    static final String ORANGE_HIGH_TMB = "High tumor mutation burden";
+    static final String ORANGE_HIGH_TML = "High tumor mutational load";
+    static final String ORANGE_HIGH_TMB = "High tumor mutational burden";
     static final String ORANGE_MSI = "Microsatellite unstable";
     static final String ORANGE_HRD = "HR deficiency";
 
