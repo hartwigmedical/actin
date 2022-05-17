@@ -33,7 +33,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
         map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
-        map.put(EligibilityRule.TML_BETWEEN_X_AND_Y, hasEligibleTumorMutationalLoadCreator());
+        map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
         map.put(EligibilityRule.HAS_HLA_A_TYPE_X, hasSpecificHLATypeCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
@@ -137,8 +137,11 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasEligibleTumorMutationalLoadCreator() {
-        return function -> new HasEligibleTumorMutationalLoad();
+    private static FunctionCreator hasLimitedTumorMutationalLoadCreator() {
+        return function -> {
+            int maxTumorMutationalLoad = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasLimitedTumorMutationalLoad(maxTumorMutationalLoad);
+        };
     }
 
     @NotNull
@@ -205,9 +208,7 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasPSMAPositivePETScanCreator() {
-        return function -> new HasPSMAPositivePETScan();
-    }
+    private static FunctionCreator hasPSMAPositivePETScanCreator() { return function -> new HasPSMAPositivePETScan(); }
 
     @NotNull
     private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {

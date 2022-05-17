@@ -183,7 +183,7 @@ MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
-TML_BETWEEN_X_AND_Y | TML should be equal/between X and Y
+TML_OF_AT_MOST_X | TML should be <= X
 HAS_HLA_A_TYPE_X | HLA-A type should be X. Currently set to fail (T.B.D.)
 OVEREXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 NON_EXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
