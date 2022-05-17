@@ -139,14 +139,14 @@ HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to undetermine
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of dinstinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
-HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below
-HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%
-HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y_WITHIN_Z_WEEKS | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%, with startDate within Z weeks | If no startDate configured, or startDate is not conclusive, resolve to `Undetermined`
-HAS_HAD_CATEGORY_X_TREATMENT_ IGNORING_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type not like any %Y%
-HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines => Y 
-HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y 
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z 
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z 
+HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below | Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y% | Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y_WITHIN_Z_WEEKS | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%, with startDate within Z weeks | If no startDate configured, or startDate is not conclusive, resolve to `Undetermined`. Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_ IGNORING_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type not like any %Y% | Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines => Y | Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y | Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z | Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z  | Also see 'Notes' below
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to undetermined
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
 
@@ -159,6 +159,12 @@ In addition, 3 following 'Categories' can be assigned:
 - Nonsteroidal anti-androgen - Treatment names: Flutamide, Nilutamide, Bicalutamide, Enzalutamide, Darolutamide, Ketodarolutamide, Apalutamide
 
 2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
+
+Notes: 
+- For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' configured (without further details), resolve to `UNDETERMINED`
+- For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' configured (without further details), resolve to `UNDETERMINED`
+- For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' configured (without further details), resolve to `UNDETERMINED`
+- For all rules asking for categories with specified type (2]), if only the requested category configured (without further details), resolve to `UNDETERMINED`
 
 ##### Rules related to prior primary tumors
 

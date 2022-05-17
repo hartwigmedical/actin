@@ -62,7 +62,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
                     return EvaluationFactory.recoverable()
                             .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Latest measurement fails for " + measurement.code() + " ,but second-latest succeeded")
+                            .addUndeterminedSpecificMessages("Latest measurement fails for " + measurement.code() + ", but second-latest succeeded")
                             .build();
                 }
             }

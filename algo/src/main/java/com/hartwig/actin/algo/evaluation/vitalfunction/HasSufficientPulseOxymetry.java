@@ -34,7 +34,7 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
         if (pulseOxymetries.isEmpty()) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No pulse oxymetries readouts found")
+                    .addUndeterminedSpecificMessages("No pulse oximetries readouts found")
                     .build();
         }
 
@@ -52,7 +52,7 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
                 if (Double.compare(pulseOxymetry.value(), minAvgPulseOxymetry) >= 0) {
                     return EvaluationFactory.recoverable()
                             .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry
+                            .addUndeterminedSpecificMessages("Patient has average pulse oximetry below " + minAvgPulseOxymetry
                                     + " but also at least one measure above " + minAvgPulseOxymetry)
                             .build();
                 }
@@ -61,9 +61,9 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has average pulse oxymetry below " + minAvgPulseOxymetry);
+            builder.addFailSpecificMessages("Patient has average pulse oximetry below " + minAvgPulseOxymetry);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has average pulse oxymetry exceeding " + minAvgPulseOxymetry);
+            builder.addPassSpecificMessages("Patient has average pulse oximetry exceeding " + minAvgPulseOxymetry);
         }
 
         return builder.build();

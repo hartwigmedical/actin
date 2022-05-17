@@ -29,7 +29,7 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
         if (ecg == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("ECG details are missing, assumed there are none")
+                    .addFailSpecificMessages("ECG details are missing, it is assumed there are no abnormalities")
                     .addFailGeneralMessages("Assumed no ECG abnormalities")
                     .build();
         }
