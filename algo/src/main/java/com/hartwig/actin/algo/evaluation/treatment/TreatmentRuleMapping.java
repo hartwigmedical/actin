@@ -32,6 +32,7 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS, hasHadTreatmentCategoryOfTypesWithinWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, hasHadLimitedTreatmentsOfCategoryCreator());
@@ -110,6 +111,11 @@ public final class TreatmentRuleMapping {
             OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
             return new HasHadTreatmentWithCategoryOfTypes(input.category(), input.strings());
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadTreatmentCategoryOfTypesWithinWeeksCreator() {
+        return function -> new HasHadTreatmentWithCategoryOfTypesWithinWeeks();
     }
 
     @NotNull
