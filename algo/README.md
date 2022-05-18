@@ -160,7 +160,7 @@ In addition, 3 following 'Categories' can be assigned:
 
 2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
-Notes: 
+Notes (TO DO): 
 - For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' configured (without further details), resolve to `UNDETERMINED`
 - For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' configured (without further details), resolve to `UNDETERMINED`
 - For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' configured (without further details), resolve to `UNDETERMINED`
