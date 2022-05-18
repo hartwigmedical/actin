@@ -25,8 +25,8 @@ public final class EventFormatter {
         STRING_REPLACEMENTS.put("partial loss", LOSS_EVENT);
         STRING_REPLACEMENTS.put("homozygous disruption", DISRUPTION_EVENT);
         STRING_REPLACEMENTS.put("Microsatellite unstable", "MSI");
-        STRING_REPLACEMENTS.put("High tumor mutation load", "High TML");
-        STRING_REPLACEMENTS.put("High tumor mutation burden", "High TMB");
+        STRING_REPLACEMENTS.put("High tumor mutational load", "High TML");
+        STRING_REPLACEMENTS.put("High tumor mutational burden", "High TMB");
         STRING_REPLACEMENTS.put(" - ", "-");
         STRING_REPLACEMENTS.put("p\\.\\?", "splice");
 
