@@ -24,9 +24,9 @@ public final class EventFormatter {
         STRING_REPLACEMENTS.put("full loss", LOSS_EVENT);
         STRING_REPLACEMENTS.put("partial loss", LOSS_EVENT);
         STRING_REPLACEMENTS.put("homozygous disruption", DISRUPTION_EVENT);
-        STRING_REPLACEMENTS.put("Microsatellite unstable", "MSI");
-        STRING_REPLACEMENTS.put("High tumor mutational load", "High TML");
-        STRING_REPLACEMENTS.put("High tumor mutational burden", "High TMB");
+        STRING_REPLACEMENTS.put(OrangeConstants.MSI, "MSI");
+        STRING_REPLACEMENTS.put(OrangeConstants.HIGH_TML, "High TML");
+        STRING_REPLACEMENTS.put(OrangeConstants.HIGH_TMB, "High TMB");
         STRING_REPLACEMENTS.put(" - ", "-");
         STRING_REPLACEMENTS.put("p\\.\\?", "splice");
 

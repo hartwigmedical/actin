@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.util.EvidenceFormatter;
 import com.hartwig.actin.molecular.orange.util.FusionParser;
+import com.hartwig.actin.molecular.orange.util.OrangeConstants;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -21,11 +22,6 @@ import org.jetbrains.annotations.NotNull;
 class OrangeEvidenceEvaluator implements EvidenceEvaluator {
 
     private static final Logger LOGGER = LogManager.getLogger(OrangeEvidenceEvaluator.class);
-
-    static final String ORANGE_HIGH_TML = "High tumor mutational load";
-    static final String ORANGE_HIGH_TMB = "High tumor mutational burden";
-    static final String ORANGE_MSI = "Microsatellite unstable";
-    static final String ORANGE_HRD = "HR deficiency";
 
     @NotNull
     private final List<ServeRecord> inclusionRecords;
@@ -100,14 +96,14 @@ class OrangeEvidenceEvaluator implements EvidenceEvaluator {
     private static boolean hasInclusiveSignatureRecord(@NotNull List<ServeRecord> inclusionRecords, @NotNull String treatment,
             @NotNull String event) {
         switch (event) {
-            case ORANGE_HIGH_TMB:
-            case ORANGE_HIGH_TML: {
+            case OrangeConstants.HIGH_TMB:
+            case OrangeConstants.HIGH_TML: {
                 return hasInclusiveTumorLoadRecord(inclusionRecords, treatment);
             }
-            case ORANGE_MSI: {
+            case OrangeConstants.MSI: {
                 return hasInclusiveMicrosatelliteRecord(inclusionRecords, treatment);
             }
-            case ORANGE_HRD: {
+            case OrangeConstants.HRD: {
                 return hasInclusiveHRDeficiencyRecord(inclusionRecords, treatment);
             }
             default: {

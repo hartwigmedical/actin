@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvid
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
+import com.hartwig.actin.molecular.orange.util.OrangeConstants;
 import com.hartwig.actin.serve.datamodel.ImmutableServeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -77,16 +78,16 @@ public class OrangeEvidenceEvaluatorTest {
     public void canDetermineInclusionForSignatures() {
         EvidenceEvaluator evaluator = withRecord(withRule(EligibilityRule.TML_OF_AT_LEAST_X));
 
-        ProtectEvidence tmlHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HIGH_TML).build();
+        ProtectEvidence tmlHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeConstants.HIGH_TML).build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(tmlHigh));
 
-        ProtectEvidence tmbHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HIGH_TMB).build();
+        ProtectEvidence tmbHigh = testBuilder(EvidenceType.SIGNATURE).event(OrangeConstants.HIGH_TMB).build();
         assertTrue(evaluator.isPotentiallyForTrialInclusion(tmbHigh));
 
-        ProtectEvidence msi = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_MSI).build();
+        ProtectEvidence msi = testBuilder(EvidenceType.SIGNATURE).event(OrangeConstants.MSI).build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(msi));
 
-        ProtectEvidence hrd = testBuilder(EvidenceType.SIGNATURE).event(OrangeEvidenceEvaluator.ORANGE_HRD).build();
+        ProtectEvidence hrd = testBuilder(EvidenceType.SIGNATURE).event(OrangeConstants.HRD).build();
         assertFalse(evaluator.isPotentiallyForTrialInclusion(hrd));
     }
 
