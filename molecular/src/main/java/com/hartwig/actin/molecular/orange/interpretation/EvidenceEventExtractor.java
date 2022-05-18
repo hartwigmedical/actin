@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;

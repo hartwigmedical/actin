@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.protect;
 
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 

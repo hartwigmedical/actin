@@ -111,14 +111,20 @@
     "actinTrials": [
       {
         "event": "High TML",
+        "sourceEvent": "TML_OF_AT_LEAST_X: TML >= 140",
+        "sourceType": "SIGNATURE",
         "treatment": "Trial 1"
       },
       {
         "event": "HR deficiency",
+        "sourceEvent": "HRD_SIGNATURE",
+        "sourceType": "SIGNATURE",
         "treatment": "Trial 2"
       },
       {
         "event": "NF1 disruption",
+        "sourceEvent": "INACTIVATION_OF_GENE_X: NF1",
+        "sourceType": "INACTIVATION",
         "treatment": "Trial 3"
       }
     ],
@@ -126,6 +132,8 @@
     "externalTrials": [
       {
         "event": "High TML",
+        "sourceEvent": "High TML",
+        "sourceType": "SIGNATURE",
         "treatment": "Trial 1"
       }
     ],
@@ -133,68 +141,55 @@
     "approvedEvidence": [
       {
         "event": "High TML",
+        "sourceEvent": "High TML",
+        "sourceType": "SIGNATURE",
         "treatment": "Pembrolizumab"
       },
       {
         "event": "High TML",
+        "sourceEvent": "High TML",
+        "sourceType": "SIGNATURE",
         "treatment": "Nivolumab"
       }
     ],
     "onLabelExperimentalEvidence": [
       {
         "event": "on-label experimental",
+        "sourceEvent": "on-label experimental",
+        "sourceType": "ACTIVATION",
         "treatment": "on-label experimental drug"
       }
     ],
     "offLabelExperimentalEvidence": [
       {
         "event": "off-label experimental",
+        "sourceEvent": "off-label experimental",
+        "sourceType": "ACTIVATION",
         "treatment": "off-label experimental drug"
       }
     ],
     "preClinicalEvidence": [
       {
         "event": "pre clinical",
+        "sourceEvent": "pre clinical",
+        "sourceType": "ACTIVATION",
         "treatment": "no drug yet"
       }
     ],
     "knownResistanceEvidence": [
       {
         "event": "known resistance",
+        "sourceEvent": "known resistance",
+        "sourceType": "ACTIVATION",
         "treatment": "known resistant drug"
       }
     ],
     "suspectResistanceEvidence": [
       {
         "event": "suspect resistance",
+        "sourceEvent": "suspect resistance",
+        "sourceType": "ACTIVATION",
         "treatment": "suspect resistant drug"
-      }
-    ]
-  },
-  "mappedEvents": {
-    "mutations": [
-      {
-        "gene": "BRAF",
-        "mutation": "V600E"
-      }
-    ],
-    "activatedGenes": [
-      "ACT"
-    ],
-    "inactivatedGenes": [
-      "NF1",
-      "PTEN"
-    ],
-    "amplifiedGenes": [
-      "MYC"
-    ],
-    "wildtypeGenes": [
-      "WILD"
-    ],
-    "fusions": [
-      {
-        "fiveGene": "EML4",
-        "threeGene": "ALK"
       }
     ]
   }

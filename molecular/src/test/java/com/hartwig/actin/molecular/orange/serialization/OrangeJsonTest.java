@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
@@ -23,7 +24,6 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;

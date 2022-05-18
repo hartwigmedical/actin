@@ -5,6 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +22,8 @@ public class GeneIsActivatedOrAmplified implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().mappedEvents().activatedGenes().contains(gene) || record.molecular().mappedEvents().amplifiedGenes().contains(gene)) {
+        ActionableActinEvents actionableActinEvents = MolecularInterpreter.extractActionableEvents(record.molecular());
+        if (actionableActinEvents.activatedGenes().contains(gene) || actionableActinEvents.amplifiedGenes().contains(gene)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Activation/amplification detected of gene " + gene)

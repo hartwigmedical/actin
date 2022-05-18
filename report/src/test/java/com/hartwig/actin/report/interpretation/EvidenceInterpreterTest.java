@@ -6,10 +6,12 @@ import static org.junit.Assert.assertTrue;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -40,6 +42,11 @@ public class EvidenceInterpreterTest {
 
     @NotNull
     private static EvidenceEntry create(@NotNull String event, @NotNull String treatment) {
-        return ImmutableEvidenceEntry.builder().event(event).treatment(treatment).build();
+        return ImmutableEvidenceEntry.builder()
+                .event(event)
+                .sourceEvent(Strings.EMPTY)
+                .sourceType(EvidenceType.ANY_MUTATION)
+                .treatment(treatment)
+                .build();
     }
 }

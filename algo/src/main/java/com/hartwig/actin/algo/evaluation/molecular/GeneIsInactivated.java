@@ -5,6 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,14 +22,13 @@ public class GeneIsInactivated implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (String inactivatedGene : record.molecular().mappedEvents().inactivatedGenes()) {
-            if (inactivatedGene.equals(gene)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Inactivation detected of gene " + gene)
-                        .addPassGeneralMessages("Molecular requirements")
-                        .build();
-            }
+        ActionableActinEvents actionableActinEvents = MolecularInterpreter.extractActionableEvents(record.molecular());
+        if (actionableActinEvents.inactivatedGenes().contains(gene)) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Inactivation detected of gene " + gene)
+                    .addPassGeneralMessages("Molecular requirements")
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()

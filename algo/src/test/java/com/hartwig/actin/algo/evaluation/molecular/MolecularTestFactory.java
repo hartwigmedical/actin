@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import java.util.List;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -12,14 +11,20 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
-import com.hartwig.actin.molecular.interpretation.ImmutableFusionGene;
-import com.hartwig.actin.molecular.interpretation.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.interpretation.ImmutableMappedActinEvents;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class MolecularTestFactory {
+
+    private static final String EVIDENCE_EVENT_SEPARATOR = ": ";
 
     private MolecularTestFactory() {
     }
@@ -37,52 +42,88 @@ final class MolecularTestFactory {
     public static PatientRecord withGeneMutation(@NotNull String gene, @NotNull String mutation) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder()
-                        .mutations(Sets.newHashSet(ImmutableGeneMutation.builder().gene(gene).mutation(mutation).build()))
-                        .build())
+                .evidence(withActinEvidence(createGeneMutationEntry(gene, mutation)))
                 .build());
+    }
+
+    @NotNull
+    private static EvidenceEntry createGeneMutationEntry(@NotNull String gene, @NotNull String mutation) {
+        return withSourceEvent(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y + EVIDENCE_EVENT_SEPARATOR + gene + " " + mutation);
     }
 
     @NotNull
     public static PatientRecord withActivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder().activatedGenes(Sets.newHashSet(gene)).build())
+                .evidence(withActinEvidence(createActivatedGeneEntry(gene)))
                 .build());
+    }
+
+    @NotNull
+    private static EvidenceEntry createActivatedGeneEntry(@NotNull String gene) {
+        return withSourceEvent(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
     }
 
     @NotNull
     public static PatientRecord withInactivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder().inactivatedGenes(Sets.newHashSet(gene)).build())
+                .evidence(withActinEvidence(createInactivatedGeneEntry(gene)))
                 .build());
+    }
+
+    @NotNull
+    private static EvidenceEntry createInactivatedGeneEntry(@NotNull String gene) {
+        return withSourceEvent(EligibilityRule.INACTIVATION_OF_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
     }
 
     @NotNull
     public static PatientRecord withAmplifiedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder().amplifiedGenes(Sets.newHashSet(gene)).build())
+                .evidence(withActinEvidence(createAmplifiedGeneEntry(gene)))
                 .build());
+    }
+
+    @NotNull
+    private static EvidenceEntry createAmplifiedGeneEntry(@NotNull String gene) {
+        return withSourceEvent(EligibilityRule.AMPLIFICATION_OF_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
     }
 
     @NotNull
     public static PatientRecord withWildtypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder().wildtypeGenes(Sets.newHashSet(gene)).build())
+                .evidence(withActinEvidence(createWildtypeGeneEntry(gene)))
                 .build());
     }
 
     @NotNull
-    public static PatientRecord withFusionGene(@NotNull String fiveGene, @NotNull String threeGene) {
+    private static EvidenceEntry createWildtypeGeneEntry(@NotNull String gene) {
+        return withSourceEvent(EligibilityRule.WILDTYPE_OF_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
+    }
+
+    @NotNull
+    public static PatientRecord withFusedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
-                .mappedEvents(ImmutableMappedActinEvents.builder()
-                        .fusions(Sets.newHashSet(ImmutableFusionGene.builder().fiveGene(fiveGene).threeGene(threeGene).build()))
-                        .build())
+                .evidence(withActinEvidence(createFusedGeneEntry(gene)))
                 .build());
+    }
+
+    @NotNull
+    private static EvidenceEntry createFusedGeneEntry(@NotNull String gene) {
+        return withSourceEvent(EligibilityRule.FUSION_IN_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
+    }
+
+    @NotNull
+    private static EvidenceEntry withSourceEvent(@NotNull String sourceEvent) {
+        return ImmutableEvidenceEntry.builder()
+                .event(Strings.EMPTY)
+                .sourceEvent(sourceEvent)
+                .sourceType(EvidenceType.ANY_MUTATION)
+                .treatment(Strings.EMPTY)
+                .build();
     }
 
     @NotNull
@@ -140,5 +181,13 @@ final class MolecularTestFactory {
     @NotNull
     private static PatientRecord withMolecularRecord(@NotNull MolecularRecord molecular) {
         return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).molecular(molecular).build();
+    }
+
+    @NotNull
+    private static MolecularEvidence withActinEvidence(@NotNull EvidenceEntry evidenceEntry) {
+        return ImmutableMolecularEvidence.builder()
+                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord().evidence())
+                .addActinTrials(evidenceEntry)
+                .build();
     }
 }

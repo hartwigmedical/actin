@@ -5,7 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.molecular.interpretation.FusionGene;
+import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,14 +22,13 @@ public class HasFusionInGene implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (FusionGene fusion : record.molecular().mappedEvents().fusions()) {
-            if (fusion.fiveGene().equals(gene) || fusion.threeGene().equals(gene)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Fusion detected with gene " + gene)
-                        .addPassGeneralMessages("Molecular requirements")
-                        .build();
-            }
+        ActionableActinEvents actionableActinEvents = MolecularInterpreter.extractActionableEvents(record.molecular());
+        if (actionableActinEvents.fusedGenes().contains(gene)) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Fusion detected with gene " + gene)
+                    .addPassGeneralMessages("Molecular requirements")
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()

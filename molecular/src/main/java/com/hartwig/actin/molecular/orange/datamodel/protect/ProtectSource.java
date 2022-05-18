@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.protect;
 
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

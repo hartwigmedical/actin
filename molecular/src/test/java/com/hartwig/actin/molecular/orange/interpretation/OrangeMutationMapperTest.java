@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;

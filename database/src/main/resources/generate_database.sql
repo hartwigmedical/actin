@@ -1,5 +1,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- TODO Remove after 1st of june
+DROP TABLE IF EXISTS fusionGene;
+
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -282,12 +285,11 @@ CREATE TABLE wildtypeGene
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS fusionGene;
-CREATE TABLE fusionGene
+DROP TABLE IF EXISTS fusedGene;
+CREATE TABLE fusedGene
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    fiveGene varchar(50) NOT NULL,
-    threeGene varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 

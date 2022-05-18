@@ -11,7 +11,6 @@ import static com.hartwig.actin.util.json.Json.nullableObject;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
-import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,6 +57,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
@@ -65,12 +65,6 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.interpretation.FusionGene;
-import com.hartwig.actin.molecular.interpretation.GeneMutation;
-import com.hartwig.actin.molecular.interpretation.ImmutableFusionGene;
-import com.hartwig.actin.molecular.interpretation.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.interpretation.ImmutableMappedActinEvents;
-import com.hartwig.actin.molecular.interpretation.MappedActinEvents;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
@@ -139,7 +133,6 @@ public class MolecularRecordJson {
                     .drivers(toMolecularDrivers(object(record, "drivers")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
                     .evidence(toMolecularEvidence(object(record, "evidence")))
-                    .mappedEvents(toMappedActinEvents(object(record, "mappedEvents")))
                     .build();
         }
 
@@ -322,44 +315,6 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static MappedActinEvents toMappedActinEvents(@NotNull JsonObject mappedEvents) {
-            return ImmutableMappedActinEvents.builder()
-                    .mutations(toGeneMutations(array(mappedEvents, "mutations")))
-                    .activatedGenes(stringList(mappedEvents, "activatedGenes"))
-                    .inactivatedGenes(stringList(mappedEvents, "inactivatedGenes"))
-                    .amplifiedGenes(stringList(mappedEvents, "amplifiedGenes"))
-                    .wildtypeGenes(stringList(mappedEvents, "wildtypeGenes"))
-                    .fusions(toFusionGenes(array(mappedEvents, "fusions")))
-                    .build();
-        }
-
-        @NotNull
-        private static Set<GeneMutation> toGeneMutations(@NotNull JsonArray mutationArray) {
-            Set<GeneMutation> geneMutations = Sets.newHashSet();
-            for (JsonElement element : mutationArray) {
-                JsonObject geneMutation = element.getAsJsonObject();
-                geneMutations.add(ImmutableGeneMutation.builder()
-                        .gene(string(geneMutation, "gene"))
-                        .mutation(string(geneMutation, "mutation"))
-                        .build());
-            }
-            return geneMutations;
-        }
-
-        @NotNull
-        private static Set<FusionGene> toFusionGenes(@NotNull JsonArray fusions) {
-            Set<FusionGene> fusionGeneSet = Sets.newHashSet();
-            for (JsonElement element : fusions) {
-                JsonObject object = element.getAsJsonObject();
-                fusionGeneSet.add(ImmutableFusionGene.builder()
-                        .fiveGene(string(object, "fiveGene"))
-                        .threeGene(string(object, "threeGene"))
-                        .build());
-            }
-            return fusionGeneSet;
-        }
-
-        @NotNull
         private static MolecularEvidence toMolecularEvidence(@NotNull JsonObject evidence) {
             return ImmutableMolecularEvidence.builder()
                     .actinSource(string(evidence, "actinSource"))
@@ -380,10 +335,12 @@ public class MolecularRecordJson {
         private static Set<EvidenceEntry> toEvidences(@NotNull JsonArray evidenceArray) {
             Set<EvidenceEntry> evidences = Sets.newTreeSet(new EvidenceEntryComparator());
             for (JsonElement element : evidenceArray) {
-                JsonObject object = element.getAsJsonObject();
+                JsonObject evidence = element.getAsJsonObject();
                 evidences.add(ImmutableEvidenceEntry.builder()
-                        .event(string(object, "event"))
-                        .treatment(string(object, "treatment"))
+                        .event(string(evidence, "event"))
+                        .sourceEvent(string(evidence, "sourceEvent"))
+                        .sourceType(EvidenceType.valueOf(string(evidence, "sourceType")))
+                        .treatment(string(evidence, "treatment"))
                         .build());
             }
             return evidences;

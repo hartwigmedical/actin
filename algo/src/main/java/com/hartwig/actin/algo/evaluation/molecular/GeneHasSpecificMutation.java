@@ -5,7 +5,9 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
 import com.hartwig.actin.molecular.interpretation.GeneMutation;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +26,8 @@ public class GeneHasSpecificMutation implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (GeneMutation geneMutation : record.molecular().mappedEvents().mutations()) {
+        ActionableActinEvents actionableActinEvents = MolecularInterpreter.extractActionableEvents(record.molecular());
+        for (GeneMutation geneMutation : actionableActinEvents.mutations()) {
             if (geneMutation.gene().equals(gene) && geneMutation.mutation().equals(mutation)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)

@@ -30,9 +30,6 @@ import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.interpretation.FusionGene;
-import com.hartwig.actin.molecular.interpretation.GeneMutation;
-import com.hartwig.actin.molecular.interpretation.MappedActinEvents;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +73,6 @@ public class MolecularRecordJsonTest {
         assertDrivers(molecular.drivers());
         assertPharmaco(molecular.pharmaco());
         assertEvidence(molecular.evidence());
-        assertMappedEvents(molecular.mappedEvents());
     }
 
     private static void assertCharacteristics(@NotNull MolecularCharacteristics characteristics) {
@@ -242,30 +238,5 @@ public class MolecularRecordJsonTest {
         }
 
         throw new IllegalStateException("Could not find evidence with treatment: " + treatmentToFind);
-    }
-
-    private static void assertMappedEvents(@NotNull MappedActinEvents events) {
-        assertEquals(1, events.mutations().size());
-        GeneMutation geneMutation = events.mutations().iterator().next();
-        assertEquals("BRAF", geneMutation.gene());
-        assertEquals("V600E", geneMutation.mutation());
-
-        assertEquals(1, events.activatedGenes().size());
-        assertEquals("ACT", events.activatedGenes().iterator().next());
-
-        assertEquals(2, events.inactivatedGenes().size());
-        assertTrue(events.inactivatedGenes().contains("NF1"));
-        assertTrue(events.inactivatedGenes().contains("PTEN"));
-
-        assertEquals(1, events.amplifiedGenes().size());
-        assertEquals("MYC", events.amplifiedGenes().iterator().next());
-
-        assertEquals(1, events.wildtypeGenes().size());
-        assertEquals("WILD", events.wildtypeGenes().iterator().next());
-
-        assertEquals(1, events.fusions().size());
-        FusionGene fusionGene = events.fusions().iterator().next();
-        assertEquals("EML4", fusionGene.fiveGene());
-        assertEquals("ALK", fusionGene.threeGene());
     }
 }

@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.datamodel;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
@@ -22,17 +21,13 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.interpretation.GeneMutation;
-import com.hartwig.actin.molecular.interpretation.ImmutableFusionGene;
-import com.hartwig.actin.molecular.interpretation.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.interpretation.ImmutableMappedActinEvents;
-import com.hartwig.actin.molecular.interpretation.MappedActinEvents;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +50,6 @@ public final class TestMolecularDataFactory {
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .evidence(createMinimalTestEvidence())
-                .mappedEvents(ImmutableMappedActinEvents.builder().build())
                 .build();
     }
 
@@ -68,17 +62,12 @@ public final class TestMolecularDataFactory {
                 .drivers(createTestDrivers())
                 .pharmaco(createTestPharmaco())
                 .evidence(createTestEvidence())
-                .mappedEvents(createTestMappedEvents())
                 .build();
     }
 
     @NotNull
     public static MolecularRecord createExhaustiveTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder()
-                .from(createProperTestMolecularRecord())
-                .drivers(createExhaustiveTestDrivers())
-                .mappedEvents(createExhaustiveTestMappedEvents())
-                .build();
+        return ImmutableMolecularRecord.builder().from(createProperTestMolecularRecord()).drivers(createExhaustiveTestDrivers()).build();
     }
 
     @NotNull
@@ -154,8 +143,18 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestActinTrials() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trial 1").build());
-        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Trial 1").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("MUTATION_IN_GENE_X_OF_TYPE_Y: BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Trial 1")
+                .build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("High tumor mutational load")
+                .sourceEvent("TML_OF_AT_LEAST_X: TML >= 140")
+                .sourceType(EvidenceType.SIGNATURE)
+                .treatment("Trial 1")
+                .build());
 
         return result;
     }
@@ -164,8 +163,18 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestExternalTrials() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trial 1").build());
-        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Trial 1").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Trial 1")
+                .build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("High TML")
+                .sourceEvent("High TML")
+                .sourceType(EvidenceType.SIGNATURE)
+                .treatment("Trial 1")
+                .build());
 
         return result;
     }
@@ -174,9 +183,24 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestApprovedEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Vemurafenib").build());
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Dabrafenib").build());
-        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Nivolumab").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Vemurafenib")
+                .build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Dabrafenib")
+                .build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("High TML")
+                .sourceEvent("High TML")
+                .sourceType(EvidenceType.SIGNATURE)
+                .treatment("Nivolumab")
+                .build());
 
         return result;
     }
@@ -185,7 +209,12 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestOnLabelExperimentalEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("High TML").treatment("Pembrolizumab").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("High TML")
+                .sourceEvent("High TML")
+                .sourceType(EvidenceType.SIGNATURE)
+                .treatment("Pembrolizumab")
+                .build());
 
         return result;
     }
@@ -194,7 +223,12 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestOffLabelExperimentalEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Trametinib").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Trametinib")
+                .build());
 
         return result;
     }
@@ -203,7 +237,12 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestPreClinicalEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Pre-clinical treatment").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Pre-clinical treatment")
+                .build());
 
         return result;
     }
@@ -212,7 +251,12 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestKnownResistanceEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Erlotinib").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Erlotinib")
+                .build());
 
         return result;
     }
@@ -221,30 +265,14 @@ public final class TestMolecularDataFactory {
     private static Set<EvidenceEntry> createTestSuspectResistanceEvidence() {
         Set<EvidenceEntry> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder().event("BRAF V600E").treatment("Some treatment").build());
+        result.add(ImmutableEvidenceEntry.builder()
+                .event("BRAF V600E")
+                .sourceEvent("BRAF V600E")
+                .sourceType(EvidenceType.HOTSPOT_MUTATION)
+                .treatment("Some treatment")
+                .build());
 
         return result;
-    }
-
-    @NotNull
-    private static MappedActinEvents createTestMappedEvents() {
-        return ImmutableMappedActinEvents.builder()
-                .mutations(createTestMutations())
-                .activatedGenes(Sets.newHashSet("BRAF"))
-                .inactivatedGenes(Sets.newHashSet("PTEN", "CDKN2A"))
-                .amplifiedGenes(Sets.newHashSet())
-                .wildtypeGenes(Sets.newHashSet())
-                .fusions(Lists.newArrayList())
-                .build();
-    }
-
-    @NotNull
-    private static Set<GeneMutation> createTestMutations() {
-        Set<GeneMutation> mutations = Sets.newHashSet();
-
-        mutations.add(ImmutableGeneMutation.builder().gene("BRAF").mutation("V600E").build());
-
-        return mutations;
     }
 
     @NotNull
@@ -286,16 +314,6 @@ public final class TestMolecularDataFactory {
                         .name("Human papillomavirus type 16d")
                         .integrations(3)
                         .build())
-                .build();
-    }
-
-    @NotNull
-    private static MappedActinEvents createExhaustiveTestMappedEvents() {
-        return ImmutableMappedActinEvents.builder()
-                .from(createTestMappedEvents())
-                .amplifiedGenes(Sets.newHashSet("AMP"))
-                .wildtypeGenes(Sets.newHashSet("WILD"))
-                .fusions(Lists.newArrayList(ImmutableFusionGene.builder().fiveGene("FIVE").threeGene("THREE").build()))
                 .build();
     }
 }

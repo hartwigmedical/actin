@@ -2,7 +2,7 @@ package com.hartwig.actin.database.dao;
 
 import static com.hartwig.actin.database.Tables.ACTIVATEDGENE;
 import static com.hartwig.actin.database.Tables.AMPLIFIEDGENE;
-import static com.hartwig.actin.database.Tables.FUSIONGENE;
+import static com.hartwig.actin.database.Tables.FUSEDGENE;
 import static com.hartwig.actin.database.Tables.INACTIVATEDGENE;
 import static com.hartwig.actin.database.Tables.MOLECULAR;
 import static com.hartwig.actin.database.Tables.MOLECULAREVIDENCE;
@@ -14,8 +14,9 @@ import java.util.Set;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.interpretation.FusionGene;
+import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
 import com.hartwig.actin.molecular.interpretation.GeneMutation;
+import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -38,19 +39,21 @@ class MolecularDAO {
         context.delete(INACTIVATEDGENE).where(INACTIVATEDGENE.SAMPLEID.eq(sampleId)).execute();
         context.delete(AMPLIFIEDGENE).where(AMPLIFIEDGENE.SAMPLEID.eq(sampleId)).execute();
         context.delete(WILDTYPEGENE).where(WILDTYPEGENE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(FUSIONGENE).where(FUSIONGENE.SAMPLEID.eq(sampleId)).execute();
+        context.delete(FUSEDGENE).where(FUSEDGENE.SAMPLEID.eq(sampleId)).execute();
         context.delete(MOLECULAREVIDENCE).where(MOLECULAREVIDENCE.SAMPLEID.eq(sampleId)).execute();
     }
 
     public void writeMolecularRecord(@NotNull MolecularRecord record) {
         String sampleId = record.sampleId();
         writeMolecularDetails(sampleId, record);
-        writeMutations(sampleId, record.mappedEvents().mutations());
-        writeActivatedGenes(sampleId, record.mappedEvents().activatedGenes());
-        writeInactivatedGenes(sampleId, record.mappedEvents().inactivatedGenes());
-        writeAmplifiedGenes(sampleId, record.mappedEvents().amplifiedGenes());
-        writeWildtypeGenes(sampleId, record.mappedEvents().wildtypeGenes());
-        writeFusionGenes(sampleId, record.mappedEvents().fusions());
+
+        ActionableActinEvents actionableActinEvents = MolecularInterpreter.extractActionableEvents(record);
+        writeMutations(sampleId, actionableActinEvents.mutations());
+        writeActivatedGenes(sampleId, actionableActinEvents.activatedGenes());
+        writeInactivatedGenes(sampleId, actionableActinEvents.inactivatedGenes());
+        writeAmplifiedGenes(sampleId, actionableActinEvents.amplifiedGenes());
+        writeWildtypeGenes(sampleId, actionableActinEvents.wildtypeGenes());
+        writeFusedGenes(sampleId, actionableActinEvents.fusedGenes());
         writeMolecularEvidence(sampleId, record.evidence());
     }
 
@@ -109,10 +112,9 @@ class MolecularDAO {
         }
     }
 
-    private void writeFusionGenes(@NotNull String sampleId, @NotNull Set<FusionGene> fusions) {
-        for (FusionGene fusionGene : fusions) {
-            context.insertInto(FUSIONGENE, FUSIONGENE.SAMPLEID, FUSIONGENE.FIVEGENE, FUSIONGENE.THREEGENE).
-                    values(sampleId, fusionGene.fiveGene(), fusionGene.threeGene()).execute();
+    private void writeFusedGenes(@NotNull String sampleId, @NotNull Set<String> fusedGenes) {
+        for (String fusedGene : fusedGenes) {
+            context.insertInto(FUSEDGENE, FUSEDGENE.SAMPLEID, FUSEDGENE.GENE).values(sampleId, fusedGene).execute();
         }
     }
 
@@ -139,7 +141,12 @@ class MolecularDAO {
                     MOLECULAREVIDENCE.TREATMENT,
                     MOLECULAREVIDENCE.ISRESPONSIVE,
                     MOLECULAREVIDENCE.SOURCE)
-                    .values(sampleId, type, evidence.event(), evidence.treatment(), DataUtil.toByte(isResponsive), source)
+                    .values(sampleId,
+                            type,
+                            evidence.event(),
+                            evidence.treatment(),
+                            DataUtil.toByte(isResponsive),
+                            source)
                     .execute();
         }
     }

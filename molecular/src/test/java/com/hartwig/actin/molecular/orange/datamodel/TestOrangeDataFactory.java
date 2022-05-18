@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
@@ -18,7 +19,6 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;

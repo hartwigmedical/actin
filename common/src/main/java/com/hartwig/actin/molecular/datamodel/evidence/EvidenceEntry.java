@@ -12,5 +12,11 @@ public abstract class EvidenceEntry {
     public abstract String event();
 
     @NotNull
+    public abstract String sourceEvent();
+
+    @NotNull
+    public abstract EvidenceType sourceType();
+
+    @NotNull
     public abstract String treatment();
 }

@@ -43,18 +43,15 @@ public class OrangeInterpreter {
     static final String HOMOLOGOUS_REPAIR_UNKNOWN = "CANNOT_BE_DETERMINED";
 
     @NotNull
-    private final OrangeEventMapper eventMapper;
-    @NotNull
     private final OrangeEvidenceFactory evidenceFactory;
 
     @NotNull
     public static OrangeInterpreter create(@NotNull List<ServeRecord> records, @NotNull List<ExternalTreatmentMapping> mappings) {
-        return new OrangeInterpreter(OrangeEventMapper.fromServeRecords(records), OrangeEvidenceFactory.create(records, mappings));
+        return new OrangeInterpreter(OrangeEvidenceFactory.create(records, mappings));
     }
 
     @VisibleForTesting
-    OrangeInterpreter(@NotNull final OrangeEventMapper eventMapper, @NotNull final OrangeEvidenceFactory evidenceFactory) {
-        this.eventMapper = eventMapper;
+    OrangeInterpreter(@NotNull final OrangeEvidenceFactory evidenceFactory) {
         this.evidenceFactory = evidenceFactory;
     }
 
@@ -69,7 +66,6 @@ public class OrangeInterpreter {
                 .drivers(DriverExtraction.extract(record))
                 .pharmaco(extractPharmaco(record.peach()))
                 .evidence(evidenceFactory.create(record.protect()))
-                .mappedEvents(eventMapper.map(record.protect()))
                 .build();
     }
 

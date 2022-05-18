@@ -10,9 +10,9 @@ public class GeneIsWildtypeTest {
 
     @Test
     public void canEvaluate() {
-        GeneIsWildtype function = new GeneIsWildtype("gene 1");
+        GeneIsWildtype function = new GeneIsWildtype("geneA");
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 2")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withWildtypeGene("gene 1")));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withWildtypeGene("geneB")));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withWildtypeGene("geneA")));
     }
 }

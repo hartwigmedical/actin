@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;

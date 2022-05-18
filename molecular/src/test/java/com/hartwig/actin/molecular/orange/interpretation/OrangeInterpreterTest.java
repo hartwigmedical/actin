@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -121,9 +120,8 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        OrangeEventMapper testEventMapper = new OrangeEventMapper(evidence -> Sets.newHashSet(evidence.event()));
         OrangeEvidenceFactory testEvidenceFactory =
                 new OrangeEvidenceFactory(evidence -> true, ExternalTreatmentMapperTestFactory.create());
-        return new OrangeInterpreter(testEventMapper, testEvidenceFactory);
+        return new OrangeInterpreter(testEvidenceFactory);
     }
 }

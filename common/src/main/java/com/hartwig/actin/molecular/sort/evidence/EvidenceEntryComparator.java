@@ -15,6 +15,16 @@ public class EvidenceEntryComparator implements Comparator<EvidenceEntry> {
             return eventCompare;
         }
 
-        return evidenceEntry1.treatment().compareTo(evidenceEntry2.treatment());
+        int treatmentCompare = evidenceEntry1.treatment().compareTo(evidenceEntry2.treatment());
+        if (treatmentCompare != 0) {
+            return treatmentCompare;
+        }
+
+        int sourceEventCompare = evidenceEntry1.sourceEvent().compareTo(evidenceEntry2.sourceEvent());
+        if (sourceEventCompare != 0) {
+            return sourceEventCompare;
+        }
+
+        return evidenceEntry1.sourceType().compareTo(evidenceEntry2.sourceType());
     }
 }

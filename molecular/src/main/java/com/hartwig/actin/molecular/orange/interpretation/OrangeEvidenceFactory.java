@@ -248,6 +248,16 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private static EvidenceEntry toEvidenceEntry(@NotNull ProtectEvidence evidence) {
-        return ImmutableEvidenceEntry.builder().event(EvidenceEventExtractor.toEvent(evidence)).treatment(evidence.treatment()).build();
+        if (evidence.sources().size() != 1) {
+            throw new IllegalStateException("Trying to convert PROTECT evidence to an evidence entry while it holds <> 1 sources");
+        }
+
+        ProtectSource source = evidence.sources().iterator().next();
+        return ImmutableEvidenceEntry.builder()
+                .event(EvidenceEventExtractor.toEvent(evidence))
+                .sourceEvent(source.event())
+                .sourceType(source.type())
+                .treatment(evidence.treatment())
+                .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.datamodel.protect;
+package com.hartwig.actin.molecular.datamodel.evidence;
 
 public enum EvidenceType {
     VIRAL_PRESENCE,
@@ -12,5 +12,6 @@ public enum EvidenceType {
     HOTSPOT_MUTATION,
     CODON_MUTATION,
     EXON_MUTATION,
-    ANY_MUTATION
+    ANY_MUTATION,
+    WILD_TYPE
 }

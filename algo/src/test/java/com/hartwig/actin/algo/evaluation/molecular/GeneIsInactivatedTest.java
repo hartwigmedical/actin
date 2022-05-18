@@ -10,9 +10,9 @@ public class GeneIsInactivatedTest {
 
     @Test
     public void canEvaluate() {
-        GeneIsInactivated function = new GeneIsInactivated("gene 1");
+        GeneIsInactivated function = new GeneIsInactivated("geneA");
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 2")));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("gene 1")));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withInactivatedGene("geneB")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withInactivatedGene("geneA")));
     }
 }

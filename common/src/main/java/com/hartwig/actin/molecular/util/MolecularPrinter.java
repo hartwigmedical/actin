@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.interpretation.FusionGene;
 import com.hartwig.actin.molecular.interpretation.GeneMutation;
 import com.hartwig.actin.util.DatamodelPrinter;
 
@@ -42,12 +41,13 @@ public class MolecularPrinter {
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
         printer.print(" Has reliable quality: " + toYesNoUnknown(record.hasReliableQuality()));
         printer.print(" Purity: " + formatPercentage(record.characteristics().purity()));
-        printer.print(" Mutations: " + mutationString(record.mappedEvents().mutations()));
-        printer.print(" Activated genes: " + concat(record.mappedEvents().activatedGenes()));
-        printer.print(" Inactivated genes: " + concat(record.mappedEvents().inactivatedGenes()));
-        printer.print(" Amplified genes: " + concat(record.mappedEvents().amplifiedGenes()));
-        printer.print(" Wildtype genes: " + concat(record.mappedEvents().wildtypeGenes()));
-        printer.print(" Fusions: " + fusionString(record.mappedEvents().fusions()));
+
+//        printer.print(" Mutations: " + mutationString(record.mappedEvents().mutations()));
+//        printer.print(" Activated genes: " + concat(record.mappedEvents().activatedGenes()));
+//        printer.print(" Inactivated genes: " + concat(record.mappedEvents().inactivatedGenes()));
+//        printer.print(" Amplified genes: " + concat(record.mappedEvents().amplifiedGenes()));
+//        printer.print(" Wildtype genes: " + concat(record.mappedEvents().wildtypeGenes()));
+//        printer.print(" Fusions: " + fusionString(record.mappedEvents().fusedGenes()));
         printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()));
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()));
         printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.characteristics().isHomologousRepairDeficient()));
@@ -90,15 +90,6 @@ public class MolecularPrinter {
         Set<String> strings = Sets.newHashSet();
         for (GeneMutation mutation : mutations) {
             strings.add(mutation.gene() + " " + mutation.mutation());
-        }
-        return concat(strings);
-    }
-
-    @NotNull
-    private static String fusionString(@NotNull Iterable<FusionGene> fusions) {
-        Set<String> strings = Sets.newHashSet();
-        for (FusionGene fusion : fusions) {
-            strings.add(fusion.fiveGene() + "-" + fusion.threeGene());
         }
         return concat(strings);
     }

@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.interpretation.MappedActinEvents;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +38,5 @@ public abstract class MolecularRecord {
 
     @NotNull
     public abstract MolecularEvidence evidence();
-
-    // TODO Remove mappedEvents. Actin should be able to resolve inclusion based on evidence.
-    @NotNull
-    public abstract MappedActinEvents mappedEvents();
 
 }
