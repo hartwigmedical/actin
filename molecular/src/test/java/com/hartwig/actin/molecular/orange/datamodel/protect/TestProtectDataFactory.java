@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.orange.datamodel.protect;
 
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
-
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +22,6 @@ public final class TestProtectDataFactory {
 
     @NotNull
     public static ProtectSource createSource() {
-        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(EvidenceType.HOTSPOT_MUTATION).build();
+        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(ProtectEvidenceType.HOTSPOT_MUTATION).build();
     }
 }

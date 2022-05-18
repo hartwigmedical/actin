@@ -25,7 +25,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
@@ -50,6 +49,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvid
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
@@ -278,7 +278,7 @@ public final class OrangeJson {
                 sources.add(ImmutableProtectSource.builder()
                         .name(string(source, "name"))
                         .event(string(source, "sourceEvent"))
-                        .type(EvidenceType.valueOf(string(source, "evidenceType")))
+                        .type(ProtectEvidenceType.valueOf(string(source, "evidenceType")))
                         .rangeRank(nullableInteger(source, "rangeRank"))
                         .build());
             }

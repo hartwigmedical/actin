@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
@@ -23,6 +22,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvid
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
@@ -166,7 +166,7 @@ public final class TestOrangeDataFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(evidenceSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         evidences.add(evidenceBuilder.gene("BRAF")
@@ -175,7 +175,7 @@ public final class TestOrangeDataFactory {
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
-                .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(evidenceSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         evidences.add(evidenceBuilder.gene("PTEN")
@@ -184,7 +184,7 @@ public final class TestOrangeDataFactory {
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
-                .addSources(evidenceSourceBuilder.type(EvidenceType.INACTIVATION).build())
+                .addSources(evidenceSourceBuilder.type(ProtectEvidenceType.INACTIVATION).build())
                 .build());
 
         ImmutableProtectSource.Builder externalSourceBuilder = ImmutableProtectSource.builder().name("ICLUSION").event(Strings.EMPTY);
@@ -195,7 +195,7 @@ public final class TestOrangeDataFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(externalSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(externalSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         ImmutableProtectSource.Builder actinSourceBuilder = ImmutableProtectSource.builder().name("ACTIN").event(Strings.EMPTY);
@@ -206,7 +206,7 @@ public final class TestOrangeDataFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(actinSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(actinSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         return ImmutableProtectRecord.builder().evidences(evidences).build();

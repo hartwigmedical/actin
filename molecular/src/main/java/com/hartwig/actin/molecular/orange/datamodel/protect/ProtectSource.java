@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.orange.datamodel.protect;
 
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +15,7 @@ public abstract class ProtectSource {
     public abstract String event();
 
     @NotNull
-    public abstract EvidenceType type();
+    public abstract ProtectEvidenceType type();
 
     @Nullable
     public abstract Integer rangeRank();

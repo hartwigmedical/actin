@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.util.EventFormatter;
 
@@ -23,7 +23,7 @@ public final class EvidenceEventExtractor {
 
     private static boolean isPromiscuousFusion(@NotNull ProtectEvidence evidence) {
         for (ProtectSource source : evidence.sources()) {
-            if (source.type() == EvidenceType.PROMISCUOUS_FUSION) {
+            if (source.type() == ProtectEvidenceType.PROMISCUOUS_FUSION) {
                 return true;
             }
         }

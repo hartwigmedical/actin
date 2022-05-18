@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
@@ -256,7 +257,7 @@ class OrangeEvidenceFactory {
         return ImmutableEvidenceEntry.builder()
                 .event(EvidenceEventExtractor.toEvent(evidence))
                 .sourceEvent(source.event())
-                .sourceType(source.type())
+                .sourceType(EvidenceType.valueOf(source.type().toString()))
                 .treatment(evidence.treatment())
                 .build();
     }

@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
@@ -25,6 +24,7 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
@@ -182,7 +182,7 @@ public class OrangeJsonTest {
         ProtectSource source = evidence.sources().iterator().next();
         assertEquals("VICC_CGI", source.name());
         assertEquals("hotspot", source.event());
-        assertEquals(EvidenceType.HOTSPOT_MUTATION, source.type());
+        assertEquals(ProtectEvidenceType.HOTSPOT_MUTATION, source.type());
         assertNull(source.rangeRank());
     }
 }
