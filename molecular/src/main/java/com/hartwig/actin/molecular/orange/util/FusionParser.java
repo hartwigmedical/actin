@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.util;
 
-import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableFusionGene;
+import com.hartwig.actin.molecular.interpretation.FusionGene;
+import com.hartwig.actin.molecular.interpretation.ImmutableFusionGene;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -14,8 +14,8 @@ import java.util.Set;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
-import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
+import com.hartwig.actin.molecular.interpretation.FusionGene;
+import com.hartwig.actin.molecular.interpretation.GeneMutation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;

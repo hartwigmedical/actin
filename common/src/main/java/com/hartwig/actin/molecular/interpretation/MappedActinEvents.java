@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.mapping;
+package com.hartwig.actin.molecular.interpretation;
 
 import java.util.Set;
 

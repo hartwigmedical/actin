@@ -6,8 +6,8 @@ import java.util.Set;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.molecular.interpretation.MappedActinEvents;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

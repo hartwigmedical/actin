@@ -28,11 +28,11 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
-import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.MappedActinEvents;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.molecular.interpretation.FusionGene;
+import com.hartwig.actin.molecular.interpretation.GeneMutation;
+import com.hartwig.actin.molecular.interpretation.MappedActinEvents;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

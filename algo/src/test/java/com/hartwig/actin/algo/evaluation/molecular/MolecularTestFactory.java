@@ -12,9 +12,9 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableFusionGene;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableGeneMutation;
-import com.hartwig.actin.molecular.datamodel.mapping.ImmutableMappedActinEvents;
+import com.hartwig.actin.molecular.interpretation.ImmutableFusionGene;
+import com.hartwig.actin.molecular.interpretation.ImmutableGeneMutation;
+import com.hartwig.actin.molecular.interpretation.ImmutableMappedActinEvents;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

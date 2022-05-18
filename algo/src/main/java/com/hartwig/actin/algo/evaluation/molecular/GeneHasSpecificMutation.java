@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.molecular.datamodel.mapping.GeneMutation;
+import com.hartwig.actin.molecular.interpretation.GeneMutation;
 
 import org.jetbrains.annotations.NotNull;
 

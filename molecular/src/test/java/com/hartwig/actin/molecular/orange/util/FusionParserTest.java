@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.orange.util;
 
 import static org.junit.Assert.assertEquals;
 
-import com.hartwig.actin.molecular.datamodel.mapping.FusionGene;
+import com.hartwig.actin.molecular.interpretation.FusionGene;
 
 import org.junit.Test;
 
