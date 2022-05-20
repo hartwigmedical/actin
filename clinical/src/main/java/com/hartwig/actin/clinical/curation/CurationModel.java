@@ -441,7 +441,7 @@ public class CurationModel {
 
     @Nullable
     public String curateBiopsyLocation(@Nullable String input) {
-        if (input == null) {
+        if (input == null || input.isEmpty()) {
             return null;
         }
 
