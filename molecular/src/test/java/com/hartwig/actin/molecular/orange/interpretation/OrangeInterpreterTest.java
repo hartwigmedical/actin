@@ -30,8 +30,8 @@ public class OrangeInterpreterTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canCreateInterpreterFromEmptyServeRecordsAndMappings() {
-        assertNotNull(OrangeInterpreter.create(Lists.newArrayList(), Lists.newArrayList()));
+    public void canCreateInterpreterFromEmptyMappings() {
+        assertNotNull(OrangeInterpreter.create(Lists.newArrayList()));
     }
 
     @Test
@@ -120,8 +120,7 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        OrangeEvidenceFactory testEvidenceFactory =
-                new OrangeEvidenceFactory(evidence -> true, ExternalTreatmentMapperTestFactory.create());
+        OrangeEvidenceFactory testEvidenceFactory = new OrangeEvidenceFactory(ExternalTreatmentMapperTestFactory.create());
         return new OrangeInterpreter(testEvidenceFactory);
     }
 }

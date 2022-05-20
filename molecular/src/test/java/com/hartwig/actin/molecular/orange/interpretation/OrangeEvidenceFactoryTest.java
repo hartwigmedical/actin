@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -13,11 +12,11 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -26,7 +25,7 @@ public class OrangeEvidenceFactoryTest {
 
     @Test
     public void canCreateMolecularEvidence() {
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> true, ExternalTreatmentMapperTestFactory.create());
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(ExternalTreatmentMapperTestFactory.create());
         ProtectRecord protect = createTestProtectRecord();
 
         MolecularEvidence evidence = factory.create(protect);
@@ -35,18 +34,10 @@ public class OrangeEvidenceFactoryTest {
     }
 
     @Test
-    public void filterActinTrialsWithoutInclusion() {
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> false, ExternalTreatmentMapperTestFactory.create());
-        ProtectRecord protect = createTestProtectRecord();
-
-        assertTrue(factory.create(protect).actinTrials().isEmpty());
-    }
-
-    @Test
     public void canMapExternalTreatmentsToActin() {
         ExternalTreatmentMapper mapper = ExternalTreatmentMapperTestFactory.create("B responsive external treatment", "mapped!");
 
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(evidence -> true, mapper);
+        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(mapper);
         ProtectRecord protect = createTestProtectRecord();
 
         MolecularEvidence evidence = factory.create(protect);
@@ -86,10 +77,8 @@ public class OrangeEvidenceFactoryTest {
     private static ProtectRecord createTestProtectRecord() {
         Set<ProtectEvidence> evidences = Sets.newHashSet();
 
-        ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
-                .reported(true)
-                .addSources(withName(OrangeEvidenceFactory.EVIDENCE_SOURCE));
+        ImmutableProtectEvidence.Builder evidenceBuilder =
+                TestProtectDataFactory.builder().reported(true).addSources(withName(OrangeEvidenceFactory.EVIDENCE_SOURCE));
 
         String treatmentWithResponsiveEvidenceA = "treatment A on-label";
         // Should be approved treatment
@@ -166,8 +155,7 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // Add one general external event that should be included
-        evidences.add(ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+        evidences.add(TestProtectDataFactory.builder()
                 .reported(true)
                 .event("B responsive external event")
                 .treatment("B responsive external treatment")
@@ -178,15 +166,14 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // And one ACTIN treatment that should be included.
-        evidences.add(ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+        evidences.add(TestProtectDataFactory.builder()
                 .reported(true)
                 .event("B responsive actin event")
                 .treatment("B responsive actin treatment")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(withName(OrangeEvidenceFactory.ACTIN_SOURCE))
+                .addSources(withNameAndEvent(OrangeEvidenceFactory.ACTIN_SOURCE, EligibilityRule.HRD_SIGNATURE.toString()))
                 .build());
 
         return ImmutableProtectRecord.builder().evidences(evidences).build();
@@ -194,6 +181,11 @@ public class OrangeEvidenceFactoryTest {
 
     @NotNull
     private static ProtectSource withName(@NotNull String name) {
-        return ImmutableProtectSource.builder().from(TestProtectDataFactory.createSource()).name(name).build();
+        return TestProtectDataFactory.sourceBuilder().name(name).build();
+    }
+
+    @NotNull
+    private static ProtectSource withNameAndEvent(@NotNull String name, @NotNull String event) {
+        return TestProtectDataFactory.sourceBuilder().name(name).event(event).build();
     }
 }

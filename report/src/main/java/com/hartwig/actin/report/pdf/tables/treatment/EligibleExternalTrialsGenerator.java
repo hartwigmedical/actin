@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -22,11 +22,11 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
     @NotNull
     private final String source;
     @NotNull
-    private final Set<EvidenceEntry> evidenceForExternalTrials;
+    private final Set<TreatmentEvidence> evidenceForExternalTrials;
     private final float keyWidth;
     private final float valueWidth;
 
-    public EligibleExternalTrialsGenerator(@NotNull final String source, @NotNull final Set<EvidenceEntry> evidenceForExternalTrials,
+    public EligibleExternalTrialsGenerator(@NotNull final String source, @NotNull final Set<TreatmentEvidence> evidenceForExternalTrials,
             final float keyWidth, final float valueWidth) {
         this.source = source;
         this.evidenceForExternalTrials = evidenceForExternalTrials;
@@ -64,9 +64,9 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Map<String, List<String>> toTreatmentMapPerEvent(@NotNull Iterable<EvidenceEntry> evidences) {
+    private static Map<String, List<String>> toTreatmentMapPerEvent(@NotNull Iterable<TreatmentEvidence> evidences) {
         Map<String, List<String>> treatmentsPerEvent = Maps.newHashMap();
-        for (EvidenceEntry evidence : evidences) {
+        for (TreatmentEvidence evidence : evidences) {
             List<String> treatments = treatmentsPerEvent.get(evidence.event());
             if (treatments == null) {
                 treatments = Lists.newArrayList();

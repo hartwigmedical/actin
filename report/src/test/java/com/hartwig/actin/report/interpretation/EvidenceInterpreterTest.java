@@ -6,9 +6,9 @@ import static org.junit.Assert.assertTrue;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 
 import org.apache.logging.log4j.util.Strings;
@@ -45,7 +45,7 @@ public class EvidenceInterpreterTest {
         return ImmutableEvidenceEntry.builder()
                 .event(event)
                 .sourceEvent(Strings.EMPTY)
-                .sourceType(EvidenceType.ANY_MUTATION)
+                .sourceType(MolecularEventType.ANY_MUTATION)
                 .treatment(treatment)
                 .build();
     }

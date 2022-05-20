@@ -26,8 +26,10 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
@@ -181,23 +183,23 @@ public class MolecularRecordJsonTest {
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {
         assertEquals(3, evidence.actinTrials().size());
-        EvidenceEntry actinTrial1 = findByEvent(evidence.actinTrials(), "High TML");
-        assertEquals("Trial 1", actinTrial1.treatment());
-        EvidenceEntry actinTrial2 = findByEvent(evidence.actinTrials(), "HR deficiency");
-        assertEquals("Trial 2", actinTrial2.treatment());
-        EvidenceEntry actinTrial3 = findByEvent(evidence.actinTrials(), "NF1 disruption");
-        assertEquals("Trial 3", actinTrial3.treatment());
+        ActinTrialEvidence actinTrial1 = findByEvent(evidence.actinTrials(), "High TML");
+        assertEquals("Trial 1", actinTrial1.trialAcronym());
+        ActinTrialEvidence actinTrial2 = findByEvent(evidence.actinTrials(), "HR deficiency");
+        assertEquals("Trial 2", actinTrial2.trialAcronym());
+        ActinTrialEvidence actinTrial3 = findByEvent(evidence.actinTrials(), "NF1 disruption");
+        assertEquals("Trial 3", actinTrial3.trialAcronym());
 
         assertEquals("trials", evidence.externalTrialSource());
         assertEquals(1, evidence.externalTrials().size());
-        EvidenceEntry externalTrial = findByEvent(evidence.externalTrials(), "High TML");
+        TreatmentEvidence externalTrial = findByEvent(evidence.externalTrials(), "High TML");
         assertEquals("Trial 1", externalTrial.treatment());
 
         assertEquals("evidence", evidence.evidenceSource());
         assertEquals(2, evidence.approvedEvidence().size());
-        EvidenceEntry approvedEvidence1 = findByTreatment(evidence.approvedEvidence(), "Pembrolizumab");
+        TreatmentEvidence approvedEvidence1 = findByTreatment(evidence.approvedEvidence(), "Pembrolizumab");
         assertEquals("High TML", approvedEvidence1.event());
-        EvidenceEntry approvedEvidence2 = findByTreatment(evidence.approvedEvidence(), "Nivolumab");
+        TreatmentEvidence approvedEvidence2 = findByTreatment(evidence.approvedEvidence(), "Nivolumab");
         assertEquals("High TML", approvedEvidence2.event());
 
         assertEquals(1, evidence.onLabelExperimentalEvidence().size());
@@ -219,8 +221,8 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static EvidenceEntry findByEvent(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String eventToFind) {
-        for (EvidenceEntry evidence : evidences) {
+    private static <X extends EvidenceEntry> X findByEvent(@NotNull Iterable<X> evidences, @NotNull String eventToFind) {
+        for (X evidence : evidences) {
             if (evidence.event().equals(eventToFind)) {
                 return evidence;
             }
@@ -230,8 +232,8 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static EvidenceEntry findByTreatment(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String treatmentToFind) {
-        for (EvidenceEntry evidence : evidences) {
+    private static TreatmentEvidence findByTreatment(@NotNull Iterable<TreatmentEvidence> evidences, @NotNull String treatmentToFind) {
+        for (TreatmentEvidence evidence : evidences) {
             if (evidence.treatment().equals(treatmentToFind)) {
                 return evidence;
             }

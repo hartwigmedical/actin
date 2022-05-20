@@ -8,8 +8,8 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
@@ -76,7 +76,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + evidence.evidenceSource()));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence))));
 
-        Set<EvidenceEntry> knownResistanceEvidence = evidence.knownResistanceEvidence();
+        Set<TreatmentEvidence> knownResistanceEvidence = evidence.knownResistanceEvidence();
         if (!knownResistanceEvidence.isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
             table.addCell(Cells.createValue(formatResistanceEvidence(knownResistanceEvidence)));
@@ -107,9 +107,9 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String formatResistanceEvidence(@NotNull Iterable<EvidenceEntry> resistanceEvidences) {
+    private static String formatResistanceEvidence(@NotNull Iterable<TreatmentEvidence> resistanceEvidences) {
         Set<String> resistanceEvidenceStrings = Sets.newTreeSet();
-        for (EvidenceEntry evidence : resistanceEvidences) {
+        for (TreatmentEvidence evidence : resistanceEvidences) {
             resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());
         }
         return concat(resistanceEvidenceStrings);

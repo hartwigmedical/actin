@@ -12,8 +12,9 @@ import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
 import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
 import com.hartwig.actin.molecular.interpretation.GeneMutation;
 import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
@@ -119,7 +120,7 @@ class MolecularDAO {
     }
 
     private void writeMolecularEvidence(@NotNull String sampleId, @NotNull MolecularEvidence evidence) {
-        writeEvidenceForTypeAndSource(sampleId, evidence.actinTrials(), "Experimental", true, "ACTIN");
+        writeActinTrials(sampleId, evidence.actinTrials());
         writeEvidenceForTypeAndSource(sampleId, evidence.externalTrials(), "Experimental", true, evidence.externalTrialSource());
 
         String evidenceSource = evidence.evidenceSource();
@@ -131,9 +132,8 @@ class MolecularDAO {
         writeEvidenceForTypeAndSource(sampleId, evidence.suspectResistanceEvidence(), "Resistance (suspected)", false, evidenceSource);
     }
 
-    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<EvidenceEntry> evidences, @NotNull String type,
-            boolean isResponsive, @NotNull String source) {
-        for (EvidenceEntry evidence : evidences) {
+    private void writeActinTrials(@NotNull String sampleId, @NotNull Iterable<ActinTrialEvidence> evidences) {
+        for (ActinTrialEvidence evidence : evidences) {
             context.insertInto(MOLECULAREVIDENCE,
                     MOLECULAREVIDENCE.SAMPLEID,
                     MOLECULAREVIDENCE.TYPE,
@@ -142,11 +142,26 @@ class MolecularDAO {
                     MOLECULAREVIDENCE.ISRESPONSIVE,
                     MOLECULAREVIDENCE.SOURCE)
                     .values(sampleId,
-                            type,
+                            "Experimental",
                             evidence.event(),
-                            evidence.treatment(),
-                            DataUtil.toByte(isResponsive),
-                            source)
+                            evidence.trialAcronym(),
+                            DataUtil.toByte(evidence.isInclusionCriterion()),
+                            "ACTIN")
+                    .execute();
+        }
+    }
+
+    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<TreatmentEvidence> evidences,
+            @NotNull String type, boolean isResponsive, @NotNull String source) {
+        for (TreatmentEvidence evidence : evidences) {
+            context.insertInto(MOLECULAREVIDENCE,
+                    MOLECULAREVIDENCE.SAMPLEID,
+                    MOLECULAREVIDENCE.TYPE,
+                    MOLECULAREVIDENCE.EVENT,
+                    MOLECULAREVIDENCE.TREATMENT,
+                    MOLECULAREVIDENCE.ISRESPONSIVE,
+                    MOLECULAREVIDENCE.SOURCE)
+                    .values(sampleId, type, evidence.event(), evidence.treatment(), DataUtil.toByte(isResponsive), source)
                     .execute();
         }
     }

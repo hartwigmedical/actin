@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
-public enum EvidenceType {
+public enum MolecularEventType {
     VIRAL_PRESENCE,
     SIGNATURE,
     ACTIVATION,

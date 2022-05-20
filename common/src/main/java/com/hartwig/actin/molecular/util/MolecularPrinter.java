@@ -56,7 +56,7 @@ public class MolecularPrinter {
 
         MolecularEvidence evidence = record.evidence();
         printer.print("Events with evidence for approved treatment: " + toEvents(evidence.approvedEvidence()));
-        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
+//        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
         printer.print("Events associated with external trials: " + toEvents(evidence.externalTrials()));
         printer.print("Events with evidence for on-label experimental treatment: " + toEvents(evidence.onLabelExperimentalEvidence()));
         printer.print("Events with evidence for off-label experimental treatment: " + toEvents(evidence.offLabelExperimentalEvidence()));
@@ -104,7 +104,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String toEvents(@NotNull Iterable<EvidenceEntry> evidences) {
+    private static String toEvents(@NotNull Iterable<? extends EvidenceEntry> evidences) {
         Set<String> events = Sets.newTreeSet();
         for (EvidenceEntry evidence : evidences) {
             events.add(evidence.event());

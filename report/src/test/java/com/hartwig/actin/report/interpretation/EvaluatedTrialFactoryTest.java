@@ -11,8 +11,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +67,7 @@ public class EvaluatedTrialFactoryTest {
         EvidenceEntry evidence = ImmutableEvidenceEntry.builder()
                 .event("some event")
                 .sourceEvent(Strings.EMPTY)
-                .sourceType(EvidenceType.ANY_MUTATION)
+                .sourceType(MolecularEventType.ANY_MUTATION)
                 .treatment("TEST-TRIAL-1")
                 .build();
 

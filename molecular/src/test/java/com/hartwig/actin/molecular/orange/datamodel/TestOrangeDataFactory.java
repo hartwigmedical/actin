@@ -34,6 +34,7 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpre
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -198,7 +199,7 @@ public final class TestOrangeDataFactory {
                 .addSources(externalSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
-        ImmutableProtectSource.Builder actinSourceBuilder = ImmutableProtectSource.builder().name("ACTIN").event(Strings.EMPTY);
+        ImmutableProtectSource.Builder actinSourceBuilder = ImmutableProtectSource.builder().name("ACTIN");
         ImmutableProtectEvidence.Builder actinTrialBuilder = ImmutableProtectEvidence.builder().reported(true);
         evidences.add(actinTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
@@ -206,7 +207,9 @@ public final class TestOrangeDataFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(actinSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(actinSourceBuilder.event(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y + ": BRAF V600E")
+                        .type(ProtectEvidenceType.HOTSPOT_MUTATION)
+                        .build())
                 .build());
 
         return ImmutableProtectRecord.builder().evidences(evidences).build();

@@ -14,32 +14,32 @@ public abstract class MolecularEvidence {
     public abstract String actinSource();
 
     @NotNull
-    public abstract Set<EvidenceEntry> actinTrials();
+    public abstract Set<ActinTrialEvidence> actinTrials();
 
     @NotNull
     public abstract String externalTrialSource();
 
     @NotNull
-    public abstract Set<EvidenceEntry> externalTrials();
+    public abstract Set<TreatmentEvidence> externalTrials();
 
     @NotNull
     public abstract String evidenceSource();
 
     @NotNull
-    public abstract Set<EvidenceEntry> approvedEvidence();
+    public abstract Set<TreatmentEvidence> approvedEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> onLabelExperimentalEvidence();
+    public abstract Set<TreatmentEvidence> onLabelExperimentalEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> offLabelExperimentalEvidence();
+    public abstract Set<TreatmentEvidence> offLabelExperimentalEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> preClinicalEvidence();
+    public abstract Set<TreatmentEvidence> preClinicalEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> knownResistanceEvidence();
+    public abstract Set<TreatmentEvidence> knownResistanceEvidence();
 
     @NotNull
-    public abstract Set<EvidenceEntry> suspectResistanceEvidence();
+    public abstract Set<TreatmentEvidence> suspectResistanceEvidence();
 }

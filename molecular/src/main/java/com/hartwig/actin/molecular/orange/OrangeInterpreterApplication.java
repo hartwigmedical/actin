@@ -11,8 +11,6 @@ import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
-import com.hartwig.actin.serve.datamodel.ServeRecord;
-import com.hartwig.actin.serve.serialization.ServeRecordTsv;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -57,16 +55,12 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        LOGGER.info("Loading SERVE bridge TSV from {}", config.serveBridgeTsv());
-        List<ServeRecord> records = ServeRecordTsv.read(config.serveBridgeTsv());
-        LOGGER.info(" Loaded {} records", records.size());
-
         LOGGER.info("Loading ACTIN to external treatment mapping TSV from {}", config.externalTreatmentMappingTsv());
         List<ExternalTreatmentMapping> mappings = ExternalTreatmentMappingTsv.read(config.externalTreatmentMappingTsv());
         LOGGER.info(" Loaded {} mappings", mappings.size());
 
         LOGGER.info("Interpreting ORANGE record");
-        MolecularRecord molecular = OrangeInterpreter.create(records, mappings).interpret(orange);
+        MolecularRecord molecular = OrangeInterpreter.create(mappings).interpret(orange);
         MolecularPrinter.printRecord(molecular);
 
         MolecularRecordJson.write(molecular, config.outputDirectory());

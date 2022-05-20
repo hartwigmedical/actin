@@ -52,7 +52,7 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    private static Set<String> events(@NotNull Iterable<EvidenceEntry> evidences) {
+    private static Set<String> events(@NotNull Iterable<? extends EvidenceEntry> evidences) {
         Set<String> events = Sets.newTreeSet();
         for (EvidenceEntry evidence : evidences) {
             events.add(evidence.event());
@@ -61,9 +61,9 @@ public final class EvidenceInterpreter {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> filter(@NotNull Set<EvidenceEntry> evidences, @NotNull Set<String> eventsToFilter) {
-        Set<EvidenceEntry> filtered = Sets.newHashSet();
-        for (EvidenceEntry evidence : evidences) {
+    private static <X extends EvidenceEntry> Set<X> filter(@NotNull Set<X> evidences, @NotNull Set<String> eventsToFilter) {
+        Set<X> filtered = Sets.newHashSet();
+        for (X evidence : evidences) {
             if (!eventsToFilter.contains(evidence.event())) {
                 filtered.add(evidence);
             }

@@ -24,7 +24,6 @@ import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.serve.datamodel.ServeRecord;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,8 +45,8 @@ public class OrangeInterpreter {
     private final OrangeEvidenceFactory evidenceFactory;
 
     @NotNull
-    public static OrangeInterpreter create(@NotNull List<ServeRecord> records, @NotNull List<ExternalTreatmentMapping> mappings) {
-        return new OrangeInterpreter(OrangeEvidenceFactory.create(records, mappings));
+    public static OrangeInterpreter create(@NotNull List<ExternalTreatmentMapping> mappings) {
+        return new OrangeInterpreter(OrangeEvidenceFactory.create(mappings));
     }
 
     @VisibleForTesting

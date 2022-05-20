@@ -9,19 +9,28 @@ public final class TestProtectDataFactory {
     }
 
     @NotNull
-    public static ProtectEvidence create() {
+    public static ImmutableProtectEvidence.Builder builder() {
         return ImmutableProtectEvidence.builder()
                 .reported(false)
                 .event(Strings.EMPTY)
                 .treatment(Strings.EMPTY)
                 .onLabel(false)
                 .level(EvidenceLevel.A)
-                .direction(EvidenceDirection.RESPONSIVE)
-                .build();
+                .direction(EvidenceDirection.RESPONSIVE);
+    }
+
+    @NotNull
+    public static ProtectEvidence create() {
+        return builder().build();
+    }
+
+    @NotNull
+    public static ImmutableProtectSource.Builder sourceBuilder() {
+        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(ProtectEvidenceType.HOTSPOT_MUTATION);
     }
 
     @NotNull
     public static ProtectSource createSource() {
-        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(ProtectEvidenceType.HOTSPOT_MUTATION).build();
+        return sourceBuilder().build();
     }
 }

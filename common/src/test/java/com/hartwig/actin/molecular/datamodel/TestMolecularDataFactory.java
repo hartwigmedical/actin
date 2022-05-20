@@ -20,14 +20,16 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -140,39 +142,41 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestActinTrials() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<ActinTrialEvidence> createTestActinTrials() {
+        Set<ActinTrialEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableActinTrialEvidence.builder()
+                .trialAcronym("Trial 1")
+                .cohortId("A")
                 .event("BRAF V600E")
-                .sourceEvent("MUTATION_IN_GENE_X_OF_TYPE_Y: BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
-                .treatment("Trial 1")
+                .isInclusionCriterion(true)
+                .rule(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)
+                .gene("BRAF")
+                .mutation("V600E")
                 .build());
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableActinTrialEvidence.builder()
+                .trialAcronym("Trial 1")
+                .cohortId(null)
                 .event("High tumor mutational load")
-                .sourceEvent("TML_OF_AT_LEAST_X: TML >= 140")
-                .sourceType(EvidenceType.SIGNATURE)
-                .treatment("Trial 1")
+                .isInclusionCriterion(false)
+                .rule(EligibilityRule.TML_OF_AT_LEAST_X)
+                .gene(null)
+                .mutation(null)
                 .build());
 
         return result;
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestExternalTrials() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestExternalTrials() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Trial 1")
                 .build());
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("High TML")
-                .sourceEvent("High TML")
-                .sourceType(EvidenceType.SIGNATURE)
                 .treatment("Trial 1")
                 .build());
 
@@ -180,25 +184,19 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestApprovedEvidence() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestApprovedEvidence() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Vemurafenib")
                 .build());
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Dabrafenib")
                 .build());
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("High TML")
-                .sourceEvent("High TML")
-                .sourceType(EvidenceType.SIGNATURE)
                 .treatment("Nivolumab")
                 .build());
 
@@ -206,13 +204,11 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestOnLabelExperimentalEvidence() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestOnLabelExperimentalEvidence() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("High TML")
-                .sourceEvent("High TML")
-                .sourceType(EvidenceType.SIGNATURE)
                 .treatment("Pembrolizumab")
                 .build());
 
@@ -220,13 +216,11 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestOffLabelExperimentalEvidence() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestOffLabelExperimentalEvidence() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Trametinib")
                 .build());
 
@@ -234,13 +228,11 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestPreClinicalEvidence() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestPreClinicalEvidence() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Pre-clinical treatment")
                 .build());
 
@@ -248,13 +240,11 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestKnownResistanceEvidence() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestKnownResistanceEvidence() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Erlotinib")
                 .build());
 
@@ -262,13 +252,11 @@ public final class TestMolecularDataFactory {
     }
 
     @NotNull
-    private static Set<EvidenceEntry> createTestSuspectResistanceEvidence() {
-        Set<EvidenceEntry> result = Sets.newHashSet();
+    private static Set<TreatmentEvidence> createTestSuspectResistanceEvidence() {
+        Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableEvidenceEntry.builder()
+        result.add(ImmutableTreatmentEvidence.builder()
                 .event("BRAF V600E")
-                .sourceEvent("BRAF V600E")
-                .sourceType(EvidenceType.HOTSPOT_MUTATION)
                 .treatment("Some treatment")
                 .build());
 

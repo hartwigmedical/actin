@@ -11,10 +11,11 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class EvaluatedTrialFactory {
 
@@ -22,7 +23,7 @@ public final class EvaluatedTrialFactory {
     }
 
     @NotNull
-    public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<EvidenceEntry> actinEvidence) {
+    public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<ActinTrialEvidence> actinEvidence) {
         List<EvaluatedTrial> trials = Lists.newArrayList();
 
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
@@ -31,15 +32,16 @@ public final class EvaluatedTrialFactory {
 
             ImmutableEvaluatedTrial.Builder builder = ImmutableEvaluatedTrial.builder()
                     .trialId(trialMatch.identification().trialId())
-                    .acronym(trialMatch.identification().acronym())
-                    .hasMolecularEvidence(hasEvidenceForTreatment(actinEvidence, trialMatch.identification().acronym()));
+                    .acronym(trialMatch.identification().acronym());
 
+            String trialAcronym = trialMatch.identification().acronym();
             boolean trialIsOpen = trialMatch.identification().open();
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
 
-                trials.add(builder.cohort(cohortMatch.metadata().description())
+                trials.add(builder.hasMolecularEvidence(hasEvidenceForTrial(actinEvidence, trialAcronym, cohortMatch.metadata().cohortId()))
+                        .cohort(cohortMatch.metadata().description())
                         .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
                         .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
@@ -50,7 +52,8 @@ public final class EvaluatedTrialFactory {
 
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts().isEmpty()) {
-                trials.add(builder.cohort(null)
+                trials.add(builder.hasMolecularEvidence(hasEvidenceForTrial(actinEvidence, trialAcronym, null))
+                        .cohort(null)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen)
                         .hasSlotsAvailable(trialIsOpen)
@@ -65,9 +68,17 @@ public final class EvaluatedTrialFactory {
         return trials;
     }
 
-    private static boolean hasEvidenceForTreatment(@NotNull Iterable<EvidenceEntry> evidences, @NotNull String treatmentToFind) {
-        for (EvidenceEntry evidence : evidences) {
-            if (evidence.treatment().equals(treatmentToFind)) {
+    private static boolean hasEvidenceForTrial(@NotNull Iterable<ActinTrialEvidence> evidences, @NotNull String trialAcronymToFind,
+            @Nullable String cohortIdToFind) {
+        for (ActinTrialEvidence evidence : evidences) {
+            boolean isCohortMatch;
+            if (evidence.cohortId() == null) {
+                isCohortMatch = cohortIdToFind == null;
+            } else {
+                isCohortMatch = evidence.cohortId().equals(cohortIdToFind);
+            }
+
+            if (evidence.trialAcronym().equals(trialAcronymToFind) && isCohortMatch) {
                 return true;
             }
         }

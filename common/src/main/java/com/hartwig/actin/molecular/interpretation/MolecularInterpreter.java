@@ -4,8 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +28,9 @@ public final class MolecularInterpreter {
     }
 
     @NotNull
-    private static Set<ActinEvidence> toActinEvidences(@NotNull Set<EvidenceEntry> evidences) {
+    private static Set<ActinEvidence> toActinEvidences(@NotNull Set<ActinTrialEvidence> evidences) {
         Set<ActinEvidence> actinEvidences = Sets.newHashSet();
-        for (EvidenceEntry evidence : evidences) {
+        for (ActinTrialEvidence evidence : evidences) {
             actinEvidences.add(ActinEvidence.create(evidence));
         }
         return actinEvidences;
@@ -57,8 +56,7 @@ public final class MolecularInterpreter {
         Set<String> activatedGenes = Sets.newHashSet();
         for (ActinEvidence evidence : evidences) {
             if (evidence.rule() == EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X || (
-                    evidence.rule() == EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X
-                            && evidence.type() == EvidenceType.ACTIVATION)) {
+                    evidence.rule() == EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X)) {
                 activatedGenes.add(evidence.param());
             }
         }
@@ -75,8 +73,7 @@ public final class MolecularInterpreter {
         Set<String> amplifiedGenes = Sets.newHashSet();
         for (ActinEvidence evidence : evidences) {
             if (evidence.rule() == EligibilityRule.AMPLIFICATION_OF_GENE_X || (
-                    evidence.rule() == EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X
-                            && evidence.type() == EvidenceType.AMPLIFICATION)) {
+                    evidence.rule() == EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X)) {
                 amplifiedGenes.add(evidence.param());
             }
         }
@@ -109,30 +106,22 @@ public final class MolecularInterpreter {
         @NotNull
         private final EligibilityRule rule;
         @NotNull
-        private final EvidenceType type;
-        @NotNull
         private final String param;
 
         @NotNull
-        static ActinEvidence create(@NotNull EvidenceEntry evidence) {
-            String[] parts = evidence.sourceEvent().split(":");
-            return new ActinEvidence(EligibilityRule.valueOf(parts[0]), evidence.sourceType(), parts[1].trim());
+        static ActinEvidence create(@NotNull ActinTrialEvidence evidence) {
+            String[] parts = evidence.mutation().split(":");
+            return new ActinEvidence(EligibilityRule.valueOf(parts[0]), parts[1].trim());
         }
 
-        private ActinEvidence(@NotNull final EligibilityRule rule, @NotNull final EvidenceType type, @NotNull final String param) {
+        private ActinEvidence(@NotNull final EligibilityRule rule, @NotNull final String param) {
             this.rule = rule;
-            this.type = type;
             this.param = param;
         }
 
         @NotNull
         public EligibilityRule rule() {
             return rule;
-        }
-
-        @NotNull
-        public EvidenceType type() {
-            return type;
         }
 
         @NotNull

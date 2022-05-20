@@ -11,14 +11,12 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,8 +97,8 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    private static EvidenceEntry createWildtypeGeneEntry(@NotNull String gene) {
-        return withSourceEvent(EligibilityRule.WILDTYPE_OF_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
+    private static ActinTrialEvidence createWildtypeGeneEntry(@NotNull String gene) {
+        return createActinTrial(EligibilityRule.WILDTYPE_OF_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
     }
 
     @NotNull
@@ -112,18 +110,13 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    private static EvidenceEntry createFusedGeneEntry(@NotNull String gene) {
-        return withSourceEvent(EligibilityRule.FUSION_IN_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
+    private static ActinTrialEvidence createFusedGeneEntry(@NotNull String gene) {
+        return createActinTrial(EligibilityRule.FUSION_IN_GENE_X + EVIDENCE_EVENT_SEPARATOR + gene);
     }
 
     @NotNull
-    private static EvidenceEntry withSourceEvent(@NotNull String sourceEvent) {
-        return ImmutableEvidenceEntry.builder()
-                .event(Strings.EMPTY)
-                .sourceEvent(sourceEvent)
-                .sourceType(EvidenceType.ANY_MUTATION)
-                .treatment(Strings.EMPTY)
-                .build();
+    private static ActinTrialEvidence createActinTrial(@NotNull String s) {
+        return null;
     }
 
     @NotNull
@@ -184,10 +177,10 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    private static MolecularEvidence withActinEvidence(@NotNull EvidenceEntry evidenceEntry) {
+    private static MolecularEvidence withActinEvidence(@NotNull ActinTrialEvidence actinTrialEvidence) {
         return ImmutableMolecularEvidence.builder()
                 .from(TestMolecularDataFactory.createMinimalTestMolecularRecord().evidence())
-                .addActinTrials(evidenceEntry)
+                .addActinTrials(actinTrialEvidence)
                 .build();
     }
 }

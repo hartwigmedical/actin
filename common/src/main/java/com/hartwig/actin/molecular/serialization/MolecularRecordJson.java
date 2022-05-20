@@ -8,6 +8,7 @@ import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableNumber;
 import static com.hartwig.actin.util.json.Json.nullableObject;
+import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
@@ -56,11 +57,12 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceType;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
@@ -71,7 +73,9 @@ import com.hartwig.actin.molecular.sort.driver.FusionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
-import com.hartwig.actin.molecular.sort.evidence.EvidenceEntryComparator;
+import com.hartwig.actin.molecular.sort.evidence.ActinTrialEvidenceComparator;
+import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
+import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -318,28 +322,45 @@ public class MolecularRecordJson {
         private static MolecularEvidence toMolecularEvidence(@NotNull JsonObject evidence) {
             return ImmutableMolecularEvidence.builder()
                     .actinSource(string(evidence, "actinSource"))
-                    .actinTrials(toEvidences(array(evidence, "actinTrials")))
+                    .actinTrials(toActinTrialEvidences(array(evidence, "actinTrials")))
                     .externalTrialSource(string(evidence, "externalTrialSource"))
-                    .externalTrials(toEvidences(array(evidence, "externalTrials")))
+                    .externalTrials(toTreatmentEvidences(array(evidence, "externalTrials")))
                     .evidenceSource(string(evidence, "evidenceSource"))
-                    .approvedEvidence(toEvidences(array(evidence, "approvedEvidence")))
-                    .onLabelExperimentalEvidence(toEvidences(array(evidence, "onLabelExperimentalEvidence")))
-                    .offLabelExperimentalEvidence(toEvidences(array(evidence, "offLabelExperimentalEvidence")))
-                    .preClinicalEvidence(toEvidences(array(evidence, "preClinicalEvidence")))
-                    .knownResistanceEvidence(toEvidences(array(evidence, "knownResistanceEvidence")))
-                    .suspectResistanceEvidence(toEvidences(array(evidence, "suspectResistanceEvidence")))
+                    .approvedEvidence(toTreatmentEvidences(array(evidence, "approvedEvidence")))
+                    .onLabelExperimentalEvidence(toTreatmentEvidences(array(evidence, "onLabelExperimentalEvidence")))
+                    .offLabelExperimentalEvidence(toTreatmentEvidences(array(evidence, "offLabelExperimentalEvidence")))
+                    .preClinicalEvidence(toTreatmentEvidences(array(evidence, "preClinicalEvidence")))
+                    .knownResistanceEvidence(toTreatmentEvidences(array(evidence, "knownResistanceEvidence")))
+                    .suspectResistanceEvidence(toTreatmentEvidences(array(evidence, "suspectResistanceEvidence")))
                     .build();
         }
 
         @NotNull
-        private static Set<EvidenceEntry> toEvidences(@NotNull JsonArray evidenceArray) {
-            Set<EvidenceEntry> evidences = Sets.newTreeSet(new EvidenceEntryComparator());
+        private static Set<ActinTrialEvidence> toActinTrialEvidences(@NotNull JsonArray actinTrialArray) {
+            Set<ActinTrialEvidence> actinTrialEvidences = Sets.newTreeSet(new ActinTrialEvidenceComparator());
+            for (JsonElement element : actinTrialArray) {
+                JsonObject actinTrialEvidence = element.getAsJsonObject();
+                actinTrialEvidences.add(ImmutableActinTrialEvidence.builder()
+                        .trialAcronym(string(actinTrialEvidence, "trialAcronym"))
+                        .cohortId(nullableString(actinTrialEvidence, "cohortId"))
+                        .event(string(actinTrialEvidence, "event"))
+                        .isInclusionCriterion(bool(actinTrialEvidence, "isInclusionCriterion"))
+                        .rule(EligibilityRule.valueOf(string(actinTrialEvidence, "rule")))
+                        .gene(nullableString(actinTrialEvidence, "gene"))
+                        .mutation(nullableString(actinTrialEvidence, "mutation"))
+                        .build());
+
+            }
+            return actinTrialEvidences;
+        }
+
+        @NotNull
+        private static Set<TreatmentEvidence> toTreatmentEvidences(@NotNull JsonArray evidenceArray) {
+            Set<TreatmentEvidence> evidences = Sets.newTreeSet(new TreatmentEvidenceComparator());
             for (JsonElement element : evidenceArray) {
                 JsonObject evidence = element.getAsJsonObject();
-                evidences.add(ImmutableEvidenceEntry.builder()
+                evidences.add(ImmutableTreatmentEvidence.builder()
                         .event(string(evidence, "event"))
-                        .sourceEvent(string(evidence, "sourceEvent"))
-                        .sourceType(EvidenceType.valueOf(string(evidence, "sourceType")))
                         .treatment(string(evidence, "treatment"))
                         .build());
             }

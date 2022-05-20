@@ -16,8 +16,10 @@ import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.report.pdf.util.Formats;
 
 import org.apache.logging.log4j.util.Strings;
@@ -195,7 +197,7 @@ public final class MolecularDriverEntryFactory {
 
     private static void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver,
             @NotNull MolecularEvidence evidence) {
-        entryBuilder.actinTreatments(treatments(driver, evidence.actinTrials()));
+        entryBuilder.actinTreatments(trials(driver, evidence.actinTrials()));
         entryBuilder.externalTreatments(treatments(driver, evidence.externalTrials()));
 
         entryBuilder.bestResponsiveEvidence(bestResponsiveEvidence(driver, evidence));
@@ -203,9 +205,20 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<String> treatments(@NotNull Driver driver, @NotNull Set<EvidenceEntry> evidences) {
+    private static Set<String> trials(@NotNull Driver driver, @NotNull Set<ActinTrialEvidence> evidences) {
         Set<String> treatments = Sets.newTreeSet(Ordering.natural());
-        for (EvidenceEntry evidence : evidences) {
+        for (ActinTrialEvidence evidence : evidences) {
+            if (evidence.event().equals(driver.event())) {
+                treatments.add(evidence.trialAcronym());
+            }
+        }
+        return treatments;
+    }
+
+    @NotNull
+    private static Set<String> treatments(@NotNull Driver driver, @NotNull Set<TreatmentEvidence> evidences) {
+        Set<String> treatments = Sets.newTreeSet(Ordering.natural());
+        for (TreatmentEvidence evidence : evidences) {
             if (evidence.event().equals(driver.event())) {
                 treatments.add(evidence.treatment());
             }
@@ -238,7 +251,7 @@ public final class MolecularDriverEntryFactory {
         return null;
     }
 
-    private static boolean hasEvidence(@NotNull Driver driver, @NotNull Iterable<EvidenceEntry> evidences) {
+    private static boolean hasEvidence(@NotNull Driver driver, @NotNull Iterable<? extends EvidenceEntry> evidences) {
         for (EvidenceEntry evidence : evidences) {
             if (evidence.event().equals(driver.event())) {
                 return true;
