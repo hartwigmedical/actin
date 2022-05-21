@@ -118,6 +118,8 @@ class MolecularDAO {
         for (Variant variant : variants) {
             context.insertInto(VARIANT,
                     VARIANT.SAMPLEID,
+                    VARIANT.EVENT,
+                    VARIANT.DRIVERLIKELIHOOD,
                     VARIANT.GENE,
                     VARIANT.IMPACT,
                     VARIANT.VARIANTCOPYNUMBER,
@@ -125,6 +127,8 @@ class MolecularDAO {
                     VARIANT.DRIVERTYPE,
                     VARIANT.CLONALLIKELIHOOD)
                     .values(sampleId,
+                            variant.event(),
+                            variant.driverLikelihood().toString(),
                             variant.gene(),
                             variant.impact(),
                             variant.variantCopyNumber(),
@@ -137,24 +141,42 @@ class MolecularDAO {
 
     private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {
         for (Amplification amplification : amplifications) {
-            context.insertInto(AMPLIFICATION, AMPLIFICATION.SAMPLEID, AMPLIFICATION.GENE, AMPLIFICATION.ISPARTIAL, AMPLIFICATION.COPIES)
-                    .values(sampleId, amplification.gene(), DataUtil.toByte(amplification.isPartial()), amplification.copies())
+            context.insertInto(AMPLIFICATION,
+                    AMPLIFICATION.SAMPLEID,
+                    AMPLIFICATION.EVENT,
+                    AMPLIFICATION.DRIVERLIKELIHOOD,
+                    AMPLIFICATION.GENE,
+                    AMPLIFICATION.ISPARTIAL,
+                    AMPLIFICATION.COPIES)
+                    .values(sampleId,
+                            amplification.event(),
+                            amplification.driverLikelihood().toString(),
+                            amplification.gene(),
+                            DataUtil.toByte(amplification.isPartial()),
+                            amplification.copies())
                     .execute();
         }
     }
 
     private void writeLosses(@NotNull String sampleId, @NotNull Set<Loss> losses) {
         for (Loss loss : losses) {
-            context.insertInto(LOSS, LOSS.SAMPLEID, LOSS.GENE, LOSS.ISPARTIAL)
-                    .values(sampleId, loss.gene(), DataUtil.toByte(loss.isPartial()))
+            context.insertInto(LOSS, LOSS.SAMPLEID, LOSS.EVENT, LOSS.DRIVERLIKELIHOOD, LOSS.GENE, LOSS.ISPARTIAL)
+                    .values(sampleId, loss.event(), loss.driverLikelihood().toString(), loss.gene(), DataUtil.toByte(loss.isPartial()))
                     .execute();
         }
     }
 
     private void writeHomozygousDisruptions(@NotNull String sampleId, @NotNull Set<HomozygousDisruption> homozygousDisruptions) {
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
-            context.insertInto(HOMOZYGOUSDISRUPTION, HOMOZYGOUSDISRUPTION.SAMPLEID, HOMOZYGOUSDISRUPTION.GENE)
-                    .values(sampleId, homozygousDisruption.gene())
+            context.insertInto(HOMOZYGOUSDISRUPTION,
+                    HOMOZYGOUSDISRUPTION.SAMPLEID,
+                    HOMOZYGOUSDISRUPTION.EVENT,
+                    HOMOZYGOUSDISRUPTION.DRIVERLIKELIHOOD,
+                    HOMOZYGOUSDISRUPTION.GENE)
+                    .values(sampleId,
+                            homozygousDisruption.event(),
+                            homozygousDisruption.driverLikelihood().toString(),
+                            homozygousDisruption.gene())
                     .execute();
         }
     }
@@ -163,12 +185,16 @@ class MolecularDAO {
         for (Disruption disruption : disruptions) {
             context.insertInto(DISRUPTION,
                     DISRUPTION.SAMPLEID,
+                    DISRUPTION.EVENT,
+                    DISRUPTION.DRIVERLIKELIHOOD,
                     DISRUPTION.GENE,
                     DISRUPTION.TYPE,
                     DISRUPTION.JUNCTIONCOPYNUMBER,
                     DISRUPTION.UNDISRUPTEDCOPYNUMBER,
                     DISRUPTION.DISRUPTEDRANGE)
                     .values(sampleId,
+                            disruption.event(),
+                            disruption.driverLikelihood().toString(),
                             disruption.gene(),
                             disruption.type(),
                             disruption.junctionCopyNumber(),
@@ -180,16 +206,29 @@ class MolecularDAO {
 
     private void writeFusions(@NotNull String sampleId, @NotNull Set<Fusion> fusions) {
         for (Fusion fusion : fusions) {
-            context.insertInto(FUSION, FUSION.SAMPLEID, FUSION.FIVEGENE, FUSION.THREEGENE, FUSION.DETAILS, FUSION.DRIVERTYPE)
-                    .values(sampleId, fusion.fiveGene(), fusion.threeGene(), fusion.details(), fusion.driverType().toString())
+            context.insertInto(FUSION,
+                    FUSION.SAMPLEID,
+                    FUSION.EVENT,
+                    FUSION.DRIVERLIKELIHOOD,
+                    FUSION.FIVEGENE,
+                    FUSION.THREEGENE,
+                    FUSION.DETAILS,
+                    FUSION.DRIVERTYPE)
+                    .values(sampleId,
+                            fusion.event(),
+                            fusion.driverLikelihood().toString(),
+                            fusion.fiveGene(),
+                            fusion.threeGene(),
+                            fusion.details(),
+                            fusion.driverType().toString())
                     .execute();
         }
     }
 
     private void writeViruses(@NotNull String sampleId, @NotNull Set<Virus> viruses) {
         for (Virus virus : viruses) {
-            context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.NAME, VIRUS.INTEGRATIONS)
-                    .values(sampleId, virus.name(), virus.integrations())
+            context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.EVENT, VIRUS.DRIVERLIKELIHOOD, VIRUS.NAME, VIRUS.INTEGRATIONS)
+                    .values(sampleId, virus.event(), virus.driverLikelihood().toString(), virus.name(), virus.integrations())
                     .execute();
         }
     }
