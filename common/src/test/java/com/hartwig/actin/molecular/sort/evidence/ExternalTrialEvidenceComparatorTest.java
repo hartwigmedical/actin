@@ -1,14 +1,12 @@
 package com.hartwig.actin.molecular.sort.evidence;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

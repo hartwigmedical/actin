@@ -16,7 +16,7 @@ import org.junit.Test;
 public class HomozygousDisruptionComparatorTest {
 
     @Test
-    public void canCompareHomozygxoousDisruptions() {
+    public void canCompareHomozygousDisruptions() {
         HomozygousDisruption homozygousDisruption1 = create("NF1", DriverLikelihood.HIGH);
         HomozygousDisruption homozygousDisruption2 = create("APC", DriverLikelihood.HIGH);
         HomozygousDisruption homozygousDisruption3 = create("APC", DriverLikelihood.LOW);

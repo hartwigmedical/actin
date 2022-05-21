@@ -2,10 +2,6 @@ package com.hartwig.actin.molecular.orange.curation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import org.junit.Test;
 
 public class ExternalTrialMapperTest {
