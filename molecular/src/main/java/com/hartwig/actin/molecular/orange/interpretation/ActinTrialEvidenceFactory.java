@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -52,12 +52,12 @@ public final class ActinTrialEvidenceFactory {
     }
 
     @NotNull
-    private static MolecularEventType extractType(@NotNull EligibilityRule rule, @NotNull ProtectEvidenceType type) {
+    private static MolecularEventType extractType(@NotNull EligibilityRule rule, @NotNull EvidenceType type) {
         switch (rule) {
             case ACTIVATION_OR_AMPLIFICATION_OF_GENE_X: {
-                if (type == ProtectEvidenceType.ACTIVATION) {
+                if (type == EvidenceType.ACTIVATION) {
                     return MolecularEventType.ACTIVATED_GENE;
-                } else if (type == ProtectEvidenceType.AMPLIFICATION) {
+                } else if (type == EvidenceType.AMPLIFICATION) {
                     return MolecularEventType.AMPLIFIED_GENE;
                 } else {
                     throw new IllegalStateException("Invalid evidence type for activation or amplification: " + type);

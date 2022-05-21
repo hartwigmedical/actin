@@ -18,11 +18,11 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
@@ -167,7 +167,7 @@ public final class TestOrangeFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(evidenceSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         evidences.add(evidenceBuilder.gene("BRAF")
@@ -176,7 +176,7 @@ public final class TestOrangeFactory {
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
-                .addSources(evidenceSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         evidences.add(evidenceBuilder.gene("PTEN")
@@ -185,7 +185,7 @@ public final class TestOrangeFactory {
                 .onLabel(false)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESISTANT)
-                .addSources(evidenceSourceBuilder.type(ProtectEvidenceType.INACTIVATION).build())
+                .addSources(evidenceSourceBuilder.type(EvidenceType.INACTIVATION).build())
                 .build());
 
         ImmutableProtectSource.Builder externalSourceBuilder = ImmutableProtectSource.builder().name("ICLUSION").event(Strings.EMPTY);
@@ -196,7 +196,7 @@ public final class TestOrangeFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(externalSourceBuilder.type(ProtectEvidenceType.HOTSPOT_MUTATION).build())
+                .addSources(externalSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
         ImmutableProtectSource.Builder actinSourceBuilder = ImmutableProtectSource.builder().name("ACTIN");
@@ -208,7 +208,7 @@ public final class TestOrangeFactory {
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
                 .addSources(actinSourceBuilder.event(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y + ": BRAF V600E")
-                        .type(ProtectEvidenceType.HOTSPOT_MUTATION)
+                        .type(EvidenceType.HOTSPOT_MUTATION)
                         .build())
                 .build());
 

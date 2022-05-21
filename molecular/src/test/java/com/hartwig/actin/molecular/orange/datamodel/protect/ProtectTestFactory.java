@@ -26,11 +26,6 @@ public final class ProtectTestFactory {
 
     @NotNull
     public static ImmutableProtectSource.Builder sourceBuilder() {
-        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(ProtectEvidenceType.HOTSPOT_MUTATION);
-    }
-
-    @NotNull
-    public static ProtectSource createSource() {
-        return sourceBuilder().build();
+        return ImmutableProtectSource.builder().name(Strings.EMPTY).event(Strings.EMPTY).type(EvidenceType.HOTSPOT_MUTATION);
     }
 }

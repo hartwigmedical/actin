@@ -15,7 +15,7 @@ public abstract class ProtectSource {
     public abstract String event();
 
     @NotNull
-    public abstract ProtectEvidenceType type();
+    public abstract EvidenceType type();
 
     @Nullable
     public abstract Integer rangeRank();

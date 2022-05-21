@@ -45,11 +45,11 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
@@ -278,7 +278,7 @@ public final class OrangeJson {
                 sources.add(ImmutableProtectSource.builder()
                         .name(string(source, "name"))
                         .event(string(source, "sourceEvent"))
-                        .type(ProtectEvidenceType.valueOf(string(source, "evidenceType")))
+                        .type(EvidenceType.valueOf(string(source, "evidenceType")))
                         .rangeRank(nullableInteger(source, "rangeRank"))
                         .build());
             }

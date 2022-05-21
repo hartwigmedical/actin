@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.protect;
 
-public enum ProtectEvidenceType {
+public enum EvidenceType {
     VIRAL_PRESENCE,
     SIGNATURE,
     ACTIVATION,
