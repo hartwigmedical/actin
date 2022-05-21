@@ -27,6 +27,7 @@ public final class EventFormatter {
         STRING_REPLACEMENTS.put(OrangeConstants.MSI, "MSI");
         STRING_REPLACEMENTS.put(OrangeConstants.HIGH_TML, "High TML");
         STRING_REPLACEMENTS.put(OrangeConstants.HIGH_TMB, "High TMB");
+        STRING_REPLACEMENTS.put(OrangeConstants.HRD, "HR deficiency");
         STRING_REPLACEMENTS.put(" - ", "-");
         STRING_REPLACEMENTS.put("p\\.\\?", "splice");
 

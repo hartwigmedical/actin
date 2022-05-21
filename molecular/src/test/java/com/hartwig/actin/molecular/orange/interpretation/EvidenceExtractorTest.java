@@ -8,6 +8,9 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapper;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
+import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
@@ -21,39 +24,37 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class OrangeEvidenceFactoryTest {
-
-    @Test
-    public void canCreateMolecularEvidence() {
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(ExternalTreatmentMapperTestFactory.create());
-        ProtectRecord protect = createTestProtectRecord();
-
-        MolecularEvidence evidence = factory.create(protect);
-
-        assertEvidence(evidence);
-    }
+public class EvidenceExtractorTest {
 
     @Test
     public void canMapExternalTreatmentsToActin() {
         ExternalTreatmentMapper mapper = ExternalTreatmentMapperTestFactory.create("B responsive external treatment", "mapped!");
 
-        OrangeEvidenceFactory factory = new OrangeEvidenceFactory(mapper);
-        ProtectRecord protect = createTestProtectRecord();
+        EvidenceExtractor extractor = new EvidenceExtractor(mapper);
 
-        MolecularEvidence evidence = factory.create(protect);
+        MolecularEvidence evidence = extractor.extract(withProtectRecord(createTestProtectRecord()));
         assertEquals("mapped!", evidence.externalTrials().iterator().next().treatment());
     }
 
+    @Test
+    public void canExtractMolecularEvidence() {
+        EvidenceExtractor extractor = new EvidenceExtractor(ExternalTreatmentMapperTestFactory.create());
+
+        MolecularEvidence evidence = extractor.extract(withProtectRecord(createTestProtectRecord()));
+
+        assertEvidence(evidence);
+    }
+
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {
-        assertEquals(OrangeEvidenceFactory.ACTIN_SOURCE_NAME, evidence.actinSource());
+        assertEquals(EvidenceExtractor.ACTIN_SOURCE_NAME, evidence.actinSource());
         assertEquals(1, evidence.actinTrials().size());
         assertEquals("B responsive actin event", evidence.actinTrials().iterator().next().event());
 
-        assertEquals(OrangeEvidenceFactory.EXTERNAL_SOURCE_NAME, evidence.externalTrialSource());
+        assertEquals(EvidenceExtractor.EXTERNAL_SOURCE_NAME, evidence.externalTrialSource());
         assertEquals(1, evidence.externalTrials().size());
         assertEquals("B responsive external event", evidence.externalTrials().iterator().next().event());
 
-        assertEquals(OrangeEvidenceFactory.EVIDENCE_SOURCE_NAME, evidence.evidenceSource());
+        assertEquals(EvidenceExtractor.EVIDENCE_SOURCE_NAME, evidence.evidenceSource());
         assertEquals(1, evidence.approvedEvidence().size());
         assertEquals("A on-label responsive event", evidence.approvedEvidence().iterator().next().event());
 
@@ -78,7 +79,7 @@ public class OrangeEvidenceFactoryTest {
         Set<ProtectEvidence> evidences = Sets.newHashSet();
 
         ImmutableProtectEvidence.Builder evidenceBuilder =
-                ProtectTestFactory.builder().reported(true).addSources(withName(OrangeEvidenceFactory.EVIDENCE_SOURCE));
+                ProtectTestFactory.builder().reported(true).addSources(withName(EvidenceExtractor.EVIDENCE_SOURCE));
 
         String treatmentWithResponsiveEvidenceA = "treatment A on-label";
         // Should be approved treatment
@@ -162,7 +163,7 @@ public class OrangeEvidenceFactoryTest {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(withName(OrangeEvidenceFactory.EXTERNAL_SOURCE))
+                .addSources(withName(EvidenceExtractor.EXTERNAL_SOURCE))
                 .build());
 
         // And one ACTIN treatment that should be included.
@@ -173,7 +174,7 @@ public class OrangeEvidenceFactoryTest {
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(withNameAndEvent(OrangeEvidenceFactory.ACTIN_SOURCE, EligibilityRule.HRD_SIGNATURE.toString()))
+                .addSources(withNameAndEvent(EvidenceExtractor.ACTIN_SOURCE, EligibilityRule.HRD_SIGNATURE.toString()))
                 .build());
 
         return ImmutableProtectRecord.builder().evidences(evidences).build();
@@ -187,5 +188,10 @@ public class OrangeEvidenceFactoryTest {
     @NotNull
     private static ProtectSource withNameAndEvent(@NotNull String name, @NotNull String event) {
         return ProtectTestFactory.sourceBuilder().name(name).event(event).build();
+    }
+
+    @NotNull
+    private static OrangeRecord withProtectRecord(@NotNull ProtectRecord protect) {
+        return ImmutableOrangeRecord.builder().from(TestOrangeFactory.createMinimalTestOrangeRecord()).protect(protect).build();
     }
 }

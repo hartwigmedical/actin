@@ -5,7 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.interpretation.EvidenceEventExtractor;
+import com.hartwig.actin.molecular.orange.interpretation.EvidenceEventExtraction;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +44,7 @@ public final class ApplicabilityFilter {
             }
         }
 
-        String event = EvidenceEventExtractor.toEvent(evidence);
+        String event = EvidenceEventExtraction.extract(evidence);
         for (String nonApplicableEvent : NON_APPLICABLE_EVENTS) {
             if (event.equals(nonApplicableEvent)) {
                 return false;

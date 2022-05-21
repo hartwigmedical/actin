@@ -11,10 +11,11 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ActinTrialEvidenceFactory {
+final class ActinTrialEvidenceFactory {
 
     private static final String TREATMENT_SEPARATOR = "\\|";
     private static final String SOURCE_EVENT_SEPARATOR = ":";
+    private static final String GENE_MUTATION_SEPARATOR = " ";
 
     private ActinTrialEvidenceFactory() {
     }
@@ -33,17 +34,22 @@ public final class ActinTrialEvidenceFactory {
         }
 
         ProtectSource source = evidence.sources().iterator().next();
-        String[] sourceEventParts = source.event().split(SOURCE_EVENT_SEPARATOR);
-        EligibilityRule rule = EligibilityRule.valueOf(sourceEventParts[0]);
+        String sourceEvent = source.event();
+
+        EligibilityRule rule;
         String param = null;
-        if (sourceEventParts.length > 1) {
-            param = sourceEventParts[1].trim();
+        if (sourceEvent.contains(SOURCE_EVENT_SEPARATOR)) {
+            int position = sourceEvent.indexOf(SOURCE_EVENT_SEPARATOR);
+            rule = EligibilityRule.valueOf(sourceEvent.substring(0, position));
+            param = sourceEvent.substring(position + 1).trim();
+        } else {
+            rule = EligibilityRule.valueOf(sourceEvent);
         }
 
         return ImmutableActinTrialEvidence.builder()
                 .trialAcronym(trialAcronym)
                 .cohortId(cohortId)
-                .event(EvidenceEventExtractor.toEvent(evidence))
+                .event(EvidenceEventExtraction.extract(evidence))
                 .isInclusionCriterion(evidence.direction().isResponsive())
                 .type(extractType(rule, source.type()))
                 .gene(extractGene(rule, param))
@@ -108,6 +114,9 @@ public final class ActinTrialEvidenceFactory {
             case WILDTYPE_OF_GENE_X: {
                 return param;
             }
+            case MUTATION_IN_GENE_X_OF_TYPE_Y: {
+                return param.substring(0, param.indexOf(GENE_MUTATION_SEPARATOR));
+            }
             default: {
                 return null;
             }
@@ -118,7 +127,7 @@ public final class ActinTrialEvidenceFactory {
     private static String extractMutation(@NotNull EligibilityRule rule, @Nullable String param) {
         switch (rule) {
             case MUTATION_IN_GENE_X_OF_TYPE_Y: {
-                return param.substring(param.indexOf(" "));
+                return param.substring(param.indexOf(GENE_MUTATION_SEPARATOR) + 1);
             }
             case HAS_HLA_A_TYPE_X: {
                 return param;

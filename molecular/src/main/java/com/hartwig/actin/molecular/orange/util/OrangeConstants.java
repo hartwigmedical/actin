@@ -10,5 +10,4 @@ public final class OrangeConstants {
     private OrangeConstants() {
     }
 
-
 }

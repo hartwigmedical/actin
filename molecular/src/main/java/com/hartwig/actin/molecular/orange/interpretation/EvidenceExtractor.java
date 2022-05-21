@@ -12,10 +12,10 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapper;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
 import com.hartwig.actin.molecular.sort.evidence.ActinTrialEvidenceComparator;
@@ -23,7 +23,7 @@ import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-class OrangeEvidenceFactory {
+class EvidenceExtractor {
 
     static final String ACTIN_SOURCE = "ACTIN";
     static final String EXTERNAL_SOURCE = "ICLUSION";
@@ -37,18 +37,18 @@ class OrangeEvidenceFactory {
     private final ExternalTreatmentMapper externalTreatmentMapper;
 
     @NotNull
-    public static OrangeEvidenceFactory create(@NotNull List<ExternalTreatmentMapping> mappings) {
-        return new OrangeEvidenceFactory(new ExternalTreatmentMapper(mappings));
+    public static EvidenceExtractor extract(@NotNull List<ExternalTreatmentMapping> mappings) {
+        return new EvidenceExtractor(new ExternalTreatmentMapper(mappings));
     }
 
     @VisibleForTesting
-    OrangeEvidenceFactory(@NotNull final ExternalTreatmentMapper externalTreatmentMapper) {
+    EvidenceExtractor(@NotNull final ExternalTreatmentMapper externalTreatmentMapper) {
         this.externalTreatmentMapper = externalTreatmentMapper;
     }
 
     @NotNull
-    public MolecularEvidence create(@NotNull ProtectRecord protect) {
-        Set<ProtectEvidence> evidences = protect.evidences();
+    public MolecularEvidence extract(@NotNull OrangeRecord record) {
+        Set<ProtectEvidence> evidences = record.protect().evidences();
 
         return ImmutableMolecularEvidence.builder()
                 .actinSource(ACTIN_SOURCE_NAME)
@@ -66,7 +66,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<ActinTrialEvidence> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<ActinTrialEvidence> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<ActinTrialEvidence> result = Sets.newTreeSet(new ActinTrialEvidenceComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
             result.add(ActinTrialEvidenceFactory.create(evidence));
@@ -89,7 +89,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createApprovedEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createApprovedEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EVIDENCE_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
@@ -100,7 +100,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createOnLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createOnLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
@@ -113,7 +113,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createOffLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createOffLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
@@ -126,7 +126,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
         Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
@@ -139,7 +139,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
         Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
@@ -160,7 +160,7 @@ class OrangeEvidenceFactory {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
         Set<TreatmentEvidence> known = createKnownResistanceEvidence(evidences);
@@ -235,6 +235,6 @@ class OrangeEvidenceFactory {
 
     @NotNull
     private static TreatmentEvidence toTreatmentEvidence(@NotNull ProtectEvidence evidence) {
-        return ImmutableTreatmentEvidence.builder().event(EvidenceEventExtractor.toEvent(evidence)).treatment(evidence.treatment()).build();
+        return ImmutableTreatmentEvidence.builder().event(EvidenceEventExtraction.extract(evidence)).treatment(evidence.treatment()).build();
     }
 }
