@@ -61,6 +61,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
@@ -75,7 +76,6 @@ import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 import com.hartwig.actin.molecular.sort.evidence.ActinTrialEvidenceComparator;
 import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -345,7 +345,7 @@ public class MolecularRecordJson {
                         .cohortId(nullableString(actinTrialEvidence, "cohortId"))
                         .event(string(actinTrialEvidence, "event"))
                         .isInclusionCriterion(bool(actinTrialEvidence, "isInclusionCriterion"))
-                        .rule(EligibilityRule.valueOf(string(actinTrialEvidence, "rule")))
+                        .type(MolecularEventType.valueOf(string(actinTrialEvidence, "type")))
                         .gene(nullableString(actinTrialEvidence, "gene"))
                         .mutation(nullableString(actinTrialEvidence, "mutation"))
                         .build());

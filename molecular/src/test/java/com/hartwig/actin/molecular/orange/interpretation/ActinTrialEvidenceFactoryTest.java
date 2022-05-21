@@ -17,8 +17,8 @@ public class ActinTrialEvidenceFactoryTest {
     public void canExtractActinTrials() {
         Set<ProtectEvidence> evidences = Sets.newHashSet();
         evidences.add(withEvent("ACTIVATING_MUTATION_IN_GENE_X: ABL1"));
-        evidences.add(withEventAndType("ACTIVATION_OR_AMPLIFICATION_OF_GENE_X: EGFR", MolecularEventType.ACTIVATION));
-        evidences.add(withEventAndType("ACTIVATION_OR_AMPLIFICATION_OF_GENE_X: MYC", MolecularEventType.AMPLIFICATION));
+        evidences.add(withEventAndType("ACTIVATION_OR_AMPLIFICATION_OF_GENE_X: EGFR", MolecularEventType.ACTIVATED_GENE));
+        evidences.add(withEventAndType("ACTIVATION_OR_AMPLIFICATION_OF_GENE_X: MYC", MolecularEventType.AMPLIFIED_GENE));
         evidences.add(withEvent("AMPLIFICATION_OF_GENE_X: CCND1"));
         evidences.add(withEvent("FUSION_IN_GENE_X: ALK"));
         evidences.add(withEvent("WILDTYPE_OF_GENE_X: KRAS"));

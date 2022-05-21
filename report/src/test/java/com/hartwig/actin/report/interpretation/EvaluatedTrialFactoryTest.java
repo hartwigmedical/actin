@@ -10,11 +10,9 @@ import java.util.Objects;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.TestActinTrialEvidenceFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -64,19 +62,15 @@ public class EvaluatedTrialFactoryTest {
     @Test
     public void canAnnotateWithMolecularEvidence() {
         TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
-        EvidenceEntry evidence = ImmutableEvidenceEntry.builder()
-                .event("some event")
-                .sourceEvent(Strings.EMPTY)
-                .sourceType(MolecularEventType.ANY_MUTATION)
-                .treatment("TEST-TRIAL-1")
-                .build();
+        ActinTrialEvidence evidence1 = TestActinTrialEvidenceFactory.builder().trialAcronym("TEST-TRIAL-1").cohortId("A").build();
+        ActinTrialEvidence evidence2 = TestActinTrialEvidenceFactory.builder().trialAcronym("TEST-TRIAL-2").build();
 
-        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch, Sets.newHashSet(evidence));
+        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch, Sets.newHashSet(evidence1, evidence2));
 
         assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort A").hasMolecularEvidence());
-        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort B").hasMolecularEvidence());
-        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C").hasMolecularEvidence());
-        assertFalse(findByTrialAndCohort(trials, "TEST-TRIAL-2", null).hasMolecularEvidence());
+        assertFalse(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort B").hasMolecularEvidence());
+        assertFalse(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C").hasMolecularEvidence());
+        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-2", null).hasMolecularEvidence());
     }
 
     @NotNull

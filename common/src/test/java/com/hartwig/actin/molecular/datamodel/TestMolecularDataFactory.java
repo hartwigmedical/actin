@@ -24,12 +24,12 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +150,7 @@ public final class TestMolecularDataFactory {
                 .cohortId("A")
                 .event("BRAF V600E")
                 .isInclusionCriterion(true)
-                .rule(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y)
+                .type(MolecularEventType.MUTATED_GENE)
                 .gene("BRAF")
                 .mutation("V600E")
                 .build());
@@ -159,7 +159,7 @@ public final class TestMolecularDataFactory {
                 .cohortId(null)
                 .event("High tumor mutational load")
                 .isInclusionCriterion(false)
-                .rule(EligibilityRule.TML_OF_AT_LEAST_X)
+                .type(MolecularEventType.SIGNATURE)
                 .gene(null)
                 .mutation(null)
                 .build());

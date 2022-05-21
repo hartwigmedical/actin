@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +21,7 @@ public abstract class ActinTrialEvidence implements EvidenceEntry {
     public abstract boolean isInclusionCriterion();
 
     @NotNull
-    public abstract EligibilityRule rule();
+    public abstract MolecularEventType type();
 
     @Nullable
     public abstract String gene();

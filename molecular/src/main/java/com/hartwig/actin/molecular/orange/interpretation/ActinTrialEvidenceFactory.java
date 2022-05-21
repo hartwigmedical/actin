@@ -2,7 +2,9 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -43,10 +45,56 @@ public final class ActinTrialEvidenceFactory {
                 .cohortId(cohortId)
                 .event(EvidenceEventExtractor.toEvent(evidence))
                 .isInclusionCriterion(evidence.direction().isResponsive())
-                .rule(rule)
+                .type(extractType(rule, source.type()))
                 .gene(extractGene(rule, param))
                 .mutation(extractMutation(rule, param))
                 .build();
+    }
+
+    @NotNull
+    private static MolecularEventType extractType(@NotNull EligibilityRule rule, @NotNull ProtectEvidenceType type) {
+        switch (rule) {
+            case ACTIVATION_OR_AMPLIFICATION_OF_GENE_X: {
+                if (type == ProtectEvidenceType.ACTIVATION) {
+                    return MolecularEventType.ACTIVATED_GENE;
+                } else if (type == ProtectEvidenceType.AMPLIFICATION) {
+                    return MolecularEventType.AMPLIFIED_GENE;
+                } else {
+                    throw new IllegalStateException("Invalid evidence type for activation or amplification: " + type);
+                }
+            }
+            case INACTIVATION_OF_GENE_X: {
+                return MolecularEventType.INACTIVATED_GENE;
+            }
+            case ACTIVATING_MUTATION_IN_GENE_X: {
+                return MolecularEventType.ACTIVATED_GENE;
+            }
+            case MUTATION_IN_GENE_X_OF_TYPE_Y: {
+                return MolecularEventType.MUTATED_GENE;
+            }
+            case AMPLIFICATION_OF_GENE_X: {
+                return MolecularEventType.AMPLIFIED_GENE;
+            }
+            case FUSION_IN_GENE_X: {
+                return MolecularEventType.FUSED_GENE;
+            }
+            case WILDTYPE_OF_GENE_X: {
+                return MolecularEventType.WILD_TYPE_GENE;
+            }
+            case MSI_SIGNATURE:
+            case HRD_SIGNATURE:
+            case TMB_OF_AT_LEAST_X:
+            case TML_OF_AT_LEAST_X:
+            case TML_OF_AT_MOST_X: {
+                return MolecularEventType.SIGNATURE;
+            }
+            case HAS_HLA_A_TYPE_X: {
+                return MolecularEventType.HLA_ALLELE;
+            }
+            default: {
+                throw new IllegalStateException("Unexpected molecular eligibility rule: " + rule);
+            }
+        }
     }
 
     @Nullable

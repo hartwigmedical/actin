@@ -31,7 +31,7 @@ public class ActinTrialEvidenceComparator implements Comparator<ActinTrialEviden
             return isInclusionCriterionCompare;
         }
 
-        int typeCompare = evidence1.rule().compareTo(evidence2.rule());
+        int typeCompare = evidence1.type().compareTo(evidence2.type());
         if (typeCompare != 0) {
             return typeCompare;
         }

@@ -10,9 +10,9 @@ public class GeneHasActivatingMutationTest {
 
     @Test
     public void canEvaluate() {
-        GeneHasActivatingMutation function = new GeneHasActivatingMutation("geneA");
+        GeneHasActivatingMutation function = new GeneHasActivatingMutation("gene A");
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withActivatedGene("geneB")));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withActivatedGene("geneA")));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withActivatedGene("gene B")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withActivatedGene("gene A")));
     }
 }

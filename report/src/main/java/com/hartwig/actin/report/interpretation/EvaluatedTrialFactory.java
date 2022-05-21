@@ -30,11 +30,10 @@ public final class EvaluatedTrialFactory {
             Set<String> trialWarnings = extractWarnings(trialMatch.evaluations());
             Set<String> trialFails = extractFails(trialMatch.evaluations());
 
-            ImmutableEvaluatedTrial.Builder builder = ImmutableEvaluatedTrial.builder()
-                    .trialId(trialMatch.identification().trialId())
-                    .acronym(trialMatch.identification().acronym());
-
             String trialAcronym = trialMatch.identification().acronym();
+            ImmutableEvaluatedTrial.Builder builder =
+                    ImmutableEvaluatedTrial.builder().trialId(trialMatch.identification().trialId()).acronym(trialAcronym);
+
             boolean trialIsOpen = trialMatch.identification().open();
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
