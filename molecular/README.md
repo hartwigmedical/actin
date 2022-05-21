@@ -124,10 +124,10 @@ N actin trial evidences (with a single configured source name)
 
 Field | Example Value | Details
 ---|---|---
-event | BRAF V600E | The molecular event against which the evidence has been matched again.
+event | BRAF V600E | The molecular event against which the evidence has been matched.
 trialAcronym | Trial A | The acronym of the trial for which the evidence holds.
-cohortId | A | The ID of the cohort for which the evidence holds (optional).
-isInclusionCriterion | 1 | Whether the evidence is an inclusion or exclusion criterion for this trial.
+cohortId | A | The ID of the cohort for which the evidence holds (optional, in case evidence holds for all cohorts within a trial).
+isInclusionCriterion | 1 | Whether the evidence is involved in an inclusion or exclusion criterion for this trial.
 type | ACTIVATED_GENE | The type of molecular event required by the trial. Can be `SIGNATURE`, `ACTIVATED_GENE`, `INACTIVATED_GENE`, `AMPLIFIED_GENE`, `FUSED_GENE`, `MUTATED_GENE`, `WILD_TYPE_GENE` and `HLA_ALLELE`
 gene | BRAF | The gene required to be mutated by the trial (optional, empty in case of `SIGNATURE` and `HLA_ALLELE`)
 mutation | null | The mutation required to be present by the trial (optional, only in case of `MUTATED_GENE` and `HLA_ALLELE`).
@@ -188,10 +188,12 @@ viruses | VirusInterpreter | All reported viruses.
 The pharmaco entries are extracted from PEACH.
 
 The evidence is extracted from PROTECT in the following steps:
- 1. Evidence is filtered for applicability based on ACTIN's internal applicability model. This applicability model removes evidence from any source that is never considered to be applicable. 
+ 1. Evidence is filtered for applicability based on ACTIN's internal applicability model. This applicability model removes evidence 
+ from any source that is never considered to be applicable. 
  1. Reported evidence is used exclusively for the inputs to the steps defined below
 
-For ACTIN trial evidence, the following extraction is done:
+For ACTIN trial evidence, the following mapping is performed based on the assumption that PROTECT has been run against a SERVE database 
+containing all ACTIN molecular criteria:
  - `trialAcronym` and `cohortId` are extracted from the `treatment` field in PROTECT
  - `isUsedAsInclusion` is set to true in case the evidence from PROTECT is responsive
  - `type`, `gene` and `mutation` are extracted from the PROTECT `ACTIN` source data 
@@ -200,14 +202,14 @@ For external trial evidence, treatments are mapped to trials from the `ICLUSION`
   
 For treatment evidence, the following categorization is done based on evidence from the `CKB` source in PROTECT:
  
-Field | Filter | Notes
----|---|---
-approvedEvidence | A-level on-label non-predicted responsive evidence. | 
-onLabelExperimentalEvidence | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence. |
-offLabelExperimentalEvidence | B-level off-label non-predicted responsive evidence. |
-preClinicalEvidence | All responsive evidence that is neither approved nor experimental. | 
-knownResistanceEvidence | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level. |  
-suspectResistanceEvidence | Any other resistance for a treatment with evidence with equal or lower evidence level. | 
+Field | Filter 
+---|---
+approvedEvidence | A-level on-label non-predicted responsive evidence. 
+onLabelExperimentalEvidence | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence.
+offLabelExperimentalEvidence | B-level off-label non-predicted responsive evidence.
+preClinicalEvidence | All responsive evidence that is neither approved nor experimental. 
+knownResistanceEvidence | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level.  
+suspectResistanceEvidence | Any other resistance for a treatment with evidence with equal or lower evidence level.
 
 ### Version History and Download Links
  - Upcoming (first release) 
