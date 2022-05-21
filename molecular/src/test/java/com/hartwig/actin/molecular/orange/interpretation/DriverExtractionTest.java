@@ -18,7 +18,7 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
@@ -40,7 +40,7 @@ public class DriverExtractionTest {
 
     @Test
     public void canExtractFromProperTestData() {
-        MolecularDrivers drivers = DriverExtraction.extract(TestOrangeDataFactory.createProperTestOrangeRecord());
+        MolecularDrivers drivers = DriverExtraction.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertVariants(drivers.variants());
         assertAmplifications(drivers.amplifications());

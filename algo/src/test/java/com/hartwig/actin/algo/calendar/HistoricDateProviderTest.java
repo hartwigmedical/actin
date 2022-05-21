@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class HistoricDateProviderTest {
 
     @NotNull
     private static ClinicalRecord withRegistrationDate(@NotNull LocalDate date) {
-        ClinicalRecord base = TestClinicalDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord base = TestClinicalFactory.createMinimalTestClinicalRecord();
 
         return ImmutableClinicalRecord.builder()
                 .from(base)

@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestClinicalDataFactory {
+public final class TestClinicalFactory {
 
     private static final LocalDate TODAY = LocalDate.now();
 
@@ -33,7 +33,7 @@ public final class TestClinicalDataFactory {
     private static final int YEARS_SINCE_TREATMENT_LINE_3 = 0;
     private static final int YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS = 3;
 
-    private TestClinicalDataFactory() {
+    private TestClinicalFactory() {
     }
 
     @NotNull

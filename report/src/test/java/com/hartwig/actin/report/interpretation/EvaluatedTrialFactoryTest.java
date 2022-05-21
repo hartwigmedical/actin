@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TestActinTrialEvidenceFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidenceTestFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,8 +62,8 @@ public class EvaluatedTrialFactoryTest {
     @Test
     public void canAnnotateWithMolecularEvidence() {
         TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
-        ActinTrialEvidence evidence1 = TestActinTrialEvidenceFactory.builder().trialAcronym("TEST-TRIAL-1").cohortId("A").build();
-        ActinTrialEvidence evidence2 = TestActinTrialEvidenceFactory.builder().trialAcronym("TEST-TRIAL-2").build();
+        ActinTrialEvidence evidence1 = ActinTrialEvidenceTestFactory.builder().trialAcronym("TEST-TRIAL-1").cohortId("A").build();
+        ActinTrialEvidence evidence2 = ActinTrialEvidenceTestFactory.builder().trialAcronym("TEST-TRIAL-2").build();
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch, Sets.newHashSet(evidence1, evidence2));
 

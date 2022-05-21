@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.TestEvaluationFactory;
+import com.hartwig.actin.algo.datamodel.EvaluationTestFactory;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
@@ -25,7 +25,7 @@ public class LabMeasurementEvaluatorTest {
     public void canEvaluate() {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
         LabMeasurementEvaluator function = new LabMeasurementEvaluator(measurement,
-                (x, y) -> TestEvaluationFactory.withResult(EvaluationResult.PASS),
+                (x, y) -> EvaluationTestFactory.withResult(EvaluationResult.PASS),
                 ALWAYS_VALID_DATE);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
@@ -38,7 +38,7 @@ public class LabMeasurementEvaluatorTest {
     public void canIgnoreOldDatesAndInvalidUnits() {
         LabMeasurement measurement = LabMeasurement.ALBUMIN;
         LabMeasurementEvaluator function =
-                new LabMeasurementEvaluator(measurement, (x, y) -> TestEvaluationFactory.withResult(EvaluationResult.PASS), TEST_DATE);
+                new LabMeasurementEvaluator(measurement, (x, y) -> EvaluationTestFactory.withResult(EvaluationResult.PASS), TEST_DATE);
 
         LabValue wrongUnit = LabTestFactory.builder().code(measurement.code()).date(TEST_DATE).build();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)));
@@ -73,9 +73,9 @@ public class LabMeasurementEvaluatorTest {
     private static LabEvaluationFunction firstFailAndRestWithParam(@NotNull EvaluationResult defaultEvaluation) {
         return (record, labValue) -> {
             if (labValue.date().equals(TEST_DATE)) {
-                return TestEvaluationFactory.withResult(EvaluationResult.FAIL);
+                return EvaluationTestFactory.withResult(EvaluationResult.FAIL);
             } else {
-                return TestEvaluationFactory.withResult(defaultEvaluation);
+                return EvaluationTestFactory.withResult(defaultEvaluation);
             }
         };
     }

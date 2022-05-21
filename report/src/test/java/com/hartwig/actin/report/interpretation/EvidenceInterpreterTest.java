@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidenceTestFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TestActinTrialEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public class EvidenceInterpreterTest {
     @NotNull
     private static MolecularEvidence createTestEvidence() {
         return ImmutableMolecularEvidence.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord().evidence())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord().evidence())
                 .approvedEvidence(Sets.newHashSet(createTreatmentEvidence("event 1", "treatment 1")))
                 .actinTrials(Sets.newHashSet(createActinTrialEvidence("event 2", "trial 1")))
                 .externalTrials(Sets.newHashSet(createTreatmentEvidence("event 1", "trial 1"),
@@ -45,7 +45,7 @@ public class EvidenceInterpreterTest {
 
     @NotNull
     private static ActinTrialEvidence createActinTrialEvidence(@NotNull String event, @NotNull String trial) {
-        return TestActinTrialEvidenceFactory.builder().event(event).trialAcronym(trial).build();
+        return ActinTrialEvidenceTestFactory.builder().event(event).trialAcronym(trial).build();
     }
 
     @NotNull

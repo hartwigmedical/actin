@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 
@@ -30,7 +30,7 @@ final class ToxicityTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .toxicities(toxicities)
                         .build())
                 .build();
@@ -46,7 +46,7 @@ final class ToxicityTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .priorTumorTreatments(treatments)
                         .build())
                 .build();
@@ -67,7 +67,7 @@ final class ToxicityTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .intolerances(intolerances)
                         .build())
                 .build();

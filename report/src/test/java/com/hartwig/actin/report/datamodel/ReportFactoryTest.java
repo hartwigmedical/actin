@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 
 import org.junit.Test;
 
@@ -18,23 +18,23 @@ public class ReportFactoryTest {
 
     @Test
     public void canCreateReportFromTestData() {
-        assertNotNull(ReportFactory.fromInputs(TestClinicalDataFactory.createMinimalTestClinicalRecord(),
-                TestMolecularDataFactory.createMinimalTestMolecularRecord(),
+        assertNotNull(ReportFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(),
+                TestMolecularFactory.createMinimalTestMolecularRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch()));
 
-        assertNotNull(ReportFactory.fromInputs(TestClinicalDataFactory.createProperTestClinicalRecord(),
-                TestMolecularDataFactory.createProperTestMolecularRecord(),
+        assertNotNull(ReportFactory.fromInputs(TestClinicalFactory.createProperTestClinicalRecord(),
+                TestMolecularFactory.createProperTestMolecularRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch()));
     }
 
     @Test
     public void usePatientSampleIdOnMismatch() {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .sampleId("clinical")
                 .build();
 
-        MolecularRecord molecular = TestMolecularDataFactory.createMinimalTestMolecularRecord();
+        MolecularRecord molecular = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         TreatmentMatch treatmentMatch = ImmutableTreatmentMatch.builder()
                 .from(TestTreatmentMatchFactory.createMinimalTreatmentMatch())

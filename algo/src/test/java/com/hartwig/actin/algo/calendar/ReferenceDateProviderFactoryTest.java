@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ public class ReferenceDateProviderFactoryTest {
 
     @Test
     public void canCreateAllFlavors() {
-        ClinicalRecord clinical = TestClinicalDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord clinical = TestClinicalFactory.createMinimalTestClinicalRecord();
 
         ReferenceDateProvider provider1 = ReferenceDateProviderFactory.create(clinical, true);
         assertNotNull(provider1.date());

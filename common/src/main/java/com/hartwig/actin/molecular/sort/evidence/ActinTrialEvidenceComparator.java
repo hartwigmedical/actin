@@ -26,7 +26,7 @@ public class ActinTrialEvidenceComparator implements Comparator<ActinTrialEviden
             return cohortIdCompare;
         }
 
-        int isInclusionCriterionCompare = Boolean.compare(evidence1.isInclusionCriterion(), evidence2.isInclusionCriterion());
+        int isInclusionCriterionCompare = Boolean.compare(evidence2.isInclusionCriterion(), evidence1.isInclusionCriterion());
         if (isInclusionCriterionCompare != 0) {
             return isInclusionCriterionCompare;
         }

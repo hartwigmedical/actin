@@ -9,7 +9,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ final class InfectionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .priorOtherConditions(conditions)
                         .build())
                 .build();

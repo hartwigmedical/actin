@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ final class GeneralTestFactory {
     @NotNull
     public static PatientRecord withBirthYear(int birthYear) {
         PatientDetails patientDetails = ImmutablePatientDetails.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord().patient())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
                 .birthYear(birthYear)
                 .build();
 
@@ -33,7 +33,7 @@ final class GeneralTestFactory {
     @NotNull
     public static PatientRecord withGender(@NotNull Gender gender) {
         PatientDetails patientDetails = ImmutablePatientDetails.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord().patient())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
                 .gender(gender)
                 .build();
 
@@ -43,7 +43,7 @@ final class GeneralTestFactory {
     @NotNull
     public static PatientRecord withWHO(@Nullable Integer who) {
         ClinicalStatus clinicalStatus = ImmutableClinicalStatus.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord().clinicalStatus())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
                 .who(who)
                 .build();
 
@@ -53,7 +53,7 @@ final class GeneralTestFactory {
     @NotNull
     private static PatientRecord withPatientDetails(@NotNull PatientDetails patientDetails) {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .patient(patientDetails)
                 .build();
 
@@ -63,7 +63,7 @@ final class GeneralTestFactory {
     @NotNull
     private static PatientRecord withClinicalStatus(@NotNull ClinicalStatus clinicalStatus) {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .clinicalStatus(clinicalStatus)
                 .build();
 

@@ -8,7 +8,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -120,7 +120,7 @@ final class TumorTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .tumor(tumor)
                         .build())
                 .build();

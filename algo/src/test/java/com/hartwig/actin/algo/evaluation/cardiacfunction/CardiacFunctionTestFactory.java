@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ final class CardiacFunctionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .clinicalStatus(ImmutableClinicalStatus.builder().ecg(ecg).build())
                         .build())
                 .build();

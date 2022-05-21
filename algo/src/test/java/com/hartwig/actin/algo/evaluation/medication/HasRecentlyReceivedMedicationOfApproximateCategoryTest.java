@@ -8,14 +8,14 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.junit.Test;
 
 public class HasRecentlyReceivedMedicationOfApproximateCategoryTest {
 
     private static final LocalDate EVALUATION_DATE =
-            TestClinicalDataFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1);
+            TestClinicalFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1);
 
     @Test
     public void canEvaluateForActiveMedications() {

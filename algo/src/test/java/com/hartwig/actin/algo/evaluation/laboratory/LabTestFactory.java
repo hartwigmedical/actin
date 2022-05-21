@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.util.Strings;
@@ -32,7 +32,7 @@ final class LabTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .labValues(labValues)
                         .build())
                 .build();

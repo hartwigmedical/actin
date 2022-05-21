@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class HasActiveInfectionTest {
         if (hasActiveInfection != null) {
             infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(Strings.EMPTY).build();
         }
-        ClinicalRecord base = TestClinicalDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord base = TestClinicalFactory.createMinimalTestClinicalRecord();
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()

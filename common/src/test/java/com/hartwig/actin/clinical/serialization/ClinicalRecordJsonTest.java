@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -20,12 +20,12 @@ public class ClinicalRecordJsonTest {
 
     @Test
     public void canConvertBackAndForthJson() {
-        ClinicalRecord minimal = TestClinicalDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord minimal = TestClinicalFactory.createMinimalTestClinicalRecord();
         ClinicalRecord convertedMinimal = ClinicalRecordJson.fromJson(ClinicalRecordJson.toJson(minimal));
 
         assertEquals(minimal, convertedMinimal);
 
-        ClinicalRecord proper = TestClinicalDataFactory.createProperTestClinicalRecord();
+        ClinicalRecord proper = TestClinicalFactory.createProperTestClinicalRecord();
         ClinicalRecord convertedProper = ClinicalRecordJson.fromJson(ClinicalRecordJson.toJson(proper));
 
         assertEquals(proper, convertedProper);

@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectReco
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
-import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectTestFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +78,7 @@ public class OrangeEvidenceFactoryTest {
         Set<ProtectEvidence> evidences = Sets.newHashSet();
 
         ImmutableProtectEvidence.Builder evidenceBuilder =
-                TestProtectDataFactory.builder().reported(true).addSources(withName(OrangeEvidenceFactory.EVIDENCE_SOURCE));
+                ProtectTestFactory.builder().reported(true).addSources(withName(OrangeEvidenceFactory.EVIDENCE_SOURCE));
 
         String treatmentWithResponsiveEvidenceA = "treatment A on-label";
         // Should be approved treatment
@@ -155,7 +155,7 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // Add one general external event that should be included
-        evidences.add(TestProtectDataFactory.builder()
+        evidences.add(ProtectTestFactory.builder()
                 .reported(true)
                 .event("B responsive external event")
                 .treatment("B responsive external treatment")
@@ -166,7 +166,7 @@ public class OrangeEvidenceFactoryTest {
                 .build());
 
         // And one ACTIN treatment that should be included.
-        evidences.add(TestProtectDataFactory.builder()
+        evidences.add(ProtectTestFactory.builder()
                 .reported(true)
                 .event("B responsive actin event")
                 .treatment("B responsive actin treatment")
@@ -181,11 +181,11 @@ public class OrangeEvidenceFactoryTest {
 
     @NotNull
     private static ProtectSource withName(@NotNull String name) {
-        return TestProtectDataFactory.sourceBuilder().name(name).build();
+        return ProtectTestFactory.sourceBuilder().name(name).build();
     }
 
     @NotNull
     private static ProtectSource withNameAndEvent(@NotNull String name, @NotNull String event) {
-        return TestProtectDataFactory.sourceBuilder().name(name).event(event).build();
+        return ProtectTestFactory.sourceBuilder().name(name).event(event).build();
     }
 }

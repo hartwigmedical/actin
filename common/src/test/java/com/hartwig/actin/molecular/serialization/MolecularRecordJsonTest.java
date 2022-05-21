@@ -13,7 +13,7 @@ import java.util.Set;
 import com.google.common.io.Resources;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
@@ -46,17 +46,17 @@ public class MolecularRecordJsonTest {
 
     @Test
     public void canConvertBackAndForthJson() {
-        MolecularRecord minimal = TestMolecularDataFactory.createMinimalTestMolecularRecord();
+        MolecularRecord minimal = TestMolecularFactory.createMinimalTestMolecularRecord();
         MolecularRecord convertedMinimal = MolecularRecordJson.fromJson(MolecularRecordJson.toJson(minimal));
 
         assertEquals(minimal, convertedMinimal);
 
-        MolecularRecord proper = TestMolecularDataFactory.createProperTestMolecularRecord();
+        MolecularRecord proper = TestMolecularFactory.createProperTestMolecularRecord();
         MolecularRecord convertedProper = MolecularRecordJson.fromJson(MolecularRecordJson.toJson(proper));
 
         assertEquals(proper, convertedProper);
 
-        MolecularRecord exhaustive = TestMolecularDataFactory.createExhaustiveTestMolecularRecord();
+        MolecularRecord exhaustive = TestMolecularFactory.createExhaustiveTestMolecularRecord();
         MolecularRecord convertedExhaustive = MolecularRecordJson.fromJson(MolecularRecordJson.toJson(exhaustive));
 
         assertEquals(exhaustive, convertedExhaustive);

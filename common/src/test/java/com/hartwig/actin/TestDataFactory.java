@@ -1,7 +1,7 @@
 package com.hartwig.actin;
 
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
-import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,8 +16,8 @@ public final class TestDataFactory {
     public static PatientRecord createMinimalTestPatientRecord() {
         return ImmutablePatientRecord.builder()
                 .sampleId(TEST_SAMPLE)
-                .clinical(TestClinicalDataFactory.createMinimalTestClinicalRecord())
-                .molecular(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .clinical(TestClinicalFactory.createMinimalTestClinicalRecord())
+                .molecular(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .build();
     }
 
@@ -25,8 +25,8 @@ public final class TestDataFactory {
     public static PatientRecord createProperTestPatientRecord() {
         return ImmutablePatientRecord.builder()
                 .from(createMinimalTestPatientRecord())
-                .clinical(TestClinicalDataFactory.createProperTestClinicalRecord())
-                .molecular(TestMolecularDataFactory.createProperTestMolecularRecord())
+                .clinical(TestClinicalFactory.createProperTestClinicalRecord())
+                .molecular(TestMolecularFactory.createProperTestMolecularRecord())
                 .build();
     }
 }

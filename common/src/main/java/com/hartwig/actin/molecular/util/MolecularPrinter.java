@@ -40,13 +40,6 @@ public class MolecularPrinter {
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
         printer.print(" Has reliable quality: " + toYesNoUnknown(record.hasReliableQuality()));
         printer.print(" Purity: " + formatPercentage(record.characteristics().purity()));
-
-//        printer.print(" Mutations: " + mutationString(record.mappedEvents().mutations()));
-//        printer.print(" Activated genes: " + concat(record.mappedEvents().activatedGenes()));
-//        printer.print(" Inactivated genes: " + concat(record.mappedEvents().inactivatedGenes()));
-//        printer.print(" Amplified genes: " + concat(record.mappedEvents().amplifiedGenes()));
-//        printer.print(" Wildtype genes: " + concat(record.mappedEvents().wildtypeGenes()));
-//        printer.print(" Fusions: " + fusionString(record.mappedEvents().fusedGenes()));
         printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()));
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()));
         printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.characteristics().isHomologousRepairDeficient()));
@@ -55,7 +48,7 @@ public class MolecularPrinter {
 
         MolecularEvidence evidence = record.evidence();
         printer.print("Events with evidence for approved treatment: " + toEvents(evidence.approvedEvidence()));
-//        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
+        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
         printer.print("Events associated with external trials: " + toEvents(evidence.externalTrials()));
         printer.print("Events with evidence for on-label experimental treatment: " + toEvents(evidence.onLabelExperimentalEvidence()));
         printer.print("Events with evidence for off-label experimental treatment: " + toEvents(evidence.offLabelExperimentalEvidence()));

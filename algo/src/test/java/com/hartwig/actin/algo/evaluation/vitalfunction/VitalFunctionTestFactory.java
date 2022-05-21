@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 
 import org.apache.logging.log4j.util.Strings;
@@ -26,7 +26,7 @@ final class VitalFunctionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .bodyWeights(bodyWeights)
                         .build())
                 .build();
@@ -42,7 +42,7 @@ final class VitalFunctionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .vitalFunctions(vitalFunctions)
                         .build())
                 .build();

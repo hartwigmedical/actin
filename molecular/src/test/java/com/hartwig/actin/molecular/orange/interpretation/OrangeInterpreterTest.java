@@ -18,7 +18,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 
@@ -36,7 +36,7 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canInterpretOrangeRecord() {
-        MolecularRecord record = createTestInterpreter().interpret(TestOrangeDataFactory.createProperTestOrangeRecord());
+        MolecularRecord record = createTestInterpreter().interpret(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
@@ -90,7 +90,7 @@ public class OrangeInterpreterTest {
     @NotNull
     private static OrangeRecord withHomologousRepairStatus(@NotNull String hrStatus) {
         return ImmutableOrangeRecord.builder()
-                .from(TestOrangeDataFactory.createMinimalTestOrangeRecord())
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord())
                 .chord(ImmutableChordRecord.builder().hrStatus(hrStatus).build())
                 .build();
     }
@@ -110,7 +110,7 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeRecord withMicrosatelliteStatus(@NotNull String microsatelliteStatus) {
-        OrangeRecord base = TestOrangeDataFactory.createMinimalTestOrangeRecord();
+        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
 
         return ImmutableOrangeRecord.builder()
                 .from(base)

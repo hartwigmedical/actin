@@ -34,13 +34,13 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestMolecularDataFactory {
+public final class TestMolecularFactory {
 
     private static final LocalDate TODAY = LocalDate.now();
 
     private static final int DAYS_SINCE_MOLECULAR_ANALYSIS = 5;
 
-    private TestMolecularDataFactory() {
+    private TestMolecularFactory() {
     }
 
     @NotNull
@@ -146,18 +146,18 @@ public final class TestMolecularDataFactory {
         Set<ActinTrialEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableActinTrialEvidence.builder()
+                .event("BRAF V600E")
                 .trialAcronym("Trial 1")
                 .cohortId("A")
-                .event("BRAF V600E")
                 .isInclusionCriterion(true)
                 .type(MolecularEventType.MUTATED_GENE)
                 .gene("BRAF")
                 .mutation("V600E")
                 .build());
         result.add(ImmutableActinTrialEvidence.builder()
+                .event("High tumor mutational load")
                 .trialAcronym("Trial 1")
                 .cohortId(null)
-                .event("High tumor mutational load")
                 .isInclusionCriterion(false)
                 .type(MolecularEventType.SIGNATURE)
                 .gene(null)
@@ -171,14 +171,8 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestExternalTrials() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Trial 1")
-                .build());
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("High TML")
-                .treatment("Trial 1")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
+        result.add(ImmutableTreatmentEvidence.builder().event("High TML").treatment("Trial 1").build());
 
         return result;
     }
@@ -187,18 +181,9 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestApprovedEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Vemurafenib")
-                .build());
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Dabrafenib")
-                .build());
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("High TML")
-                .treatment("Nivolumab")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Dabrafenib").build());
+        result.add(ImmutableTreatmentEvidence.builder().event("High TML").treatment("Nivolumab").build());
 
         return result;
     }
@@ -207,10 +192,7 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestOnLabelExperimentalEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("High TML")
-                .treatment("Pembrolizumab")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("High TML").treatment("Pembrolizumab").build());
 
         return result;
     }
@@ -219,10 +201,7 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestOffLabelExperimentalEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Trametinib")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Trametinib").build());
 
         return result;
     }
@@ -231,10 +210,7 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestPreClinicalEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Pre-clinical treatment")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Pre-clinical treatment").build());
 
         return result;
     }
@@ -243,10 +219,7 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestKnownResistanceEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Erlotinib")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Erlotinib").build());
 
         return result;
     }
@@ -255,10 +228,7 @@ public final class TestMolecularDataFactory {
     private static Set<TreatmentEvidence> createTestSuspectResistanceEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder()
-                .event("BRAF V600E")
-                .treatment("Some treatment")
-                .build());
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Some treatment").build());
 
         return result;
     }

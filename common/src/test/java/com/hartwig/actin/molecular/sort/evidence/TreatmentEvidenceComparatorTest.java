@@ -14,7 +14,7 @@ import org.junit.Test;
 public class TreatmentEvidenceComparatorTest {
 
     @Test
-    public void canSortEvidenceEntries() {
+    public void canSortTreatmentEvidences() {
         TreatmentEvidence entry1 = create("event 3", "treatment 5");
         TreatmentEvidence entry2 = create("event 3", "treatment 4");
         TreatmentEvidence entry3 = create("event 2", "treatment 6");

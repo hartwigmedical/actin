@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.datamodel;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestEvaluationFactory {
+public final class EvaluationTestFactory {
 
-    private TestEvaluationFactory() {
+    private EvaluationTestFactory() {
     }
 
     @NotNull

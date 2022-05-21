@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.TestEvaluationFactory;
+import com.hartwig.actin.algo.datamodel.EvaluationTestFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +42,6 @@ public final class TestEvaluationFunctionFactory {
 
     @NotNull
     private static EvaluationFunction fixedEvaluation(@NotNull EvaluationResult output) {
-        return record -> TestEvaluationFactory.withResult(output);
+        return record -> EvaluationTestFactory.withResult(output);
     }
 }

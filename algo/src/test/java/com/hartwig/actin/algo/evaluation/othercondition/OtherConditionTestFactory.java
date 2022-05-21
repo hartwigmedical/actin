@@ -12,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 
 import org.apache.logging.log4j.util.Strings;
@@ -33,7 +33,7 @@ final class OtherConditionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .priorOtherConditions(conditions)
                         .build())
                 .build();
@@ -49,7 +49,7 @@ final class OtherConditionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .complications(complications)
                         .build())
                 .build();
@@ -60,7 +60,7 @@ final class OtherConditionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .toxicities(toxicities)
                         .build())
                 .build();
@@ -71,7 +71,7 @@ final class OtherConditionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .intolerances(intolerances)
                         .build())
                 .build();
@@ -82,7 +82,7 @@ final class OtherConditionTestFactory {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .medications(medications)
                         .build())
                 .build();

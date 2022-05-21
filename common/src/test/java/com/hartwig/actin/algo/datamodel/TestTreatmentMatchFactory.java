@@ -75,7 +75,7 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
-                .build(), TestEvaluationFactory.withResult(EvaluationResult.PASS));
+                .build(), EvaluationTestFactory.withResult(EvaluationResult.PASS));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
@@ -88,7 +88,7 @@ public final class TestTreatmentMatchFactory {
                         .id("E-01")
                         .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
                         .build())
-                .build(), TestEvaluationFactory.withResult(EvaluationResult.PASS));
+                .build(), EvaluationTestFactory.withResult(EvaluationResult.PASS));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
@@ -96,7 +96,7 @@ public final class TestTreatmentMatchFactory {
                         .id("E-01")
                         .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
                         .build())
-                .build(), TestEvaluationFactory.withResult(EvaluationResult.NOT_EVALUATED));
+                .build(), EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED));
 
         return map;
     }
@@ -143,7 +143,7 @@ public final class TestTreatmentMatchFactory {
                         .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
-                .build(), TestEvaluationFactory.withResult(EvaluationResult.FAIL));
+                .build(), EvaluationTestFactory.withResult(EvaluationResult.FAIL));
 
         return map;
     }
@@ -155,12 +155,12 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_INFECTION).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Should have active infection").build())
-                .build(), TestEvaluationFactory.withResult(EvaluationResult.FAIL));
+                .build(), EvaluationTestFactory.withResult(EvaluationResult.FAIL));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Should be able to give consent").build())
-                .build(), TestEvaluationFactory.withResult(EvaluationResult.WARN));
+                .build(), EvaluationTestFactory.withResult(EvaluationResult.WARN));
 
         return map;
     }

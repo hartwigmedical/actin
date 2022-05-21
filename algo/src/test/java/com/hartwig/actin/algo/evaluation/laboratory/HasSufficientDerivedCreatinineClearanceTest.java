@@ -19,7 +19,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.util.Strings;
@@ -117,7 +117,7 @@ public class HasSufficientDerivedCreatinineClearanceTest {
     @NotNull
     private static PatientRecord create(int birthYear, @NotNull Gender gender, @NotNull List<LabValue> labValues,
             @NotNull List<BodyWeight> bodyWeights) {
-        ClinicalRecord base = TestClinicalDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord base = TestClinicalFactory.createMinimalTestClinicalRecord();
 
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())

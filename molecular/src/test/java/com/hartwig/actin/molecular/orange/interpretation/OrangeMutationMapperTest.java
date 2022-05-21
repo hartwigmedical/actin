@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSour
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidenceType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
-import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectTestFactory;
 import com.hartwig.actin.serve.datamodel.ImmutableServeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -28,7 +28,7 @@ public class OrangeMutationMapperTest {
         OrangeMutationMapper mapper = withMutations("X", "Val600Glu", "X", "V600E");
 
         ProtectEvidence hotspotEvidence1 = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("X")
                 .event("Val600Glu")
                 .addSources(withType(ProtectEvidenceType.HOTSPOT_MUTATION))
@@ -40,7 +40,7 @@ public class OrangeMutationMapperTest {
         assertTrue(mutations1.contains("V600E"));
 
         ProtectEvidence hotspotEvidence2 = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("X")
                 .event("V600E")
                 .addSources(withType(ProtectEvidenceType.HOTSPOT_MUTATION))
@@ -57,7 +57,7 @@ public class OrangeMutationMapperTest {
         OrangeMutationMapper mapper = withMutation("X", "R30X");
 
         ProtectEvidence codonEvidence = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("X")
                 .addSources(withTypeAndRangeRank(ProtectEvidenceType.CODON_MUTATION, 30))
                 .build();
@@ -71,7 +71,7 @@ public class OrangeMutationMapperTest {
     public void canMapExonMutations() {
         OrangeMutationMapper mapperExact = withMutation("X", "EXON 20 INSERTION");
         ProtectEvidence exonEvidence20 = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("X")
                 .addSources(withTypeAndRangeRank(ProtectEvidenceType.EXON_MUTATION, 20))
                 .build();
@@ -81,7 +81,7 @@ public class OrangeMutationMapperTest {
         assertTrue(exactMutations.contains("EXON 20 INSERTION"));
 
         OrangeMutationMapper mapperRange = withMutation("X", "exon 2-4");
-        ProtectEvidence base = ImmutableProtectEvidence.builder().from(TestProtectDataFactory.create()).gene("X").build();
+        ProtectEvidence base = ImmutableProtectEvidence.builder().from(ProtectTestFactory.create()).gene("X").build();
 
         ProtectEvidence exonEvidence2 =
                 ImmutableProtectEvidence.builder().from(base).addSources(withTypeAndRangeRank(ProtectEvidenceType.EXON_MUTATION, 2)).build();
@@ -100,7 +100,7 @@ public class OrangeMutationMapperTest {
     public void crashOnInvalidEvidenceType() {
         OrangeMutationMapper mapper = OrangeMutationMapper.fromServeRecords(Lists.newArrayList());
         ProtectEvidence invalid = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .addSources(withType(ProtectEvidenceType.ACTIVATION))
                 .build();
 
@@ -111,7 +111,7 @@ public class OrangeMutationMapperTest {
     public void crashOnUnmappedHotspot() {
         OrangeMutationMapper mapper = withMutation("X", "V600E");
         ProtectEvidence unmapped = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("unmapped gene")
                 .event("V600E")
                 .addSources(withType(ProtectEvidenceType.HOTSPOT_MUTATION))
@@ -124,7 +124,7 @@ public class OrangeMutationMapperTest {
     public void crashOnUnmappedCodon() {
         OrangeMutationMapper mapper = withMutation("X", "V1X");
         ProtectEvidence unmapped = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("unmapped gene")
                 .addSources(withTypeAndRangeRank(ProtectEvidenceType.CODON_MUTATION, 1))
                 .build();
@@ -136,7 +136,7 @@ public class OrangeMutationMapperTest {
     public void crashOnUnmappedExon() {
         OrangeMutationMapper mapper = withMutation("X", "V1X");
         ProtectEvidence unmapped = ImmutableProtectEvidence.builder()
-                .from(TestProtectDataFactory.create())
+                .from(ProtectTestFactory.create())
                 .gene("unmapped gene")
                 .addSources(withTypeAndRangeRank(ProtectEvidenceType.EXON_MUTATION, 1))
                 .build();
@@ -146,12 +146,12 @@ public class OrangeMutationMapperTest {
 
     @NotNull
     private static ProtectSource withType(@NotNull ProtectEvidenceType type) {
-        return ImmutableProtectSource.builder().from(TestProtectDataFactory.createSource()).type(type).build();
+        return ImmutableProtectSource.builder().from(ProtectTestFactory.createSource()).type(type).build();
     }
 
     @NotNull
     private static ProtectSource withTypeAndRangeRank(@NotNull ProtectEvidenceType type, int rangeRank) {
-        return ImmutableProtectSource.builder().from(TestProtectDataFactory.createSource()).type(type).rangeRank(rangeRank).build();
+        return ImmutableProtectSource.builder().from(ProtectTestFactory.createSource()).type(type).rangeRank(rangeRank).build();
     }
 
     @NotNull

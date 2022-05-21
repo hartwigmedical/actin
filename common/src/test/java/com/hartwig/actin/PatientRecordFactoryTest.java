@@ -6,10 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 
 import org.junit.Test;
 
@@ -17,34 +17,34 @@ public class PatientRecordFactoryTest {
 
     @Test
     public void canCreatePatientRecordFromTestRecords() {
-        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalDataFactory.createMinimalTestClinicalRecord(),
-                TestMolecularDataFactory.createMinimalTestMolecularRecord()));
+        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(),
+                TestMolecularFactory.createMinimalTestMolecularRecord()));
 
-        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalDataFactory.createProperTestClinicalRecord(),
-                TestMolecularDataFactory.createProperTestMolecularRecord()));
+        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalFactory.createProperTestClinicalRecord(),
+                TestMolecularFactory.createProperTestMolecularRecord()));
     }
 
     @Test
     public void doNotCrashOnMissingTumorDoids() {
-        ClinicalRecord base = TestClinicalDataFactory.createMinimalTestClinicalRecord();
+        ClinicalRecord base = TestClinicalFactory.createMinimalTestClinicalRecord();
 
         ClinicalRecord noTumorDoid = ImmutableClinicalRecord.builder()
                 .from(base)
                 .tumor(ImmutableTumorDetails.builder().from(base.tumor()).doids(null).build())
                 .build();
 
-        assertNotNull(PatientRecordFactory.fromInputs(noTumorDoid, TestMolecularDataFactory.createMinimalTestMolecularRecord()));
+        assertNotNull(PatientRecordFactory.fromInputs(noTumorDoid, TestMolecularFactory.createMinimalTestMolecularRecord()));
     }
 
     @Test
     public void clinicalSampleBeatsMolecularSample() {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .sampleId("clinical")
                 .build();
 
         MolecularRecord molecular = ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .sampleId("molecular")
                 .build();
 

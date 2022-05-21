@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.datamodel.evidence;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestActinTrialEvidenceFactory {
+public final class ActinTrialEvidenceTestFactory {
 
-    private TestActinTrialEvidenceFactory() {
+    private ActinTrialEvidenceTestFactory() {
     }
 
     @NotNull

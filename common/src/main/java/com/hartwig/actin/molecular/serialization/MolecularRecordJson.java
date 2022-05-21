@@ -341,15 +341,14 @@ public class MolecularRecordJson {
             for (JsonElement element : actinTrialArray) {
                 JsonObject actinTrialEvidence = element.getAsJsonObject();
                 actinTrialEvidences.add(ImmutableActinTrialEvidence.builder()
+                        .event(string(actinTrialEvidence, "event"))
                         .trialAcronym(string(actinTrialEvidence, "trialAcronym"))
                         .cohortId(nullableString(actinTrialEvidence, "cohortId"))
-                        .event(string(actinTrialEvidence, "event"))
                         .isInclusionCriterion(bool(actinTrialEvidence, "isInclusionCriterion"))
                         .type(MolecularEventType.valueOf(string(actinTrialEvidence, "type")))
                         .gene(nullableString(actinTrialEvidence, "gene"))
                         .mutation(nullableString(actinTrialEvidence, "mutation"))
                         .build());
-
             }
             return actinTrialEvidences;
         }

@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.orange.datamodel.protect;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestProtectDataFactory {
+public final class ProtectTestFactory {
 
-    private TestProtectDataFactory() {
+    private ProtectTestFactory() {
     }
 
     @NotNull

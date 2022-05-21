@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 public class TreatmentEvidenceComparator implements Comparator<TreatmentEvidence> {
 
     @Override
-    public int compare(@NotNull TreatmentEvidence treatmentEvidence1, @NotNull TreatmentEvidence treatmentEvidence2) {
-        int eventCompare = treatmentEvidence1.event().compareTo(treatmentEvidence2.event());
+    public int compare(@NotNull TreatmentEvidence evidence1, @NotNull TreatmentEvidence evidence2) {
+        int eventCompare = evidence1.event().compareTo(evidence2.event());
         if (eventCompare != 0) {
             return eventCompare;
         }
 
-        return treatmentEvidence1.treatment().compareTo(treatmentEvidence2.treatment());
+        return evidence1.treatment().compareTo(evidence2.treatment());
     }
 }

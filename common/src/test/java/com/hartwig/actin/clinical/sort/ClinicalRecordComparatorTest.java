@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -31,6 +31,6 @@ public class ClinicalRecordComparatorTest {
 
     @NotNull
     private static ClinicalRecord withSampleId(@NotNull String sampleId) {
-        return ImmutableClinicalRecord.builder().from(TestClinicalDataFactory.createMinimalTestClinicalRecord()).sampleId(sampleId).build();
+        return ImmutableClinicalRecord.builder().from(TestClinicalFactory.createMinimalTestClinicalRecord()).sampleId(sampleId).build();
     }
 }

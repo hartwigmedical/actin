@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.util;
 
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.junit.Test;
 
@@ -8,7 +8,7 @@ public class ClinicalPrinterTest {
 
     @Test
     public void canPrintClinicalRecords() {
-        ClinicalPrinter.printRecord(TestClinicalDataFactory.createProperTestClinicalRecord());
-        ClinicalPrinter.printRecord(TestClinicalDataFactory.createMinimalTestClinicalRecord());
+        ClinicalPrinter.printRecord(TestClinicalFactory.createProperTestClinicalRecord());
+        ClinicalPrinter.printRecord(TestClinicalFactory.createMinimalTestClinicalRecord());
     }
 }

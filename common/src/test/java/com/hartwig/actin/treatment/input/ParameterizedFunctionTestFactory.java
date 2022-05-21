@@ -15,11 +15,11 @@ import com.hartwig.actin.treatment.input.single.FunctionInput;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestParameterizedFunctionFactory {
+public final class ParameterizedFunctionTestFactory {
 
     private static final EligibilityRule MOCK_RULE = firstNonComposite();
 
-    private TestParameterizedFunctionFactory() {
+    private ParameterizedFunctionTestFactory() {
     }
 
     @NotNull

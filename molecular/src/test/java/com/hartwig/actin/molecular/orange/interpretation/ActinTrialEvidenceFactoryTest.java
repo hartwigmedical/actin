@@ -5,7 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectTestFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -53,12 +53,12 @@ public class ActinTrialEvidenceFactoryTest {
 
     @NotNull
     private static ProtectEvidence withEvent(@NotNull String sourceEvent) {
-        return TestProtectDataFactory.builder().addSources(TestProtectDataFactory.sourceBuilder().event(sourceEvent).build()).build();
+        return ProtectTestFactory.builder().addSources(ProtectTestFactory.sourceBuilder().event(sourceEvent).build()).build();
     }
 
     @NotNull
     private static ProtectEvidence withEventAndType(@NotNull String sourceEvent, @NotNull MolecularEventType sourceType) {
-        return TestProtectDataFactory.builder().addSources(TestProtectDataFactory.sourceBuilder().event(sourceEvent).build()).build();
+        return ProtectTestFactory.builder().addSources(ProtectTestFactory.sourceBuilder().event(sourceEvent).build()).build();
     }
 
 }

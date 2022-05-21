@@ -9,13 +9,13 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularDataFactory;
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidenceTestFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TestActinTrialEvidenceFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +37,7 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withGeneMutation(@NotNull String gene, @NotNull String mutation) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.MUTATED_GENE, gene, mutation)))
                 .build());
     }
@@ -45,7 +45,7 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withActivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.ACTIVATED_GENE, gene, null)))
                 .build());
     }
@@ -53,7 +53,7 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withInactivatedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.INACTIVATED_GENE, gene, null)))
                 .build());
     }
@@ -61,7 +61,7 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withAmplifiedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.AMPLIFIED_GENE, gene, null)))
                 .build());
     }
@@ -69,7 +69,7 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withWildtypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.WILD_TYPE_GENE, gene, null)))
                 .build());
     }
@@ -77,7 +77,7 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withFusedGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.FUSED_GENE, gene, null)))
                 .build());
     }
@@ -85,20 +85,20 @@ final class MolecularTestFactory {
     @NotNull
     private static ActinTrialEvidence createActinEvidence(@NotNull MolecularEventType type, @Nullable String gene,
             @Nullable String mutation) {
-        return TestActinTrialEvidenceFactory.builder().type(type).gene(gene).mutation(mutation).build();
+        return ActinTrialEvidenceTestFactory.builder().type(type).gene(gene).mutation(mutation).build();
     }
 
     @NotNull
     private static MolecularEvidence withActinEvidence(@NotNull ActinTrialEvidence actinTrialEvidence) {
         return ImmutableMolecularEvidence.builder()
-                .from(TestMolecularDataFactory.createMinimalTestMolecularRecord().evidence())
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord().evidence())
                 .addActinTrials(actinTrialEvidence)
                 .build();
     }
 
     @NotNull
     public static PatientRecord withMicrosatelliteInstability(@Nullable Boolean isMicrosatelliteUnstable) {
-        MolecularRecord base = TestMolecularDataFactory.createMinimalTestMolecularRecord();
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
@@ -111,7 +111,7 @@ final class MolecularTestFactory {
 
     @NotNull
     public static PatientRecord withHomologousRepairDeficiency(@Nullable Boolean isHomologousRepairDeficient) {
-        MolecularRecord base = TestMolecularDataFactory.createMinimalTestMolecularRecord();
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
@@ -124,7 +124,7 @@ final class MolecularTestFactory {
 
     @NotNull
     public static PatientRecord withTumorMutationalBurden(@Nullable Double tumorMutationalBurden) {
-        MolecularRecord base = TestMolecularDataFactory.createMinimalTestMolecularRecord();
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
@@ -137,7 +137,7 @@ final class MolecularTestFactory {
 
     @NotNull
     public static PatientRecord withTumorMutationalLoad(@Nullable Integer tumorMutationalLoad) {
-        MolecularRecord base = TestMolecularDataFactory.createMinimalTestMolecularRecord();
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)

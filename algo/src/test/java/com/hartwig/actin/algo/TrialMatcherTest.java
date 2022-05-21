@@ -10,12 +10,12 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
 import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.EvaluationTestFactory;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.datamodel.TestEvaluationFactory;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
@@ -45,7 +45,7 @@ public class TrialMatcherTest {
     @NotNull
     private static EvaluationFunctionFactory createTestEvaluationFunctionFactory() {
         return EvaluationFunctionFactory.create(TestDoidModelFactory.createMinimalTestDoidModel(),
-                TestReferenceDateProviderFactory.createCurrentDateProvider());
+                ReferenceDateProviderTestFactory.createCurrentDateProvider());
     }
 
     private static void assertTrialMatch(@NotNull TrialMatch trialMatch) {
@@ -97,17 +97,17 @@ public class TrialMatcherTest {
     public void canDeterminePotentialEligibility() {
         List<Evaluation> evaluations = Lists.newArrayList();
 
-        evaluations.add(TestEvaluationFactory.withResult(EvaluationResult.PASS));
+        evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.PASS));
         assertTrue(TrialMatcher.isPotentiallyEligible(evaluations));
 
         evaluations.add(ImmutableEvaluation.builder()
-                .from(TestEvaluationFactory.withResult(EvaluationResult.FAIL))
+                .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
                 .recoverable(true)
                 .build());
         assertTrue(TrialMatcher.isPotentiallyEligible(evaluations));
 
         evaluations.add(ImmutableEvaluation.builder()
-                .from(TestEvaluationFactory.withResult(EvaluationResult.FAIL))
+                .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
                 .recoverable(false)
                 .build());
         assertFalse(TrialMatcher.isPotentiallyEligible(evaluations));

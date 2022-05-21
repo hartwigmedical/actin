@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestReferenceDateProviderFactory {
+public final class ReferenceDateProviderTestFactory {
 
-    private TestReferenceDateProviderFactory() {
+    private ReferenceDateProviderTestFactory() {
     }
 
     @NotNull

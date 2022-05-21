@@ -33,7 +33,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -70,7 +70,7 @@ public class CurationModelTest {
     public void canOverrideKnownLesionLocations() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        TumorDetails base = TestClinicalDataFactory.createMinimalTestClinicalRecord().tumor();
+        TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
 
         assertEquals(base, model.overrideKnownLesionLocations(base, null, null));
         assertEquals(base, model.overrideKnownLesionLocations(base, "biopsy location", Lists.newArrayList("some other lesion")));

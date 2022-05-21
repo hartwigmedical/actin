@@ -12,7 +12,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.apache.logging.log4j.util.Strings;
@@ -75,7 +75,7 @@ public class HasRecentlyReceivedRadiotherapyTest {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalDataFactory.createMinimalTestClinicalRecord())
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .priorTumorTreatments(treatments)
                         .build())
                 .build();

@@ -5,12 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Map;
 
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.calendar.TestReferenceDateProviderFactory;
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.TestParameterizedFunctionFactory;
+import com.hartwig.actin.treatment.input.ParameterizedFunctionTestFactory;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
 
 import org.junit.Test;
@@ -20,11 +20,11 @@ public class FunctionCreatorFactoryTest {
     @Test
     public void everyFunctionCanBeCreated() {
         DoidModel doidModel = TestDoidModelFactory.createMinimalTestDoidModel();
-        ReferenceDateProvider referenceDateProvider = TestReferenceDateProviderFactory.createCurrentDateProvider();
+        ReferenceDateProvider referenceDateProvider = ReferenceDateProviderTestFactory.createCurrentDateProvider();
         Map<EligibilityRule, FunctionCreator> map = FunctionCreatorFactory.create(doidModel, referenceDateProvider);
 
         for (EligibilityRule rule : EligibilityRule.values()) {
-            EligibilityFunction function = TestParameterizedFunctionFactory.create(rule);
+            EligibilityFunction function = ParameterizedFunctionTestFactory.create(rule);
             if (!CompositeRules.isComposite(rule)) {
                 FunctionCreator creator = map.get(rule);
                 assertNotNull(rule + " has no creator configured", creator);

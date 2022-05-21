@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.datamodel.TestClinicalDataFactory;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class LabInterpreterTest {
     public void canGenerateLabInterpretation() {
         assertNotNull(LabInterpreter.interpret(Lists.newArrayList()));
 
-        assertNotNull(LabInterpreter.interpret(TestClinicalDataFactory.createProperTestClinicalRecord().labValues()));
+        assertNotNull(LabInterpreter.interpret(TestClinicalFactory.createProperTestClinicalRecord().labValues()));
     }
 
     @Test

@@ -39,9 +39,9 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestOrangeDataFactory {
+public final class TestOrangeFactory {
 
-    private TestOrangeDataFactory() {
+    private TestOrangeFactory() {
     }
 
     @NotNull
