@@ -110,27 +110,27 @@
     "actinSource": "local",
     "actinTrials": [
       {
+        "event": "High TML",
         "trialAcronym": "Trial 1",
         "cohortId": "A",
-        "event": "High TML",
         "isInclusionCriterion": true,
         "type": "SIGNATURE",
         "gene": null,
         "mutation": null
       },
       {
+        "event": "HR deficiency",
         "trialAcronym": "Trial 2",
         "cohortId": null,
-        "event": "HR deficiency",
         "isInclusionCriterion": false,
         "type": "SIGNATURE",
         "gene": null,
         "mutation": null
       },
       {
+        "event": "NF1 disruption",
         "trialAcronym": "Trial 3",
         "cohortId": "B",
-        "event": "NF1 disruption",
         "isInclusionCriterion": true,
         "type": "INACTIVATED_GENE",
         "gene": "NF1",

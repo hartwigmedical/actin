@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.serialization;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
@@ -182,13 +184,8 @@ public class MolecularRecordJsonTest {
     }
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {
-        assertEquals(3, evidence.actinTrials().size());
-        ActinTrialEvidence actinTrial1 = findByEvent(evidence.actinTrials(), "High TML");
-        assertEquals("Trial 1", actinTrial1.trialAcronym());
-        ActinTrialEvidence actinTrial2 = findByEvent(evidence.actinTrials(), "HR deficiency");
-        assertEquals("Trial 2", actinTrial2.trialAcronym());
-        ActinTrialEvidence actinTrial3 = findByEvent(evidence.actinTrials(), "NF1 disruption");
-        assertEquals("Trial 3", actinTrial3.trialAcronym());
+        assertEquals("local", evidence.actinSource());
+        assertActinTrialEvidence(evidence.actinTrials());
 
         assertEquals("trials", evidence.externalTrialSource());
         assertEquals(1, evidence.externalTrials().size());
@@ -203,21 +200,54 @@ public class MolecularRecordJsonTest {
         assertEquals("High TML", approvedEvidence2.event());
 
         assertEquals(1, evidence.onLabelExperimentalEvidence().size());
-        assertEquals("on-label experimental",
-                findByTreatment(evidence.onLabelExperimentalEvidence(), "on-label experimental drug").event());
+        TreatmentEvidence onLabelExperimentalEvidence =
+                findByTreatment(evidence.onLabelExperimentalEvidence(), "on-label experimental drug");
+        assertEquals("on-label experimental", onLabelExperimentalEvidence.event());
 
         assertEquals(1, evidence.offLabelExperimentalEvidence().size());
-        assertEquals("off-label experimental",
-                findByTreatment(evidence.offLabelExperimentalEvidence(), "off-label experimental drug").event());
+        TreatmentEvidence offLabelExperimentalEvidence =
+                findByTreatment(evidence.offLabelExperimentalEvidence(), "off-label experimental drug");
+        assertEquals("off-label experimental", offLabelExperimentalEvidence.event());
 
         assertEquals(1, evidence.preClinicalEvidence().size());
-        assertEquals("pre clinical", findByTreatment(evidence.preClinicalEvidence(), "no drug yet").event());
+        TreatmentEvidence preClinicalEvidence = findByTreatment(evidence.preClinicalEvidence(), "no drug yet");
+        assertEquals("pre clinical", preClinicalEvidence.event());
 
         assertEquals(1, evidence.knownResistanceEvidence().size());
-        assertEquals("known resistance", findByTreatment(evidence.knownResistanceEvidence(), "known resistant drug").event());
+        TreatmentEvidence knownResistanceEvidence = findByTreatment(evidence.knownResistanceEvidence(), "known resistant drug");
+        assertEquals("known resistance", knownResistanceEvidence.event());
 
         assertEquals(1, evidence.suspectResistanceEvidence().size());
-        assertEquals("suspect resistance", findByTreatment(evidence.suspectResistanceEvidence(), "suspect resistant drug").event());
+        TreatmentEvidence suspectResistanceEvidence = findByTreatment(evidence.suspectResistanceEvidence(), "suspect resistant drug");
+        assertEquals("suspect resistance", suspectResistanceEvidence.event());
+    }
+
+    private static void assertActinTrialEvidence(@NotNull Set<ActinTrialEvidence> actinTrials) {
+        assertEquals(3, actinTrials.size());
+
+        ActinTrialEvidence actinTrial1 = findByEvent(actinTrials, "High TML");
+        assertEquals("Trial 1", actinTrial1.trialAcronym());
+        assertEquals("A", actinTrial1.cohortId());
+        assertTrue(actinTrial1.isInclusionCriterion());
+        assertEquals(MolecularEventType.SIGNATURE, actinTrial1.type());
+        assertNull(actinTrial1.gene());
+        assertNull(actinTrial1.mutation());
+
+        ActinTrialEvidence actinTrial2 = findByEvent(actinTrials, "HR deficiency");
+        assertEquals("Trial 2", actinTrial2.trialAcronym());
+        assertNull(actinTrial2.cohortId());
+        assertFalse(actinTrial2.isInclusionCriterion());
+        assertEquals(MolecularEventType.SIGNATURE, actinTrial2.type());
+        assertNull(actinTrial2.gene());
+        assertNull(actinTrial2.mutation());
+
+        ActinTrialEvidence actinTrial3 = findByEvent(actinTrials, "NF1 disruption");
+        assertEquals("Trial 3", actinTrial3.trialAcronym());
+        assertEquals("B", actinTrial3.cohortId());
+        assertTrue(actinTrial3.isInclusionCriterion());
+        assertEquals(MolecularEventType.INACTIVATED_GENE, actinTrial3.type());
+        assertEquals("NF1", actinTrial3.gene());
+        assertNull(actinTrial3.mutation());
     }
 
     @NotNull
