@@ -29,6 +29,7 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
@@ -189,8 +190,8 @@ public class MolecularRecordJsonTest {
 
         assertEquals("trials", evidence.externalTrialSource());
         assertEquals(1, evidence.externalTrials().size());
-        TreatmentEvidence externalTrial = findByEvent(evidence.externalTrials(), "High TML");
-        assertEquals("Trial 1", externalTrial.treatment());
+        ExternalTrialEvidence externalTrial = findByEvent(evidence.externalTrials(), "High TML");
+        assertEquals("Trial 1", externalTrial.trial());
 
         assertEquals("evidence", evidence.evidenceSource());
         assertEquals(2, evidence.approvedEvidence().size());

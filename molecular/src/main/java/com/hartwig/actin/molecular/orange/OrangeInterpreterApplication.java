@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
-import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMappingTsv;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingTsv;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
@@ -55,8 +55,8 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        LOGGER.info("Loading ACTIN to external treatment mapping TSV from {}", config.externalTreatmentMappingTsv());
-        List<ExternalTreatmentMapping> mappings = ExternalTreatmentMappingTsv.read(config.externalTreatmentMappingTsv());
+        LOGGER.info("Loading ACTIN to external treatment mapping TSV from {}", config.externalTrialMappingTsv());
+        List<ExternalTrialMapping> mappings = ExternalTrialMappingTsv.read(config.externalTrialMappingTsv());
         LOGGER.info(" Loaded {} mappings", mappings.size());
 
         LOGGER.info("Interpreting ORANGE record");

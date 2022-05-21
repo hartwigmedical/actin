@@ -18,6 +18,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -197,33 +198,33 @@ public final class MolecularDriverEntryFactory {
 
     private static void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver,
             @NotNull MolecularEvidence evidence) {
-        entryBuilder.actinTreatments(trials(driver, evidence.actinTrials()));
-        entryBuilder.externalTreatments(treatments(driver, evidence.externalTrials()));
+        entryBuilder.actinTrials(actinTrials(driver, evidence.actinTrials()));
+        entryBuilder.externalTrials(externalTrials(driver, evidence.externalTrials()));
 
         entryBuilder.bestResponsiveEvidence(bestResponsiveEvidence(driver, evidence));
         entryBuilder.bestResistanceEvidence(bestResistanceEvidence(driver, evidence));
     }
 
     @NotNull
-    private static Set<String> trials(@NotNull Driver driver, @NotNull Set<ActinTrialEvidence> evidences) {
-        Set<String> treatments = Sets.newTreeSet(Ordering.natural());
-        for (ActinTrialEvidence evidence : evidences) {
+    private static Set<String> actinTrials(@NotNull Driver driver, @NotNull Set<ActinTrialEvidence> actinTrials) {
+        Set<String> trials = Sets.newTreeSet(Ordering.natural());
+        for (ActinTrialEvidence evidence : actinTrials) {
             if (evidence.event().equals(driver.event())) {
-                treatments.add(evidence.trialAcronym());
+                trials.add(evidence.trialAcronym());
             }
         }
-        return treatments;
+        return trials;
     }
 
     @NotNull
-    private static Set<String> treatments(@NotNull Driver driver, @NotNull Set<TreatmentEvidence> evidences) {
-        Set<String> treatments = Sets.newTreeSet(Ordering.natural());
-        for (TreatmentEvidence evidence : evidences) {
+    private static Set<String> externalTrials(@NotNull Driver driver, @NotNull Set<ExternalTrialEvidence> externalTrials) {
+        Set<String> trials = Sets.newTreeSet(Ordering.natural());
+        for (ExternalTrialEvidence evidence : externalTrials) {
             if (evidence.event().equals(driver.event())) {
-                treatments.add(evidence.treatment());
+                trials.add(evidence.trial());
             }
         }
-        return treatments;
+        return trials;
     }
 
     @Nullable

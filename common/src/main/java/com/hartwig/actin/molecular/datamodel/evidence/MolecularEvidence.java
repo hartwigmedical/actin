@@ -20,7 +20,7 @@ public abstract class MolecularEvidence {
     public abstract String externalTrialSource();
 
     @NotNull
-    public abstract Set<TreatmentEvidence> externalTrials();
+    public abstract Set<ExternalTrialEvidence> externalTrials();
 
     @NotNull
     public abstract String evidenceSource();

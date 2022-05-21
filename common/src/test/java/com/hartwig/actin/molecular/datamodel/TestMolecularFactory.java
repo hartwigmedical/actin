@@ -21,7 +21,9 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
@@ -168,11 +170,11 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createTestExternalTrials() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
+    private static Set<ExternalTrialEvidence> createTestExternalTrials() {
+        Set<ExternalTrialEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Trial 1").build());
-        result.add(ImmutableTreatmentEvidence.builder().event("High TML").treatment("Trial 1").build());
+        result.add(ImmutableExternalTrialEvidence.builder().event("BRAF V600E").trial("Trial 1").build());
+        result.add(ImmutableExternalTrialEvidence.builder().event("High TML").trial("Trial 1").build());
 
         return result;
     }

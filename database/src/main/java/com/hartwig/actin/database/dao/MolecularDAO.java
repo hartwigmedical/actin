@@ -1,18 +1,36 @@
 package com.hartwig.actin.database.dao;
 
-import static com.hartwig.actin.database.Tables.ACTIVATEDGENE;
-import static com.hartwig.actin.database.Tables.AMPLIFIEDGENE;
-import static com.hartwig.actin.database.Tables.FUSEDGENE;
-import static com.hartwig.actin.database.Tables.INACTIVATEDGENE;
 import static com.hartwig.actin.database.Tables.MOLECULAR;
-import static com.hartwig.actin.database.Tables.MOLECULAREVIDENCE;
-import static com.hartwig.actin.database.Tables.MUTATION;
-import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
+import static com.hartwig.actin.database.Tables.VARIANT;
+import static com.hartwig.actin.database.Tables.AMPLIFICATION;
+import static com.hartwig.actin.database.Tables.LOSS;
+import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTION;
+import static com.hartwig.actin.database.Tables.DISRUPTION;
+import static com.hartwig.actin.database.Tables.FUSION;
+import static com.hartwig.actin.database.Tables.VIRUS;
+import static com.hartwig.actin.database.Tables.PHARMACO;
+import static com.hartwig.actin.database.Tables.ACTINTRIALEVIDENCE;
+import static com.hartwig.actin.database.Tables.EXTERNALTRIALEVIDENCE;
+import static com.hartwig.actin.database.Tables.TREATMENTEVIDENCE;
+
+import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Fusion;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
+import com.hartwig.actin.molecular.datamodel.driver.Loss;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -30,29 +48,53 @@ class MolecularDAO {
         String sampleId = record.sampleId();
 
         context.delete(MOLECULAR).where(MOLECULAR.SAMPLEID.eq(sampleId)).execute();
-        context.delete(MUTATION).where(MUTATION.SAMPLEID.eq(sampleId)).execute();
-        context.delete(ACTIVATEDGENE).where(ACTIVATEDGENE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(INACTIVATEDGENE).where(INACTIVATEDGENE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(AMPLIFIEDGENE).where(AMPLIFIEDGENE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(WILDTYPEGENE).where(WILDTYPEGENE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(FUSEDGENE).where(FUSEDGENE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(MOLECULAREVIDENCE).where(MOLECULAREVIDENCE.SAMPLEID.eq(sampleId)).execute();
+        context.delete(VARIANT).where(VARIANT.SAMPLEID.eq(sampleId)).execute();
+        context.delete(AMPLIFICATION).where(AMPLIFICATION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(LOSS).where(LOSS.SAMPLEID.eq(sampleId)).execute();
+        context.delete(HOMOZYGOUSDISRUPTION).where(HOMOZYGOUSDISRUPTION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(DISRUPTION).where(DISRUPTION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(FUSION).where(FUSION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(VIRUS).where(VIRUS.SAMPLEID.eq(sampleId)).execute();
+        context.delete(PHARMACO).where(PHARMACO.SAMPLEID.eq(sampleId)).execute();
+        context.delete(ACTINTRIALEVIDENCE).where(ACTINTRIALEVIDENCE.SAMPLEID.eq(sampleId)).execute();
+        context.delete(EXTERNALTRIALEVIDENCE).where(EXTERNALTRIALEVIDENCE.SAMPLEID.eq(sampleId)).execute();
+        context.delete(TREATMENTEVIDENCE).where(TREATMENTEVIDENCE.SAMPLEID.eq(sampleId)).execute();
     }
 
     public void writeMolecularRecord(@NotNull MolecularRecord record) {
         String sampleId = record.sampleId();
+
         writeMolecularDetails(sampleId, record);
 
-        writeMolecularEvidence(sampleId, record.evidence());
+        MolecularDrivers drivers = record.drivers();
+        writeVariants(sampleId, drivers.variants());
+        writeAmplifications(sampleId, drivers.amplifications());
+        writeLosses(sampleId, drivers.losses());
+        writeHomozygousDisruptions(sampleId, drivers.homozygousDisruptions());
+        writeDisruptions(sampleId, drivers.disruptions());
+        writeFusions(sampleId, drivers.fusions());
+        writeViruses(sampleId, drivers.viruses());
+
+        writePharmaco(sampleId, record.pharmaco());
+
+        MolecularEvidence evidence = record.evidence();
+        writeActinTrialEvidence(sampleId, evidence.actinSource(), evidence.actinTrials());
+        writeExternalTrialEvidence(sampleId, evidence.externalTrialSource(), evidence.externalTrials());
+        writeTreatmentEvidence(sampleId, evidence);
     }
 
     private void writeMolecularDetails(@NotNull String sampleId, @NotNull MolecularRecord record) {
+        PredictedTumorOrigin predictedTumorOrigin = record.characteristics().predictedTumorOrigin();
+
         context.insertInto(MOLECULAR,
                 MOLECULAR.SAMPLEID,
                 MOLECULAR.EXPERIMENTTYPE,
                 MOLECULAR.EXPERIMENTDATE,
                 MOLECULAR.HASRELIABLEQUALITY,
                 MOLECULAR.PURITY,
+                MOLECULAR.HASRELIABLEPURITY,
+                MOLECULAR.PREDICTEDTUMORTYPE,
+                MOLECULAR.PREDICTEDTUMORLIKELIHOOD,
                 MOLECULAR.ISMICROSATELLITEUNSTABLE,
                 MOLECULAR.ISHOMOLOGOUSREPAIRDEFICIENT,
                 MOLECULAR.TUMORMUTATIONALBURDEN,
@@ -62,6 +104,9 @@ class MolecularDAO {
                         record.date(),
                         DataUtil.toByte(record.hasReliableQuality()),
                         record.characteristics().purity(),
+                        DataUtil.toByte(record.characteristics().hasReliablePurity()),
+                        predictedTumorOrigin != null ? predictedTumorOrigin.tumorType() : null,
+                        predictedTumorOrigin != null ? predictedTumorOrigin.likelihood() : null,
                         DataUtil.toByte(record.characteristics().isMicrosatelliteUnstable()),
                         DataUtil.toByte(record.characteristics().isHomologousRepairDeficient()),
                         record.characteristics().tumorMutationalBurden(),
@@ -69,49 +114,154 @@ class MolecularDAO {
                 .execute();
     }
 
-    private void writeMolecularEvidence(@NotNull String sampleId, @NotNull MolecularEvidence evidence) {
-        writeActinTrials(sampleId, evidence.actinTrials());
-        writeEvidenceForTypeAndSource(sampleId, evidence.externalTrials(), "Experimental", true, evidence.externalTrialSource());
-
-        String evidenceSource = evidence.evidenceSource();
-        writeEvidenceForTypeAndSource(sampleId, evidence.approvedEvidence(), "Approved", true, evidenceSource);
-        writeEvidenceForTypeAndSource(sampleId, evidence.onLabelExperimentalEvidence(), "Experimental (on-label)", true, evidenceSource);
-        writeEvidenceForTypeAndSource(sampleId, evidence.offLabelExperimentalEvidence(), "Experimental (off-label)", true, evidenceSource);
-        writeEvidenceForTypeAndSource(sampleId, evidence.preClinicalEvidence(), "Pre-clinical", true, evidenceSource);
-        writeEvidenceForTypeAndSource(sampleId, evidence.knownResistanceEvidence(), "Resistance (known)", false, evidenceSource);
-        writeEvidenceForTypeAndSource(sampleId, evidence.suspectResistanceEvidence(), "Resistance (suspected)", false, evidenceSource);
-    }
-
-    private void writeActinTrials(@NotNull String sampleId, @NotNull Iterable<ActinTrialEvidence> evidences) {
-        for (ActinTrialEvidence evidence : evidences) {
-            context.insertInto(MOLECULAREVIDENCE,
-                    MOLECULAREVIDENCE.SAMPLEID,
-                    MOLECULAREVIDENCE.TYPE,
-                    MOLECULAREVIDENCE.EVENT,
-                    MOLECULAREVIDENCE.TREATMENT,
-                    MOLECULAREVIDENCE.ISRESPONSIVE,
-                    MOLECULAREVIDENCE.SOURCE)
+    private void writeVariants(@NotNull String sampleId, @NotNull Set<Variant> variants) {
+        for (Variant variant : variants) {
+            context.insertInto(VARIANT,
+                    VARIANT.SAMPLEID,
+                    VARIANT.GENE,
+                    VARIANT.IMPACT,
+                    VARIANT.VARIANTCOPYNUMBER,
+                    VARIANT.TOTALCOPYNUMBER,
+                    VARIANT.DRIVERTYPE,
+                    VARIANT.CLONALLIKELIHOOD)
                     .values(sampleId,
-                            "Experimental",
-                            evidence.event(),
-                            evidence.trialAcronym(),
-                            DataUtil.toByte(evidence.isInclusionCriterion()),
-                            "ACTIN")
+                            variant.gene(),
+                            variant.impact(),
+                            variant.variantCopyNumber(),
+                            variant.totalCopyNumber(),
+                            variant.driverType().toString(),
+                            variant.clonalLikelihood())
                     .execute();
         }
     }
 
-    private void writeEvidenceForTypeAndSource(@NotNull String sampleId, @NotNull Iterable<TreatmentEvidence> evidences,
-            @NotNull String type, boolean isResponsive, @NotNull String source) {
+    private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {
+        for (Amplification amplification : amplifications) {
+            context.insertInto(AMPLIFICATION, AMPLIFICATION.SAMPLEID, AMPLIFICATION.GENE, AMPLIFICATION.ISPARTIAL, AMPLIFICATION.COPIES)
+                    .values(sampleId, amplification.gene(), DataUtil.toByte(amplification.isPartial()), amplification.copies())
+                    .execute();
+        }
+    }
+
+    private void writeLosses(@NotNull String sampleId, @NotNull Set<Loss> losses) {
+        for (Loss loss : losses) {
+            context.insertInto(LOSS, LOSS.SAMPLEID, LOSS.GENE, LOSS.ISPARTIAL)
+                    .values(sampleId, loss.gene(), DataUtil.toByte(loss.isPartial()))
+                    .execute();
+        }
+    }
+
+    private void writeHomozygousDisruptions(@NotNull String sampleId, @NotNull Set<HomozygousDisruption> homozygousDisruptions) {
+        for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
+            context.insertInto(HOMOZYGOUSDISRUPTION, HOMOZYGOUSDISRUPTION.SAMPLEID, HOMOZYGOUSDISRUPTION.GENE)
+                    .values(sampleId, homozygousDisruption.gene())
+                    .execute();
+        }
+    }
+
+    private void writeDisruptions(@NotNull String sampleId, @NotNull Set<Disruption> disruptions) {
+        for (Disruption disruption : disruptions) {
+            context.insertInto(DISRUPTION,
+                    DISRUPTION.SAMPLEID,
+                    DISRUPTION.GENE,
+                    DISRUPTION.TYPE,
+                    DISRUPTION.JUNCTIONCOPYNUMBER,
+                    DISRUPTION.UNDISRUPTEDCOPYNUMBER,
+                    DISRUPTION.DISRUPTEDRANGE)
+                    .values(sampleId,
+                            disruption.gene(),
+                            disruption.type(),
+                            disruption.junctionCopyNumber(),
+                            disruption.undisruptedCopyNumber(),
+                            disruption.range())
+                    .execute();
+        }
+    }
+
+    private void writeFusions(@NotNull String sampleId, @NotNull Set<Fusion> fusions) {
+        for (Fusion fusion : fusions) {
+            context.insertInto(FUSION, FUSION.SAMPLEID, FUSION.FIVEGENE, FUSION.THREEGENE, FUSION.DETAILS, FUSION.DRIVERTYPE)
+                    .values(sampleId, fusion.fiveGene(), fusion.threeGene(), fusion.details(), fusion.driverType().toString())
+                    .execute();
+        }
+    }
+
+    private void writeViruses(@NotNull String sampleId, @NotNull Set<Virus> viruses) {
+        for (Virus virus : viruses) {
+            context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.NAME, VIRUS.INTEGRATIONS)
+                    .values(sampleId, virus.name(), virus.integrations())
+                    .execute();
+        }
+    }
+
+    private void writePharmaco(@NotNull String sampleId, @NotNull Set<PharmacoEntry> pharmaco) {
+        for (PharmacoEntry entry : pharmaco) {
+            for (Haplotype haplotype : entry.haplotypes()) {
+                context.insertInto(PHARMACO, PHARMACO.SAMPLEID, PHARMACO.GENE, PHARMACO.HAPLOTYPE, PHARMACO.HAPLOTYPEFUNCTION)
+                        .values(sampleId, entry.gene(), haplotype.name(), haplotype.function())
+                        .execute();
+            }
+        }
+    }
+
+    private void writeActinTrialEvidence(@NotNull String sampleId, @NotNull String actinSource,
+            @NotNull Set<ActinTrialEvidence> actinTrials) {
+        for (ActinTrialEvidence evidence : actinTrials) {
+            context.insertInto(ACTINTRIALEVIDENCE,
+                    ACTINTRIALEVIDENCE.SAMPLEID,
+                    ACTINTRIALEVIDENCE.SOURCE,
+                    ACTINTRIALEVIDENCE.EVENT,
+                    ACTINTRIALEVIDENCE.TRIALACRONYM,
+                    ACTINTRIALEVIDENCE.COHORTCODE,
+                    ACTINTRIALEVIDENCE.ISINCLUSIONCRITERION,
+                    ACTINTRIALEVIDENCE.TYPE,
+                    ACTINTRIALEVIDENCE.GENE,
+                    ACTINTRIALEVIDENCE.MUTATION)
+                    .values(sampleId,
+                            actinSource,
+                            evidence.event(),
+                            evidence.trialAcronym(),
+                            evidence.cohortId(),
+                            DataUtil.toByte(evidence.isInclusionCriterion()),
+                            evidence.type().toString(),
+                            evidence.gene(),
+                            evidence.mutation())
+                    .execute();
+        }
+    }
+
+    private void writeExternalTrialEvidence(@NotNull String sampleId, @NotNull String externalTrialSource,
+            @NotNull Set<ExternalTrialEvidence> externalTrials) {
+        for (ExternalTrialEvidence evidence : externalTrials) {
+            context.insertInto(EXTERNALTRIALEVIDENCE,
+                    EXTERNALTRIALEVIDENCE.SAMPLEID,
+                    EXTERNALTRIALEVIDENCE.SOURCE,
+                    EXTERNALTRIALEVIDENCE.EVENT,
+                    EXTERNALTRIALEVIDENCE.TRIAL).values(sampleId, externalTrialSource, evidence.event(), evidence.trial()).execute();
+        }
+    }
+
+    private void writeTreatmentEvidence(@NotNull String sampleId, @NotNull MolecularEvidence evidence) {
+        String evidenceSource = evidence.evidenceSource();
+        writeEvidenceForType(sampleId, evidenceSource, "Approved", true, evidence.approvedEvidence());
+        writeEvidenceForType(sampleId, evidenceSource, "Experimental (on-label)", true, evidence.onLabelExperimentalEvidence());
+        writeEvidenceForType(sampleId, evidenceSource, "Experimental (off-label)", true, evidence.offLabelExperimentalEvidence());
+        writeEvidenceForType(sampleId, evidenceSource, "Pre-clinical", true, evidence.preClinicalEvidence());
+        writeEvidenceForType(sampleId, evidenceSource, "Resistance (known)", false, evidence.knownResistanceEvidence());
+        writeEvidenceForType(sampleId, evidenceSource, "Resistance (suspected)", false, evidence.suspectResistanceEvidence());
+    }
+
+    private void writeEvidenceForType(@NotNull String sampleId, @NotNull String source, @NotNull String type, boolean isResponsive,
+            @NotNull Iterable<TreatmentEvidence> evidences) {
         for (TreatmentEvidence evidence : evidences) {
-            context.insertInto(MOLECULAREVIDENCE,
-                    MOLECULAREVIDENCE.SAMPLEID,
-                    MOLECULAREVIDENCE.TYPE,
-                    MOLECULAREVIDENCE.EVENT,
-                    MOLECULAREVIDENCE.TREATMENT,
-                    MOLECULAREVIDENCE.ISRESPONSIVE,
-                    MOLECULAREVIDENCE.SOURCE)
-                    .values(sampleId, type, evidence.event(), evidence.treatment(), DataUtil.toByte(isResponsive), source)
+            context.insertInto(TREATMENTEVIDENCE,
+                    TREATMENTEVIDENCE.SAMPLEID,
+                    TREATMENTEVIDENCE.SOURCE,
+                    TREATMENTEVIDENCE.TYPE,
+                    TREATMENTEVIDENCE.EVENT,
+                    TREATMENTEVIDENCE.TREATMENT,
+                    TREATMENTEVIDENCE.ISRESPONSIVE)
+                    .values(sampleId, source, type, evidence.event(), evidence.treatment(), DataUtil.toByte(isResponsive))
                     .execute();
         }
     }

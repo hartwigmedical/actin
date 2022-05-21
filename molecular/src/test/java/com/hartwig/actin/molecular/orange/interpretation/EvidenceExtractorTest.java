@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapper;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapper;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -28,12 +28,12 @@ public class EvidenceExtractorTest {
 
     @Test
     public void canMapExternalTreatmentsToActin() {
-        ExternalTreatmentMapper mapper = ExternalTreatmentMapperTestFactory.create("B responsive external treatment", "mapped!");
+        ExternalTrialMapper mapper = ExternalTreatmentMapperTestFactory.create("B responsive external trial", "mapped!");
 
         EvidenceExtractor extractor = new EvidenceExtractor(mapper);
 
         MolecularEvidence evidence = extractor.extract(withProtectRecord(createTestProtectRecord()));
-        assertEquals("mapped!", evidence.externalTrials().iterator().next().treatment());
+        assertEquals("mapped!", evidence.externalTrials().iterator().next().trial());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class EvidenceExtractorTest {
         evidences.add(ProtectTestFactory.builder()
                 .reported(true)
                 .event("B responsive external event")
-                .treatment("B responsive external treatment")
+                .treatment("B responsive external trial")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
@@ -170,7 +170,7 @@ public class EvidenceExtractorTest {
         evidences.add(ProtectTestFactory.builder()
                 .reported(true)
                 .event("B responsive actin event")
-                .treatment("B responsive actin treatment")
+                .treatment("B responsive actin trial")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)

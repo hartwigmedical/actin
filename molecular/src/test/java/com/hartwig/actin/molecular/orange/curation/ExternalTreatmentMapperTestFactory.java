@@ -10,14 +10,13 @@ public final class ExternalTreatmentMapperTestFactory {
     }
 
     @NotNull
-    public static ExternalTreatmentMapper create() {
-        return new ExternalTreatmentMapper(Lists.newArrayList());
+    public static ExternalTrialMapper create() {
+        return new ExternalTrialMapper(Lists.newArrayList());
     }
 
     @NotNull
-    public static ExternalTreatmentMapper create(@NotNull String externalTreatment, @NotNull String actinTreatment) {
-        ExternalTreatmentMapping mapping =
-                ImmutableExternalTreatmentMapping.builder().externalTreatment(externalTreatment).actinTreatment(actinTreatment).build();
-        return new ExternalTreatmentMapper(Lists.newArrayList(mapping));
+    public static ExternalTrialMapper create(@NotNull String externalTrial, @NotNull String actinTrial) {
+        ExternalTrialMapping mapping = ImmutableExternalTrialMapping.builder().externalTrial(externalTrial).actinTrial(actinTrial).build();
+        return new ExternalTrialMapper(Lists.newArrayList(mapping));
     }
 }

@@ -6,12 +6,14 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
-import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapper;
-import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapping;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapper;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
@@ -19,6 +21,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
 import com.hartwig.actin.molecular.sort.evidence.ActinTrialEvidenceComparator;
+import com.hartwig.actin.molecular.sort.evidence.ExternalTrialEvidenceComparator;
 import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,16 +37,16 @@ class EvidenceExtractor {
     static final String EVIDENCE_SOURCE_NAME = "CKB";
 
     @NotNull
-    private final ExternalTreatmentMapper externalTreatmentMapper;
+    private final ExternalTrialMapper externalTrialMapper;
 
     @NotNull
-    public static EvidenceExtractor extract(@NotNull List<ExternalTreatmentMapping> mappings) {
-        return new EvidenceExtractor(new ExternalTreatmentMapper(mappings));
+    public static EvidenceExtractor extract(@NotNull List<ExternalTrialMapping> mappings) {
+        return new EvidenceExtractor(new ExternalTrialMapper(mappings));
     }
 
     @VisibleForTesting
-    EvidenceExtractor(@NotNull final ExternalTreatmentMapper externalTreatmentMapper) {
-        this.externalTreatmentMapper = externalTreatmentMapper;
+    EvidenceExtractor(@NotNull final ExternalTrialMapper externalTrialMapper) {
+        this.externalTrialMapper = externalTrialMapper;
     }
 
     @NotNull
@@ -75,17 +78,17 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private Set<TreatmentEvidence> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
-        Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
+    private Set<ExternalTrialEvidence> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+        Set<ExternalTrialEvidence> result = Sets.newTreeSet(new ExternalTrialEvidenceComparator());
         for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EXTERNAL_SOURCE)) {
-            result.add(mapExternalToActinTreatment(toTreatmentEvidence(evidence)));
+            result.add(mapExternalToActinTreatment(toExternalTrialEvidence(evidence)));
         }
         return result;
     }
 
     @NotNull
-    private TreatmentEvidence mapExternalToActinTreatment(@NotNull TreatmentEvidence entry) {
-        return ImmutableTreatmentEvidence.builder().from(entry).treatment(externalTreatmentMapper.map(entry.treatment())).build();
+    private ExternalTrialEvidence mapExternalToActinTreatment(@NotNull ExternalTrialEvidence evidence) {
+        return ImmutableExternalTrialEvidence.builder().from(evidence).trial(externalTrialMapper.map(evidence.trial())).build();
     }
 
     @NotNull
@@ -234,7 +237,18 @@ class EvidenceExtractor {
     }
 
     @NotNull
+    private static ExternalTrialEvidence toExternalTrialEvidence(@NotNull ProtectEvidence evidence) {
+        return ImmutableExternalTrialEvidence.builder()
+                .event(EvidenceEventExtraction.extract(evidence))
+                .trial(evidence.treatment())
+                .build();
+    }
+
+    @NotNull
     private static TreatmentEvidence toTreatmentEvidence(@NotNull ProtectEvidence evidence) {
-        return ImmutableTreatmentEvidence.builder().event(EvidenceEventExtraction.extract(evidence)).treatment(evidence.treatment()).build();
+        return ImmutableTreatmentEvidence.builder()
+                .event(EvidenceEventExtraction.extract(evidence))
+                .treatment(evidence.treatment())
+                .build();
     }
 }

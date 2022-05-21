@@ -58,7 +58,9 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
@@ -75,6 +77,7 @@ import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 import com.hartwig.actin.molecular.sort.evidence.ActinTrialEvidenceComparator;
+import com.hartwig.actin.molecular.sort.evidence.ExternalTrialEvidenceComparator;
 import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
@@ -324,7 +327,7 @@ public class MolecularRecordJson {
                     .actinSource(string(evidence, "actinSource"))
                     .actinTrials(toActinTrialEvidences(array(evidence, "actinTrials")))
                     .externalTrialSource(string(evidence, "externalTrialSource"))
-                    .externalTrials(toTreatmentEvidences(array(evidence, "externalTrials")))
+                    .externalTrials(toExternalTrialEvidences(array(evidence, "externalTrials")))
                     .evidenceSource(string(evidence, "evidenceSource"))
                     .approvedEvidence(toTreatmentEvidences(array(evidence, "approvedEvidence")))
                     .onLabelExperimentalEvidence(toTreatmentEvidences(array(evidence, "onLabelExperimentalEvidence")))
@@ -354,13 +357,26 @@ public class MolecularRecordJson {
         }
 
         @NotNull
+        private static Set<ExternalTrialEvidence> toExternalTrialEvidences(@NotNull JsonArray externalTrialArray) {
+            Set<ExternalTrialEvidence> evidences = Sets.newTreeSet(new ExternalTrialEvidenceComparator());
+            for (JsonElement element : externalTrialArray) {
+                JsonObject externalTrialEvidence = element.getAsJsonObject();
+                evidences.add(ImmutableExternalTrialEvidence.builder()
+                        .event(string(externalTrialEvidence, "event"))
+                        .trial(string(externalTrialEvidence, "trial"))
+                        .build());
+            }
+            return evidences;
+        }
+
+        @NotNull
         private static Set<TreatmentEvidence> toTreatmentEvidences(@NotNull JsonArray evidenceArray) {
             Set<TreatmentEvidence> evidences = Sets.newTreeSet(new TreatmentEvidenceComparator());
             for (JsonElement element : evidenceArray) {
-                JsonObject evidence = element.getAsJsonObject();
+                JsonObject treatmentEvidence = element.getAsJsonObject();
                 evidences.add(ImmutableTreatmentEvidence.builder()
-                        .event(string(evidence, "event"))
-                        .treatment(string(evidence, "treatment"))
+                        .event(string(treatmentEvidence, "event"))
+                        .treatment(string(treatmentEvidence, "treatment"))
                         .build());
             }
             return evidences;

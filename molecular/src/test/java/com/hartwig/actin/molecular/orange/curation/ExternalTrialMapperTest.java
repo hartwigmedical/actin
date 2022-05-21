@@ -8,13 +8,11 @@ import com.google.common.collect.Lists;
 
 import org.junit.Test;
 
-public class ExternalTreatmentMapperTest {
+public class ExternalTrialMapperTest {
 
     @Test
-    public void canMapExternalTreatments() {
-        List<ExternalTreatmentMapping> mappings =
-                Lists.newArrayList(ImmutableExternalTreatmentMapping.builder().actinTreatment("ACT 1").externalTreatment("EXT 1").build());
-        ExternalTreatmentMapper mapper = new ExternalTreatmentMapper(mappings);
+    public void canMapExternalTrials() {
+        ExternalTrialMapper mapper = ExternalTreatmentMapperTestFactory.create("EXT 1", "ACT 1");
 
         assertEquals("ACT 1", mapper.map("EXT 1"));
         assertEquals("ACT 1", mapper.map("ACT 1"));

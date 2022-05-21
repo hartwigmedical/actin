@@ -7,6 +7,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidenceTestFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
@@ -32,11 +34,11 @@ public class EvidenceInterpreterTest {
     private static MolecularEvidence createTestEvidence() {
         return ImmutableMolecularEvidence.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord().evidence())
-                .approvedEvidence(Sets.newHashSet(createTreatmentEvidence("event 1", "treatment 1")))
                 .actinTrials(Sets.newHashSet(createActinTrialEvidence("event 2", "trial 1")))
-                .externalTrials(Sets.newHashSet(createTreatmentEvidence("event 1", "trial 1"),
-                        createTreatmentEvidence("event 2", "trial 1"),
-                        createTreatmentEvidence("event 3", "trial 3")))
+                .externalTrials(Sets.newHashSet(createExternalTrialEvidence("event 1", "trial 1"),
+                        createExternalTrialEvidence("event 2", "trial 1"),
+                        createExternalTrialEvidence("event 3", "trial 3")))
+                .approvedEvidence(Sets.newHashSet(createTreatmentEvidence("event 1", "treatment 1")))
                 .onLabelExperimentalEvidence(Sets.newHashSet(createTreatmentEvidence("event 2", "trial 1")))
                 .offLabelExperimentalEvidence(Sets.newHashSet(createTreatmentEvidence("event 1", "treatment 1"),
                         createTreatmentEvidence("event 3", "treatment 3")))
@@ -46,6 +48,11 @@ public class EvidenceInterpreterTest {
     @NotNull
     private static ActinTrialEvidence createActinTrialEvidence(@NotNull String event, @NotNull String trial) {
         return ActinTrialEvidenceTestFactory.builder().event(event).trialAcronym(trial).build();
+    }
+
+    @NotNull
+    private static ExternalTrialEvidence createExternalTrialEvidence(@NotNull String event, @NotNull String trial) {
+        return ImmutableExternalTrialEvidence.builder().event(event).trial(trial).build();
     }
 
     @NotNull

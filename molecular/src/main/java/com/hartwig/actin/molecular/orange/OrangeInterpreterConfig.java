@@ -20,7 +20,7 @@ public interface OrangeInterpreterConfig {
     Logger LOGGER = LogManager.getLogger(OrangeInterpreterConfig.class);
 
     String ORANGE_JSON = "orange_json";
-    String EXTERNAL_TREATMENT_MAPPING_TSV = "external_treatment_mapping_tsv";
+    String EXTERNAL_TRIAL_MAPPING_TSV = "external_trial_mapping_tsv";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -31,7 +31,7 @@ public interface OrangeInterpreterConfig {
         Options options = new Options();
 
         options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted");
-        options.addOption(EXTERNAL_TREATMENT_MAPPING_TSV, true, "A mapping from external treatment names to ACTIN treatments");
+        options.addOption(EXTERNAL_TRIAL_MAPPING_TSV, true, "A mapping from external trial names to ACTIN trials");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
 
@@ -44,7 +44,7 @@ public interface OrangeInterpreterConfig {
     String orangeJson();
 
     @NotNull
-    String externalTreatmentMappingTsv();
+    String externalTrialMappingTsv();
 
     @NotNull
     String outputDirectory();
@@ -58,7 +58,7 @@ public interface OrangeInterpreterConfig {
 
         return ImmutableOrangeInterpreterConfig.builder()
                 .orangeJson(ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON))
-                .externalTreatmentMappingTsv(ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TREATMENT_MAPPING_TSV))
+                .externalTrialMappingTsv(ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

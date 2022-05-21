@@ -141,7 +141,7 @@
     "externalTrials": [
       {
         "event": "High TML",
-        "treatment": "Trial 1"
+        "trial": "Trial 1"
       }
     ],
     "evidenceSource": "evidence",

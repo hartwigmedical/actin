@@ -11,18 +11,18 @@ import com.hartwig.actin.util.TabularFile;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ExternalTreatmentMappingTsv {
+public final class ExternalTrialMappingTsv {
 
     private static final String FIELD_DELIMITER = "\t";
 
-    private ExternalTreatmentMappingTsv() {
+    private ExternalTrialMappingTsv() {
     }
 
     @NotNull
-    public static List<ExternalTreatmentMapping> read(@NotNull String tsv) throws IOException {
+    public static List<ExternalTrialMapping> read(@NotNull String tsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(tsv).toPath());
 
-        List<ExternalTreatmentMapping> mappings = Lists.newArrayList();
+        List<ExternalTrialMapping> mappings = Lists.newArrayList();
         Map<String, Integer> fields = TabularFile.createFields(lines.get(0).split(FIELD_DELIMITER));
         for (String line : lines.subList(1, lines.size())) {
             mappings.add(fromLine(line, fields));
@@ -31,11 +31,11 @@ public final class ExternalTreatmentMappingTsv {
     }
 
     @NotNull
-    private static ExternalTreatmentMapping fromLine(@NotNull String line, @NotNull Map<String, Integer> fields) {
+    private static ExternalTrialMapping fromLine(@NotNull String line, @NotNull Map<String, Integer> fields) {
         String[] values = line.split(FIELD_DELIMITER, -1);
-        return ImmutableExternalTreatmentMapping.builder()
-                .externalTreatment(values[fields.get("externalTreatment")])
-                .actinTreatment(values[fields.get("actinTreatment")])
+        return ImmutableExternalTrialMapping.builder()
+                .externalTrial(values[fields.get("externalTrial")])
+                .actinTrial(values[fields.get("actinTrial")])
                 .build();
     }
 }

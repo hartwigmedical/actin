@@ -2,6 +2,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- TODO Remove after 1st of june
 DROP TABLE IF EXISTS fusionGene;
+DROP TABLE IF EXISTS mutation;
+DROP TABLE IF EXISTS activatedGene;
+DROP TABLE IF EXISTS inactivatedGene;
+DROP TABLE IF EXISTS amplifiedGene;
+DROP TABLE IF EXISTS wildtypeGene;
+DROP TABLE IF EXISTS fusedGene;
+DROP TABLE IF EXISTS molecularEvidence;
 
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
@@ -237,6 +244,9 @@ CREATE TABLE molecular
     experimentDate DATE,
     hasReliableQuality BOOLEAN NOT NULL,
     purity double precision,
+    hasReliablePurity BOOLEAN,
+    predictedTumorType varchar(50),
+    predictedTumorLikelihood double precision,
     isMicrosatelliteUnstable BOOLEAN,
     isHomologousRepairDeficient BOOLEAN,
     tumorMutationalBurden double precision,
@@ -244,68 +254,132 @@ CREATE TABLE molecular
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS mutation;
-CREATE TABLE mutation
+DROP TABLE IF EXISTS variant;
+CREATE TABLE variant
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     gene varchar(50) NOT NULL,
-    mutation varchar(100) NOT NULL,
+    impact varchar(50) NOT NULL,
+    variantCopyNumber double precision NOT NULL,
+    totalCopyNumber double precision NOT NULL,
+    driverType varchar(50) NOT NULL,
+    clonalLikelihood double precision NOT NULL,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS activatedGene;
-CREATE TABLE activatedGene
+DROP TABLE IF EXISTS amplification;
+CREATE TABLE amplification
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     gene varchar(50) NOT NULL,
+    isPartial BOOLEAN NOT NULL,
+    copies int NOT NULL,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS inactivatedGene;
-CREATE TABLE inactivatedGene
+DROP TABLE IF EXISTS loss;
+CREATE TABLE loss
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     gene varchar(50) NOT NULL,
+    isPartial BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS amplifiedGene;
-CREATE TABLE amplifiedGene
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
-    gene varchar(50) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS wildtypeGene;
-CREATE TABLE wildtypeGene
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
-    gene varchar(50) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS fusedGene;
-CREATE TABLE fusedGene
+DROP TABLE IF EXISTS homozygousDisruption;
+CREATE TABLE homozygousDisruption
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     gene varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS molecularEvidence;
-CREATE TABLE molecularEvidence
+DROP TABLE IF EXISTS homozygousDisruption;
+CREATE TABLE homozygousDisruption
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS disruption;
+CREATE TABLE disruption
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    type varchar(50) NOT NULL,
+    junctionCopyNumber double precision NOT NULL,
+    undisruptedCopyNumber double precision NOT NULL,
+    disruptedRange varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS fusion;
+CREATE TABLE fusion
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    fiveGene varchar(50) NOT NULL,
+    threeGene varchar(50) NOT NULL,
+    details varchar(50) NOT NULL,
+    driverType varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS virus;
+CREATE TABLE virus
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    name varchar(50) NOT NULL,
+    integrations int NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS pharmaco;
+CREATE TABLE pharmaco
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    gene varchar(50) NOT NULL,
+    haplotype varchar(50) NOT NULL,
+    haplotypeFunction varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS actinTrialEvidence;
+CREATE TABLE actinTrialEvidence
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    source varchar(50) NOT NULL,
+    event varchar(50) NOT NULL,
+    trialAcronym varchar(50) NOT NULL,
+    cohortCode varchar(50),
+    isInclusionCriterion BOOLEAN NOT NULL,
+    type varchar(50) NOT NULL,
+    gene varchar(50),
+    mutation varchar(50),
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS externalTrialEvidence;
+CREATE TABLE externalTrialEvidence
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    source varchar(50) NOT NULL,
+    event varchar(50) NOT NULL,
+    trial varchar(500) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS treatmentEvidence;
+CREATE TABLE treatmentEvidence
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    source varchar(50) NOT NULL,
     type varchar(50) NOT NULL,
     event varchar(50) NOT NULL,
     treatment varchar(500) NOT NULL,
     isResponsive BOOLEAN NOT NULL,
-    source varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
-
-
 
 -- TREATMENT
 DROP TABLE IF EXISTS trial;

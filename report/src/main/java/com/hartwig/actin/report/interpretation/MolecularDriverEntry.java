@@ -22,10 +22,10 @@ public abstract class MolecularDriverEntry {
     public abstract DriverLikelihood driverLikelihood();
 
     @NotNull
-    public abstract Set<String> actinTreatments();
+    public abstract Set<String> actinTrials();
 
     @NotNull
-    public abstract Set<String> externalTreatments();
+    public abstract Set<String> externalTrials();
 
     @Nullable
     public abstract String bestResponsiveEvidence();

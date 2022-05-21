@@ -55,8 +55,8 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(entry.driverType()));
             table.addCell(Cells.createContent(entry.driver()));
             table.addCell(Cells.createContent(entry.driverLikelihood().display()));
-            table.addCell(Cells.createContent(concat(entry.actinTreatments())));
-            table.addCell(Cells.createContent(concat(entry.externalTreatments())));
+            table.addCell(Cells.createContent(concat(entry.actinTrials())));
+            table.addCell(Cells.createContent(concat(entry.externalTrials())));
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResponsiveEvidence())));
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
         }
