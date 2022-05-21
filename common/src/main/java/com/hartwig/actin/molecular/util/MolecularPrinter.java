@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.interpretation.GeneMutation;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -83,15 +82,6 @@ public class MolecularPrinter {
     @NotNull
     private static String formatInteger(@Nullable Integer integer) {
         return integer != null ? String.valueOf(integer) : "unknown";
-    }
-
-    @NotNull
-    private static String mutationString(@NotNull Iterable<GeneMutation> mutations) {
-        Set<String> strings = Sets.newHashSet();
-        for (GeneMutation mutation : mutations) {
-            strings.add(mutation.gene() + " " + mutation.mutation());
-        }
-        return concat(strings);
     }
 
     @NotNull

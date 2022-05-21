@@ -4,7 +4,6 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
-import com.hartwig.actin.molecular.interpretation.GeneMutation;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.TestProtectDataFactory;
 
@@ -50,17 +49,6 @@ public class ActinTrialEvidenceFactoryTest {
 //
 //        assertEquals(1, actionableActinEvents.fusedGenes().size());
 //        assertTrue(actionableActinEvents.fusedGenes().contains("ALK"));
-    }
-
-    @NotNull
-    private static GeneMutation findByGene(@NotNull Iterable<GeneMutation> geneMutations, @NotNull String geneToFind) {
-        for (GeneMutation geneMutation : geneMutations) {
-            if (geneMutation.gene().equals(geneToFind)) {
-                return geneMutation;
-            }
-        }
-
-        throw new IllegalStateException("Could not find gene mutation for gene: " + geneToFind);
     }
 
     @NotNull

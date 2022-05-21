@@ -9,15 +9,10 @@ import static com.hartwig.actin.database.Tables.MOLECULAREVIDENCE;
 import static com.hartwig.actin.database.Tables.MUTATION;
 import static com.hartwig.actin.database.Tables.WILDTYPEGENE;
 
-import java.util.Set;
-
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
-import com.hartwig.actin.molecular.interpretation.ActionableActinEvents;
-import com.hartwig.actin.molecular.interpretation.GeneMutation;
-import com.hartwig.actin.molecular.interpretation.MolecularInterpreter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -48,13 +43,6 @@ class MolecularDAO {
         String sampleId = record.sampleId();
         writeMolecularDetails(sampleId, record);
 
-        ActionableActinEvents actionableActinEvents = MolecularInterpreter.extractActionableEvents(record);
-        writeMutations(sampleId, actionableActinEvents.mutations());
-        writeActivatedGenes(sampleId, actionableActinEvents.activatedGenes());
-        writeInactivatedGenes(sampleId, actionableActinEvents.inactivatedGenes());
-        writeAmplifiedGenes(sampleId, actionableActinEvents.amplifiedGenes());
-        writeWildtypeGenes(sampleId, actionableActinEvents.wildtypeGenes());
-        writeFusedGenes(sampleId, actionableActinEvents.fusedGenes());
         writeMolecularEvidence(sampleId, record.evidence());
     }
 
@@ -79,44 +67,6 @@ class MolecularDAO {
                         record.characteristics().tumorMutationalBurden(),
                         record.characteristics().tumorMutationalLoad())
                 .execute();
-    }
-
-    private void writeMutations(@NotNull String sampleId, @NotNull Set<GeneMutation> mutations) {
-        for (GeneMutation mutation : mutations) {
-            context.insertInto(MUTATION, MUTATION.SAMPLEID, MUTATION.GENE, MUTATION.MUTATION_)
-                    .values(sampleId, mutation.gene(), mutation.mutation())
-                    .execute();
-        }
-    }
-
-    private void writeActivatedGenes(@NotNull String sampleId, @NotNull Set<String> activatedGenes) {
-        for (String activatedGene : activatedGenes) {
-            context.insertInto(ACTIVATEDGENE, ACTIVATEDGENE.SAMPLEID, ACTIVATEDGENE.GENE).values(sampleId, activatedGene).execute();
-        }
-    }
-
-    private void writeInactivatedGenes(@NotNull String sampleId, @NotNull Set<String> inactivatedGenes) {
-        for (String inactivatedGene : inactivatedGenes) {
-            context.insertInto(INACTIVATEDGENE, INACTIVATEDGENE.SAMPLEID, INACTIVATEDGENE.GENE).values(sampleId, inactivatedGene).execute();
-        }
-    }
-
-    private void writeAmplifiedGenes(@NotNull String sampleId, @NotNull Set<String> amplifiedGenes) {
-        for (String amplifiedGene : amplifiedGenes) {
-            context.insertInto(AMPLIFIEDGENE, AMPLIFIEDGENE.SAMPLEID, AMPLIFIEDGENE.GENE).values(sampleId, amplifiedGene).execute();
-        }
-    }
-
-    private void writeWildtypeGenes(@NotNull String sampleId, @NotNull Set<String> wildtypeGenes) {
-        for (String wildtypeGene : wildtypeGenes) {
-            context.insertInto(WILDTYPEGENE, WILDTYPEGENE.SAMPLEID, WILDTYPEGENE.GENE).values(sampleId, wildtypeGene).execute();
-        }
-    }
-
-    private void writeFusedGenes(@NotNull String sampleId, @NotNull Set<String> fusedGenes) {
-        for (String fusedGene : fusedGenes) {
-            context.insertInto(FUSEDGENE, FUSEDGENE.SAMPLEID, FUSEDGENE.GENE).values(sampleId, fusedGene).execute();
-        }
     }
 
     private void writeMolecularEvidence(@NotNull String sampleId, @NotNull MolecularEvidence evidence) {
