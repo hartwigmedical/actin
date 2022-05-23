@@ -31,12 +31,8 @@ public class HasHadTreatmentWithCategoryOfTypes implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasHadValidTreatment = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (treatment.categories().contains(category)) {
-                for (String type : types) {
-                    if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                        hasHadValidTreatment = true;
-                    }
-                }
+            if (hasValidCategoryAndType(treatment)) {
+                hasHadValidTreatment = true;
             }
         }
 
@@ -51,5 +47,16 @@ public class HasHadTreatmentWithCategoryOfTypes implements EvaluationFunction {
         }
 
         return builder.build();
+    }
+
+    private boolean hasValidCategoryAndType(@NotNull PriorTumorTreatment treatment) {
+        if (treatment.categories().contains(category)) {
+            for (String type : types) {
+                if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
@@ -20,7 +22,7 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
@@ -32,7 +34,8 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS, hasHadTreatmentCategoryOfTypesWithinWeeksCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS,
+                hasHadTreatmentCategoryOfTypesWithinWeeksCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, hasHadLimitedTreatmentsOfCategoryCreator());
@@ -114,8 +117,14 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentCategoryOfTypesWithinWeeksCreator() {
-        return function -> new HasHadTreatmentWithCategoryOfTypesWithinWeeks();
+    private static FunctionCreator hasHadTreatmentCategoryOfTypesWithinWeeksCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+        return function -> {
+            OneTypedTreatmentManyStringsOneInteger input =
+                    FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
+
+            LocalDate minDate = referenceDateProvider.date().minusWeeks(input.integer());
+            return new HasHadTreatmentWithCategoryOfTypesRecently(input.category(), input.strings(), minDate);
+        };
     }
 
     @NotNull
