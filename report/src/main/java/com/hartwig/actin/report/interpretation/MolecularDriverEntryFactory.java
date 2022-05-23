@@ -203,7 +203,7 @@ public final class MolecularDriverEntryFactory {
     private static Set<String> actinTrials(@NotNull Driver driver, @NotNull Set<ActinTrialEvidence> actinTrials) {
         Set<String> trials = Sets.newTreeSet(Ordering.natural());
         for (ActinTrialEvidence evidence : actinTrials) {
-            if (evidence.event().equals(driver.event())) {
+            if (evidence.isInclusionCriterion() && evidence.event().equals(driver.event())) {
                 trials.add(evidence.trialAcronym());
             }
         }
