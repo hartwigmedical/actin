@@ -192,7 +192,7 @@ public final class MolecularDriverEntryFactory {
 
     private static void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver,
             @NotNull MolecularEvidence evidence) {
-        entryBuilder.actinTrials(actinTrials(driver, evidence.actinTrials()));
+        entryBuilder.actinTrials(inclusiveActinTrials(driver, evidence.actinTrials()));
         entryBuilder.externalTrials(externalTrials(driver, evidence.externalTrials()));
 
         entryBuilder.bestResponsiveEvidence(bestResponsiveEvidence(driver, evidence));
@@ -200,7 +200,7 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<String> actinTrials(@NotNull Driver driver, @NotNull Set<ActinTrialEvidence> actinTrials) {
+    private static Set<String> inclusiveActinTrials(@NotNull Driver driver, @NotNull Set<ActinTrialEvidence> actinTrials) {
         Set<String> trials = Sets.newTreeSet(Ordering.natural());
         for (ActinTrialEvidence evidence : actinTrials) {
             if (evidence.isInclusionCriterion() && evidence.event().equals(driver.event())) {
