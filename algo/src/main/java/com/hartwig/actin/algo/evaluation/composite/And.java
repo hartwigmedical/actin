@@ -30,21 +30,23 @@ public class And implements EvaluationFunction {
         }
 
         EvaluationResult worst = null;
+        Boolean recoverable = null;
         for (Evaluation eval : evaluations) {
             if (worst == null || eval.result().isWorseThan(worst)) {
                 worst = eval.result();
+                recoverable = eval.recoverable();
+            } else if (worst == eval.result()) {
+                recoverable = eval.recoverable() && recoverable;
             }
         }
 
-        if (worst == null) {
+        if (worst == null || recoverable == null) {
             throw new IllegalStateException("Could not determine AND result for functions: " + functions);
         }
 
-        boolean recoverable = true;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(worst);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(worst).recoverable(recoverable);
         for (Evaluation eval : evaluations) {
-            if (eval.result() == worst) {
-                recoverable = recoverable && eval.recoverable();
+            if (eval.result() == worst && eval.recoverable() == recoverable) {
                 builder.addAllPassSpecificMessages(eval.passSpecificMessages());
                 builder.addAllPassGeneralMessages(eval.passGeneralMessages());
                 builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());
@@ -56,6 +58,6 @@ public class And implements EvaluationFunction {
             }
         }
 
-        return builder.recoverable(recoverable).build();
+        return builder.build();
     }
 }

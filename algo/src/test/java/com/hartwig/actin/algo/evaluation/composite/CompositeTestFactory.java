@@ -21,8 +21,8 @@ final class CompositeTestFactory {
     }
 
     @NotNull
-    public static Evaluation create(boolean recoverable) {
-        return create(DEFAULT_RESULT, recoverable, DEFAULT_INDEX);
+    public static Evaluation create(boolean recoverable, int index) {
+        return create(DEFAULT_RESULT, recoverable, index);
     }
 
     @NotNull

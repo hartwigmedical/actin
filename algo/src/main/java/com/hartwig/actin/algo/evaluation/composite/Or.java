@@ -30,21 +30,23 @@ public class Or implements EvaluationFunction {
         }
 
         EvaluationResult best = null;
+        Boolean recoverable = null;
         for (Evaluation eval : evaluations) {
             if (best == null || best.isWorseThan(eval.result())) {
                 best = eval.result();
+                recoverable = eval.recoverable();
+            }else if (best == eval.result()) {
+                recoverable = eval.recoverable() || recoverable;
             }
         }
 
-        if (best == null) {
+        if (best == null || recoverable == null) {
             throw new IllegalStateException("Could not determine OR result for functions: " + functions);
         }
 
-        boolean recoverable = false;
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(best);
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(best).recoverable(recoverable);
         for (Evaluation eval : evaluations) {
-            if (eval.result() == best) {
-                recoverable = recoverable || eval.recoverable();
+            if (eval.result() == best && eval.recoverable() == recoverable) {
                 builder.addAllPassSpecificMessages(eval.passSpecificMessages());
                 builder.addAllPassGeneralMessages(eval.passGeneralMessages());
                 builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());
@@ -56,6 +58,6 @@ public class Or implements EvaluationFunction {
             }
         }
 
-        return builder.recoverable(recoverable).build();
+        return builder.build();
     }
 }

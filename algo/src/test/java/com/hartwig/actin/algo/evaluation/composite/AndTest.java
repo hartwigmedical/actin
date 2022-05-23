@@ -109,12 +109,15 @@ public class AndTest {
     }
 
     @Test
-    public void properlyDeterminesRecoverable() {
-        EvaluationFunction recoverable = record -> CompositeTestFactory.create(true);
-        EvaluationFunction unrecoverable = record -> CompositeTestFactory.create(false);
+    public void properlyRespectsRecoverable() {
+        EvaluationFunction recoverable = record -> CompositeTestFactory.create(true, 1);
+        EvaluationFunction unrecoverable = record -> CompositeTestFactory.create(false, 2);
 
         Evaluation result = new And(Lists.newArrayList(recoverable, unrecoverable)).evaluate(TEST_PATIENT);
+
         assertFalse(result.recoverable());
+        assertEquals(1, result.undeterminedGeneralMessages().size());
+        assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"));
     }
 
     @Test(expected = IllegalStateException.class)
