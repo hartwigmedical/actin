@@ -1,3 +1,4 @@
-﻿"subject"	"class_display"	"period_start"	"period_end"	"code_coding_display_original"
-"ACTN-01-02-9999"	"surgery"	"2020-08-28 08:00:00.000"	"2020-08-28 08:53:00.000"	"diagnostics stomach"
-""	""	""	""	""
+﻿"subject"	"class_display"	"period_start"	"period_end"	"code_coding_display_original"	"reason_text"
+"ACTN-01-02-9999"	"surgery"	"2020-08-28 08:00:00.000"	"2020-08-28 08:53:00.000"	"diagnostics stomach"	""
+"ACTN-01-02-9999"	"surgery"	"2020-08-29 08:00:00.000"	"2020-08-29 08:54:00.000"	"Procedurele sedatie analgesie ANE op OK"	""
+""	""	""	""	""	""

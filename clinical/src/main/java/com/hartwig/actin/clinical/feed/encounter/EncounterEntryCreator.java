@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class EncounterEntryCreator implements FeedEntryCreator<EncounterEntry> {
 
+    private static final String BIOPSY_PROCEDURE_DISPLAY = "Procedurele sedatie analgesie ANE op OK";
+
     public EncounterEntryCreator() {
     }
 
@@ -24,6 +26,6 @@ public class EncounterEntryCreator implements FeedEntryCreator<EncounterEntry> {
 
     @Override
     public boolean isValid(@NotNull final FeedLine line) {
-        return true;
+        return !line.string("code_coding_display_original").equals(BIOPSY_PROCEDURE_DISPLAY);
     }
 }
