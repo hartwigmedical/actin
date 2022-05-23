@@ -64,7 +64,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         float trialColWidth = width / 9;
         float acronymColWidth = width / 11;
         float cohortColWidth = width / 3;
-        float molecularColWidth = width / 11;
+        float molecularColWidth = width / 8;
         float checksColWidth = width - (trialColWidth + acronymColWidth + cohortColWidth + molecularColWidth);
 
         return new EligibleActinTrialsGenerator(trials,
