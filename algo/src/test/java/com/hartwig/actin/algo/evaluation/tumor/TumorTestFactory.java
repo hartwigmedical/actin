@@ -42,6 +42,11 @@ final class TumorTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withDoidAndDetails(@NotNull String doid, @NotNull String extraDetails) {
+        return withTumorDetails(ImmutableTumorDetails.builder().addDoids(doid).primaryTumorExtraDetails(extraDetails).build());
+    }
+
+    @NotNull
     public static PatientRecord withDoids(@Nullable List<String> doids) {
         return withTumorDetails(ImmutableTumorDetails.builder().doids(doids).build());
     }

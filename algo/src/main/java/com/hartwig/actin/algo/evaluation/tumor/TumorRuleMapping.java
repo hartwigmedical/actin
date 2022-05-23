@@ -23,7 +23,7 @@ public final class TumorRuleMapping {
 
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
-        map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator());
+        map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator(doidModel));
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -60,7 +60,6 @@ public final class TumorRuleMapping {
         };
     }
 
-
     @NotNull
     private static FunctionCreator hasCancerOfUnknownPrimaryCreator(@NotNull DoidModel doidModel) {
         return function -> {
@@ -70,8 +69,8 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasProstateCancerWithSmallCellHistologyCreator() {
-        return function -> new HasProstateCancerWithSmallCellHistology();
+    private static FunctionCreator hasProstateCancerWithSmallCellHistologyCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasProstateCancerWithSmallCellHistology(doidModel);
     }
 
     @NotNull
