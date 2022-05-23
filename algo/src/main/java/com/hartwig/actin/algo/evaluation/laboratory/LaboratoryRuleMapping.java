@@ -54,7 +54,8 @@ public final class LaboratoryRuleMapping {
         map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X,
                 hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME, referenceDateProvider));
         map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, hasLimitedPTTCreator());
-        map.put(EligibilityRule.HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT, hasLabValueOutsideRefLimitUpCreator());
+        map.put(EligibilityRule.HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT,
+                hasLabValueOutsideRefLimitUpCreator(LabMeasurement.DDIMER, referenceDateProvider));
 
         map.put(EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X,
                 hasSufficientLabValueCreator(LabMeasurement.ALBUMIN, LabUnit.GRAMS_PER_DECILITER, referenceDateProvider));
@@ -201,8 +202,9 @@ public final class LaboratoryRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasLabValueOutsideRefLimitUpCreator() {
-        return function -> new HasLabValueOutsideRefLimitUp();
+    private static FunctionCreator hasLabValueOutsideRefLimitUpCreator(@NotNull LabMeasurement measurement,
+            @NotNull ReferenceDateProvider referenceDateProvider) {
+        return function -> createLabEvaluator(measurement, new HasLabValueOutsideRefLimitUp(), referenceDateProvider);
     }
 
     @NotNull
@@ -262,6 +264,7 @@ public final class LaboratoryRuleMapping {
         return new LabMeasurementEvaluator(measurement, function, minValidLabDate(referenceDateProvider));
     }
 
+    @NotNull
     private static LocalDate minValidLabDate(@NotNull ReferenceDateProvider referenceDateProvider) {
         return referenceDateProvider.date().minusDays(MAX_LAB_VALUE_AGE_DAYS);
     }
