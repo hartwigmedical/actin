@@ -112,6 +112,22 @@ public class LabResultsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("LDH"));
         addLabMeasurements(table, dates, LabMeasurement.LACTATE_DEHYDROGENASE);
 
+        table.addCell(Cells.createKey("Tumor markers"));
+//        table.addCell(Cells.createKey("CA 15.3"));
+//        addLabMeasurements(table, dates, LabMeasurement.CA_);
+//        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createKey("CA 125"));
+        addLabMeasurements(table, dates, LabMeasurement.CA_125);
+//        table.addCell(Cells.createEmpty());
+//        table.addCell(Cells.createKey("CA 19.9"));
+//        addLabMeasurements(table, dates, LabMeasurement.CA);
+//        table.addCell(Cells.createEmpty());
+//        table.addCell(Cells.createKey("CEA"));
+//        addLabMeasurements(table, dates, LabMeasurement);
+//        table.addCell(Cells.createEmpty());
+//        table.addCell(Cells.createKey("PSA"));
+//        addLabMeasurements(table, dates, LabMeasurement.);
+
         if (labInterpretation.allDates().size() > MAX_LAB_DATES) {
             String note = "Note: Only the most recent " + MAX_LAB_DATES + " lab results have been displayed";
             table.addCell(Cells.createSpanningSubNote(note, table));
