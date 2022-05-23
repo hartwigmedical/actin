@@ -476,7 +476,7 @@ HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 differ
 HAS_SBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average systolic blood pressure value <= X
 HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value => X
 HAS_DBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value <= X
-HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND average value => X
+HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND median value => X
 HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND average value between X and Y 
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 
