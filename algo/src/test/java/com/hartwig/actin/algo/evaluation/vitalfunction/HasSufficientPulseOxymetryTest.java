@@ -24,14 +24,18 @@ public class HasSufficientPulseOxymetryTest {
         List<VitalFunction> pulses = Lists.newArrayList();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
 
-        pulses.add(pulse().date(referenceDate).value(95).build());
+        pulses.add(pulse().date(referenceDate).value(92).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
 
-        // Undetermined when the average falls below 90 but one measure above 90.
+        // Undetermined when the median falls below 90 but one measure above 90.
         pulses.add(pulse().date(referenceDate.minusDays(1)).value(80).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
 
-        // Succeed again when the average goes above 90
+        // Succeed when median goes above 90.
+        pulses.add(pulse().date(referenceDate).value(92).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));
+
+        // Still succeed again with multiple more good results.
         pulses.add(pulse().date(referenceDate.minusDays(2)).value(98).build());
         pulses.add(pulse().date(referenceDate.minusDays(3)).value(99).build());
         pulses.add(pulse().date(referenceDate.minusDays(4)).value(98).build());

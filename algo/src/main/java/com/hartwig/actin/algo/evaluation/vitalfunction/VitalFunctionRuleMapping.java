@@ -49,8 +49,8 @@ public final class VitalFunctionRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientPulseOxymetryCreator() {
         return function -> {
-            double minAvgPulseOxymetry = FunctionInputResolver.createOneDoubleInput(function);
-            return new HasSufficientPulseOxymetry(minAvgPulseOxymetry);
+            double minMedianPulseOxymetry = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientPulseOxymetry(minMedianPulseOxymetry);
         };
     }
 
