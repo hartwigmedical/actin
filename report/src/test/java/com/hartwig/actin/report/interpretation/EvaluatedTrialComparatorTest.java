@@ -3,8 +3,11 @@ package com.hartwig.actin.report.interpretation;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -15,28 +18,34 @@ public class EvaluatedTrialComparatorTest {
 
     @Test
     public void canSortEvaluatedTrials() {
-        EvaluatedTrial trial1 = create("trial 1", "cohort 1", false);
-        EvaluatedTrial trial2 = create("trial 1", "cohort 2", false);
-        EvaluatedTrial trial3 = create("trial 1", null, false);
-        EvaluatedTrial trial4 = create("trial 2", "cohort 1", false);
-        EvaluatedTrial trial5 = create("trial 5", "cohort 1", true);
+        EvaluatedTrial trial1 = create("trial 1", "cohort 1");
+        EvaluatedTrial trial2 = create("trial 1", "cohort 2");
+        EvaluatedTrial trial3 = create("trial 1", null);
+        EvaluatedTrial trial4 = create("trial 2", "cohort 1");
+        EvaluatedTrial trial5 = create("trial 5", "cohort 1", "Event C");
+        EvaluatedTrial trial6 = create("trial 5", "cohort 1", "Event D", "Event A");
 
-        List<EvaluatedTrial> trials = Lists.newArrayList(trial1, trial2, trial3, trial4, trial5);
+        List<EvaluatedTrial> trials = Lists.newArrayList(trial1, trial2, trial3, trial4, trial5, trial6);
         trials.sort(new EvaluatedTrialComparator());
 
-        assertEquals(trial5, trials.get(0));
-        assertEquals(trial3, trials.get(1));
-        assertEquals(trial1, trials.get(2));
-        assertEquals(trial2, trials.get(3));
-        assertEquals(trial4, trials.get(4));
+        assertEquals(trial6, trials.get(0));
+        assertEquals(trial5, trials.get(1));
+        assertEquals(trial3, trials.get(2));
+        assertEquals(trial1, trials.get(3));
+        assertEquals(trial2, trials.get(4));
+        assertEquals(trial4, trials.get(5));
     }
 
     @NotNull
-    private static EvaluatedTrial create(@NotNull String trialId, @Nullable String cohort, boolean hasMolecularEvidence) {
+    private static EvaluatedTrial create(@NotNull String trialId, @Nullable String cohort, String... molecularEvents) {
+        Set<String> molecularEventSet = Sets.newTreeSet(Ordering.natural());
+        if (molecularEvents.length > 0) {
+            molecularEventSet.addAll(Lists.newArrayList(molecularEvents));
+        }
         return ImmutableEvaluatedTrial.builder()
                 .trialId(trialId)
                 .acronym(Strings.EMPTY)
-                .hasMolecularEvidence(hasMolecularEvidence)
+                .molecularEvents(molecularEventSet)
                 .cohort(cohort)
                 .isPotentiallyEligible(false)
                 .isOpen(false)

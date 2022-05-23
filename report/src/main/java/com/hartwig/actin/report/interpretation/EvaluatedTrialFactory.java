@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -39,8 +40,8 @@ public final class EvaluatedTrialFactory {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
 
-                trials.add(builder.hasMolecularEvidence(hasEvidenceForTrial(actinEvidence, trialAcronym, cohortMatch.metadata().cohortId()))
-                        .cohort(cohortMatch.metadata().description())
+                trials.add(builder.cohort(cohortMatch.metadata().description())
+                        .molecularEvents(eventsForTrial(actinEvidence, trialAcronym, cohortMatch.metadata().cohortId()))
                         .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
                         .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
@@ -51,8 +52,8 @@ public final class EvaluatedTrialFactory {
 
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts().isEmpty()) {
-                trials.add(builder.hasMolecularEvidence(hasEvidenceForTrial(actinEvidence, trialAcronym, null))
-                        .cohort(null)
+                trials.add(builder.cohort(null)
+                        .molecularEvents(eventsForTrial(actinEvidence, trialAcronym, null))
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen)
                         .hasSlotsAvailable(trialIsOpen)
@@ -67,8 +68,10 @@ public final class EvaluatedTrialFactory {
         return trials;
     }
 
-    private static boolean hasEvidenceForTrial(@NotNull Iterable<ActinTrialEvidence> evidences, @NotNull String trialAcronymToFind,
+    @NotNull
+    private static Set<String> eventsForTrial(@NotNull Iterable<ActinTrialEvidence> evidences, @NotNull String trialAcronymToFind,
             @Nullable String cohortIdToFind) {
+        Set<String> events = Sets.newTreeSet(Ordering.natural());
         for (ActinTrialEvidence evidence : evidences) {
             boolean isCohortMatch;
             if (evidence.cohortId() == null) {
@@ -77,17 +80,17 @@ public final class EvaluatedTrialFactory {
                 isCohortMatch = evidence.cohortId().equals(cohortIdToFind);
             }
 
-            if (evidence.trialAcronym().equals(trialAcronymToFind) && isCohortMatch) {
-                return true;
+            if (evidence.isInclusionCriterion() && evidence.trialAcronym().equals(trialAcronymToFind) && isCohortMatch) {
+                events.add(evidence.event());
             }
         }
 
-        return false;
+        return events;
     }
 
     @NotNull
     private static Set<String> extractWarnings(@NotNull Map<Eligibility, Evaluation> evaluationMap) {
-        Set<String> messages = Sets.newHashSet();
+        Set<String> messages = Sets.newTreeSet(Ordering.natural());
         for (Evaluation evaluation : evaluationMap.values()) {
             if (evaluation.result() == EvaluationResult.WARN) {
                 messages.addAll(evaluation.warnGeneralMessages());
@@ -102,7 +105,7 @@ public final class EvaluatedTrialFactory {
 
     @NotNull
     private static Set<String> extractFails(@NotNull Map<Eligibility, Evaluation> evaluations) {
-        Set<String> messages = Sets.newHashSet();
+        Set<String> messages = Sets.newTreeSet(Ordering.natural());
         for (Evaluation evaluation : evaluations.values()) {
             if (evaluation.result() == EvaluationResult.FAIL && !evaluation.recoverable()) {
                 messages.addAll(evaluation.failGeneralMessages());

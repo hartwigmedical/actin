@@ -24,7 +24,7 @@ public class EvidenceInterpreterTest {
         MolecularEvidence evidence = createTestEvidence();
 
         assertEquals(Sets.newHashSet("event 1"), EvidenceInterpreter.eventsWithApprovedEvidence(evidence));
-        assertEquals(Sets.newHashSet("event 2"), EvidenceInterpreter.eventsWithActinEvidence(evidence));
+        assertEquals(Sets.newHashSet("event 2"), EvidenceInterpreter.eventsWithInclusiveActinEvidence(evidence));
         assertEquals(Sets.newHashSet("event 3"), EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence));
         assertTrue(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence).isEmpty());
         assertEquals(Sets.newHashSet("event 3"), EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence));
@@ -34,7 +34,8 @@ public class EvidenceInterpreterTest {
     private static MolecularEvidence createTestEvidence() {
         return ImmutableMolecularEvidence.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord().evidence())
-                .actinTrials(Sets.newHashSet(createActinTrialEvidence("event 2", "trial 1")))
+                .actinTrials(Sets.newHashSet(createActinTrialEvidence("event 2", "trial 1", true),
+                        createActinTrialEvidence("event 1", "trial 3", false)))
                 .externalTrials(Sets.newHashSet(createExternalTrialEvidence("event 1", "trial 1"),
                         createExternalTrialEvidence("event 2", "trial 1"),
                         createExternalTrialEvidence("event 3", "trial 3")))
@@ -46,8 +47,8 @@ public class EvidenceInterpreterTest {
     }
 
     @NotNull
-    private static ActinTrialEvidence createActinTrialEvidence(@NotNull String event, @NotNull String trial) {
-        return ActinTrialEvidenceTestFactory.builder().event(event).trialAcronym(trial).build();
+    private static ActinTrialEvidence createActinTrialEvidence(@NotNull String event, @NotNull String trial, boolean isInclusionCriterion) {
+        return ActinTrialEvidenceTestFactory.builder().event(event).trialAcronym(trial).isInclusionCriterion(isInclusionCriterion).build();
     }
 
     @NotNull

@@ -27,7 +27,7 @@ public class EvaluatedTrialFactoryTest {
         assertEquals(4, trials.size());
 
         EvaluatedTrial cohortA = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort A");
-        assertFalse(cohortA.hasMolecularEvidence());
+        assertTrue(cohortA.molecularEvents().isEmpty());
         assertFalse(cohortA.isPotentiallyEligible());
         assertTrue(cohortA.isOpen());
         assertTrue(cohortA.hasSlotsAvailable());
@@ -35,7 +35,7 @@ public class EvaluatedTrialFactoryTest {
         assertFalse(cohortA.fails().isEmpty());
 
         EvaluatedTrial cohortB = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort B");
-        assertFalse(cohortB.hasMolecularEvidence());
+        assertTrue(cohortB.molecularEvents().isEmpty());
         assertTrue(cohortB.isPotentiallyEligible());
         assertTrue(cohortB.isOpen());
         assertFalse(cohortB.hasSlotsAvailable());
@@ -43,7 +43,7 @@ public class EvaluatedTrialFactoryTest {
         assertTrue(cohortB.fails().isEmpty());
 
         EvaluatedTrial cohortC = findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C");
-        assertFalse(cohortC.hasMolecularEvidence());
+        assertTrue(cohortC.molecularEvents().isEmpty());
         assertFalse(cohortC.isPotentiallyEligible());
         assertFalse(cohortC.isOpen());
         assertTrue(cohortC.hasSlotsAvailable());
@@ -51,7 +51,7 @@ public class EvaluatedTrialFactoryTest {
         assertTrue(cohortC.fails().isEmpty());
 
         EvaluatedTrial trial2 = findByTrialAndCohort(trials, "TEST-TRIAL-2", null);
-        assertFalse(trial2.hasMolecularEvidence());
+        assertTrue(trial2.molecularEvents().isEmpty());
         assertFalse(trial2.isPotentiallyEligible());
         assertTrue(trial2.isOpen());
         assertTrue(trial2.hasSlotsAvailable());
@@ -60,17 +60,27 @@ public class EvaluatedTrialFactoryTest {
     }
 
     @Test
-    public void canAnnotateWithMolecularEvidence() {
+    public void canAnnotateWithMolecularEvents() {
         TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
-        ActinTrialEvidence evidence1 = ActinTrialEvidenceTestFactory.builder().trialAcronym("TEST-TRIAL-1").cohortId("A").build();
-        ActinTrialEvidence evidence2 = ActinTrialEvidenceTestFactory.builder().trialAcronym("TEST-TRIAL-2").build();
+        ActinTrialEvidence evidence1 = ActinTrialEvidenceTestFactory.builder()
+                .event("Event A")
+                .isInclusionCriterion(true)
+                .trialAcronym("TEST-TRIAL-1")
+                .cohortId("A")
+                .build();
+        ActinTrialEvidence evidence2 = ActinTrialEvidenceTestFactory.builder()
+                .event("Event B")
+                .isInclusionCriterion(true)
+                .trialAcronym("TEST-TRIAL-2")
+                .cohortId(null)
+                .build();
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch, Sets.newHashSet(evidence1, evidence2));
 
-        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort A").hasMolecularEvidence());
-        assertFalse(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort B").hasMolecularEvidence());
-        assertFalse(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C").hasMolecularEvidence());
-        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-2", null).hasMolecularEvidence());
+        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort A").molecularEvents().contains("Event A"));
+        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort B").molecularEvents().isEmpty());
+        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-1", "Cohort C").molecularEvents().isEmpty());
+        assertTrue(findByTrialAndCohort(trials, "TEST-TRIAL-2", null).molecularEvents().contains("Event B"));
     }
 
     @NotNull

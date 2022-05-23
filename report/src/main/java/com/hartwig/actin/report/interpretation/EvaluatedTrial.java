@@ -16,10 +16,11 @@ public abstract class EvaluatedTrial {
     @NotNull
     public abstract String acronym();
 
-    public abstract boolean hasMolecularEvidence();
-
     @Nullable
     public abstract String cohort();
+
+    @NotNull
+    public abstract Set<String> molecularEvents();
 
     public abstract boolean isPotentiallyEligible();
 

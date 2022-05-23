@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.feed;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
@@ -38,7 +38,7 @@ public class FeedModel {
 
     @NotNull
     public Set<String> subjects() {
-        Set<String> subjects = Sets.newTreeSet(Comparator.naturalOrder());
+        Set<String> subjects = Sets.newTreeSet(Ordering.natural());
         for (PatientEntry entry : feed.patientEntries()) {
             subjects.add(entry.subject());
         }

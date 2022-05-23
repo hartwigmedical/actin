@@ -1,8 +1,5 @@
 package com.hartwig.actin.report.interpretation;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.Set;
 
 import com.google.common.collect.Ordering;
@@ -27,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class MolecularDriverEntryFactory {
-
-    private static final DecimalFormat SINGLE_DIGIT_FORMAT = new DecimalFormat("#.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     private MolecularDriverEntryFactory() {
     }

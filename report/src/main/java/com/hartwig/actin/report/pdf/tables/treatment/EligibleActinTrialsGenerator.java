@@ -114,7 +114,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             table.addCell(Cells.createContent(trial.trialId() + addon));
             table.addCell(Cells.createContent(trial.acronym()));
             table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContentYesNo(trial.hasMolecularEvidence() ? "Yes" : "No"));
+            table.addCell(Cells.createContent(concat(trial.molecularEvents())));
             table.addCell(Cells.createContent(concat(trial.warnings())));
         }
 

@@ -64,7 +64,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
 
         table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithActinEvidence(evidence))));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithInclusiveActinEvidence(evidence))));
 
         table.addCell(addIndent(Cells.createKey(
                 "Additional events with trial eligibility in NL (" + evidence.externalTrialSource() + ")")));
