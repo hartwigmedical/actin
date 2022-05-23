@@ -298,7 +298,7 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private List<Intolerance> extractIntolerances(@NotNull String subject) {
-        List<Intolerance> allergies = Lists.newArrayList();
+        List<Intolerance> intolerances = Lists.newArrayList();
         for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
             Intolerance intolerance = ImmutableIntolerance.builder()
                     .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
@@ -308,9 +308,9 @@ public class ClinicalRecordsFactory {
                     .verificationStatus(CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus()))
                     .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
                     .build();
-            allergies.add(curation.curateIntolerance(intolerance));
+            intolerances.add(curation.curateIntolerance(intolerance));
         }
-        return allergies;
+        return intolerances;
     }
 
     @NotNull
