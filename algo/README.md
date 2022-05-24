@@ -165,7 +165,7 @@ Notes:
 - For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' configured (without further details), resolve to `UNDETERMINED`
 - For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' configured (without further details), resolve to `UNDETERMINED`
 - For all rules asking for categories with specified type (2]), if only the requested category configured (without further details), resolve to `UNDETERMINED`
-- TO DO; For all rules asking for specific treatment or categories, in case the treatment line of interest also contains "Trial" and without this line the evaluation does not resolve to PASS, resolve to `UNDETERMINED`
+- TODO; For all rules asking for specific treatment or categories, in case the treatment line of interest also contains "Trial" and without this line the evaluation does not resolve to PASS, resolve to `UNDETERMINED`
 
 ##### Rules related to prior primary tumors
 
@@ -195,8 +195,8 @@ HAS_HLA_A_TYPE_X | HLA-A type should be X. Currently set to fail (T.B.D.)
 OVEREXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 NON_EXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
-EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y | TO DO; In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
-EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y | TO DO; In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
+EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
+EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
 PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
 PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
 PD_L1_SCORE_TPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X
