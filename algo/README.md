@@ -102,7 +102,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to WARN in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
-HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `Undetermined` in case of DOID exactly equal to DOID 10283   
+HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `Undetermined` in case of DOID exactly equal to DOID 10283   
 HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
 HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
@@ -160,11 +160,12 @@ In addition, 3 following 'Categories' can be assigned:
 
 2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
-Notes (TO DO): 
+Notes:
 - For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' configured (without further details), resolve to `UNDETERMINED`
 - For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' configured (without further details), resolve to `UNDETERMINED`
 - For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' configured (without further details), resolve to `UNDETERMINED`
 - For all rules asking for categories with specified type (2]), if only the requested category configured (without further details), resolve to `UNDETERMINED`
+- TO DO; For all rules asking for specific treatment or categories, in case the treatment line of interest also contains "Trial" and without this line the evaluation does not resolve to PASS, resolve to `UNDETERMINED`
 
 ##### Rules related to prior primary tumors
 
@@ -176,8 +177,8 @@ HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current
 
 ##### Rules related to molecular results
 
-Rule | When does a patient pass evaluation?
----|---
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 ACTIVATION_OR_AMPLIFICATION_OF_GENE_X | Activating mutation or amplification is found in gene X
 INACTIVATION_OF_GENE_X | Inactivating mutation or deletion/disruption is found in gene X
 ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
@@ -194,8 +195,8 @@ HAS_HLA_A_TYPE_X | HLA-A type should be X. Currently set to fail (T.B.D.)
 OVEREXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 NON_EXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
-EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y
-EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y
+EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y | TO DO; In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
+EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y | TO DO; In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
 PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
 PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
 PD_L1_SCORE_TPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X
@@ -402,6 +403,7 @@ CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_OATP_X | T.B.D., currently res
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D., currently resolves to undetermined | Breast cancer resistance protein
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to warn in case patient receives any medication
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)
+IS_WILLING_TO_TAKE_PREMEDICATION | Currently won't be evaluated
 
 ##### Rules related to washout period 
 
@@ -476,7 +478,7 @@ HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 differ
 HAS_SBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average systolic blood pressure value <= X
 HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value => X
 HAS_DBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value <= X
-HAS_PULSE_OXYMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND median value => X
+HAS_PULSE_OXIMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND median value => X
 HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND average value between X and Y 
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 

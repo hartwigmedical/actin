@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class GeneHasExactExpressionByIHC implements EvaluationFunction {
 
     @NotNull
