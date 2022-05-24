@@ -68,7 +68,6 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
                     .addPassSpecificMessages("Patient has received " + Format.concat(names) + " less than " + maxTreatmentLines + " times")
                     .addPassGeneralMessages("Nr of specific treatments")
                     .build();
-
         }
     }
 }
