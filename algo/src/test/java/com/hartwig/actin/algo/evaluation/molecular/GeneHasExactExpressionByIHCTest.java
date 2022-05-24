@@ -21,7 +21,7 @@ public class GeneHasExactExpressionByIHCTest {
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with no result
         priorTests.add(ihcBuilder(gene).build());
@@ -34,6 +34,10 @@ public class GeneHasExactExpressionByIHCTest {
         // Add test with too high result
         priorTests.add(ihcBuilder(gene).scoreValue(3D).build());
         assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+
+        // Add test with 'positive' result
+        priorTests.add(ihcBuilder(gene).scoreText("Positive").build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with exact result
         priorTests.add(ihcBuilder(gene).scoreValue(2D).build());

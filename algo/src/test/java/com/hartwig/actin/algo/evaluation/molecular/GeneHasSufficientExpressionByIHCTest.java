@@ -21,7 +21,7 @@ public class GeneHasSufficientExpressionByIHCTest {
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with no result
         priorTests.add(ihcBuilder(gene).build());
@@ -30,6 +30,10 @@ public class GeneHasSufficientExpressionByIHCTest {
         // Add test with too low result
         priorTests.add(ihcBuilder(gene).scoreValue(1D).build());
         assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+
+        // Add test with unclear result
+        priorTests.add(ihcBuilder(gene).scoreText("Negative").build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with valid result
         priorTests.add(ihcBuilder(gene).scoreValue(3D).build());

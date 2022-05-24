@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class GeneHasExactExpressionByIHC implements EvaluationFunction {
 
     @NotNull
@@ -27,35 +26,38 @@ public class GeneHasExactExpressionByIHC implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        boolean hasPositiveOrNegativeResult = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
-            boolean hasExactExpression = false;
-
             Double scoreValue = ihcTest.scoreValue();
             if (scoreValue != null) {
                 // We assume IHC prior molecular tests always have integer score values.
-                hasExactExpression = expressionLevel == Math.round(scoreValue);
+                if (expressionLevel == Math.round(scoreValue)) {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.PASS)
+                            .addPassSpecificMessages("Gene " + gene + " has exact expression level " + expressionLevel + " (by IHC)")
+                            .build();
+                }
             }
 
-            if (hasExactExpression) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Gene " + gene + " has exact expression level " + expressionLevel + " (by IHC)")
-                        .build();
+            String scoreText = ihcTest.scoreText();
+            if (scoreText != null && (scoreText.equalsIgnoreCase("positive") || scoreText.equalsIgnoreCase("negative"))) {
+                hasPositiveOrNegativeResult = true;
             }
         }
 
-        if (!ihcTests.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Gene " + gene + " does not have exact expression level " + expressionLevel + " (by IHC)")
-                    .addFailGeneralMessages("No " + gene + " expression by IHC")
-                    .build();
-        } else {
+        if (hasPositiveOrNegativeResult) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .addUndeterminedSpecificMessages(
+                            "Unknown if gene " + gene + " expression level is exactly " + expressionLevel + " (by IHC)")
+                    .addUndeterminedGeneralMessages("Unknown " + gene + " IHC test result")
                     .build();
         }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Gene " + gene + " does not have exact expression level " + expressionLevel + " (by IHC)")
+                .addFailGeneralMessages("No " + gene + " expression by IHC")
+                .build();
     }
 }

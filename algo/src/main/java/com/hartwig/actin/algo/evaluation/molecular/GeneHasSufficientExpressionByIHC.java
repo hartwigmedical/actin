@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
 
     @NotNull
@@ -27,51 +26,40 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
-        boolean hasPotentiallyPositiveTest = false;
+        boolean hasPositiveOrNegativeResult = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
-            boolean hasSufficientExpression = false;
-
             Double scoreValue = ihcTest.scoreValue();
             if (scoreValue != null) {
                 // We assume IHC prior molecular tests always have integer score values.
-                hasSufficientExpression = Double.compare(Math.round(scoreValue), minExpressionLevel) >= 0;
-            }
-
-            if (hasSufficientExpression) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
-                        .addPassGeneralMessages("Adequate " + gene + " IHC expression level")
-                        .build();
+                if (Double.compare(Math.round(scoreValue), minExpressionLevel) >= 0) {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.PASS)
+                            .addPassSpecificMessages(
+                                    "Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
+                            .addPassGeneralMessages("Adequate " + gene + " IHC expression level")
+                            .build();
+                }
             }
 
             String scoreText = ihcTest.scoreText();
-            if (scoreValue == null && scoreText != null && scoreText.equalsIgnoreCase("positive")) {
-                hasPotentiallyPositiveTest = true;
+            if (scoreText != null && (scoreText.equalsIgnoreCase("positive") || scoreText.equalsIgnoreCase("negative"))) {
+                hasPositiveOrNegativeResult = true;
             }
         }
 
-        if (hasPotentiallyPositiveTest) {
+        if (hasPositiveOrNegativeResult) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
                     .addUndeterminedGeneralMessages("Unknown " + gene + " exact IHC expression level")
                     .build();
-        } else if (!ihcTests.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages(
-                            "Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
-                    .addFailGeneralMessages("Insufficient " + gene + "exact IHC expression level")
-                    .build();
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
-                    .build();
-
         }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
+                .addFailGeneralMessages("Insufficient " + gene + "exact IHC expression level")
+                .build();
     }
 }
