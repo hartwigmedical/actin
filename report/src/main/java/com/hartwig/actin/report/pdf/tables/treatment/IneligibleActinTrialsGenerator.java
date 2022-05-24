@@ -40,10 +40,10 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
             }
         }
 
-        float trialColWidth = contentWidth / 10;
-        float acronymColWidth = contentWidth / 10;
+        float trialColWidth = contentWidth / 9;
+        float acronymColWidth = contentWidth / 9;
         float cohortColWidth = contentWidth / 3;
-        float recruitingColWidth = contentWidth / 10;
+        float recruitingColWidth = contentWidth / 11;
         float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + recruitingColWidth);
 
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
