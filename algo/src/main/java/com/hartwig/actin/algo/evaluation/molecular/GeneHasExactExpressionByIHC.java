@@ -52,6 +52,12 @@ public class GeneHasExactExpressionByIHC implements EvaluationFunction {
                             "Unknown if gene " + gene + " expression level is exactly " + expressionLevel + " (by IHC)")
                     .addUndeterminedGeneralMessages("Unknown " + gene + " IHC test result")
                     .build();
+        } else if (ihcTests.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
+                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()
