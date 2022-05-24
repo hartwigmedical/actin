@@ -5,7 +5,6 @@ import java.util.List;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -32,34 +31,52 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        int numTreatmentLines = 0;
+        int numMatchingTreatmentLines = 0;
+        int numApproximateTreatmentLines = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
-                boolean matchWithAnyType = false;
-                for (String type : types) {
-                    if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                        matchWithAnyType = true;
+                if (TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
+                    if (hasValidType(treatment)) {
+                        numMatchingTreatmentLines++;
                     }
-                }
-                if (matchWithAnyType) {
-                    numTreatmentLines++;
+                } else {
+                    numApproximateTreatmentLines++;
                 }
             }
         }
 
-        EvaluationResult result = numTreatmentLines <= maxTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(
-                    "Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
-                            + category.display());
-            builder.addFailGeneralMessages("No " + category.display() + " treatment");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(
-                    "Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " " + category.display());
-            builder.addPassGeneralMessages(category.display() + " treatment");
+        if (numMatchingTreatmentLines + numApproximateTreatmentLines <= maxTreatmentLines) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
+                            + category.display())
+                    .addPassGeneralMessages(category.display() + " treatment")
+                    .build();
+        } else if (numMatchingTreatmentLines <= maxTreatmentLines) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Can't determine whether patient has received at most " + maxTreatmentLines + " lines of "
+                                    + Format.concat(types) + " " + category.display())
+                    .addUndeterminedGeneralMessages("Unclear " + category.display() + " treatment")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages(
+                            "Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
+                                    + category.display())
+                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .build();
         }
+    }
 
-        return builder.build();
+    private boolean hasValidType(@NotNull PriorTumorTreatment treatment) {
+        for (String type : types) {
+            if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -30,16 +30,18 @@ public class HasHadTreatmentWithCategoryOfTypesTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(immunoRecord));
 
         // Add one correct category but wrong type
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).targetedType("Anti-KRAS").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
+        // Add one correct category but without type
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
-        PatientRecord multiRecord1 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(multiRecord1));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one correct category with matching type
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some anti-EGFR Type")
                 .build());
-        PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(multiRecord2));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

@@ -35,6 +35,10 @@ public class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("Some anti-EGFR treatment").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
+        // Add another correct treatment category but with no type
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
         // Add another correct treatment category with right type
         treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("Another anti-EGFR").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));

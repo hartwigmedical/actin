@@ -18,6 +18,11 @@ final class TreatmentTypeResolver {
         return type != null && type.toLowerCase().contains(typeToFind.toLowerCase());
     }
 
+    public static boolean hasTypeConfigured(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category) {
+        String type = resolveType(treatment, category);
+        return type != null && !type.isEmpty();
+    }
+
     @Nullable
     private static String resolveType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category) {
         switch (category) {

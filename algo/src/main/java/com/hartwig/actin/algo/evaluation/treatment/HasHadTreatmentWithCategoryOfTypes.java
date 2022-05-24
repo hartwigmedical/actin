@@ -5,7 +5,6 @@ import java.util.List;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -30,31 +29,44 @@ public class HasHadTreatmentWithCategoryOfTypes implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasHadValidTreatment = false;
+        boolean hasPotentiallyHadValidTreatment = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (hasValidCategoryAndType(treatment)) {
-                hasHadValidTreatment = true;
+            if (treatment.categories().contains(category)) {
+                if (hasValidType(treatment)) {
+                    hasHadValidTreatment = true;
+                } else if (!TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
+                    hasPotentiallyHadValidTreatment = true;
+                }
             }
         }
 
-        EvaluationResult result = hasHadValidTreatment ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment");
-            builder.addFailGeneralMessages("No " + category.display() + " treatment");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment");
-            builder.addPassGeneralMessages(category.display() + " treatment");
+        if (hasHadValidTreatment) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment")
+                    .addPassGeneralMessages(category.display() + " treatment")
+                    .build();
+        } else if (hasPotentiallyHadValidTreatment) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Can't determine whether patient has received " + Format.concat(types) + " " + category.display()
+                                    + " treatment")
+                    .addUndeterminedGeneralMessages("Unclear " + category.display() + " treatment")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment")
+                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .build();
         }
-
-        return builder.build();
     }
 
-    private boolean hasValidCategoryAndType(@NotNull PriorTumorTreatment treatment) {
-        if (treatment.categories().contains(category)) {
-            for (String type : types) {
-                if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                    return true;
-                }
+    private boolean hasValidType(@NotNull PriorTumorTreatment treatment) {
+        for (String type : types) {
+            if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
+                return true;
             }
         }
         return false;

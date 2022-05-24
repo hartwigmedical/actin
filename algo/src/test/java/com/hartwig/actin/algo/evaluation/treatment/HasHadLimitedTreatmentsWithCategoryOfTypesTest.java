@@ -35,6 +35,10 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-BRAF").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
+        // Add correct treatment category without a type
+        treatments.add(TreatmentTestFactory.builder().addCategories(category).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
         // Add correct treatment category with another correct type
         treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-KRAS").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
