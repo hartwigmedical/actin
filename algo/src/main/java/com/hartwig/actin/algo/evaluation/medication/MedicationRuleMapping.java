@@ -60,6 +60,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES,
                 getsDrugMetabolizingEnzymeInhibitingMedicationCreator(selector));
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator(selector));
+        map.put(EligibilityRule.IS_WILLING_TO_TAKE_PREMEDICATION, isWillingToTakePremedicationCreator());
 
         return map;
     }
@@ -176,5 +177,10 @@ public final class MedicationRuleMapping {
     private static FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull MedicationSelector selector,
             @NotNull String... categoriesToFind) {
         return function -> new CurrentlyGetsMedicationOfExactCategory(selector, Sets.newHashSet(categoriesToFind));
+    }
+
+    @NotNull
+    private static FunctionCreator isWillingToTakePremedicationCreator() {
+        return function -> new IsWillingToTakePremedication();
     }
 }
