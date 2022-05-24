@@ -26,17 +26,13 @@ public enum TreatmentInput {
     GENE_THERAPY(TreatmentCategory.GENE_THERAPY),
     TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
 
-    TAXANE(Sets.newHashSet("Paclitaxel", "Docetaxel", "Cabazitaxel")),
-    FLUOROPYRIMIDINE(Sets.newHashSet("Capecitabine", "Carmofur", "Doxifluridine", "Fluorouracil", "Tegafur")),
-    NONSTEROIDAL_ANTI_ANDROGEN(Sets.newHashSet("Flutamide",
-            "Nilutamide",
-            "Bicalutamide",
-            "Enzalutamide",
-            "Darolutamide",
-            "Ketodarolutamide",
-            "Apalutamide"));
+    TAXANE(TreatmentCategory.CHEMORADIOTHERAPY, Sets.newHashSet("Paclitaxel", "Docetaxel", "Cabazitaxel")),
+    FLUOROPYRIMIDINE(TreatmentCategory.CHEMORADIOTHERAPY,
+            Sets.newHashSet("Capecitabine", "Carmofur", "Doxifluridine", "Fluorouracil", "Tegafur")),
+    NONSTEROIDAL_ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY,
+            Sets.newHashSet("Flutamide", "Nilutamide", "Bicalutamide", "Enzalutamide", "Darolutamide", "Ketodarolutamide", "Apalutamide"));
 
-    @Nullable
+    @NotNull
     private final TreatmentCategory mappedCategory;
     @Nullable
     private final Set<String> mappedNames;
@@ -45,11 +41,7 @@ public enum TreatmentInput {
         this(mappedCategory, null);
     }
 
-    TreatmentInput(@NotNull Set<String> mappedNames) {
-        this(null, mappedNames);
-    }
-
-    TreatmentInput(@Nullable final TreatmentCategory mappedCategory, @Nullable final Set<String> mappedNames) {
+    TreatmentInput(@NotNull TreatmentCategory mappedCategory, @Nullable Set<String> mappedNames) {
         this.mappedCategory = mappedCategory;
         this.mappedNames = mappedNames;
     }
