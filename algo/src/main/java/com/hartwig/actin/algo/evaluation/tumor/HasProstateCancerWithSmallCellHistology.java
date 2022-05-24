@@ -60,11 +60,11 @@ public class HasProstateCancerWithSmallCellHistology implements EvaluationFuncti
 
         boolean hasSuspiciousDoidMatch = false;
         for (Set<String> warnDoids : PROSTATE_WARN_DOID_SETS) {
-            boolean isMatch = true;
+            boolean containsEntireSet = true;
             for (String warnDoid : warnDoids) {
-                isMatch = isMatch && expanded.contains(warnDoid);
+                containsEntireSet = containsEntireSet && expanded.contains(warnDoid);
             }
-            if (isMatch) {
+            if (containsEntireSet) {
                 hasSuspiciousDoidMatch = true;
                 break;
             }
