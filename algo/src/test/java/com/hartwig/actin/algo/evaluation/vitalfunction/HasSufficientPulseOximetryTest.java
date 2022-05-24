@@ -14,12 +14,12 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class HasSufficientPulseOxymetryTest {
+public class HasSufficientPulseOximetryTest {
 
     @Test
     public void canEvaluate() {
         LocalDate referenceDate = LocalDate.of(2021, 11, 19);
-        HasSufficientPulseOxymetry function = new HasSufficientPulseOxymetry(90);
+        HasSufficientPulseOximetry function = new HasSufficientPulseOximetry(90);
 
         List<VitalFunction> pulses = Lists.newArrayList();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)));

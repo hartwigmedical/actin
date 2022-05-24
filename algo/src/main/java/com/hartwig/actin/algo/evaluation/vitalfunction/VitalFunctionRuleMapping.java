@@ -23,7 +23,7 @@ public final class VitalFunctionRuleMapping {
         map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, hasLimitedBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
         map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
         map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X, hasLimitedBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
-        map.put(EligibilityRule.HAS_PULSE_OXYMETRY_OF_AT_LEAST_X, hasSufficientPulseOxymetryCreator());
+        map.put(EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X, hasSufficientPulseOximetryCreator());
         map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, hasRestingHeartRateWithinBoundsCreator());
         map.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, hasSufficientBodyWeightCreator());
 
@@ -47,10 +47,10 @@ public final class VitalFunctionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientPulseOxymetryCreator() {
+    private static FunctionCreator hasSufficientPulseOximetryCreator() {
         return function -> {
-            double minMedianPulseOxymetry = FunctionInputResolver.createOneDoubleInput(function);
-            return new HasSufficientPulseOxymetry(minMedianPulseOxymetry);
+            double minMedianPulseOximetry = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientPulseOximetry(minMedianPulseOximetry);
         };
     }
 

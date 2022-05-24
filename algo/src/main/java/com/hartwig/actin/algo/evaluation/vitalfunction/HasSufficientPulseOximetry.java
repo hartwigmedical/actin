@@ -15,25 +15,24 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientPulseOxymetry implements EvaluationFunction {
+public class HasSufficientPulseOximetry implements EvaluationFunction {
 
-    private static final int MAX_PULSE_OXYMETRY_TO_USE = 5;
+    private static final int MAX_PULSE_OXIMETRY_TO_USE = 5;
 
-    private final double minMedianPulseOxymetry;
+    private final double minMedianPulseOximetry;
 
-    HasSufficientPulseOxymetry(final double minMedianPulseOxymetry) {
-        this.minMedianPulseOxymetry = minMedianPulseOxymetry;
+    HasSufficientPulseOximetry(final double minMedianPulseOximetry) {
+        this.minMedianPulseOximetry = minMedianPulseOximetry;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> pulseOxymetries = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
+        List<VitalFunction> pulseOximetries = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
                 VitalFunctionCategory.SPO2,
-                null,
-                MAX_PULSE_OXYMETRY_TO_USE);
+                null, MAX_PULSE_OXIMETRY_TO_USE);
 
-        if (pulseOxymetries.isEmpty()) {
+        if (pulseOximetries.isEmpty()) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No pulse oximetries readouts found")
@@ -41,8 +40,8 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
         }
 
         List<Double> values = Lists.newArrayList();
-        for (VitalFunction pulseOxymetry : pulseOxymetries) {
-            values.add(pulseOxymetry.value());
+        for (VitalFunction pulseOximetry : pulseOximetries) {
+            values.add(pulseOximetry.value());
         }
         values.sort(Comparator.naturalOrder());
 
@@ -54,15 +53,15 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
             median = values.get(index);
         }
 
-        EvaluationResult result = Double.compare(median, minMedianPulseOxymetry) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = Double.compare(median, minMedianPulseOximetry) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         if (result == EvaluationResult.FAIL) {
-            for (VitalFunction pulseOxymetry : pulseOxymetries) {
-                if (Double.compare(pulseOxymetry.value(), minMedianPulseOxymetry) >= 0) {
+            for (VitalFunction pulseOximetry : pulseOximetries) {
+                if (Double.compare(pulseOximetry.value(), minMedianPulseOximetry) >= 0) {
                     return EvaluationFactory.recoverable()
                             .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOxymetry
-                                    + " but also at least one measure above " + minMedianPulseOxymetry)
+                            .addUndeterminedSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOximetry
+                                    + " but also at least one measure above " + minMedianPulseOximetry)
                             .build();
                 }
             }
@@ -70,9 +69,9 @@ public class HasSufficientPulseOxymetry implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOxymetry);
+            builder.addFailSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOximetry);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has median pulse oximetry exceeding " + minMedianPulseOxymetry);
+            builder.addPassSpecificMessages("Patient has median pulse oximetry exceeding " + minMedianPulseOximetry);
         }
 
         return builder.build();
