@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import java.util.List;
+import java.util.Set;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidModel;
@@ -20,7 +20,7 @@ public class HasCancerOfUnknownPrimaryTest {
 
         HasCancerOfUnknownPrimary function = new HasCancerOfUnknownPrimary(doidModel, category);
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((List<String>) null)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withDoids(HasCancerOfUnknownPrimary.CANCER_DOID)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("random doid")));

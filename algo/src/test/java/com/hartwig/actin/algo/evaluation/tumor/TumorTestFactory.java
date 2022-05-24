@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -38,7 +40,7 @@ final class TumorTestFactory {
 
     @NotNull
     public static PatientRecord withDoids(@NotNull String... doids) {
-        return withDoids(Lists.newArrayList(doids));
+        return withDoids(Sets.newHashSet(doids));
     }
 
     @NotNull
@@ -47,7 +49,7 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withDoids(@Nullable List<String> doids) {
+    public static PatientRecord withDoids(@Nullable Set<String> doids) {
         return withTumorDetails(ImmutableTumorDetails.builder().doids(doids).build());
     }
 
