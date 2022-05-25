@@ -25,8 +25,8 @@ Every sample, uniquely defined by their sample ID, has a molecular record with t
 
 Field | Example Value | Details
 ---|---|---
-type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
-date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
+experimentType | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
+experimentDate | 2022-01-14 | The date on which the molecular results were obtained (optional field).
 hasReliableQuality | 1 | Whether the molecular results have reliable quality. 
  
 1 molecular characteristics
@@ -35,7 +35,7 @@ Field | Example Value | Details
 ---|---|---
 purity | 78% | The percentage of cells in the sequenced biopsy that originated from the tumor.
 hasReliablePurity | 1 | Indicates whether the purity estimate can be trusted.
-predictedTumorOrigin | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
+predictedTumorType | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
 isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
 isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
 tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB.
@@ -87,7 +87,7 @@ Field | Example Value | Details
 ---|---|---
 event | BRCA1 disruption | A single representation of the event, expected to match with the event string from evidence section.
 driverLikelihood | LOW | Either `HIGH`, `MEDIUM` or `LOW`
-gene | BRCA1 | The gene that has been disrupted.
+gene | BRCA1 | The gene that has been disrupted
 type | DUP | Type of disruption
 junctionCopyNumber | 1.1 | Number of copies affected by this disruption
 undisruptedCopyNumber | 1.8 | Remaining number of copies not impacted by this disruption
@@ -110,15 +110,16 @@ Field | Example Value | Details
 ---|---|---
 event | HPV positive | A single representation of the event, expected to match with the event string from evidence section.
 driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
-name | Human papillomavirus type 16 | The name of the virus found in the tumor
-integrations | 3 | Number of integrations of this virus into the tumor sample detected
+name | Human papillomavirus type 16 | Name of the virus found in the tumor sample
+integrations | 3 | Number of integrations of detected virus in the tumor sample
 
 N pharmaco
 
 Field | Example Value | Details
 ---|---|---
 gene | DPYD | The gene for which the pharmaco entry is applicable
-haplotypes | 1* HOM, Normal function | A list of haplotypes found for the gene along with their predicted function. 
+haplotype | 1* HOM | Haplotypes found for the gene  
+haplotypeFunction | Function impact of corresponding haplotype
 
 N actin trial evidences (with a single configured source name)
 
@@ -126,7 +127,7 @@ Field | Example Value | Details
 ---|---|---
 event | BRAF V600E | The molecular event against which the evidence has been matched.
 trialAcronym | Trial A | The acronym of the trial for which the evidence holds.
-cohortId | A | The ID of the cohort for which the evidence holds (optional, in case evidence holds for all cohorts within a trial).
+cohortCode | A | The ID of the cohort for which the evidence holds (optional, in case evidence holds for all cohorts within a trial).
 isInclusionCriterion | 1 | Whether the evidence is involved in an inclusion or exclusion criterion for this trial.
 type | ACTIVATED_GENE | The type of molecular event required by the trial. Can be `SIGNATURE`, `ACTIVATED_GENE`, `INACTIVATED_GENE`, `AMPLIFIED_GENE`, `FUSED_GENE`, `MUTATED_GENE`, `WILD_TYPE_GENE` and `HLA_ALLELE`
 gene | BRAF | The gene required to be mutated by the trial (optional, empty in case of `SIGNATURE` and `HLA_ALLELE`)
@@ -139,7 +140,7 @@ Field | Example Value | Details
 event | High TMB | The molecular event against which the evidence has been matched again.
 trial | Trial A | The name of the trial for which the evidence holds.
 
-1 treatment evidence, with a single configured source name
+1 treatment evidence, with a single configured source name, for N events
 
 Field | Example Value | Details
 ---|---|---
@@ -209,7 +210,7 @@ onLabelExperimentalEvidence | Union of A-level that is either predicted or off-l
 offLabelExperimentalEvidence | B-level off-label non-predicted responsive evidence.
 preClinicalEvidence | All responsive evidence that is neither approved nor experimental. 
 knownResistanceEvidence | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level.  
-suspectResistanceEvidence | Any other resistance for a treatment with evidence with equal or lower evidence level.
+suspectResistanceEvidence | Any other resistance evidence for a treatment with evidence with equal or lower evidence level.
 
 ### Version History and Download Links
  - Upcoming (first release) 
