@@ -17,15 +17,9 @@ public final class LifestyleRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_SMOKED_WITHIN_X_MONTHS, hasSmokedRecentlyCreator());
         map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, isWillingToNotUseContactLensesCreator());
 
         return map;
-    }
-
-    @NotNull
-    private static FunctionCreator hasSmokedRecentlyCreator() {
-        return function -> new HasSmokedRecently();
     }
 
     @NotNull

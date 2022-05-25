@@ -55,7 +55,6 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_OATP_X, getsOATPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES,
                 getsDrugMetabolizingEnzymeInhibitingMedicationCreator(selector));
@@ -142,14 +141,6 @@ public final class MedicationRuleMapping {
     @NotNull
     private static FunctionCreator getsPGPInhibitingMedicationCreator() {
         return function -> new CurrentlyGetsPGPInhibitingMedication();
-    }
-
-    @NotNull
-    private static FunctionCreator getsOATPInhibitingMedicationCreator() {
-        return function -> {
-            String termToFind = FunctionInputResolver.createOneStringInput(function);
-            return new CurrentlyGetsOATPInhibitingMedication(termToFind);
-        };
     }
 
     @NotNull
