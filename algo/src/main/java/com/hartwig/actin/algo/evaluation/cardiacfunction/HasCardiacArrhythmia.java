@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ECG;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Implementation of "type" can be removed as corresponding rule is deleted
 public class HasCardiacArrhythmia implements EvaluationFunction {
 
     @Nullable

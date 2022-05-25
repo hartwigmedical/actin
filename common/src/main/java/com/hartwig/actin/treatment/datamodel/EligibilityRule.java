@@ -188,7 +188,6 @@ public enum EligibilityRule {
 
     //Rules related to cardiac function
     HAS_CARDIAC_ARRHYTHMIA,
-    HAS_CARDIAC_ARRHYTHMIA_OF_TYPE_X,
     HAS_LVEF_OF_AT_LEAST_X,
     HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN,
     HAS_QTC_OF_AT_MOST_X,
