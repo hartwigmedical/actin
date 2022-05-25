@@ -44,13 +44,13 @@ CREATE OR REPLACE VIEW molecularDetails
 AS (
 SELECT * FROM (
 SELECT  x.sampleId,
-	    IF(driverType='HOTSPOT',"Mutation (Hotspot)",IF(driverType='BIALLELIC',"Mutation (Biallelic VUS)",IF(driverType='VUS',"Mutation (VUS)", driverType))) AS Type,
+	    IF(driverType='HOTSPOT',"Mutation (Hotspot)",IF(driverType='BIALLELIC',"Mutation (Biallelic VUS)",IF(driverType='VUS',"Mutation (VUS)", driverType))) AS type,
 	    x.event, concat(round(variantCopyNumber,1),"/",round(totalCopyNumber,1), " copies") AS details, driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
 	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive
 	FROM variant x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId,
@@ -60,7 +60,7 @@ SELECT  x.sampleId,
 	FROM amplification x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId,
@@ -70,7 +70,7 @@ SELECT  x.sampleId,
 	FROM loss x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId,
@@ -80,7 +80,7 @@ SELECT  x.sampleId,
 	FROM homozygousDisruption x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId,
@@ -90,7 +90,7 @@ SELECT  x.sampleId,
 	FROM fusion x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId,
@@ -100,7 +100,7 @@ SELECT  x.sampleId,
 	FROM disruption x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId,
@@ -110,7 +110,7 @@ SELECT  x.sampleId,
 	FROM virus x
 	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
 	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=e.event
+	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
 	GROUP BY 1,3
 ORDER BY 1,2,3)
 AS a
