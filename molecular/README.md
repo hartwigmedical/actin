@@ -178,13 +178,17 @@ The drivers are extracted from the following algorithms:
 
 Driver Type | Algo | Details
 ---|---|---
-variants | PURPLE | Union of reported somatic variants and reported germline variants.
+variants | PURPLE | Union of reported somatic variants and reported germline variants. 
 amplifications | PURPLE | Union of reported somatic full gains and reported somatic partial gains.
 losses | PURPLE | Union of reported somatic full losses and reported somatic partial losses.
 homozygousDisruptions | LINX | All reported homozygous disruptions. 
 disruptions | LINX | All reported somatic gene disruptions.
 fusions | LINX | All reported fusions with driver type mapped to either `KNOWN` or `PROMISCUOUS`.
 viruses | VirusInterpreter | All reported viruses.
+
+Note that all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
+ - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
+ - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
 
 The pharmaco entries are extracted from PEACH.
 
