@@ -226,6 +226,13 @@ public class DriverExtractionTest {
         assertEquals(DriverLikelihood.LOW, DriverExtraction.extractVirusDriverLikelihood(unknown));
     }
 
+    @Test
+    public void canKeep3Digits() {
+        assertEquals(3, DriverExtraction.keep3Digits(3D), EPSILON);
+        assertEquals(3.123, DriverExtraction.keep3Digits(3.123), EPSILON);
+        assertEquals(3.123, DriverExtraction.keep3Digits(3.123456789), EPSILON);
+    }
+
     @NotNull
     private static PurpleVariant createTestVariant() {
         return ImmutablePurpleVariant.builder()
@@ -255,7 +262,7 @@ public class DriverExtractionTest {
     }
 
     @NotNull
-    public static VirusInterpreterEntry createTestVirus() {
+    private static VirusInterpreterEntry createTestVirus() {
         return ImmutableVirusInterpreterEntry.builder()
                 .name(Strings.EMPTY)
                 .integrations(0)

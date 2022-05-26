@@ -76,10 +76,10 @@ final class DriverExtraction {
                     .driverLikelihood(interpretDriverLikelihood(variant))
                     .gene(variant.gene())
                     .impact(impact)
-                    .variantCopyNumber(variant.alleleCopyNumber())
-                    .totalCopyNumber(variant.totalCopyNumber())
+                    .variantCopyNumber(keep3Digits(variant.alleleCopyNumber()))
+                    .totalCopyNumber(keep3Digits(variant.totalCopyNumber()))
                     .driverType(extractVariantDriverType(variant))
-                    .clonalLikelihood(variant.clonalLikelihood())
+                    .clonalLikelihood(keep3Digits(variant.clonalLikelihood()))
                     .build());
         }
         return variants;
@@ -181,8 +181,8 @@ final class DriverExtraction {
                     .driverLikelihood(DriverLikelihood.LOW)
                     .gene(disruption.gene())
                     .type(disruption.type())
-                    .junctionCopyNumber(disruption.junctionCopyNumber())
-                    .undisruptedCopyNumber(disruption.undisruptedCopyNumber())
+                    .junctionCopyNumber(keep3Digits(disruption.junctionCopyNumber()))
+                    .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
                     .range(disruption.range())
                     .build());
         }
@@ -274,5 +274,10 @@ final class DriverExtraction {
                         "Cannot determine driver likelihood type for virus driver likelihood: " + virus.driverLikelihood());
             }
         }
+    }
+
+    @VisibleForTesting
+    static double keep3Digits(double input) {
+        return Math.round(input * 1000) / 1000D;
     }
 }
