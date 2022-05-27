@@ -213,8 +213,8 @@ approvedEvidence | A-level on-label non-predicted responsive evidence.
 onLabelExperimentalEvidence | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence.
 offLabelExperimentalEvidence | B-level off-label non-predicted responsive evidence.
 preClinicalEvidence | All responsive evidence that is neither approved nor experimental. 
-knownResistanceEvidence | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level.  
-suspectResistanceEvidence | Any other resistance evidence for a treatment with evidence with equal or lower evidence level.
+knownResistanceEvidence | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level compared to the resistance evidence level.  
+suspectResistanceEvidence | Any other resistance evidence for a treatment with evidence with equal or lower evidence level compared to the resistance evidence level.
 
 ### Version History and Download Links
  - Upcoming (first release) 
