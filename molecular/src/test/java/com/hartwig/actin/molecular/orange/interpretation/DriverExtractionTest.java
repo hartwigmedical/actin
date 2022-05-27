@@ -90,7 +90,7 @@ public class DriverExtractionTest {
         assertEquals(1, homozygousDisruptions.size());
 
         HomozygousDisruption homozygousDisruption = homozygousDisruptions.iterator().next();
-        assertEquals("TP53 disruption", homozygousDisruption.event());
+        assertEquals("TP53 hom disruption", homozygousDisruption.event());
         assertEquals(DriverLikelihood.HIGH, homozygousDisruption.driverLikelihood());
         assertEquals("TP53", homozygousDisruption.gene());
     }
@@ -99,7 +99,7 @@ public class DriverExtractionTest {
         assertEquals(1, disruptions.size());
 
         Disruption disruption = disruptions.iterator().next();
-        assertTrue(disruption.event().isEmpty());
+        assertEquals("RB1 disruption", disruption.event());
         assertEquals(DriverLikelihood.LOW, disruption.driverLikelihood());
         assertEquals("RB1", disruption.gene());
         assertEquals("DEL", disruption.type());

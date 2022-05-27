@@ -164,7 +164,7 @@ final class DriverExtraction {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
         for (String homozygous : linx.homozygousDisruptedGenes()) {
             homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                    .event(homozygous + " " + EventFormatter.DISRUPTION_EVENT)
+                    .event(homozygous + " " + EventFormatter.HOM_DISRUPTION_EVENT)
                     .driverLikelihood(DriverLikelihood.HIGH)
                     .gene(homozygous)
                     .build());
@@ -177,7 +177,7 @@ final class DriverExtraction {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
             disruptions.add(ImmutableDisruption.builder()
-                    .event(Strings.EMPTY)
+                    .event(disruption.gene() + " " + EventFormatter.DISRUPTION_EVENT)
                     .driverLikelihood(DriverLikelihood.LOW)
                     .gene(disruption.gene())
                     .type(disruption.type())

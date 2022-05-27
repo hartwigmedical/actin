@@ -13,6 +13,7 @@ public final class EventFormatter {
 
     public static final String GAIN_EVENT = "amp";
     public static final String LOSS_EVENT = "del";
+    public static final String HOM_DISRUPTION_EVENT = "hom disruption";
     public static final String DISRUPTION_EVENT = "disruption";
 
     private static final Map<String, String> STRING_REPLACEMENTS = Maps.newHashMap();
@@ -23,7 +24,7 @@ public final class EventFormatter {
         STRING_REPLACEMENTS.put("partial gain", GAIN_EVENT);
         STRING_REPLACEMENTS.put("full loss", LOSS_EVENT);
         STRING_REPLACEMENTS.put("partial loss", LOSS_EVENT);
-        STRING_REPLACEMENTS.put("homozygous disruption", DISRUPTION_EVENT);
+        STRING_REPLACEMENTS.put("homozygous disruption", HOM_DISRUPTION_EVENT);
         STRING_REPLACEMENTS.put(OrangeConstants.MSI, "MSI");
         STRING_REPLACEMENTS.put(OrangeConstants.HIGH_TML, "High TML");
         STRING_REPLACEMENTS.put(OrangeConstants.HIGH_TMB, "High TMB");
