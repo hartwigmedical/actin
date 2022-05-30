@@ -13,6 +13,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasLungMetastases implements EvaluationFunction {
 
     private static final Set<String> LUNG_KEYWORDS = Sets.newHashSet();

@@ -103,20 +103,20 @@ Rule | When does a patient pass evaluation? | Note
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to WARN in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
 HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `Undetermined` in case of DOID exactly equal to DOID 10283   
-HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
-HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | won't be evaluated
-HAS_STAGE_X | Tumor details > stage. X one of: I, II, III, IIIA, IIIB, IIIC, IV
-HAS_ADVANCED_CANCER | Tumor details > stage III(A/B/C) or IV
-HAS_METASTATIC_CANCER | Tumor details > stage IV 
-HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions = 1
+HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
+HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
+HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV
+HAS_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C) or IV
+HAS_METASTATIC_CANCER | Tumor details > stage should be IV 
+HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions and/or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or hasActiveBrainLesions = 1
 HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
-HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 or missing | WARN in case hasBoneLesions = 1 while all others are missing
-HAS_LUNG_METASTASES | Tumor details > otherLesionDescription like %Pulmonal% or %Lung%
+HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 or missing, and otherLesions is empty | WARN in case hasBoneLesions = 1 while all others are missing
+HAS_LUNG_METASTASES | Tumor details > hasLungLesions = 1
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
@@ -172,7 +172,7 @@ Notes:
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_ACTIVE_SECOND_MALIGNANCY | Prior second primary > any entry with active=1
-HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primaries > contains entry with DOID belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primaries > contains any entry with DOID belonging to DOID X
 HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to UNDETERMINED.
 
 ##### Rules related to molecular results
@@ -493,7 +493,7 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_HAD_RECENT_SURGERY | Surgeries > presence
+HAS_HAD_RECENT_SURGERY | Surgeries > presence of surgery entry within 2 months
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
 
 ##### Rules related to lifestyle

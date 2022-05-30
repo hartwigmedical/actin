@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README, and take into account evaluation date
 public class HasHadAnySurgery implements EvaluationFunction {
 
     HasHadAnySurgery() {
