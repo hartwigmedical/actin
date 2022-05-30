@@ -398,7 +398,6 @@ CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermine
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to undetermined | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D., currently resolves to undetermined | P-glycoprotein
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_OATP_X | T.B.D., currently resolves to undetermined | Organic-anion-transporting polypeptides
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D., currently resolves to undetermined | Breast cancer resistance protein
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to warn in case patient receives any medication
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)
@@ -501,7 +500,6 @@ HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surg
  
 Rule | When does a patient pass evaluation?
 ---|---
-HAS_SMOKED_WITHIN_X_MONTHS | Currently resolves to undetermined
 IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to WARN
  
 ### Disease Ontology ID (DOID)
