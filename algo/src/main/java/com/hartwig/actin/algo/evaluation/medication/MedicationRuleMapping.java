@@ -53,7 +53,10 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator(selector));
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X, getsCYPXInducingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X, getsCYPXInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingOrInducingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X, getsCYPSubstrateMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES,
@@ -131,10 +134,34 @@ public final class MedicationRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator getsCYPXInducingMedicationCreator() {
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new CurrentlyGetsCYPXInducingMedication(termToFind);
+        };
+    }
+
+    @NotNull
     private static FunctionCreator getsCYPXInhibitingMedicationCreator() {
         return function -> {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
             return new CurrentlyGetsCYPXInhibitingMedication(termToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator getsCYPXInhibitingOrInducingMedicationCreator() {
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new CurrentlyGetsCYPXInhibitingOrInducingMedication(termToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator getsCYPSubstrateMedicationCreator() {
+        return function -> {
+            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            return new CurrentlyGetsCYPXSubstrateMedication(termToFind);
         };
     }
 

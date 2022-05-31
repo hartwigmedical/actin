@@ -119,6 +119,7 @@ HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLes
 HAS_LUNG_METASTASES | Tumor details > hasLungLesions = 1
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
+HAS_ASSESSABLE_DISEASE | Tumor details > hasMeasurableDisease = 1, | `UNDETERMINED` in case missing or false
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to WARN in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
@@ -172,6 +173,7 @@ Notes:
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_ACTIVE_SECOND_MALIGNANCY | Prior second primary > any entry with active=1
+HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primary > any entry
 HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primaries > contains any entry with DOID belonging to DOID X
 HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to UNDETERMINED.
 
@@ -300,6 +302,7 @@ HAS_AFP_ULN_OF_AT_LEAST_X | Alpha fetoprotein (AFP) <= X*ULN
 HAS_CA125_ULN_OF_AT_LEAST_X | CA 125 (C125) <= X*ULN
 HAS_HCG_ULN_OF_AT_LEAST_X | HCG + beta HCG (HCG) <= X*ULN
 HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
+HAS_PSA_UG_PER_L_OF_AT_LEAST_X | Prostate-specific antigen (PSA) => X
 
 _Urine measurements_
 
@@ -328,6 +331,7 @@ Rule | When does a patient pass evaluation?
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
+HAS_HISTORY_OF_BRAIN_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 936
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
 HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 331
@@ -396,7 +400,10 @@ CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active 
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to undetermined | Cytochrome P450 enzymes
+CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X | T.B.D., currently resolves to undetermined | Cytochrome P450 enzymes
+CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X | T.B.D., currently resolves to undetermined
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to undetermined 
+CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X | T.B.D., currently resolves to undetermined  
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D., currently resolves to undetermined | P-glycoprotein
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D., currently resolves to undetermined | Breast cancer resistance protein
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to warn in case patient receives any medication

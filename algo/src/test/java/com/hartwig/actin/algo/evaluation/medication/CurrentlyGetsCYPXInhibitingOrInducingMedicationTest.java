@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class CurrentlyGetsCYPXInhibitingMedicationTest {
+public class CurrentlyGetsCYPXInhibitingOrInducingMedicationTest {
 
     @Test
     public void canEvaluate() {
-        CurrentlyGetsCYPXInhibitingMedication function = new CurrentlyGetsCYPXInhibitingMedication("CYP9A9");
+        CurrentlyGetsCYPXInhibitingOrInducingMedication function = new CurrentlyGetsCYPXInhibitingOrInducingMedication("CYP9A9");
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

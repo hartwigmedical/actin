@@ -40,6 +40,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
+        map.put(EligibilityRule.HAS_ASSESSABLE_DISEASE, hasAssessableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE, hasMeasurableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator(doidModel));
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
@@ -154,6 +155,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
         return function -> new TumorBiopsyTakenBeforeInformedConsent();
+    }
+
+    @NotNull
+    private static FunctionCreator hasAssessableDiseaseCreator() {
+        return function -> new HasAssessableDisease();
     }
 
     @NotNull

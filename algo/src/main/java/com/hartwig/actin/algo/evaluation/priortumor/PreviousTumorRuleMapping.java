@@ -23,6 +23,7 @@ public final class PreviousTumorRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, hasActiveSecondMalignancyCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
                 hasHistoryOfSecondMalignancyWithDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS,
@@ -34,6 +35,11 @@ public final class PreviousTumorRuleMapping {
     @NotNull
     private static FunctionCreator hasActiveSecondMalignancyCreator() {
         return function -> new HasActiveSecondMalignancy();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfSecondMalignancyCreator() {
+        return function -> new HasHistoryOfSecondMalignancy();
     }
 
     @NotNull

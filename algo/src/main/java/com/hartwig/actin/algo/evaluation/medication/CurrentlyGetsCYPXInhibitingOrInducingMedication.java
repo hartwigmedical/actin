@@ -8,12 +8,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentlyGetsCYPXInhibitingMedication implements EvaluationFunction {
+public class CurrentlyGetsCYPXInhibitingOrInducingMedication implements EvaluationFunction {
 
     @NotNull
     private final String termToFind;
 
-    CurrentlyGetsCYPXInhibitingMedication(@NotNull final String termToFind) {
+    CurrentlyGetsCYPXInhibitingOrInducingMedication(@NotNull final String termToFind) {
         this.termToFind = termToFind;
     }
 
@@ -23,7 +23,7 @@ public class CurrentlyGetsCYPXInhibitingMedication implements EvaluationFunction
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
-                        "Currently not determined if patient gets " + termToFind + " inhibiting medication")
+                        "Currently not determined if patient gets " + termToFind + " inhibiting/inducing medication")
                 .addUndeterminedGeneralMessages("CYP medication requirements")
                 .build();
     }
