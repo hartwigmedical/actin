@@ -89,13 +89,17 @@ public class CurationDatabaseReaderTest {
     private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {
         assertEquals(2, configs.size());
 
-        OncologicalHistoryConfig config1 = find(configs, "Capecitabine/Oxaliplatin 2020");
+        OncologicalHistoryConfig config1 = find(configs, "Capecitabine/Oxaliplatin 2020-2021");
         assertFalse(config1.ignore());
 
         PriorTumorTreatment curated1 = (PriorTumorTreatment) config1.curated();
         assertEquals("Capecitabine+Oxaliplatin", curated1.name());
-        assertEquals(2020, (int) curated1.year());
-        assertNull(curated1.month());
+        assertEquals(2020, (int) curated1.startYear());
+        assertNull(curated1.startMonth());
+        assertEquals(2021, (int) curated1.stopYear());
+        assertNull(curated1.stopMonth());
+        assertEquals("PR", curated1.bestResponse());
+        assertEquals("toxicity", curated1.stopReason());
         assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated1.categories());
         assertTrue(curated1.isSystemic());
         assertEquals("antimetabolite,platinum", curated1.chemoType());

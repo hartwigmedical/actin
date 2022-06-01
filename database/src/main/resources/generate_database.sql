@@ -1,15 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Remove after 1st of june
-DROP TABLE IF EXISTS fusionGene;
-DROP TABLE IF EXISTS mutation;
-DROP TABLE IF EXISTS activatedGene;
-DROP TABLE IF EXISTS inactivatedGene;
-DROP TABLE IF EXISTS amplifiedGene;
-DROP TABLE IF EXISTS wildtypeGene;
-DROP TABLE IF EXISTS fusedGene;
-DROP TABLE IF EXISTS molecularEvidence;
-
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -66,8 +56,12 @@ CREATE TABLE priorTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     name varchar(100) NOT NULL,
-    year int,
-    month int,
+    startYear int,
+    startMonth int,
+    stopYear int,
+    stopMonth int,
+    bestResponse varchar(50),
+    stopReason varchar(50),
     categories varchar(100) NOT NULL,
     isSystemic BOOLEAN NOT NULL,
     chemoType varchar(50),

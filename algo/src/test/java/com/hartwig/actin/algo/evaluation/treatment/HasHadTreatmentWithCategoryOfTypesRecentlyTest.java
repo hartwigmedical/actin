@@ -54,7 +54,7 @@ public class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some anti-EGFR Type")
-                .year(referenceDate.getYear() + 1)
+                .startYear(referenceDate.getYear() + 1)
                 .build());
         PatientRecord multiRecord3 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
         assertEvaluation(EvaluationResult.PASS, function.evaluate(multiRecord3));
@@ -65,18 +65,24 @@ public class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         LocalDate referenceDate = LocalDate.of(2020, 4, 1);
 
         assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().build(), referenceDate));
-        assertTrue(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().year(2021).build(),
+        assertTrue(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().startYear(2021).build(),
                 referenceDate));
-        assertFalse(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().year(2019).build(),
+        assertFalse(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().startYear(2019).build(),
                 referenceDate));
-        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().year(2020).build(),
+        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().startYear(2020).build(),
                 referenceDate));
 
-        assertTrue(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().year(2020).month(7).build(),
-                referenceDate));
-        assertFalse(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().year(2020).month(3).build(),
-                referenceDate));
-        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().year(2020).month(4).build(),
-                referenceDate));
+        assertTrue(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder()
+                .startYear(2020)
+                .startMonth(7)
+                .build(), referenceDate));
+        assertFalse(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder()
+                .startYear(2020)
+                .startMonth(3)
+                .build(), referenceDate));
+        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder()
+                .startYear(2020)
+                .startMonth(4)
+                .build(), referenceDate));
     }
 }

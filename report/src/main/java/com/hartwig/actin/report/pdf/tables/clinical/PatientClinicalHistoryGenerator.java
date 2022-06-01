@@ -116,7 +116,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
             String treatmentName = treatmentName(priorTumorTreatment);
             if (treatmentName.equals(treatmentNameToInclude)) {
-                String date = toDateString(priorTumorTreatment.year(), priorTumorTreatment.month());
+                String date = toDateString(priorTumorTreatment.startYear(), priorTumorTreatment.startMonth());
                 if (date != null) {
                     dates.add(date);
                 }

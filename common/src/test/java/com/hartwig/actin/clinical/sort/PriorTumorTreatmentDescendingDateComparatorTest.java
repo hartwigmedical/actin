@@ -16,11 +16,11 @@ public class PriorTumorTreatmentDescendingDateComparatorTest {
 
     @Test
     public void canSortOnDescendingDate() {
-        PriorTumorTreatment treatment1 = withNameYearMonth("1", null, null);
-        PriorTumorTreatment treatment2 = withNameYearMonth("1", 2020, 2);
-        PriorTumorTreatment treatment3 = withNameYearMonth("2", 2020, 3);
-        PriorTumorTreatment treatment4 = withNameYearMonth("2", 2021, 1);
-        PriorTumorTreatment treatment5 = withNameYearMonth("2", 2018, null);
+        PriorTumorTreatment treatment1 = withNameStartYearMonth("1", null, null);
+        PriorTumorTreatment treatment2 = withNameStartYearMonth("1", 2020, 2);
+        PriorTumorTreatment treatment3 = withNameStartYearMonth("2", 2020, 3);
+        PriorTumorTreatment treatment4 = withNameStartYearMonth("2", 2021, 1);
+        PriorTumorTreatment treatment5 = withNameStartYearMonth("2", 2018, null);
 
         List<PriorTumorTreatment> treatments = Lists.newArrayList(treatment1, treatment2, treatment3, treatment4, treatment5);
         treatments.sort(new PriorTumorTreatmentDescendingDateComparator());
@@ -33,7 +33,8 @@ public class PriorTumorTreatmentDescendingDateComparatorTest {
     }
 
     @NotNull
-    private static PriorTumorTreatment withNameYearMonth(@NotNull String name, @Nullable Integer year, @Nullable Integer month) {
-        return ImmutablePriorTumorTreatment.builder().name(name).year(year).month(month).isSystemic(false).build();
+    private static PriorTumorTreatment withNameStartYearMonth(@NotNull String name, @Nullable Integer startYear,
+            @Nullable Integer startMonth) {
+        return ImmutablePriorTumorTreatment.builder().name(name).startYear(startYear).startMonth(startMonth).isSystemic(false).build();
     }
 }

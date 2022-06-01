@@ -73,18 +73,18 @@ final class SystemicTreatmentAnalyser {
     }
 
     private static boolean isBefore(@NotNull PriorTumorTreatment first, @NotNull PriorTumorTreatment second) {
-        if (isLower(first.year(), second.year())) {
+        if (isLower(first.startYear(), second.startYear())) {
             return true;
         } else {
-            return isEqual(first.year(), second.year()) && isLower(first.month(), second.month());
+            return isEqual(first.startYear(), second.startYear()) && isLower(first.startMonth(), second.startMonth());
         }
     }
 
     private static boolean isAfter(@NotNull PriorTumorTreatment first, @NotNull PriorTumorTreatment second) {
-        if (isHigher(first.year(), second.year())) {
+        if (isHigher(first.startYear(), second.startYear())) {
             return true;
         } else {
-            return isEqual(first.year(), second.year()) && isHigher(first.month(), second.month());
+            return isEqual(first.startYear(), second.startYear()) && isHigher(first.startMonth(), second.startMonth());
         }
     }
 

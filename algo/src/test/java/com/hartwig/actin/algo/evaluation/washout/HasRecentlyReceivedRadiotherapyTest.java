@@ -39,19 +39,19 @@ public class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorTumorTreatment(rightCategoryNoDate)));
 
         // Right category but old date
-        PriorTumorTreatment rightCategoryOldDate = radiotherapy().year(year - 1).build();
+        PriorTumorTreatment rightCategoryOldDate = radiotherapy().startYear(year - 1).build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatment(rightCategoryOldDate)));
 
         // Right category but old month
-        PriorTumorTreatment rightCategoryOldMonth = radiotherapy().year(year).month(month - 1).build();
+        PriorTumorTreatment rightCategoryOldMonth = radiotherapy().startYear(year).startMonth(month - 1).build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatment(rightCategoryOldMonth)));
 
         // Right category and recent year
-        PriorTumorTreatment rightCategoryRecentYear = radiotherapy().year(year).build();
+        PriorTumorTreatment rightCategoryRecentYear = radiotherapy().startYear(year).build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorTumorTreatment(rightCategoryRecentYear)));
 
         // Right category and recent year and month
-        PriorTumorTreatment rightCategoryRecentYearAndMonth = radiotherapy().year(year).month(month).build();
+        PriorTumorTreatment rightCategoryRecentYearAndMonth = radiotherapy().startYear(year).startMonth(month).build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorTumorTreatment(rightCategoryRecentYearAndMonth)));
     }
 

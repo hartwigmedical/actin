@@ -116,7 +116,7 @@ public class CurationModelTest {
     @NotNull
     private static PriorTumorTreatment findByYear(@NotNull List<PriorTumorTreatment> priorTumorTreatments, int year) {
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            if (priorTumorTreatment.year() == year) {
+            if (priorTumorTreatment.startYear() == year) {
                 return priorTumorTreatment;
             }
         }

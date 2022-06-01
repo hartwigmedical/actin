@@ -116,15 +116,15 @@ public final class TestClinicalFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Resection")
-                .year(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_1)
+                .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_1)
                 .addCategories(TreatmentCategory.SURGERY)
                 .isSystemic(false)
                 .build());
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Vemurafenib")
-                .year(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2)
-                .month(TODAY.getMonthValue())
+                .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2)
+                .startMonth(TODAY.getMonthValue())
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .isSystemic(true)
                 .targetedType("BRAF inhibitor")
@@ -132,7 +132,7 @@ public final class TestClinicalFactory {
 
         priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
                 .name("Ipilimumab")
-                .year(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_3)
+                .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_3)
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .isSystemic(true)
                 .immunoType("Anti-CTLA-4")

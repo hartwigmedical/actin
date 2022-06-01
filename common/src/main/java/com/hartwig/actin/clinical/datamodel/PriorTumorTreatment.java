@@ -14,10 +14,22 @@ public abstract class PriorTumorTreatment {
     public abstract String name();
 
     @Nullable
-    public abstract Integer year();
+    public abstract Integer startYear();
 
     @Nullable
-    public abstract Integer month();
+    public abstract Integer startMonth();
+
+    @Nullable
+    public abstract Integer stopYear();
+
+    @Nullable
+    public abstract Integer stopMonth();
+
+    @Nullable
+    public abstract String bestResponse();
+
+    @Nullable
+    public abstract String stopReason();
 
     @NotNull
     public abstract Set<TreatmentCategory> categories();

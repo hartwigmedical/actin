@@ -18,22 +18,22 @@ public class SystemicTreatmentAnalyserTest {
         assertEquals(0, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Add one systemic treatment.
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").year(2022).month(5).isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2022).startMonth(5).isSystemic(true).build());
         assertEquals(1, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(1, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Add one non-systemic treatment prior
-        treatments.add(TreatmentTestFactory.builder().name("treatment B").year(2022).month(2).isSystemic(false).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment B").startYear(2022).startMonth(2).isSystemic(false).build());
         assertEquals(1, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(1, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Add another systemic treatment prior
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").year(2021).month(10).isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2021).startMonth(10).isSystemic(true).build());
         assertEquals(2, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(2, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Add another systemic treatment prior
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").year(2021).month(5).isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2021).startMonth(5).isSystemic(true).build());
         assertEquals(2, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(3, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
@@ -43,17 +43,17 @@ public class SystemicTreatmentAnalyserTest {
         assertEquals(4, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Add another systemic treatment with just year
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").year(2021).isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2021).isSystemic(true).build());
         assertEquals(2, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(5, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Add different systemic treatment with just year
-        treatments.add(TreatmentTestFactory.builder().name("treatment C").year(2021).isSystemic(true).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment C").startYear(2021).isSystemic(true).build());
         assertEquals(3, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(6, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
         // Make sure one older non-systemic doesnt screw up.
-        treatments.add(TreatmentTestFactory.builder().name("treatment D").year(2019).month(5).isSystemic(false).build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment D").startYear(2019).startMonth(5).isSystemic(false).build());
         assertEquals(3, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(6, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
     }

@@ -84,14 +84,14 @@ public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFun
     @VisibleForTesting
     @Nullable
     static Boolean startedPastDate(@NotNull PriorTumorTreatment treatment, @NotNull LocalDate minDate) {
-        Integer year = treatment.year();
+        Integer year = treatment.startYear();
 
         if (year == null) {
             return null;
         } else if (year > minDate.getYear()) {
             return true;
         } else if (year == minDate.getYear()) {
-            Integer month = treatment.month();
+            Integer month = treatment.startMonth();
             if (month == null || month == minDate.getMonthValue()) {
                 return null;
             } else {

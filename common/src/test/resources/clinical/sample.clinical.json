@@ -52,8 +52,12 @@
   "priorTumorTreatments": [
     {
       "name": "Capecitabine",
-      "year": 2019,
-      "month": 3,
+      "startYear": 2019,
+      "startMonth": 3,
+      "stopYear": 2020,
+      "stopMonth": null,
+      "bestResponse": "PR",
+      "stopReason": "toxicity",
       "categories": [
         "CHEMOTHERAPY"
       ],

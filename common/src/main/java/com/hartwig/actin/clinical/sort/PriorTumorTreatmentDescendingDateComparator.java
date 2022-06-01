@@ -12,12 +12,12 @@ public class PriorTumorTreatmentDescendingDateComparator implements Comparator<P
 
     @Override
     public int compare(@NotNull PriorTumorTreatment priorTumorTreatment1, @NotNull PriorTumorTreatment priorTumorTreatment2) {
-        int yearCompare = intCompare(priorTumorTreatment1.year(), priorTumorTreatment2.year());
+        int yearCompare = intCompare(priorTumorTreatment1.startYear(), priorTumorTreatment2.startYear());
         if (yearCompare != 0) {
             return yearCompare;
         }
 
-        int monthCompare = intCompare(priorTumorTreatment1.month(), priorTumorTreatment2.month());
+        int monthCompare = intCompare(priorTumorTreatment1.startMonth(), priorTumorTreatment2.startMonth());
         if (monthCompare != 0) {
             return monthCompare;
         }

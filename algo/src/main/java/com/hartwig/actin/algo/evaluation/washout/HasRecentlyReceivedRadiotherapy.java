@@ -27,8 +27,8 @@ public class HasRecentlyReceivedRadiotherapy implements EvaluationFunction {
         boolean hasReceivedRadiotherapy = false;
         for (PriorTumorTreatment priorTumorTreatment : record.clinical().priorTumorTreatments()) {
             if (priorTumorTreatment.categories().contains(TreatmentCategory.RADIOTHERAPY)) {
-                Integer year = priorTumorTreatment.year();
-                Integer month = priorTumorTreatment.month();
+                Integer year = priorTumorTreatment.startYear();
+                Integer month = priorTumorTreatment.startMonth();
 
                 if ((year == null) || (year == referenceYear && (month == null || month == referenceMonth))) {
                     hasReceivedRadiotherapy = true;
