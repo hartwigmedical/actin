@@ -38,6 +38,7 @@ public enum LabUnit {
     PERCENTAGE("%"),
     PERCENTAGE_OF_LEUKOCYTES("% of leukocytes"),
     PERCENTAGE_OF_T_CELLS("% of T-cells"),
+    MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"),
     NONE(Strings.EMPTY);
 
     @NotNull
