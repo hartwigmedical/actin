@@ -70,8 +70,12 @@ N prior tumor treatments
 Field | Example Value | Details
 ---|---|---
 name | Ipilimumab | Treatment name
-year | 2021 | Year in which treatment was started
-month | 11 | Month in which treatment was started 
+startYear | 2021 | Year in which treatment was started
+startMonth | 11 | Month in which treatment was started 
+stopYear | 2021 | Year in which treatment was stopped
+stopMonth | 12 | Month in which treatment was stopped 
+bestResponse | Complete response | Best response to treatment
+stopReason | | Reason of treatment end
 categories | Immunotherapy | A set of categories assigned to the treatment
 isSystemic | 1 | Treatment is systemic?
 chemoType | | Type of chemotherapy (if applicable)
