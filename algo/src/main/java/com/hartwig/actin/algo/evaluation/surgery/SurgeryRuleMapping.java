@@ -20,15 +20,16 @@ public final class SurgeryRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator());
+        map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator(referenceDateProvider));
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator hasHadAnySurgeryCreator() {
-        return function -> new HasHadAnySurgery();
+    private static FunctionCreator hasHadAnySurgeryCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+        LocalDate minDate = referenceDateProvider.date().minusMonths(2);
+        return function -> new HasHadAnySurgery(minDate);
     }
 
     @NotNull

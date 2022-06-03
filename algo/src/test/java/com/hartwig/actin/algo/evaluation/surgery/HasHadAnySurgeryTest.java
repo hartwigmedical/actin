@@ -16,12 +16,16 @@ public class HasHadAnySurgeryTest {
 
     @Test
     public void canEvaluate() {
-        HasHadAnySurgery function = new HasHadAnySurgery();
+        LocalDate minDate = LocalDate.of(2019, 8, 20);
+        HasHadAnySurgery function = new HasHadAnySurgery(minDate);
 
         List<Surgery> surgeries = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
 
         surgeries.add(ImmutableSurgery.builder().endDate(LocalDate.of(2010, 10, 10)).build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
+
+        surgeries.add(ImmutableSurgery.builder().endDate(minDate).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
     }
 }

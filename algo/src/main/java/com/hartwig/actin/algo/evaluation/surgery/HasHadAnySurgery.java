@@ -1,24 +1,37 @@
 package com.hartwig.actin.algo.evaluation.surgery;
 
+import java.time.LocalDate;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README, and take into account evaluation date
 public class HasHadAnySurgery implements EvaluationFunction {
 
-    HasHadAnySurgery() {
+    @NotNull
+    private final LocalDate minDate;
+
+    HasHadAnySurgery(@NotNull final LocalDate minDate) {
+        this.minDate = minDate;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        EvaluationResult result = record.clinical().surgeries().isEmpty() ? EvaluationResult.FAIL : EvaluationResult.PASS;
+        boolean hasHadRecentSurgery = false;
+        for (Surgery surgery : record.clinical().surgeries()) {
+            if (!surgery.endDate().isBefore(minDate)) {
+                hasHadRecentSurgery = true;
+            }
+        }
+
+        EvaluationResult result = hasHadRecentSurgery ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
