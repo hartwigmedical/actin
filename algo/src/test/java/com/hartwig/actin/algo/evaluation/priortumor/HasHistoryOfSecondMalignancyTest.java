@@ -20,12 +20,8 @@ public class HasHistoryOfSecondMalignancyTest {
         List<PriorSecondPrimary> priorTumors = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
 
-        // One prior tumor but inactive
-        priorTumors.add(PriorTumorTestFactory.builder().isActive(false).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
-
-        // One other prior tumor, still active
-        priorTumors.add(PriorTumorTestFactory.builder().isActive(true).build());
+        // One prior tumor
+        priorTumors.add(PriorTumorTestFactory.builder().build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
     }
 }

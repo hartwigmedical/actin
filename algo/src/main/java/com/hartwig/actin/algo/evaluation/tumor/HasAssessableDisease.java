@@ -9,7 +9,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Review below implementation and test
 public class HasAssessableDisease implements EvaluationFunction {
 
     HasAssessableDisease() {
