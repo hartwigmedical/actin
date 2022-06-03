@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class HasBoneMetastasesOnly implements EvaluationFunction {
 
-    //TODO: Add otherLesions logic (README)
     HasBoneMetastasesOnly() {
     }
 
