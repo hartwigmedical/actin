@@ -31,7 +31,7 @@ public final class CardiacFunctionRuleMapping {
 
     @NotNull
     private static FunctionCreator hasAnyTypeOfCardiacArrhythmiaCreator() {
-        return function -> new HasCardiacArrhythmia(null);
+        return function -> new HasCardiacArrhythmia();
     }
 
     @NotNull
