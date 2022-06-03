@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -33,9 +35,10 @@ public class HasBoneMetastasesOnly implements EvaluationFunction {
         Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
         Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
         Boolean hasLungLesions = record.clinical().tumor().hasLungLesions();
+        List<String> otherLesions = record.clinical().tumor().otherLesions();
 
         if (hasBoneMetastases && hasLiverMetastases == null && hasCnsMetastases == null && hasBrainMetastases == null
-                && hasLungLesions == null) {
+                && hasLungLesions == null && otherLesions == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient has bone lesions but data regarding other lesion locations is missing")
@@ -43,8 +46,9 @@ public class HasBoneMetastasesOnly implements EvaluationFunction {
                     .build();
         }
 
-        boolean hasOtherLesions = anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasLungLesions);
-        EvaluationResult result = hasBoneMetastases && !hasOtherLesions ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        boolean hasOtherLesion = otherLesions != null && !otherLesions.isEmpty();
+        boolean hasAnyOtherLesion = anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasLungLesions, hasOtherLesion);
+        EvaluationResult result = hasBoneMetastases && !hasAnyOtherLesion ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
