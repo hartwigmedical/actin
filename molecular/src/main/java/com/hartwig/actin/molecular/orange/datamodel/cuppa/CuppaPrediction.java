@@ -1,16 +1,15 @@
 package com.hartwig.actin.molecular.orange.datamodel.cuppa;
 
-import java.util.Set;
-
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class CuppaRecord {
+public abstract class CuppaPrediction {
 
     @NotNull
-    public abstract Set<CuppaPrediction> predictions();
+    public abstract String cancerType();
 
+    public abstract double likelihood();
 }

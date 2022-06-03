@@ -13,6 +13,7 @@ import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
@@ -150,8 +151,10 @@ public class OrangeJsonTest {
     }
 
     private static void assertCuppa(@NotNull CuppaRecord cuppa) {
-        assertEquals("Melanoma", cuppa.predictedCancerType());
-        assertEquals(0.996, cuppa.bestPredictionLikelihood(), EPSILON);
+        assertEquals(1, cuppa.predictions().size());
+        CuppaPrediction prediction = cuppa.predictions().iterator().next();
+        assertEquals("Melanoma", prediction.cancerType());
+        assertEquals(0.996, prediction.likelihood(), EPSILON);
     }
 
     private static void assertVirusInterpreter(@NotNull VirusInterpreterRecord virusInterpreter) {

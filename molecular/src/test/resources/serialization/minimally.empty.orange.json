@@ -14,7 +14,7 @@
     "tumorMutationalLoad": 0,
     "reportableSomaticVariants": [],
     "reportableGermlineVariants": [],
-    "reportableGainsLosses": []
+    "reportableSomaticGainsLosses": []
   },
   "linx": {
     "reportableFusions": [],
@@ -29,8 +29,8 @@
   },
   "peach": [],
   "cuppa": {
-    "predictedCancerType": "Unknown",
-    "bestPredictionLikelihood": 0
+    "predictions": [
+    ]
   },
   "protect": []
 }

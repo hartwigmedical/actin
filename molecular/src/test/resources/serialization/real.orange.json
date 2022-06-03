@@ -1,9 +1,9 @@
 {
-  "sampleId": "Test",
+  "sampleId": "ACTN01029999T",
   "reportDate": {
     "year": 2022,
-    "month": 5,
-    "day": 17
+    "month": 6,
+    "day": 3
   },
   "configuredPrimaryTumor": [
     {
@@ -29,6 +29,7 @@
       "snomedConceptId": null
     }
   ],
+  "refGenomeVersion": "V37",
   "platinumVersion": "5.28",
   "refSample": {
     "metrics": {
@@ -516,6 +517,8 @@
         "otherReportedEffects": "",
         "totalReadCount": 111,
         "alleleReadCount": 74,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 3.02,
         "alleleCopyNumber": 2.026722,
         "minorAlleleCopyNumber": 1.0,
@@ -547,6 +550,8 @@
         "otherReportedEffects": "",
         "totalReadCount": 112,
         "alleleReadCount": 47,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 3.98,
         "alleleCopyNumber": 1.678764,
         "minorAlleleCopyNumber": 1.97,
@@ -578,6 +583,8 @@
         "otherReportedEffects": "",
         "totalReadCount": 65,
         "alleleReadCount": 56,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 2.0,
         "alleleCopyNumber": 1.7404,
         "minorAlleleCopyNumber": 0.0,
@@ -609,6 +616,8 @@
         "otherReportedEffects": "",
         "totalReadCount": 221,
         "alleleReadCount": 150,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 6.02,
         "alleleCopyNumber": 4.09962,
         "minorAlleleCopyNumber": 2.01,
@@ -640,6 +649,8 @@
         "otherReportedEffects": "ENST00000579755|c.246_247delCG|p.Gly83fs|frameshift_variant|NONSENSE_OR_FRAMESHIFT",
         "totalReadCount": 99,
         "alleleReadCount": 99,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 2.0,
         "alleleCopyNumber": 2.0,
         "minorAlleleCopyNumber": 0.0,
@@ -671,6 +682,8 @@
         "otherReportedEffects": "ENST00000579755|c.246_247delCG|p.Gly83fs|frameshift_variant|NONSENSE_OR_FRAMESHIFT",
         "totalReadCount": 99,
         "alleleReadCount": 99,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 2.0,
         "alleleCopyNumber": 2.0,
         "minorAlleleCopyNumber": 0.0,
@@ -688,7 +701,7 @@
     "unreportedSomaticVariants": [],
     "reportableGermlineVariants": [],
     "unreportedGermlineVariants": [],
-    "reportableGainsLosses": [
+    "reportableSomaticGainsLosses": [
       {
         "interpretation": "PARTIAL_LOSS",
         "chromosome": "10",
@@ -700,7 +713,10 @@
         "maxCopies": 2
       }
     ],
-    "unreportedGainsLosses": [],
+    "unreportedSomaticGainsLosses": [],
+    "reportableGermlineDeletions": [],
+    "unreportedGermlineDeletions": [],
+    "lohGenes": [],
     "cnPerChromosome": []
   },
   "linx": {
@@ -710,6 +726,8 @@
       {
         "location": "10q23.31",
         "gene": "PTEN",
+        "transcriptId": "ENST00000371953",
+        "isCanonical": true,
         "range": "Intron 5 -\u003e Intron 6",
         "type": "DEL",
         "junctionCopyNumber": 2.0076,
@@ -736,6 +754,86 @@
         "gene": "PTEN",
         "eventType": "DEL"
       }
+    ],
+    "reportableGermlineDisruptions": [],
+    "unreportedGermlineDisruptions": []
+  },
+  "isofox": null,
+  "lilac": {
+    "qc": "PASS",
+    "alleles": [
+      {
+        "name": "A*01:01",
+        "refFragments": 210,
+        "tumorFragments": 1602,
+        "rnaFragments": null,
+        "tumorCopyNumber": 2.0,
+        "somaticMissense": 0.0,
+        "somaticNonsenseOrFrameshift": 0.0,
+        "somaticSplice": 0.0,
+        "somaticSynonymous": 0.0,
+        "somaticInframeIndel": 0.0
+      },
+      {
+        "name": "A*01:01",
+        "refFragments": 211,
+        "tumorFragments": 1602,
+        "rnaFragments": null,
+        "tumorCopyNumber": 1.83,
+        "somaticMissense": 0.0,
+        "somaticNonsenseOrFrameshift": 0.0,
+        "somaticSplice": 0.0,
+        "somaticSynonymous": 0.0,
+        "somaticInframeIndel": 0.0
+      },
+      {
+        "name": "B*08:01",
+        "refFragments": 216,
+        "tumorFragments": 750,
+        "rnaFragments": null,
+        "tumorCopyNumber": 1.83,
+        "somaticMissense": 0.0,
+        "somaticNonsenseOrFrameshift": 0.0,
+        "somaticSplice": 0.0,
+        "somaticSynonymous": 0.0,
+        "somaticInframeIndel": 0.0
+      },
+      {
+        "name": "B*40:02",
+        "refFragments": 196,
+        "tumorFragments": 721,
+        "rnaFragments": null,
+        "tumorCopyNumber": 2.0,
+        "somaticMissense": 0.0,
+        "somaticNonsenseOrFrameshift": 0.0,
+        "somaticSplice": 0.0,
+        "somaticSynonymous": 0.0,
+        "somaticInframeIndel": 0.0
+      },
+      {
+        "name": "C*03:04",
+        "refFragments": 213,
+        "tumorFragments": 768,
+        "rnaFragments": null,
+        "tumorCopyNumber": 2.0,
+        "somaticMissense": 0.0,
+        "somaticNonsenseOrFrameshift": 0.0,
+        "somaticSplice": 0.0,
+        "somaticSynonymous": 0.0,
+        "somaticInframeIndel": 0.0
+      },
+      {
+        "name": "C*07:01",
+        "refFragments": 225,
+        "tumorFragments": 767,
+        "rnaFragments": null,
+        "tumorCopyNumber": 1.83,
+        "somaticMissense": 0.0,
+        "somaticNonsenseOrFrameshift": 0.0,
+        "somaticSplice": 0.0,
+        "somaticSynonymous": 0.0,
+        "somaticInframeIndel": 0.0
+      }
     ]
   },
   "virusInterpreter": {
@@ -752,8 +850,152 @@
     "remarksHrdType": ""
   },
   "cuppa": {
-    "predictedCancerType": "Melanoma",
-    "bestPredictionLikelihood": 0.996,
+    "predictions": [
+      {
+        "cancerType": "Melanoma",
+        "likelihood": 0.996
+      },
+      {
+        "cancerType": "Skin: Other",
+        "likelihood": 1.86E-4
+      },
+      {
+        "cancerType": "Lung: Non-small Cell",
+        "likelihood": 1.46E-4
+      },
+      {
+        "cancerType": "Acute myeloid leukemia",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Anogenital",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Bile duct/Gallbladder",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Bone/Soft tissue: Other",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Cartilaginous neoplasm",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Chronic lymphocytic leukemia",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Colorectum/Appendix/SmallIntestine",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Esophagus/Stomach",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "GIST",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Glioma",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Head and neck: other",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Kidney",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Leiomyosarcoma",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Liposarcoma",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Liver",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Lung: NET",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Lung: Small Cell",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Lymphoid tissue",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Medulloblastoma",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Mesothelium",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Myeloproliferative neoplasm",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Osteosarcoma",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Pancreas",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Pancreas: NET",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Pilocytic astrocytoma",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Prostate",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Salivary gland/Adenoid cystic",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Small intestine/Colorectum: NET",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Thyroid gland",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Urothelial tract",
+        "likelihood": 1.31E-4
+      },
+      {
+        "cancerType": "Breast",
+        "likelihood": 2.94E-5
+      },
+      {
+        "cancerType": "Ovary/Fallopian tube",
+        "likelihood": 0.0
+      },
+      {
+        "cancerType": "Uterus: Endometrium",
+        "likelihood": 0.0
+      }
+    ],
     "simpleDups32To200B": 3,
     "maxComplexSize": 8,
     "telomericSGLs": 0,
@@ -906,22 +1148,22 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600G",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dNCCN"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
           "sourceEvent": "BRAF BRAF:V600E",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dFDA"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600G",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "https://www.google.com/#q\u003dNCCN"
           ]
         }
       ]
@@ -1157,6 +1399,18 @@
       "direction": "RESISTANT",
       "sources": [
         {
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
+          ]
+        },
+        {
           "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
           "sourceUrls": [],
@@ -1174,18 +1428,6 @@
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/19001320"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
           ]
         }
       ]
@@ -1477,8 +1719,8 @@
       "direction": "RESPONSIVE",
       "sources": [
         {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
@@ -1487,8 +1729,8 @@
           ]
         },
         {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
@@ -1513,7 +1755,7 @@
       "sources": [
         {
           "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600G",
+          "sourceEvent": "BRAF BRAF:V600E",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
@@ -1523,7 +1765,7 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
+          "sourceEvent": "BRAF BRAF:V600G",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
@@ -1573,6 +1815,16 @@
       "sources": [
         {
           "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22735384"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
           "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
@@ -1589,16 +1841,6 @@
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/21343559"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22735384"
           ]
         }
       ]
@@ -1653,20 +1895,20 @@
       "sources": [
         {
           "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
+          "sourceEvent": "BRAF V600",
           "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
+          "evidenceType": "CODON_MUTATION",
+          "rangeRank": 600,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/22663011"
           ]
         },
         {
           "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
+          "sourceEvent": "BRAF V600E",
           "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/22663011"
           ]
@@ -1753,6 +1995,16 @@
       "sources": [
         {
           "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/26352686"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600",
           "sourceUrls": [],
           "evidenceType": "CODON_MUTATION",
@@ -1771,16 +2023,6 @@
             "http://www.ncbi.nlm.nih.gov/pubmed/22492957",
             "http://www.ncbi.nlm.nih.gov/pubmed/20068183",
             "http://www.ncbi.nlm.nih.gov/pubmed/21274720"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26352686"
           ]
         },
         {
@@ -2385,21 +2627,7 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23300174",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23278307",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25815361",
-            "http://www.ncbi.nlm.nih.gov/pubmed/27116997"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120"
+            "http://www.ncbi.nlm.nih.gov/pubmed/26490654"
           ]
         },
         {
@@ -2409,7 +2637,55 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
+            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23300174",
+            "http://www.ncbi.nlm.nih.gov/pubmed/23278307",
+            "http://www.ncbi.nlm.nih.gov/pubmed/25815361",
+            "http://www.ncbi.nlm.nih.gov/pubmed/27116997"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/24335681"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
+            "http://www.ncbi.nlm.nih.gov/pubmed/24987354",
+            "http://www.ncbi.nlm.nih.gov/pubmed/25353071"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/27520988"
+          ]
+        },
+        {
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
+            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
           ]
         },
         {
@@ -2431,6 +2707,26 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/25092772"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF V600E",
+          "sourceUrls": [],
+          "evidenceType": "HOTSPOT_MUTATION",
+          "rangeRank": null,
+          "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/23733758",
             "http://www.ncbi.nlm.nih.gov/pubmed/24888229",
             "http://www.ncbi.nlm.nih.gov/pubmed/26776917"
@@ -2443,7 +2739,7 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26490654"
+            "http://www.ncbi.nlm.nih.gov/pubmed/24997557"
           ]
         },
         {
@@ -2453,17 +2749,17 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24821190"
+            "http://www.ncbi.nlm.nih.gov/pubmed/25209580"
           ]
         },
         {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
+          "name": "VICC_CGI",
+          "sourceEvent": "BRAF BRAF:V600E",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25092772"
+            "http://www.ncbi.nlm.nih.gov/pubmed/22586120"
           ]
         },
         {
@@ -2484,7 +2780,7 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24725538"
+            "http://www.ncbi.nlm.nih.gov/pubmed/24821190"
           ]
         },
         {
@@ -2504,61 +2800,7 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25209580"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24997557"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24335681"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27520988"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
-            "http://www.ncbi.nlm.nih.gov/pubmed/24987354",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25353071"
+            "http://www.ncbi.nlm.nih.gov/pubmed/24725538"
           ]
         }
       ]
@@ -2886,22 +3128,22 @@
       "sources": [
         {
           "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF MUTATION",
-          "sourceUrls": [],
-          "evidenceType": "ACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22169769"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
           "sourceEvent": "BRAF V600E",
           "sourceUrls": [],
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/16424035"
+          ]
+        },
+        {
+          "name": "VICC_CIVIC",
+          "sourceEvent": "BRAF MUTATION",
+          "sourceUrls": [],
+          "evidenceType": "ACTIVATION",
+          "rangeRank": null,
+          "evidenceUrls": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22169769"
           ]
         }
       ]
@@ -3434,8 +3676,7 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22448344",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22180495"
+            "http://www.ncbi.nlm.nih.gov/pubmed/25706985"
           ]
         },
         {
@@ -3456,7 +3697,8 @@
           "evidenceType": "HOTSPOT_MUTATION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25706985"
+            "http://www.ncbi.nlm.nih.gov/pubmed/22448344",
+            "http://www.ncbi.nlm.nih.gov/pubmed/22180495"
           ]
         },
         {
@@ -3729,9 +3971,9 @@
       "sources": [
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceEvent": "PTEN PTEN deletion",
           "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/26645196"
@@ -3739,9 +3981,9 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
           "sourceUrls": [],
-          "evidenceType": "DELETION",
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/26645196"
@@ -3764,9 +4006,9 @@
       "sources": [
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceEvent": "PTEN PTEN deletion",
           "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2013 (abstr 2532)"
@@ -3774,9 +4016,9 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
           "sourceUrls": [],
-          "evidenceType": "DELETION",
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2013 (abstr 2532)"
@@ -3908,18 +4150,18 @@
       "direction": "RESPONSIVE",
       "sources": [
         {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN DELETION",
+          "name": "VICC_CGI",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
           "sourceUrls": [],
-          "evidenceType": "DELETION",
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
           ]
         },
         {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
+          "name": "VICC_CIVIC",
+          "sourceEvent": "PTEN DELETION",
           "sourceUrls": [],
           "evidenceType": "DELETION",
           "rangeRank": null,
@@ -3939,9 +4181,9 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceEvent": "PTEN PTEN deletion",
           "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
@@ -3989,9 +4231,9 @@
       "sources": [
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceEvent": "PTEN PTEN deletion",
           "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/20944090",
@@ -4000,9 +4242,9 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
           "sourceUrls": [],
-          "evidenceType": "DELETION",
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "http://www.ncbi.nlm.nih.gov/pubmed/20944090",
@@ -4026,9 +4268,9 @@
       "sources": [
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
+          "sourceEvent": "PTEN PTEN oncogenic mutation",
           "sourceUrls": [],
-          "evidenceType": "DELETION",
+          "evidenceType": "INACTIVATION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2014 (abstr 2514)"
@@ -4036,9 +4278,9 @@
         },
         {
           "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
+          "sourceEvent": "PTEN PTEN deletion",
           "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
+          "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
             "https://www.google.com/#q\u003dASCO 2014 (abstr 2514)"
@@ -4525,7 +4767,7 @@
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/11504908"
+            "http://www.ncbi.nlm.nih.gov/pubmed/23674493"
           ]
         },
         {
@@ -4535,7 +4777,7 @@
           "evidenceType": "DELETION",
           "rangeRank": null,
           "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23674493"
+            "http://www.ncbi.nlm.nih.gov/pubmed/11504908"
           ]
         }
       ]
@@ -4574,21 +4816,21 @@
     }
   },
   "plots": {
-    "sageReferenceBQRPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/sage_somatic/ref_sample.sage.bqr.png",
-    "sageTumorBQRPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/sage_somatic/tumor_sample.sage.bqr.png",
-    "purpleInputPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.input.png",
-    "purpleFinalCircosPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.circos.png",
-    "purpleClonalityPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.somatic.clonality.png",
-    "purpleCopyNumberPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.copynumber.png",
-    "purpleVariantCopyNumberPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.somatic.png",
-    "purplePurityRangePlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.purity.range.png",
-    "purpleKataegisPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/purple/plot/tumor_sample.somatic.rainfall.png",
+    "sageReferenceBQRPlot": "test_run/sage_somatic/ref_sample.sage.bqr.png",
+    "sageTumorBQRPlot": "test_run/sage_somatic/tumor_sample.sage.bqr.png",
+    "purpleInputPlot": "test_run/purple/plot/tumor_sample.input.png",
+    "purpleFinalCircosPlot": "test_run/purple/plot/tumor_sample.circos.png",
+    "purpleClonalityPlot": "test_run/purple/plot/tumor_sample.somatic.clonality.png",
+    "purpleCopyNumberPlot": "test_run/purple/plot/tumor_sample.copynumber.png",
+    "purpleVariantCopyNumberPlot": "test_run/purple/plot/tumor_sample.somatic.png",
+    "purplePurityRangePlot": "test_run/purple/plot/tumor_sample.purity.range.png",
+    "purpleKataegisPlot": "test_run/purple/plot/tumor_sample.somatic.rainfall.png",
     "linxDriverPlots": [
-      "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/linx/plot/tumor_sample.cluster3.png",
-      "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/linx/plot/tumor_sample.cluster2.png",
-      "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/linx/plot/tumor_sample.cluster1.png"
+      "test_run/linx/plot/tumor_sample.cluster3.png",
+      "test_run/linx/plot/tumor_sample.cluster2.png",
+      "test_run/linx/plot/tumor_sample.cluster1.png"
     ],
-    "cuppaSummaryPlot": "/Users/korneelduyvesteyn/hmf/repos/hmftools/orange/target/test-classes/test_run/cuppa/tumor_sample.cup.report.summary.png",
+    "cuppaSummaryPlot": "test_run/cuppa/tumor_sample.cup.report.summary.png",
     "cuppaFeaturePlot": null
   }
 }

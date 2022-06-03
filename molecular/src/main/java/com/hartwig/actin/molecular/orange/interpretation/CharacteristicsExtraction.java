@@ -1,10 +1,13 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Set;
+
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,10 +31,10 @@ final class CharacteristicsExtraction {
 
     @NotNull
     public static MolecularCharacteristics extract(@NotNull OrangeRecord record) {
-        PredictedTumorOrigin predictedTumorOrigin = ImmutablePredictedTumorOrigin.builder()
-                .tumorType(record.cuppa().predictedCancerType())
-                .likelihood(record.cuppa().bestPredictionLikelihood())
-                .build();
+        CuppaPrediction best = findBestCuppaPrediction(record.cuppa().predictions());
+        PredictedTumorOrigin predictedTumorOrigin = best != null
+                ? ImmutablePredictedTumorOrigin.builder().tumorType(best.cancerType()).likelihood(best.likelihood()).build()
+                : null;
 
         PurpleRecord purple = record.purple();
         return ImmutableMolecularCharacteristics.builder()
@@ -43,6 +46,17 @@ final class CharacteristicsExtraction {
                 .tumorMutationalBurden(purple.tumorMutationalBurden())
                 .tumorMutationalLoad(purple.tumorMutationalLoad())
                 .build();
+    }
+
+    @Nullable
+    private static CuppaPrediction findBestCuppaPrediction(@NotNull Set<CuppaPrediction> predictions) {
+        CuppaPrediction best = null;
+        for (CuppaPrediction prediction : predictions) {
+            if (best == null || prediction.likelihood() > best.likelihood()) {
+                best = prediction;
+            }
+        }
+        return best;
     }
 
     @Nullable

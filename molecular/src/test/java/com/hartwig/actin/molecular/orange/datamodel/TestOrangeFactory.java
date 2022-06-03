@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
@@ -52,7 +54,7 @@ public final class TestOrangeFactory {
                 .purple(createMinimalTestPurpleRecord())
                 .linx(ImmutableLinxRecord.builder().build())
                 .peach(ImmutablePeachRecord.builder().build())
-                .cuppa(ImmutableCuppaRecord.builder().predictedCancerType("Unknown").bestPredictionLikelihood(0D).build())
+                .cuppa(ImmutableCuppaRecord.builder().build())
                 .virusInterpreter(ImmutableVirusInterpreterRecord.builder().build())
                 .chord(ImmutableChordRecord.builder().hrStatus(Strings.EMPTY).build())
                 .protect(ImmutableProtectRecord.builder().build())
@@ -66,7 +68,7 @@ public final class TestOrangeFactory {
                 .purple(createTestPurpleRecord())
                 .linx(createTestLinxRecord())
                 .peach(createTestPeachRecord())
-                .cuppa(ImmutableCuppaRecord.builder().predictedCancerType("Melanoma").bestPredictionLikelihood(0.996).build())
+                .cuppa(createTestCuppaRecord())
                 .virusInterpreter(createTestVirusInterpreterRecord())
                 .chord(ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build())
                 .protect(createTestProtectRecord())
@@ -140,6 +142,13 @@ public final class TestOrangeFactory {
     private static PeachRecord createTestPeachRecord() {
         return ImmutablePeachRecord.builder()
                 .addEntries(ImmutablePeachEntry.builder().gene("DPYD").haplotype("1* HOM").function("Normal function").build())
+                .build();
+    }
+
+    @NotNull
+    private static CuppaRecord createTestCuppaRecord() {
+        return ImmutableCuppaRecord.builder()
+                .addPredictions(ImmutableCuppaPrediction.builder().cancerType("Melanoma").likelihood(0.996).build())
                 .build();
     }
 

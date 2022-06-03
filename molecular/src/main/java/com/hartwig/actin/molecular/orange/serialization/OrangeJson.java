@@ -29,7 +29,9 @@ import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
@@ -115,7 +117,7 @@ public final class OrangeJson {
                     .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
                     .variants(variants)
-                    .gainsLosses(toPurpleGainsLosses(array(purple, "reportableGainsLosses")))
+                    .gainsLosses(toPurpleGainsLosses(array(purple, "reportableSomaticGainsLosses")))
                     .build();
         }
 
@@ -223,10 +225,15 @@ public final class OrangeJson {
 
         @NotNull
         private static CuppaRecord toCuppaRecord(@NotNull JsonObject cuppa) {
-            return ImmutableCuppaRecord.builder()
-                    .predictedCancerType(string(cuppa, "predictedCancerType"))
-                    .bestPredictionLikelihood(number(cuppa, "bestPredictionLikelihood"))
-                    .build();
+            Set<CuppaPrediction> predictions = Sets.newHashSet();
+            for (JsonElement element : array(cuppa, "predictions")) {
+                JsonObject prediction = element.getAsJsonObject();
+                predictions.add(ImmutableCuppaPrediction.builder()
+                        .cancerType(string(prediction, "cancerType"))
+                        .likelihood(number(prediction, "likelihood"))
+                        .build());
+            }
+            return ImmutableCuppaRecord.builder().predictions(predictions).build();
         }
 
         @NotNull

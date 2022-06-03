@@ -40,6 +40,8 @@
       {
         "source": "SOMATIC",
         "gene": "SF3B1",
+        "transcript": "ENST00000335508",
+        "isCanonical": true,
         "chromosome": "2",
         "position": 198266779,
         "gDNA": "2:198266779",
@@ -50,8 +52,11 @@
         "canonicalCodingEffect": "MISSENSE",
         "canonicalHgvsCodingImpact": "c.2153C\u003eT",
         "canonicalHgvsProteinImpact": "p.Pro718Leu",
+        "otherReportedEffects": "",
         "totalReadCount": 111,
         "alleleReadCount": 74,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "totalCopyNumber": 3.02,
         "alleleCopyNumber": 2.026722,
         "minorAlleleCopyNumber": 1.0,
@@ -70,6 +75,8 @@
       {
         "source": "GERMLINE",
         "gene": "BRCA1",
+        "transcript": "ENST00000471181",
+        "isCanonical": true,
         "chromosome": "17",
         "position": 41209068,
         "gDNA": "17:41209068",
@@ -80,10 +87,13 @@
         "canonicalCodingEffect": "SPLICE",
         "canonicalHgvsCodingImpact": "c.5340+1G>A",
         "canonicalHgvsProteinImpact": "p.?",
+        "otherReportedEffects": "",
         "totalReadCount": 12,
         "alleleReadCount": 22,
         "totalCopyNumber": 2.0,
         "alleleCopyNumber": 1.0,
+        "rnaAlleleReadCount": null,
+        "rnaTotalReadCount": null,
         "minorAlleleCopyNumber": 0.0,
         "tVAF": "53%",
         "hotspot": "HOTSPOT",
@@ -96,12 +106,14 @@
         "type": "SNP"
       }
     ],
-    "reportableGainsLosses": [
+    "reportableSomaticGainsLosses": [
       {
         "interpretation": "FULL_LOSS",
         "chromosome": "18",
         "chromosomeBand": "q21.2",
         "gene": "SMAD4",
+        "transcript": "ENST00000342988",
+        "isCanonical": true,
         "minCopies": 0,
         "maxCopies": 0
       }
@@ -138,6 +150,8 @@
       {
         "location": "17q11.2",
         "gene": "NF1",
+        "transcriptId": "ENST00000358273",
+        "isCanonical": true,
         "range": "Intron 5 -> Intron 8",
         "type": "DUP",
         "junctionCopyNumber": 1.1,
@@ -190,8 +204,12 @@
     }
   ],
   "cuppa": {
-    "predictedCancerType": "Melanoma",
-    "bestPredictionLikelihood": 0.996,
+    "predictions": [
+      {
+        "cancerType": "Melanoma",
+        "likelihood": 0.996
+      }
+    ],
     "simpleDups32To200B": 3,
     "maxComplexSize": 8,
     "telomericSGLs": 0,
@@ -200,7 +218,10 @@
   "protect": [
     {
       "gene": "BRAF",
+      "transcript": "ENST00000288602",
+      "isCanonical": true,
       "event": "p.Val600Glu",
+      "eventIsHighDriver": true,
       "germline": false,
       "reported": true,
       "treatment": "Cobimetinib + Vemurafenib",
