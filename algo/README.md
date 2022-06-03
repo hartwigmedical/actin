@@ -174,7 +174,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_ACTIVE_SECOND_MALIGNANCY | Prior second primary > any entry with active=1
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primary > any entry
-HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primaries > contains any entry with DOID belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primary > contains any entry with DOID belonging to DOID X
 HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to UNDETERMINED.
 
 ##### Rules related to molecular results
@@ -303,6 +303,7 @@ HAS_CA125_ULN_OF_AT_LEAST_X | CA 125 (C125) <= X*ULN
 HAS_HCG_ULN_OF_AT_LEAST_X | HCG + beta HCG (HCG) <= X*ULN
 HAS_LDH_ULN_OF_AT_MOST_X | Lactate dehydrogenase (LDH) <= X*ULN
 HAS_PSA_UG_PER_L_OF_AT_LEAST_X | Prostate-specific antigen (PSA) => X
+HAS_PSA_LLN_OF_AT_LEAST_X | Prostate-specific antigen (PSA) => X*LLN
 
 _Urine measurements_
 

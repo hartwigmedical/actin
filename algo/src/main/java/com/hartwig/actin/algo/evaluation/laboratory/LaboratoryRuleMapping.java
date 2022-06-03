@@ -134,6 +134,8 @@ public final class LaboratoryRuleMapping {
                 hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE, referenceDateProvider));
         map.put(EligibilityRule.HAS_PSA_UG_PER_L_OF_AT_LEAST_X,
                 hasSufficientLabValueCreator(LabMeasurement.PSA, referenceDateProvider));
+        map.put(EligibilityRule.HAS_PSA_LLN_OF_AT_LEAST_X,
+                hasSufficientLabValueLLNCreator(LabMeasurement.PSA, referenceDateProvider));
 
         map.put(EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X,
                 hasSufficientLabValueCreator(LabMeasurement.TOTAL_PROTEIN_URINE, referenceDateProvider));
