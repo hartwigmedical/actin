@@ -55,7 +55,7 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        LOGGER.info("Loading ACTIN to external treatment mapping TSV from {}", config.externalTrialMappingTsv());
+        LOGGER.info("Loading ACTIN to external trial mapping TSV from {}", config.externalTrialMappingTsv());
         List<ExternalTrialMapping> mappings = ExternalTrialMappingTsv.read(config.externalTrialMappingTsv());
         LOGGER.info(" Loaded {} mappings", mappings.size());
 
