@@ -24,6 +24,14 @@ public class CurationUtilTest {
     }
 
     @Test
+    public void canFullTrim() {
+        assertEquals(Strings.EMPTY, CurationUtil.fullTrim(Strings.EMPTY));
+        assertEquals("hi", CurationUtil.fullTrim("hi"));
+        assertEquals("this is a normal sentence", CurationUtil.fullTrim("this is a normal sentence"));
+        assertEquals("this is a weird sentence", CurationUtil.fullTrim(" this     is  a weird   sentence  "));
+    }
+
+    @Test
     public void canConvertToDOIDs() {
         assertEquals(Sets.newHashSet("123"), CurationUtil.toDOIDs("123"));
 

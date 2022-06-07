@@ -701,9 +701,10 @@ public class CurationModel {
     private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
         Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
-            evaluatedCurationInputs.put(configs.get(0).getClass(), input);
+            String trimmed = CurationUtil.fullTrim(input);
+            evaluatedCurationInputs.put(configs.get(0).getClass(), trimmed);
             for (T config : configs) {
-                if (config.input().equals(input)) {
+                if (config.input().equals(trimmed)) {
                     results.add(config);
                 }
             }

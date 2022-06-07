@@ -29,6 +29,15 @@ public final class CurationUtil {
     }
 
     @NotNull
+    public static String fullTrim(@NotNull String input) {
+        String reformatted = input.trim();
+        while (reformatted.contains("  ")) {
+            reformatted = reformatted.replaceAll(" {2}", " ");
+        }
+        return reformatted;
+    }
+
+    @NotNull
     public static Set<String> toDOIDs(@NotNull String doidString) {
         return toSet(doidString, DOID_DELIMITER);
     }
