@@ -102,7 +102,7 @@ public class CurationModel {
     public TumorDetails curateTumorDetails(@Nullable String inputTumorLocation, @Nullable String inputTumorType) {
         PrimaryTumorConfig primaryTumorConfig = null;
         if (inputTumorLocation != null && inputTumorType != null) {
-            String inputPrimaryTumor = inputTumorLocation + " | " + inputTumorType;
+            String inputPrimaryTumor = CurationUtil.fullTrim(inputTumorLocation + " | " + inputTumorType);
 
             Set<PrimaryTumorConfig> configs = find(database.primaryTumorConfigs(), inputPrimaryTumor);
             if (configs.isEmpty()) {
@@ -210,11 +210,12 @@ public class CurationModel {
 
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         for (String input : inputs) {
-            Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), input);
+            String trimmedInput = CurationUtil.fullTrim(input);
+            Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), trimmedInput);
             if (configs.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
-                if (!input.trim().isEmpty() && find(database.secondPrimaryConfigs(), input).isEmpty()) {
-                    LOGGER.warn(" Could not find oncological history config for input '{}'", input);
+                if (!trimmedInput.isEmpty() && find(database.secondPrimaryConfigs(), trimmedInput).isEmpty()) {
+                    LOGGER.warn(" Could not find oncological history config for input '{}'", trimmedInput);
                 }
             } else {
                 for (OncologicalHistoryConfig config : configs) {
@@ -236,11 +237,12 @@ public class CurationModel {
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         for (String input : inputs) {
-            Set<SecondPrimaryConfig> configs = find(database.secondPrimaryConfigs(), input);
-            if (configs.isEmpty() && !input.trim().isEmpty()) {
+            String trimmedInput = CurationUtil.fullTrim(input);
+            Set<SecondPrimaryConfig> configs = find(database.secondPrimaryConfigs(), trimmedInput);
+            if (configs.isEmpty() && !trimmedInput.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
-                if (find(database.oncologicalHistoryConfigs(), input).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary config for input '{}'", input);
+                if (find(database.oncologicalHistoryConfigs(), trimmedInput).isEmpty()) {
+                    LOGGER.warn(" Could not find second primary config for input '{}'", trimmedInput);
                 }
             }
 
@@ -262,9 +264,10 @@ public class CurationModel {
 
         List<PriorOtherCondition> priorOtherConditions = Lists.newArrayList();
         for (String input : inputs) {
-            Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), input);
+            String trimmedInput = CurationUtil.fullTrim(input);
+            Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), trimmedInput);
             if (configs.isEmpty()) {
-                LOGGER.warn(" Could not find non-oncological history config for input '{}'", input);
+                LOGGER.warn(" Could not find non-oncological history config for input '{}'", trimmedInput);
             }
 
             for (NonOncologicalHistoryConfig config : configs) {
@@ -285,9 +288,10 @@ public class CurationModel {
 
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
         for (String input : inputs) {
-            Set<MolecularTestConfig> configs = find(database.molecularTestConfigs(), input);
+            String trimmedInput = CurationUtil.fullTrim(input);
+            Set<MolecularTestConfig> configs = find(database.molecularTestConfigs(), trimmedInput);
             if (configs.isEmpty()) {
-                LOGGER.warn(" Could not find molecular test config for input '{}'", input);
+                LOGGER.warn(" Could not find molecular test config for input '{}'", trimmedInput);
             }
 
             for (MolecularTestConfig config : configs) {
@@ -336,9 +340,10 @@ public class CurationModel {
 
         List<Toxicity> toxicities = Lists.newArrayList();
         for (String input : inputs) {
-            Set<ToxicityConfig> configs = find(database.toxicityConfigs(), input);
+            String trimmedInput = CurationUtil.fullTrim(input);
+            Set<ToxicityConfig> configs = find(database.toxicityConfigs(), trimmedInput);
             if (configs.isEmpty()) {
-                LOGGER.warn(" Could not find toxicity config for input '{}'", input);
+                LOGGER.warn(" Could not find toxicity config for input '{}'", trimmedInput);
             }
 
             for (ToxicityConfig config : configs) {
@@ -494,16 +499,18 @@ public class CurationModel {
 
     @Nullable
     public String curateMedicationName(@NotNull String input) {
-        if (input.isEmpty()) {
+        String trimmedInput = CurationUtil.fullTrim(input);
+
+        if (trimmedInput.isEmpty()) {
             return null;
         }
 
-        Set<MedicationNameConfig> configs = find(database.medicationNameConfigs(), input);
+        Set<MedicationNameConfig> configs = find(database.medicationNameConfigs(), trimmedInput);
         if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find medication name config for '{}'", input);
+            LOGGER.warn(" Could not find medication name config for '{}'", trimmedInput);
             return null;
         } else if (configs.size() > 1) {
-            LOGGER.warn(" Multiple medication name configs founds for medication input '{}'", input);
+            LOGGER.warn(" Multiple medication name configs founds for medication input '{}'", trimmedInput);
             return null;
         }
 
@@ -536,13 +543,14 @@ public class CurationModel {
 
     @NotNull
     private Set<String> lookupCategories(@NotNull String medication) {
-        Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), medication);
+        String trimmedMedication = CurationUtil.fullTrim(medication);
+        Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), trimmedMedication);
 
         if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find medication category config for '{}'", medication);
+            LOGGER.warn(" Could not find medication category config for '{}'", trimmedMedication);
             return Sets.newHashSet();
         } else if (configs.size() > 1) {
-            LOGGER.warn(" Multiple category configs found for medication with name '{}'", medication);
+            LOGGER.warn(" Multiple category configs found for medication with name '{}'", trimmedMedication);
             return Sets.newHashSet();
         }
 
@@ -701,10 +709,9 @@ public class CurationModel {
     private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
         Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
-            String trimmed = CurationUtil.fullTrim(input);
-            evaluatedCurationInputs.put(configs.get(0).getClass(), trimmed);
+            evaluatedCurationInputs.put(configs.get(0).getClass(), input);
             for (T config : configs) {
-                if (config.input().equals(trimmed)) {
+                if (config.input().equals(input)) {
                     results.add(config);
                 }
             }
