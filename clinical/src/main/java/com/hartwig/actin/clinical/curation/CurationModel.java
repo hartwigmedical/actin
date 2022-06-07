@@ -43,6 +43,7 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
+import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
@@ -587,13 +588,14 @@ public class CurationModel {
 
     @Nullable
     private LaboratoryTranslation findLaboratoryTranslation(@NotNull LabValue input) {
+        String trimmedName = input.name().trim();
         for (LaboratoryTranslation entry : database.laboratoryTranslations()) {
-            if (entry.code().equals(input.code()) && entry.name().equals(input.name())) {
+            if (entry.code().equals(input.code()) && entry.name().equals(trimmedName)) {
                 return entry;
             }
         }
 
-        LOGGER.warn(" Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), input.name());
+        LOGGER.warn(" Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), trimmedName);
         return null;
     }
 
@@ -611,13 +613,14 @@ public class CurationModel {
 
     @Nullable
     private BloodTransfusionTranslation findBloodTransfusionTranslation(@NotNull BloodTransfusion input) {
+        String trimmedProduct = input.product().trim();
         for (BloodTransfusionTranslation entry : database.bloodTransfusionTranslations()) {
-            if (entry.product().equals(input.product())) {
+            if (entry.product().equals(trimmedProduct)) {
                 return entry;
             }
         }
 
-        LOGGER.warn(" Could not find blood transfusion translation for blood transfusion with product '{}'", input.product());
+        LOGGER.warn(" Could not find blood transfusion translation for blood transfusion with product '{}'", trimmedProduct);
         return null;
     }
 
@@ -639,7 +642,7 @@ public class CurationModel {
             List<? extends Translation> translations = translationsForClass(entry.getKey());
             Collection<Translation> evaluated = entry.getValue();
             for (Translation translation : translations) {
-                if (!evaluated.contains(translation)) {
+                if (!evaluated.contains(translation) && !(translation instanceof ImmutableBloodTransfusionTranslation)) {
                     warnCount++;
                     LOGGER.warn(" Translation '{}' not used", translation);
                 }
