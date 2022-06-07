@@ -28,6 +28,8 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory;
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -46,8 +48,9 @@ public final class CurationDatabaseReader {
     private static final Logger LOGGER = LogManager.getLogger(CurationDatabaseReader.class);
 
     private static final String PRIMARY_TUMOR_TSV = "primary_tumor.tsv";
-    private static final String LESION_LOCATION_TSV = "lesion_location.tsv";
     private static final String ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv";
+    private static final String SECOND_PRIMARY_TSV = "second_primary.tsv";
+    private static final String LESION_LOCATION_TSV = "lesion_location.tsv";
     private static final String NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv";
     private static final String ECG_TSV = "ecg.tsv";
     private static final String INFECTION_TSV = "infection.tsv";
@@ -73,8 +76,9 @@ public final class CurationDatabaseReader {
 
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
-                .lesionLocationConfigs(readLesionLocationConfigs(basePath + LESION_LOCATION_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
+                .secondPrimaryConfigs(readSecondPrimaryConfigs(basePath + SECOND_PRIMARY_TSV))
+                .lesionLocationConfigs(readLesionLocationConfigs(basePath + LESION_LOCATION_TSV))
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
                 .ecgConfigs(readECGConfigs(basePath + ECG_TSV))
                 .infectionConfigs(readInfectionConfigs(basePath + INFECTION_TSV))
@@ -98,16 +102,23 @@ public final class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<LesionLocationConfig> readLesionLocationConfigs(@NotNull String tsv) throws IOException {
-        List<LesionLocationConfig> configs = CurationConfigFile.read(tsv, new LesionLocationConfigFactory());
-        LOGGER.info(" Read {} lesion location configs from {}", configs.size(), tsv);
+    private static List<OncologicalHistoryConfig> readOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
+        List<OncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new OncologicalHistoryConfigFactory());
+        LOGGER.info(" Read {} oncological history configs from {}", configs.size(), tsv);
         return configs;
     }
 
     @NotNull
-    private static List<OncologicalHistoryConfig> readOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
-        List<OncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new OncologicalHistoryConfigFactory());
-        LOGGER.info(" Read {} oncological history configs from {}", configs.size(), tsv);
+    private static List<SecondPrimaryConfig> readSecondPrimaryConfigs(@NotNull String tsv) throws IOException {
+        List<SecondPrimaryConfig> configs = CurationConfigFile.read(tsv, new SecondPrimaryConfigFactory());
+        LOGGER.info(" Read {} second primary configs from {}", configs.size(), tsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<LesionLocationConfig> readLesionLocationConfigs(@NotNull String tsv) throws IOException {
+        List<LesionLocationConfig> configs = CurationConfigFile.read(tsv, new LesionLocationConfigFactory());
+        LOGGER.info(" Read {} lesion location configs from {}", configs.size(), tsv);
         return configs;
     }
 

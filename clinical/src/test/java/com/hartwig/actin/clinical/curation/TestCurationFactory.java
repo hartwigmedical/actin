@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
@@ -28,6 +29,7 @@ import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -63,8 +65,9 @@ public final class TestCurationFactory {
     private static CurationDatabase createTestCurationDatabase() {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
-                .lesionLocationConfigs(createTestLesionLocationConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
+                .secondPrimaryConfigs(createTestSecondPrimaryConfigs())
+                .lesionLocationConfigs(createTestLesionLocationConfigs())
                 .nonOncologicalHistoryConfigs(createTestNonOncologicalHistoryConfigs())
                 .ecgConfigs(createTestECGConfigs())
                 .infectionConfigs(createTestInfectionConfigs())
@@ -92,6 +95,61 @@ public final class TestCurationFactory {
                 .primaryTumorSubType(Strings.EMPTY)
                 .primaryTumorExtraDetails(Strings.EMPTY)
                 .addDoids("299")
+                .build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
+        List<OncologicalHistoryConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Cis 2020 2021")
+                .ignore(false)
+                .curated(ImmutablePriorTumorTreatment.builder()
+                        .name("Cisplatin")
+                        .startYear(2020)
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                        .isSystemic(true)
+                        .chemoType("platinum")
+                        .build())
+                .build());
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder()
+                .input("Cis 2020 2021")
+                .ignore(false)
+                .curated(ImmutablePriorTumorTreatment.builder()
+                        .name("Cisplatin")
+                        .startYear(2021)
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                        .isSystemic(true)
+                        .chemoType("platinum")
+                        .build())
+                .build());
+
+        configs.add(ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<SecondPrimaryConfig> createTestSecondPrimaryConfigs() {
+        List<SecondPrimaryConfig> configs = Lists.newArrayList();
+
+        configs.add(ImmutableSecondPrimaryConfig.builder()
+                .input("Breast cancer Jan-2018")
+                .ignore(false)
+                .curated(ImmutablePriorSecondPrimary.builder()
+                        .tumorLocation("Breast")
+                        .tumorSubLocation(Strings.EMPTY)
+                        .tumorType("Carcinoma")
+                        .tumorSubType(Strings.EMPTY)
+                        .diagnosedYear(2018)
+                        .diagnosedMonth(1)
+                        .treatmentHistory("Surgery")
+                        .isActive(false)
+                        .build())
                 .build());
 
         return configs;
@@ -128,54 +186,6 @@ public final class TestCurationFactory {
         configs.add(ImmutableLesionLocationConfig.builder().input("Not a lesion").location(Strings.EMPTY).build());
 
         configs.add(ImmutableLesionLocationConfig.builder().input("No").location(Strings.EMPTY).build());
-
-        return configs;
-    }
-
-    @NotNull
-    private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
-        List<OncologicalHistoryConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Cis 2020 2021")
-                .ignore(false)
-                .curated(ImmutablePriorTumorTreatment.builder()
-                        .name("Cisplatin")
-                        .startYear(2020)
-                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .isSystemic(true)
-                        .chemoType("platinum")
-                        .build())
-                .build());
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Cis 2020 2021")
-                .ignore(false)
-                .curated(ImmutablePriorTumorTreatment.builder()
-                        .name("Cisplatin")
-                        .startYear(2021)
-                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .isSystemic(true)
-                        .chemoType("platinum")
-                        .build())
-                .build());
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Breast cancer Jan-2018")
-                .ignore(false)
-                .curated(ImmutablePriorSecondPrimary.builder()
-                        .tumorLocation("Breast")
-                        .tumorSubLocation(Strings.EMPTY)
-                        .tumorType("Carcinoma")
-                        .tumorSubType(Strings.EMPTY)
-                        .diagnosedYear(2018)
-                        .diagnosedMonth(1)
-                        .treatmentHistory("Surgery")
-                        .isActive(false)
-                        .build())
-                .build());
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
 
         return configs;
     }

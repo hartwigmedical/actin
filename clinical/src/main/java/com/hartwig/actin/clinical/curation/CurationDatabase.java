@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
@@ -30,10 +31,13 @@ public abstract class CurationDatabase {
     public abstract List<PrimaryTumorConfig> primaryTumorConfigs();
 
     @NotNull
-    public abstract List<LesionLocationConfig> lesionLocationConfigs();
+    public abstract List<OncologicalHistoryConfig> oncologicalHistoryConfigs();
 
     @NotNull
-    public abstract List<OncologicalHistoryConfig> oncologicalHistoryConfigs();
+    public abstract List<SecondPrimaryConfig> secondPrimaryConfigs();
+
+    @NotNull
+    public abstract List<LesionLocationConfig> lesionLocationConfigs();
 
     @NotNull
     public abstract List<NonOncologicalHistoryConfig> nonOncologicalHistoryConfigs();

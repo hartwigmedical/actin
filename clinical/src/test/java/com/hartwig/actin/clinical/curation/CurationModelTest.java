@@ -129,7 +129,7 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         List<PriorSecondPrimary> priorSecondPrimaries =
-                model.curatePriorSecondPrimaries(Lists.newArrayList("Breast cancer Jan-2018", "no a second primary", "cannot curate"));
+                model.curatePriorSecondPrimaries(Lists.newArrayList("Breast cancer Jan-2018", "cannot curate"));
 
         assertEquals(1, priorSecondPrimaries.size());
         assertEquals("Breast", priorSecondPrimaries.get(0).tumorLocation());

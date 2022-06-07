@@ -27,6 +27,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
@@ -38,6 +39,7 @@ import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -209,11 +211,14 @@ public class CurationModel {
         for (String input : inputs) {
             Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), input);
             if (configs.isEmpty()) {
-                LOGGER.warn(" Could not find oncological history config for input '{}'", input);
+                // Same input is curated twice, so need to check if used at other place.
+                if (!input.trim().isEmpty() && find(database.secondPrimaryConfigs(), input).isEmpty()) {
+                    LOGGER.warn(" Could not find oncological history config for input '{}'", input);
+                }
             } else {
                 for (OncologicalHistoryConfig config : configs) {
-                    if (!config.ignore() && config.curated() instanceof PriorTumorTreatment) {
-                        priorTumorTreatments.add((PriorTumorTreatment) config.curated());
+                    if (!config.ignore()) {
+                        priorTumorTreatments.add(config.curated());
                     }
                 }
             }
@@ -230,14 +235,17 @@ public class CurationModel {
 
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
         for (String input : inputs) {
-            Set<OncologicalHistoryConfig> configs = find(database.oncologicalHistoryConfigs(), input);
+            Set<SecondPrimaryConfig> configs = find(database.secondPrimaryConfigs(), input);
             if (configs.isEmpty() && !input.trim().isEmpty()) {
-                LOGGER.warn(" Could not find oncological history config for input '{}'", input);
+                // Same input is curated twice, so need to check if used at other place.
+                if (find(database.oncologicalHistoryConfigs(), input).isEmpty()) {
+                    LOGGER.warn(" Could not find second primary config for input '{}'", input);
+                }
             }
 
-            for (OncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.curated() instanceof PriorSecondPrimary) {
-                    priorSecondPrimaries.add((PriorSecondPrimary) config.curated());
+            for (SecondPrimaryConfig config : configs) {
+                if (!config.ignore()) {
+                    priorSecondPrimaries.add(config.curated());
                 }
             }
         }
@@ -619,7 +627,8 @@ public class CurationModel {
             List<? extends CurationConfig> configs = configsForClass(entry.getKey());
             Collection<String> evaluated = entry.getValue();
             for (CurationConfig config : configs) {
-                if (!evaluated.contains(config.input())) {
+                // TODO: Raise warnings for unused medication dosage once more final
+                if (!evaluated.contains(config.input()) && !(config instanceof ImmutableMedicationDosageConfig)) {
                     warnCount++;
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input(), entry.getKey().getSimpleName());
                 }
@@ -644,10 +653,12 @@ public class CurationModel {
     private List<? extends CurationConfig> configsForClass(@NotNull Class<? extends CurationConfig> classToLookUp) {
         if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
             return database.primaryTumorConfigs();
-        } else if (classToLookUp == ImmutableLesionLocationConfig.class) {
-            return database.lesionLocationConfigs();
         } else if (classToLookUp == ImmutableOncologicalHistoryConfig.class) {
             return database.oncologicalHistoryConfigs();
+        } else if (classToLookUp == ImmutableSecondPrimaryConfig.class) {
+            return database.secondPrimaryConfigs();
+        } else if (classToLookUp == ImmutableLesionLocationConfig.class) {
+            return database.lesionLocationConfigs();
         } else if (classToLookUp == ImmutableNonOncologicalHistoryConfig.class) {
             return database.nonOncologicalHistoryConfigs();
         } else if (classToLookUp == ImmutableComplicationConfig.class) {
@@ -669,7 +680,6 @@ public class CurationModel {
         } else if (classToLookUp == ImmutableIntoleranceConfig.class) {
             return database.intoleranceConfigs();
         }
-
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);
     }
 

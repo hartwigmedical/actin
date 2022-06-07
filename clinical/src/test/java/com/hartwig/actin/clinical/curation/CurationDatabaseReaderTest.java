@@ -23,6 +23,7 @@ import com.hartwig.actin.clinical.curation.config.MolecularTestConfig;
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
@@ -47,8 +48,9 @@ public class CurationDatabaseReaderTest {
         CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
-        assertLesionLocationConfigs(database.lesionLocationConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
+        assertSecondPrimaryConfigs(database.secondPrimaryConfigs());
+        assertLesionLocationConfigs(database.lesionLocationConfigs());
         assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
         assertECGConfigs(database.ecgConfigs());
         assertInfectionConfigs(database.infectionConfigs());
@@ -64,6 +66,7 @@ public class CurationDatabaseReaderTest {
         assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
     }
 
+
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
         assertEquals(1, configs.size());
 
@@ -78,54 +81,58 @@ public class CurationDatabaseReaderTest {
         assertTrue(config.doids().contains("299"));
     }
 
+    private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {
+        assertEquals(1, configs.size());
+
+        OncologicalHistoryConfig config = find(configs, "Capecitabine/Oxaliplatin 2020-2021");
+        assertFalse(config.ignore());
+
+        PriorTumorTreatment curated = config.curated();
+        assertEquals("Capecitabine+Oxaliplatin", curated.name());
+        assertEquals(2020, (int) curated.startYear());
+        assertNull(curated.startMonth());
+        assertEquals(2021, (int) curated.stopYear());
+        assertNull(curated.stopMonth());
+        assertEquals("PR", curated.bestResponse());
+        assertEquals("toxicity", curated.stopReason());
+        assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated.categories());
+        assertTrue(curated.isSystemic());
+        assertEquals("antimetabolite,platinum", curated.chemoType());
+        assertNull(curated.immunoType());
+        assertNull(curated.targetedType());
+        assertNull(curated.hormoneType());
+        assertNull(curated.radioType());
+        assertNull(curated.transplantType());
+        assertNull(curated.supportiveType());
+        assertNull(curated.trialAcronym());
+    }
+
+    private static void assertSecondPrimaryConfigs(@NotNull List<SecondPrimaryConfig> configs) {
+        assertEquals(1, configs.size());
+
+        SecondPrimaryConfig config = find(configs, "basaalcelcarcinoom (2014) | 2014");
+        assertFalse(config.ignore());
+
+        PriorSecondPrimary curated = config.curated();
+        assertEquals(Strings.EMPTY, curated.tumorLocation());
+        assertEquals(Strings.EMPTY, curated.tumorSubLocation());
+        assertEquals("Carcinoma", curated.tumorType());
+        assertEquals("Basal cell carcinoma", curated.tumorSubType());
+        assertEquals(Sets.newHashSet("2513"), curated.doids());
+        assertEquals(2014, (int) curated.diagnosedYear());
+        assertEquals(1, (int) curated.diagnosedMonth());
+        assertEquals("None", curated.treatmentHistory());
+        assertEquals(2014, (int) curated.lastTreatmentYear());
+        assertEquals(2, (int) curated.lastTreatmentMonth());
+        assertFalse(curated.isActive());
+    }
+
     private static void assertLesionLocationConfigs(@NotNull List<LesionLocationConfig> configs) {
         assertEquals(1, configs.size());
 
         LesionLocationConfig config = configs.get(0);
         assertEquals("Lever", config.input());
         assertEquals("Liver", config.location());
-    }
-
-    private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {
-        assertEquals(2, configs.size());
-
-        OncologicalHistoryConfig config1 = find(configs, "Capecitabine/Oxaliplatin 2020-2021");
-        assertFalse(config1.ignore());
-
-        PriorTumorTreatment curated1 = (PriorTumorTreatment) config1.curated();
-        assertEquals("Capecitabine+Oxaliplatin", curated1.name());
-        assertEquals(2020, (int) curated1.startYear());
-        assertNull(curated1.startMonth());
-        assertEquals(2021, (int) curated1.stopYear());
-        assertNull(curated1.stopMonth());
-        assertEquals("PR", curated1.bestResponse());
-        assertEquals("toxicity", curated1.stopReason());
-        assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated1.categories());
-        assertTrue(curated1.isSystemic());
-        assertEquals("antimetabolite,platinum", curated1.chemoType());
-        assertNull(curated1.immunoType());
-        assertNull(curated1.targetedType());
-        assertNull(curated1.hormoneType());
-        assertNull(curated1.radioType());
-        assertNull(curated1.transplantType());
-        assertNull(curated1.supportiveType());
-        assertNull(curated1.trialAcronym());
-
-        OncologicalHistoryConfig config2 = find(configs, "Breast Jan-2018");
-        assertFalse(config2.ignore());
-
-        PriorSecondPrimary curated2 = (PriorSecondPrimary) config2.curated();
-        assertEquals("Breast", curated2.tumorLocation());
-        assertEquals(Strings.EMPTY, curated2.tumorSubLocation());
-        assertEquals("Carcinoma", curated2.tumorType());
-        assertEquals(Strings.EMPTY, curated2.tumorSubType());
-        assertTrue(curated2.doids().isEmpty());
-        assertEquals(2018, (int) curated2.diagnosedYear());
-        assertEquals(1, (int) curated2.diagnosedMonth());
-        assertEquals("Surgery", curated2.treatmentHistory());
-        assertEquals(2019, (int) curated2.lastTreatmentYear());
-        assertEquals(2, (int) curated2.lastTreatmentMonth());
-        assertTrue(curated2.isActive());
     }
 
     private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {
