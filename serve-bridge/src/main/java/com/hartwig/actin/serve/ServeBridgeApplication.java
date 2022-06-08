@@ -2,6 +2,7 @@ package com.hartwig.actin.serve;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.serve.serialization.ServeRecordTsv;
@@ -53,7 +54,7 @@ public class ServeBridgeApplication {
         LOGGER.info(" Loaded {} trials", trials.size());
 
         LOGGER.info("Creating SERVE records");
-        List<ServeRecord> records = ServeRecordExtractor.extract(trials);
+        Set<ServeRecord> records = ServeRecordExtractor.extract(trials);
         LOGGER.info(" Extracted {} records from {} trials", records.size(), trials.size());
 
         LOGGER.info("Writing SERVE records to {}", config.outputServeKnowledgebaseTsv());

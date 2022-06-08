@@ -1,12 +1,14 @@
 package com.hartwig.actin.serve;
 
 import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.serve.datamodel.ImmutableServeRecord;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
 import com.hartwig.actin.serve.interpretation.ServeExtraction;
 import com.hartwig.actin.serve.interpretation.ServeRules;
+import com.hartwig.actin.serve.sort.ServeRecordComparator;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -25,8 +27,8 @@ public final class ServeRecordExtractor {
     }
 
     @NotNull
-    public static List<ServeRecord> extract(@NotNull List<Trial> trials) {
-        List<ServeRecord> records = Lists.newArrayList();
+    public static Set<ServeRecord> extract(@NotNull List<Trial> trials) {
+        Set<ServeRecord> records = Sets.newTreeSet(new ServeRecordComparator());
 
         for (Trial trial : trials) {
             String trialAcronym = trial.identification().acronym();
@@ -39,9 +41,9 @@ public final class ServeRecordExtractor {
     }
 
     @NotNull
-    private static List<ServeRecord> extractFromEligibility(@NotNull String trial, @Nullable String cohort,
+    private static Set<ServeRecord> extractFromEligibility(@NotNull String trial, @Nullable String cohort,
             @NotNull List<Eligibility> eligibilities) {
-        List<ServeRecord> records = Lists.newArrayList();
+        Set<ServeRecord> records = Sets.newHashSet();
 
         for (Eligibility eligibility : eligibilities) {
             records.addAll(extractFromFunction(trial, cohort, eligibility.function(), true, true));
@@ -51,9 +53,9 @@ public final class ServeRecordExtractor {
     }
 
     @NotNull
-    private static List<ServeRecord> extractFromFunction(@NotNull String trial, @Nullable String cohort,
+    private static Set<ServeRecord> extractFromFunction(@NotNull String trial, @Nullable String cohort,
             @NotNull EligibilityFunction function, boolean isAllowedToBeUsedAsInclusion, boolean isUsedAsInclusion) {
-        List<ServeRecord> records = Lists.newArrayList();
+        Set<ServeRecord> records = Sets.newHashSet();
 
         if (CompositeRules.isComposite(function.rule())) {
             CompositeInput input = CompositeRules.inputsForCompositeRule(function.rule());

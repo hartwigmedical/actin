@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.serve.datamodel.ServeRecord;
@@ -30,7 +31,7 @@ public class ServeRecordExtractorTest {
     public void canExtractServeRecords() {
         List<Trial> trials = createTestTrials();
 
-        List<ServeRecord> records = ServeRecordExtractor.extract(trials);
+        Set<ServeRecord> records = ServeRecordExtractor.extract(trials);
 
         assertEquals(5, records.size());
 
@@ -71,7 +72,7 @@ public class ServeRecordExtractorTest {
     }
 
     @NotNull
-    private static ServeRecord find(@NotNull List<ServeRecord> records, @NotNull EligibilityRule rule) {
+    private static ServeRecord find(@NotNull Iterable<ServeRecord> records, @NotNull EligibilityRule rule) {
         for (ServeRecord record : records) {
             if (record.rule() == rule) {
                 return record;
