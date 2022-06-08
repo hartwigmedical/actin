@@ -403,6 +403,7 @@ CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermine
 CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X | T.B.D., currently resolves to undetermined | Cytochrome P450 enzymes
 CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X | T.B.D., currently resolves to undetermined
+HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS | T.B.D., currently resolves to undetermined
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to undetermined 
 CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X | T.B.D., currently resolves to undetermined  
 CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D., currently resolves to undetermined | P-glycoprotein

@@ -54,6 +54,7 @@ public final class MedicationRuleMapping {
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X, getsCYPXInducingMedicationCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS, hasRecentlyReceivedCYPXInducingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X, getsCYPXInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingOrInducingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X, getsCYPSubstrateMedicationCreator());
@@ -138,6 +139,14 @@ public final class MedicationRuleMapping {
         return function -> {
             String termToFind = FunctionInputResolver.createOneStringInput(function);
             return new CurrentlyGetsCYPXInducingMedication(termToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasRecentlyReceivedCYPXInducingMedicationCreator() {
+        return function -> {
+            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            return new HasRecentlyReceivedCYPXInducingMedication(input.string());
         };
     }
 
