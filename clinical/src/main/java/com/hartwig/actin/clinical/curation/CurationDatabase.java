@@ -18,6 +18,7 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +72,9 @@ public abstract class CurationDatabase {
 
     @NotNull
     public abstract List<LaboratoryTranslation> laboratoryTranslations();
+
+    @NotNull
+    public abstract List<ToxicityTranslation> toxicityTranslations();
 
     @NotNull
     public abstract List<BloodTransfusionTranslation> bloodTransfusionTranslations();

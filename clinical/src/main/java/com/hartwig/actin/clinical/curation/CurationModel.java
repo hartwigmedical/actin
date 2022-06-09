@@ -45,6 +45,7 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
 import com.hartwig.actin.clinical.curation.translation.Translation;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.Complication;
@@ -608,6 +609,31 @@ public class CurationModel {
     }
 
     @NotNull
+    public Toxicity translateToxicity(@NotNull Toxicity input) {
+        ToxicityTranslation translation = findToxicityTranslation(input);
+
+        if (translation == null) {
+            return input;
+        }
+
+        evaluatedTranslations.put(ToxicityTranslation.class, translation);
+        return ImmutableToxicity.builder().from(input).name(translation.translatedToxicity()).build();
+    }
+
+    @Nullable
+    private ToxicityTranslation findToxicityTranslation(@NotNull Toxicity input) {
+        String trimmedToxicity = input.name().trim();
+        for (ToxicityTranslation entry : database.toxicityTranslations()) {
+            if (entry.toxicity().equals(trimmedToxicity)) {
+                return entry;
+            }
+        }
+
+        // No warn since not all toxicities need to be translated.
+        return null;
+    }
+
+    @NotNull
     public BloodTransfusion translateBloodTransfusion(@NotNull BloodTransfusion input) {
         BloodTransfusionTranslation translation = findBloodTransfusionTranslation(input);
 
@@ -698,6 +724,8 @@ public class CurationModel {
     private List<? extends Translation> translationsForClass(@NotNull Class<? extends Translation> classToLookup) {
         if (classToLookup == LaboratoryTranslation.class) {
             return database.laboratoryTranslations();
+        } else if (classToLookup == ToxicityTranslation.class) {
+            return database.toxicityTranslations();
         } else if (classToLookup == BloodTransfusionTranslation.class) {
             return database.bloodTransfusionTranslations();
         }

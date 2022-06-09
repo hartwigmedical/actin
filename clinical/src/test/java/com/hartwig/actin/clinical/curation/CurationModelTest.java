@@ -23,6 +23,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
@@ -383,6 +384,23 @@ public class CurationModelTest {
         LabValue notExistingTranslated = model.translateLabValue(notExisting);
         assertEquals("no", notExistingTranslated.code());
         assertEquals("does not exist", notExistingTranslated.name());
+
+        model.evaluate();
+    }
+
+    @Test
+    public void canTranslateToxicities() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        Toxicity test =
+                ImmutableToxicity.builder().name("Pijn").evaluatedDate(LocalDate.of(2020, 11, 11)).source(ToxicitySource.EHR).build();
+
+        Toxicity translated = model.translateToxicity(test);
+        assertEquals("Pain", translated.name());
+
+        Toxicity notExisting = ImmutableToxicity.builder().from(test).name("something").build();
+        Toxicity notExistingTranslated = model.translateToxicity(notExisting);
+        assertEquals(notExisting.name(), notExistingTranslated.name());
 
         model.evaluate();
     }

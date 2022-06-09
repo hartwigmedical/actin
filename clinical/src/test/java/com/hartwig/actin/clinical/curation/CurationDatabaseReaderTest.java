@@ -27,6 +27,7 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -63,9 +64,9 @@ public class CurationDatabaseReaderTest {
         assertAllergyConfigs(database.intoleranceConfigs());
 
         assertLaboratoryTranslations(database.laboratoryTranslations());
+        assertToxicityTranslations(database.toxicityTranslations());
         assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
     }
-
 
     private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
         assertEquals(1, configs.size());
@@ -289,6 +290,14 @@ public class CurationDatabaseReaderTest {
         assertEquals("AC2", translation.translatedCode());
         assertEquals("ACTH", translation.name());
         assertEquals("Adrenocorticotropic hormone", translation.translatedName());
+    }
+
+    private static void assertToxicityTranslations(@NotNull List<ToxicityTranslation> translations) {
+        assertEquals(1, translations.size());
+
+        ToxicityTranslation translation = translations.get(0);
+        assertEquals("Pijn", translation.toxicity());
+        assertEquals("Pain", translation.translatedToxicity());
     }
 
     private static void assertBloodTransfusionTranslations(@NotNull List<BloodTransfusionTranslation> translations) {

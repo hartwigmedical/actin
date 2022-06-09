@@ -35,7 +35,9 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.ImmutableToxicityTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
@@ -79,6 +81,7 @@ public final class TestCurationFactory {
                 .medicationCategoryConfigs(createTestMedicationCategoryConfigs())
                 .intoleranceConfigs(createTestIntoleranceConfigs())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
+                .toxicityTranslations(createTestToxicityTranslations())
                 .bloodTransfusionTranslations(createTestBloodTransfusionTranslations())
                 .build();
     }
@@ -328,6 +331,15 @@ public final class TestCurationFactory {
                 .name("naam")
                 .translatedName("Name")
                 .build());
+
+        return translations;
+    }
+
+    @NotNull
+    private static List<ToxicityTranslation> createTestToxicityTranslations() {
+        List<ToxicityTranslation> translations = Lists.newArrayList();
+
+        translations.add(ImmutableToxicityTranslation.builder().toxicity("Pijn").translatedToxicity("Pain").build());
 
         return translations;
     }

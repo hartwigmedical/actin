@@ -36,6 +36,8 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory;
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.TranslationFile;
 import com.hartwig.actin.util.Paths;
 
@@ -63,6 +65,7 @@ public final class CurationDatabaseReader {
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
 
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
+    private static final String TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv";
     private static final String BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv";
 
     private CurationDatabaseReader() {
@@ -90,6 +93,7 @@ public final class CurationDatabaseReader {
                 .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
                 .intoleranceConfigs(readIntoleranceConfigs(basePath + INTOLERANCE_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
+                .toxicityTranslations(readToxicityTranslations(basePath + TOXICITY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
                 .build();
     }
@@ -196,6 +200,13 @@ public final class CurationDatabaseReader {
     private static List<LaboratoryTranslation> readLaboratoryTranslations(@NotNull String tsv) throws IOException {
         List<LaboratoryTranslation> translations = TranslationFile.read(tsv, new LaboratoryTranslationFactory());
         LOGGER.info(" Read {} laboratory translations from {}", translations.size(), tsv);
+        return translations;
+    }
+
+    @NotNull
+    private static List<ToxicityTranslation> readToxicityTranslations(@NotNull String tsv) throws IOException {
+        List<ToxicityTranslation> translations = TranslationFile.read(tsv, new ToxicityTranslationFactory());
+        LOGGER.info(" Read {} toxicity translations from {}", translations.size(), tsv);
         return translations;
     }
 

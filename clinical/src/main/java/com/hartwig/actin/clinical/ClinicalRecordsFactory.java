@@ -285,12 +285,14 @@ public class ClinicalRecordsFactory {
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
             Integer grade = !entry.itemAnswerValueValueString().isEmpty() ? Integer.valueOf(entry.itemAnswerValueValueString()) : null;
             if (grade != null) {
-                toxicities.add(ImmutableToxicity.builder()
+                Toxicity toxicity = ImmutableToxicity.builder()
                         .name(entry.itemText())
                         .evaluatedDate(entry.authored())
                         .source(ToxicitySource.EHR)
                         .grade(grade)
-                        .build());
+                        .build();
+
+                toxicities.add(curation.translateToxicity(toxicity));
             }
         }
         return toxicities;
