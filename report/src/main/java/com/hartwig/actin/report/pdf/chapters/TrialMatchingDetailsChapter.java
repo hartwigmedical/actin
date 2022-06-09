@@ -62,7 +62,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         List<TrialMatch> eligible = Lists.newArrayList();
         List<TrialMatch> nonEligible = Lists.newArrayList();
         for (TrialMatch trial : report.treatmentMatch().trialMatches()) {
-            if (trial.isPotentiallyEligible()) {
+            if (isOpenAndPotentiallyEligible(trial)) {
                 eligible.add(trial);
             } else {
                 nonEligible.add(trial);
@@ -70,7 +70,7 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         }
 
         if (!eligible.isEmpty()) {
-            addTrialMatches(document, eligible, "Potentially eligible trials & cohorts", true);
+            addTrialMatches(document, eligible, "Potentially eligible open trials & cohorts", true);
         }
 
         if (!nonEligible.isEmpty()) {
@@ -79,6 +79,23 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
             }
             addTrialMatches(document, nonEligible, "Other trials & cohorts", false);
         }
+    }
+
+    private static boolean isOpenAndPotentiallyEligible(@NotNull TrialMatch trial) {
+        if (!trial.isPotentiallyEligible() || !trial.identification().open()) {
+            return false;
+        }
+
+        if (trial.cohorts().isEmpty()) {
+            return true;
+        }
+
+        for (CohortMatch cohort : trial.cohorts()) {
+            if (cohort.isPotentiallyEligible() && !cohort.metadata().blacklist() && cohort.metadata().open()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void addChapterTitle(@NotNull Document document) {
