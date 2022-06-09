@@ -55,7 +55,9 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             }
         }
 
-        String title = evidence.actinSource() + " trials that are closed but considered eligible (" + unavailableAndEligible.size() + ")";
+        String title = String.format("%s trials that are closed or blacklisted but considered eligible (%s)",
+                evidence.actinSource(),
+                unavailableAndEligible.size());
         return create(unavailableAndEligible, title, contentWidth);
     }
 
