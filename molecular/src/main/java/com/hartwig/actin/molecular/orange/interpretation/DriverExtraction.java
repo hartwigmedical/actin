@@ -55,12 +55,14 @@ final class DriverExtraction {
 
     @NotNull
     public static MolecularDrivers extract(@NotNull OrangeRecord record) {
+        Set<Loss> losses  = extractLosses(record.purple());
+
         return ImmutableMolecularDrivers.builder()
                 .variants(extractVariants(record.purple()))
                 .amplifications(extractAmplifications(record.purple()))
-                .losses(extractLosses(record.purple()))
+                .losses(losses)
                 .homozygousDisruptions(extractHomozygousDisruptions(record.linx()))
-                .disruptions(extractDisruptions(record.linx()))
+                .disruptions(extractDisruptions(record.linx(), losses))
                 .fusions(extractFusions(record.linx()))
                 .viruses(extractViruses(record.virusInterpreter()))
                 .build();
@@ -173,20 +175,36 @@ final class DriverExtraction {
     }
 
     @NotNull
-    private static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx) {
+    private static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<Loss> losses) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
-            disruptions.add(ImmutableDisruption.builder()
-                    .event(disruption.gene() + " " + EventFormatter.DISRUPTION_EVENT)
-                    .driverLikelihood(DriverLikelihood.LOW)
-                    .gene(disruption.gene())
-                    .type(disruption.type())
-                    .junctionCopyNumber(keep3Digits(disruption.junctionCopyNumber()))
-                    .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
-                    .range(disruption.range())
-                    .build());
+            // TODO: Linx should already filter or flag disruptions that are lost.
+            if (include(disruption, losses)) {
+                disruptions.add(ImmutableDisruption.builder()
+                        .event(disruption.gene() + " " + EventFormatter.DISRUPTION_EVENT)
+                        .driverLikelihood(DriverLikelihood.LOW)
+                        .gene(disruption.gene())
+                        .type(disruption.type())
+                        .junctionCopyNumber(keep3Digits(disruption.junctionCopyNumber()))
+                        .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
+                        .range(disruption.range())
+                        .build());
+            }
         }
         return disruptions;
+    }
+
+    private static boolean include(@NotNull LinxDisruption disruption, @NotNull Set<Loss> losses) {
+        return !disruption.type().equalsIgnoreCase("del") || !isLost(losses, disruption.gene());
+    }
+
+    private static boolean isLost(@NotNull Set<Loss> losses, @NotNull String gene) {
+        for (Loss loss : losses) {
+            if (loss.gene().equals(gene)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull

@@ -121,7 +121,7 @@ public final class MolecularDriverEntryFactory {
 
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType("Homozygous disruption");
+            entryBuilder.driverType("Disruption (homozygous)");
             entryBuilder.driver(homozygousDisruption.gene());
             entryBuilder.driverLikelihood(homozygousDisruption.driverLikelihood());
 
@@ -139,7 +139,7 @@ public final class MolecularDriverEntryFactory {
 
         for (Disruption disruption : disruptions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType("Non-homozygous disruption");
+            entryBuilder.driverType("Disruption");
             String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / " + Formats.singleDigitNumber(
                     disruption.undisruptedCopyNumber()) + " undisr. copies";
             entryBuilder.driver(disruption.gene() + ", " + disruption.type() + " (" + addon + ")");

@@ -18,12 +18,21 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxTestFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
@@ -37,6 +46,41 @@ import org.junit.Test;
 public class DriverExtractionTest {
 
     private static final double EPSILON = 1.0E-10;
+
+    @Test
+    public void canFilterDisruptionsWithLosses() {
+        String gene = "gene";
+
+        OrangeRecord record1 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene(gene).type("DEL").build(),
+                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_LOSS).build());
+
+        assertEquals(0, DriverExtraction.extract(record1).disruptions().size());
+
+        OrangeRecord record2 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene(gene).type("DUP").build(),
+                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_LOSS).build());
+
+        assertEquals(1, DriverExtraction.extract(record2).disruptions().size());
+
+        OrangeRecord record3 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene(gene).type("DEL").build(),
+                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_GAIN).build());
+
+        assertEquals(1, DriverExtraction.extract(record3).disruptions().size());
+
+        OrangeRecord record4 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene("other").type("DEL").build(),
+                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_LOSS).build());
+
+        assertEquals(1, DriverExtraction.extract(record4).disruptions().size());
+    }
+
+    @NotNull
+    private static OrangeRecord withDisruptionAndGainLoss(@NotNull LinxDisruption disruption, @NotNull PurpleGainLoss gainLoss) {
+        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
+        return ImmutableOrangeRecord.builder()
+                .from(base)
+                .linx(ImmutableLinxRecord.builder().from(base.linx()).addDisruptions(disruption).build())
+                .purple(ImmutablePurpleRecord.builder().from(base.purple()).addGainsLosses(gainLoss).build())
+                .build();
+    }
 
     @Test
     public void canExtractFromProperTestData() {
