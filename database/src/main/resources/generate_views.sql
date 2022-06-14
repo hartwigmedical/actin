@@ -40,6 +40,13 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, sampleId, trialMatch.code A
 AS a
 );
 
+CREATE OR REPLACE VIEW eligibleCohorts
+AS (
+SELECT DISTINCT sampleId, trialId, trialAcronym, cohortDescription
+    FROM trialEvaluation
+    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
+);
+
 CREATE OR REPLACE VIEW molecularDetails
 AS (
 SELECT * FROM (
