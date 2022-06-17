@@ -1,41 +1,45 @@
 {
   "sampleId": "ACTN01029999T",
-  "reportDate": {
+  "experimentDate": {
     "year": 2022,
     "month": 1,
     "day": 20
   },
   "purple": {
-    "qc": {
-      "method": "NORMAL",
-      "copyNumberSegments": 208,
-      "unsupportedCopyNumberSegments": 0,
-      "deletedGenes": 4,
+    "fit": {
+      "qc": {
+        "method": "NORMAL",
+        "copyNumberSegments": 208,
+        "unsupportedCopyNumberSegments": 0,
+        "deletedGenes": 4,
+        "purity": 0.99,
+        "contamination": 0.0,
+        "amberMeanDepth": 111,
+        "cobaltGender": "MALE",
+        "amberGender": "MALE",
+        "germlineAberrations": [
+          "NONE"
+        ]
+      },
+      "hasReliableQuality": true,
+      "fittedPurityMethod": "NORMAL",
+      "wholeGenomeDuplication": true,
+      "hasReliablePurity": true,
       "purity": 0.99,
-      "contamination": 0.0,
-      "amberMeanDepth": 111,
-      "cobaltGender": "MALE",
-      "amberGender": "MALE",
-      "germlineAberrations": [
-        "NONE"
-      ]
+      "minPurity": 0.97,
+      "maxPurity": 1.0,
+      "ploidy": 3.1,
+      "minPloidy": 3.1,
+      "maxPloidy": 3.15
     },
-    "hasReliableQuality": true,
-    "fittedPurityMethod": "NORMAL",
-    "wholeGenomeDuplication": true,
-    "hasReliablePurity": true,
-    "purity": 0.99,
-    "minPurity": 0.97,
-    "maxPurity": 1.0,
-    "ploidy": 3.1,
-    "minPloidy": 3.1,
-    "maxPloidy": 3.15,
-    "microsatelliteIndelsPerMb": 0.11507520111927247,
-    "microsatelliteStatus": "MSS",
-    "tumorMutationalBurdenPerMb": 13.713186428821267,
-    "tumorMutationalLoad": 185,
-    "svTumorMutationalBurden": 73,
-    "tumorMutationalLoadStatus": "HIGH",
+    "characteristics": {
+      "microsatelliteIndelsPerMb": 0.11507520111927247,
+      "microsatelliteStatus": "MSS",
+      "tumorMutationalBurdenPerMb": 13.713186428821267,
+      "tumorMutationalLoad": 185,
+      "svTumorMutationalBurden": 73,
+      "tumorMutationalLoadStatus": "HIGH"
+    },
     "reportableSomaticVariants": [
       {
         "source": "SOMATIC",
@@ -146,7 +150,7 @@
         "junctionCopyNumber": 0.881
       }
     ],
-    "geneDisruptions": [
+    "reportableGeneDisruptions": [
       {
         "location": "17q11.2",
         "gene": "NF1",
@@ -215,33 +219,38 @@
     "telomericSGLs": 0,
     "LINECount": 1
   },
-  "protect": [
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Cobimetinib + Vemurafenib",
-      "onLabel": true,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "hotspot",
-          "sourceUrls": [
-            ""
-          ],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            ""
-          ]
-        }
-      ]
-    }
-  ]
+  "protect": {
+    "reportableEvidences": [
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Cobimetinib + Vemurafenib",
+        "onLabel": true,
+        "level": "A",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "hotspot",
+            "sourceUrls": [
+              ""
+            ],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              ""
+            ]
+          }
+        ]
+      }
+    ],
+    "reportableTrials": [],
+    "unreportedEvidences": [],
+    "unreportedTrials": []
+  }
 }

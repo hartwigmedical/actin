@@ -92,14 +92,14 @@ public final class OrangeJson {
 
             return ImmutableOrangeRecord.builder()
                     .sampleId(string(record, "sampleId"))
-                    .reportDate(date(record, "reportDate"))
+                    .experimentDate(date(record, "experimentDate"))
                     .purple(toPurpleRecord(object(record, "purple")))
                     .linx(toLinxRecord(object(record, "linx")))
                     .peach(toPeachRecord(array(record, "peach")))
                     .cuppa(toCuppaRecord(object(record, "cuppa")))
                     .virusInterpreter(toVirusInterpreterRecord(object(record, "virusInterpreter")))
                     .chord(toChordRecord(object(record, "chord")))
-                    .protect(toProtectRecord(array(record, "protect")))
+                    .protect(toProtectRecord(object(record, "protect")))
                     .build();
         }
 
@@ -109,13 +109,15 @@ public final class OrangeJson {
             variants.addAll(toPurpleVariants(array(purple, "reportableSomaticVariants")));
             variants.addAll(toPurpleVariants(array(purple, "reportableGermlineVariants")));
 
+            JsonObject purpleFit = object(purple, "fit");
+            JsonObject purpleCharacteristics = object(purple, "characteristics");
             return ImmutablePurpleRecord.builder()
-                    .hasReliableQuality(bool(purple, "hasReliableQuality"))
-                    .purity(number(purple, "purity"))
-                    .hasReliablePurity(bool(purple, "hasReliablePurity"))
-                    .microsatelliteStabilityStatus(string(purple, "microsatelliteStatus"))
-                    .tumorMutationalBurden(number(purple, "tumorMutationalBurdenPerMb"))
-                    .tumorMutationalLoad(integer(purple, "tumorMutationalLoad"))
+                    .hasReliableQuality(bool(purpleFit, "hasReliableQuality"))
+                    .purity(number(purpleFit, "purity"))
+                    .hasReliablePurity(bool(purpleFit, "hasReliablePurity"))
+                    .microsatelliteStabilityStatus(string(purpleCharacteristics, "microsatelliteStatus"))
+                    .tumorMutationalBurden(number(purpleCharacteristics, "tumorMutationalBurdenPerMb"))
+                    .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))
                     .variants(variants)
                     .gainsLosses(toPurpleGainsLosses(array(purple, "reportableSomaticGainsLosses")))
                     .build();
@@ -161,7 +163,7 @@ public final class OrangeJson {
             return ImmutableLinxRecord.builder()
                     .fusions(toLinxFusions(array(linx, "reportableFusions")))
                     .homozygousDisruptedGenes(toHomozygousDisruptedGenes(array(linx, "homozygousDisruptions")))
-                    .disruptions(toLinxDisruptions(array(linx, "geneDisruptions")))
+                    .disruptions(toLinxDisruptions(array(linx, "reportableGeneDisruptions")))
                     .build();
         }
 
@@ -257,9 +259,19 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static ProtectRecord toProtectRecord(@NotNull JsonArray protectArray) {
+        private static ProtectRecord toProtectRecord(@NotNull JsonObject protect) {
             Set<ProtectEvidence> evidences = Sets.newHashSet();
-            for (JsonElement element : protectArray) {
+            evidences.addAll(toEvidences(array(protect, "reportableEvidences")));
+            evidences.addAll(toEvidences(array(protect, "reportableTrials")));
+            evidences.addAll(toEvidences(array(protect, "unreportedEvidences")));
+            evidences.addAll(toEvidences(array(protect, "unreportedTrials")));
+            return ImmutableProtectRecord.builder().evidences(evidences).build();
+        }
+
+        @NotNull
+        private static Set<ProtectEvidence> toEvidences(@NotNull JsonArray protectEvidencesArray) {
+            Set<ProtectEvidence> evidences = Sets.newHashSet();
+            for (JsonElement element : protectEvidencesArray) {
                 JsonObject evidence = element.getAsJsonObject();
 
                 evidences.add(ImmutableProtectEvidence.builder()
@@ -273,7 +285,7 @@ public final class OrangeJson {
                         .sources(toSources(array(evidence, "sources")))
                         .build());
             }
-            return ImmutableProtectRecord.builder().evidences(evidences).build();
+            return evidences;
         }
 
         @NotNull

@@ -1,9 +1,9 @@
 {
   "sampleId": "ACTN01029999T",
-  "reportDate": {
+  "experimentDate": {
     "year": 2022,
     "month": 6,
-    "day": 3
+    "day": 17
   },
   "configuredPrimaryTumor": [
     {
@@ -465,39 +465,44 @@
     "ZRSR2": 5.099999999999999E-4
   },
   "purple": {
-    "qc": {
-      "status": [
-        "PASS"
-      ],
-      "method": "NORMAL",
-      "copyNumberSegments": 203,
-      "unsupportedCopyNumberSegments": 0,
-      "deletedGenes": 4,
+    "fit": {
+      "qc": {
+        "status": [
+          "PASS"
+        ],
+        "method": "NORMAL",
+        "copyNumberSegments": 203,
+        "unsupportedCopyNumberSegments": 0,
+        "deletedGenes": 4,
+        "purity": 0.99,
+        "contamination": 0.0,
+        "amberMeanDepth": 111,
+        "cobaltGender": "MALE",
+        "amberGender": "MALE",
+        "germlineAberrations": [
+          "NONE"
+        ]
+      },
+      "hasReliableQuality": true,
+      "fittedPurityMethod": "NORMAL",
+      "hasReliablePurity": true,
       "purity": 0.99,
-      "contamination": 0.0,
-      "amberMeanDepth": 111,
-      "cobaltGender": "MALE",
-      "amberGender": "MALE",
-      "germlineAberrations": [
-        "NONE"
-      ]
+      "minPurity": 0.97,
+      "maxPurity": 1.0,
+      "ploidy": 3.1,
+      "minPloidy": 3.1,
+      "maxPloidy": 3.15
     },
-    "hasReliableQuality": true,
-    "fittedPurityMethod": "NORMAL",
-    "hasReliablePurity": true,
-    "purity": 0.99,
-    "minPurity": 0.97,
-    "maxPurity": 1.0,
-    "ploidy": 3.1,
-    "minPloidy": 3.1,
-    "maxPloidy": 3.15,
-    "wholeGenomeDuplication": true,
-    "microsatelliteIndelsPerMb": 0.1172,
-    "microsatelliteStatus": "MSS",
-    "tumorMutationalBurdenPerMb": 13.7205,
-    "tumorMutationalLoad": 186,
-    "tumorMutationalLoadStatus": "HIGH",
-    "svTumorMutationalBurden": 72,
+    "characteristics": {
+      "wholeGenomeDuplication": true,
+      "microsatelliteIndelsPerMb": 0.1172,
+      "microsatelliteStatus": "MSS",
+      "tumorMutationalBurdenPerMb": 13.7205,
+      "tumorMutationalLoad": 186,
+      "tumorMutationalLoadStatus": "HIGH",
+      "svTumorMutationalBurden": 72
+    },
+    "allSomaticVariants": [],
     "reportableSomaticVariants": [
       {
         "source": "SOMATIC",
@@ -698,9 +703,13 @@
         "type": "INDEL"
       }
     ],
-    "unreportedSomaticVariants": [],
+    "additionalSuspectSomaticVariants": [],
+    "allGermlineVariants": [],
     "reportableGermlineVariants": [],
-    "unreportedGermlineVariants": [],
+    "additionalSuspectGermlineVariants": [],
+    "allSomaticGeneCopyNumbers": [],
+    "suspectGeneCopyNumbersWithLOH": [],
+    "allSomaticGainsLosses": [],
     "reportableSomaticGainsLosses": [
       {
         "interpretation": "PARTIAL_LOSS",
@@ -713,16 +722,255 @@
         "maxCopies": 2
       }
     ],
-    "unreportedSomaticGainsLosses": [],
+    "nearReportableSomaticGains": [],
+    "additionalSuspectSomaticGainsLosses": [],
+    "allGermlineDeletions": [],
     "reportableGermlineDeletions": [],
-    "unreportedGermlineDeletions": [],
-    "lohGenes": [],
-    "cnPerChromosome": []
+    "copyNumberPerChromosome": [
+      {
+        "chromosome": "_7",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 4.171334679722508
+      },
+      {
+        "chromosome": "_7",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 4.024620078272729
+      },
+      {
+        "chromosome": "_18",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.8490432529511334
+      },
+      {
+        "chromosome": "_18",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.370931614063123
+      },
+      {
+        "chromosome": "_14",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.0138455205847463
+      },
+      {
+        "chromosome": "_14",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.0139998277714284
+      },
+      {
+        "chromosome": "_15",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.546611471333237
+      },
+      {
+        "chromosome": "_15",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.7023997998702702
+      },
+      {
+        "chromosome": "_16",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 1.989521251230779
+      },
+      {
+        "chromosome": "_16",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.1919712830460782
+      },
+      {
+        "chromosome": "_10",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.007094743290902
+      },
+      {
+        "chromosome": "_10",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.5009802424099066
+      },
+      {
+        "chromosome": "_2",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.02120002022585
+      },
+      {
+        "chromosome": "_2",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.016271458549662
+      },
+      {
+        "chromosome": "_Y",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 0.23189998001646422
+      },
+      {
+        "chromosome": "_19",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.934100089054606
+      },
+      {
+        "chromosome": "_19",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.889021931658433
+      },
+      {
+        "chromosome": "_17",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.0477000530660465
+      },
+      {
+        "chromosome": "_17",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.9938998740100473
+      },
+      {
+        "chromosome": "_21",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.9982181161009325
+      },
+      {
+        "chromosome": "_21",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.991999766033014
+      },
+      {
+        "chromosome": "_9",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.6992000400581495
+      },
+      {
+        "chromosome": "_9",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.7291755064569365
+      },
+      {
+        "chromosome": "_1",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.923536090197291
+      },
+      {
+        "chromosome": "_1",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.5772792739090105
+      },
+      {
+        "chromosome": "_12",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.003116732830778
+      },
+      {
+        "chromosome": "_12",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.0115999171651855
+      },
+      {
+        "chromosome": "_8",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.3429529791412795
+      },
+      {
+        "chromosome": "_8",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.3325999264957695
+      },
+      {
+        "chromosome": "_5",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.0096989504909413
+      },
+      {
+        "chromosome": "_5",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.0000481443928493
+      },
+      {
+        "chromosome": "_3",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 4.000879324279213
+      },
+      {
+        "chromosome": "_3",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.5910709809245502
+      },
+      {
+        "chromosome": "_20",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 4.008612196597953
+      },
+      {
+        "chromosome": "_20",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 4.013880905298536
+      },
+      {
+        "chromosome": "_4",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.8453841055332885
+      },
+      {
+        "chromosome": "_4",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 2.0210999604946176
+      },
+      {
+        "chromosome": "_X",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 1.9547000205458256
+      },
+      {
+        "chromosome": "_X",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 1.9496150872949336
+      },
+      {
+        "chromosome": "_11",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.9098638260285616
+      },
+      {
+        "chromosome": "_11",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.1661435478205004
+      },
+      {
+        "chromosome": "_22",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.983474946385728
+      },
+      {
+        "chromosome": "_22",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.9915997247172412
+      },
+      {
+        "chromosome": "_6",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 2.913192184870031
+      },
+      {
+        "chromosome": "_6",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.8479440436530545
+      },
+      {
+        "chromosome": "_13",
+        "chromosomeArm": "Q_ARM",
+        "copyNumber": 3.146714774779385
+      },
+      {
+        "chromosome": "_13",
+        "chromosomeArm": "P_ARM",
+        "copyNumber": 3.1564998196285714
+      }
+    ]
   },
   "linx": {
+    "allStructuralVariants": [],
+    "allFusions": [],
     "reportableFusions": [],
-    "unreportedFusions": [],
-    "geneDisruptions": [
+    "additionalSuspectFusions": [],
+    "allBreakends": [],
+    "reportableGeneDisruptions": [
       {
         "location": "10q23.31",
         "gene": "PTEN",
@@ -733,31 +981,22 @@
         "junctionCopyNumber": 2.0076,
         "undisruptedCopyNumber": 0.0,
         "firstAffectedExon": 5,
-        "svId": 120,
-        "clusterId": null
+        "clusterId": 66
       }
     ],
+    "additionalSuspectDisruptions": [],
     "homozygousDisruptions": [],
-    "drivers": [
-      {
-        "clusterId": 59,
-        "gene": "CDKN2A",
-        "eventType": "LOH_SV_TELO"
-      },
-      {
-        "clusterId": 64,
-        "gene": "PTEN",
-        "eventType": "LOH_SV_TELO"
-      },
-      {
-        "clusterId": 67,
-        "gene": "PTEN",
-        "eventType": "DEL"
-      }
-    ],
-    "reportableGermlineDisruptions": [],
-    "unreportedGermlineDisruptions": []
+    "allGermlineDisruptions": [],
+    "reportableGermlineDisruptions": []
   },
+  "wildTypeGenes": [
+    {
+      "gene": "GENE1"
+    },
+    {
+      "gene": "GENE2"
+    }
+  ],
   "isofox": null,
   "lilac": {
     "qc": "PASS",
@@ -1012,3802 +1251,655 @@
       "repoVersion": "1.6"
     }
   ],
-  "protect": [
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Cobimetinib + Vemurafenib",
-      "onLabel": true,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dFDA"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Dabrafenib",
-      "onLabel": true,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dFDA"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Dabrafenib + Trametinib",
-      "onLabel": true,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25399551"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dFDA"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Trametinib",
-      "onLabel": true,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dFDA"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Vemurafenib",
-      "onLabel": true,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21639808"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dFDA"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600G",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dNCCN"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "RO4987655",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24947927"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Bevacizumab",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603024",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19571295"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "CI-1040",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/18682506",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21882184"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Cetuximab",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19884556",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19001320",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25666295",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Cetuximab + Irinotecan + Vemurafenib",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27729313"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Fluorouracil",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Irinotecan",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Oxaliplatin",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Panitumumab",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23325582"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19001320"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Selumetinib",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22492957"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Sorafenib",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/18682506",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21882184"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Buparlisib + Carboplatin + Paclitaxel",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25672916"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Anti-EGFR monoclonal antibody",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19398573"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19398573"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Cetuximab",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21163703"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Chemotherapy",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/15900596"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Everolimus",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23989949"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Lapatinib + Trastuzumab",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25300346"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": true,
-      "treatment": "Trastuzumab",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24387334"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/20813970"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib",
-      "onLabel": false,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dNCCN"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Trametinib",
-      "onLabel": false,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27283860"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27283860"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": false,
-      "level": "A",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600G",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cobimetinib + Vemurafenib",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25265494"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22735384"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21343559"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Trametinib",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24583796"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23020132"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Trametinib",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22663011"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22663011"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": true,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22356324"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24508103",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26557775",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25524477",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23569304",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25399551"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Trametinib",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26392102"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26352686"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22492957",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20068183",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21274720"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26200454"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27460442"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": false,
-      "level": "B",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Bay",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23434733"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Pictilisib",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25370471"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Raffinose",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dESMO 2015 (abstract 300)",
-            "https://www.google.com/#q\u003dAACR 2017 (abstr  CT002)",
-            "https://www.google.com/#q\u003dAACR 2016 (abstr CT005)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24463458",
-            "http://www.ncbi.nlm.nih.gov/pubmed/24616537"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "2-butanone",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22241789",
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 9029)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Braf",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cetuximab",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603018",
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603024",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26989027"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cetuximab + Irinotecan + Mab + Vemurafenib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF (V600)",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27729313"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23470635"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
-            "https://www.google.com/#q\u003dESMO 2014 (abstr LBA38_PR)",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338",
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 8009)",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23524406",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
-            "http://www.ncbi.nlm.nih.gov/pubmed/27080216"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23524406"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Mab + Panitumumab",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF (V600)",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dENA 2014 (abstr 11LBA)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Mab + Panitumumab + Trametinib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2014 (abstr 3515)",
-            "https://www.google.com/#q\u003dASCO 2015 (abstr 103)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Trametinib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26392102",
-            "https://www.google.com/#q\u003dASCO 2015 (abstr 8006)"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27048246"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib + Trametinib + Vemurafenib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27048246"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Egfr",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22773810"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Glu-arg-lys",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2017 (abstr 2508)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Irinotecan",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19603018"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Mab",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF (V600)",
-          "sourceUrls": [],
-          "evidenceType": "CODON_MUTATION",
-          "rangeRank": 600,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/28363909"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Panitumumab + Vemurafenib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27325282"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Selumetinib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dNCT01089101"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26490654"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23300174",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23278307",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25815361",
-            "http://www.ncbi.nlm.nih.gov/pubmed/27116997"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24335681"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
-            "http://www.ncbi.nlm.nih.gov/pubmed/24987354",
-            "http://www.ncbi.nlm.nih.gov/pubmed/25353071"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27520988"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23489023",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22608338"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22621641",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23612012",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22743296"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26287849"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25092772"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23733758",
-            "http://www.ncbi.nlm.nih.gov/pubmed/24888229",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26776917"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24997557"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25209580"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25524464",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26579623"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24821190"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26286452"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24725538"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "0325901",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035",
-            "http://www.ncbi.nlm.nih.gov/pubmed/16273091"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Braf",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22389471",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21156289"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Braf + Cdk2",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22997239"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Braf + Hsp90",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22351686"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cobimetinib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23934108"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dabrafenib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21107320",
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20818844",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21107323"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dactolisib + Nvp + Selumetinib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26678033"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dasatinib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19671763"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Glu-arg-lys",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22997239",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23614898"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Gsk",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Selumetinib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/18172275",
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Sorafenib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035",
-            "http://www.ncbi.nlm.nih.gov/pubmed/15781657"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Trametinib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF MUTATION",
-          "sourceUrls": [],
-          "evidenceType": "ACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22169769"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22241959",
-            "http://www.ncbi.nlm.nih.gov/pubmed/18287029",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20551065",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26070258",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21107323",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21107320",
-            "http://www.ncbi.nlm.nih.gov/pubmed/16424035",
-            "http://www.ncbi.nlm.nih.gov/pubmed/20149136"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24576830"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "0325901",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19010912"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "0879 + Dactolisib + Gdc + Nvp",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23549875"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "119",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21351275"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "2-butanone",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19018267"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "957054-30-7 + Plx-4720",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23845441"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Bevacizumab + Capecitabine + Vemurafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22180495"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Braf",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22038996",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cetuximab",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF MUTATION",
-          "sourceUrls": [],
-          "evidenceType": "ACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586653"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cetuximab + Gefitinib + Vemurafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22281684"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cetuximab + Sorafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19001320"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Ci-1040",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/17911174"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Dasatinib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23729178"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Nutlin + Plx-4720",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23812671"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Panitumumab + Sorafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/19001320"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Plx-4720",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "BRAF BRAF:V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dPMC3638050"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Regorafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26865419"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Selumetinib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/20806365"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Sorafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/16533790"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "BRAF",
-      "transcript": "ENST00000288602",
-      "isCanonical": true,
-      "event": "p.Val600Glu",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Vemurafenib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25706985"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21185263",
-            "http://www.ncbi.nlm.nih.gov/pubmed/26456083"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22448344",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22180495"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22038996"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "BRAF V600E",
-          "sourceUrls": [],
-          "evidenceType": "HOTSPOT_MUTATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/18458053"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000498124",
-      "isCanonical": true,
-      "event": "p.Ala68fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cdk4",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 2500)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000498124",
-      "isCanonical": true,
-      "event": "p.Ala68fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Ilorasertib",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dNCT02478320"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000498124",
-      "isCanonical": true,
-      "event": "p.Ala68fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cdk4",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000498124",
-      "isCanonical": true,
-      "event": "p.Ala68fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cdk4",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000579755",
-      "isCanonical": false,
-      "event": "p.Gly83fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cdk4",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 2500)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000579755",
-      "isCanonical": false,
-      "event": "p.Gly83fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Ilorasertib",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dNCT02478320"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000579755",
-      "isCanonical": false,
-      "event": "p.Gly83fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cdk4",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "CDKN2A",
-      "transcript": "ENST00000579755",
-      "isCanonical": false,
-      "event": "p.Gly83fs",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cdk4",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "CDKN2A CDKN2A oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22711607",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22586120",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22471707"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "HDAC2",
-      "transcript": "ENST00000519065",
-      "isCanonical": true,
-      "event": "p.Arg409*",
-      "eventIsHighDriver": false,
-      "germline": false,
-      "reported": false,
-      "treatment": "Olaparib",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "HDAC2 HDAC2 biallelic inactivation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26510020"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "1-tert-butyl-3-[6-(3 + 3-d]pyrimidin-7-yl]-urea + 5-dimethoxy-phenyl)-2-(4-diethylamino-butylamino)-pyrido[2",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26645196"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26645196"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Sirolimus",
-      "onLabel": true,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 2532)"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2013 (abstr 2532)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "10-decarboxymethylaclacinomycin t (dcmat)",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22025163"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22025163"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "2206",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22025163"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Byl-719",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN biallelic inactivation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25409150"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cetuximab + Mab",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN biallelic inactivation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dCaris molecular intelligence"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Everolimus",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN DELETION",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27091708"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23582881"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Mab + Panitumumab",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN biallelic inactivation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dCaris molecular intelligence"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Parp inhibitors",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/20944090",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21468130"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/20944090",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21468130"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Pik3cb",
-      "onLabel": false,
-      "level": "C",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2014 (abstr 2514)"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "https://www.google.com/#q\u003dASCO 2014 (abstr 2514)"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Azd5363",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/22294718"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Ipatasertib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN MUTATION",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Pi3k pathway inhibitors",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
-            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
-            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Uprosertib",
-      "onLabel": true,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24735930"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "154447-36-6 + Trastuzumab",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/15324695"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "2-butanone",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "3\u0027-azido-3\u0027-deoxythymidine-5\u0027-monophosphate",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/27397505"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Alpelisib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25409150"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Alpelisib + Azd8186 + Enzalutamide",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN MUTATION",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25544636"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Azd5363 + Docetaxel",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/24088382"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Azd8186",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/25398829"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Cisplatin",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/15790433"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Gdc + Taselisib",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN MUTATION",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/26589432"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Pi3k pathway inhibitor + ar antagonists",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21575859"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/21575859"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Pi3k pathway inhibitors",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN deletion",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
-            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
-          ]
-        },
-        {
-          "name": "VICC_CGI",
-          "sourceEvent": "PTEN PTEN oncogenic mutation",
-          "sourceUrls": [],
-          "evidenceType": "INACTIVATION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23136191",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22662154",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21289267",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21191045",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21325073",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23287563",
-            "http://www.ncbi.nlm.nih.gov/pubmed/17804702",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21673091",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21632463",
-            "http://www.ncbi.nlm.nih.gov/pubmed/21998291",
-            "http://www.ncbi.nlm.nih.gov/pubmed/22932669",
-            "http://www.ncbi.nlm.nih.gov/pubmed/23085766"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Temsirolimus",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESPONSIVE",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/23674493"
-          ]
-        },
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/11504908"
-          ]
-        }
-      ]
-    },
-    {
-      "gene": "PTEN",
-      "transcript": "ENST00000371953",
-      "isCanonical": true,
-      "event": "partial loss",
-      "eventIsHighDriver": true,
-      "germline": false,
-      "reported": false,
-      "treatment": "Trastuzumab",
-      "onLabel": false,
-      "level": "D",
-      "direction": "RESISTANT",
-      "sources": [
-        {
-          "name": "VICC_CIVIC",
-          "sourceEvent": "PTEN LOSS",
-          "sourceUrls": [],
-          "evidenceType": "DELETION",
-          "rangeRank": null,
-          "evidenceUrls": [
-            "http://www.ncbi.nlm.nih.gov/pubmed/17936563"
-          ]
-        }
-      ]
-    }
-  ],
+  "protect": {
+    "reportableEvidences": [
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Cobimetinib + Vemurafenib",
+        "onLabel": true,
+        "level": "A",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "https://www.google.com/#q\u003dFDA"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Dabrafenib",
+        "onLabel": true,
+        "level": "A",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "https://www.google.com/#q\u003dFDA"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Dabrafenib + Trametinib",
+        "onLabel": true,
+        "level": "A",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "https://www.google.com/#q\u003dFDA"
+            ]
+          },
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/25399551"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Trametinib",
+        "onLabel": true,
+        "level": "A",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "https://www.google.com/#q\u003dFDA"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Vemurafenib",
+        "onLabel": true,
+        "level": "A",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/21639808"
+            ]
+          },
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "https://www.google.com/#q\u003dFDA"
+            ]
+          },
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600G",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "https://www.google.com/#q\u003dNCCN"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "RO4987655",
+        "onLabel": true,
+        "level": "B",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600",
+            "sourceUrls": [],
+            "evidenceType": "CODON_MUTATION",
+            "rangeRank": 600,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/24947927"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Bevacizumab",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/19603024",
+              "http://www.ncbi.nlm.nih.gov/pubmed/19571295"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "CI-1040",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/18682506",
+              "http://www.ncbi.nlm.nih.gov/pubmed/21882184"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Cetuximab",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
+              "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
+              "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
+            ]
+          },
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/19884556",
+              "http://www.ncbi.nlm.nih.gov/pubmed/19001320",
+              "http://www.ncbi.nlm.nih.gov/pubmed/25666295",
+              "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Cetuximab + Irinotecan + Vemurafenib",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/27729313"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Fluorouracil",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Irinotecan",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Oxaliplatin",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/19603024"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Panitumumab",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/19001320"
+            ]
+          },
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600",
+            "sourceUrls": [],
+            "evidenceType": "CODON_MUTATION",
+            "rangeRank": 600,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/23325582"
+            ]
+          },
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "BRAF BRAF:V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
+              "http://www.ncbi.nlm.nih.gov/pubmed/23325582",
+              "http://www.ncbi.nlm.nih.gov/pubmed/20619739"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Selumetinib",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/22492957"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "BRAF",
+        "transcript": "ENST00000288602",
+        "isCanonical": true,
+        "event": "p.Val600Glu",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Sorafenib",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "BRAF V600E",
+            "sourceUrls": [],
+            "evidenceType": "HOTSPOT_MUTATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/18682506",
+              "http://www.ncbi.nlm.nih.gov/pubmed/21882184"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "event": "partial loss",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Buparlisib + Carboplatin + Paclitaxel",
+        "onLabel": true,
+        "level": "B",
+        "direction": "RESPONSIVE",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "PTEN LOSS",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/25672916"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "event": "partial loss",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Anti-EGFR monoclonal antibody",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "PTEN PTEN oncogenic mutation",
+            "sourceUrls": [],
+            "evidenceType": "INACTIVATION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
+              "http://www.ncbi.nlm.nih.gov/pubmed/19398573"
+            ]
+          },
+          {
+            "name": "VICC_CGI",
+            "sourceEvent": "PTEN PTEN deletion",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/21163703",
+              "http://www.ncbi.nlm.nih.gov/pubmed/19398573"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "event": "partial loss",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Cetuximab",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "PTEN LOSS",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/21163703"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "event": "partial loss",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Everolimus",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "PTEN LOSS",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/23989949"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "event": "partial loss",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Lapatinib + Trastuzumab",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "PTEN LOSS",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/25300346"
+            ]
+          }
+        ]
+      },
+      {
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "event": "partial loss",
+        "eventIsHighDriver": true,
+        "germline": false,
+        "reported": true,
+        "treatment": "Trastuzumab",
+        "onLabel": false,
+        "level": "B",
+        "direction": "RESISTANT",
+        "sources": [
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "PTEN LOSS",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/24387334"
+            ]
+          },
+          {
+            "name": "VICC_CIVIC",
+            "sourceEvent": "PTEN LOSS",
+            "sourceUrls": [],
+            "evidenceType": "DELETION",
+            "rangeRank": null,
+            "evidenceUrls": [
+              "http://www.ncbi.nlm.nih.gov/pubmed/20813970"
+            ]
+          }
+        ]
+      }
+    ],
+    "reportableTrials": [],
+    "unreportedEvidences": [],
+    "unreportedTrials": []
+  },
   "cohortEvaluations": {
     "SV_TMB": {
       "cancerType": "Skin",

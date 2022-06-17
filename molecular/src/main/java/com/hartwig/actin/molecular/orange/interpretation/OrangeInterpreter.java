@@ -31,7 +31,7 @@ public class OrangeInterpreter {
         return ImmutableMolecularRecord.builder()
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
-                .date(record.reportDate())
+                .date(record.experimentDate())
                 .hasReliableQuality(record.purple().hasReliableQuality())
                 .characteristics(CharacteristicsExtraction.extract(record))
                 .drivers(DriverExtraction.extract(record))

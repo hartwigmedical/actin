@@ -22,7 +22,7 @@ public abstract class OrangeRecord {
     public abstract String sampleId();
 
     @NotNull
-    public abstract LocalDate reportDate();
+    public abstract LocalDate experimentDate();
 
     @NotNull
     public abstract PurpleRecord purple();

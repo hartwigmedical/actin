@@ -64,7 +64,7 @@ public class OrangeJsonTest {
         OrangeRecord record = OrangeJson.read(MINIMALLY_POPULATED_ORANGE_JSON);
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertEquals(LocalDate.of(2022, 1, 20), record.reportDate());
+        assertEquals(LocalDate.of(2022, 1, 20), record.experimentDate());
 
         assertPurple(record.purple());
         assertLinx(record.linx());

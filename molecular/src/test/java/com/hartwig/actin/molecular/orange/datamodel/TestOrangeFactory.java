@@ -50,7 +50,7 @@ public final class TestOrangeFactory {
     public static OrangeRecord createMinimalTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
-                .reportDate(LocalDate.of(2021, 5, 6))
+                .experimentDate(LocalDate.of(2021, 5, 6))
                 .purple(createMinimalTestPurpleRecord())
                 .linx(ImmutableLinxRecord.builder().build())
                 .peach(ImmutablePeachRecord.builder().build())

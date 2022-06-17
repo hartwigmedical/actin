@@ -1,24 +1,28 @@
 {
   "sampleId": "ACTN01029999T",
-  "reportDate": {
+  "experimentDate": {
     "year": 2022,
     "month": 1,
     "day": 20
   },
   "purple": {
-    "hasReliableQuality": false,
-    "hasReliablePurity": false,
-    "purity": 0.1,
-    "microsatelliteStatus": "MSS",
-    "tumorMutationalBurdenPerMb": 0,
-    "tumorMutationalLoad": 0,
+    "fit": {
+      "hasReliableQuality": false,
+      "hasReliablePurity": false,
+      "purity": 0.1
+    },
+    "characteristics": {
+      "microsatelliteStatus": "MSS",
+      "tumorMutationalBurdenPerMb": 0,
+      "tumorMutationalLoad": 0
+    },
     "reportableSomaticVariants": [],
     "reportableGermlineVariants": [],
     "reportableSomaticGainsLosses": []
   },
   "linx": {
     "reportableFusions": [],
-    "geneDisruptions": [],
+    "reportableGeneDisruptions": [],
     "homozygousDisruptions": []
   },
   "virusInterpreter": {
@@ -32,5 +36,10 @@
     "predictions": [
     ]
   },
-  "protect": []
+  "protect": {
+    "reportableEvidences": [],
+    "reportableTrials": [],
+    "unreportedEvidences": [],
+    "unreportedTrials": []
+  }
 }
