@@ -159,7 +159,7 @@ Field | Mapping
 ---|---
 sampleId | The ORANGE field `sampleId`
 type | Hard-coded to `WGS` 
-date | The ORANGE field `reportedDate`
+date | The ORANGE field `experimentDate`
 hasReliableQuality | The PURPLE field `hasReliableQuality` 
 
 The characteristics are extracted as follows:
