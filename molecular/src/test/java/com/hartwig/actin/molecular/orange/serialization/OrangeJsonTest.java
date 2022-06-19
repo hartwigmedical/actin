@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Set;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
@@ -73,6 +74,7 @@ public class OrangeJsonTest {
         assertVirusInterpreter(record.virusInterpreter());
         assertChord(record.chord());
         assertProtect(record.protect());
+        assertWildTypeGenes(record.wildTypeGenes());
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
@@ -187,5 +189,10 @@ public class OrangeJsonTest {
         assertEquals("hotspot", source.event());
         assertEquals(EvidenceType.HOTSPOT_MUTATION, source.type());
         assertNull(source.rangeRank());
+    }
+
+    private static void assertWildTypeGenes(@NotNull Set<String> wildTypeGenes) {
+        assertEquals(1, wildTypeGenes.size());
+        assertEquals("KRAS", wildTypeGenes.iterator().next());
     }
 }

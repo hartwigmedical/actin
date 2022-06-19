@@ -41,5 +41,6 @@
     "reportableTrials": [],
     "unreportedEvidences": [],
     "unreportedTrials": []
-  }
+  },
+  "wildTypeGenes": []
 }

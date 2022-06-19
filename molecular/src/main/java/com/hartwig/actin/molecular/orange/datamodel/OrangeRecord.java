@@ -44,8 +44,8 @@ public abstract class OrangeRecord {
     public abstract ChordRecord chord();
 
     @NotNull
-    public abstract ProtectRecord protect();
+    public abstract Set<String> wildTypeGenes();
 
     @NotNull
-    public abstract Set<String> wildTypeGenes();
+    public abstract ProtectRecord protect();
 }

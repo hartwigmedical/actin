@@ -106,6 +106,9 @@
       ]
     }
   ],
+  "wildTypeGenes": [
+    "KRAS"
+  ],
   "evidence": {
     "actinSource": "local",
     "actinTrials": [

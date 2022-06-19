@@ -38,6 +38,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class MolecularRecordJsonTest {
@@ -77,6 +78,7 @@ public class MolecularRecordJsonTest {
         assertCharacteristics(molecular.characteristics());
         assertDrivers(molecular.drivers());
         assertPharmaco(molecular.pharmaco());
+        assertWildTypeGenes(molecular.wildTypeGenes());
         assertEvidence(molecular.evidence());
     }
 
@@ -182,6 +184,12 @@ public class MolecularRecordJsonTest {
         Haplotype haplotype = entry.haplotypes().iterator().next();
         assertEquals("1* HOM", haplotype.name());
         assertEquals("Normal function", haplotype.function());
+    }
+
+    private static void assertWildTypeGenes(@Nullable Set<String> wildTypeGenes) {
+        assertNotNull(wildTypeGenes);
+        assertEquals(1, wildTypeGenes.size());
+        assertEquals("KRAS", wildTypeGenes.iterator().next());
     }
 
     private static void assertEvidence(@NotNull MolecularEvidence evidence) {

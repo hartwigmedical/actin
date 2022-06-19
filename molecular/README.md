@@ -25,8 +25,8 @@ Every sample, uniquely defined by their sample ID, has a molecular record with t
 
 Field | Example Value | Details
 ---|---|---
-experimentType | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
-experimentDate | 2022-01-14 | The date on which the molecular results were obtained (optional field).
+type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
+date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
 hasReliableQuality | 1 | Whether the molecular results have reliable quality. 
  
 1 molecular characteristics
@@ -121,6 +121,10 @@ gene | DPYD | The gene for which the pharmaco entry is applicable
 haplotype | 1* HOM | Haplotypes found for the gene  
 haplotypeFunction | Function impact of corresponding haplotype
 
+N wild-type genes (optional)
+
+If the molecular experiment was not suitable to call wild-type genes this list can be omitted.
+
 N actin trial evidences (with a single configured source name)
 
 Field | Example Value | Details
@@ -140,16 +144,16 @@ Field | Example Value | Details
 event | High TMB | The molecular event against which the evidence has been matched again.
 trial | Trial A | The name of the trial for which the evidence holds.
 
-1 treatment evidence, with a single configured source name, for N events
-
-Field | Example Value | Details
----|---|---
-approvedEvidence | PIK3CA E545K -> Alpelisib | A list of mutations along with approved evidence for treatment.
-onLabelExperimentalEvidence | - | A list of mutations along with on-label experimental evidence for treatment.
-offLabelExperimentalEvidence | - | A list of mutations with evidence that is experimental for a different tumor type.
-preClinicalEvidence | - | A list of mutations with evidence that is pre-clinical.
-knownResistanceEvidence | KRAS amp -> Erlotinib | A list of mutations along with known resistance evidence for treatment.
-suspectResistanceEvidence | - | A list of mutations along with suspect resistance evidence for treatment.
+N treatment evidences of various types, with a single configured source name. The types are as follows:
+ 
+Type | Details
+---|---
+approvedEvidence |  Treatments which are approved for the sample tumor type.
+onLabelExperimentalEvidence | Treatments which are experimental for the specific sample tumor type.
+offLabelExperimentalEvidence | Treatment which are experimental for a different tumor type.
+preClinicalEvidence | Treatments that have some evidence but haven't reached experimental state yet.
+knownResistanceEvidence | Evidence of resistance for treatments that are considered reliable.  
+suspectResistanceEvidence | Evidence of resistance for treatments that has not yet been confirmed to be reliable.
 
 ### Interpretation of ORANGE results
 
@@ -191,6 +195,9 @@ Note that all floating point numbers are rounded to 3 digits when ingesting data
  - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
 
 The pharmaco entries are extracted from PEACH.
+
+The wild-type genes are extracted from the ORANGE list of wild-type genes. 
+In case the ORANGE results were not reliable, no wild-type genes will be set.
 
 The evidence is extracted from PROTECT in the following steps:
  1. Evidence is filtered for applicability based on ACTIN's internal applicability model. This applicability model removes evidence 

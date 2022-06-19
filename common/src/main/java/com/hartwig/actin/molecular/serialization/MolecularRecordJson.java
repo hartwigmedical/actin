@@ -9,6 +9,7 @@ import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableNumber;
 import static com.hartwig.actin.util.json.Json.nullableObject;
 import static com.hartwig.actin.util.json.Json.nullableString;
+import static com.hartwig.actin.util.json.Json.nullableStringList;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
@@ -139,6 +140,7 @@ public class MolecularRecordJson {
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toMolecularDrivers(object(record, "drivers")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
+                    .wildTypeGenes(nullableStringList(record, "wildTypeGenes"))
                     .evidence(toMolecularEvidence(object(record, "evidence")))
                     .build();
         }

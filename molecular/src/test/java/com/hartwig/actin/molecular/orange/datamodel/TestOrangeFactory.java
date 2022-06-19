@@ -2,8 +2,10 @@ package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
@@ -71,6 +73,7 @@ public final class TestOrangeFactory {
                 .cuppa(createTestCuppaRecord())
                 .virusInterpreter(createTestVirusInterpreterRecord())
                 .chord(ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build())
+                .wildTypeGenes(createTestWildTypeGenes())
                 .protect(createTestProtectRecord())
                 .build();
     }
@@ -162,6 +165,13 @@ public final class TestOrangeFactory {
                         .driverLikelihood(VirusDriverLikelihood.HIGH)
                         .build())
                 .build();
+    }
+
+    @NotNull
+    private static Iterable<String> createTestWildTypeGenes() {
+        Set<String> wildTypeGenes = Sets.newHashSet();
+        wildTypeGenes.add("KRAS");
+        return wildTypeGenes;
     }
 
     @NotNull

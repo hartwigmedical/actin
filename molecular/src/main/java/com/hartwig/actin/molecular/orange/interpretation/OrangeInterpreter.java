@@ -36,6 +36,7 @@ public class OrangeInterpreter {
                 .characteristics(CharacteristicsExtraction.extract(record))
                 .drivers(DriverExtraction.extract(record))
                 .pharmaco(PharmacoExtraction.extract(record))
+                .wildTypeGenes(WildTypeExtraction.extract(record))
                 .evidence(evidenceExtractor.extract(record))
                 .build();
     }

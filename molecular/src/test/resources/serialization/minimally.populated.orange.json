@@ -252,5 +252,10 @@
     "reportableTrials": [],
     "unreportedEvidences": [],
     "unreportedTrials": []
-  }
+  },
+  "wildTypeGenes": [
+    {
+      "gene": "KRAS"
+    }
+  ]
 }

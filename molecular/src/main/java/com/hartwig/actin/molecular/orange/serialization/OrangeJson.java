@@ -99,6 +99,7 @@ public final class OrangeJson {
                     .cuppa(toCuppaRecord(object(record, "cuppa")))
                     .virusInterpreter(toVirusInterpreterRecord(object(record, "virusInterpreter")))
                     .chord(toChordRecord(object(record, "chord")))
+                    .wildTypeGenes(toWildTypeGenes(array(record, "wildTypeGenes")))
                     .protect(toProtectRecord(object(record, "protect")))
                     .build();
         }
@@ -302,6 +303,16 @@ public final class OrangeJson {
                         .build());
             }
             return sources;
+        }
+
+        @NotNull
+        private static Set<String> toWildTypeGenes(@NotNull JsonArray wildTypeGeneArray) {
+            Set<String> wildTypeGenes = Sets.newHashSet();
+            for (JsonElement element : wildTypeGeneArray) {
+                JsonObject wildtypeGene = element.getAsJsonObject();
+                wildTypeGenes.add(string(wildtypeGene, "gene"));
+            }
+            return wildTypeGenes;
         }
     }
 }

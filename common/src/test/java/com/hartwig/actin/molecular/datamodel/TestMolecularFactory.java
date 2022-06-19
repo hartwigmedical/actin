@@ -65,6 +65,7 @@ public final class TestMolecularFactory {
                 .characteristics(createTestCharacteristics())
                 .drivers(createTestDrivers())
                 .pharmaco(createTestPharmaco())
+                .wildTypeGenes(createTestWildTypeGenes())
                 .evidence(createTestEvidence())
                 .build();
     }
@@ -124,6 +125,13 @@ public final class TestMolecularFactory {
                 .gene("DPYD")
                 .addHaplotypes(ImmutableHaplotype.builder().name("1* HOM").function("Normal function").build())
                 .build());
+    }
+
+    @NotNull
+    private static Iterable<String> createTestWildTypeGenes() {
+        Set<String> wildTypeGenes = Sets.newHashSet();
+        wildTypeGenes.add("KRAS");
+        return wildTypeGenes;
     }
 
     @NotNull

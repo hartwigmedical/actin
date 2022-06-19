@@ -36,6 +36,9 @@ public abstract class MolecularRecord {
     @NotNull
     public abstract Set<PharmacoEntry> pharmaco();
 
+    @Nullable
+    public abstract Set<String> wildTypeGenes();
+
     @NotNull
     public abstract MolecularEvidence evidence();
 
