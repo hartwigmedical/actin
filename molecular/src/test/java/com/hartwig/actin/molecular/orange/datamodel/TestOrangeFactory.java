@@ -166,11 +166,11 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static ProtectRecord createTestProtectRecord() {
-        List<ProtectEvidence> evidences = Lists.newArrayList();
+        List<ProtectEvidence> reportableEvidences = Lists.newArrayList();
 
         ImmutableProtectSource.Builder evidenceSourceBuilder = ImmutableProtectSource.builder().name("CKB").event(Strings.EMPTY);
         ImmutableProtectEvidence.Builder evidenceBuilder = ImmutableProtectEvidence.builder().reported(true);
-        evidences.add(evidenceBuilder.gene("BRAF")
+        reportableEvidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Vemurafenib")
                 .onLabel(true)
@@ -179,7 +179,7 @@ public final class TestOrangeFactory {
                 .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
-        evidences.add(evidenceBuilder.gene("BRAF")
+        reportableEvidences.add(evidenceBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Cetuximab")
                 .onLabel(false)
@@ -188,7 +188,7 @@ public final class TestOrangeFactory {
                 .addSources(evidenceSourceBuilder.type(EvidenceType.HOTSPOT_MUTATION).build())
                 .build());
 
-        evidences.add(evidenceBuilder.gene("PTEN")
+        reportableEvidences.add(evidenceBuilder.gene("PTEN")
                 .event("partial loss")
                 .treatment("Everolimus")
                 .onLabel(false)
@@ -197,9 +197,10 @@ public final class TestOrangeFactory {
                 .addSources(evidenceSourceBuilder.type(EvidenceType.INACTIVATION).build())
                 .build());
 
+        List<ProtectEvidence> reportableTrials = Lists.newArrayList();
         ImmutableProtectSource.Builder externalSourceBuilder = ImmutableProtectSource.builder().name("ICLUSION").event(Strings.EMPTY);
         ImmutableProtectEvidence.Builder externalTrialBuilder = ImmutableProtectEvidence.builder().reported(true);
-        evidences.add(externalTrialBuilder.gene("BRAF")
+        reportableTrials.add(externalTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial X")
                 .onLabel(true)
@@ -210,7 +211,7 @@ public final class TestOrangeFactory {
 
         ImmutableProtectSource.Builder actinSourceBuilder = ImmutableProtectSource.builder().name("ACTIN");
         ImmutableProtectEvidence.Builder actinTrialBuilder = ImmutableProtectEvidence.builder().reported(true);
-        evidences.add(actinTrialBuilder.gene("BRAF")
+        reportableTrials.add(actinTrialBuilder.gene("BRAF")
                 .event("p.Val600Glu")
                 .treatment("Trial Y")
                 .onLabel(true)
@@ -221,6 +222,6 @@ public final class TestOrangeFactory {
                         .build())
                 .build());
 
-        return ImmutableProtectRecord.builder().evidences(evidences).build();
+        return ImmutableProtectRecord.builder().reportableEvidences(reportableEvidences).reportableTrials(reportableTrials).build();
     }
 }

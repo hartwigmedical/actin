@@ -11,5 +11,14 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ProtectRecord {
 
     @NotNull
-    public abstract Set<ProtectEvidence> evidences();
+    public abstract Set<ProtectEvidence> reportableEvidences();
+
+    @NotNull
+    public abstract Set<ProtectEvidence> unreportedEvidences();
+
+    @NotNull
+    public abstract Set<ProtectEvidence> reportableTrials();
+
+    @NotNull
+    public abstract Set<ProtectEvidence> unreportedTrials();
 }

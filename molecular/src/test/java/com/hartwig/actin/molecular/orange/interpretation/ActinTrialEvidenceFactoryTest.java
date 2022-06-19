@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
+import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectTestFactory;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -75,12 +76,12 @@ public class ActinTrialEvidenceFactoryTest {
     }
 
     @Test
-    public void canCreateWildtype() {
+    public void canCreateWildType() {
         ProtectEvidence evidence = create(EligibilityRule.WILDTYPE_OF_GENE_X + ": KRAS", EvidenceType.WILD_TYPE);
-        ActinTrialEvidence wildtype = ActinTrialEvidenceFactory.create(evidence);
-        assertEquals(MolecularEventType.WILD_TYPE_GENE, wildtype.type());
-        assertEquals("KRAS", wildtype.gene());
-        assertNull(wildtype.mutation());
+        ActinTrialEvidence wildType = ActinTrialEvidenceFactory.create(evidence);
+        assertEquals(MolecularEventType.WILD_TYPE_GENE, wildType.type());
+        assertEquals("KRAS", wildType.gene());
+        assertNull(wildType.mutation());
     }
 
     @Test
@@ -136,14 +137,19 @@ public class ActinTrialEvidenceFactoryTest {
 
     @NotNull
     private static ProtectEvidence create(@NotNull String sourceEvent, @NotNull EvidenceType type) {
-        return ProtectTestFactory.builder().addSources(ProtectTestFactory.sourceBuilder().event(sourceEvent).type(type).build()).build();
+        return ProtectTestFactory.builder().addSources(actinSourceBuilder().event(sourceEvent).type(type).build()).build();
     }
 
     @NotNull
     private static ProtectEvidence withTreatment(@NotNull String treatment) {
         return ProtectTestFactory.builder()
                 .treatment(treatment)
-                .addSources(ProtectTestFactory.sourceBuilder().event(EligibilityRule.HRD_SIGNATURE.toString()).build())
+                .addSources(actinSourceBuilder().event(EligibilityRule.HRD_SIGNATURE.toString()).build())
                 .build();
+    }
+
+    @NotNull
+    private static ImmutableProtectSource.Builder actinSourceBuilder() {
+        return ProtectTestFactory.sourceBuilder().name(EvidenceConstants.ACTIN_SOURCE);
     }
 }

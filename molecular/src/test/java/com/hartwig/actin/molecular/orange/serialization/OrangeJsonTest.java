@@ -171,8 +171,8 @@ public class OrangeJsonTest {
     }
 
     private static void assertProtect(@NotNull ProtectRecord protect) {
-        assertEquals(1, protect.evidences().size());
-        ProtectEvidence evidence = protect.evidences().iterator().next();
+        assertEquals(1, protect.reportableEvidences().size());
+        ProtectEvidence evidence = protect.reportableEvidences().iterator().next();
         assertTrue(evidence.reported());
         assertEquals("BRAF", evidence.gene());
         assertEquals("p.Val600Glu", evidence.event());

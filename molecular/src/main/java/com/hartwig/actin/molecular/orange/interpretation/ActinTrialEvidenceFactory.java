@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Set;
+
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
@@ -22,10 +24,6 @@ final class ActinTrialEvidenceFactory {
 
     @NotNull
     public static ActinTrialEvidence create(@NotNull ProtectEvidence evidence) {
-        if (evidence.sources().size() != 1) {
-            throw new IllegalStateException(
-                    "Number of sources for evidence not equal to 1 when creating actin trial evidence: " + evidence);
-        }
         String[] treatmentParts = evidence.treatment().split(TREATMENT_SEPARATOR);
         String trialAcronym = treatmentParts[0];
         String cohortId = null;
@@ -33,7 +31,7 @@ final class ActinTrialEvidenceFactory {
             cohortId = treatmentParts[1];
         }
 
-        ProtectSource source = evidence.sources().iterator().next();
+        ProtectSource source = findActinSource(evidence.sources());
         String sourceEvent = source.event();
 
         EligibilityRule rule;
@@ -55,6 +53,17 @@ final class ActinTrialEvidenceFactory {
                 .gene(extractGene(rule, param))
                 .mutation(extractMutation(rule, param))
                 .build();
+    }
+
+    @NotNull
+    private static ProtectSource findActinSource(@NotNull Set<ProtectSource> sources) {
+        for (ProtectSource source : sources) {
+            if (source.name().equals(EvidenceConstants.ACTIN_SOURCE)) {
+                return source;
+            }
+        }
+
+        throw new IllegalStateException("Could not find ACTIN source in evidence that is supposedly ACTIN evidence");
     }
 
     @NotNull

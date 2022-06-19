@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
@@ -45,4 +46,6 @@ public abstract class OrangeRecord {
     @NotNull
     public abstract ProtectRecord protect();
 
+    @NotNull
+    public abstract Set<String> wildTypeGenes();
 }

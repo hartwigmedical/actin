@@ -260,12 +260,12 @@ public final class OrangeJson {
 
         @NotNull
         private static ProtectRecord toProtectRecord(@NotNull JsonObject protect) {
-            Set<ProtectEvidence> evidences = Sets.newHashSet();
-            evidences.addAll(toEvidences(array(protect, "reportableEvidences")));
-            evidences.addAll(toEvidences(array(protect, "reportableTrials")));
-            evidences.addAll(toEvidences(array(protect, "unreportedEvidences")));
-            evidences.addAll(toEvidences(array(protect, "unreportedTrials")));
-            return ImmutableProtectRecord.builder().evidences(evidences).build();
+            return ImmutableProtectRecord.builder()
+                    .reportableEvidences(toEvidences(array(protect, "reportableEvidences")))
+                    .unreportedEvidences(toEvidences(array(protect, "unreportedEvidences")))
+                    .reportableTrials(toEvidences(array(protect, "reportableTrials")))
+                    .unreportedTrials(toEvidences(array(protect, "unreportedTrials")))
+                    .build();
         }
 
         @NotNull

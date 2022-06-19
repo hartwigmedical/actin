@@ -6,8 +6,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapper;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapper;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
@@ -76,14 +76,14 @@ public class EvidenceExtractorTest {
 
     @NotNull
     private static ProtectRecord createTestProtectRecord() {
-        Set<ProtectEvidence> evidences = Sets.newHashSet();
+        Set<ProtectEvidence> reportableEvidences = Sets.newHashSet();
 
         ImmutableProtectEvidence.Builder evidenceBuilder =
-                ProtectTestFactory.builder().reported(true).addSources(withName(EvidenceExtractor.EVIDENCE_SOURCE));
+                ProtectTestFactory.builder().reported(true).addSources(withName(EvidenceConstants.EVIDENCE_SOURCE));
 
         String treatmentWithResponsiveEvidenceA = "treatment A on-label";
         // Should be approved treatment
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("A on-label responsive event")
                 .treatment(treatmentWithResponsiveEvidenceA)
                 .onLabel(true)
@@ -92,7 +92,7 @@ public class EvidenceExtractorTest {
                 .build());
 
         // Should be experimental
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("A off-label responsive event")
                 .treatment("treatment A off-label")
                 .onLabel(false)
@@ -101,7 +101,7 @@ public class EvidenceExtractorTest {
                 .build());
 
         // Should be off-label experimental
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("B off-label responsive event")
                 .treatment("treatment B off-label")
                 .onLabel(false)
@@ -111,7 +111,7 @@ public class EvidenceExtractorTest {
 
         // Should be pre-clinical since it is D-level off-label evidence.
         String treatmentWithResponsiveEvidenceD = "treatment D off-label";
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("D off-label responsive event")
                 .treatment(treatmentWithResponsiveEvidenceD)
                 .onLabel(false)
@@ -120,7 +120,7 @@ public class EvidenceExtractorTest {
                 .build());
 
         // Should be included in known resistance evidence, all good.
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("A resistant event")
                 .treatment(treatmentWithResponsiveEvidenceA)
                 .onLabel(false)
@@ -129,7 +129,7 @@ public class EvidenceExtractorTest {
                 .build());
 
         // Should be filtered since there is no responsive evidence for resistance event
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("B resistant event")
                 .treatment("Treatment without responsive evidence")
                 .onLabel(false)
@@ -138,7 +138,7 @@ public class EvidenceExtractorTest {
                 .build());
 
         // Should be filtered since evidence level is not as high as the responsive evidence
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("B resistant event")
                 .treatment(treatmentWithResponsiveEvidenceA)
                 .onLabel(false)
@@ -147,7 +147,7 @@ public class EvidenceExtractorTest {
                 .build());
 
         // Should be included in suspect resistance evidence, all good.
-        evidences.add(evidenceBuilder.gene(null)
+        reportableEvidences.add(evidenceBuilder.gene(null)
                 .event("C resistant event")
                 .treatment(treatmentWithResponsiveEvidenceD)
                 .onLabel(true)
@@ -155,29 +155,30 @@ public class EvidenceExtractorTest {
                 .direction(EvidenceDirection.RESISTANT)
                 .build());
 
-        // Add one general external event that should be included
-        evidences.add(ProtectTestFactory.builder()
+        Set<ProtectEvidence> reportableTrials = Sets.newHashSet();
+        // Add one general external trial that should be included
+        reportableTrials.add(ProtectTestFactory.builder()
                 .reported(true)
                 .event("B responsive external event")
                 .treatment("B responsive external trial")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(withName(EvidenceExtractor.EXTERNAL_SOURCE))
+                .addSources(withName(EvidenceConstants.EXTERNAL_SOURCE))
                 .build());
 
         // And one ACTIN treatment that should be included.
-        evidences.add(ProtectTestFactory.builder()
+        reportableTrials.add(ProtectTestFactory.builder()
                 .reported(true)
                 .event("B responsive actin event")
                 .treatment("B responsive actin trial")
                 .onLabel(true)
                 .level(EvidenceLevel.B)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(withNameAndEvent(EvidenceExtractor.ACTIN_SOURCE, EligibilityRule.HRD_SIGNATURE.toString()))
+                .addSources(withNameAndEvent(EvidenceConstants.ACTIN_SOURCE, EligibilityRule.HRD_SIGNATURE.toString()))
                 .build());
 
-        return ImmutableProtectRecord.builder().evidences(evidences).build();
+        return ImmutableProtectRecord.builder().reportableEvidences(reportableEvidences).reportableTrials(reportableTrials).build();
     }
 
     @NotNull

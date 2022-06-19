@@ -67,7 +67,7 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withWildtypeGene(@NotNull String gene) {
+    public static PatientRecord withWildTypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.WILD_TYPE_GENE, gene, null)))

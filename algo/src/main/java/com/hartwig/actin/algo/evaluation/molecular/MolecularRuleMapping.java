@@ -28,7 +28,7 @@ public final class MolecularRuleMapping {
         map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, geneHasSpecificMutationCreator());
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasFusionInGeneCreator());
-        map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildtypeCreator());
+        map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildTypeCreator());
         map.put(EligibilityRule.MSI_SIGNATURE, isMicrosatelliteUnstableCreator());
         map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
@@ -103,10 +103,10 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator geneIsWildtypeCreator() {
+    private static FunctionCreator geneIsWildTypeCreator() {
         return function -> {
             String gene = FunctionInputResolver.createOneStringInput(function);
-            return new GeneIsWildtype(gene);
+            return new GeneIsWildType(gene);
         };
     }
 

@@ -16,7 +16,6 @@ import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapper;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.filter.ApplicabilityFilter;
@@ -27,10 +26,6 @@ import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
 import org.jetbrains.annotations.NotNull;
 
 class EvidenceExtractor {
-
-    static final String ACTIN_SOURCE = "ACTIN";
-    static final String EXTERNAL_SOURCE = "ICLUSION";
-    static final String EVIDENCE_SOURCE = "CKB";
 
     static final String ACTIN_SOURCE_NAME = "Erasmus MC";
     static final String EXTERNAL_SOURCE_NAME = "iClusion";
@@ -51,36 +46,34 @@ class EvidenceExtractor {
 
     @NotNull
     public MolecularEvidence extract(@NotNull OrangeRecord record) {
-        Set<ProtectEvidence> evidences = record.protect().evidences();
-
         return ImmutableMolecularEvidence.builder()
                 .actinSource(ACTIN_SOURCE_NAME)
-                .actinTrials(createActinTrials(evidences))
+                .actinTrials(createActinTrials(record.protect().reportableTrials()))
                 .externalTrialSource(EXTERNAL_SOURCE_NAME)
-                .externalTrials(createExternalTrials(evidences))
+                .externalTrials(createExternalTrials(record.protect().reportableTrials()))
                 .evidenceSource(EVIDENCE_SOURCE_NAME)
-                .approvedEvidence(createApprovedEvidence(evidences))
-                .onLabelExperimentalEvidence(createOnLabelExperimentalEvidence(evidences))
-                .offLabelExperimentalEvidence(createOffLabelExperimentalEvidence(evidences))
-                .preClinicalEvidence(createPreClinicalEvidence(evidences))
-                .knownResistanceEvidence(createKnownResistanceEvidence(evidences))
-                .suspectResistanceEvidence(createSuspectResistanceEvidence(evidences))
+                .approvedEvidence(createApprovedEvidence(record.protect().reportableEvidences()))
+                .onLabelExperimentalEvidence(createOnLabelExperimentalEvidence(record.protect().reportableEvidences()))
+                .offLabelExperimentalEvidence(createOffLabelExperimentalEvidence(record.protect().reportableEvidences()))
+                .preClinicalEvidence(createReportedPreClinicalEvidence(record.protect().reportableEvidences()))
+                .knownResistanceEvidence(createKnownResistanceEvidence(record.protect().reportableEvidences()))
+                .suspectResistanceEvidence(createSuspectResistanceEvidence(record.protect().reportableEvidences()))
                 .build();
     }
 
     @NotNull
-    private static Set<ActinTrialEvidence> createActinTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<ActinTrialEvidence> createActinTrials(@NotNull Iterable<ProtectEvidence> reportableTrials) {
         Set<ActinTrialEvidence> result = Sets.newTreeSet(new ActinTrialEvidenceComparator());
-        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, ACTIN_SOURCE)) {
+        for (ProtectEvidence evidence : applicableForSource(reportableTrials, EvidenceConstants.ACTIN_SOURCE)) {
             result.add(ActinTrialEvidenceFactory.create(evidence));
         }
         return result;
     }
 
     @NotNull
-    private Set<ExternalTrialEvidence> createExternalTrials(@NotNull Iterable<ProtectEvidence> evidences) {
+    private Set<ExternalTrialEvidence> createExternalTrials(@NotNull Iterable<ProtectEvidence> reportableTrials) {
         Set<ExternalTrialEvidence> result = Sets.newTreeSet(new ExternalTrialEvidenceComparator());
-        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EXTERNAL_SOURCE)) {
+        for (ProtectEvidence evidence : applicableForSource(reportableTrials, EvidenceConstants.EXTERNAL_SOURCE)) {
             result.add(mapExternalToActinTreatment(toExternalTrialEvidence(evidence)));
         }
         return result;
@@ -92,9 +85,9 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createApprovedEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createApprovedEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
-        for (ProtectEvidence evidence : reportedApplicableForSource(evidences, EVIDENCE_SOURCE)) {
+        for (ProtectEvidence evidence : applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE)) {
             if (evidence.direction().isResponsive() && isApproved(evidence)) {
                 result.add(toTreatmentEvidence(evidence));
             }
@@ -103,10 +96,10 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createOnLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createOnLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
-        Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        Set<ProtectEvidence> ckbEvidences = applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
             if (evidence.direction().isResponsive() && isOnLabelExperimental(evidence)) {
                 result.add(toTreatmentEvidence(evidence));
@@ -116,10 +109,10 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createOffLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createOffLabelExperimentalEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        Set<ProtectEvidence> ckbEvidences = applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
             if (evidence.direction().isResponsive() && isOffLabelExperimental(evidence)) {
                 result.add(toTreatmentEvidence(evidence));
@@ -129,10 +122,10 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createReportedPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
-        Set<ProtectEvidence> ckbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        Set<ProtectEvidence> ckbEvidences = applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : ckbEvidences) {
             if (evidence.direction().isResponsive() && isPreClinical(evidence)) {
                 result.add(toTreatmentEvidence(evidence));
@@ -142,10 +135,10 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createKnownResistanceEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
-        Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        Set<ProtectEvidence> reportedCkbEvidences = applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : reportedCkbEvidences) {
             if (evidence.direction().isResistant()) {
                 boolean hasEqualOrWorseResponsive =
@@ -163,12 +156,12 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> evidences) {
+    private static Set<TreatmentEvidence> createSuspectResistanceEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
-        Set<TreatmentEvidence> known = createKnownResistanceEvidence(evidences);
+        Set<TreatmentEvidence> known = createKnownResistanceEvidence(reportableEvidences);
 
-        Set<ProtectEvidence> reportedCkbEvidences = reportedApplicableForSource(evidences, EVIDENCE_SOURCE);
+        Set<ProtectEvidence> reportedCkbEvidences = applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE);
         for (ProtectEvidence evidence : reportedCkbEvidences) {
             if (evidence.direction().isResistant()) {
                 if (hasEqualOrWorseResponsive(reportedCkbEvidences, evidence.treatment(), evidence.level(), false)) {
@@ -199,19 +192,18 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<ProtectEvidence> reportedApplicableForSource(@NotNull Iterable<ProtectEvidence> evidences,
-            @NotNull String sourceName) {
+    private static Set<ProtectEvidence> applicableForSource(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String sourceName) {
         Set<ProtectEvidence> filtered = Sets.newHashSet();
         for (ProtectEvidence evidence : evidences) {
-            ProtectSource applicableSource = null;
+            boolean hasApplicableSource = false;
             for (ProtectSource source : evidence.sources()) {
                 if (source.name().equals(sourceName)) {
-                    applicableSource = source;
+                    hasApplicableSource = true;
                 }
             }
 
-            if (evidence.reported() && applicableSource != null && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
-                filtered.add(ImmutableProtectEvidence.builder().from(evidence).sources(Sets.newHashSet(applicableSource)).build());
+            if (hasApplicableSource && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
+                filtered.add(evidence);
             }
         }
         return filtered;
