@@ -187,7 +187,7 @@ ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
 MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 FUSION_IN_GENE_X | High driver fusion with fusion partner gene X is found
-WILDTYPE_OF_GENE_X | No driver mutation is found in gene X
+WILDTYPE_OF_GENE_X | No driver mutation or fusion is found in gene X
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X

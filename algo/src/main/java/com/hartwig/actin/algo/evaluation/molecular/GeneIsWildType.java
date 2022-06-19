@@ -1,8 +1,11 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.Set;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
@@ -19,12 +22,27 @@ public class GeneIsWildType implements EvaluationFunction {
 
     @NotNull
     @Override
-    //TODO: Adjust evaluation when wild-type is fully implemented
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Wild-type of gene " + gene + " currently cannot be detected")
-                .addUndeterminedGeneralMessages("Gene wild-type statuses")
-                .build();
+        Set<String> wildTypeGenes = record.molecular().wildTypeGenes();
+        if (wildTypeGenes == null) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Wild-type status of gene " + gene + " could not be detected")
+                    .addUndeterminedGeneralMessages("Molecular requirements")
+                    .build();
+        }
+
+        EvaluationResult result = wildTypeGenes.contains(gene) ? EvaluationResult.PASS : EvaluationResult.FAIL;
+
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailSpecificMessages(gene + " is not wild-type");
+            builder.addFailGeneralMessages("Molecular requirements");
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassSpecificMessages(gene + "is wild-type");
+            builder.addPassGeneralMessages("Molecular requirements");
+        }
+
+        return builder.build();
     }
 }

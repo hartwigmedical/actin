@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import java.util.List;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -67,10 +68,18 @@ final class MolecularTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withUndeterminedWildTypes() {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
+                .wildTypeGenes(null)
+                .build());
+    }
+
+    @NotNull
     public static PatientRecord withWildTypeGene(@NotNull String gene) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .evidence(withActinEvidence(createActinEvidence(MolecularEventType.WILD_TYPE_GENE, gene, null)))
+                .wildTypeGenes(Sets.newHashSet(gene))
                 .build());
     }
 
