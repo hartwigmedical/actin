@@ -204,7 +204,7 @@ PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, 
 PD_L1_SCORE_TPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X
 HAS_PSMA_POSITIVE_PET_SCAN | Currently resolves to undetermined
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Currently set to ingestion of ORANGE results (T.B.D.)
-MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Currently set to ingestion of ORANGE results (T.B.D.)
+MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of ORANGE results or presence of previous molecular test for gene X
 MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | Won't be evaluated
 
 ##### Rules related to recent laboratory measurements

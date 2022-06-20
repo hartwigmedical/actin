@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MolecularResultsAreAvailable implements EvaluationFunction {
 
+    //TODO: Update according to README
     MolecularResultsAreAvailable() {
     }
 
