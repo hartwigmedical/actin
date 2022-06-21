@@ -181,8 +181,8 @@ public final class TestMolecularFactory {
     private static Set<ExternalTrialEvidence> createTestExternalTrials() {
         Set<ExternalTrialEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableExternalTrialEvidence.builder().event("BRAF V600E").trial("Trial 1").build());
-        result.add(ImmutableExternalTrialEvidence.builder().event("High TML").trial("Trial 1").build());
+        result.add(ImmutableExternalTrialEvidence.builder().event("BRAF V600E").trial("External test trial 1").build());
+        result.add(ImmutableExternalTrialEvidence.builder().event("High TML").trial("External test trial 2").build());
 
         return result;
     }
