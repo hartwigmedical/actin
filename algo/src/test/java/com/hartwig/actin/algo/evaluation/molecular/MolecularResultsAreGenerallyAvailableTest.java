@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class MolecularResultsAreAvailableTest {
+public class MolecularResultsAreGenerallyAvailableTest {
 
     @Test
     public void canEvaluate() {
-        MolecularResultsAreAvailable function = new MolecularResultsAreAvailable();
+        MolecularResultsAreGenerallyAvailable function = new MolecularResultsAreGenerallyAvailable();
 
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

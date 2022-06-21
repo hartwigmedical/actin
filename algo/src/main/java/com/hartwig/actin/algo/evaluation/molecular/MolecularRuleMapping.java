@@ -20,8 +20,8 @@ public final class MolecularRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreAvailableCreator());
-        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableForGeneCreator());
         map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, geneIsActivatedOrAmplifiedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, geneIsInactivatedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, geneHasActivatingMutationCreator());
@@ -50,8 +50,16 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator molecularResultsAreAvailableCreator() {
-        return function -> new MolecularResultsAreAvailable();
+    private static FunctionCreator molecularResultsAreGenerallyAvailableCreator() {
+        return function -> new MolecularResultsAreGenerallyAvailable();
+    }
+
+    @NotNull
+    private static FunctionCreator molecularResultsAreAvailableForGeneCreator() {
+        return function -> {
+            String gene = FunctionInputResolver.createOneStringInput(function);
+            return new MolecularResultsAreAvailableForGene(gene);
+        };
     }
 
     @NotNull
@@ -208,7 +216,9 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasPSMAPositivePETScanCreator() { return function -> new HasPSMAPositivePETScan(); }
+    private static FunctionCreator hasPSMAPositivePETScanCreator() {
+        return function -> new HasPSMAPositivePETScan();
+    }
 
     @NotNull
     private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {

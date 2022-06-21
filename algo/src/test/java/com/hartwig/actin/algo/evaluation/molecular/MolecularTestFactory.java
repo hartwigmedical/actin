@@ -8,6 +8,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
@@ -89,6 +90,24 @@ final class MolecularTestFactory {
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .evidence(withActinEvidence(createActinEvidence(MolecularEventType.FUSED_GENE, gene, null)))
                 .build());
+    }
+
+    @NotNull
+    public static PatientRecord withExperimentType(@NotNull ExperimentType type) {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
+                .type(type)
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withExperimentTypeAndPriorTest(@NotNull ExperimentType type, PriorMolecularTest priorTest) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
+                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
+                .build();
     }
 
     @NotNull

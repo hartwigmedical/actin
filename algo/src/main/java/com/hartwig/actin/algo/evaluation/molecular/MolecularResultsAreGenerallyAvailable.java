@@ -8,10 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MolecularResultsAreAvailable implements EvaluationFunction {
+public class MolecularResultsAreGenerallyAvailable implements EvaluationFunction {
 
-    //TODO: Update according to README
-    MolecularResultsAreAvailable() {
+    MolecularResultsAreGenerallyAvailable() {
     }
 
     @NotNull
