@@ -95,8 +95,8 @@ public final class TestClinicalFactory {
                 .hasActiveCnsLesions(true)
                 .hasBoneLesions(null)
                 .hasLiverLesions(true)
-                .hasLungLesions(true)
-                .addOtherLesions("Abdominal")
+                .hasLungLesions(false)
+                .addOtherLesions("Lymph nodes")
                 .biopsyLocation("Liver")
                 .build();
     }
@@ -146,15 +146,15 @@ public final class TestClinicalFactory {
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
 
         priorSecondPrimaries.add(ImmutablePriorSecondPrimary.builder()
-                .tumorLocation("Bone/Soft tissue")
+                .tumorLocation("Lung")
                 .tumorSubLocation(Strings.EMPTY)
-                .tumorType("Schwannoma")
+                .tumorType("carcinoma")
                 .tumorSubType(Strings.EMPTY)
-                .addDoids("3192")
+                .addDoids("3905")
                 .diagnosedYear(TODAY.getYear() - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
                 .diagnosedMonth(TODAY.getMonthValue())
                 .treatmentHistory("Surgery")
-                .isActive(true)
+                .isActive(false)
                 .build());
 
         return priorSecondPrimaries;
@@ -170,12 +170,6 @@ public final class TestClinicalFactory {
                 .category("Pancreas disease")
                 .build());
 
-        priorOtherConditions.add(ImmutablePriorOtherCondition.builder()
-                .name("Myocardial infarction")
-                .addDoids("5844")
-                .category("Vascular disease")
-                .build());
-
         return priorOtherConditions;
     }
 
@@ -187,9 +181,9 @@ public final class TestClinicalFactory {
                 .test("IHC")
                 .item("ERBB2")
                 .measure(null)
-                .scoreText(null)
-                .scoreValue(3D)
-                .unit("+")
+                .scoreText("negative")
+                .scoreValue(null)
+                .unit(null)
                 .build());
 
         return priorMolecularTests;
