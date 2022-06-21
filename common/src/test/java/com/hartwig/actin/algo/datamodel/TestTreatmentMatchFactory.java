@@ -46,8 +46,8 @@ public final class TestTreatmentMatchFactory {
                 .identification(ImmutableTrialIdentification.builder()
                         .trialId("Test Trial 1")
                         .open(true)
-                        .acronym("TEST-TRIAL-1")
-                        .title("This is the first ACTIN test trial")
+                        .acronym("TEST-1")
+                        .title("Example test trial 1")
                         .build())
                 .isPotentiallyEligible(true)
                 .evaluations(createTestGeneralEvaluationsTrial1())
@@ -58,10 +58,10 @@ public final class TestTreatmentMatchFactory {
                 .identification(ImmutableTrialIdentification.builder()
                         .trialId("Test Trial 2")
                         .open(true)
-                        .acronym("TEST-TRIAL-2")
-                        .title("This is the second ACTIN test trial")
+                        .acronym("TEST-2")
+                        .title("Example test trial 2")
                         .build())
-                .isPotentiallyEligible(false)
+                .isPotentiallyEligible(true)
                 .evaluations(createTestGeneralEvaluationsTrial2())
                 .build());
 
@@ -78,25 +78,37 @@ public final class TestTreatmentMatchFactory {
                 .build(), EvaluationTestFactory.withResult(EvaluationResult.PASS));
 
         map.put(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder()
-                                .rule(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES)
+                        .function(ImmutableEligibilityFunction.builder()
+                                .rule(EligibilityRule.NOT)
+                                .addParameters(ImmutableEligibilityFunction.builder()
+                                        .rule(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES)
+                                        .build())
                                 .build())
-                        .build())
-                .addReferences(ImmutableCriterionReference.builder()
-                        .id("E-01")
-                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
-                        .build())
-                .build(), EvaluationTestFactory.withResult(EvaluationResult.PASS));
+                        .addReferences(ImmutableCriterionReference.builder()
+                                .id("I-02")
+                                .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
+                                .build())
+                        .build(),
+                ImmutableEvaluation.builder()
+                        .result(EvaluationResult.PASS)
+                        .recoverable(false)
+                        .addPassSpecificMessages("Patient has no known brain metastases")
+                        .addPassGeneralMessages("No known brain metastases")
+                        .build());
 
         map.put(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                .addReferences(ImmutableCriterionReference.builder()
-                        .id("E-01")
-                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
-                        .build())
-                .build(), EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED));
+                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
+                        .addReferences(ImmutableCriterionReference.builder()
+                                .id("I-02")
+                                .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
+                                .build())
+                        .build(),
+                ImmutableEvaluation.builder()
+                        .result(EvaluationResult.UNDETERMINED)
+                        .recoverable(false)
+                        .addUndeterminedGeneralMessages("Undetermined SOC exhaustion")
+                        .addUndeterminedSpecificMessages("Could not be determined if patient has exhausted SOC")
+                        .build());
 
         return map;
     }
@@ -106,17 +118,18 @@ public final class TestTreatmentMatchFactory {
         List<CohortMatch> cohorts = Lists.newArrayList();
 
         cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("A", true, true, false))
+                .metadata(createTestMetadata("A", true, false, false))
                 .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluations())
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("B", true, false, false))
+                .metadata(createTestMetadata("B", true, true, false))
                 .isPotentiallyEligible(true)
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("C", true, true, true))
+                .metadata(createTestMetadata("C", false, false, false))
                 .isPotentiallyEligible(false)
+                .evaluations(createTestCohortEvaluations())
                 .build());
 
         return cohorts;
@@ -138,12 +151,18 @@ public final class TestTreatmentMatchFactory {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
-                        .build())
-                .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Has no active CNS metastases").build())
-                .build(), EvaluationTestFactory.withResult(EvaluationResult.FAIL));
+                        .function(ImmutableEligibilityFunction.builder()
+                                .rule(EligibilityRule.NOT)
+                                .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
+                                .build())
+                        .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Active CNS metastases").build())
+                        .build(),
+                ImmutableEvaluation.builder()
+                        .result(EvaluationResult.FAIL)
+                        .recoverable(false)
+                        .addFailGeneralMessages("Active CNS metastases")
+                        .addFailSpecificMessages("Patient has active CNS metastases")
+                        .build());
 
         return map;
     }
@@ -153,14 +172,27 @@ public final class TestTreatmentMatchFactory {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_INFECTION).build())
-                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Should have active infection").build())
-                .build(), EvaluationTestFactory.withResult(EvaluationResult.FAIL));
+                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_MEASURABLE_DISEASE).build())
+                        .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Patient should have measurable disease").build())
+                        .build(),
+                ImmutableEvaluation.builder()
+                        .result(EvaluationResult.PASS)
+                        .recoverable(false)
+                        .addPassSpecificMessages("Patient has measurable disease")
+                        .build());
 
         map.put(ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT).build())
-                .addReferences(ImmutableCriterionReference.builder().id("I-02").text("Should be able to give consent").build())
-                .build(), EvaluationTestFactory.withResult(EvaluationResult.WARN));
+                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT).build())
+                        .addReferences(ImmutableCriterionReference.builder()
+                                .id("I-02")
+                                .text("Patient should be able to give adequate informed consent")
+                                .build())
+                        .build(),
+                ImmutableEvaluation.builder()
+                        .result(EvaluationResult.NOT_EVALUATED)
+                        .recoverable(false)
+                        .addPassSpecificMessages("It is assumed that patient can provide adequate informed consent")
+                        .build());
 
         return map;
     }
