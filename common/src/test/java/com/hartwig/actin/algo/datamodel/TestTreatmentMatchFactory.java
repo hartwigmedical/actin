@@ -76,8 +76,8 @@ public final class TestTreatmentMatchFactory {
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
-                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
-                .build(), EvaluationTestFactory.withResult(EvaluationResult.PASS));
+                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Patient must be an adult").build())
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", "Patient is adult"));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
@@ -88,7 +88,7 @@ public final class TestTreatmentMatchFactory {
                         .build())
                 .addReferences(ImmutableCriterionReference.builder()
                         .id("I-02")
-                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
+                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC")
                         .build())
                 .build(), unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases"));
 
