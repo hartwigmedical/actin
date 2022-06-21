@@ -18,6 +18,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.sort.EligibilityComparator;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class TestTreatmentMatchFactory {
 
@@ -78,23 +79,17 @@ public final class TestTreatmentMatchFactory {
                 .build(), EvaluationTestFactory.withResult(EvaluationResult.PASS));
 
         map.put(ImmutableEligibility.builder()
-                        .function(ImmutableEligibilityFunction.builder()
-                                .rule(EligibilityRule.NOT)
-                                .addParameters(ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES)
-                                        .build())
+                .function(ImmutableEligibilityFunction.builder()
+                        .rule(EligibilityRule.NOT)
+                        .addParameters(ImmutableEligibilityFunction.builder()
+                                .rule(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES)
                                 .build())
-                        .addReferences(ImmutableCriterionReference.builder()
-                                .id("I-02")
-                                .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
-                                .build())
-                        .build(),
-                ImmutableEvaluation.builder()
-                        .result(EvaluationResult.PASS)
-                        .recoverable(false)
-                        .addPassSpecificMessages("Patient has no known brain metastases")
-                        .addPassGeneralMessages("No known brain metastases")
-                        .build());
+                        .build())
+                .addReferences(ImmutableCriterionReference.builder()
+                        .id("I-02")
+                        .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
+                        .build())
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases"));
 
         map.put(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
@@ -103,12 +98,9 @@ public final class TestTreatmentMatchFactory {
                                 .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
                                 .build())
                         .build(),
-                ImmutableEvaluation.builder()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .recoverable(false)
-                        .addUndeterminedGeneralMessages("Undetermined SOC exhaustion")
-                        .addUndeterminedSpecificMessages("Could not be determined if patient has exhausted SOC")
-                        .build());
+                unrecoverable(EvaluationResult.UNDETERMINED,
+                        "Could not be determined if patient has exhausted SOC",
+                        "Undetermined SOC exhaustion"));
 
         return map;
     }
@@ -151,18 +143,12 @@ public final class TestTreatmentMatchFactory {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
-                        .function(ImmutableEligibilityFunction.builder()
-                                .rule(EligibilityRule.NOT)
-                                .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
-                                .build())
-                        .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Active CNS metastases").build())
-                        .build(),
-                ImmutableEvaluation.builder()
-                        .result(EvaluationResult.FAIL)
-                        .recoverable(false)
-                        .addFailGeneralMessages("Active CNS metastases")
-                        .addFailSpecificMessages("Patient has active CNS metastases")
-                        .build());
+                .function(ImmutableEligibilityFunction.builder()
+                        .rule(EligibilityRule.NOT)
+                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
+                        .build())
+                .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Active CNS metastases").build())
+                .build(), unrecoverable(EvaluationResult.FAIL, "Patient has active CNS metastases", "Active CNS metastases"));
 
         return map;
     }
@@ -172,14 +158,9 @@ public final class TestTreatmentMatchFactory {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
-                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_MEASURABLE_DISEASE).build())
-                        .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Patient should have measurable disease").build())
-                        .build(),
-                ImmutableEvaluation.builder()
-                        .result(EvaluationResult.PASS)
-                        .recoverable(false)
-                        .addPassSpecificMessages("Patient has measurable disease")
-                        .build());
+                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_MEASURABLE_DISEASE).build())
+                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Patient should have measurable disease").build())
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient has measurable disease"));
 
         map.put(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT).build())
@@ -188,12 +169,53 @@ public final class TestTreatmentMatchFactory {
                                 .text("Patient should be able to give adequate informed consent")
                                 .build())
                         .build(),
-                ImmutableEvaluation.builder()
-                        .result(EvaluationResult.NOT_EVALUATED)
-                        .recoverable(false)
-                        .addPassSpecificMessages("It is assumed that patient can provide adequate informed consent")
-                        .build());
+                unrecoverable(EvaluationResult.NOT_EVALUATED, "It is assumed that patient can provide adequate informed consent"));
 
         return map;
+    }
+
+    @NotNull
+    private static Evaluation unrecoverable(@NotNull EvaluationResult result, @NotNull String specificMessage) {
+        return unrecoverable(result, specificMessage, null);
+    }
+
+    @NotNull
+    private static Evaluation unrecoverable(@NotNull EvaluationResult result, @NotNull String specificMessage,
+            @Nullable String generalMessage) {
+        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result).recoverable(false);
+
+        switch (result) {
+            case PASS:
+            case NOT_EVALUATED: {
+                if (generalMessage != null) {
+                    builder.addPassGeneralMessages(generalMessage);
+                }
+                builder.addPassSpecificMessages(specificMessage);
+                break;
+            }
+            case WARN: {
+                if (generalMessage != null) {
+                    builder.addWarnGeneralMessages(generalMessage);
+                }
+                builder.addWarnSpecificMessages(specificMessage);
+                break;
+            }
+            case FAIL: {
+                if (generalMessage != null) {
+                    builder.addFailGeneralMessages(generalMessage);
+                }
+                builder.addFailSpecificMessages(specificMessage);
+                break;
+            }
+            case UNDETERMINED: {
+                if (generalMessage != null) {
+                    builder.addUndeterminedGeneralMessages(generalMessage);
+                }
+                builder.addUndeterminedSpecificMessages(specificMessage);
+                break;
+            }
+        }
+
+        return builder.build();
     }
 }
