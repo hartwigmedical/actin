@@ -148,7 +148,7 @@ HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment o
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z  | Also see 'Notes' below
-HAS_HAD_CATEGORY_X_TREATMENT_WITH_STOP_REASON_PD | Patient has had any treatment of category X with at least one stop reason due to PD | `Undetermined` in case stop reason is unknown but category X treatment is received
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ WITH_STOP_REASON_PD | Patient has had any treatment of category X with at least one stop reason due to PD | `Undetermined` in case stop reason is unknown but category X treatment is received
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to undetermined
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
 
