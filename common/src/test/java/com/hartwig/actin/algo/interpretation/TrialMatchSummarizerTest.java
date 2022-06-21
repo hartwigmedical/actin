@@ -19,7 +19,7 @@ public class TrialMatchSummarizerTest {
         TrialMatchSummary summary = TrialMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches());
 
         assertEquals(2, summary.trialCount());
-        assertEquals(4, summary.cohortCount());
+        assertEquals(5, summary.cohortCount());
 
         assertEquals(2, summary.eligibleTrialMap().size());
 
