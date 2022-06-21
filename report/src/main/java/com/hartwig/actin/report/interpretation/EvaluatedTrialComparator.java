@@ -5,12 +5,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
 
     @Override
     public int compare(@NotNull EvaluatedTrial trial1, @NotNull EvaluatedTrial trial2) {
-        int hasMolecularCompare = compareSets(trial1.molecularEvents(), trial2.molecularEvents());
+        int hasMolecularCompare = Boolean.compare(trial1.molecularEvents().isEmpty(), trial2.molecularEvents().isEmpty());
         if (hasMolecularCompare != 0) {
             return hasMolecularCompare;
         }
@@ -20,11 +21,20 @@ public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
             return trialCompare;
         }
 
-        if (trial1.cohort() == null) {
-            return trial2.cohort() != null ? -1 : 0;
-        } else {
-            return trial1.cohort().compareTo(trial2.cohort());
+        int cohortCompare = compareCohorts(trial1.cohort(), trial2.cohort());
+        if (cohortCompare != 0) {
+            return cohortCompare;
         }
+
+        return compareSets(trial1.molecularEvents(), trial2.molecularEvents());
+    }
+
+    private int compareCohorts(@Nullable String cohort1, @Nullable String cohort2) {
+        if (cohort1 == null) {
+            return cohort2 != null ? -1 : 0;
+        }
+
+        return cohort1.compareTo(cohort2);
     }
 
     private static int compareSets(@NotNull Set<String> set1, @NotNull Set<String> set2) {
