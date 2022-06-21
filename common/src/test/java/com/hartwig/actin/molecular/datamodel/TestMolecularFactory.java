@@ -137,11 +137,11 @@ public final class TestMolecularFactory {
     @NotNull
     private static MolecularEvidence createTestEvidence() {
         return ImmutableMolecularEvidence.builder()
-                .actinSource("local")
+                .actinSource("Local")
                 .actinTrials(createTestActinTrials())
-                .externalTrialSource("external")
+                .externalTrialSource("External")
                 .externalTrials(createTestExternalTrials())
-                .evidenceSource("general")
+                .evidenceSource("General")
                 .approvedEvidence(createTestApprovedEvidence())
                 .onLabelExperimentalEvidence(createTestOnLabelExperimentalEvidence())
                 .offLabelExperimentalEvidence(createTestOffLabelExperimentalEvidence())

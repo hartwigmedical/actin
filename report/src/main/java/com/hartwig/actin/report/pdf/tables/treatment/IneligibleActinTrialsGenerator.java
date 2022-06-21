@@ -100,7 +100,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         }
 
         if (hasTrialWithNoSlots) {
-            table.addCell(Cells.createSpanningSubNote(" * Cohort has no available slots", table));
+            table.addCell(Cells.createSpanningSubNote(" * Cohort currently has no slots available", table));
         }
 
         return Tables.makeWrapping(table);

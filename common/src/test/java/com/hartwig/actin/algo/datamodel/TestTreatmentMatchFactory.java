@@ -52,7 +52,7 @@ public final class TestTreatmentMatchFactory {
                         .build())
                 .isPotentiallyEligible(true)
                 .evaluations(createTestGeneralEvaluationsTrial1())
-                .cohorts(createTestCohorts())
+                .cohorts(createTestCohortsTrial1())
                 .build());
 
         matches.add(ImmutableTrialMatch.builder()
@@ -64,6 +64,7 @@ public final class TestTreatmentMatchFactory {
                         .build())
                 .isPotentiallyEligible(true)
                 .evaluations(createTestGeneralEvaluationsTrial2())
+                .cohorts(createTestCohortsTrial2())
                 .build());
 
         return matches;
@@ -106,28 +107,6 @@ public final class TestTreatmentMatchFactory {
     }
 
     @NotNull
-    private static List<CohortMatch> createTestCohorts() {
-        List<CohortMatch> cohorts = Lists.newArrayList();
-
-        cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("A", true, false, false))
-                .isPotentiallyEligible(false)
-                .evaluations(createTestCohortEvaluations())
-                .build());
-        cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("B", true, true, false))
-                .isPotentiallyEligible(true)
-                .build());
-        cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("C", false, false, false))
-                .isPotentiallyEligible(false)
-                .evaluations(createTestCohortEvaluations())
-                .build());
-
-        return cohorts;
-    }
-
-    @NotNull
     private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean open, boolean slotsAvailable, boolean blacklist) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortId)
@@ -139,7 +118,29 @@ public final class TestTreatmentMatchFactory {
     }
 
     @NotNull
-    private static Map<Eligibility, Evaluation> createTestCohortEvaluations() {
+    private static List<CohortMatch> createTestCohortsTrial1() {
+        List<CohortMatch> cohorts = Lists.newArrayList();
+
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("A", true, false, false))
+                .isPotentiallyEligible(false)
+                .evaluations(createTestCohortEvaluationsTrial1())
+                .build());
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("B", true, true, false))
+                .isPotentiallyEligible(true)
+                .build());
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("C", false, false, false))
+                .isPotentiallyEligible(false)
+                .evaluations(createTestCohortEvaluationsTrial1())
+                .build());
+
+        return cohorts;
+    }
+
+    @NotNull
+    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial1() {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
@@ -170,6 +171,41 @@ public final class TestTreatmentMatchFactory {
                                 .build())
                         .build(),
                 unrecoverable(EvaluationResult.NOT_EVALUATED, "It is assumed that patient can provide adequate informed consent"));
+
+        return map;
+    }
+
+    @NotNull
+    private static List<CohortMatch> createTestCohortsTrial2() {
+        List<CohortMatch> cohorts = Lists.newArrayList();
+
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("A", true, false, false))
+                .isPotentiallyEligible(true)
+                .build());
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("B", true, true, false))
+                .isPotentiallyEligible(false)
+                .evaluations(createTestCohortEvaluationsTrial2())
+                .build());
+
+        return cohorts;
+    }
+
+    @NotNull
+    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial2() {
+        Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder()
+                        .rule(EligibilityRule.NOT)
+                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
+                        .build())
+                .addReferences(ImmutableCriterionReference.builder()
+                        .id("I-03")
+                        .text("Patient should not have had Vemurafenib treatment")
+                        .build())
+                .build(), unrecoverable(EvaluationResult.FAIL, "Patient has had Vemurafenib treatment", "Vemurafenib treatment"));
 
         return map;
     }
