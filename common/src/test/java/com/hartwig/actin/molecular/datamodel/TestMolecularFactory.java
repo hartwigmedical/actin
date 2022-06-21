@@ -62,17 +62,21 @@ public final class TestMolecularFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
-                .characteristics(createTestCharacteristics())
-                .drivers(createTestDrivers())
-                .pharmaco(createTestPharmaco())
+                .characteristics(createProperTestCharacteristics())
+                .drivers(createProperTestDrivers())
+                .pharmaco(createProperTestPharmaco())
                 .wildTypeGenes(createTestWildTypeGenes())
-                .evidence(createTestEvidence())
+                .evidence(createProperTestEvidence())
                 .build();
     }
 
     @NotNull
     public static MolecularRecord createExhaustiveTestMolecularRecord() {
-        return ImmutableMolecularRecord.builder().from(createProperTestMolecularRecord()).drivers(createExhaustiveTestDrivers()).build();
+        return ImmutableMolecularRecord.builder()
+                .from(createProperTestMolecularRecord())
+                .drivers(createExhaustiveTestDrivers())
+                .evidence(createExhaustiveTestEvidence())
+                .build();
     }
 
     @NotNull
@@ -85,7 +89,7 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
-    private static MolecularCharacteristics createTestCharacteristics() {
+    private static MolecularCharacteristics createProperTestCharacteristics() {
         return ImmutableMolecularCharacteristics.builder()
                 .purity(0.98)
                 .hasReliablePurity(true)
@@ -98,7 +102,7 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
-    private static MolecularDrivers createTestDrivers() {
+    private static MolecularDrivers createProperTestDrivers() {
         return ImmutableMolecularDrivers.builder()
                 .addVariants(ImmutableVariant.builder()
                         .event("BRAF V600E")
@@ -120,7 +124,7 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
-    private static Set<PharmacoEntry> createTestPharmaco() {
+    private static Set<PharmacoEntry> createProperTestPharmaco() {
         return Sets.newHashSet(ImmutablePharmacoEntry.builder()
                 .gene("DPYD")
                 .addHaplotypes(ImmutableHaplotype.builder().name("1* HOM").function("Normal function").build())
@@ -135,7 +139,7 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
-    private static MolecularEvidence createTestEvidence() {
+    private static MolecularEvidence createProperTestEvidence() {
         return ImmutableMolecularEvidence.builder()
                 .actinSource("Local")
                 .actinTrials(createTestActinTrials())
@@ -146,10 +150,18 @@ public final class TestMolecularFactory {
                 .onLabelExperimentalEvidence(createTestOnLabelExperimentalEvidence())
                 .offLabelExperimentalEvidence(createTestOffLabelExperimentalEvidence())
                 .preClinicalEvidence(createTestPreClinicalEvidence())
+                .build();
+    }
+
+    @NotNull
+    private static MolecularEvidence createExhaustiveTestEvidence() {
+        return ImmutableMolecularEvidence.builder()
+                .from(createProperTestEvidence())
                 .knownResistanceEvidence(createTestKnownResistanceEvidence())
                 .suspectResistanceEvidence(createTestSuspectResistanceEvidence())
                 .build();
     }
+
 
     @NotNull
     private static Set<ActinTrialEvidence> createTestActinTrials() {
@@ -246,7 +258,7 @@ public final class TestMolecularFactory {
     @NotNull
     private static MolecularDrivers createExhaustiveTestDrivers() {
         return ImmutableMolecularDrivers.builder()
-                .from(createTestDrivers())
+                .from(createProperTestDrivers())
                 .addAmplifications(ImmutableAmplification.builder()
                         .event("MYC amp")
                         .driverLikelihood(DriverLikelihood.HIGH)
