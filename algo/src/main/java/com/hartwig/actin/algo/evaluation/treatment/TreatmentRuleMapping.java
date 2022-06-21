@@ -43,6 +43,7 @@ public final class TreatmentRuleMapping {
                 hasHadSomeTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_STOP_REASON_PD, hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
 
@@ -177,6 +178,11 @@ public final class TreatmentRuleMapping {
                     FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
             return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer());
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator() {
+        return function -> new HasHadSomeTreatmentsOfCategoryWithStopReasonPD();
     }
 
     @NotNull
