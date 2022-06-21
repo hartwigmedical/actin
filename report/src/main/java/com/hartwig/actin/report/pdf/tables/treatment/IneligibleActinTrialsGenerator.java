@@ -3,11 +3,13 @@ package com.hartwig.actin.report.pdf.tables.treatment;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -86,7 +88,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
 
         boolean hasTrialWithNoSlots = false;
-        for (EvaluatedTrial trial : trials) {
+        for (EvaluatedTrial trial : sort(trials)) {
             String addon = Strings.EMPTY;
             if (trial.isOpen() && !trial.hasSlotsAvailable()) {
                 addon = " *";
@@ -104,6 +106,11 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         }
 
         return Tables.makeWrapping(table);
+    }
+
+    @NotNull
+    private static List<EvaluatedTrial> sort(@NotNull List<EvaluatedTrial> trials) {
+        return trials.stream().sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
     }
 
     @NotNull
