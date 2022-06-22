@@ -146,7 +146,6 @@ public final class TestMolecularFactory {
                 .externalTrialSource("External")
                 .externalTrials(createTestExternalTrials())
                 .evidenceSource("General")
-                .approvedEvidence(createTestApprovedEvidence())
                 .onLabelExperimentalEvidence(createTestOnLabelExperimentalEvidence())
                 .offLabelExperimentalEvidence(createTestOffLabelExperimentalEvidence())
                 .preClinicalEvidence(createTestPreClinicalEvidence())
@@ -157,6 +156,7 @@ public final class TestMolecularFactory {
     private static MolecularEvidence createExhaustiveTestEvidence() {
         return ImmutableMolecularEvidence.builder()
                 .from(createProperTestEvidence())
+                .approvedEvidence(createTestApprovedEvidence())
                 .knownResistanceEvidence(createTestKnownResistanceEvidence())
                 .suspectResistanceEvidence(createTestSuspectResistanceEvidence())
                 .build();
@@ -169,21 +169,12 @@ public final class TestMolecularFactory {
 
         result.add(ImmutableActinTrialEvidence.builder()
                 .event("BRAF V600E")
-                .trialAcronym("Trial 1")
-                .cohortId("A")
+                .trialAcronym("TEST-1")
+                .cohortId("B")
                 .isInclusionCriterion(true)
                 .type(MolecularEventType.MUTATED_GENE)
                 .gene("BRAF")
                 .mutation("V600E")
-                .build());
-        result.add(ImmutableActinTrialEvidence.builder()
-                .event("High tumor mutational load")
-                .trialAcronym("Trial 1")
-                .cohortId(null)
-                .isInclusionCriterion(false)
-                .type(MolecularEventType.SIGNATURE)
-                .gene(null)
-                .mutation(null)
                 .build());
 
         return result;
@@ -202,6 +193,8 @@ public final class TestMolecularFactory {
     @NotNull
     private static Set<TreatmentEvidence> createTestApprovedEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
+
+        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
 
         return result;
     }
