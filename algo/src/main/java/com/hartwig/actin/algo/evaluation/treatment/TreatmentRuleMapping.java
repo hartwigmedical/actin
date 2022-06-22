@@ -183,7 +183,10 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator() {
-        return function -> new HasHadSomeTreatmentsOfCategoryWithStopReasonPD();
+        return function -> {
+            OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
+            return new HasHadTreatmentWithCategoryOfTypesAndStopReasonPD(input.category(), input.strings());
+        };
     }
 
     @NotNull
