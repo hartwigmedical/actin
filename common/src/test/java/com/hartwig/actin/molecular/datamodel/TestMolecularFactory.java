@@ -203,10 +203,6 @@ public final class TestMolecularFactory {
     private static Set<TreatmentEvidence> createTestApprovedEvidence() {
         Set<TreatmentEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Dabrafenib").build());
-        result.add(ImmutableTreatmentEvidence.builder().event("High TML").treatment("Nivolumab").build());
-
         return result;
     }
 
