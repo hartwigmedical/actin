@@ -39,7 +39,7 @@ public class GeneIsWildType implements EvaluationFunction {
             builder.addFailSpecificMessages(gene + " is not wild-type");
             builder.addFailGeneralMessages("Molecular requirements");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(gene + "is wild-type");
+            builder.addPassSpecificMessages(gene + " is wild-type");
             builder.addPassGeneralMessages("Molecular requirements");
         }
 
