@@ -95,12 +95,12 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         for (PriorTumorTreatment priorTumorTreatment : filtered) {
             String treatmentName = treatmentName(priorTumorTreatment);
             if (!evaluatedNames.contains(treatmentName)) {
-                StringJoiner dateJoiner = Formats.commaJoiner();
-                for (String date : extractDatesForTreatmentName(filtered, treatmentName)) {
-                    dateJoiner.add(date);
+                StringJoiner annotationJoiner = Formats.semicolonJoiner();
+                for (String annotation : extractAnnotationsForTreatmentName(filtered, treatmentName)) {
+                    annotationJoiner.add(annotation);
                 }
-                String dateAddition = dateJoiner.toString();
-                String treatment = treatmentName + (!dateAddition.isEmpty() ? " (" + dateAddition + ")" : "");
+                String annotationAddition = annotationJoiner.toString();
+                String treatment = treatmentName + (!annotationAddition.isEmpty() ? " (" + annotationAddition + ")" : "");
 
                 joiner.add(treatment);
             }
@@ -110,19 +110,31 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<String> extractDatesForTreatmentName(@NotNull List<PriorTumorTreatment> priorTumorTreatments,
+    private static Set<String> extractAnnotationsForTreatmentName(@NotNull List<PriorTumorTreatment> priorTumorTreatments,
             @NotNull String treatmentNameToInclude) {
-        Set<String> dates = Sets.newTreeSet();
+        Set<String> annotations = Sets.newTreeSet();
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
             String treatmentName = treatmentName(priorTumorTreatment);
             if (treatmentName.equals(treatmentNameToInclude)) {
-                String date = toDateString(priorTumorTreatment.startYear(), priorTumorTreatment.startMonth());
-                if (date != null) {
-                    dates.add(date);
+                StringJoiner joiner = Formats.commaJoiner();
+
+                String dateString = toDateString(priorTumorTreatment.startYear(), priorTumorTreatment.startMonth());
+                if (dateString != null ) {
+                    joiner.add(dateString);
+                }
+
+                String stopReasonString = toStopReasonString(priorTumorTreatment.stopReason());
+                if (stopReasonString != null) {
+                    joiner.add(stopReasonString);
+                }
+
+                String annotation = joiner.toString();
+                if (!annotation.isEmpty()) {
+                    annotations.add(annotation);
                 }
             }
         }
-        return dates;
+        return annotations;
     }
 
     @NotNull
@@ -176,6 +188,11 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         } else {
             return null;
         }
+    }
+
+    @Nullable
+    private static String toStopReasonString(@Nullable String stopReason) {
+        return stopReason != null ? "stop reason: " + stopReason : null;
     }
 
     @NotNull
