@@ -2,10 +2,16 @@ package com.hartwig.actin.report.pdf.util;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
@@ -50,6 +56,21 @@ public final class Cells {
     public static Cell createTitle(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableTitleStyle());
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createHeaderTest(@NotNull String text) {
+        // TODO Clean up or actually use.
+        PdfLinkAnnotation la1 = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
+                .setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
+                .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
+                .setBorder(new PdfArray(new int[]{0,0,0}));
+
+        Link link = new Link(text, la1);
+
+        Cell cell = create(new Paragraph(Strings.EMPTY).add(link));
+        cell.addStyle(Styles.tableHeaderStyle());
         return cell;
     }
 
