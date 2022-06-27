@@ -63,6 +63,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
 
+        // TODO Remove events which by themselves are not sufficient for molecular inclusion, or are only implied in blacklisted cohorts.
         table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithInclusiveActinEvidence(evidence))));
 
