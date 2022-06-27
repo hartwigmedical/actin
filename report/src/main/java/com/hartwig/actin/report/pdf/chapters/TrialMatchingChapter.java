@@ -51,6 +51,7 @@ public class TrialMatchingChapter implements ReportChapter {
     private void addTrialMatchingOverview(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
+        // TODO Separate closed and blacklisted tables. First show closed, then blacklisted.
         List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(report.treatmentMatch(),
                 report.molecular().evidence(),
                 contentWidth()),
