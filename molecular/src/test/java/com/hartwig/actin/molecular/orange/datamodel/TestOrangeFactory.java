@@ -11,6 +11,9 @@ import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllele;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
@@ -58,6 +61,7 @@ public final class TestOrangeFactory {
                 .peach(ImmutablePeachRecord.builder().build())
                 .cuppa(ImmutableCuppaRecord.builder().build())
                 .virusInterpreter(ImmutableVirusInterpreterRecord.builder().build())
+                .lilac(ImmutableLilacRecord.builder().qc(Strings.EMPTY).build())
                 .chord(ImmutableChordRecord.builder().hrStatus(Strings.EMPTY).build())
                 .protect(ImmutableProtectRecord.builder().build())
                 .build();
@@ -72,6 +76,7 @@ public final class TestOrangeFactory {
                 .peach(createTestPeachRecord())
                 .cuppa(createTestCuppaRecord())
                 .virusInterpreter(createTestVirusInterpreterRecord())
+                .lilac(createTestLilacRecord())
                 .chord(ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build())
                 .wildTypeGenes(createTestWildTypeGenes())
                 .protect(createTestProtectRecord())
@@ -163,6 +168,21 @@ public final class TestOrangeFactory {
                         .interpretation("HPV")
                         .integrations(3)
                         .driverLikelihood(VirusDriverLikelihood.HIGH)
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    private static LilacRecord createTestLilacRecord() {
+        return ImmutableLilacRecord.builder()
+                .qc("PASS")
+                .addAlleles(ImmutableLilacHlaAllele.builder()
+                        .name("A*01:01")
+                        .tumorCopyNumber(1.2)
+                        .somaticMissense(0D)
+                        .somaticNonsenseOrFrameshift(0D)
+                        .somaticSplice(0D)
+                        .somaticInframeIndel(0D)
                         .build())
                 .build();
     }

@@ -56,7 +56,7 @@ public final class TestMolecularFactory {
                 .hasReliableQuality(true)
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
-                .immunology(ImmutableMolecularImmunology.builder().build())
+                .immunology(ImmutableMolecularImmunology.builder().isReliable(false).build())
                 .evidence(createMinimalTestEvidence())
                 .build();
     }
@@ -131,6 +131,7 @@ public final class TestMolecularFactory {
     @NotNull
     private static MolecularImmunology createProperTestImmunology() {
         return ImmutableMolecularImmunology.builder()
+                .isReliable(true)
                 .addHlaAlleles(ImmutableHlaAllele.builder().name("A*02:01").tumorCopyNumber(1.2).hasSomaticMutations(false).build())
                 .build();
     }

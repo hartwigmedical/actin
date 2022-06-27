@@ -304,7 +304,10 @@ public class MolecularRecordJson {
 
         @NotNull
         private static MolecularImmunology toMolecularImmunology(@NotNull JsonObject immunology) {
-            return ImmutableMolecularImmunology.builder().hlaAlleles(toHlaAlleles(array(immunology, "hlaAlleles"))).build();
+            return ImmutableMolecularImmunology.builder()
+                    .isReliable(bool(immunology, "isReliable"))
+                    .hlaAlleles(toHlaAlleles(array(immunology, "hlaAlleles")))
+                    .build();
         }
 
         @NotNull

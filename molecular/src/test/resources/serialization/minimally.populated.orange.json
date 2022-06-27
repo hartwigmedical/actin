@@ -257,5 +257,22 @@
     {
       "gene": "KRAS"
     }
-  ]
+  ],
+  "lilac": {
+    "qc": "PASS",
+    "alleles": [
+      {
+        "name": "A*01:01",
+        "refFragments": 20,
+        "tumorFragments": 30,
+        "rnaFragments": null,
+        "tumorCopyNumber": 6.1,
+        "somaticMissense": 5.0,
+        "somaticNonsenseOrFrameshift": 4.0,
+        "somaticSplice": 3.0,
+        "somaticSynonymous": 2.0,
+        "somaticInframeIndel": 1.0
+      }
+    ]
+  }
 }

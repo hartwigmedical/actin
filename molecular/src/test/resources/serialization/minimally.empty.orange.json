@@ -42,5 +42,10 @@
     "unreportedEvidences": [],
     "unreportedTrials": []
   },
-  "wildTypeGenes": []
+  "wildTypeGenes": [],
+  "lilac": {
+    "qc": "FAIL",
+    "alleles": [
+    ]
+  }
 }

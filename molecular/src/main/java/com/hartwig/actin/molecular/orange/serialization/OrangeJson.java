@@ -33,6 +33,10 @@ import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllele;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
@@ -98,6 +102,7 @@ public final class OrangeJson {
                     .peach(toPeachRecord(array(record, "peach")))
                     .cuppa(toCuppaRecord(object(record, "cuppa")))
                     .virusInterpreter(toVirusInterpreterRecord(object(record, "virusInterpreter")))
+                    .lilac(toLilacRecord(object(record, "lilac")))
                     .chord(toChordRecord(object(record, "chord")))
                     .wildTypeGenes(toWildTypeGenes(array(record, "wildTypeGenes")))
                     .protect(toProtectRecord(object(record, "protect")))
@@ -252,6 +257,24 @@ public final class OrangeJson {
                         .build());
             }
             return ImmutableVirusInterpreterRecord.builder().entries(entries).build();
+        }
+
+        @NotNull
+        private static LilacRecord toLilacRecord(@NotNull JsonObject lilac) {
+            Set<LilacHlaAllele> alleles = Sets.newHashSet();
+            for (JsonElement element : array(lilac, "alleles")) {
+                JsonObject allele = element.getAsJsonObject();
+                alleles.add(ImmutableLilacHlaAllele.builder()
+                        .name(string(allele, "name"))
+                        .tumorCopyNumber(number(allele, "tumorCopyNumber"))
+                        .somaticMissense(number(allele, "somaticMissense"))
+                        .somaticNonsenseOrFrameshift(number(allele, "somaticNonsenseOrFrameshift"))
+                        .somaticSplice(number(allele, "somaticSplice"))
+                        .somaticInframeIndel(number(allele, "somaticInframeIndel"))
+                        .build());
+            }
+
+            return ImmutableLilacRecord.builder().qc(string(lilac, "qc")).alleles(alleles).build();
         }
 
         @NotNull

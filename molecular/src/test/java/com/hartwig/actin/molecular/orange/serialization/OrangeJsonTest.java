@@ -16,6 +16,8 @@ import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
@@ -72,6 +74,7 @@ public class OrangeJsonTest {
         assertPeach(record.peach());
         assertCuppa(record.cuppa());
         assertVirusInterpreter(record.virusInterpreter());
+        assertLilac(record.lilac());
         assertChord(record.chord());
         assertProtect(record.protect());
         assertWildTypeGenes(record.wildTypeGenes());
@@ -166,6 +169,18 @@ public class OrangeJsonTest {
         assertEquals("EBV", entry.interpretation());
         assertEquals(1, entry.integrations());
         assertEquals(VirusDriverLikelihood.HIGH, entry.driverLikelihood());
+    }
+
+    private static void assertLilac(@NotNull LilacRecord lilac) {
+        assertEquals("PASS", lilac.qc());
+        assertEquals(1, lilac.alleles().size());
+        LilacHlaAllele allele = lilac.alleles().iterator().next();
+        assertEquals("A*01:01", allele.name());
+        assertEquals(6.1, allele.tumorCopyNumber(), EPSILON);
+        assertEquals(5.0, allele.somaticMissense(), EPSILON);
+        assertEquals(4.0, allele.somaticNonsenseOrFrameshift(), EPSILON);
+        assertEquals(3.0, allele.somaticSplice(), EPSILON);
+        assertEquals(1.0, allele.somaticInframeIndel(), EPSILON);
     }
 
     private static void assertChord(@NotNull ChordRecord chord) {

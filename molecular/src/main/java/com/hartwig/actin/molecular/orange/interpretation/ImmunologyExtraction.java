@@ -13,6 +13,7 @@ final class ImmunologyExtraction {
 
     @NotNull
     public static MolecularImmunology extract(@NotNull OrangeRecord record) {
-        return ImmutableMolecularImmunology.builder().build();
+        // TODO Implement
+        return ImmutableMolecularImmunology.builder().isReliable(true).build();
     }
 }

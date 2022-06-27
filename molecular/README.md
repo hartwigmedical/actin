@@ -113,7 +113,7 @@ driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 name | Human papillomavirus type 16 | Name of the virus found in the tumor sample
 integrations | 3 | Number of integrations of detected virus in the tumor sample
 
-N HLA alleles
+N HLA alleles (with a single isReliable boolean indicating whether the HLA results are reliable)
 
 Field | Example Value | Details
 ---|---|---

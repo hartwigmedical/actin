@@ -96,6 +96,7 @@
     ]
   },
   "immunology": {
+    "isReliable": true,
     "hlaAlleles": [
       {
         "name": "A*02:01",

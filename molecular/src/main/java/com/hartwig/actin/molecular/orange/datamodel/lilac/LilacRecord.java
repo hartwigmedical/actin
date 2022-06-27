@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.immunology;
+package com.hartwig.actin.molecular.orange.datamodel.lilac;
 
 import java.util.Set;
 
@@ -8,10 +8,11 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class MolecularImmunology {
-
-    public abstract boolean isReliable();
+public abstract class LilacRecord {
 
     @NotNull
-    public abstract Set<HlaAllele> hlaAlleles();
+    public abstract String qc();
+
+    @NotNull
+    public abstract Set<LilacHlaAllele> alleles();
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
@@ -39,6 +40,9 @@ public abstract class OrangeRecord {
 
     @NotNull
     public abstract VirusInterpreterRecord virusInterpreter();
+
+    @NotNull
+    public abstract LilacRecord lilac();
 
     @NotNull
     public abstract ChordRecord chord();
