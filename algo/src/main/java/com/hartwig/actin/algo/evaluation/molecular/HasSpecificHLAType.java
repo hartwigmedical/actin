@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSpecificHLAType implements EvaluationFunction {
 
+    // TODO Implement properly.
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
