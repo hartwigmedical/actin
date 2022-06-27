@@ -484,12 +484,12 @@ In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names
 
 Rule | When does a patient pass evaluation? 
 ---|---
-HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average systolic blood pressure value => X
-HAS_SBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average systolic blood pressure value <= X
-HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value => X
-HAS_DBP_MMHG_OF_AT_MOST_X | vitalFunction > Include measurements up to 5 different days but must be within a month, with over all average diastolic blood pressure value <= X
+HAS_SBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median systolic blood pressure value => X
+HAS_SBP_MMHG_OF_AT_MOST_X | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median systolic blood pressure value <= X
+HAS_DBP_MMHG_OF_AT_LEAST_X | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median diastolic blood pressure value => X
+HAS_DBP_MMHG_OF_AT_MOST_X | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median diastolic blood pressure value <= X
 HAS_PULSE_OXIMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND median value => X
-HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND average value between X and Y 
+HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND median value between X and Y 
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 
 For SBP, DBP and Pulse oximetry, evaluation should resolve to UNDETERMINED rather than FAIL in case of no PASS, but at least 1 of the up to 5 most recent values would be sufficient to PASS.

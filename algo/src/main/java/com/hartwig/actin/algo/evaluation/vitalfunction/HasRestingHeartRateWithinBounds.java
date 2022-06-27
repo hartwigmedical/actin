@@ -13,6 +13,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
 
     static final String UNIT_TO_SELECT = "BPM";

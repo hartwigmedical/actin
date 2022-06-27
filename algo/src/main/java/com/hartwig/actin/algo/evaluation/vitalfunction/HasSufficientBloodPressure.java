@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunction;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasSufficientBloodPressure implements EvaluationFunction {
 
     @NotNull
