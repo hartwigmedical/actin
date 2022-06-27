@@ -113,6 +113,14 @@ driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 name | Human papillomavirus type 16 | Name of the virus found in the tumor sample
 integrations | 3 | Number of integrations of detected virus in the tumor sample
 
+N HLA alleles
+
+Field | Example Value | Details
+---|---|---
+name | A*02:01 | Name of the HLA allele
+tumorCopyNumber | 1.2 | The number of copies of this HLA allele in the tumor sample. 
+hasSomaticMutations | false | A boolean indicating whether any mutations have occurred in this allele in the tumor
+
 N pharmaco
 
 Field | Example Value | Details

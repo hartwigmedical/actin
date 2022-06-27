@@ -35,6 +35,7 @@ public class OrangeInterpreter {
                 .hasReliableQuality(record.purple().hasReliableQuality())
                 .characteristics(CharacteristicsExtraction.extract(record))
                 .drivers(DriverExtraction.extract(record))
+                .immunology(ImmunologyExtraction.extract(record))
                 .pharmaco(PharmacoExtraction.extract(record))
                 .wildTypeGenes(WildTypeExtraction.extract(record))
                 .evidence(evidenceExtractor.extract(record))

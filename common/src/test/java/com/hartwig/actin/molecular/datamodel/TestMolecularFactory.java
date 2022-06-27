@@ -29,6 +29,9 @@ import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
@@ -53,6 +56,7 @@ public final class TestMolecularFactory {
                 .hasReliableQuality(true)
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
+                .immunology(ImmutableMolecularImmunology.builder().build())
                 .evidence(createMinimalTestEvidence())
                 .build();
     }
@@ -64,6 +68,7 @@ public final class TestMolecularFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
                 .characteristics(createProperTestCharacteristics())
                 .drivers(createProperTestDrivers())
+                .immunology(createProperTestImmunology())
                 .pharmaco(createProperTestPharmaco())
                 .wildTypeGenes(createTestWildTypeGenes())
                 .evidence(createProperTestEvidence())
@@ -124,6 +129,13 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
+    private static MolecularImmunology createProperTestImmunology() {
+        return ImmutableMolecularImmunology.builder()
+                .addHlaAlleles(ImmutableHlaAllele.builder().name("A*02:01").tumorCopyNumber(1.2).hasSomaticMutations(false).build())
+                .build();
+    }
+
+    @NotNull
     private static Set<PharmacoEntry> createProperTestPharmaco() {
         return Sets.newHashSet(ImmutablePharmacoEntry.builder()
                 .gene("DPYD")
@@ -161,7 +173,6 @@ public final class TestMolecularFactory {
                 .suspectResistanceEvidence(createTestSuspectResistanceEvidence())
                 .build();
     }
-
 
     @NotNull
     private static Set<ActinTrialEvidence> createTestActinTrials() {

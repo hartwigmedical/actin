@@ -6,6 +6,7 @@ import java.util.Set;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.immutables.value.Value;
@@ -32,6 +33,9 @@ public abstract class MolecularRecord {
 
     @NotNull
     public abstract MolecularDrivers drivers();
+
+    @NotNull
+    public abstract MolecularImmunology immunology();
 
     @NotNull
     public abstract Set<PharmacoEntry> pharmaco();

@@ -33,6 +33,8 @@ import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
@@ -77,6 +79,7 @@ public class MolecularRecordJsonTest {
 
         assertCharacteristics(molecular.characteristics());
         assertDrivers(molecular.drivers());
+        assertImmunology(molecular.immunology());
         assertPharmaco(molecular.pharmaco());
         assertWildTypeGenes(molecular.wildTypeGenes());
         assertEvidence(molecular.evidence());
@@ -164,14 +167,23 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static Disruption findByRange(@NotNull Iterable<Disruption> disruptions, @NotNull String detailsToFind) {
+    private static Disruption findByRange(@NotNull Iterable<Disruption> disruptions, @NotNull String rangeToFind) {
         for (Disruption disruption : disruptions) {
-            if (disruption.range().equals(detailsToFind)) {
+            if (disruption.range().equals(rangeToFind)) {
                 return disruption;
             }
         }
 
-        throw new IllegalStateException("Could not find disruption with details: " + detailsToFind);
+        throw new IllegalStateException("Could not find disruption with range: " + rangeToFind);
+    }
+
+    private static void assertImmunology(@NotNull MolecularImmunology immunology) {
+        assertEquals(1, immunology.hlaAlleles().size());
+        HlaAllele hlaAllele = immunology.hlaAlleles().iterator().next();
+
+        assertEquals("A*02:01", hlaAllele.name());
+        assertEquals(1.2, hlaAllele.tumorCopyNumber(), EPSILON);
+        assertFalse(hlaAllele.hasSomaticMutations());
     }
 
     private static void assertPharmaco(@NotNull Set<PharmacoEntry> pharmaco) {

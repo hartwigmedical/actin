@@ -67,6 +67,10 @@ import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
@@ -139,6 +143,7 @@ public class MolecularRecordJson {
                     .hasReliableQuality(bool(record, "hasReliableQuality"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toMolecularDrivers(object(record, "drivers")))
+                    .immunology(toMolecularImmunology(object(record, "immunology")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
                     .wildTypeGenes(nullableStringList(record, "wildTypeGenes"))
                     .evidence(toMolecularEvidence(object(record, "evidence")))
@@ -295,6 +300,25 @@ public class MolecularRecordJson {
                         .build());
             }
             return viruses;
+        }
+
+        @NotNull
+        private static MolecularImmunology toMolecularImmunology(@NotNull JsonObject immunology) {
+            return ImmutableMolecularImmunology.builder().hlaAlleles(toHlaAlleles(array(immunology, "hlaAlleles"))).build();
+        }
+
+        @NotNull
+        private static Set<HlaAllele> toHlaAlleles(@NotNull JsonArray hlaAlleleArray) {
+            Set<HlaAllele> hlaAlleles = Sets.newHashSet();
+            for (JsonElement element : hlaAlleleArray) {
+                JsonObject hlaAllele = element.getAsJsonObject();
+                hlaAlleles.add(ImmutableHlaAllele.builder()
+                        .name(string(hlaAllele, "name"))
+                        .tumorCopyNumber(number(hlaAllele, "tumorCopyNumber"))
+                        .hasSomaticMutations(bool(hlaAllele, "hasSomaticMutations"))
+                        .build());
+            }
+            return hlaAlleles;
         }
 
         @NotNull
