@@ -74,7 +74,7 @@ public final class ServeExtraction {
                 }
                 return "TML <= " + function.parameters().get(0);
             }
-            case HAS_HLA_A_TYPE_X: {
+            case HAS_HLA_TYPE_X: {
                 if (function.parameters().size() != 1) {
                     throw new IllegalStateException("Cannot determine required HLA type for rule: " + function);
                 }

@@ -24,7 +24,7 @@ public final class ServeRules {
         MOLECULAR_RULES.add(EligibilityRule.TMB_OF_AT_LEAST_X);
         MOLECULAR_RULES.add(EligibilityRule.TML_OF_AT_LEAST_X);
         MOLECULAR_RULES.add(EligibilityRule.TML_OF_AT_MOST_X);
-        MOLECULAR_RULES.add(EligibilityRule.HAS_HLA_A_TYPE_X);
+        MOLECULAR_RULES.add(EligibilityRule.HAS_HLA_TYPE_X);
     }
 
     private ServeRules() {

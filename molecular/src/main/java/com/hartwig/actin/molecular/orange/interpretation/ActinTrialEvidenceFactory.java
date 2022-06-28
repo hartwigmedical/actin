@@ -103,7 +103,7 @@ final class ActinTrialEvidenceFactory {
             case TML_OF_AT_MOST_X: {
                 return MolecularEventType.SIGNATURE;
             }
-            case HAS_HLA_A_TYPE_X: {
+            case HAS_HLA_TYPE_X: {
                 return MolecularEventType.HLA_ALLELE;
             }
             default: {
@@ -138,7 +138,7 @@ final class ActinTrialEvidenceFactory {
             case MUTATION_IN_GENE_X_OF_TYPE_Y: {
                 return param.substring(param.indexOf(GENE_MUTATION_SEPARATOR) + 1);
             }
-            case HAS_HLA_A_TYPE_X: {
+            case HAS_HLA_TYPE_X: {
                 return param;
             }
         }

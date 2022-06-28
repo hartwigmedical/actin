@@ -194,7 +194,7 @@ HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
 TML_OF_AT_MOST_X | TML should be <= X
-HAS_HLA_A_TYPE_X | HLA-A type should be X. Currently set to fail (T.B.D.)
+HAS_HLA_TYPE_X | HLA type should be type X
 OVEREXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 NON_EXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
 EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
