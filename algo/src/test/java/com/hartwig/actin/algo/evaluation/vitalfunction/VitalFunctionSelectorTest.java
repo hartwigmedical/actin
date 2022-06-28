@@ -15,6 +15,8 @@ import org.junit.Test;
 
 public class VitalFunctionSelectorTest {
 
+    private static final double EPSILON = 1.0E-10;
+
     @Test
     public void canSelectVitalFunctions() {
         List<VitalFunction> vitalFunctions = Lists.newArrayList();
@@ -77,9 +79,23 @@ public class VitalFunctionSelectorTest {
         assertEquals(systolic().date(mostRecentDate.minusDays(4)).build(), selected.get(4));
     }
 
+    @Test
+    public void canDetermineMedian() {
+        List<VitalFunction> vitalFunctions = Lists.newArrayList();
+
+        vitalFunctions.add(systolic().value(1D).build());
+        assertEquals(1D, VitalFunctionSelector.selectMedian(vitalFunctions).value(), EPSILON);
+
+        vitalFunctions.add(systolic().value(2D).build());
+        assertEquals(1D, VitalFunctionSelector.selectMedian(vitalFunctions).value(), EPSILON);
+
+        vitalFunctions.add(systolic().value(3D).build());
+        assertEquals(2D, VitalFunctionSelector.selectMedian(vitalFunctions).value(), EPSILON);
+    }
+
     @NotNull
     private static List<VitalFunction> selectSystolic(@NotNull List<VitalFunction> vitalFunctions) {
-        return VitalFunctionSelector.selectRelevant(vitalFunctions, BloodPressureCategory.SYSTOLIC);
+        return VitalFunctionSelector.selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC);
     }
 
     @NotNull
@@ -94,5 +110,10 @@ public class VitalFunctionSelectorTest {
         return VitalFunctionTestFactory.vitalFunction()
                 .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
                 .subcategory(BloodPressureCategory.DIASTOLIC.display());
+    }
+
+    @NotNull
+    private static VitalFunction withValue(double value) {
+        return VitalFunctionTestFactory.vitalFunction().value(value).build();
     }
 }

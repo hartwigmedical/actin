@@ -10,9 +10,9 @@ public class GeneIsAmplifiedTest {
 
     @Test
     public void canEvaluate() {
-        GeneIsAmplified function = new GeneIsAmplified("geneA");
+        GeneIsAmplified function = new GeneIsAmplified("gene A");
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withAmplifiedGene("geneB")));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withAmplifiedGene("geneA")));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withAmplifiedGene("gene B")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withAmplifiedGene("gene A")));
     }
 }

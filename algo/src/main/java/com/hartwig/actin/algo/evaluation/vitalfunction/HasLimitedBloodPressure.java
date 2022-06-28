@@ -27,7 +27,7 @@ public class HasLimitedBloodPressure implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> relevant = VitalFunctionSelector.selectRelevant(record.clinical().vitalFunctions(), category);
+        List<VitalFunction> relevant = VitalFunctionSelector.selectBloodPressures(record.clinical().vitalFunctions(), category);
         String categoryDisplay = category.display().toLowerCase();
 
         if (relevant.isEmpty()) {
