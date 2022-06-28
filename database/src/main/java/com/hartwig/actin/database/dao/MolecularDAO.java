@@ -1,17 +1,18 @@
 package com.hartwig.actin.database.dao;
 
-import static com.hartwig.actin.database.Tables.MOLECULAR;
-import static com.hartwig.actin.database.Tables.VARIANT;
-import static com.hartwig.actin.database.Tables.AMPLIFICATION;
-import static com.hartwig.actin.database.Tables.LOSS;
-import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTION;
-import static com.hartwig.actin.database.Tables.DISRUPTION;
-import static com.hartwig.actin.database.Tables.FUSION;
-import static com.hartwig.actin.database.Tables.VIRUS;
-import static com.hartwig.actin.database.Tables.PHARMACO;
 import static com.hartwig.actin.database.Tables.ACTINTRIALEVIDENCE;
+import static com.hartwig.actin.database.Tables.AMPLIFICATION;
+import static com.hartwig.actin.database.Tables.DISRUPTION;
 import static com.hartwig.actin.database.Tables.EXTERNALTRIALEVIDENCE;
+import static com.hartwig.actin.database.Tables.FUSION;
+import static com.hartwig.actin.database.Tables.HLAALLELE;
+import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTION;
+import static com.hartwig.actin.database.Tables.LOSS;
+import static com.hartwig.actin.database.Tables.MOLECULAR;
+import static com.hartwig.actin.database.Tables.PHARMACO;
 import static com.hartwig.actin.database.Tables.TREATMENTEVIDENCE;
+import static com.hartwig.actin.database.Tables.VARIANT;
+import static com.hartwig.actin.database.Tables.VIRUS;
 
 import java.util.Set;
 
@@ -29,6 +30,8 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
@@ -55,6 +58,7 @@ class MolecularDAO {
         context.delete(DISRUPTION).where(DISRUPTION.SAMPLEID.eq(sampleId)).execute();
         context.delete(FUSION).where(FUSION.SAMPLEID.eq(sampleId)).execute();
         context.delete(VIRUS).where(VIRUS.SAMPLEID.eq(sampleId)).execute();
+        context.delete(HLAALLELE).where(HLAALLELE.SAMPLEID.eq(sampleId)).execute();
         context.delete(PHARMACO).where(PHARMACO.SAMPLEID.eq(sampleId)).execute();
         context.delete(ACTINTRIALEVIDENCE).where(ACTINTRIALEVIDENCE.SAMPLEID.eq(sampleId)).execute();
         context.delete(EXTERNALTRIALEVIDENCE).where(EXTERNALTRIALEVIDENCE.SAMPLEID.eq(sampleId)).execute();
@@ -74,6 +78,8 @@ class MolecularDAO {
         writeDisruptions(sampleId, drivers.disruptions());
         writeFusions(sampleId, drivers.fusions());
         writeViruses(sampleId, drivers.viruses());
+
+        writeImmunology(sampleId, record.immunology());
 
         writePharmaco(sampleId, record.pharmaco());
 
@@ -229,6 +235,23 @@ class MolecularDAO {
         for (Virus virus : viruses) {
             context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.EVENT, VIRUS.DRIVERLIKELIHOOD, VIRUS.NAME, VIRUS.INTEGRATIONS)
                     .values(sampleId, virus.event(), virus.driverLikelihood().toString(), virus.name(), virus.integrations())
+                    .execute();
+        }
+    }
+
+    private void writeImmunology(@NotNull String sampleId, @NotNull MolecularImmunology immunology) {
+        for (HlaAllele hlaAllele : immunology.hlaAlleles()) {
+            context.insertInto(HLAALLELE,
+                    HLAALLELE.SAMPLEID,
+                    HLAALLELE.ISRELIABLE,
+                    HLAALLELE.NAME,
+                    HLAALLELE.TUMORCOPYNUMBER,
+                    HLAALLELE.HASSOMATICMUTATIONS)
+                    .values(sampleId,
+                            DataUtil.toByte(immunology.isReliable()),
+                            hlaAllele.name(),
+                            hlaAllele.tumorCopyNumber(),
+                            DataUtil.toByte(hlaAllele.hasSomaticMutations()))
                     .execute();
         }
     }

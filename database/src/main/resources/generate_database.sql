@@ -344,6 +344,17 @@ CREATE TABLE virus
     PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS hlaAllele;
+CREATE TABLE hlaAllele
+(   id int NOT NULL AUTO_INCREMENT,
+    sampleId varchar(50) NOT NULL,
+    isReliable BOOLEAN NOT NULL,
+    name varchar(50) NOT NULL,
+    tumorCopyNumber double precision NOT NULL,
+    hasSomaticMutations BOOLEAN NOT NULL,
+    PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS pharmaco;
 CREATE TABLE pharmaco
 (   id int NOT NULL AUTO_INCREMENT,
