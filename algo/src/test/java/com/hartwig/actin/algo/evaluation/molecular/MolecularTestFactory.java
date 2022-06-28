@@ -18,6 +18,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidenceTestFact
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,6 +98,14 @@ final class MolecularTestFactory {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .type(type)
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withMolecularImmunology(@NotNull MolecularImmunology immunology) {
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
+                .immunology(immunology)
                 .build());
     }
 

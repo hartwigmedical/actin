@@ -10,9 +10,9 @@ public class HasFusionInGeneTest {
 
     @Test
     public void canEvaluate() {
-        HasFusionInGene function = new HasFusionInGene("geneA");
+        HasFusionInGene function = new HasFusionInGene("gene A");
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusedGene("geneB")));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusedGene("geneA")));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusedGene("gene B")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusedGene("gene A")));
     }
 }

@@ -154,7 +154,10 @@ public final class MolecularRuleMapping {
 
     @NotNull
     private static FunctionCreator hasSpecificHLATypeCreator() {
-        return function -> new HasSpecificHLAType();
+        return function -> {
+            String hlaAlleleToFind = FunctionInputResolver.createOneStringInput(function);
+            return new HasSpecificHLAType(hlaAlleleToFind);
+        };
     }
 
     @NotNull
