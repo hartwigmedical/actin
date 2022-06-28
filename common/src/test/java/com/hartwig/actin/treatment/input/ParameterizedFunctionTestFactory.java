@@ -96,6 +96,9 @@ public final class ParameterizedFunctionTestFactory {
             case ONE_TUMOR_STAGE: {
                 return Lists.newArrayList(TumorStage.I.display());
             }
+            case ONE_HLA_ALLELE: {
+                return Lists.newArrayList("A*02:01");
+            }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);
             }

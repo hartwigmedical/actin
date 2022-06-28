@@ -336,6 +336,22 @@ public class FunctionInputResolverTest {
         assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("II", "III"))));
     }
 
+    @Test
+    public void canResolveFunctionsWithOneHlaAlleleInput() {
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_HLA_ALLELE);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("A*02:01"));
+        assertTrue(FunctionInputResolver.hasValidInputs(valid));
+
+        assertEquals("A*02:01", FunctionInputResolver.createOneHlaAlleleInput(valid));
+
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("HLA-A*02:01"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("A*02"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("A:01*02"))));
+        assertFalse(FunctionInputResolver.hasValidInputs(create(rule, Lists.newArrayList("A*02:01", "A*02:02"))));
+    }
+
     @NotNull
     private static EligibilityRule firstOfType(@NotNull FunctionInput input) {
         for (Map.Entry<EligibilityRule, FunctionInput> entry : FunctionInputMapping.RULE_INPUT_MAP.entrySet()) {

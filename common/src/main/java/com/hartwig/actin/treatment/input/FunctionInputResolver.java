@@ -148,6 +148,10 @@ public final class FunctionInputResolver {
                     createOneTumorStageInput(function);
                     return true;
                 }
+                case ONE_HLA_ALLELE: {
+                    createOneHlaAlleleInput(function);
+                    return true;
+                }
                 default: {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule());
                     return null;
@@ -318,6 +322,21 @@ public final class FunctionInputResolver {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_STAGE, 1);
 
         return TumorStage.valueOf((String) function.parameters().get(0));
+    }
+
+    @NotNull
+    public static String createOneHlaAlleleInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_HLA_ALLELE, 1);
+
+        // Expected format "A*02:01"
+        String param = (String) function.parameters().get(0);
+        int asterixIndex = param.indexOf("*");
+        int semicolonIndex = param.indexOf(":");
+        if (asterixIndex != 1 || semicolonIndex <= asterixIndex) {
+            throw new IllegalArgumentException("Not a proper HLA allele: " + param);
+        }
+
+        return param;
     }
 
     @NotNull
