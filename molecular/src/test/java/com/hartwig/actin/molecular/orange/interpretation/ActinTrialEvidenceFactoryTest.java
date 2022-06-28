@@ -123,11 +123,11 @@ public class ActinTrialEvidenceFactoryTest {
 
     @Test
     public void canCreateHLA() {
-        ProtectEvidence evidence1 = create(EligibilityRule.HAS_HLA_TYPE_X + ": HLA*02:01");
+        ProtectEvidence evidence1 = create(EligibilityRule.HAS_HLA_TYPE_X + ": A*02:01");
         ActinTrialEvidence hla = ActinTrialEvidenceFactory.create(evidence1);
         assertEquals(MolecularEventType.HLA_ALLELE, hla.type());
         assertNull(hla.gene());
-        assertEquals("HLA*02:01", hla.mutation());
+        assertEquals("A*02:01", hla.mutation());
     }
 
     @NotNull
