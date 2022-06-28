@@ -12,16 +12,15 @@ import com.hartwig.actin.clinical.datamodel.VitalFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasSufficientBloodPressure implements EvaluationFunction {
 
     @NotNull
     private final BloodPressureCategory category;
-    private final double minAvgBloodPressure;
+    private final double minMedianBloodPressure;
 
-    HasSufficientBloodPressure(@NotNull final BloodPressureCategory category, final double minAvgBloodPressure) {
+    HasSufficientBloodPressure(@NotNull final BloodPressureCategory category, final double minMedianBloodPressure) {
         this.category = category;
-        this.minAvgBloodPressure = minAvgBloodPressure;
+        this.minMedianBloodPressure = minMedianBloodPressure;
     }
 
     @NotNull
@@ -37,23 +36,17 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
                     .build();
         }
 
-        double sum = 0;
-        for (VitalFunction vitalFunction : relevant) {
-            sum += vitalFunction.value();
-        }
-
-        double avg = sum / relevant.size();
-
-        EvaluationResult result = Double.compare(avg, minAvgBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        double median = VitalFunctionFunctions.determineMedianValue(relevant);
+        EvaluationResult result = Double.compare(median, minMedianBloodPressure) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         if (result == EvaluationResult.FAIL) {
             for (VitalFunction vitalFunction : relevant) {
-                if (Double.compare(vitalFunction.value(), minAvgBloodPressure) >= 0) {
+                if (Double.compare(vitalFunction.value(), minMedianBloodPressure) >= 0) {
                     return EvaluationFactory.recoverable()
                             .result(EvaluationResult.UNDETERMINED)
                             .addUndeterminedSpecificMessages(
-                                    "Patient has average " + categoryDisplay + " blood pressure below " + minAvgBloodPressure
-                                            + " but also at least one measure above " + minAvgBloodPressure)
+                                    "Patient has median " + categoryDisplay + " blood pressure below " + minMedianBloodPressure
+                                            + " but also at least one measure above " + minMedianBloodPressure)
                             .addUndeterminedGeneralMessages(categoryDisplay + " requirements")
                             .build();
                 }
@@ -62,10 +55,10 @@ public class HasSufficientBloodPressure implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has average " + categoryDisplay + " below " + minAvgBloodPressure);
+            builder.addFailSpecificMessages("Patient has median " + categoryDisplay + " below " + minMedianBloodPressure);
             builder.addFailGeneralMessages("Low " + categoryDisplay);
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has average " + categoryDisplay + " exceeding " + minAvgBloodPressure);
+            builder.addPassSpecificMessages("Patient has median " + categoryDisplay + " exceeding " + minMedianBloodPressure);
             builder.addPassGeneralMessages(categoryDisplay + " requirements");
         }
 

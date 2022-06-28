@@ -13,19 +13,18 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
 
     static final String UNIT_TO_SELECT = "BPM";
 
     private static final int MAX_HEART_RATES_TO_USE = 5;
 
-    private final double minAvgRestingHeartRate;
-    private final double maxAvgRestingHeartRate;
+    private final double minMedianRestingHeartRate;
+    private final double maxMedianRestingHeartRate;
 
-    public HasRestingHeartRateWithinBounds(final double minAvgRestingHeartRate, final double maxAvgRestingHeartRate) {
-        this.minAvgRestingHeartRate = minAvgRestingHeartRate;
-        this.maxAvgRestingHeartRate = maxAvgRestingHeartRate;
+    public HasRestingHeartRateWithinBounds(final double minMedianRestingHeartRate, final double maxMedianRestingHeartRate) {
+        this.minMedianRestingHeartRate = minMedianRestingHeartRate;
+        this.maxMedianRestingHeartRate = maxMedianRestingHeartRate;
     }
 
     @NotNull
@@ -43,25 +42,21 @@ public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
                     .build();
         }
 
-        double sum = 0;
-        for (VitalFunction heartRate : heartRates) {
-            sum += heartRate.value();
-        }
+        double median = VitalFunctionFunctions.determineMedianValue(heartRates);
 
-        double avg = sum / heartRates.size();
-
-        EvaluationResult result = Double.compare(avg, minAvgRestingHeartRate) >= 0 && Double.compare(avg, maxAvgRestingHeartRate) <= 0
-                ? EvaluationResult.PASS
-                : EvaluationResult.FAIL;
+        EvaluationResult result =
+                Double.compare(median, minMedianRestingHeartRate) >= 0 && Double.compare(median, maxMedianRestingHeartRate) <= 0
+                        ? EvaluationResult.PASS
+                        : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(
-                    "Patient has does not have average heart rate between " + minAvgRestingHeartRate + " and " + maxAvgRestingHeartRate);
+            builder.addFailSpecificMessages("Patient has does not have median heart rate between " + minMedianRestingHeartRate + " and "
+                    + maxMedianRestingHeartRate);
             builder.addFailGeneralMessages("heart rate requirements");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(
-                    "Patient has average heart rate between " + minAvgRestingHeartRate + " and " + maxAvgRestingHeartRate);
+                    "Patient has median heart rate between " + minMedianRestingHeartRate + " and " + maxMedianRestingHeartRate);
             builder.addPassGeneralMessages("heart rate requirements");
         }
 

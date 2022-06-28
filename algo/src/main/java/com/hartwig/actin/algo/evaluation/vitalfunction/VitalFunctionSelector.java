@@ -1,14 +1,11 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.primitives.Doubles;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
@@ -70,29 +67,9 @@ final class VitalFunctionSelector {
     private static List<VitalFunction> extractMedians(@NotNull Multimap<LocalDate, VitalFunction> vitalFunctionsPerDate) {
         List<VitalFunction> mediansPerDay = Lists.newArrayList();
         for (LocalDate date : vitalFunctionsPerDate.keySet()) {
-            mediansPerDay.add(selectMedian(vitalFunctionsPerDate.get(date)));
+            mediansPerDay.add(VitalFunctionFunctions.selectMedianFunction(vitalFunctionsPerDate.get(date)));
         }
         return mediansPerDay;
-    }
-
-    @NotNull
-    @VisibleForTesting
-    static VitalFunction selectMedian(@NotNull Iterable<VitalFunction> vitalFunctions) {
-        List<Double> values = Lists.newArrayList();
-        for (VitalFunction vitalFunction : vitalFunctions) {
-            values.add(vitalFunction.value());
-        }
-
-        values.sort(Comparator.naturalOrder());
-
-        Double median = values.get((int) Math.round(values.size() / 2D) - 1);
-        for (VitalFunction vitalFunction : vitalFunctions) {
-            if (Doubles.compare(vitalFunction.value(), median) == 0) {
-                return vitalFunction;
-            }
-        }
-
-        throw new IllegalStateException("Could not determine median vital function from " + vitalFunctions);
     }
 
     private static boolean isBloodPressure(@NotNull VitalFunction vitalFunction) {

@@ -26,24 +26,26 @@ public class HasRestingHeartRateWithinBoundsTest {
         heartRates.add(heartRate().date(referenceDate).value(70).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)));
 
-        // Fail when average drops below 60
+        // Fail when median drops below 60
         heartRates.add(heartRate().date(referenceDate).value(40).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)));
 
-        // Succeed again when average back in range
+        // Succeed again when median back in range
         heartRates.add(heartRate().date(referenceDate).value(80).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)));
 
-        // Fail again when average becomes too high
-        heartRates.add(heartRate().date(referenceDate).value(200).build());
+        // Fail again when median becomes too high
+        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(200).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(200).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(200).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)));
 
         // Succeed when we add bunch of more recent correct measures.
-        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(70).build());
-        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(70).build());
-        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(70).build());
-        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(70).build());
-        heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(70).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
+        heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)));
     }
 

@@ -33,16 +33,16 @@ public final class VitalFunctionRuleMapping {
     @NotNull
     private static FunctionCreator hasSufficientBloodPressureCreator(@NotNull BloodPressureCategory category) {
         return function -> {
-            double minAvgBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
-            return new HasSufficientBloodPressure(category, minAvgBloodPressure);
+            double minMedianBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasSufficientBloodPressure(category, minMedianBloodPressure);
         };
     }
 
     @NotNull
     private static FunctionCreator hasLimitedBloodPressureCreator(@NotNull BloodPressureCategory category) {
         return function -> {
-            double maxAvgBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
-            return new HasLimitedBloodPressure(category, maxAvgBloodPressure);
+            double maxMedianBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
+            return new HasLimitedBloodPressure(category, maxMedianBloodPressure);
         };
     }
 

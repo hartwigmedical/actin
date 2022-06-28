@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction;
 
-import java.util.Comparator;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -39,20 +37,7 @@ public class HasSufficientPulseOximetry implements EvaluationFunction {
                     .build();
         }
 
-        List<Double> values = Lists.newArrayList();
-        for (VitalFunction pulseOximetry : pulseOximetries) {
-            values.add(pulseOximetry.value());
-        }
-        values.sort(Comparator.naturalOrder());
-
-        double median;
-        int index = (int) Math.ceil(values.size() / 2D) - 1;
-        if (values.size() % 2 == 0) {
-            median = 0.5 * (values.get(index) + values.get(index + 1));
-        } else {
-            median = values.get(index);
-        }
-
+        double median = VitalFunctionFunctions.determineMedianValue(pulseOximetries);
         EvaluationResult result = Double.compare(median, minMedianPulseOximetry) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         if (result == EvaluationResult.FAIL) {

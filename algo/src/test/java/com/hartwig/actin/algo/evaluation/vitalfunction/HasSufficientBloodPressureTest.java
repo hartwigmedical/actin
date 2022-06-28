@@ -27,11 +27,11 @@ public class HasSufficientBloodPressureTest {
         bloodPressures.add(systolic().date(referenceDate).value(110).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
-        // Undetermined when the average falls below 100 but one measure above 100
+        // Undetermined when the median falls below 100 but one measure above 100
         bloodPressures.add(systolic().date(referenceDate.minusDays(1)).value(70).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)));
 
-        // Succeed again when the average goes above 100
+        // Succeed again when the median goes above 100
         bloodPressures.add(systolic().date(referenceDate.minusDays(2)).value(110).build());
         bloodPressures.add(systolic().date(referenceDate.minusDays(3)).value(110).build());
         bloodPressures.add(systolic().date(referenceDate.minusDays(4)).value(110).build());
