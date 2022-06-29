@@ -31,13 +31,18 @@ public class HasBladderOutflowObstructionTest {
     public void canEvaluateOnPriorOtherCondition() {
         HasBladderOutflowObstruction function = new HasBladderOutflowObstruction();
 
-        PriorOtherCondition different = ImmutablePriorOtherCondition.builder().name("different").category(Strings.EMPTY).build();
+        PriorOtherCondition different = ImmutablePriorOtherCondition.builder()
+                .name("different")
+                .category(Strings.EMPTY)
+                .isContraindicationForTherapy(false)
+                .build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withPriorOtherCondition(different)));
 
         PriorOtherCondition matching = ImmutablePriorOtherCondition.builder()
                 .name("bladder obstruction")
                 .addDoids(HasBladderOutflowObstruction.BLADDER_NECK_OBSTRUCTION_DOID)
                 .category(Strings.EMPTY)
+                .isContraindicationForTherapy(false)
                 .build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withPriorOtherCondition(matching)));
     }

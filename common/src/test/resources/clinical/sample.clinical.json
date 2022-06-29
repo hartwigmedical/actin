@@ -98,7 +98,8 @@
         "11335",
         "5082"
       ],
-      "category": "Liver disease"
+      "category": "Liver disease",
+      "isContraindicationForTherapy": false
     }
   ],
   "priorMolecularTests": [

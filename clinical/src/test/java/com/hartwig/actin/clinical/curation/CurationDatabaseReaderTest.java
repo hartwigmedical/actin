@@ -137,7 +137,7 @@ public class CurationDatabaseReaderTest {
     }
 
     private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {
-        assertEquals(3, configs.size());
+        assertEquals(4, configs.size());
         NonOncologicalHistoryConfig config1 = find(configs, "Levercirrose/ sarcoidose");
         assertFalse(config1.ignore());
 
@@ -148,6 +148,7 @@ public class CurationDatabaseReaderTest {
         assertEquals(2, curated1.doids().size());
         assertTrue(curated1.doids().contains("5082"));
         assertTrue(curated1.doids().contains("11335"));
+        assertFalse(curated1.isContraindicationForTherapy());
 
         NonOncologicalHistoryConfig config2 = find(configs, "NA");
         assertTrue(config2.ignore());
@@ -156,6 +157,10 @@ public class CurationDatabaseReaderTest {
         NonOncologicalHistoryConfig config3 = find(configs, "LVEF 0.17");
         assertFalse(config3.ignore());
         assertEquals(0.17, (Double) config3.curated(), EPSILON);
+
+        NonOncologicalHistoryConfig config4 = find(configs, "No contraindication");
+        PriorOtherCondition curated4 = (PriorOtherCondition) config4.curated();
+        assertTrue(curated4.isContraindicationForTherapy());
     }
 
     private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {

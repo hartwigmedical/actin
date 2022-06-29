@@ -41,7 +41,7 @@ final class OtherConditionTestFactory {
 
     @NotNull
     public static ImmutablePriorOtherCondition.Builder builder() {
-        return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY);
+        return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY).isContraindicationForTherapy(false);
     }
 
     @NotNull

@@ -257,12 +257,14 @@ class ClinicalDAO {
                     PRIOROTHERCONDITION.NAME,
                     PRIOROTHERCONDITION.YEAR,
                     PRIOROTHERCONDITION.DOIDS,
-                    PRIOROTHERCONDITION.CATEGORY)
+                    PRIOROTHERCONDITION.CATEGORY,
+                    PRIOROTHERCONDITION.ISCONTRAINDICATIONFORTHERAPY)
                     .values(sampleId,
                             priorOtherCondition.name(),
                             priorOtherCondition.year(),
                             DataUtil.concat(priorOtherCondition.doids()),
-                            priorOtherCondition.category())
+                            priorOtherCondition.category(),
+                            DataUtil.toByte(priorOtherCondition.isContraindicationForTherapy()))
                     .execute();
         }
     }

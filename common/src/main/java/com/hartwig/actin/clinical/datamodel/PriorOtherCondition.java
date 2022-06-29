@@ -22,4 +22,6 @@ public abstract class PriorOtherCondition {
     @NotNull
     public abstract String category();
 
+    public abstract boolean isContraindicationForTherapy();
+
 }

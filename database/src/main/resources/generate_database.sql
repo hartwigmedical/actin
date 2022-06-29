@@ -102,6 +102,7 @@ CREATE TABLE priorOtherCondition
     year int,
     doids varchar(50) NOT NULL,
     category varchar(50) NOT NULL,
+    isContraindicationForTherapy BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 

@@ -200,7 +200,11 @@ public final class TestCurationFactory {
         configs.add(ImmutableNonOncologicalHistoryConfig.builder()
                 .input("sickness")
                 .ignore(false)
-                .curated(ImmutablePriorOtherCondition.builder().name("sick").category("being sick").build())
+                .curated(ImmutablePriorOtherCondition.builder()
+                        .name("sick")
+                        .category("being sick")
+                        .isContraindicationForTherapy(false)
+                        .build())
                 .build());
 
         configs.add(ImmutableNonOncologicalHistoryConfig.builder().input("not a condition").ignore(true).build());

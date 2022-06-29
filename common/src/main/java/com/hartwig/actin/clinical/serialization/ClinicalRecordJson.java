@@ -310,6 +310,7 @@ public final class ClinicalRecordJson {
                         .year(nullableInteger(object, "year"))
                         .doids(stringList(object, "doids"))
                         .category(string(object, "category"))
+                        .isContraindicationForTherapy(bool(object, "isContraindicationForTherapy"))
                         .build());
             }
             return priorOtherConditionList;

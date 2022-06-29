@@ -32,6 +32,7 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
                     .year(ResourceFile.optionalInteger(parts[fields.get("year")]))
                     .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
                     .category(parts[fields.get("category")])
+                    .isContraindicationForTherapy(ResourceFile.bool(parts[fields.get("isContraindicationForTherapy")]))
                     .build();
         }
     }
