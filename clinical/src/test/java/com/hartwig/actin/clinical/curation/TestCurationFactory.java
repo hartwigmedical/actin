@@ -203,7 +203,7 @@ public final class TestCurationFactory {
                 .curated(ImmutablePriorOtherCondition.builder()
                         .name("sick")
                         .category("being sick")
-                        .isContraindicationForTherapy(false)
+                        .isContraindicationForTherapy(true)
                         .build())
                 .build());
 

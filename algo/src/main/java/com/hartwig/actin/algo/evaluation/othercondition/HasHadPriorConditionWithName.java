@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -21,7 +23,9 @@ public class HasHadPriorConditionWithName implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
+        List<PriorOtherCondition> clinicallyRelevant =
+                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
+        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
             if (priorOtherCondition.name().toLowerCase().contains(nameToFind.toLowerCase())) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)

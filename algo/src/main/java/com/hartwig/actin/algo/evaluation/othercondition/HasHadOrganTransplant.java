@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
+import java.util.List;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -21,7 +23,9 @@ public class HasHadOrganTransplant implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
+        List<PriorOtherCondition> clinicallyRelevant =
+                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
+        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
             if (priorOtherCondition.category().equals(ORGAN_TRANSPLANT_CATEGORY)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)

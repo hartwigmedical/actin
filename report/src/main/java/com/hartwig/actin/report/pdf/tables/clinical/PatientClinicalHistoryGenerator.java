@@ -199,7 +199,11 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
         StringJoiner joiner = Formats.commaJoiner();
         for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
-            joiner.add(priorOtherCondition.name());
+            String addon = Strings.EMPTY;
+            if (!priorOtherCondition.isContraindicationForTherapy()) {
+                addon = " (no contraindication for therapy)";
+            }
+            joiner.add(priorOtherCondition.name() + addon);
         }
         return Formats.valueOrDefault(joiner.toString(), "None");
     }

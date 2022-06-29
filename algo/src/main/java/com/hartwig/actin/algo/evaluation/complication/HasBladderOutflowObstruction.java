@@ -53,10 +53,12 @@ public class HasBladderOutflowObstruction implements EvaluationFunction {
         }
 
         Set<String> priorBladderConditions = Sets.newHashSet();
-        for (PriorOtherCondition condition : record.clinical().priorOtherConditions()){
-            for (String doid : condition.doids()) {
-                if (doid.equals(BLADDER_NECK_OBSTRUCTION_DOID)) {
-                    priorBladderConditions.add(condition.name());
+        for (PriorOtherCondition condition : record.clinical().priorOtherConditions()) {
+            if (condition.isContraindicationForTherapy()) {
+                for (String doid : condition.doids()) {
+                    if (doid.equals(BLADDER_NECK_OBSTRUCTION_DOID)) {
+                        priorBladderConditions.add(condition.name());
+                    }
                 }
             }
         }

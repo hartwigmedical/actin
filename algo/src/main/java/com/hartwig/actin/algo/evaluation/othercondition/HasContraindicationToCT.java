@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -38,7 +39,9 @@ public class HasContraindicationToCT implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
+        List<PriorOtherCondition> clinicallyRelevant =
+                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
+        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
             for (String doid : priorOtherCondition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()

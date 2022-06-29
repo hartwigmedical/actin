@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.infection;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -8,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctions;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +29,9 @@ public class HasKnownEBVInfection implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
+        List<PriorOtherCondition> clinicallyRelevant =
+                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
+        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
             for (String ebvTerm : EBV_TERMS) {
                 if (priorOtherCondition.name().toLowerCase().contains(ebvTerm.toLowerCase())) {
                     return EvaluationFactory.unrecoverable()

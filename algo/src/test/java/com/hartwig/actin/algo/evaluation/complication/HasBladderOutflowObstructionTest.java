@@ -34,15 +34,23 @@ public class HasBladderOutflowObstructionTest {
         PriorOtherCondition different = ImmutablePriorOtherCondition.builder()
                 .name("different")
                 .category(Strings.EMPTY)
-                .isContraindicationForTherapy(false)
+                .isContraindicationForTherapy(true)
                 .build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withPriorOtherCondition(different)));
+
+        PriorOtherCondition noContraindication = ImmutablePriorOtherCondition.builder()
+                .name("bladder obstruction")
+                .addDoids(HasBladderOutflowObstruction.BLADDER_NECK_OBSTRUCTION_DOID)
+                .category(Strings.EMPTY)
+                .isContraindicationForTherapy(false)
+                .build();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withPriorOtherCondition(noContraindication)));
 
         PriorOtherCondition matching = ImmutablePriorOtherCondition.builder()
                 .name("bladder obstruction")
                 .addDoids(HasBladderOutflowObstruction.BLADDER_NECK_OBSTRUCTION_DOID)
                 .category(Strings.EMPTY)
-                .isContraindicationForTherapy(false)
+                .isContraindicationForTherapy(true)
                 .build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withPriorOtherCondition(matching)));
     }

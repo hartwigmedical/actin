@@ -168,7 +168,7 @@ public final class TestClinicalFactory {
                 .name("Pancreatitis")
                 .addDoids("4989")
                 .category("Pancreas disease")
-                .isContraindicationForTherapy(false)
+                .isContraindicationForTherapy(true)
                 .build());
 
         return priorOtherConditions;

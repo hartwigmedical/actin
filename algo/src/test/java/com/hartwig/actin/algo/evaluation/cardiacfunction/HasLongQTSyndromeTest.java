@@ -40,7 +40,7 @@ public class HasLongQTSyndromeTest {
 
     @NotNull
     private static ImmutablePriorOtherCondition.Builder builder() {
-        return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY).isContraindicationForTherapy(false);
+        return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY).isContraindicationForTherapy(true);
     }
 
     @NotNull
