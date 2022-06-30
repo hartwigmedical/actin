@@ -21,7 +21,6 @@ public class HasHadOrganTransplantWithinYears implements EvaluationFunction {
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
                         "Currently it cannot be determined if patient has had an organ transplant within certain years")
-                .addUndeterminedGeneralMessages("Organ transplant within years")
                 .build();
     }
 

@@ -19,7 +19,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("History of pneumonitis currently cannot be determined")
+                .addUndeterminedSpecificMessages("Currently history of pneumonitis cannot be determined")
                 .build();
     }
 
