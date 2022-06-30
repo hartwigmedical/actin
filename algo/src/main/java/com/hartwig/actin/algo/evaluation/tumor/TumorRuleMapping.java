@@ -21,6 +21,7 @@ public final class TumorRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator());
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
         map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator(doidModel));
@@ -40,6 +41,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
+        map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_NEW_TISSUE_SAMPLE_FOR_FFPE_ANALYSIS, canProvideSampleForFFPEAnalysisCreator());
         map.put(EligibilityRule.HAS_ASSESSABLE_DISEASE, hasAssessableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE, hasMeasurableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator(doidModel));
@@ -51,6 +53,11 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
 
         return map;
+    }
+
+    @NotNull
+    private static FunctionCreator hasSolidPrimaryTumorCreator() {
+        return function -> new HasSolidPrimaryTumor();
     }
 
     @NotNull
@@ -155,6 +162,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
         return function -> new TumorBiopsyTakenBeforeInformedConsent();
+    }
+
+    @NotNull
+    private static FunctionCreator canProvideSampleForFFPEAnalysisCreator() {
+        return function -> new CanProvideSampleForFFPEAnalysis();
     }
 
     @NotNull

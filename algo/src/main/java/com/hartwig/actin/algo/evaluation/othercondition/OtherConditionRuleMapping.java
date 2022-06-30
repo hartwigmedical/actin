@@ -54,11 +54,13 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasPriorConditionWithDoidCreator(doidModel, LIVER_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasPriorConditionWithDoidCreator(doidModel, LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasPriorConditionWithDoidCreator(doidModel, MYOCARDIAL_INFARCT_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS, hasHistoryOfPneumonitisCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasPriorConditionWithDoidCreator(doidModel, STROKE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasPriorConditionWithDoidCreator(doidModel, TIA_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionWithDoidCreator(doidModel, VASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
+        map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS, hasHadOrganTransplantWithinYearsCreator());
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasPriorConditionWithDoidCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HYPERTENSION, hasPriorConditionWithDoidCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_HYPOTENSION, hasPriorConditionWithNameCreator(HYPOTENSION_NAME));
@@ -101,6 +103,11 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
+    private static FunctionCreator hasHistoryOfPneumonitisCreator() {
+        return function -> new HasHistoryOfPneumonitis();
+    }
+
+    @NotNull
     private static FunctionCreator hasSevereConcomitantIllnessCreator() {
         return function -> new HasSevereConcomitantIllness();
     }
@@ -108,6 +115,11 @@ public final class OtherConditionRuleMapping {
     @NotNull
     private static FunctionCreator hasHadOrganTransplantCreator() {
         return function -> new HasHadOrganTransplant();
+    }
+
+    @NotNull
+    private static FunctionCreator hasHadOrganTransplantWithinYearsCreator() {
+        return function -> new HasHadOrganTransplantWithinYears();
     }
 
     @NotNull

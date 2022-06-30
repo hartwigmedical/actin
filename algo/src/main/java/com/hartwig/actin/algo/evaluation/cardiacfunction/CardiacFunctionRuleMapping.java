@@ -25,6 +25,7 @@ public final class CardiacFunctionRuleMapping {
         map.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator(doidModel));
+        map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, hasNormalCardiacFunctionByMUGAOrTTECreator());
 
         return map;
     }
@@ -53,6 +54,11 @@ public final class CardiacFunctionRuleMapping {
     @NotNull
     private static FunctionCreator hasLongQTSyndromeCreator(@NotNull DoidModel doidModel) {
         return function -> new HasLongQTSyndrome(doidModel);
+    }
+
+    @NotNull
+    private static FunctionCreator hasNormalCardiacFunctionByMUGAOrTTECreator() {
+        return function -> new HasNormalCardiacFunctionByMUGAOrTTE();
     }
 
 }

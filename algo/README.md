@@ -100,6 +100,7 @@ IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
  
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
+HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 2531. | Resolve to WARN in case any DOID equal or child of DOID 0060058 or 9538 
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to WARN in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
 HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `Undetermined` in case of DOID exactly equal to DOID 10283   
@@ -119,6 +120,7 @@ HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLes
 HAS_LUNG_METASTASES | Tumor details > hasLungLesions = 1
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
+CAN_PROVIDE_ARCHIVAL_OR_NEW_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
 HAS_ASSESSABLE_DISEASE | Tumor details > hasMeasurableDisease = 1, | `UNDETERMINED` in case missing or false
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to WARN in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
@@ -328,8 +330,8 @@ or that this value is also out of requested range, the evaluation resolves to FA
 
 ##### Rules related to other conditions
 
-Rule | When does a patient pass evaluation?
----|---
+Rule | When does a patient pass evaluation? | Note
+---|---|---
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
@@ -342,11 +344,13 @@ HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured d
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
+HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logics as described later)
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
 HAS_SEVERE_CONCOMITANT_CONDITION | Won't be evaluated
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
+HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS | Prior other conditions > categories contains "Organ transplant" and years ago <= X | `Undetermined` in case year is unknown
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_HYPOTENSION | Prior other conditions > name like %hypotension%
@@ -359,6 +363,9 @@ HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI | > Same contraindications as for HAS_
 IS_IN_DIALYSIS | Won't be evaluated
 HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | Currently resolves to undetermined
 
+Note:
+For all Prior other conditions applies that in case the condition is indicated as having no contraindication for therapy (isContraindicationForTherapy=0), the condition is ignored for evaluation.
+
 ##### Rules related to cardiac function
 
 Rule | When does a patient pass evaluation?
@@ -369,6 +376,7 @@ HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavaila
 HAS_QTC_OF_AT_MOST_X | QTcF or QTcB. Currently: Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
+HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to WARN in case LVEF is known and < 50%
 
 ##### Rules related to infections
 
