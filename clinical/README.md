@@ -109,6 +109,7 @@ name | Pancreatitis | Other condition considered relevant for treatment decision
 year | 2020 | Year in which other condition was diagnosed
 doids | 4989 | Separated by ";"
 category | Pancreas disease | Assigned category of considered condition, based on DOIDs
+isContraindicationForTherapy | 1 | Boolean if considered condition can have impact on therapy indication 
 
 N prior (non-WGS) molecular tests
 
