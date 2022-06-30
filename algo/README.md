@@ -473,7 +473,7 @@ HAS_BLADDER_OUTFLOW_OBSTRUCTION | complication > Name like %bladder%outflow% or 
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_INTOLERANCE_FOR_NAME_X | Intolerance > Name like %X%
+HAS_INTOLERANCE_TO_NAME_X | Intolerance > Name like %X%
 HAS_INTOLERANCE_BELONGING_TO_DOID_X | Intolerance > doid is equal of a child of doid X
 HAS_INTOLERANCE_FOR_TAXANE | Intolerance > Name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel
 HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION | Intolerance > Resolves to undetermined in case of presence of any active allergies belonging to categories in 'Medication' and/or DOID 0060500 
