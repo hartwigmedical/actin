@@ -100,7 +100,8 @@ IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
  
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 2531. | Resolve to WARN in case any DOID equal or child of DOID 0060058 or 9538 
+HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 and/or 4960. | Resolve to WARN in case any DOID equal or child of DOID 2536 (but does not resolve to FAIL already) 
+HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 and/or 4960. | Resolve to WARN in case any DOID equal or child of DOID 5772, 3282, 5621, 3664, 8683 
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to WARN in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
 HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `Undetermined` in case of DOID exactly equal to DOID 10283   
@@ -109,6 +110,7 @@ HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C) or IV
 HAS_METASTATIC_CANCER | Tumor details > stage should be IV 
+HAS_UNRESECTABLE_CANCER | 
 HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions and/or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
@@ -141,6 +143,7 @@ HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to undetermined
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to undetermined, unless there is no prior treatment history and X>0, then resolve to FAIL
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
+HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES | 
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y% | Also see 'Notes' below
