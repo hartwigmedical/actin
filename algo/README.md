@@ -379,7 +379,7 @@ HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavaila
 HAS_QTC_OF_AT_MOST_X | QTcF or QTcB. Currently: Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
-HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to WARN in case LVEF is known and < 50%
+HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to WARN in case LVEF is known and < 50%, otherwise resolve to NOT_EVALUATED 
 
 ##### Rules related to infections
 
