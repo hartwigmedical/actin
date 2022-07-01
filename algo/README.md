@@ -110,7 +110,7 @@ HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C) or IV
 HAS_METASTATIC_CANCER | Tumor details > stage should be IV 
-HAS_UNRESECTABLE_CANCER | 
+HAS_UNRESECTABLE_CANCER | Tumor details > stage should be IV | Undetermined in case of III(A/B/C/)
 HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions and/or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
@@ -143,7 +143,7 @@ HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to undetermined
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to undetermined, unless there is no prior treatment history and X>0, then resolve to FAIL
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
-HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES | 
+HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y% | Also see 'Notes' below

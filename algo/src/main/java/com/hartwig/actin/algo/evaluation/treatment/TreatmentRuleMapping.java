@@ -31,6 +31,7 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
+        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES, hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
@@ -88,6 +89,11 @@ public final class TreatmentRuleMapping {
             int maxSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
             return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
         };
+    }
+
+    @NotNull
+    private static FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
+        return function -> new HasProgressiveDiseaseFollowingSomeSystemicTreatments();
     }
 
     @NotNull

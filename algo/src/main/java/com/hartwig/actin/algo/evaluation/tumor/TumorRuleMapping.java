@@ -30,6 +30,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
         map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
+        map.put(EligibilityRule.HAS_UNRESECTABLE_CANCER, hasUnresectableCancerCreator());
         map.put(EligibilityRule.HAS_ANY_LESION, hasAnyLesionCreator());
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
@@ -107,6 +108,11 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasMetastaticCancerCreator() {
         return function -> new HasMetastaticCancer();
+    }
+
+    @NotNull
+    private static FunctionCreator hasUnresectableCancerCreator() {
+        return function -> new HasUnresectableCancer();
     }
 
     @NotNull
