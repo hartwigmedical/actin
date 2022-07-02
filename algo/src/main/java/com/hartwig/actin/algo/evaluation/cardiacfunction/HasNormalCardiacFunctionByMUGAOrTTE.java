@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Implement according to README
 public class HasNormalCardiacFunctionByMUGAOrTTE implements EvaluationFunction {
 
     HasNormalCardiacFunctionByMUGAOrTTE() {
@@ -22,12 +21,14 @@ public class HasNormalCardiacFunctionByMUGAOrTTE implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("LVEF of " + lvef + " exceeds 50%")
+                    .addWarnGeneralMessages("MUGA or TTE")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently normal cardiac function by MUGA or TTE cannot be determined")
+                .result(EvaluationResult.NOT_EVALUATED)
+                .addPassSpecificMessages("Currently normal cardiac function by MUGA or TTE cannot be evaluated")
+                .addPassGeneralMessages("MUGA or TTE")
                 .build();
     }
 }

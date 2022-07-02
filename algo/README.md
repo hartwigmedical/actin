@@ -85,8 +85,8 @@ Rule | When does a patient pass evaluation? | Note
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | `UNDETERMINED` in case of exactly X
 IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
-HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to not evaluated
-HAS_LANSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to not evaluated
+HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
+HAS_LANSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
 CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > Won't be evaluated
 HAS_RAPIDLY_DETERIORATING_CONDITION | > Won't be evaluated
 HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS | > Won't be evaluated
@@ -100,61 +100,61 @@ IS_INVOLVED_IN_STUDY_PROCEDURES | > Won't be evaluated
  
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 and/or 4960. | Resolve to WARN in case any DOID equal or child of DOID 2536 (but does not resolve to FAIL already) 
-HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 and/or 4960. | Resolve to WARN in case any DOID equal or child of DOID 5772, 3282, 5621, 3664, 8683 
+HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 or 4960. | Resolve to `WARN` in case any DOID equal or child of DOID 2536 (but does not resolve to `FAIL` already) 
+HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 and/or 4960. | Resolve to `WARN` in case any DOID equal or child of DOID 5772, 3282, 5621, 3664, 8683 
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
-HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to WARN in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
-HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `Undetermined` in case of DOID exactly equal to DOID 10283   
+HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to `WARN` in case ALL configured DOIDs exactly equal to DOID 162 | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
+HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `UNDETERMINED` in case of DOID exactly equal to DOID 10283   
 HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV
 HAS_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C) or IV
 HAS_METASTATIC_CANCER | Tumor details > stage should be IV 
-HAS_UNRESECTABLE_CANCER | Tumor details > stage should be IV | Undetermined in case of III(A/B/C/)
-HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions and/or hasOtherLesions = 1
+HAS_UNRESECTABLE_CANCER | Tumor details > stage should be IV | `UNDETERMINED` in case of III(A/B/C/)
+HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or hasActiveBrainLesions = 1
 HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
-HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 or missing, and otherLesions is empty | WARN in case hasBoneLesions = 1 while all others are missing
+HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 or missing, and otherLesions is empty | `WARN` in case hasBoneLesions = 1 while all others are missing
 HAS_LUNG_METASTASES | Tumor details > hasLungLesions = 1
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
 CAN_PROVIDE_ARCHIVAL_OR_NEW_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
 HAS_ASSESSABLE_DISEASE | Tumor details > hasMeasurableDisease = 1, | `UNDETERMINED` in case missing or false
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
-HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to WARN in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
-HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to undetermined
-HAS_INJECTION_AMENABLE_LESION | Currently resolves to undetermined
-HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to undetermined
-HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI | Currently resolves to undetermined
-HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to undetermined
+HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to `WARN` in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
+HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to `UNDETERMINED`
+HAS_INJECTION_AMENABLE_LESION | Currently resolves to `UNDETERMINED`
+HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to `UNDETERMINED`
+HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI | Currently resolves to `UNDETERMINED`
+HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to `UNDETERMINED`
 HAS_SUPERSCAN_BONE_SCAN | Won't be evaluated
 
 ##### Rules related to previous cancer treatments
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | Currently resolves to not evaluated
-IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Currently resolves to undetermined
-HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to undetermined
-HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to undetermined, unless there is no prior treatment history and X>0, then resolve to FAIL
+IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | Currently resolves to `NOT_EVALUATED`
+IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Currently resolves to `UNDETERMINED`
+HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to `UNDETERMINED`
+HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to `UNDETERMINED`, unless there is no prior treatment history and X>0, then resolve to `FAIL`
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
 HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y% | Also see 'Notes' below
-HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y_WITHIN_Z_WEEKS | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%, with startDate within Z weeks | If no startDate configured, or startDate is not conclusive, resolve to `Undetermined`. Also see 'Notes' below
+HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y_WITHIN_Z_WEEKS | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%, with startDate within Z weeks | If no startDate configured, or startDate is not conclusive, resolve to `UNDETERMINED`. Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_ IGNORING_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type not like any %Y% | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines => Y | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z  | Also see 'Notes' below
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ WITH_STOP_REASON_PD | Patient has had any treatment of category X with at least one stop reason due to PD | `Undetermined` in case stop reason is unknown but category X treatment is received
-HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to undetermined
+HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ WITH_STOP_REASON_PD | Patient has had any treatment of category X with at least one stop reason due to PD | `UNDETERMINED` in case stop reason is unknown but category X treatment is received
+HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to `UNDETERMINED`
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
 
 1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Trial, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy, Supportive treatment.
@@ -181,7 +181,7 @@ Rule | When does a patient pass evaluation? | Note
 HAS_ACTIVE_SECOND_MALIGNANCY | Prior second primary > any entry with active=1
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primary > any entry
 HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primary > contains any entry with DOID belonging to DOID X
-HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to UNDETERMINED.
+HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to `UNDETERMINED`.
 
 ##### Rules related to molecular results
 
@@ -200,15 +200,15 @@ TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
 TML_OF_AT_MOST_X | TML should be <= X
 HAS_HLA_TYPE_X | HLA type should be type X
-OVEREXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
-NON_EXPRESSION_OF_GENE_X | Currently set to fail (T.B.D.)
+OVEREXPRESSION_OF_GENE_X | Currently set to `FAIL` (T.B.D.)
+NON_EXPRESSION_OF_GENE_X | Currently set to `FAIL` (T.B.D.)
 EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
 EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
 EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
 PD_L1_SCORE_CPS_OF_AT_LEAST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X
 PD_L1_SCORE_CPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X
 PD_L1_SCORE_TPS_OF_AT_MOST_X | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X
-HAS_PSMA_POSITIVE_PET_SCAN | Currently resolves to undetermined
+HAS_PSMA_POSITIVE_PET_SCAN | Currently resolves to `UNDETERMINED`
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE | Currently set to ingestion of molecular results (T.B.D.)
 MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X | Ingestion of molecular results with experiment type 'WGS', or presence of previous molecular test for gene X
 MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE | Won't be evaluated
@@ -328,8 +328,8 @@ ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimi
 
 Note: for all lab values, the latest available lab value (up to 30 days) is evaluated. 
 If the latest lab value is out of the requested range, the second-last lab value is evaluated. 
-In case that a second-last lab value is available and within requested range as configured in the rule, the evaluation resolves to UNDETERMINED. In case no second-last value is applicable, 
-or that this value is also out of requested range, the evaluation resolves to FAIL.
+In case that a second-last lab value is available and within requested range as configured in the rule, the evaluation resolves to `UNDETERMINED`. In case no second-last value is applicable, 
+or that this value is also out of requested range, the evaluation resolves to `FAIL`.
 
 ##### Rules related to other conditions
 
@@ -347,13 +347,13 @@ HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured d
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
-HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logics as described later)
+HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logic as described later)
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_TIA | Prior other conditions > any configured doid should be equal or be a child of DOID 224 
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
 HAS_SEVERE_CONCOMITANT_CONDITION | Won't be evaluated
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
-HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS | Prior other conditions > categories contains "Organ transplant" and years ago <= X | `Undetermined` in case year is unknown
+HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS | Prior other conditions > categories contains "Organ transplant" and years ago <= X | `UNDETERMINED` in case year is unknown
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739
 HAS_HYPERTENSION | Prior other conditions > any configured doid should be equal or be a child of DOID 10763
 HAS_HYPOTENSION | Prior other conditions > name like %hypotension%
@@ -364,7 +364,7 @@ HAS_POTENTIAL_CONTRAINDICATION_TO_CT | > prior other condition > name like %clau
 HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or intolerance name like %contrast agent%
 HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI | > Same contraindications as for HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, and: (T.B.D.)
 IS_IN_DIALYSIS | Won't be evaluated
-HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | Currently resolves to undetermined
+HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | Currently resolves to `UNDETERMINED`
 
 Note:
 For all Prior other conditions applies that in case the condition is indicated as having no contraindication for therapy (isContraindicationForTherapy=0), the condition is ignored for evaluation.
@@ -374,12 +374,12 @@ For all Prior other conditions applies that in case the condition is indicated a
 Rule | When does a patient pass evaluation?
 ---|---
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestECG = 1
-HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to UNDETERMINED, out of range LVEF leads to FAIL
-HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to PASS, out of range LVEF leads to FAIL
+HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to `UNDETERMINED`, out of range LVEF leads to `FAIL`
+HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to `PASS`, out of range LVEF leads to `FAIL`
 HAS_QTC_OF_AT_MOST_X | QTcF or QTcB. Currently: Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
-HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to WARN in case LVEF is known and < 50%, otherwise resolve to NOT_EVALUATED 
+HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to `WARN` in case LVEF is known and < 50%, otherwise resolve to `NOT_EVALUATED` 
 
 ##### Rules related to infections
 
@@ -394,8 +394,8 @@ HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equ
 HAS_KNOWN_HTLV_INFECTION | Prior other conditions > name like %HTLV%
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
 HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
-MEETS_COVID_19_INFECTION_REQUIREMENTS | Currently resolves to undetermined
-IS_FULLY_VACCINATED_AGAINST_COVID_19 | Currently resolves to undetermined
+MEETS_COVID_19_INFECTION_REQUIREMENTS | Currently resolves to `UNDETERMINED`
+IS_FULLY_VACCINATED_AGAINST_COVID_19 | Currently resolves to `UNDETERMINED`
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated
 
 ##### Rules related to current medication 
@@ -404,23 +404,23 @@ Rule | When does a patient pass evaluation?| Note
 ---|---|---
 CURRENTLY_GETS_NAME_X_MEDICATION | Medication > name like %X% and status is active
 CURRENTLY_GETS_CATEGORY_X_MEDICATION | Medication > categories like %X% and status is active
-HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS | Medication > categories like %X% and active OR stopDate within Y weeks | Undetermined in case Y would require stop dates to be prior to ACTIN registration date.
+HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS | Medication > categories like %X% and active OR stopDate within Y weeks | `UNDETERMINED` in case Y would require stop dates to be prior to ACTIN registration date.
 CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active 
-CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to undetermined
-CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to undetermined
-CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X | T.B.D., currently resolves to undetermined | Cytochrome P450 enzymes
-CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X | T.B.D., currently resolves to undetermined
-HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS | T.B.D., currently resolves to undetermined
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to undetermined 
-CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X | T.B.D., currently resolves to undetermined  
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D., currently resolves to undetermined | P-glycoprotein
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D., currently resolves to undetermined | Breast cancer resistance protein
-CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to warn in case patient receives any medication
+CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to `UNDETERMINED`
+CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION | T.B.D., currently resolves to `UNDETERMINED`
+CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X | T.B.D., currently resolves to `UNDETERMINED` | Cytochrome P450 enzymes
+CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X | T.B.D., currently resolves to `UNDETERMINED`
+HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS | T.B.D., currently resolves to `UNDETERMINED`
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_CYP_X | T.B.D., currently resolves to `UNDETERMINED` 
+CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X | T.B.D., currently resolves to `UNDETERMINED`  
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_PGP | T.B.D., currently resolves to `UNDETERMINED` | P-glycoprotein
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_BCRP | T.B.D., currently resolves to `UNDETERMINED` | Breast cancer resistance protein
+CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to `WARN` in case patient receives any medication
 HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)
 IS_WILLING_TO_TAKE_PREMEDICATION | Currently won't be evaluated
 
@@ -467,7 +467,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | complication > Name like %X%
 HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
-HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | Warn in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
+HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | `WARN` in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
 HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %cervical%spondylotic%myelopathy% 
 HAS_URINARY_INCONTINENCE | complication > Name like %incontinence% or %bladder%control% 
 HAS_BLADDER_OUTFLOW_OBSTRUCTION | complication > Name like %bladder%outflow% or %bladder%outlet% or %bladder%obstruction% or %bladder%retention%, or prior other condition belonging to DOID 13948
@@ -479,16 +479,16 @@ Rule | When does a patient pass evaluation? | Note
 HAS_INTOLERANCE_TO_NAME_X | Intolerance > Name like %X%
 HAS_INTOLERANCE_BELONGING_TO_DOID_X | Intolerance > doid is equal of a child of doid X
 HAS_INTOLERANCE_FOR_TAXANE | Intolerance > Name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel
-HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION | Intolerance > Resolves to undetermined in case of presence of any active allergies belonging to categories in 'Medication' and/or DOID 0060500 
-HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to undetermined in case of presence of any allergies (T.B.D.)
-HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | Resolves to undetermined in case of previous treatment with categories like immunotherapy
+HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION | Intolerance > Resolves to `UNDETERMINED` in case of presence of any active allergies belonging to categories in 'Medication' and/or DOID 0060500 
+HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to `UNDETERMINED` in case of presence of any allergies (T.B.D.)
+HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | Resolves to `UNDETERMINED` in case of previous treatment with categories like immunotherapy
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X | Toxicities > grade => X
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y | Toxicities > grade => X and name like %Y%
 HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignoring name like %Y%. | Multiple names can be specified within 1 rule, separated by ";"
 
 Note for all TOXICITY rules: 
 - In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
-In case X = 3 or 4, the evaluation resolves to 'undetermined' if there are names for which grade is not specified.
+In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
 - In case X = 2, 3 or 4, and source is not Questionnaire: ignore the toxicity if the name of the toxicity is also indicated as a complication (T.B.I)
 
 ##### Rules related to vital function / body weight measurements
@@ -503,7 +503,7 @@ HAS_PULSE_OXIMETRY_OF_AT_LEAST_X | vitalFunction > Up to 5 most recent SpO2 meas
 HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND median value between X and Y 
 HAS_BODY_WEIGHT_OF_AT_LEAST_X | bodyWeight > Latest body weight measurement (in kg) => X
 
-For SBP, DBP and Pulse oximetry, evaluation should resolve to UNDETERMINED rather than FAIL in case of no PASS, but at least 1 of the up to 5 most recent values would be sufficient to PASS.
+For SBP, DBP and Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up to 5 most recent values would be sufficient to `PASS`.
 
 ##### Rules related to blood transfusions
 
@@ -523,7 +523,7 @@ HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surg
  
 Rule | When does a patient pass evaluation?
 ---|---
-IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to WARN
+IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to `WARN`
  
 ### Disease Ontology ID (DOID)
  

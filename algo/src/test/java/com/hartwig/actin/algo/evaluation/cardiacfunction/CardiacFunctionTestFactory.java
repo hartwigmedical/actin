@@ -29,6 +29,18 @@ final class CardiacFunctionTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withLVEF(@Nullable Double lvef) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(base.clinical())
+                        .clinicalStatus(ImmutableClinicalStatus.builder().from(base.clinical().clinicalStatus()).lvef(lvef).build())
+                        .build())
+                .build();
+    }
+
+    @NotNull
     public static PatientRecord withECG(@Nullable ECG ecg) {
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())

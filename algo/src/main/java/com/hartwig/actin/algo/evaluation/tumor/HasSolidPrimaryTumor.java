@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 //TODO: Implement according to README
 public class HasSolidPrimaryTumor implements EvaluationFunction {
 
+
     HasSolidPrimaryTumor() {
     }
 
