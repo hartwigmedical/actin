@@ -21,7 +21,7 @@ public final class TumorRuleMapping {
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator());
+        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator(doidModel));
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
         map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator(doidModel));
@@ -57,8 +57,8 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSolidPrimaryTumorCreator() {
-        return function -> new HasSolidPrimaryTumor();
+    private static FunctionCreator hasSolidPrimaryTumorCreator(@NotNull DoidModel doidModel) {
+        return function -> new HasSolidPrimaryTumor(doidModel);
     }
 
     @NotNull
