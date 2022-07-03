@@ -489,7 +489,7 @@ HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignori
 Note for all TOXICITY rules: 
 - In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
-- In case X = 2, 3 or 4, and source is not Questionnaire: ignore the toxicity if the name of the toxicity is also indicated as a complication (T.B.I)
+- (TODO) In case X = 2, 3 or 4, and source is not Questionnaire: ignore the toxicity if the name of the toxicity is also indicated as a complication
 
 ##### Rules related to vital function / body weight measurements
 
