@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -35,7 +36,8 @@ public final class OtherConditionRuleMapping {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel,
+            @NotNull ReferenceDateProvider referenceDateProvider) {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
@@ -60,7 +62,7 @@ public final class OtherConditionRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionWithDoidCreator(doidModel, VASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
-        map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS, hasHadOrganTransplantWithinYearsCreator());
+        map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS, hasHadOrganTransplantWithinYearsCreator(referenceDateProvider));
         map.put(EligibilityRule.HAS_GILBERT_DISEASE, hasPriorConditionWithDoidCreator(doidModel, GILBERT_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HYPERTENSION, hasPriorConditionWithDoidCreator(doidModel, HYPERTENSION_DOID));
         map.put(EligibilityRule.HAS_HYPOTENSION, hasPriorConditionWithNameCreator(HYPOTENSION_NAME));
@@ -114,12 +116,16 @@ public final class OtherConditionRuleMapping {
 
     @NotNull
     private static FunctionCreator hasHadOrganTransplantCreator() {
-        return function -> new HasHadOrganTransplant();
+        return function -> new HasHadOrganTransplant(null);
     }
 
     @NotNull
-    private static FunctionCreator hasHadOrganTransplantWithinYearsCreator() {
-        return function -> new HasHadOrganTransplantWithinYears();
+    private static FunctionCreator hasHadOrganTransplantWithinYearsCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+        return function -> {
+            int maxYearsAgo = FunctionInputResolver.createOneIntegerInput(function);
+            int minYear = referenceDateProvider.year() - maxYearsAgo;
+            return new HasHadOrganTransplant(minYear);
+        };
     }
 
     @NotNull

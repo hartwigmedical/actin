@@ -43,7 +43,7 @@ final class FunctionCreatorFactory {
         map.putAll(PreviousTumorRuleMapping.create(doidModel, referenceDateProvider));
         map.putAll(MolecularRuleMapping.create());
         map.putAll(LaboratoryRuleMapping.create(referenceDateProvider));
-        map.putAll(OtherConditionRuleMapping.create(doidModel));
+        map.putAll(OtherConditionRuleMapping.create(doidModel, referenceDateProvider));
         map.putAll(CardiacFunctionRuleMapping.create(doidModel));
         map.putAll(InfectionRuleMapping.create(doidModel));
         map.putAll(MedicationRuleMapping.create(referenceDateProvider));
