@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -56,5 +57,26 @@ public class SystemicTreatmentAnalyserTest {
         treatments.add(TreatmentTestFactory.builder().name("treatment D").startYear(2019).startMonth(5).isSystemic(false).build());
         assertEquals(3, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(6, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
+    }
+
+    @Test
+    public void canDetermineStopReasonOnLastSystemicTreatment() {
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(false).build());
+        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
+        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2020).stopReason("reason 1").build());
+        assertEquals("reason 1", SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).stopReason("reason 2").build());
+        assertEquals("reason 2", SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2022).stopReason(null).build());
+        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
     }
 }

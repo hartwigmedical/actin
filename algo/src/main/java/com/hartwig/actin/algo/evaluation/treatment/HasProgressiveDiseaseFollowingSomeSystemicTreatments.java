@@ -8,19 +8,52 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Implement according to README
 public class HasProgressiveDiseaseFollowingSomeSystemicTreatments implements EvaluationFunction {
 
-    HasProgressiveDiseaseFollowingSomeSystemicTreatments() {
+    static final String STOP_REASON_PD = "PD";
+
+    private final int minSystemicTreatments;
+
+    HasProgressiveDiseaseFollowingSomeSystemicTreatments(final int minSystemicTreatments) {
+        this.minSystemicTreatments = minSystemicTreatments;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        int minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments());
+        int maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments());
+        String stopReason = SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(record.clinical().priorTumorTreatments());
+
+        if (minSystemicCount >= minSystemicTreatments) {
+            if (stopReason != null && stopReason.equals(STOP_REASON_PD)) {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.PASS)
+                        .addPassSpecificMessages(
+                                "Patient received at least " + minSystemicTreatments + " systemic treatments with final stop reason PD")
+                        .addPassGeneralMessages("Nr of systemic treatments")
+                        .build();
+            } else {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.UNDETERMINED)
+                        .addUndeterminedSpecificMessages(
+                                "Patient received at least " + minSystemicTreatments + " systemic treatments but unclear final stop reason")
+                        .addUndeterminedGeneralMessages("Nr of systemic treatments")
+                        .build();
+            }
+        } else if (maxSystemicCount >= minSystemicTreatments) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Could not determine if patient received at least " + minSystemicTreatments + " systemic treatments")
+                    .addUndeterminedGeneralMessages("Nr of systemic treatments")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(
-                        "Currently it cannot be determined if there is progressive disease following some treatments")
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments")
+                .addFailGeneralMessages("Nr of systemic treatments")
                 .build();
     }
 }

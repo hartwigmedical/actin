@@ -56,6 +56,20 @@ final class SystemicTreatmentAnalyser {
         return systemicCount;
     }
 
+    @Nullable
+    public static String stopReasonOnLastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+        PriorTumorTreatment last = null;
+        for (PriorTumorTreatment treatment : priorTumorTreatments) {
+            if (treatment.isSystemic()) {
+                if (last == null || (last.startYear() == null && treatment.startYear() != null) || isAfter(treatment, last)) {
+                    last = treatment;
+                }
+            }
+        }
+
+        return last != null ? last.stopReason() : null;
+    }
+
     private static boolean isInterrupted(@NotNull PriorTumorTreatment mostRecent, @NotNull PriorTumorTreatment leastRecent,
             @NotNull List<PriorTumorTreatment> treatments) {
         // Treatments with ambiguous timeline are never considered interrupted.

@@ -93,7 +93,10 @@ public final class TreatmentRuleMapping {
 
     @NotNull
     private static FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
-        return function -> new HasProgressiveDiseaseFollowingSomeSystemicTreatments();
+        return function -> {
+            int minSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            return new HasProgressiveDiseaseFollowingSomeSystemicTreatments(minSystemicTreatments);
+        };
     }
 
     @NotNull
