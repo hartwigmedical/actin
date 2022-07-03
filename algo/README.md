@@ -172,7 +172,7 @@ Notes:
 - For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' configured (without further details), resolve to `UNDETERMINED`
 - For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' configured (without further details), resolve to `UNDETERMINED`
 - For all rules asking for categories with specified type (2]), if only the requested category configured (without further details), resolve to `UNDETERMINED`
-- TODO; For all rules asking for specific treatment or categories, in case the treatment line of interest also contains "Trial" and without this line the evaluation does not resolve to PASS, resolve to `UNDETERMINED`
+- (TODO) For all rules asking for specific treatment or categories, in case the treatment line of interest also contains "Trial" and without this line the evaluation does not resolve to PASS, resolve to `UNDETERMINED`
 
 ##### Rules related to prior primary tumors
 

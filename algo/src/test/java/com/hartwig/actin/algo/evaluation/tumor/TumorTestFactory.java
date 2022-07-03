@@ -13,6 +13,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,6 +137,16 @@ final class TumorTestFactory {
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .tumor(tumor)
                         .build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withMolecularExperimentType(@Nullable ExperimentType type) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
                 .build();
     }
 }

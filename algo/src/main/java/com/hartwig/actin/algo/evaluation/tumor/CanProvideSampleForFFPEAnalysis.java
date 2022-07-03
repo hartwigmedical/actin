@@ -5,10 +5,10 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Implement according to README
 public class CanProvideSampleForFFPEAnalysis implements EvaluationFunction {
 
     CanProvideSampleForFFPEAnalysis() {
@@ -17,11 +17,18 @@ public class CanProvideSampleForFFPEAnalysis implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        if (record.molecular().type() != ExperimentType.WGS) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Can't determine whether patient can provide sample for FFPE analysis without WGS")
+                    .addUndeterminedGeneralMessages("FFPE analysis")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.NOT_EVALUATED)
-                .addPassSpecificMessages("Currently it is assumed that sample for FFPE analysis can be provided")
-                .addPassGeneralMessages("Sample FFPE analysis")
+                .result(EvaluationResult.PASS)
+                .addPassSpecificMessages("It is assumed that patient can provide sample for FFPE analysis (presence of WGS analysis)")
+                .addPassGeneralMessages("FFPE analysis")
                 .build();
     }
-
 }
