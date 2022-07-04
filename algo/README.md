@@ -122,7 +122,8 @@ HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLes
 HAS_LUNG_METASTASES | Tumor details > hasLungLesions = 1
 HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
-CAN_PROVIDE_ARCHIVAL_OR_NEW_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
+CAN_PROVIDE_FRESH_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
+CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
 HAS_ASSESSABLE_DISEASE | Tumor details > hasMeasurableDisease = 1, | `UNDETERMINED` in case missing or false
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to `WARN` in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
