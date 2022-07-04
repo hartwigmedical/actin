@@ -108,9 +108,12 @@ HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141
 HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV
-HAS_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C)
+HAS_LOCALLY_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C)
 HAS_METASTATIC_CANCER | Tumor details > stage should be IV 
 HAS_UNRESECTABLE_CANCER | Tumor details > stage should be IV | `UNDETERMINED` in case of III(A/B/C/)
+HAS_UNRESECTABLE_STAGE_III_CANCER | Tumor details > stage, `UNDETERMINED` in case of III(A/B/C/)
+HAS_RECURRENT_CANCER | Currently resolves to `UNDETERMINED`
+HAS_INCURABLE_CANCER | Tumor details > stage should be IV | `UNDETERMINED` in case of III(A/B/C/)
 HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions = 1
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1

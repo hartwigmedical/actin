@@ -1,8 +1,5 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -13,18 +10,9 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasAdvancedCancer implements EvaluationFunction {
+public class HasIncurableCancer implements EvaluationFunction {
 
-    private static final Set<TumorStage> STAGES_CONSIDERED_ADVANCED = Sets.newHashSet();
-
-    static {
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.III);
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.IIIA);
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.IIIB);
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.IIIC);
-    }
-
-    HasAdvancedCancer() {
+    HasIncurableCancer() {
     }
 
     @NotNull
@@ -40,16 +28,28 @@ public class HasAdvancedCancer implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = STAGES_CONSIDERED_ADVANCED.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result;
+        if (stage == TumorStage.IV) {
+            result = EvaluationResult.PASS;
+        } else if (stage == TumorStage.III || stage.category() == TumorStage.III) {
+            result = EvaluationResult.UNDETERMINED;
+        } else {
+            result = EvaluationResult.FAIL;
+        }
+
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered advanced");
-            builder.addFailGeneralMessages("Tumor stage");
+            builder.addFailSpecificMessages("Patient should have no incurable cancer");
+            builder.addFailGeneralMessages("No incurable cancer");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            builder.addUndeterminedSpecificMessages("Undetermined if patient has incurable cancer");
+            builder.addUndeterminedGeneralMessages("Undetermined if cancer incurable");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered advanced");
-            builder.addPassGeneralMessages("Tumor stage");
+            builder.addPassSpecificMessages("Stage IV cancer is considered incurable");
+            builder.addPassGeneralMessages("Incurable cancer");
         }
 
         return builder.build();
     }
+
 }

@@ -29,9 +29,12 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
-        map.put(EligibilityRule.HAS_ADVANCED_CANCER, hasAdvancedCancerCreator());
+        map.put(EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER, hasLocallyAdvancedCancerCreator());
         map.put(EligibilityRule.HAS_METASTATIC_CANCER, hasMetastaticCancerCreator());
         map.put(EligibilityRule.HAS_UNRESECTABLE_CANCER, hasUnresectableCancerCreator());
+        map.put(EligibilityRule.HAS_UNRESECTABLE_STAGE_III_CANCER, hasUnresectableStageIIICancerCreator());
+        map.put(EligibilityRule.HAS_RECURRENT_CANCER, hasRecurrentCancerCreator());
+        map.put(EligibilityRule.HAS_INCURABLE_CANCER, hasIncurableCancerCreator());
         map.put(EligibilityRule.HAS_ANY_LESION, hasAnyLesionCreator());
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
@@ -108,8 +111,8 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasAdvancedCancerCreator() {
-        return function -> new HasAdvancedCancer();
+    private static FunctionCreator hasLocallyAdvancedCancerCreator() {
+        return function -> new HasLocallyAdvancedCancer();
     }
 
     @NotNull
@@ -120,6 +123,21 @@ public final class TumorRuleMapping {
     @NotNull
     private static FunctionCreator hasUnresectableCancerCreator() {
         return function -> new HasUnresectableCancer();
+    }
+
+    @NotNull
+    private static FunctionCreator hasUnresectableStageIIICancerCreator() {
+        return function -> new HasUnresectableStageIIICancer();
+    }
+
+    @NotNull
+    private static FunctionCreator hasRecurrentCancerCreator() {
+        return function -> new HasRecurrentCancer();
+    }
+
+    @NotNull
+    private static FunctionCreator hasIncurableCancerCreator() {
+        return function -> new HasIncurableCancer();
     }
 
     @NotNull

@@ -33,9 +33,12 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_STAGE_X, FunctionInput.ONE_TUMOR_STAGE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_ADVANCED_CANCER, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_METASTATIC_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_UNRESECTABLE_CANCER, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_UNRESECTABLE_STAGE_III_CANCER, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECURRENT_CANCER, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_INCURABLE_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ANY_LESION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIVER_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, FunctionInput.NONE);

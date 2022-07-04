@@ -7,14 +7,14 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.junit.Test;
 
-public class HasAdvancedCancerTest {
+public class HasRecurrentCancerTest {
 
     @Test
     public void canEvaluate() {
-        HasAdvancedCancer function = new HasAdvancedCancer();
+        HasRecurrentCancer function = new HasRecurrentCancer();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)));
     }
 }
