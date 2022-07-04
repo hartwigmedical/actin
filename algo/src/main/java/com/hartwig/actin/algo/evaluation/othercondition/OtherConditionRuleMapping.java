@@ -13,22 +13,23 @@ import org.jetbrains.annotations.NotNull;
 
 public final class OtherConditionRuleMapping {
 
-    private static final String GILBERT_DISEASE_DOID = "2739";
     private static final String AUTOIMMUNE_DISEASE_DOID = "417";
     private static final String BRAIN_DISEASE_DOID = "936";
     private static final String CARDIAC_DISEASE_DOID = "114";
-    private static final String VASCULAR_DISEASE_DOID = "114";
     private static final String CARDIOVASCULAR_DISEASE_DOID = "1287";
     private static final String CENTRAL_NERVOUS_SYSTEM_DOID = "331";
-    private static final String LUNG_DISEASE_DOID = "850";
-    private static final String LIVER_DISEASE_DOID = "409";
-    private static final String TIA_DOID = "224";
-    private static final String MYOCARDIAL_INFARCT_DOID = "5844";
-    private static final String STROKE_DOID = "6713";
-    private static final String HYPERTENSION_DOID = "10763";
     private static final String DIABETES_DOID = "9351";
     private static final String GASTROINTESTINAL_DISEASE_DOID = "77";
+    private static final String GILBERT_DISEASE_DOID = "2739";
+    private static final String HYPERTENSION_DOID = "10763";
     private static final String IMMUNE_SYSTEM_DISEASE_DOID = "2914";
+    private static final String INTERSTITIAL_LUNG_DISEASE_DOID = "3082";
+    private static final String LUNG_DISEASE_DOID = "850";
+    private static final String LIVER_DISEASE_DOID = "409";
+    private static final String MYOCARDIAL_INFARCT_DOID = "5844";
+    private static final String STROKE_DOID = "6713";
+    private static final String TIA_DOID = "224";
+    private static final String VASCULAR_DISEASE_DOID = "114";
 
     private static final String HYPOTENSION_NAME = "hypotension";
 
@@ -53,6 +54,8 @@ public final class OtherConditionRuleMapping {
                 hasPriorConditionWithDoidCreator(doidModel, GASTROINTESTINAL_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,
                 hasPriorConditionWithDoidCreator(doidModel, IMMUNE_SYSTEM_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE,
+                hasPriorConditionWithDoidCreator(doidModel, INTERSTITIAL_LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasPriorConditionWithDoidCreator(doidModel, LIVER_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasPriorConditionWithDoidCreator(doidModel, LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasPriorConditionWithDoidCreator(doidModel, MYOCARDIAL_INFARCT_DOID));

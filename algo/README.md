@@ -344,6 +344,7 @@ HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured 
 HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 331
 HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 77
 HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
+HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE |  Prior other conditions > any configured doid should be equal or be a child of DOID 3082
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
