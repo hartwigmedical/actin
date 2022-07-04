@@ -23,7 +23,7 @@ public class HasSolidPrimaryTumor implements EvaluationFunction {
         NON_SOLID_CANCER_DOIDS.add("712"); // refractory hematologic cancer
         NON_SOLID_CANCER_DOIDS.add("4960"); // bone marrow cancer
 
-        WARN_SOLID_CANCER_DOIDS.add("2536"); // chronic inflammatory demyelinating polyneuritis
+        WARN_SOLID_CANCER_DOIDS.add("2531"); // hematologic cancer
     }
 
     @NotNull

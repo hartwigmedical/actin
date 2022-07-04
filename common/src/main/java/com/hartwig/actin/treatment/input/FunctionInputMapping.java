@@ -26,6 +26,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, FunctionInput.ONE_TUMOR_TYPE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, FunctionInput.NONE);
