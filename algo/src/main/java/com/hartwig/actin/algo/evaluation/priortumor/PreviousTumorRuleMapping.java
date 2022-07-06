@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -26,6 +26,8 @@ public final class PreviousTumorRuleMapping {
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X,
                 hasHistoryOfSecondMalignancyWithDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X,
+                hasHistoryOfSecondMalignancyWithDoidTermCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS,
                 hasHistoryOfSecondMalignancyWithinYearsCreator(referenceDateProvider));
 
@@ -47,6 +49,15 @@ public final class PreviousTumorRuleMapping {
         return function -> {
             String doidToMatch = FunctionInputResolver.createOneStringInput(function);
             return new HasHistoryOfSecondMalignancyWithDOID(doidModel, doidToMatch);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasHistoryOfSecondMalignancyWithDoidTermCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            // TODO Map DOID term to DOID
+            String doidTermToMatch = FunctionInputResolver.createOneDoidTermInput(function);
+            return new HasHistoryOfSecondMalignancyWithDOID(doidModel, doidTermToMatch);
         };
     }
 

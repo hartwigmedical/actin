@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid.datamodel;
+package com.hartwig.actin.doid.datamodel;
 
 import java.util.List;
 
@@ -9,7 +9,10 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(allParameters = true,
              passAnnotations = { NotNull.class, Nullable.class })
-public abstract class GraphMetadata {
+public abstract class Metadata {
+
+    @Nullable
+    public abstract Definition definition();
 
     @Nullable
     public abstract List<String> subsets();
@@ -18,8 +21,18 @@ public abstract class GraphMetadata {
     public abstract List<Xref> xrefs();
 
     @Nullable
+    public abstract List<Synonym> synonyms();
+
+    @Nullable
     public abstract List<BasicPropertyValue> basicPropertyValues();
 
     @Nullable
-    public abstract String version();
+    public abstract String snomedConceptId();
+
+    @Nullable
+    public abstract Boolean deprecated();
+
+    @Nullable
+    public abstract List<String> comments();
+
 }

@@ -9,8 +9,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.doid.TestDoidModelFactory;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

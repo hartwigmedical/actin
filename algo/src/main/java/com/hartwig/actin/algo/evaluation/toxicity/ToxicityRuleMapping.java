@@ -4,8 +4,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
@@ -24,6 +24,7 @@ public final class ToxicityRuleMapping {
 
         map.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, hasIntoleranceWithSpecificNameCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, hasIntoleranceWithSpecificDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, hasIntoleranceWithSpecificDoidTermCreator(doidModel));
         map.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, hasIntoleranceToTaxaneCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, hasIntoleranceRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
@@ -48,6 +49,15 @@ public final class ToxicityRuleMapping {
         return function -> {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
             return new HasIntoleranceWithSpecificDoid(doidModel, doidToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasIntoleranceWithSpecificDoidTermCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            // TODO Map DOID term to DOID
+            String doidTermToFind = FunctionInputResolver.createOneDoidTermInput(function);
+            return new HasIntoleranceWithSpecificDoid(doidModel, doidTermToFind);
         };
     }
 

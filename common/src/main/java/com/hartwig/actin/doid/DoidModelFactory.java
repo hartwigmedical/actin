@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.doid;
 
 import java.util.Collection;
 import java.util.Map;
@@ -6,9 +6,9 @@ import java.util.Map;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
-import com.hartwig.actin.algo.doid.datamodel.Edge;
-import com.hartwig.actin.algo.doid.datamodel.Node;
+import com.hartwig.actin.doid.datamodel.DoidEntry;
+import com.hartwig.actin.doid.datamodel.Edge;
+import com.hartwig.actin.doid.datamodel.Node;
 
 import org.jetbrains.annotations.NotNull;
 

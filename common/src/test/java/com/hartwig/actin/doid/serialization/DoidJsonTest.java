@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid.serialization;
+package com.hartwig.actin.doid.serialization;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -9,17 +9,18 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import com.hartwig.actin.algo.doid.datamodel.BasicPropertyValue;
-import com.hartwig.actin.algo.doid.datamodel.Definition;
-import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
-import com.hartwig.actin.algo.doid.datamodel.Edge;
-import com.hartwig.actin.algo.doid.datamodel.ImmutableXref;
-import com.hartwig.actin.algo.doid.datamodel.Node;
-import com.hartwig.actin.algo.doid.datamodel.Synonym;
-import com.hartwig.actin.algo.doid.datamodel.Xref;
+import com.hartwig.actin.doid.datamodel.BasicPropertyValue;
+import com.hartwig.actin.doid.datamodel.Definition;
+import com.hartwig.actin.doid.datamodel.DoidEntry;
+import com.hartwig.actin.doid.datamodel.Edge;
+import com.hartwig.actin.doid.datamodel.ImmutableXref;
+import com.hartwig.actin.doid.datamodel.Node;
+import com.hartwig.actin.doid.datamodel.Synonym;
+import com.hartwig.actin.doid.datamodel.Xref;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class DoidJsonTest {
@@ -114,12 +115,12 @@ public class DoidJsonTest {
         assertEquals(Lists.newArrayList("http://purl.obolibrary.org/obo/doid#NCIthesaurus"), subset);
 
         List<Xref> xrefs = node2.metadata().xrefs();
-        assertEquals(ImmutableXref.builder().val("NCI:C50706").build(), xrefs.get(0));
-        assertEquals(ImmutableXref.builder().val("MESH:D003668").build(), xrefs.get(1));
-        assertEquals(ImmutableXref.builder().val("ICD9CM:707.0").build(), xrefs.get(2));
-        assertEquals(ImmutableXref.builder().val("UMLS_CUI:C0011127").build(), xrefs.get(3));
-        assertEquals(ImmutableXref.builder().val("SNOMEDCT_US_2020_03_01:28103007").build(), xrefs.get(4));
-        assertEquals(ImmutableXref.builder().val("ICD10CM:L89").build(), xrefs.get(5));
+        Assert.assertEquals(ImmutableXref.builder().val("NCI:C50706").build(), xrefs.get(0));
+        Assert.assertEquals(ImmutableXref.builder().val("MESH:D003668").build(), xrefs.get(1));
+        Assert.assertEquals(ImmutableXref.builder().val("ICD9CM:707.0").build(), xrefs.get(2));
+        Assert.assertEquals(ImmutableXref.builder().val("UMLS_CUI:C0011127").build(), xrefs.get(3));
+        Assert.assertEquals(ImmutableXref.builder().val("SNOMEDCT_US_2020_03_01:28103007").build(), xrefs.get(4));
+        Assert.assertEquals(ImmutableXref.builder().val("ICD10CM:L89").build(), xrefs.get(5));
 
         Synonym synonym1 = node2.metadata().synonyms().get(0);
         assertEquals("hasExactSynonym", synonym1.pred());

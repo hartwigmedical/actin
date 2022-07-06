@@ -4,8 +4,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -42,6 +42,8 @@ public final class OtherConditionRuleMapping {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator(doidModel));
+        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X,
+                hasPriorConditionWithConfiguredDOIDTermCreator(doidModel));
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithConfiguredNameCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(doidModel, AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_BRAIN_DISEASE, hasPriorConditionWithDoidCreator(doidModel, BRAIN_DISEASE_DOID));
@@ -81,11 +83,21 @@ public final class OtherConditionRuleMapping {
         return map;
     }
 
+
     @NotNull
     private static FunctionCreator hasPriorConditionWithConfiguredDOIDCreator(@NotNull DoidModel doidModel) {
         return function -> {
             String doidToFind = FunctionInputResolver.createOneStringInput(function);
             return new HasHadPriorConditionWithDoid(doidModel, doidToFind);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasPriorConditionWithConfiguredDOIDTermCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            // TODO Map DOID term to DOID
+            String doidTermToFind = FunctionInputResolver.createOneDoidTermInput(function);
+            return new HasHadPriorConditionWithDoid(doidModel, doidTermToFind);
         };
     }
 

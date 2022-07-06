@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.doid.TestDoidModelFactory;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid;
+package com.hartwig.actin.doid;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -8,13 +8,13 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.doid.datamodel.DoidEntry;
-import com.hartwig.actin.algo.doid.datamodel.DoidEntryTestFactory;
-import com.hartwig.actin.algo.doid.datamodel.Edge;
-import com.hartwig.actin.algo.doid.datamodel.ImmutableDoidEntry;
-import com.hartwig.actin.algo.doid.datamodel.ImmutableEdge;
-import com.hartwig.actin.algo.doid.datamodel.ImmutableNode;
-import com.hartwig.actin.algo.doid.datamodel.Node;
+import com.hartwig.actin.doid.datamodel.DoidEntry;
+import com.hartwig.actin.doid.datamodel.DoidEntryTestFactory;
+import com.hartwig.actin.doid.datamodel.Edge;
+import com.hartwig.actin.doid.datamodel.ImmutableDoidEntry;
+import com.hartwig.actin.doid.datamodel.ImmutableEdge;
+import com.hartwig.actin.doid.datamodel.ImmutableNode;
+import com.hartwig.actin.doid.datamodel.Node;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

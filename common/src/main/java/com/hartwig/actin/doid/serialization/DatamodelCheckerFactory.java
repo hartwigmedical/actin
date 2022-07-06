@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid.serialization;
+package com.hartwig.actin.doid.serialization;
 
 import java.util.Map;
 

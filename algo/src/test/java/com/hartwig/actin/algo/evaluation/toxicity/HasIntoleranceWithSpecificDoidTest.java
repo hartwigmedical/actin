@@ -4,9 +4,9 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.junit.Test;
 

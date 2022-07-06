@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.doid.TestDoidModelFactory;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.junit.Test;
 

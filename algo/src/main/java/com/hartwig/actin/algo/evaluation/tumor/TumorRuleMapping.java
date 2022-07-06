@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
@@ -24,6 +24,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator(doidModel));
         map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(doidModel));
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
+        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, hasPrimaryTumorBelongsToDoidTermCreator(doidModel));
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
         map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator(doidModel));
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
@@ -76,6 +77,15 @@ public final class TumorRuleMapping {
         return function -> {
             String doidToMatch = FunctionInputResolver.createOneStringInput(function);
             return new PrimaryTumorLocationBelongsToDoid(doidModel, doidToMatch, false, false);
+        };
+    }
+
+    @NotNull
+    private static FunctionCreator hasPrimaryTumorBelongsToDoidTermCreator(@NotNull DoidModel doidModel) {
+        return function -> {
+            // TODO Map DOID term to DOID
+            String doidTermToMatch = FunctionInputResolver.createOneDoidTermInput(function);
+            return new PrimaryTumorLocationBelongsToDoid(doidModel, doidTermToMatch, false, false);
         };
     }
 

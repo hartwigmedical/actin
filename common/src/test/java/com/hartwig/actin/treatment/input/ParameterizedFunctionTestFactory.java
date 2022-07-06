@@ -99,6 +99,9 @@ public final class ParameterizedFunctionTestFactory {
             case ONE_HLA_ALLELE: {
                 return Lists.newArrayList("A*02:01");
             }
+            case ONE_DOID_TERM: {
+                return Lists.newArrayList("skin melanoma");
+            }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);
             }

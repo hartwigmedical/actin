@@ -7,8 +7,8 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
-import com.hartwig.actin.algo.doid.TestDoidModelFactory;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapping;
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapping;
@@ -23,6 +22,7 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapping;
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapping;
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapping;
 import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapping;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;

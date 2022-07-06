@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.doid.datamodel;
+package com.hartwig.actin.doid.datamodel;
 
 import java.util.List;
 

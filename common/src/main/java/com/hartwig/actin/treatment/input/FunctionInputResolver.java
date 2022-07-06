@@ -152,6 +152,10 @@ public final class FunctionInputResolver {
                     createOneHlaAlleleInput(function);
                     return true;
                 }
+                case ONE_DOID_TERM: {
+                    createOneDoidTermInput(function);
+                    return true;
+                }
                 default: {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule());
                     return null;
@@ -160,6 +164,14 @@ public final class FunctionInputResolver {
         } catch (Exception exception) {
             return false;
         }
+    }
+
+    @NotNull
+    public static String createOneDoidTermInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_DOID_TERM, 1);
+
+        // TODO resolve doid.
+        return (String) function.parameters().get(0);
     }
 
     public static int createOneIntegerInput(@NotNull EligibilityFunction function) {

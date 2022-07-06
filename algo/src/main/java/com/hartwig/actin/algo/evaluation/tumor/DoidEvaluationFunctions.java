@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.Set;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidModel;
+import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
 

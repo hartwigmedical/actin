@@ -28,6 +28,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, FunctionInput.ONE_TUMOR_TYPE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
@@ -90,6 +91,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS, FunctionInput.ONE_INTEGER);
 
         RULE_INPUT_MAP.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, FunctionInput.ONE_STRING);
@@ -174,6 +176,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_BRAIN_DISEASE, FunctionInput.NONE);
@@ -278,6 +281,7 @@ final class FunctionInputMapping {
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, FunctionInput.NONE);

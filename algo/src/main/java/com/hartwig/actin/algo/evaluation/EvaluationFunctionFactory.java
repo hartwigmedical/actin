@@ -5,11 +5,11 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.doid.DoidModel;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
 import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.algo.evaluation.composite.WarnIf;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
