@@ -4,19 +4,21 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class CardiacFunctionRuleMapping {
+public class CardiacFunctionRuleMapper extends RuleMapper {
 
-    private CardiacFunctionRuleMapping() {
+    public CardiacFunctionRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasAnyTypeOfCardiacArrhythmiaCreator());
@@ -24,41 +26,40 @@ public final class CardiacFunctionRuleMapping {
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, hasLimitedQTCFCreator());
-        map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator(doidModel));
+        map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator());
         map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, hasNormalCardiacFunctionByMUGAOrTTECreator());
 
         return map;
     }
 
     @NotNull
-    private static FunctionCreator hasAnyTypeOfCardiacArrhythmiaCreator() {
+    private FunctionCreator hasAnyTypeOfCardiacArrhythmiaCreator() {
         return function -> new HasCardiacArrhythmia();
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientLVEFCreator(boolean passIfUnknown) {
+    private FunctionCreator hasSufficientLVEFCreator(boolean passIfUnknown) {
         return function -> {
-            double minLVEF = FunctionInputResolver.createOneDoubleInput(function);
+            double minLVEF = functionInputResolver().createOneDoubleInput(function);
             return new HasSufficientLVEF(minLVEF, passIfUnknown);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedQTCFCreator() {
+    private FunctionCreator hasLimitedQTCFCreator() {
         return function -> {
-            double maxQTCF = FunctionInputResolver.createOneDoubleInput(function);
+            double maxQTCF = functionInputResolver().createOneDoubleInput(function);
             return new HasLimitedQTCF(maxQTCF);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLongQTSyndromeCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasLongQTSyndrome(doidModel);
+    private FunctionCreator hasLongQTSyndromeCreator() {
+        return function -> new HasLongQTSyndrome(doidModel());
     }
 
     @NotNull
-    private static FunctionCreator hasNormalCardiacFunctionByMUGAOrTTECreator() {
+    private  FunctionCreator hasNormalCardiacFunctionByMUGAOrTTECreator() {
         return function -> new HasNormalCardiacFunctionByMUGAOrTTE();
     }
-
 }

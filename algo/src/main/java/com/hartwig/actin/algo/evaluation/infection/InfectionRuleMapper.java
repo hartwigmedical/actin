@@ -4,12 +4,13 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class InfectionRuleMapping {
+public class InfectionRuleMapper extends RuleMapper {
 
     private static final String HEPATITIS_A_DOID = "12549";
     private static final String HEPATITIS_B_DOID = "2043";
@@ -18,22 +19,24 @@ public final class InfectionRuleMapping {
     private static final String CYTOMEGALOVIRUS_DOID = "0080827";
     private static final String TUBERCOLOSIS_DOID = "399";
 
-    private InfectionRuleMapping() {
+    public InfectionRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_ACTIVE_INFECTION, hasActiveInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_EBV_INFECTION, hasKnownEBVInfectionCreator());
-        map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_A_INFECTION, hasSpecificInfectionCreator(doidModel, HEPATITIS_A_DOID));
-        map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_B_INFECTION, hasSpecificInfectionCreator(doidModel, HEPATITIS_B_DOID));
-        map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasSpecificInfectionCreator(doidModel, HEPATITIS_C_DOID));
-        map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasSpecificInfectionCreator(doidModel, HIV_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_A_INFECTION, hasSpecificInfectionCreator(HEPATITIS_A_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_B_INFECTION, hasSpecificInfectionCreator(HEPATITIS_B_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasSpecificInfectionCreator(HEPATITIS_C_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasSpecificInfectionCreator(HIV_DOID));
         map.put(EligibilityRule.HAS_KNOWN_HTLV_INFECTION, hasKnownHTLVInfectionCreator());
-        map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(doidModel, CYTOMEGALOVIRUS_DOID));
-        map.put(EligibilityRule.HAS_KNOWN_TUBERCOLOSIS_INFECTION, hasSpecificInfectionCreator(doidModel, TUBERCOLOSIS_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(CYTOMEGALOVIRUS_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_TUBERCOLOSIS_INFECTION, hasSpecificInfectionCreator(TUBERCOLOSIS_DOID));
         map.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, meetsCovid19InfectionRequirementsCreator());
         map.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, isFullyVaccinatedCovid19Creator());
         map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToAttenuatedVaccineUseCreator());
@@ -42,37 +45,37 @@ public final class InfectionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasActiveInfectionCreator() {
+    private FunctionCreator hasActiveInfectionCreator() {
         return function -> new HasActiveInfection();
     }
 
     @NotNull
-    private static FunctionCreator hasKnownEBVInfectionCreator() {
+    private FunctionCreator hasKnownEBVInfectionCreator() {
         return function -> new HasKnownEBVInfection();
     }
 
     @NotNull
-    private static FunctionCreator hasSpecificInfectionCreator(@NotNull DoidModel doidModel, @NotNull String doidToFind) {
-        return function -> new HasSpecificInfection(doidModel, doidToFind);
+    private FunctionCreator hasSpecificInfectionCreator(@NotNull String doidToFind) {
+        return function -> new HasSpecificInfection(doidModel(), doidToFind);
     }
 
     @NotNull
-    private static FunctionCreator hasKnownHTLVInfectionCreator() {
+    private FunctionCreator hasKnownHTLVInfectionCreator() {
         return function -> new HasKnownHTLVInfection();
     }
 
     @NotNull
-    private static FunctionCreator meetsCovid19InfectionRequirementsCreator() {
+    private FunctionCreator meetsCovid19InfectionRequirementsCreator() {
         return function -> new MeetsCovid19InfectionRequirements();
     }
 
     @NotNull
-    private static FunctionCreator isFullyVaccinatedCovid19Creator() {
+    private FunctionCreator isFullyVaccinatedCovid19Creator() {
         return function -> new IsFullyVaccinatedCovid19();
     }
 
     @NotNull
-    private static FunctionCreator canAdhereToAttenuatedVaccineUseCreator() {
+    private FunctionCreator canAdhereToAttenuatedVaccineUseCreator() {
         return function -> new CanAdhereToAttenuatedVaccineUse();
     }
 }

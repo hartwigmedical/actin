@@ -21,19 +21,24 @@ public class EvaluationFunctionFactory {
 
     @NotNull
     private final Map<EligibilityRule, FunctionCreator> functionCreatorMap;
+    @NotNull
+    private final FunctionInputResolver functionInputResolver;
 
     @NotNull
     public static EvaluationFunctionFactory create(@NotNull DoidModel doidModel, @NotNull ReferenceDateProvider referenceDateProvider) {
-        return new EvaluationFunctionFactory(FunctionCreatorFactory.create(doidModel, referenceDateProvider));
+        return new EvaluationFunctionFactory(FunctionCreatorFactory.create(doidModel, referenceDateProvider),
+                new FunctionInputResolver(doidModel));
     }
 
-    private EvaluationFunctionFactory(@NotNull final Map<EligibilityRule, FunctionCreator> functionCreatorMap) {
+    public EvaluationFunctionFactory(@NotNull final Map<EligibilityRule, FunctionCreator> functionCreatorMap,
+            @NotNull final FunctionInputResolver functionInputResolver) {
         this.functionCreatorMap = functionCreatorMap;
+        this.functionInputResolver = functionInputResolver;
     }
 
     @NotNull
     public EvaluationFunction create(@NotNull EligibilityFunction function) {
-        Boolean hasValidInputs = FunctionInputResolver.hasValidInputs(function);
+        Boolean hasValidInputs = functionInputResolver.hasValidInputs(function);
         if (hasValidInputs == null || !hasValidInputs) {
             throw new IllegalStateException("No valid inputs defined for " + function);
         }

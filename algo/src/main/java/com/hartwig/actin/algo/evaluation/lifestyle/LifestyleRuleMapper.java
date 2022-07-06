@@ -4,17 +4,21 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class LifestyleRuleMapping {
+public class LifestyleRuleMapper extends RuleMapper {
 
-    private LifestyleRuleMapping() {
+    public LifestyleRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, isWillingToNotUseContactLensesCreator());
@@ -23,7 +27,7 @@ public final class LifestyleRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator isWillingToNotUseContactLensesCreator() {
+    private FunctionCreator isWillingToNotUseContactLensesCreator() {
         return function -> new IsWillingToNotUseContactLenses();
     }
 }

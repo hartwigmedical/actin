@@ -3,23 +3,25 @@ package com.hartwig.actin.algo.evaluation.general;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class GeneralRuleMapping {
+public class GeneralRuleMapper extends RuleMapper {
 
-    private GeneralRuleMapping() {
+    public GeneralRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator(referenceDateProvider));
+        map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator());
         map.put(EligibilityRule.IS_MALE, isMaleCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
@@ -37,72 +39,71 @@ public final class GeneralRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasAtLeastCertainAgeCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+    private FunctionCreator hasAtLeastCertainAgeCreator() {
         return function -> {
-            int minAge = FunctionInputResolver.createOneIntegerInput(function);
-            return new HasAtLeastCertainAge(referenceDateProvider.year(), minAge);
+            int minAge = functionInputResolver().createOneIntegerInput(function);
+            return new HasAtLeastCertainAge(referenceDateProvider().year(), minAge);
         };
     }
 
     @NotNull
-    private static FunctionCreator isMaleCreator() {
+    private FunctionCreator isMaleCreator() {
         return function -> new IsMale();
     }
 
     @NotNull
-    private static FunctionCreator hasMaximumWHOStatusCreator() {
+    private FunctionCreator hasMaximumWHOStatusCreator() {
         return function -> {
-            int maximumWHO = FunctionInputResolver.createOneIntegerInput(function);
+            int maximumWHO = functionInputResolver().createOneIntegerInput(function);
             return new HasMaximumWHOStatus(maximumWHO);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasMinimumKarnofskyScoreCreator() {
+    private FunctionCreator hasMinimumKarnofskyScoreCreator() {
         return function -> new HasMinimumKarnofskyScore();
     }
 
     @NotNull
-    private static FunctionCreator hasMinimumLanskyScoreCreator() {
+    private FunctionCreator hasMinimumLanskyScoreCreator() {
         return function -> new HasMinimumLanskyScore();
     }
 
     @NotNull
-    private static FunctionCreator canGiveAdequateInformedConsentCreator() {
+    private FunctionCreator canGiveAdequateInformedConsentCreator() {
         return function -> new CanGiveAdequateInformedConsent();
     }
 
     @NotNull
-    private static FunctionCreator isInvolvedInStudyProceduresCreator() {
+    private FunctionCreator isInvolvedInStudyProceduresCreator() {
         return function -> new IsInvolvedInStudyProcedures();
     }
 
     @NotNull
-    private static FunctionCreator hasRapidlyDeterioratingConditionCreator() {
+    private FunctionCreator hasRapidlyDeterioratingConditionCreator() {
         return function -> new HasRapidlyDeterioratingCondition();
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientLifeExpectancyCreator() {
+    private FunctionCreator hasSufficientLifeExpectancyCreator() {
         return function -> new HasSufficientLifeExpectancy();
     }
 
     @NotNull
-    private static FunctionCreator isTreatedInHospitalCreator() {
+    private FunctionCreator isTreatedInHospitalCreator() {
         return function -> new IsTreatedInHospital();
     }
 
     @NotNull
-    private static FunctionCreator willParticipateInTrialInCountryCreator() {
+    private FunctionCreator willParticipateInTrialInCountryCreator() {
         return function -> {
-            String country = FunctionInputResolver.createOneStringInput(function);
+            String country = functionInputResolver().createOneStringInput(function);
             return new WillParticipateInTrialInCountry(country);
         };
     }
 
     @NotNull
-    private static FunctionCreator isLegallyInstitutionalizedCreator() {
+    private FunctionCreator isLegallyInstitutionalizedCreator() {
         return function -> new IsLegallyInstitutionalized();
     }
-
 }

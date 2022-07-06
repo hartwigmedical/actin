@@ -1,29 +1,30 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ComplicationRuleMapping {
+public class ComplicationRuleMapper extends RuleMapper {
 
-    private ComplicationRuleMapping() {
+    public ComplicationRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_COMPLICATION_X, hasSpecificComplicationCreator());
-        map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator(referenceDateProvider.date()));
+        map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
         map.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, hasLeptomeningealDiseaseCreator());
         map.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, hasSpinalCordCompressionCreator());
         map.put(EligibilityRule.HAS_URINARY_INCONTINENCE, hasUrinaryIncontinenceCreator());
@@ -33,36 +34,36 @@ public final class ComplicationRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSpecificComplicationCreator() {
+    private FunctionCreator hasSpecificComplicationCreator() {
         return function -> {
-            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            String termToFind = functionInputResolver().createOneStringInput(function);
             return new HasSpecificComplication(termToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasUncontrolledTumorRelatedPainCreator(@NotNull LocalDate evaluationDate) {
-        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(evaluationDate);
+    private FunctionCreator hasUncontrolledTumorRelatedPainCreator() {
+        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date());
         return function -> new HasUncontrolledTumorRelatedPain(interpreter);
     }
 
     @NotNull
-    private static FunctionCreator hasLeptomeningealDiseaseCreator() {
+    private FunctionCreator hasLeptomeningealDiseaseCreator() {
         return function -> new HasLeptomeningealDisease();
     }
 
     @NotNull
-    private static FunctionCreator hasSpinalCordCompressionCreator() {
+    private FunctionCreator hasSpinalCordCompressionCreator() {
         return function -> new HasSpinalCordCompression();
     }
 
     @NotNull
-    private static FunctionCreator hasUrinaryIncontinenceCreator() {
+    private FunctionCreator hasUrinaryIncontinenceCreator() {
         return function -> new HasUrinaryIncontinence();
     }
 
     @NotNull
-    private static FunctionCreator hasBladderOutflowObstructionCreator() {
+    private FunctionCreator hasBladderOutflowObstructionCreator() {
         return function -> new HasBladderOutflowObstruction();
     }
 }

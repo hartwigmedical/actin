@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
@@ -38,17 +39,21 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class FunctionInputResolver {
+public class FunctionInputResolver {
 
     private static final Logger LOGGER = LogManager.getLogger(FunctionInputResolver.class);
 
     private static final String MANY_STRING_SEPARATOR = ";";
 
-    private FunctionInputResolver() {
+    @NotNull
+    private final DoidModel doidModel;
+
+    public FunctionInputResolver(@NotNull final DoidModel doidModel) {
+        this.doidModel = doidModel;
     }
 
     @Nullable
-    public static Boolean hasValidInputs(@NotNull EligibilityFunction function) {
+    public Boolean hasValidInputs(@NotNull EligibilityFunction function) {
         if (CompositeRules.isComposite(function.rule())) {
             return hasValidCompositeInputs(function);
         } else {
@@ -74,7 +79,7 @@ public final class FunctionInputResolver {
     }
 
     @Nullable
-    private static Boolean hasValidSingleInputs(@NotNull EligibilityFunction function) {
+    private Boolean hasValidSingleInputs(@NotNull EligibilityFunction function) {
         try {
             switch (RULE_INPUT_MAP.get(function.rule())) {
                 case NONE: {
@@ -167,21 +172,21 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static String createOneDoidTermInput(@NotNull EligibilityFunction function) {
+    public String createOneDoidTermInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_DOID_TERM, 1);
 
         // TODO resolve doid.
         return (String) function.parameters().get(0);
     }
 
-    public static int createOneIntegerInput(@NotNull EligibilityFunction function) {
+    public int createOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_INTEGER, 1);
 
         return Integer.parseInt((String) function.parameters().get(0));
     }
 
     @NotNull
-    public static TwoIntegers createTwoIntegersInput(@NotNull EligibilityFunction function) {
+    public TwoIntegers createTwoIntegersInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_INTEGERS, 2);
 
         return ImmutableTwoIntegers.builder()
@@ -190,14 +195,14 @@ public final class FunctionInputResolver {
                 .build();
     }
 
-    public static double createOneDoubleInput(@NotNull EligibilityFunction function) {
+    public double createOneDoubleInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_DOUBLE, 1);
 
         return Double.parseDouble((String) function.parameters().get(0));
     }
 
     @NotNull
-    public static TwoDoubles createTwoDoublesInput(@NotNull EligibilityFunction function) {
+    public TwoDoubles createTwoDoublesInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_DOUBLES, 2);
 
         return ImmutableTwoDoubles.builder()
@@ -207,14 +212,14 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TreatmentInput createOneTreatmentInput(@NotNull EligibilityFunction function) {
+    public TreatmentInput createOneTreatmentInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT, 1);
 
         return TreatmentInput.fromString((String) function.parameters().get(0));
     }
 
     @NotNull
-    public static OneTreatmentOneInteger createOneTreatmentOneIntegerInput(@NotNull EligibilityFunction function) {
+    public OneTreatmentOneInteger createOneTreatmentOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_INTEGER, 2);
 
         return ImmutableOneTreatmentOneInteger.builder()
@@ -224,7 +229,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTypedTreatmentManyStrings createOneTypedTreatmentManyStringsInput(@NotNull EligibilityFunction function) {
+    public OneTypedTreatmentManyStrings createOneTypedTreatmentManyStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS, 2);
 
         return ImmutableOneTypedTreatmentManyStrings.builder()
@@ -234,7 +239,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneTypedTreatmentManyStringsOneInteger createOneTypedTreatmentManyStringsOneIntegerInput(
+    public OneTypedTreatmentManyStringsOneInteger createOneTypedTreatmentManyStringsOneIntegerInput(
             @NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER, 3);
 
@@ -246,7 +251,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    private static TreatmentCategory toTypedCategory(@NotNull String string) {
+    private TreatmentCategory toTypedCategory(@NotNull String string) {
         TreatmentCategory category = TreatmentCategoryResolver.fromString(string);
         if (!category.hasType()) {
             throw new IllegalStateException("Not a typed category: " + category.display());
@@ -255,21 +260,21 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TumorTypeInput createOneTumorTypeInput(@NotNull EligibilityFunction function) {
+    public TumorTypeInput createOneTumorTypeInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE, 1);
 
         return TumorTypeInput.fromString((String) function.parameters().get(0));
     }
 
     @NotNull
-    public static String createOneStringInput(@NotNull EligibilityFunction function) {
+    public String createOneStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_STRING, 1);
 
         return (String) function.parameters().get(0);
     }
 
     @NotNull
-    public static OneIntegerOneString createOneStringOneIntegerInput(@NotNull EligibilityFunction function) {
+    public OneIntegerOneString createOneStringOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_STRING_ONE_INTEGER, 2);
 
         return ImmutableOneIntegerOneString.builder()
@@ -279,7 +284,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TwoStrings createTwoStringsInput(@NotNull EligibilityFunction function) {
+    public TwoStrings createTwoStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2);
 
         return ImmutableTwoStrings.builder()
@@ -289,7 +294,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneIntegerManyStrings createManyStringsOneIntegerInput(@NotNull EligibilityFunction function) {
+    public OneIntegerManyStrings createManyStringsOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.MANY_STRINGS_ONE_INTEGER, 2);
 
         return ImmutableOneIntegerManyStrings.builder()
@@ -299,7 +304,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TwoIntegersManyStrings createManyStringsTwoIntegersInput(@NotNull EligibilityFunction function) {
+    public TwoIntegersManyStrings createManyStringsTwoIntegersInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.MANY_STRINGS_TWO_INTEGERS, 3);
 
         return ImmutableTwoIntegersManyStrings.builder()
@@ -310,7 +315,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneIntegerOneString createOneIntegerOneStringInput(@NotNull EligibilityFunction function) {
+    public OneIntegerOneString createOneIntegerOneStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2);
 
         return ImmutableOneIntegerOneString.builder()
@@ -320,7 +325,7 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static OneIntegerManyStrings createOneIntegerManyStringsInput(@NotNull EligibilityFunction function) {
+    public OneIntegerManyStrings createOneIntegerManyStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_STRINGS, 2);
 
         return ImmutableOneIntegerManyStrings.builder()
@@ -330,14 +335,14 @@ public final class FunctionInputResolver {
     }
 
     @NotNull
-    public static TumorStage createOneTumorStageInput(@NotNull EligibilityFunction function) {
+    public TumorStage createOneTumorStageInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_STAGE, 1);
 
         return TumorStage.valueOf((String) function.parameters().get(0));
     }
 
     @NotNull
-    public static String createOneHlaAlleleInput(@NotNull EligibilityFunction function) {
+    public String createOneHlaAlleleInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_HLA_ALLELE, 1);
 
         // Expected format "A*02:01"

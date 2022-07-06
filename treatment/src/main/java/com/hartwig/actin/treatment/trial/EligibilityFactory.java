@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class EligibilityFactory {
+public class EligibilityFactory {
 
     private static final Logger LOGGER = LogManager.getLogger(EligibilityFactory.class);
 
@@ -22,10 +22,14 @@ public final class EligibilityFactory {
     private static final char PARAM_START = '[';
     private static final char PARAM_END = ']';
 
-    private EligibilityFactory() {
+    @NotNull
+    private final FunctionInputResolver functionInputResolver;
+
+    public EligibilityFactory(@NotNull final FunctionInputResolver functionInputResolver) {
+        this.functionInputResolver = functionInputResolver;
     }
 
-    public static boolean isValidInclusionCriterion(@NotNull String criterion) {
+    public boolean isValidInclusionCriterion(@NotNull String criterion) {
         try {
             generateEligibilityFunction(criterion);
             return true;
@@ -36,7 +40,7 @@ public final class EligibilityFactory {
     }
 
     @NotNull
-    public static EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
+    public EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
         EligibilityRule rule;
         List<Object> parameters = Lists.newArrayList();
         String trimmed = criterion.trim();
@@ -53,7 +57,7 @@ public final class EligibilityFactory {
         }
 
         EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
-        Boolean hasValidInputs = FunctionInputResolver.hasValidInputs(function);
+        Boolean hasValidInputs = functionInputResolver.hasValidInputs(function);
         if (hasValidInputs == null || !hasValidInputs) {
             throw new IllegalStateException("Function " + function.rule() + " has invalid inputs: '" + function.parameters() + "'");
         }
