@@ -28,6 +28,8 @@ public class HasHistoryOfSecondMalignancyWithDOID implements EvaluationFunction 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        String doidTerm = doidModel.resolveTermForDoid(doidToMatch);
+
         boolean hasMatch = false;
         for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
             if (isDoidMatch(priorSecondPrimary.doids(), doidToMatch)) {
@@ -38,10 +40,10 @@ public class HasHistoryOfSecondMalignancyWithDOID implements EvaluationFunction 
         EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no history of previous malignancy belonging to " + doidModel.resolveTermForDoid(doidToMatch));
+            builder.addFailSpecificMessages("Patient has no history of previous malignancy belonging to " + doidTerm);
             builder.addFailGeneralMessages("No specific history of malignancy");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has history of previous malignancy belonging to " + doidModel.resolveTermForDoid(doidToMatch));
+            builder.addPassSpecificMessages("Patient has history of previous malignancy belonging to " + doidTerm);
             builder.addPassGeneralMessages("Second primary history");
         }
 

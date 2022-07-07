@@ -30,6 +30,8 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        String doidTerm = doidModel.resolveTermForDoid(doidToFind);
+
         List<PriorOtherCondition> clinicallyRelevant =
                 OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
         for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
@@ -40,7 +42,7 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
 
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has other condition belonging to " + doidModel.resolveTermForDoid(doidToFind))
+                            .addPassSpecificMessages("Patient has other condition belonging to " + doidTerm)
                             .addPassGeneralMessages("Present " + Format.concat(conditions))
                             .build();
                 }
@@ -49,7 +51,7 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no other condition belonging to " + doidModel.resolveTermForDoid(doidToFind))
+                .addFailSpecificMessages("Patient has no other condition belonging to " + doidTerm)
                 .addFailGeneralMessages("No relevant non-oncological condition")
                 .build();
     }

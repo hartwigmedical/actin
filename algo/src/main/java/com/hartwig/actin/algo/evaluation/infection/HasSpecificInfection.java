@@ -28,6 +28,8 @@ public class HasSpecificInfection implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        String doidTerm = doidModel.resolveTermForDoid(doidToFind);
+
         List<PriorOtherCondition> clinicallyRelevant =
                 OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
         for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
@@ -35,8 +37,8 @@ public class HasSpecificInfection implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has infection with " + doidModel.resolveTermForDoid(doidToFind))
-                            .addPassGeneralMessages("Present " + doidModel.resolveTermForDoid(doidToFind) + " infection")
+                            .addPassSpecificMessages("Patient has infection with " + doidTerm)
+                            .addPassGeneralMessages("Present " + doidTerm + " infection")
                             .build();
                 }
             }
@@ -44,7 +46,7 @@ public class HasSpecificInfection implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no known infection with " + doidModel.resolveTermForDoid(doidToFind))
+                .addFailSpecificMessages("Patient has no known infection with " + doidTerm)
                 .addFailGeneralMessages("Requested infection(s) not present")
                 .build();
     }

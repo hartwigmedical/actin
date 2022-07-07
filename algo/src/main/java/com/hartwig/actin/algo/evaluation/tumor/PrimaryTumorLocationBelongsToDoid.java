@@ -34,6 +34,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        String doidTerm = doidModel.resolveTermForDoid(doidToMatch);
         Set<String> doids = record.clinical().tumor().doids();
 
         if (doids == null || doids.isEmpty()) {
@@ -47,7 +48,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isDoidMatch(doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has " + doidModel.resolveTermForDoid(doidToMatch))
+                    .addPassSpecificMessages("Patient has " + doidTerm)
                     .addPassGeneralMessages("Tumor type")
                     .build();
         }
@@ -55,14 +56,14 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isPotentialMatch(record.clinical().tumor(), doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidModel.resolveTermForDoid(doidToMatch))
+                    .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidTerm)
                     .addUndeterminedGeneralMessages("Tumor type")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no " + doidModel.resolveTermForDoid(doidToMatch))
+                .addFailSpecificMessages("Patient has no " + doidTerm)
                 .addFailGeneralMessages("Tumor type")
                 .build();
     }
