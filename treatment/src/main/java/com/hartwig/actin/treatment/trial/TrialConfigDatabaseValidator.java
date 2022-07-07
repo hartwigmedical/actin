@@ -20,14 +20,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class TrialConfigDatabaseValidator {
+public class TrialConfigDatabaseValidator {
 
     private static final Logger LOGGER = LogManager.getLogger(TrialConfigDatabaseValidator.class);
 
-    private TrialConfigDatabaseValidator() {
+    @NotNull
+    private final EligibilityFactory eligibilityFactory;
+
+    public TrialConfigDatabaseValidator(@NotNull final EligibilityFactory eligibilityFactory) {
+        this.eligibilityFactory = eligibilityFactory;
     }
 
-    public static boolean isValid(@NotNull TrialConfigDatabase database) {
+    public boolean isValid(@NotNull TrialConfigDatabase database) {
         Set<String> trialIds = extractTrialIds(database.trialDefinitionConfigs());
         boolean validTrials = validateTrials(database.trialDefinitionConfigs());
 
@@ -119,7 +123,7 @@ public final class TrialConfigDatabaseValidator {
         return cohortIds;
     }
 
-    private static boolean validateInclusionCriteria(@NotNull Set<String> trialIds, @NotNull Multimap<String, String> cohortIdsPerTrial,
+    private boolean validateInclusionCriteria(@NotNull Set<String> trialIds, @NotNull Multimap<String, String> cohortIdsPerTrial,
             @NotNull List<InclusionCriteriaConfig> inclusionCriteria) {
         boolean valid = true;
         for (InclusionCriteriaConfig criterion : inclusionCriteria) {
@@ -136,7 +140,7 @@ public final class TrialConfigDatabaseValidator {
                 }
             }
 
-            if (!EligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule())) {
+            if (!eligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule())) {
                 LOGGER.warn("Not a valid inclusion criterion for trial '{}': '{}'", criterion.trialId(), criterion.inclusionRule());
                 valid = false;
             }

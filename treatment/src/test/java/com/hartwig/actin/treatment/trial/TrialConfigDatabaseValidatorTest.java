@@ -18,13 +18,15 @@ public class TrialConfigDatabaseValidatorTest {
 
     @Test
     public void confirmTrialConfigDatabasesAreValid() {
-        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase()));
-        assertTrue(TrialConfigDatabaseValidator.isValid(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
+        TrialConfigDatabaseValidator validator = createTestValidator();
+        assertTrue(validator.isValid(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase()));
+        assertTrue(validator.isValid(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
     }
 
     @Test
     public void canDetectIllDefinedTrialConfigDatabase() {
-        assertFalse(TrialConfigDatabaseValidator.isValid(createInvalidTrialConfigDatabase()));
+        TrialConfigDatabaseValidator validator = createTestValidator();
+        assertFalse(validator.isValid(createInvalidTrialConfigDatabase()));
     }
 
     @NotNull
@@ -101,5 +103,10 @@ public class TrialConfigDatabaseValidatorTest {
                         .build())
 
                 .build();
+    }
+
+    @NotNull
+    private static TrialConfigDatabaseValidator createTestValidator() {
+        return new TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory());
     }
 }

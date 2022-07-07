@@ -7,7 +7,8 @@ This application requires Java 11+ and can be run as follows:
 
 ```
 java -cp actin.jar com.hartwig.actin.treatment.TreatmentCreatorApplication \
-   -trial_config_directory /path/to/trial_config_dir
+   -trial_config_directory /path/to/trial_config_dir \
+   -doid_json /path/to/full_doid_tree_json_file \
    -output_directory /path/to/where/treatment_json_files/are/written
 ```
 

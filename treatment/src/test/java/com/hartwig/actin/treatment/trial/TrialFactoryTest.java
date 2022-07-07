@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -24,12 +25,13 @@ public class TrialFactoryTest {
 
     @Test
     public void canCreateFromTrialConfigDirectory() throws IOException {
-        assertNotNull(TrialFactory.fromTrialConfigDirectory(TRIAL_CONFIG_DIRECTORY));
+        assertNotNull(TrialFactory.create(TRIAL_CONFIG_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel()));
     }
 
     @Test
     public void canCreateFromProperTestModel() {
-        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
+        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()),
+                TestEligibilityFactoryFactory.createTestEligibilityFactory());
         List<Trial> trials = factory.create();
 
         assertEquals(2, trials.size());

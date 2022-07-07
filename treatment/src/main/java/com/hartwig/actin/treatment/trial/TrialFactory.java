@@ -7,6 +7,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
@@ -19,6 +20,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.datamodel.TrialIdentification;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.sort.CohortComparator;
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator;
 import com.hartwig.actin.treatment.sort.EligibilityComparator;
@@ -33,15 +35,23 @@ public class TrialFactory {
 
     @NotNull
     private final TrialConfigModel trialModel;
+    @NotNull
+    private final EligibilityFactory eligibilityFactory;
 
     @NotNull
-    public static List<Trial> fromTrialConfigDirectory(@NotNull String trialConfigDirectory) throws IOException {
-        return new TrialFactory(TrialConfigModel.fromTrialConfigDirectory(trialConfigDirectory)).create();
+    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel) throws IOException {
+        FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel);
+        EligibilityFactory eligibilityFactory = new EligibilityFactory(functionInputResolver);
+
+        TrialConfigModel trialModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory);
+
+        return new TrialFactory(trialModel, eligibilityFactory);
     }
 
     @VisibleForTesting
-    TrialFactory(@NotNull final TrialConfigModel trialModel) {
+    TrialFactory(@NotNull final TrialConfigModel trialModel, @NotNull final EligibilityFactory eligibilityFactory) {
         this.trialModel = trialModel;
+        this.eligibilityFactory = eligibilityFactory;
     }
 
     @NotNull
@@ -108,7 +118,7 @@ public class TrialFactory {
         for (InclusionCriteriaConfig criterion : criteria) {
             eligibility.add(ImmutableEligibility.builder()
                     .references(resolveReferences(references, criterion.referenceIds()))
-                    .function(EligibilityFactory.generateEligibilityFunction(criterion.inclusionRule()))
+                    .function(eligibilityFactory.generateEligibilityFunction(criterion.inclusionRule()))
                     .build());
         }
 

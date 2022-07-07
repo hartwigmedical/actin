@@ -4,29 +4,31 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TumorRuleMapping {
+public class TumorRuleMapper extends RuleMapper {
 
-    private TumorRuleMapping() {
+    public TumorRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator(doidModel));
-        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(doidModel));
-        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, hasPrimaryTumorBelongsToDoidTermCreator(doidModel));
-        map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator(doidModel));
-        map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator(doidModel));
+        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator());
+        map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, hasSolidPrimaryTumorCreatorIncludingLymphomaCreator());
+        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator());
+        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, hasPrimaryTumorBelongsToDoidTermCreator());
+        map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
+        map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator());
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -51,7 +53,7 @@ public final class TumorRuleMapping {
         map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FFPE_ANALYSIS, canProvideSampleForFFPEAnalysisCreator());
         map.put(EligibilityRule.HAS_ASSESSABLE_DISEASE, hasAssessableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE, hasMeasurableDiseaseCreator());
-        map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator(doidModel));
+        map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
         map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
         map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMRIVolumeAmenableLesionCreator());
@@ -63,200 +65,200 @@ public final class TumorRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSolidPrimaryTumorCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasSolidPrimaryTumor(doidModel);
+    private FunctionCreator hasSolidPrimaryTumorCreator() {
+        return function -> new HasSolidPrimaryTumor(doidModel());
     }
 
     @NotNull
-    private static FunctionCreator hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasSolidPrimaryTumorIncludingLymphoma(doidModel);
+    private FunctionCreator hasSolidPrimaryTumorCreatorIncludingLymphomaCreator() {
+        return function -> new HasSolidPrimaryTumorIncludingLymphoma(doidModel());
     }
 
     @NotNull
-    private static FunctionCreator hasPrimaryTumorBelongsToDoidCreator(@NotNull DoidModel doidModel) {
+    private FunctionCreator hasPrimaryTumorBelongsToDoidCreator() {
         return function -> {
-            String doidToMatch = FunctionInputResolver.createOneStringInput(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel, doidToMatch, false, false);
+            String doidToMatch = functionInputResolver().createOneStringInput(function);
+            return new PrimaryTumorLocationBelongsToDoid(doidModel(), doidToMatch, false, false);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasPrimaryTumorBelongsToDoidTermCreator(@NotNull DoidModel doidModel) {
+    private FunctionCreator hasPrimaryTumorBelongsToDoidTermCreator() {
         return function -> {
             // TODO Map DOID term to DOID
-            String doidTermToMatch = FunctionInputResolver.createOneDoidTermInput(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel, doidTermToMatch, false, false);
+            String doidTermToMatch = functionInputResolver().createOneDoidTermInput(function);
+            return new PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermToMatch, false, false);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasCancerOfUnknownPrimaryCreator(@NotNull DoidModel doidModel) {
+    private FunctionCreator hasCancerOfUnknownPrimaryCreator() {
         return function -> {
-            TumorTypeInput categoryOfCUP = FunctionInputResolver.createOneTumorTypeInput(function);
-            return new HasCancerOfUnknownPrimary(doidModel, categoryOfCUP);
+            TumorTypeInput categoryOfCUP = functionInputResolver().createOneTumorTypeInput(function);
+            return new HasCancerOfUnknownPrimary(doidModel(), categoryOfCUP);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasProstateCancerWithSmallCellHistologyCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasProstateCancerWithSmallCellHistology(doidModel);
+    private FunctionCreator hasProstateCancerWithSmallCellHistologyCreator() {
+        return function -> new HasProstateCancerWithSmallCellHistology(doidModel());
     }
 
     @NotNull
-    private static FunctionCreator hasCytologicalDocumentationOfTumorTypeCreator() {
+    private FunctionCreator hasCytologicalDocumentationOfTumorTypeCreator() {
         return function -> new HasCytologicalDocumentationOfTumorType();
     }
 
     @NotNull
-    private static FunctionCreator hasHistologicalDocumentationOfTumorTypeCreator() {
+    private FunctionCreator hasHistologicalDocumentationOfTumorTypeCreator() {
         return function -> new HasHistologicalDocumentationOfTumorType();
     }
 
     @NotNull
-    private static FunctionCreator hasTumorStageCreator() {
+    private FunctionCreator hasTumorStageCreator() {
         return function -> {
-            TumorStage stageToMatch = FunctionInputResolver.createOneTumorStageInput(function);
+            TumorStage stageToMatch = functionInputResolver().createOneTumorStageInput(function);
             return new HasTumorStage(stageToMatch);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLocallyAdvancedCancerCreator() {
+    private FunctionCreator hasLocallyAdvancedCancerCreator() {
         return function -> new HasLocallyAdvancedCancer();
     }
 
     @NotNull
-    private static FunctionCreator hasMetastaticCancerCreator() {
+    private FunctionCreator hasMetastaticCancerCreator() {
         return function -> new HasMetastaticCancer();
     }
 
     @NotNull
-    private static FunctionCreator hasUnresectableCancerCreator() {
+    private FunctionCreator hasUnresectableCancerCreator() {
         return function -> new HasUnresectableCancer();
     }
 
     @NotNull
-    private static FunctionCreator hasUnresectableStageIIICancerCreator() {
+    private FunctionCreator hasUnresectableStageIIICancerCreator() {
         return function -> new HasUnresectableStageIIICancer();
     }
 
     @NotNull
-    private static FunctionCreator hasRecurrentCancerCreator() {
+    private FunctionCreator hasRecurrentCancerCreator() {
         return function -> new HasRecurrentCancer();
     }
 
     @NotNull
-    private static FunctionCreator hasIncurableCancerCreator() {
+    private FunctionCreator hasIncurableCancerCreator() {
         return function -> new HasIncurableCancer();
     }
 
     @NotNull
-    private static FunctionCreator hasAnyLesionCreator() {
+    private FunctionCreator hasAnyLesionCreator() {
         return function -> new HasAnyLesion();
     }
 
     @NotNull
-    private static FunctionCreator hasLivesMetastasesCreator() {
+    private FunctionCreator hasLivesMetastasesCreator() {
         return function -> new HasLiverMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasKnownCnsMetastasesCreator() {
+    private FunctionCreator hasKnownCnsMetastasesCreator() {
         return function -> new HasKnownCnsMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasKnownActiveCnsMetastasesCreator() {
+    private FunctionCreator hasKnownActiveCnsMetastasesCreator() {
         return function -> new HasKnownActiveCnsMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasKnownBrainMetastasesCreator() {
+    private FunctionCreator hasKnownBrainMetastasesCreator() {
         return function -> new HasKnownBrainMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasKnownActiveBrainMetastasesCreator() {
+    private FunctionCreator hasKnownActiveBrainMetastasesCreator() {
         return function -> new HasKnownActiveBrainMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasBoneMetastasesCreator() {
+    private FunctionCreator hasBoneMetastasesCreator() {
         return function -> new HasBoneMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasOnlyBoneMetastasesCreator() {
+    private FunctionCreator hasOnlyBoneMetastasesCreator() {
         return function -> new HasBoneMetastasesOnly();
     }
 
     @NotNull
-    private static FunctionCreator hasLungMetastasesCreator() {
+    private FunctionCreator hasLungMetastasesCreator() {
         return function -> new HasLungMetastases();
     }
 
     @NotNull
-    private static FunctionCreator hasBiopsyAmenableLesionCreator() {
+    private FunctionCreator hasBiopsyAmenableLesionCreator() {
         return function -> new HasBiopsyAmenableLesion();
     }
 
     @NotNull
-    private static FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
+    private FunctionCreator tumorBiopsyTakenBeforeInformedConsentCreator() {
         return function -> new TumorBiopsyTakenBeforeInformedConsent();
     }
 
     @NotNull
-    private static FunctionCreator canProvideFreshSampleForFFPEAnalysisCreator() {
+    private FunctionCreator canProvideFreshSampleForFFPEAnalysisCreator() {
         return function -> new CanProvideFreshSampleForFFPEAnalysis();
     }
 
     @NotNull
-    private static FunctionCreator canProvideSampleForFFPEAnalysisCreator() {
+    private FunctionCreator canProvideSampleForFFPEAnalysisCreator() {
         return function -> new CanProvideSampleForFFPEAnalysis();
     }
 
     @NotNull
-    private static FunctionCreator hasAssessableDiseaseCreator() {
+    private FunctionCreator hasAssessableDiseaseCreator() {
         return function -> new HasAssessableDisease();
     }
 
     @NotNull
-    private static FunctionCreator hasMeasurableDiseaseCreator() {
+    private FunctionCreator hasMeasurableDiseaseCreator() {
         return function -> new HasMeasurableDisease();
     }
 
     @NotNull
-    private static FunctionCreator hasMeasurableDiseaseRecistCreator(@NotNull DoidModel doidModel) {
-        return function -> new HasMeasurableDiseaseRecist(doidModel);
+    private FunctionCreator hasMeasurableDiseaseRecistCreator() {
+        return function -> new HasMeasurableDiseaseRecist(doidModel());
     }
 
     @NotNull
-    private static FunctionCreator hasSpecificProgressiveDiseaseCriteriaCreator() {
+    private FunctionCreator hasSpecificProgressiveDiseaseCriteriaCreator() {
         return function -> new HasSpecificProgressiveDiseaseCriteria();
     }
 
     @NotNull
-    private static FunctionCreator hasInjectionAmenableLesionCreator() {
+    private FunctionCreator hasInjectionAmenableLesionCreator() {
         return function -> new HasInjectionAmenableLesion();
     }
 
     @NotNull
-    private static FunctionCreator hasMRIVolumeAmenableLesionCreator() {
+    private FunctionCreator hasMRIVolumeAmenableLesionCreator() {
         return function -> new HasMRIVolumeAmenableLesion();
     }
 
     @NotNull
-    private static FunctionCreator hasIntratumoralHemorrhageByMRICreator() {
+    private FunctionCreator hasIntratumoralHemorrhageByMRICreator() {
         return function -> new HasIntratumoralHemorrhageByMRI();
     }
 
     @NotNull
-    private static FunctionCreator hasLowRiskOfHemorrhageUponTreatmentCreator() {
+    private FunctionCreator hasLowRiskOfHemorrhageUponTreatmentCreator() {
         return function -> new HasLowRiskOfHemorrhageUponTreatment();
     }
 
     @NotNull
-    private static FunctionCreator hasSuperScanBoneScanCreator() {
+    private FunctionCreator hasSuperScanBoneScanCreator() {
         return function -> new HasSuperScanBoneScan();
     }
 }

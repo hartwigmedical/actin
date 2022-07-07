@@ -4,20 +4,23 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.TwoStrings;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class MolecularRuleMapping {
+public class MolecularRuleMapper extends RuleMapper {
 
-    private MolecularRuleMapping() {
+    public MolecularRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
@@ -50,181 +53,181 @@ public final class MolecularRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator molecularResultsAreGenerallyAvailableCreator() {
+    private FunctionCreator molecularResultsAreGenerallyAvailableCreator() {
         return function -> new MolecularResultsAreGenerallyAvailable();
     }
 
     @NotNull
-    private static FunctionCreator molecularResultsAreAvailableForGeneCreator() {
+    private FunctionCreator molecularResultsAreAvailableForGeneCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new MolecularResultsAreAvailableForGene(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneIsActivatedOrAmplifiedCreator() {
+    private FunctionCreator geneIsActivatedOrAmplifiedCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new GeneIsActivatedOrAmplified(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneIsInactivatedCreator() {
+    private FunctionCreator geneIsInactivatedCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new GeneIsInactivated(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneHasActivatingMutationCreator() {
+    private FunctionCreator geneHasActivatingMutationCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new GeneHasActivatingMutation(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneHasSpecificMutationCreator() {
+    private FunctionCreator geneHasSpecificMutationCreator() {
         return function -> {
-            TwoStrings inputs = FunctionInputResolver.createTwoStringsInput(function);
+            TwoStrings inputs = functionInputResolver().createTwoStringsInput(function);
             return new GeneHasSpecificMutation(inputs.string1(), inputs.string2());
         };
     }
 
     @NotNull
-    private static FunctionCreator geneIsAmplifiedCreator() {
+    private FunctionCreator geneIsAmplifiedCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new GeneIsAmplified(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasFusionInGeneCreator() {
+    private FunctionCreator hasFusionInGeneCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new HasFusionInGene(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneIsWildTypeCreator() {
+    private FunctionCreator geneIsWildTypeCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new GeneIsWildType(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator isMicrosatelliteUnstableCreator() {
+    private FunctionCreator isMicrosatelliteUnstableCreator() {
         return function -> new IsMicrosatelliteUnstable();
     }
 
     @NotNull
-    private static FunctionCreator isHomologousRepairDeficientCreator() {
+    private FunctionCreator isHomologousRepairDeficientCreator() {
         return function -> new IsHomologousRepairDeficient();
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientTumorMutationalBurdenCreator() {
+    private FunctionCreator hasSufficientTumorMutationalBurdenCreator() {
         return function -> {
-            double minTumorMutationalBurden = FunctionInputResolver.createOneDoubleInput(function);
+            double minTumorMutationalBurden = functionInputResolver().createOneDoubleInput(function);
             return new HasSufficientTumorMutationalBurden(minTumorMutationalBurden);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientTumorMutationalLoadCreator() {
+    private FunctionCreator hasSufficientTumorMutationalLoadCreator() {
         return function -> {
-            int minTumorMutationalLoad = FunctionInputResolver.createOneIntegerInput(function);
+            int minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
             return new HasSufficientTumorMutationalLoad(minTumorMutationalLoad);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedTumorMutationalLoadCreator() {
+    private FunctionCreator hasLimitedTumorMutationalLoadCreator() {
         return function -> {
-            int maxTumorMutationalLoad = FunctionInputResolver.createOneIntegerInput(function);
+            int maxTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
             return new HasLimitedTumorMutationalLoad(maxTumorMutationalLoad);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasSpecificHLATypeCreator() {
+    private FunctionCreator hasSpecificHLATypeCreator() {
         return function -> {
-            String hlaAlleleToFind = FunctionInputResolver.createOneHlaAlleleInput(function);
+            String hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function);
             return new HasSpecificHLAType(hlaAlleleToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneIsOverexpressedCreator() {
+    private FunctionCreator geneIsOverexpressedCreator() {
         return function -> new GeneIsOverexpressed();
     }
 
     @NotNull
-    private static FunctionCreator geneIsNotExpressedCreator() {
+    private FunctionCreator geneIsNotExpressedCreator() {
         return function -> new GeneIsNotExpressed();
     }
 
     @NotNull
-    private static FunctionCreator geneIsExpressedByIHCCreator() {
+    private FunctionCreator geneIsExpressedByIHCCreator() {
         return function -> {
-            String gene = FunctionInputResolver.createOneStringInput(function);
+            String gene = functionInputResolver().createOneStringInput(function);
             return new GeneIsExpressedByIHC(gene);
         };
     }
 
     @NotNull
-    private static FunctionCreator geneHasExactExpressionByIHCCreator() {
+    private FunctionCreator geneHasExactExpressionByIHCCreator() {
         return function -> {
-            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
             return new GeneHasExactExpressionByIHC(input.string(), input.integer());
         };
     }
 
     @NotNull
-    private static FunctionCreator geneHasSufficientExpressionByIHCCreator() {
+    private FunctionCreator geneHasSufficientExpressionByIHCCreator() {
         return function -> {
-            OneIntegerOneString input = FunctionInputResolver.createOneStringOneIntegerInput(function);
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
             return new GeneHasSufficientExpressionByIHC(input.string(), input.integer());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientPDL1ByCPSByIHCCreator() {
+    private FunctionCreator hasSufficientPDL1ByCPSByIHCCreator() {
         return function -> {
-            int minPDL1 = FunctionInputResolver.createOneIntegerInput(function);
+            int minPDL1 = functionInputResolver().createOneIntegerInput(function);
             return new HasSufficientPDL1ByIHC("CPS", minPDL1);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedPDL1ByCPSByIHCCreator() {
+    private FunctionCreator hasLimitedPDL1ByCPSByIHCCreator() {
         return function -> {
-            int maxPDL1 = FunctionInputResolver.createOneIntegerInput(function);
+            int maxPDL1 = functionInputResolver().createOneIntegerInput(function);
             return new HasLimitedPDL1ByIHC("CPS", maxPDL1);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedPDL1ByTPSByIHCCreator() {
+    private FunctionCreator hasLimitedPDL1ByTPSByIHCCreator() {
         return function -> {
-            double maxPDL1Percentage = FunctionInputResolver.createOneDoubleInput(function);
+            double maxPDL1Percentage = functionInputResolver().createOneDoubleInput(function);
             return new HasLimitedPDL1ByIHC("TPS", maxPDL1Percentage);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasPSMAPositivePETScanCreator() {
+    private FunctionCreator hasPSMAPositivePETScanCreator() {
         return function -> new HasPSMAPositivePETScan();
     }
 
     @NotNull
-    private static FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
+    private FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
         return function -> new ManufacturedTCellsWithinShelfLife();
     }
 }

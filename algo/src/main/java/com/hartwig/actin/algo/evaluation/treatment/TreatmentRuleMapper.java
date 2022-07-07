@@ -5,10 +5,10 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
@@ -16,13 +16,15 @@ import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneI
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TreatmentRuleMapping {
+public class TreatmentRuleMapper extends RuleMapper {
 
-    private TreatmentRuleMapping() {
+    public TreatmentRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
@@ -31,12 +33,12 @@ public final class TreatmentRuleMapping {
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
-        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES, hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
+        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
+                hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS,
-                hasHadTreatmentCategoryOfTypesWithinWeeksCreator(referenceDateProvider));
+        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS, hasHadTreatmentCategoryOfTypesWithinWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES, hasHadLimitedTreatmentsOfCategoryCreator());
@@ -53,64 +55,64 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator isEligibleForCurativeTreatmentCreator() {
+    private FunctionCreator isEligibleForCurativeTreatmentCreator() {
         return function -> new IsEligibleForCurativeTreatment();
     }
 
     @NotNull
-    private static FunctionCreator hasExhaustedSOCTreatmentsCreator() {
+    private FunctionCreator hasExhaustedSOCTreatmentsCreator() {
         return function -> new HasExhaustedSOCTreatments();
     }
 
     @NotNull
-    private static FunctionCreator isEligibleForOnLabelDrugCreator() {
+    private FunctionCreator isEligibleForOnLabelDrugCreator() {
         return function -> new IsEligibleForOnLabelDrug();
     }
 
     @NotNull
-    private static FunctionCreator hasHadSomeApprovedTreatmentCreator() {
+    private FunctionCreator hasHadSomeApprovedTreatmentCreator() {
         return function -> {
-            int minApprovedTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            int minApprovedTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasHadSomeApprovedTreatments(minApprovedTreatments);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadSomeSystemicTreatmentCreator() {
+    private FunctionCreator hasHadSomeSystemicTreatmentCreator() {
         return function -> {
-            int minSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasHadSomeSystemicTreatments(minSystemicTreatments);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
+    private FunctionCreator hasHadLimitedSystemicTreatmentsCreator() {
         return function -> {
-            int maxSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            int maxSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
+    private FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
         return function -> {
-            int minSystemicTreatments = FunctionInputResolver.createOneIntegerInput(function);
+            int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasProgressiveDiseaseFollowingSomeSystemicTreatments(minSystemicTreatments);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadSpecificTreatmentCreator() {
+    private FunctionCreator hasHadSpecificTreatmentCreator() {
         return function -> {
-            String treatment = FunctionInputResolver.createOneStringInput(function);
+            String treatment = functionInputResolver().createOneStringInput(function);
             return new HasHadSomeSpecificTreatments(Sets.newHashSet(treatment), null, 1);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentWithCategoryCreator() {
+    private FunctionCreator hasHadTreatmentWithCategoryCreator() {
         return function -> {
-            TreatmentInput treatment = FunctionInputResolver.createOneTreatmentInput(function);
+            TreatmentInput treatment = functionInputResolver().createOneTreatmentInput(function);
             if (treatment.mappedNames() == null) {
                 return new HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), 1);
             } else {
@@ -120,36 +122,36 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentCategoryOfTypesCreator() {
+    private FunctionCreator hasHadTreatmentCategoryOfTypesCreator() {
         return function -> {
-            OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
+            OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
             return new HasHadTreatmentWithCategoryOfTypes(input.category(), input.strings());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentCategoryOfTypesWithinWeeksCreator(@NotNull ReferenceDateProvider referenceDateProvider) {
+    private FunctionCreator hasHadTreatmentCategoryOfTypesWithinWeeksCreator() {
         return function -> {
             OneTypedTreatmentManyStringsOneInteger input =
-                    FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
+                    functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
 
-            LocalDate minDate = referenceDateProvider.date().minusWeeks(input.integer());
+            LocalDate minDate = referenceDateProvider().date().minusWeeks(input.integer());
             return new HasHadTreatmentWithCategoryOfTypesRecently(input.category(), input.strings(), minDate);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
+    private FunctionCreator hasHadTreatmentCategoryIgnoringTypesCreator() {
         return function -> {
-            OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
+            OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
             return new HasHadTreatmentWithCategoryButNotOfTypes(input.category(), input.strings());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadSomeTreatmentsOfCategoryCreator() {
+    private FunctionCreator hasHadSomeTreatmentsOfCategoryCreator() {
         return function -> {
-            OneTreatmentOneInteger input = FunctionInputResolver.createOneTreatmentOneIntegerInput(function);
+            OneTreatmentOneInteger input = functionInputResolver().createOneTreatmentOneIntegerInput(function);
             TreatmentInput treatment = input.treatment();
             if (treatment.mappedNames() == null) {
                 return new HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), input.integer());
@@ -160,9 +162,9 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadLimitedTreatmentsOfCategoryCreator() {
+    private FunctionCreator hasHadLimitedTreatmentsOfCategoryCreator() {
         return function -> {
-            OneTreatmentOneInteger input = FunctionInputResolver.createOneTreatmentOneIntegerInput(function);
+            OneTreatmentOneInteger input = functionInputResolver().createOneTreatmentOneIntegerInput(function);
             TreatmentInput treatment = input.treatment();
             if (treatment.mappedNames() == null) {
                 return new HasHadLimitedTreatmentsWithCategory(treatment.mappedCategory(), input.integer());
@@ -173,38 +175,38 @@ public final class TreatmentRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypesCreator() {
+    private FunctionCreator hasHadSomeTreatmentsOfCategoryWithTypesCreator() {
         return function -> {
             OneTypedTreatmentManyStringsOneInteger input =
-                    FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
+                    functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
             return new HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypesCreator() {
+    private FunctionCreator hasHadLimitedTreatmentsOfCategoryWithTypesCreator() {
         return function -> {
             OneTypedTreatmentManyStringsOneInteger input =
-                    FunctionInputResolver.createOneTypedTreatmentManyStringsOneIntegerInput(function);
+                    functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
             return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator() {
+    private FunctionCreator hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator() {
         return function -> {
-            OneTypedTreatmentManyStrings input = FunctionInputResolver.createOneTypedTreatmentManyStringsInput(function);
+            OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
             return new HasHadTreatmentWithCategoryOfTypesAndStopReasonPD(input.category(), input.strings());
         };
     }
 
     @NotNull
-    private static FunctionCreator hadHadIntratumoralInjectionTreatmentCreator() {
+    private FunctionCreator hadHadIntratumoralInjectionTreatmentCreator() {
         return function -> new HadHadIntratumoralInjectionTreatment();
     }
 
     @NotNull
-    private static FunctionCreator participatesInAnotherTrialCreator() {
+    private FunctionCreator participatesInAnotherTrialCreator() {
         return function -> new ParticipatesInAnotherTrial();
     }
 }

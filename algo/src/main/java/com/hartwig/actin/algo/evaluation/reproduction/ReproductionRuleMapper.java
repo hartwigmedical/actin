@@ -4,17 +4,20 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ReproductionRuleMapping {
+public class ReproductionRuleMapper extends RuleMapper {
 
-    private ReproductionRuleMapping() {
+    public ReproductionRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
@@ -26,22 +29,22 @@ public final class ReproductionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator isBreastfeedingCreator() {
+    private FunctionCreator isBreastfeedingCreator() {
         return function -> new IsBreastfeeding();
     }
 
     @NotNull
-    private static FunctionCreator isPregnantCreator() {
+    private FunctionCreator isPregnantCreator() {
         return function -> new IsPregnant();
     }
 
     @NotNull
-    private static FunctionCreator canUseAdequateAnticonceptionCreator() {
+    private FunctionCreator canUseAdequateAnticonceptionCreator() {
         return function -> new CanUseAdequateAnticonception();
     }
 
     @NotNull
-    private static FunctionCreator willingToAdhereToDonationPrescriptionsCreator() {
+    private FunctionCreator willingToAdhereToDonationPrescriptionsCreator() {
         return function -> new WillingToAdhereToDonationPrescriptions();
     }
 }

@@ -5,26 +5,28 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ToxicityRuleMapping {
+public class ToxicityRuleMapper extends RuleMapper {
 
-    private ToxicityRuleMapping() {
+    public ToxicityRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel) {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, hasIntoleranceWithSpecificNameCreator());
-        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, hasIntoleranceWithSpecificDoidCreator(doidModel));
-        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, hasIntoleranceWithSpecificDoidTermCreator(doidModel));
+        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, hasIntoleranceWithSpecificDoidCreator());
+        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, hasIntoleranceWithSpecificDoidTermCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, hasIntoleranceToTaxaneCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, hasIntoleranceRelatedToStudyMedicationCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
@@ -37,70 +39,70 @@ public final class ToxicityRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasIntoleranceWithSpecificNameCreator() {
+    private FunctionCreator hasIntoleranceWithSpecificNameCreator() {
         return function -> {
-            String termToFind = FunctionInputResolver.createOneStringInput(function);
+            String termToFind = functionInputResolver().createOneStringInput(function);
             return new HasIntoleranceWithSpecificName(termToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasIntoleranceWithSpecificDoidCreator(@NotNull DoidModel doidModel) {
+    private FunctionCreator hasIntoleranceWithSpecificDoidCreator() {
         return function -> {
-            String doidToFind = FunctionInputResolver.createOneStringInput(function);
-            return new HasIntoleranceWithSpecificDoid(doidModel, doidToFind);
+            String doidToFind = functionInputResolver().createOneStringInput(function);
+            return new HasIntoleranceWithSpecificDoid(doidModel(), doidToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasIntoleranceWithSpecificDoidTermCreator(@NotNull DoidModel doidModel) {
+    private FunctionCreator hasIntoleranceWithSpecificDoidTermCreator() {
         return function -> {
             // TODO Map DOID term to DOID
-            String doidTermToFind = FunctionInputResolver.createOneDoidTermInput(function);
-            return new HasIntoleranceWithSpecificDoid(doidModel, doidTermToFind);
+            String doidTermToFind = functionInputResolver().createOneDoidTermInput(function);
+            return new HasIntoleranceWithSpecificDoid(doidModel(), doidTermToFind);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasIntoleranceToTaxaneCreator() {
+    private FunctionCreator hasIntoleranceToTaxaneCreator() {
         return function -> new HasIntoleranceToTaxanes();
     }
 
     @NotNull
-    private static FunctionCreator hasIntoleranceRelatedToStudyMedicationCreator() {
+    private FunctionCreator hasIntoleranceRelatedToStudyMedicationCreator() {
         return function -> new HasIntoleranceRelatedToStudyMedication();
     }
 
     @NotNull
-    private static FunctionCreator hasHistoryAnaphylaxisCreator() {
+    private FunctionCreator hasHistoryAnaphylaxisCreator() {
         return function -> new HasHistoryOfAnaphylaxis();
     }
 
     @NotNull
-    private static FunctionCreator hasExperiencedImmuneRelatedAdverseEventsCreator() {
+    private FunctionCreator hasExperiencedImmuneRelatedAdverseEventsCreator() {
         return function -> new HasExperiencedImmuneRelatedAdverseEvents();
     }
 
     @NotNull
-    private static FunctionCreator hasToxicityWithGradeCreator() {
+    private FunctionCreator hasToxicityWithGradeCreator() {
         return function -> {
-            int minGrade = FunctionInputResolver.createOneIntegerInput(function);
+            int minGrade = functionInputResolver().createOneIntegerInput(function);
             return new HasToxicityWithGrade(minGrade, null, Sets.newHashSet());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasToxicityWithGradeAndNameCreator() {
+    private FunctionCreator hasToxicityWithGradeAndNameCreator() {
         return function -> {
-            OneIntegerOneString input = FunctionInputResolver.createOneIntegerOneStringInput(function);
+            OneIntegerOneString input = functionInputResolver().createOneIntegerOneStringInput(function);
             return new HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasToxicityWithGradeIgnoringNamesCreator() {
+    private FunctionCreator hasToxicityWithGradeIgnoringNamesCreator() {
         return function -> {
-            OneIntegerManyStrings input = FunctionInputResolver.createOneIntegerManyStringsInput(function);
+            OneIntegerManyStrings input = functionInputResolver().createOneIntegerManyStringsInput(function);
             return new HasToxicityWithGrade(input.integer(), null, Sets.newHashSet(input.strings()));
         };
     }

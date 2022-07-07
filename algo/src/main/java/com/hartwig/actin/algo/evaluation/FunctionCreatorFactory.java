@@ -12,18 +12,19 @@ import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapper;
 import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapper;
 import com.hartwig.actin.algo.evaluation.lifestyle.LifestyleRuleMapper;
 import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapper;
-import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapping;
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapping;
-import com.hartwig.actin.algo.evaluation.priortumor.PreviousTumorRuleMapping;
-import com.hartwig.actin.algo.evaluation.reproduction.ReproductionRuleMapping;
-import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapping;
-import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapping;
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapping;
-import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapping;
-import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapping;
-import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapping;
+import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapper;
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapper;
+import com.hartwig.actin.algo.evaluation.priortumor.PreviousTumorRuleMapper;
+import com.hartwig.actin.algo.evaluation.reproduction.ReproductionRuleMapper;
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapper;
+import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapper;
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper;
+import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper;
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper;
+import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,29 +36,32 @@ final class FunctionCreatorFactory {
     @NotNull
     public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel,
             @NotNull ReferenceDateProvider referenceDateProvider) {
-        // TODO
-        RuleMappingResources resources = null;
+        RuleMappingResources resources = ImmutableRuleMappingResources.builder()
+                .referenceDateProvider(referenceDateProvider)
+                .doidModel(doidModel)
+                .functionInputResolver(new FunctionInputResolver(doidModel))
+                .build();
 
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.putAll(GeneralRuleMapper.create(referenceDateProvider));
-        map.putAll(TumorRuleMapping.create(doidModel));
-        map.putAll(TreatmentRuleMapping.create(referenceDateProvider));
-        map.putAll(PreviousTumorRuleMapping.create(doidModel, referenceDateProvider));
-        map.putAll(MolecularRuleMapping.create());
-        map.putAll(LaboratoryRuleMapper.create(referenceDateProvider));
-        map.putAll(OtherConditionRuleMapping.create(doidModel, referenceDateProvider));
-        map.putAll(CardiacFunctionRuleMapper.create(doidModel));
-        map.putAll(InfectionRuleMapper.create(doidModel));
-        map.putAll(MedicationRuleMapper.create(referenceDateProvider));
-        map.putAll(WashoutRuleMapping.create(referenceDateProvider));
-        map.putAll(ReproductionRuleMapping.create());
-        map.putAll(ComplicationRuleMapper.create(referenceDateProvider));
-        map.putAll(ToxicityRuleMapping.create(doidModel));
-        map.putAll(VitalFunctionRuleMapping.create());
+        map.putAll(new GeneralRuleMapper(resources).createMappings());
+        map.putAll(new TumorRuleMapper(resources).createMappings());
+        map.putAll(new TreatmentRuleMapper(resources).createMappings());
+        map.putAll(new PreviousTumorRuleMapper(resources).createMappings());
+        map.putAll(new MolecularRuleMapper(resources).createMappings());
+        map.putAll(new LaboratoryRuleMapper(resources).createMappings());
+        map.putAll(new OtherConditionRuleMapper(resources).createMappings());
+        map.putAll(new CardiacFunctionRuleMapper(resources).createMappings());
+        map.putAll(new InfectionRuleMapper(resources).createMappings());
+        map.putAll(new MedicationRuleMapper(resources).createMappings());
+        map.putAll(new WashoutRuleMapper(resources).createMappings());
+        map.putAll(new ReproductionRuleMapper(resources).createMappings());
+        map.putAll(new ComplicationRuleMapper(resources).createMappings());
+        map.putAll(new ToxicityRuleMapper(resources).createMappings());
+        map.putAll(new VitalFunctionRuleMapper(resources).createMappings());
         map.putAll(new BloodTransfusionRuleMapper(resources).createMappings());
-        map.putAll(SurgeryRuleMapping.create(referenceDateProvider));
-        map.putAll(LifestyleRuleMapper.create());
+        map.putAll(new SurgeryRuleMapper(resources).createMappings());
+        map.putAll(new LifestyleRuleMapper(resources).createMappings());
 
         return map;
     }

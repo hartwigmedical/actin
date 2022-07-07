@@ -4,19 +4,22 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
+import com.hartwig.actin.algo.evaluation.RuleMapper;
+import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class VitalFunctionRuleMapping {
+public class VitalFunctionRuleMapper extends RuleMapper {
 
-    private VitalFunctionRuleMapping() {
+    public VitalFunctionRuleMapper(@NotNull final RuleMappingResources resources) {
+        super(resources);
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create() {
+    @Override
+    public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
@@ -31,41 +34,41 @@ public final class VitalFunctionRuleMapping {
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientBloodPressureCreator(@NotNull BloodPressureCategory category) {
+    private FunctionCreator hasSufficientBloodPressureCreator(@NotNull BloodPressureCategory category) {
         return function -> {
-            double minMedianBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
+            double minMedianBloodPressure = functionInputResolver().createOneDoubleInput(function);
             return new HasSufficientBloodPressure(category, minMedianBloodPressure);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasLimitedBloodPressureCreator(@NotNull BloodPressureCategory category) {
+    private FunctionCreator hasLimitedBloodPressureCreator(@NotNull BloodPressureCategory category) {
         return function -> {
-            double maxMedianBloodPressure = FunctionInputResolver.createOneDoubleInput(function);
+            double maxMedianBloodPressure = functionInputResolver().createOneDoubleInput(function);
             return new HasLimitedBloodPressure(category, maxMedianBloodPressure);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientPulseOximetryCreator() {
+    private FunctionCreator hasSufficientPulseOximetryCreator() {
         return function -> {
-            double minMedianPulseOximetry = FunctionInputResolver.createOneDoubleInput(function);
+            double minMedianPulseOximetry = functionInputResolver().createOneDoubleInput(function);
             return new HasSufficientPulseOximetry(minMedianPulseOximetry);
         };
     }
 
     @NotNull
-    private static FunctionCreator hasRestingHeartRateWithinBoundsCreator() {
+    private FunctionCreator hasRestingHeartRateWithinBoundsCreator() {
         return function -> {
-            TwoDoubles input = FunctionInputResolver.createTwoDoublesInput(function);
+            TwoDoubles input = functionInputResolver().createTwoDoublesInput(function);
             return new HasRestingHeartRateWithinBounds(input.double1(), input.double2());
         };
     }
 
     @NotNull
-    private static FunctionCreator hasSufficientBodyWeightCreator() {
+    private FunctionCreator hasSufficientBodyWeightCreator() {
         return function -> {
-            double minBodyWeight = FunctionInputResolver.createOneDoubleInput(function);
+            double minBodyWeight = functionInputResolver().createOneDoubleInput(function);
             return new HasSufficientBodyWeight(minBodyWeight);
         };
     }

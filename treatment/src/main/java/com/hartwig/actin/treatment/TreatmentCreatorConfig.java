@@ -20,6 +20,7 @@ public interface TreatmentCreatorConfig {
     Logger LOGGER = LogManager.getLogger(TreatmentCreatorConfig.class);
 
     String TRIAL_CONFIG_DIRECTORY = "trial_config_directory";
+    String DOID_JSON = "doid_json";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -30,6 +31,7 @@ public interface TreatmentCreatorConfig {
         Options options = new Options();
 
         options.addOption(TRIAL_CONFIG_DIRECTORY, true, "Directory containing the trial config files");
+        options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where treatment data will be written to");
 
@@ -40,6 +42,9 @@ public interface TreatmentCreatorConfig {
 
     @NotNull
     String trialConfigDirectory();
+
+    @NotNull
+    String doidJson();
 
     @NotNull
     String outputDirectory();
@@ -53,6 +58,7 @@ public interface TreatmentCreatorConfig {
 
         return ImmutableTreatmentCreatorConfig.builder()
                 .trialConfigDirectory(ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_DIRECTORY))
+                .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

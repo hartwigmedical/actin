@@ -17,7 +17,7 @@ public class TrialConfigModelTest {
 
     @Test
     public void canCreateFromTrialConfigDirectory() throws IOException {
-        assertNotNull(TrialConfigModel.fromTrialConfigDirectory(TRIAL_CONFIG_DIRECTORY));
+        assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()));
     }
 
     @Test

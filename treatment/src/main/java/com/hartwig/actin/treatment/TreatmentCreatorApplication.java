@@ -3,6 +3,10 @@ package com.hartwig.actin.treatment;
 import java.io.IOException;
 import java.util.List;
 
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.DoidModelFactory;
+import com.hartwig.actin.doid.datamodel.DoidEntry;
+import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
@@ -48,8 +52,15 @@ public class TreatmentCreatorApplication {
     }
 
     public void run() throws IOException {
+        LOGGER.info("Loading DOID tree from {}", config.doidJson());
+        DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
+
+        DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
+        TrialFactory trialFactory = TrialFactory.create(config.trialConfigDirectory(), doidModel);
+
         LOGGER.info("Creating trial database");
-        List<Trial> trials = TrialFactory.fromTrialConfigDirectory(config.trialConfigDirectory());
+        List<Trial> trials = trialFactory.create();
 
         LOGGER.info("Evaluating usage of eligibility rules");
         EligibilityRuleUsageEvaluator.evaluate(trials);

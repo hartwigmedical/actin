@@ -18,9 +18,10 @@ public class TrialConfigModel {
     private final TrialConfigDatabase database;
 
     @NotNull
-    public static TrialConfigModel fromTrialConfigDirectory(@NotNull String trialConfigDirectory) throws IOException {
+    public static TrialConfigModel create(@NotNull String trialConfigDirectory, @NotNull EligibilityFactory eligibilityFactory)
+            throws IOException {
         TrialConfigDatabase database = TrialConfigDatabaseReader.read(trialConfigDirectory);
-        if (!TrialConfigDatabaseValidator.isValid(database)) {
+        if (!new TrialConfigDatabaseValidator(eligibilityFactory).isValid(database)) {
             throw new IllegalStateException("Trial config database is not considered valid. Cannot create config model.");
         }
         return new TrialConfigModel(database);
