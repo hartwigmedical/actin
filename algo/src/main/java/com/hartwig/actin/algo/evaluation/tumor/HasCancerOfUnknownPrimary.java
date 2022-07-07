@@ -37,7 +37,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor location/type configured for patient, unknown if CUP")
+                    .addUndeterminedSpecificMessages("No tumor location/type configured for patient, undetermined if CUP")
                     .addUndeterminedGeneralMessages("Unconfigured tumor location/type")
                     .build();
         }
