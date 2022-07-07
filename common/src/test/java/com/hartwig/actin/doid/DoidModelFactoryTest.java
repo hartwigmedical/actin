@@ -48,9 +48,13 @@ public class DoidModelFactoryTest {
         assertEquals(1, relations305.size());
         assertTrue(relations305.contains("400"));
 
-        assertEquals(1, model.termsForDoid().size());
-        assertEquals("tumor A", model.termsForDoid().get("200"));
-        assertNull(model.termsForDoid().get("300"));
+        assertEquals(1, model.termForDoidMap().size());
+        assertEquals("tumor A", model.termForDoidMap().get("200"));
+        assertNull(model.termForDoidMap().get("300"));
+
+        assertEquals(1, model.doidForTermMap().size());
+        assertEquals("200", model.doidForTermMap().get("tumor A"));
+        assertNull(model.doidForTermMap().get("tumor B"));
     }
 
     @NotNull

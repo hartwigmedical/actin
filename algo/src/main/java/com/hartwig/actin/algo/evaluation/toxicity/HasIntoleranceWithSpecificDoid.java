@@ -47,7 +47,7 @@ public class HasIntoleranceWithSpecificDoid implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no allergies with doid" + doidModel.term(doidToFind))
+                .addFailSpecificMessages("Patient has no allergies with doid" + doidModel.resolveTermForDoid(doidToFind))
                 .build();
     }
 }

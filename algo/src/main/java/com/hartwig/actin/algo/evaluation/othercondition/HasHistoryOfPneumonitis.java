@@ -44,7 +44,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(PNEUMONITIS_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has pneumonitis: " + doidModel.term(doid))
+                            .addPassSpecificMessages("Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid))
                             .addPassGeneralMessages("Pneumonitis")
                             .build();
                 }

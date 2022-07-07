@@ -40,7 +40,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has a contraindication to MRI due to " + doidModel.term(doid))
+                            .addPassSpecificMessages("Patient has a contraindication to MRI due to " + doidModel.resolveTermForDoid(doid))
                             .addPassGeneralMessages("MRI contraindication")
                             .build();
                 }

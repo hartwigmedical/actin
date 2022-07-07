@@ -47,7 +47,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isDoidMatch(doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has " + doidModel.term(doidToMatch))
+                    .addPassSpecificMessages("Patient has " + doidModel.resolveTermForDoid(doidToMatch))
                     .addPassGeneralMessages("Tumor type")
                     .build();
         }
@@ -55,14 +55,14 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isPotentialMatch(record.clinical().tumor(), doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidModel.term(doidToMatch))
+                    .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidModel.resolveTermForDoid(doidToMatch))
                     .addUndeterminedGeneralMessages("Tumor type")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no " + doidModel.term(doidToMatch))
+                .addFailSpecificMessages("Patient has no " + doidModel.resolveTermForDoid(doidToMatch))
                 .addFailGeneralMessages("Tumor type")
                 .build();
     }

@@ -40,7 +40,7 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
 
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has other condition belonging to " + doidModel.term(doidToFind))
+                            .addPassSpecificMessages("Patient has other condition belonging to " + doidModel.resolveTermForDoid(doidToFind))
                             .addPassGeneralMessages("Present " + Format.concat(conditions))
                             .build();
                 }
@@ -49,7 +49,7 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no other condition belonging to " + doidModel.term(doidToFind))
+                .addFailSpecificMessages("Patient has no other condition belonging to " + doidModel.resolveTermForDoid(doidToFind))
                 .addFailGeneralMessages("No relevant non-oncological condition")
                 .build();
     }

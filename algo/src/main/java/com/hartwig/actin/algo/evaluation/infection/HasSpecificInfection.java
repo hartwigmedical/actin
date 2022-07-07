@@ -35,8 +35,8 @@ public class HasSpecificInfection implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has infection with " + doidModel.term(doidToFind))
-                            .addPassGeneralMessages("Present " + doidModel.term(doidToFind) + " infection")
+                            .addPassSpecificMessages("Patient has infection with " + doidModel.resolveTermForDoid(doidToFind))
+                            .addPassGeneralMessages("Present " + doidModel.resolveTermForDoid(doidToFind) + " infection")
                             .build();
                 }
             }
@@ -44,7 +44,7 @@ public class HasSpecificInfection implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no known infection with " + doidModel.term(doidToFind))
+                .addFailSpecificMessages("Patient has no known infection with " + doidModel.resolveTermForDoid(doidToFind))
                 .addFailGeneralMessages("Requested infection(s) not present")
                 .build();
     }

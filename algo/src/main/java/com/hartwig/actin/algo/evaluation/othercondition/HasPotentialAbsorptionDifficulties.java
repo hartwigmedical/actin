@@ -51,7 +51,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                 if (doidModel.doidWithParents(doid).contains(GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has potential absorption difficulties due to " + doidModel.term(doid))
+                            .addPassSpecificMessages("Patient has potential absorption difficulties due to " + doidModel.resolveTermForDoid(doid))
                             .addPassGeneralMessages("Potential absorption difficulties")
                             .build();
                 }

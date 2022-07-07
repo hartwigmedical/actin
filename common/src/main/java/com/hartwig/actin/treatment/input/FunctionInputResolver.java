@@ -175,7 +175,6 @@ public class FunctionInputResolver {
     public String createOneDoidTermInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_DOID_TERM, 1);
 
-        // TODO resolve doid.
         return (String) function.parameters().get(0);
     }
 

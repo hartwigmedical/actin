@@ -10,9 +10,13 @@ import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.datamodel.Edge;
 import com.hartwig.actin.doid.datamodel.Node;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class DoidModelFactory {
+
+    private static final Logger LOGGER = LogManager.getLogger(DoidModelFactory.class);
 
     private DoidModelFactory() {
     }
@@ -36,14 +40,21 @@ public final class DoidModelFactory {
             }
         }
 
-        Map<String, String> termsPerDoid = Maps.newHashMap();
+        // Assume both doid and term are unique.
+        Map<String, String> termPerDoid = Maps.newHashMap();
+        Map<String, String> doidPerTerm = Maps.newHashMap();
         for (Node node : doidEntry.nodes()) {
             String term = node.term();
             if (term != null) {
-                termsPerDoid.put(node.doid(), term);
+                termPerDoid.put(node.doid(), term);
+                if (doidPerTerm.containsKey(term)) {
+                    LOGGER.warn("DOID term is not unique: '{}'", term);
+                } else {
+                    doidPerTerm.put(term, node.doid());
+                }
             }
         }
 
-        return new DoidModel(relationship, termsPerDoid);
+        return new DoidModel(relationship, termPerDoid, doidPerTerm);
     }
 }

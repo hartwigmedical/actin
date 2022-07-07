@@ -15,14 +15,14 @@ public final class TestDoidModelFactory {
 
     @NotNull
     public static DoidModel createMinimalTestDoidModel() {
-        return new DoidModel(ArrayListMultimap.create(), Maps.newHashMap());
+        return new DoidModel(ArrayListMultimap.create(), Maps.newHashMap(), Maps.newHashMap());
     }
 
     @NotNull
     public static DoidModel createWithOneParentChild(@NotNull String parent, @NotNull String child) {
         Multimap<String, String> relationship = ArrayListMultimap.create();
         relationship.put(child, parent);
-        return new DoidModel(relationship, Maps.newHashMap());
+        return createWithRelationship(relationship);
     }
 
     @NotNull
@@ -31,6 +31,11 @@ public final class TestDoidModelFactory {
         for (Map.Entry<String, String> entry : childParentMap.entrySet()) {
             relationship.put(entry.getKey(), entry.getValue());
         }
-        return new DoidModel(relationship, Maps.newHashMap());
+        return createWithRelationship(relationship);
+    }
+
+    @NotNull
+    private static DoidModel createWithRelationship(@NotNull Multimap<String, String> relationship) {
+        return new DoidModel(relationship, Maps.newHashMap(), Maps.newHashMap());
     }
 }
