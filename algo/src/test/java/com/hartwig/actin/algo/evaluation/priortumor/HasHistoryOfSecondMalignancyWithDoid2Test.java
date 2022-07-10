@@ -12,12 +12,12 @@ import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.junit.Test;
 
-public class HasHistoryOfSecondMalignancyWithDOIDTest {
+public class HasHistoryOfSecondMalignancyWithDoid2Test {
 
     @Test
     public void canEvaluate() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
-        HasHistoryOfSecondMalignancyWithDOID function = new HasHistoryOfSecondMalignancyWithDOID(doidModel, "100");
+        HasHistoryOfSecondMalignancyWithDoid2 function = new HasHistoryOfSecondMalignancyWithDoid2(doidModel, "100");
 
         // No prior tumors.
         List<PriorSecondPrimary> priorTumors = Lists.newArrayList();
