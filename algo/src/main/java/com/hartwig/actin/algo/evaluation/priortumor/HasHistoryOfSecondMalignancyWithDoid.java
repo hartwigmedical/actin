@@ -13,14 +13,14 @@ import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHistoryOfSecondMalignancyWithDoid2 implements EvaluationFunction {
+public class HasHistoryOfSecondMalignancyWithDoid implements EvaluationFunction {
 
     @NotNull
     private final DoidModel doidModel;
     @NotNull
     private final String doidToMatch;
 
-    HasHistoryOfSecondMalignancyWithDoid2(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
+    HasHistoryOfSecondMalignancyWithDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
         this.doidModel = doidModel;
         this.doidToMatch = doidToMatch;
     }
