@@ -84,7 +84,7 @@ public class BuildClinicalFromDoidsOnly {
     }
 
     @NotNull
-    static Set<String> toStringSet(@NotNull String paramValue, @NotNull String separator) {
+    private static Set<String> toStringSet(@NotNull String paramValue, @NotNull String separator) {
         return !paramValue.isEmpty() ? Sets.newHashSet(paramValue.split(separator)) : Sets.newHashSet();
     }
 }
