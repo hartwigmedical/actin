@@ -15,15 +15,15 @@ public class DoidModel {
     @NotNull
     private final Multimap<String, String> relationship;
     @NotNull
-    private final Map<String, String> termPerDoid;
+    private final Map<String, String> termPerDoidMap;
     @NotNull
-    private final Map<String, String> doidPerTerm;
+    private final Map<String, String> doidPerTermMap;
 
-    DoidModel(@NotNull final Multimap<String, String> relationship, @NotNull final Map<String, String> termPerDoid,
-            @NotNull final Map<String, String> doidPerTerm) {
+    DoidModel(@NotNull final Multimap<String, String> relationship, @NotNull final Map<String, String> termPerDoidMap,
+            @NotNull final Map<String, String> doidPerTermMap) {
         this.relationship = relationship;
-        this.termPerDoid = termPerDoid;
-        this.doidPerTerm = doidPerTerm;
+        this.termPerDoidMap = termPerDoidMap;
+        this.doidPerTermMap = doidPerTermMap;
     }
 
     @NotNull
@@ -35,13 +35,13 @@ public class DoidModel {
     @NotNull
     @VisibleForTesting
     Map<String, String> termForDoidMap() {
-        return termPerDoid;
+        return termPerDoidMap;
     }
 
     @NotNull
     @VisibleForTesting
     Map<String, String> doidForTermMap() {
-        return doidPerTerm;
+        return doidPerTermMap;
     }
 
     @NotNull
@@ -77,11 +77,11 @@ public class DoidModel {
 
     @Nullable
     public String resolveTermForDoid(@NotNull String doid) {
-        return termPerDoid.get(doid);
+        return termPerDoidMap.get(doid);
     }
 
     @Nullable
     public String resolveDoidForTerm(@NotNull String term) {
-        return doidPerTerm.get(term);
+        return doidPerTermMap.get(term);
     }
 }

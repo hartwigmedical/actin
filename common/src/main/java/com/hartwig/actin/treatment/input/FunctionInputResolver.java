@@ -171,12 +171,6 @@ public class FunctionInputResolver {
         }
     }
 
-    @NotNull
-    public String createOneDoidTermInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_DOID_TERM, 1);
-
-        return (String) function.parameters().get(0);
-    }
 
     public int createOneIntegerInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_INTEGER, 1);
@@ -352,6 +346,17 @@ public class FunctionInputResolver {
             throw new IllegalArgumentException("Not a proper HLA allele: " + param);
         }
 
+        return param;
+    }
+
+    @NotNull
+    public String createOneDoidTermInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_DOID_TERM, 1);
+
+        String param = (String) function.parameters().get(0);
+        if (doidModel.resolveDoidForTerm(param) == null) {
+            throw new IllegalStateException("Not a valid DOID term: " + param);
+        }
         return param;
     }
 

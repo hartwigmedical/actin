@@ -53,9 +53,8 @@ public class PreviousTumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHistoryOfSecondMalignancyWithDoidTermCreator() {
         return function -> {
-            // TODO Map DOID term to DOID
             String doidTermToMatch = functionInputResolver().createOneDoidTermInput(function);
-            return new HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidTermToMatch);
+            return new HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch));
         };
     }
 

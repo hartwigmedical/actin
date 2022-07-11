@@ -15,20 +15,24 @@ import com.hartwig.actin.treatment.input.single.FunctionInput;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ParameterizedFunctionTestFactory {
+public class ParameterizedFunctionTestFactory {
 
     private static final EligibilityRule MOCK_RULE = firstNonComposite();
 
-    private ParameterizedFunctionTestFactory() {
+    @NotNull
+    private final String doidTermToUse;
+
+    public ParameterizedFunctionTestFactory(@NotNull final String doidTermToUse) {
+        this.doidTermToUse = doidTermToUse;
     }
 
     @NotNull
-    public static EligibilityFunction create(@NotNull EligibilityRule rule) {
+    public EligibilityFunction create(@NotNull EligibilityRule rule) {
         return ImmutableEligibilityFunction.builder().rule(rule).parameters(createTestParameters(rule)).build();
     }
 
     @NotNull
-    private static List<Object> createTestParameters(@NotNull EligibilityRule rule) {
+    private List<Object> createTestParameters(@NotNull EligibilityRule rule) {
         if (CompositeRules.isComposite(rule)) {
             CompositeInput inputs = CompositeRules.inputsForCompositeRule(rule);
             if (inputs == CompositeInput.EXACTLY_1) {
@@ -44,7 +48,7 @@ public final class ParameterizedFunctionTestFactory {
     }
 
     @NotNull
-    private static List<Object> createForInputs(@NotNull FunctionInput input) {
+    private List<Object> createForInputs(@NotNull FunctionInput input) {
         switch (input) {
             case NONE: {
                 return Lists.newArrayList();
@@ -100,7 +104,7 @@ public final class ParameterizedFunctionTestFactory {
                 return Lists.newArrayList("A*02:01");
             }
             case ONE_DOID_TERM: {
-                return Lists.newArrayList("skin melanoma");
+                return Lists.newArrayList(doidTermToUse);
             }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);

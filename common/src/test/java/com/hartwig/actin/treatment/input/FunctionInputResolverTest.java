@@ -62,14 +62,14 @@ public class FunctionInputResolverTest {
 
         EligibilityFunction valid1 = create(EligibilityRule.NOT, inputs);
         assertTrue(resolver.hasValidInputs(valid1));
-        assertNotNull(resolver.createOneCompositeParameter(valid1));
+        assertNotNull(FunctionInputResolver.createOneCompositeParameter(valid1));
         assertTrue(resolver.hasValidInputs(create(EligibilityRule.WARN_IF, inputs)));
 
         // Add 2nd input
         inputs.add(createValidTestFunction());
         EligibilityFunction valid2 = create(EligibilityRule.OR, inputs);
         assertTrue(resolver.hasValidInputs(valid2));
-        assertNotNull(resolver.createAtLeastTwoCompositeParameters(valid2));
+        assertNotNull(FunctionInputResolver.createAtLeastTwoCompositeParameters(valid2));
         assertFalse(resolver.hasValidInputs(create(EligibilityRule.NOT, inputs)));
 
         // Add 3rd input
@@ -388,6 +388,23 @@ public class FunctionInputResolverTest {
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A:01*02"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02:01", "A*02:02"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneDoidTermInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithDoid("doid 1", "term 1");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_DOID_TERM);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("term 1"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        assertEquals("term 1", resolver.createOneDoidTermInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("doid 1"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("term 2"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("term 1", "term 2"))));
     }
 
     @NotNull

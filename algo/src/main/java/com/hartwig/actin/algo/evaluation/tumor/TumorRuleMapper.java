@@ -85,9 +85,8 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasPrimaryTumorBelongsToDoidTermCreator() {
         return function -> {
-            // TODO Map DOID term to DOID
             String doidTermToMatch = functionInputResolver().createOneDoidTermInput(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermToMatch, false, false);
+            return new PrimaryTumorLocationBelongsToDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch), false, false);
         };
     }
 

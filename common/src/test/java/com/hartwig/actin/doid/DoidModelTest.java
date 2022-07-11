@@ -79,12 +79,12 @@ public class DoidModelTest {
         relations.put("200", "300");
         relations.put("300", "400");
 
-        Map<String, String> termPerDoid = Maps.newHashMap();
-        termPerDoid.put("200", "tumor A");
+        Map<String, String> termPerDoidMap = Maps.newHashMap();
+        termPerDoidMap.put("200", "tumor A");
 
-        Map<String, String> doidPerTerm = Maps.newHashMap();
-        doidPerTerm.put("tumor A", "200");
+        Map<String, String> doidPerTermMap = Maps.newHashMap();
+        doidPerTermMap.put("tumor A", "200");
 
-        return new DoidModel(relations, termPerDoid, doidPerTerm);
+        return new DoidModel(relations, termPerDoidMap, doidPerTermMap);
     }
 }

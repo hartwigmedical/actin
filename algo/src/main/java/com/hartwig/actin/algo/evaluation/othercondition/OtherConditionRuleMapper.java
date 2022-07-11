@@ -89,9 +89,8 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasPriorConditionWithConfiguredDOIDTermCreator() {
         return function -> {
-            // TODO Map DOID term to DOID
             String doidTermToFind = functionInputResolver().createOneDoidTermInput(function);
-            return new HasHadPriorConditionWithDoid(doidModel(), doidTermToFind);
+            return new HasHadPriorConditionWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind));
         };
     }
 

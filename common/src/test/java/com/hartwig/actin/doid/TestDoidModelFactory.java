@@ -35,6 +35,17 @@ public final class TestDoidModelFactory {
     }
 
     @NotNull
+    public static DoidModel createWithOneDoidAndTerm(@NotNull String doid, @NotNull String term) {
+        Map<String, String> termPerDoidMap = Maps.newHashMap();
+        termPerDoidMap.put(doid, term);
+
+        Map<String, String> doidPerTermMap = Maps.newHashMap();
+        doidPerTermMap.put(term, doid);
+
+        return new DoidModel(ArrayListMultimap.create(), termPerDoidMap, doidPerTermMap);
+    }
+
+    @NotNull
     private static DoidModel createWithRelationship(@NotNull Multimap<String, String> relationship) {
         return new DoidModel(relationship, Maps.newHashMap(), Maps.newHashMap());
     }

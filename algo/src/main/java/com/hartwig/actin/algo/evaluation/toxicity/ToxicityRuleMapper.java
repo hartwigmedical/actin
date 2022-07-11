@@ -57,9 +57,8 @@ public class ToxicityRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasIntoleranceWithSpecificDoidTermCreator() {
         return function -> {
-            // TODO Map DOID term to DOID
             String doidTermToFind = functionInputResolver().createOneDoidTermInput(function);
-            return new HasIntoleranceWithSpecificDoid(doidModel(), doidTermToFind);
+            return new HasIntoleranceWithSpecificDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind));
         };
     }
 

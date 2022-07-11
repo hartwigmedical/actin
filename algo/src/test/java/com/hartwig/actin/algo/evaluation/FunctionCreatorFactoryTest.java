@@ -19,12 +19,15 @@ public class FunctionCreatorFactoryTest {
 
     @Test
     public void everyFunctionCanBeCreated() {
-        DoidModel doidModel = TestDoidModelFactory.createMinimalTestDoidModel();
+        String doidTerm = "term 1";
+
+        DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("doid 1", doidTerm);
         ReferenceDateProvider referenceDateProvider = ReferenceDateProviderTestFactory.createCurrentDateProvider();
         Map<EligibilityRule, FunctionCreator> map = FunctionCreatorFactory.create(doidModel, referenceDateProvider);
 
+        ParameterizedFunctionTestFactory factory = new ParameterizedFunctionTestFactory(doidTerm);
         for (EligibilityRule rule : EligibilityRule.values()) {
-            EligibilityFunction function = ParameterizedFunctionTestFactory.create(rule);
+            EligibilityFunction function = factory.create(rule);
             if (!CompositeRules.isComposite(rule)) {
                 FunctionCreator creator = map.get(rule);
                 assertNotNull(rule + " has no creator configured", creator);

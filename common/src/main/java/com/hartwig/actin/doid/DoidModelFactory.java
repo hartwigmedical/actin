@@ -41,20 +41,20 @@ public final class DoidModelFactory {
         }
 
         // Assume both doid and term are unique.
-        Map<String, String> termPerDoid = Maps.newHashMap();
-        Map<String, String> doidPerTerm = Maps.newHashMap();
+        Map<String, String> termPerDoidMap = Maps.newHashMap();
+        Map<String, String> doidPerTermMap = Maps.newHashMap();
         for (Node node : doidEntry.nodes()) {
             String term = node.term();
             if (term != null) {
-                termPerDoid.put(node.doid(), term);
-                if (doidPerTerm.containsKey(term)) {
+                termPerDoidMap.put(node.doid(), term);
+                if (doidPerTermMap.containsKey(term)) {
                     LOGGER.warn("DOID term is not unique: '{}'", term);
                 } else {
-                    doidPerTerm.put(term, node.doid());
+                    doidPerTermMap.put(term, node.doid());
                 }
             }
         }
 
-        return new DoidModel(relationship, termPerDoid, doidPerTerm);
+        return new DoidModel(relationship, termPerDoidMap, doidPerTermMap);
     }
 }
