@@ -102,7 +102,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 or 4960. | Resolve to `WARN` in case any DOID equal or child of DOID 2531 (but does not resolve to `FAIL` already) 
 HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 or 4960. | Resolve to `WARN` in case any DOID equal or child of DOID 5772, 3282, 5621, 3664, 8683 (but does not resolve to `FAIL` already) 
-HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X | Any configured DOID should be equal or be a child of DOID X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
+HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X | Any configured DOID term should be equal of a child of DOID belonging to term X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to `UNDETERMINED` in case ALL configured DOIDs exactly equal to DOID 162 and tumor sublocation is not "CUP" (TODO) | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
 HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `UNDETERMINED` in case of DOID exactly equal to DOID 10283   
 HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
@@ -127,7 +127,6 @@ HAS_BIOPSY_AMENABLE_LESION | Presence of WGS (to be further extended)
 HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be extended)
 CAN_PROVIDE_FRESH_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
 CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
-HAS_ASSESSABLE_DISEASE | Tumor details > hasMeasurableDisease = 1, | `UNDETERMINED` in case missing or false
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
 HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to `WARN` in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to `UNDETERMINED`
@@ -184,7 +183,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_ACTIVE_SECOND_MALIGNANCY | Prior second primary > any entry with active=1
 HAS_HISTORY_OF_SECOND_MALIGNANCY | Prior second primary > any entry
-HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X | Prior second primary > contains any entry with DOID belonging to DOID X
+HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X | Prior second primary > contains any entry with DOID belonging to DOID term X
 HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to `UNDETERMINED`.
 
 ##### Rules related to molecular results
@@ -339,7 +338,7 @@ or that this value is also out of requested range, the evaluation resolves to `F
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_X | Prior other conditions > any configured doid should be equal or be a child of DOID "X"
+HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_TERM_X | Prior other conditions > any configured DOID should be equal or be a child of DOID belongin to term "X"
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
 HAS_HISTORY_OF_BRAIN_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 936
@@ -482,7 +481,7 @@ HAS_BLADDER_OUTFLOW_OBSTRUCTION | complication > Name like %bladder%outflow% or 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_INTOLERANCE_TO_NAME_X | Intolerance > Name like %X%
-HAS_INTOLERANCE_BELONGING_TO_DOID_X | Intolerance > doid is equal of a child of doid X
+HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X | Intolerance > doid is equal of a child of doid belonging to term X
 HAS_INTOLERANCE_FOR_TAXANE | Intolerance > Name contains any taxane | Taxanes: Paclitaxel, Docetaxel, Cabazitaxel
 HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION | Intolerance > Resolves to `UNDETERMINED` in case of presence of any active allergies belonging to categories in 'Medication' and/or DOID 0060500 
 HAS_HISTORY_OF_ANAPHYLAXIS | Resolves to `UNDETERMINED` in case of presence of any allergies (T.B.D.)

@@ -25,7 +25,6 @@ public class TumorRuleMapper extends RuleMapper {
 
         map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, hasSolidPrimaryTumorCreator());
         map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, hasSolidPrimaryTumorCreatorIncludingLymphomaCreator());
-        map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_X, hasPrimaryTumorBelongsToDoidCreator());
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, hasPrimaryTumorBelongsToDoidTermCreator());
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
         map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator());
@@ -51,7 +50,6 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
         map.put(EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FFPE_ANALYSIS, canProvideFreshSampleForFFPEAnalysisCreator());
         map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FFPE_ANALYSIS, canProvideSampleForFFPEAnalysisCreator());
-        map.put(EligibilityRule.HAS_ASSESSABLE_DISEASE, hasAssessableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE, hasMeasurableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
@@ -72,14 +70,6 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasSolidPrimaryTumorCreatorIncludingLymphomaCreator() {
         return function -> new HasSolidPrimaryTumorIncludingLymphoma(doidModel());
-    }
-
-    @NotNull
-    private FunctionCreator hasPrimaryTumorBelongsToDoidCreator() {
-        return function -> {
-            String doidToMatch = functionInputResolver().createOneStringInput(function);
-            return new PrimaryTumorLocationBelongsToDoid(doidModel(), doidToMatch, false, false);
-        };
     }
 
     @NotNull
@@ -214,11 +204,6 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator canProvideSampleForFFPEAnalysisCreator() {
         return function -> new CanProvideSampleForFFPEAnalysis();
-    }
-
-    @NotNull
-    private FunctionCreator hasAssessableDiseaseCreator() {
-        return function -> new HasAssessableDisease();
     }
 
     @NotNull

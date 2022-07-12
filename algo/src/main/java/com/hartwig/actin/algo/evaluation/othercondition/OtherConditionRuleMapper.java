@@ -41,7 +41,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_X, hasPriorConditionWithConfiguredDOIDCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X, hasPriorConditionWithConfiguredDOIDTermCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithConfiguredNameCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(AUTOIMMUNE_DISEASE_DOID));
@@ -76,14 +75,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
 
         return map;
-    }
-
-    @NotNull
-    private FunctionCreator hasPriorConditionWithConfiguredDOIDCreator() {
-        return function -> {
-            String doidToFind = functionInputResolver().createOneStringInput(function);
-            return new HasHadPriorConditionWithDoid(doidModel(), doidToFind);
-        };
     }
 
     @NotNull

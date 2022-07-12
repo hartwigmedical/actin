@@ -24,7 +24,6 @@ public class PreviousTumorRuleMapper extends RuleMapper {
 
         map.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, hasActiveSecondMalignancyCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_X, hasHistoryOfSecondMalignancyWithDoidCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X,
                 hasHistoryOfSecondMalignancyWithDoidTermCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS, hasHistoryOfSecondMalignancyWithinYearsCreator());
@@ -40,14 +39,6 @@ public class PreviousTumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHistoryOfSecondMalignancyCreator() {
         return function -> new HasHistoryOfSecondMalignancy();
-    }
-
-    @NotNull
-    private FunctionCreator hasHistoryOfSecondMalignancyWithDoidCreator() {
-        return function -> {
-            String doidToMatch = functionInputResolver().createOneStringInput(function);
-            return new HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidToMatch);
-        };
     }
 
     @NotNull

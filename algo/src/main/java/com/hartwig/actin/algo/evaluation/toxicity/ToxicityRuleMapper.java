@@ -25,7 +25,6 @@ public class ToxicityRuleMapper extends RuleMapper {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, hasIntoleranceWithSpecificNameCreator());
-        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_X, hasIntoleranceWithSpecificDoidCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, hasIntoleranceWithSpecificDoidTermCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, hasIntoleranceToTaxaneCreator());
         map.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, hasIntoleranceRelatedToStudyMedicationCreator());
@@ -43,14 +42,6 @@ public class ToxicityRuleMapper extends RuleMapper {
         return function -> {
             String termToFind = functionInputResolver().createOneStringInput(function);
             return new HasIntoleranceWithSpecificName(termToFind);
-        };
-    }
-
-    @NotNull
-    private FunctionCreator hasIntoleranceWithSpecificDoidCreator() {
-        return function -> {
-            String doidToFind = functionInputResolver().createOneStringInput(function);
-            return new HasIntoleranceWithSpecificDoid(doidModel(), doidToFind);
         };
     }
 
