@@ -74,7 +74,7 @@ public interface TreatmentMatcherConfig {
 
         boolean runHistorically = cmd.hasOption(RUN_HISTORICALLY);
         if (runHistorically) {
-            LOGGER.debug("Switched to run in historic mode");
+            LOGGER.info("Configured to run in historic mode");
         }
 
         return ImmutableTreatmentMatcherConfig.builder()
