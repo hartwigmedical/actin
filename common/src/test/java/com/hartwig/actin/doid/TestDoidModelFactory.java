@@ -40,7 +40,7 @@ public final class TestDoidModelFactory {
         termPerDoidMap.put(doid, term);
 
         Map<String, String> doidPerTermMap = Maps.newHashMap();
-        doidPerTermMap.put(term, doid);
+        doidPerTermMap.put(term.toLowerCase(), doid);
 
         return new DoidModel(ArrayListMultimap.create(), termPerDoidMap, doidPerTermMap);
     }

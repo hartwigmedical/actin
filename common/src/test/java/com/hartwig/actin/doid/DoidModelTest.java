@@ -61,7 +61,7 @@ public class DoidModelTest {
     public void canResolveTerms() {
         DoidModel model = createTestModel();
 
-        assertEquals("tumor A", model.resolveTermForDoid("200"));
+        assertEquals("tumor a", model.resolveTermForDoid("200"));
         assertNull(model.resolveTermForDoid("300"));
     }
 
@@ -69,7 +69,9 @@ public class DoidModelTest {
     public void canResolveDoids() {
         DoidModel model = createTestModel();
 
+        assertEquals("200", model.resolveDoidForTerm("tumor a"));
         assertEquals("200", model.resolveDoidForTerm("tumor A"));
+        assertEquals("200", model.resolveDoidForTerm("Tumor A"));
         assertNull(model.resolveDoidForTerm("tumor B"));
     }
 
@@ -80,10 +82,10 @@ public class DoidModelTest {
         relations.put("300", "400");
 
         Map<String, String> termPerDoidMap = Maps.newHashMap();
-        termPerDoidMap.put("200", "tumor A");
+        termPerDoidMap.put("200", "tumor a");
 
         Map<String, String> doidPerTermMap = Maps.newHashMap();
-        doidPerTermMap.put("tumor A", "200");
+        doidPerTermMap.put("tumor a", "200");
 
         return new DoidModel(relations, termPerDoidMap, doidPerTermMap);
     }

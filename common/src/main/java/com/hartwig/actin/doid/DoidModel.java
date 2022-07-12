@@ -82,6 +82,6 @@ public class DoidModel {
 
     @Nullable
     public String resolveDoidForTerm(@NotNull String term) {
-        return doidPerTermMap.get(term);
+        return doidPerTermMap.get(term.toLowerCase());
     }
 }
