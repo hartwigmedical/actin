@@ -17,13 +17,13 @@ public class DoidModel {
     @NotNull
     private final Map<String, String> termPerDoidMap;
     @NotNull
-    private final Map<String, String> doidPerTermMap;
+    private final Map<String, String> doidPerLowerCaseTermMap;
 
     DoidModel(@NotNull final Multimap<String, String> relationship, @NotNull final Map<String, String> termPerDoidMap,
-            @NotNull final Map<String, String> doidPerTermMap) {
+            @NotNull final Map<String, String> doidPerLowerCaseTermMap) {
         this.relationship = relationship;
         this.termPerDoidMap = termPerDoidMap;
-        this.doidPerTermMap = doidPerTermMap;
+        this.doidPerLowerCaseTermMap = doidPerLowerCaseTermMap;
     }
 
     @NotNull
@@ -40,8 +40,8 @@ public class DoidModel {
 
     @NotNull
     @VisibleForTesting
-    Map<String, String> doidForTermMap() {
-        return doidPerTermMap;
+    Map<String, String> doidForLowerCaseTermMap() {
+        return doidPerLowerCaseTermMap;
     }
 
     @NotNull
@@ -82,6 +82,6 @@ public class DoidModel {
 
     @Nullable
     public String resolveDoidForTerm(@NotNull String term) {
-        return doidPerTermMap.get(term.toLowerCase());
+        return doidPerLowerCaseTermMap.get(term.toLowerCase());
     }
 }

@@ -52,9 +52,9 @@ public class DoidModelFactoryTest {
         assertEquals("tumor A", model.termForDoidMap().get("200"));
         assertNull(model.termForDoidMap().get("300"));
 
-        assertEquals(1, model.doidForTermMap().size());
-        assertEquals("200", model.doidForTermMap().get("tumor A"));
-        assertNull(model.doidForTermMap().get("tumor B"));
+        assertEquals(1, model.doidForLowerCaseTermMap().size());
+        assertEquals("200", model.doidForLowerCaseTermMap().get("tumor a"));
+        assertNull(model.doidForLowerCaseTermMap().get("tumor b"));
     }
 
     @NotNull

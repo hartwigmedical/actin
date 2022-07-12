@@ -42,19 +42,20 @@ public final class DoidModelFactory {
 
         // Assume both doid and term are unique.
         Map<String, String> termPerDoidMap = Maps.newHashMap();
-        Map<String, String> doidPerTermMap = Maps.newHashMap();
+        Map<String, String> doidPerLowerCaseTermMap = Maps.newHashMap();
         for (Node node : doidEntry.nodes()) {
             String term = node.term();
             if (term != null) {
                 termPerDoidMap.put(node.doid(), term);
-                if (doidPerTermMap.containsKey(term)) {
-                    LOGGER.warn("DOID term is not unique: '{}'", term);
+                String lowerCaseTerm = term.toLowerCase();
+                if (doidPerLowerCaseTermMap.containsKey(lowerCaseTerm)) {
+                    LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", term);
                 } else {
-                    doidPerTermMap.put(term, node.doid());
+                    doidPerLowerCaseTermMap.put(lowerCaseTerm, node.doid());
                 }
             }
         }
 
-        return new DoidModel(relationship, termPerDoidMap, doidPerTermMap);
+        return new DoidModel(relationship, termPerDoidMap, doidPerLowerCaseTermMap);
     }
 }
