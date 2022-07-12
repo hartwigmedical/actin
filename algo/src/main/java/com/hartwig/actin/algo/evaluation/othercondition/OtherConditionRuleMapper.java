@@ -27,7 +27,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
     private static final String LIVER_DISEASE_DOID = "409";
     private static final String MYOCARDIAL_INFARCT_DOID = "5844";
     private static final String STROKE_DOID = "6713";
-    private static final String TIA_DOID = "224";
     private static final String VASCULAR_DISEASE_DOID = "114";
 
     private static final String HYPOTENSION_NAME = "hypotension";
@@ -57,7 +56,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasPriorConditionWithDoidCreator(MYOCARDIAL_INFARCT_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS, hasHistoryOfPneumonitisCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasPriorConditionWithDoidCreator(STROKE_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_TIA, hasPriorConditionWithDoidCreator(TIA_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionWithDoidCreator(VASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
