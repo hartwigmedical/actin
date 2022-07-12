@@ -91,11 +91,10 @@ public class TrialJsonTest {
         EligibilityFunction functionC2 = findBaseFunction(cohortC.eligibility(), EligibilityRule.OR);
         assertEquals(2, functionC2.parameters().size());
 
-        //TODO: Fix test
         EligibilityFunction subFunction1 =
                 findSubFunction(functionC2.parameters(), EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X);
         assertEquals(1, subFunction1.parameters().size());
-        assertTrue(subFunction1.parameters().contains("0123"));
+        assertTrue(subFunction1.parameters().contains("cancer term"));
 
         EligibilityFunction subFunction2 = findSubFunction(functionC2.parameters(), EligibilityRule.IS_PREGNANT);
         assertTrue(subFunction2.parameters().isEmpty());
