@@ -49,6 +49,8 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITH_STOP_REASON_PD,
                 hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
+        map.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
+                hasLimitedCumulativeAnthracyclineExposureCreator());
         map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
 
         return map;
@@ -203,6 +205,11 @@ public class TreatmentRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hadHadIntratumoralInjectionTreatmentCreator() {
         return function -> new HadHadIntratumoralInjectionTreatment();
+    }
+
+    @NotNull
+    private FunctionCreator hasLimitedCumulativeAnthracyclineExposureCreator() {
+        return function -> new HasLimitedCumulativeAnthracyclineExposure();
     }
 
     @NotNull

@@ -158,6 +158,7 @@ HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had 
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z  | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ WITH_STOP_REASON_PD | Patient has had any treatment of category X with at least one stop reason due to PD | `UNDETERMINED` in case stop reason is unknown but category X treatment is received
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to `UNDETERMINED`
+HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_ MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT | Resolve to `UNDETERMINED` in case patient has received Chemotherapy of type Anthracycline; or patient has cancer belonging to DOID terms "Breast cancer", "Lymph node cancer", "Sarcoma", "Ovarian cancer", "Leukemia" AND "Chemotherapy" (without a type specified) in treatment history; or patient has had prior second primary belonging to DOID terms "Breast cancer", "Lymph node cancer", "Sarcoma", "Ovarian cancer", "Leukemia" AND "Chemotherapy" in treatment history (or treatment history is empty)
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
 
 1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Trial, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy, Supportive treatment.

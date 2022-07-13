@@ -84,6 +84,8 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITH_STOP_REASON_PD,
                 FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
+                FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, FunctionInput.NONE);
