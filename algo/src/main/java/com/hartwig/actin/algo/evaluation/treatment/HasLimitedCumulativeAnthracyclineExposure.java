@@ -20,6 +20,7 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently it is undetermined if patient meets anthracycline criteria")
+                .addUndeterminedGeneralMessages("Undetermined anthracycline exposure")
                 .build();
     }
 }
