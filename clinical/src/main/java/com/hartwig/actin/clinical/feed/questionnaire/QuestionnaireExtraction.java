@@ -196,6 +196,7 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, int lineOffset) {
+
         LookupResult result = lookup(entry, key);
 
         String line = result != null ? result.lines[result.lineIndex + lineOffset] : null;
@@ -249,7 +250,10 @@ public final class QuestionnaireExtraction {
             Boolean present = toOption(value(entry, mapping.get(key)));
             Boolean active = null;
             if (present != null) {
-                active = present ? toOption(value(entry, mapping.get(key), ACTIVE_LINE_OFFSET)) : false;
+                Boolean activeOption = toOption(value(entry, mapping.get(key), ACTIVE_LINE_OFFSET));
+                if (activeOption != null) {
+                    active = present ? activeOption : false;
+                }
             }
 
             return new LesionData(present, active);

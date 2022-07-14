@@ -357,7 +357,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.hasBrainLesions());
         assertNull(questionnaire.hasActiveBrainLesions());
         assertFalse(questionnaire.hasCnsLesions());
-        assertFalse(questionnaire.hasActiveCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
         assertFalse(questionnaire.hasBoneLesions());
         assertFalse(questionnaire.hasLiverLesions());
 
