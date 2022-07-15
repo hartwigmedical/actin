@@ -209,7 +209,7 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasLimitedCumulativeAnthracyclineExposureCreator() {
-        return function -> new HasLimitedCumulativeAnthracyclineExposure();
+        return function -> new HasLimitedCumulativeAnthracyclineExposure(doidModel());
     }
 
     @NotNull

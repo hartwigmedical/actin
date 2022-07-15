@@ -6,6 +6,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
@@ -32,5 +33,16 @@ final class TreatmentTestFactory {
                         .priorTumorTreatments(priorTumorTreatments)
                         .build())
                 .build();
+    }
+
+    @NotNull
+    public static ImmutablePriorSecondPrimary.Builder priorSecondPrimaryBuilder() {
+        return ImmutablePriorSecondPrimary.builder()
+                .tumorLocation(Strings.EMPTY)
+                .tumorSubLocation(Strings.EMPTY)
+                .tumorType(Strings.EMPTY)
+                .tumorSubType(Strings.EMPTY)
+                .treatmentHistory(Strings.EMPTY)
+                .isActive(false);
     }
 }
