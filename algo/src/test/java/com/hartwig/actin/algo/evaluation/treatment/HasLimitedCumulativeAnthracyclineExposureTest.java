@@ -32,11 +32,11 @@ public class HasLimitedCumulativeAnthracyclineExposureTest {
         List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
 
         // Add one generic chemo
         priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
 
         // Raise undetermined in case patient has suspicious cancer type
         String firstSuspiciousCancerType = HasLimitedCumulativeAnthracyclineExposure.CANCER_DOIDS_FOR_ANTHRACYCLINE.iterator().next();
