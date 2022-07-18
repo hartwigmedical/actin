@@ -24,6 +24,7 @@ public class GeneralRuleMapper extends RuleMapper {
         map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator());
         map.put(EligibilityRule.IS_MALE, isMaleCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
+        map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_EXACTLY_X, hasWHOStatusCreator());
         map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
         map.put(EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X, hasMinimumLanskyScoreCreator());
         map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
@@ -56,6 +57,14 @@ public class GeneralRuleMapper extends RuleMapper {
         return function -> {
             int maximumWHO = functionInputResolver().createOneIntegerInput(function);
             return new HasMaximumWHOStatus(maximumWHO);
+        };
+    }
+
+    @NotNull
+    private FunctionCreator hasWHOStatusCreator() {
+        return function -> {
+            int exactWHO = functionInputResolver().createOneIntegerInput(function);
+            return new HasWHOStatus(exactWHO);
         };
     }
 
