@@ -58,6 +58,8 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI, hasIntratumoralHemorrhageByMRICreator());
         map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, hasLowRiskOfHemorrhageUponTreatmentCreator());
         map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
+        map.put(EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE, hasChildPughClassCreator());
+        map.put(EligibilityRule.HAS_BCLC_STAGE_X, hasBCLCStageCreator());
 
         return map;
     }
@@ -244,5 +246,15 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasSuperScanBoneScanCreator() {
         return function -> new HasSuperScanBoneScan();
+    }
+
+    @NotNull
+    private FunctionCreator hasChildPughClassCreator() {
+        return function -> new HasChildPughClass();
+    }
+
+    @NotNull
+    private FunctionCreator hasBCLCStageCreator() {
+        return function -> new HasBCLCStage();
     }
 }
