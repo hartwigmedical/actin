@@ -85,6 +85,7 @@ Rule | When does a patient pass evaluation? | Note
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | `UNDETERMINED` in case of exactly X
 IS_MALE | Patient > Gender = Male
 HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
+HAS_WHO_STATUS_OF_AT_EXACTLY_X | WHO = X
 HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
 HAS_LANSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
 CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > Won't be evaluated
@@ -135,13 +136,15 @@ HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to `UNDETERMINED
 HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI | Currently resolves to `UNDETERMINED`
 HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT | Currently resolves to `UNDETERMINED`
 HAS_SUPERSCAN_BONE_SCAN | Won't be evaluated
+HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE | Currently resolves to `UNDETERMINED` | X can be one of: A, B, C
+HAS_BCLC_STAGE_X | Currently resolves to `UNDETERMINED` | X can be one of: 0, A, B, C or D
 
 ##### Rules related to previous cancer treatments
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | Currently resolves to `NOT_EVALUATED`
-IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X | Currently resolves to `UNDETERMINED`
+IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X | Currently resolves to `UNDETERMINED`
 HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to `UNDETERMINED`
 HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to `UNDETERMINED`, unless there is no prior treatment history and X>0, then resolve to `FAIL`
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
@@ -264,6 +267,7 @@ HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
+HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y | Creatinine clearance (Any formula) between X and Y.
 
 _Cardiac / cardiovascular function_
 

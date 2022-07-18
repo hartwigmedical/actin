@@ -68,6 +68,7 @@ public class LaboratoryRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD));
         map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
+        map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y, hasCreatinineClearanceBetweenValuesCreator());
 
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));
         map.put(EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TROPONIN_IT));
@@ -191,6 +192,11 @@ public class LaboratoryRuleMapper extends RuleMapper {
 
             return new Fallback(main, fallback);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasCreatinineClearanceBetweenValuesCreator() {
+        return function -> new HasCreatinineClearanceBetweenValues();
     }
 
     @NotNull
