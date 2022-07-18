@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsEligibleForOnLabelDrug implements EvaluationFunction {
+public class IsEligibleForOnLabelTreatment implements EvaluationFunction {
 
-    IsEligibleForOnLabelDrug() {
+    IsEligibleForOnLabelTreatment() {
     }
 
     @NotNull

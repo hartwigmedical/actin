@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class IsEligibleForOnLabelDrugTest {
+public class IsEligibleForOnLabelTreatmentTest {
 
     @Test
     public void canEvaluate() {
-        IsEligibleForOnLabelDrug function = new IsEligibleForOnLabelDrug();
+        IsEligibleForOnLabelTreatment function = new IsEligibleForOnLabelTreatment();
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

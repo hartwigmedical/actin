@@ -29,7 +29,7 @@ public class TreatmentRuleMapper extends RuleMapper {
 
         map.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, isEligibleForCurativeTreatmentCreator());
         map.put(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, hasExhaustedSOCTreatmentsCreator());
-        map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_DRUG_X, isEligibleForOnLabelDrugCreator());
+        map.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X, isEligibleForOnLabelTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
@@ -67,8 +67,8 @@ public class TreatmentRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator isEligibleForOnLabelDrugCreator() {
-        return function -> new IsEligibleForOnLabelDrug();
+    private FunctionCreator isEligibleForOnLabelTreatmentCreator() {
+        return function -> new IsEligibleForOnLabelTreatment();
     }
 
     @NotNull
