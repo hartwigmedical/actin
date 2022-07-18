@@ -64,7 +64,7 @@ class EvidenceExtractor {
     @NotNull
     private static Set<ActinTrialEvidence> createActinTrials(@NotNull Iterable<ProtectEvidence> reportableTrials) {
         Set<ActinTrialEvidence> result = Sets.newTreeSet(new ActinTrialEvidenceComparator());
-        for (ProtectEvidence evidence : applicableForSource(reportableTrials, EvidenceConstants.ACTIN_SOURCE)) {
+        for (ProtectEvidence evidence : allForSource(reportableTrials, EvidenceConstants.ACTIN_SOURCE)) {
             result.add(ActinTrialEvidenceFactory.create(evidence));
         }
         return result;
@@ -192,7 +192,7 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<ProtectEvidence> applicableForSource(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String sourceName) {
+    private static Set<ProtectEvidence> allForSource(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String sourceName) {
         Set<ProtectEvidence> filtered = Sets.newHashSet();
         for (ProtectEvidence evidence : evidences) {
             boolean hasApplicableSource = false;
@@ -202,7 +202,18 @@ class EvidenceExtractor {
                 }
             }
 
-            if (hasApplicableSource && ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
+            if (hasApplicableSource) {
+                filtered.add(evidence);
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
+    private static Set<ProtectEvidence> applicableForSource(@NotNull Iterable<ProtectEvidence> evidences, @NotNull String sourceName) {
+        Set<ProtectEvidence> filtered = Sets.newHashSet();
+        for (ProtectEvidence evidence : allForSource(evidences, sourceName)) {
+            if (ApplicabilityFilter.isPotentiallyApplicable(evidence)) {
                 filtered.add(evidence);
             }
         }
