@@ -29,39 +29,50 @@ public class HasLimitedCumulativeAnthracyclineExposureTest {
         HasLimitedCumulativeAnthracyclineExposure function =
                 new HasLimitedCumulativeAnthracyclineExposure(TestDoidModelFactory.createMinimalTestDoidModel());
 
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-        List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
+        // PASS when no information relevant to anthracycline is provided.
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, Lists.newArrayList(), Lists.newArrayList())));
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
+        // PASS with one generic chemo for non-suspicious cancer type
+        PriorTumorTreatment genericChemo = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build();
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(create(Sets.newHashSet("other cancer type"), Lists.newArrayList(), Lists.newArrayList(genericChemo))));
 
-        // Add one generic chemo
-        priorTumorTreatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
-
-        // Raise undetermined in case patient has suspicious cancer type
         String firstSuspiciousCancerType = HasLimitedCumulativeAnthracyclineExposure.CANCER_DOIDS_FOR_ANTHRACYCLINE.iterator().next();
+        // PASS when pt has prior second primary with different treatment history
+        PriorSecondPrimary suspectTumorTypeWithOther =
+                TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(firstSuspiciousCancerType).treatmentHistory("other").build();
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(create(null, Lists.newArrayList(suspectTumorTypeWithOther), Lists.newArrayList())));
+
+        // UNDETERMINED in case the patient had prior second primary with suspicious prior treatment
+        String firstSuspiciousTreatment = HasLimitedCumulativeAnthracyclineExposure.PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS.iterator().next();
+        PriorSecondPrimary suspectTumorTypeWithSuspectTreatment = TreatmentTestFactory.priorSecondPrimaryBuilder()
+                .addDoids(firstSuspiciousCancerType)
+                .treatmentHistory(firstSuspiciousTreatment)
+                .build();
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(create(Sets.newHashSet(firstSuspiciousCancerType), priorSecondPrimaries, priorTumorTreatments)));
+                function.evaluate(create(null, Lists.newArrayList(suspectTumorTypeWithSuspectTreatment), Lists.newArrayList())));
 
-        // Same when prior tumor is suspicious
-        priorSecondPrimaries.add(TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(firstSuspiciousCancerType).build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
+        // UNDETERMINED in case the patient had prior second primary with no prior treatment recorded
+        PriorSecondPrimary suspectTumorTypeWithoutKnownTreatment =
+                TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(firstSuspiciousCancerType).build();
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(create(null, Lists.newArrayList(suspectTumorTypeWithoutKnownTreatment), Lists.newArrayList())));
 
-        // Same when prior tumor is suspicious
-        priorSecondPrimaries.add(TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(firstSuspiciousCancerType).build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(create(null, priorSecondPrimaries, priorTumorTreatments)));
+        // UNDETERMINED when chemo with no type is provided and tumor type is suspicious.
+        PriorTumorTreatment priorChemoWithoutType = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build();
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(create(Sets.newHashSet(firstSuspiciousCancerType),
+                        Lists.newArrayList(),
+                        Lists.newArrayList(priorChemoWithoutType))));
 
-        // Also raise undetermined when actual anthracycline is provided.
-        priorTumorTreatments.add(TreatmentTestFactory.builder()
+        // UNDETERMINED when actual anthracycline is provided regardless of tumor type
+        PriorTumorTreatment priorAnthracycline = TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .chemoType(HasLimitedCumulativeAnthracyclineExposure.ANTHRACYCLINE_CHEMO_TYPE)
-                .build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(create(null, Lists.newArrayList(), priorTumorTreatments)));
-    }
-
-    @NotNull
-    private static PriorSecondPrimary priorPrimaryWithDoid(@NotNull String doid) {
-        return TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(doid).build();
+                .build();
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(create(null, Lists.newArrayList(), Lists.newArrayList(priorAnthracycline))));
     }
 
     @NotNull
