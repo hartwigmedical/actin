@@ -35,6 +35,7 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
                 hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
+        map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT, hasHadAnyCancerTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
@@ -101,6 +102,11 @@ public class TreatmentRuleMapper extends RuleMapper {
             int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasProgressiveDiseaseFollowingSomeSystemicTreatments(minSystemicTreatments);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasHadAnyCancerTreatmentCreator() {
+        return function -> new HasHadAnyCancerTreatment();
     }
 
     @NotNull
