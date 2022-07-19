@@ -24,7 +24,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
 
         map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator());
-
+        map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS, hasHadSurgeryInPastMonthsCreator());
         return map;
     }
 
@@ -43,4 +43,10 @@ public final class SurgeryRuleMapper extends RuleMapper {
             return new HasHadSurgeryInPastWeeks(minDate);
         };
     }
+
+    @NotNull
+    private FunctionCreator hasHadSurgeryInPastMonthsCreator() {
+        return function -> new HasHadSurgeryInPastMonths();
+    }
+
 }

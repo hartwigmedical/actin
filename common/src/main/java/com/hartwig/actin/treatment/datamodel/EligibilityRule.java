@@ -307,6 +307,7 @@ public enum EligibilityRule {
     // Rules related to surgery
     HAS_HAD_RECENT_SURGERY,
     HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS,
+    HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS,
 
     // Rules related to lifestyle
     IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES
