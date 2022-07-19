@@ -29,8 +29,9 @@ public class MolecularTestConfigFactory implements CurationConfigFactory<Molecul
                 .item(parts[fields.get("item")])
                 .measure(ResourceFile.optionalString(parts[fields.get("measure")]))
                 .scoreText(ResourceFile.optionalString(parts[fields.get("scoreText")]))
+                .scoreValuePrefix(ResourceFile.optionalString(parts[fields.get("scoreValuePrefix")]))
                 .scoreValue(ResourceFile.optionalNumber(parts[fields.get("scoreValue")]))
-                .unit(ResourceFile.optionalString(parts[fields.get("unit")]))
+                .scoreValueUnit(ResourceFile.optionalString(parts[fields.get("scoreValueUnit")]))
                 .build();
     }
 }

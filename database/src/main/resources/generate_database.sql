@@ -114,8 +114,9 @@ CREATE TABLE priorMolecularTest
     item varchar(50) NOT NULL,
     measure varchar(50),
     scoreText varchar(50),
+    scoreValuePrefix varchar(50),
     scoreValue double precision,
-    unit varchar(50),
+    scoreValueUnit varchar(50),
     PRIMARY KEY (id)
 );
 

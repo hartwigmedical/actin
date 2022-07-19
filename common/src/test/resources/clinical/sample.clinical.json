@@ -108,8 +108,9 @@
       "item": "ERBB2",
       "measure": null,
       "scoreText": null,
+      "scoreValuePrefix": null,
       "scoreValue": 3,
-      "unit": "+"
+      "scoreValueUnit": "+"
     }
   ],
   "complications": [

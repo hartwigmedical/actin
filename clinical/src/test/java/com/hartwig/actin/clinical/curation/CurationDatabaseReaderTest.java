@@ -222,8 +222,9 @@ public class CurationDatabaseReaderTest {
                 .item("ERBB2")
                 .measure(null)
                 .scoreText(null)
+                .scoreValuePrefix(null)
                 .scoreValue(3D)
-                .unit("+")
+                .scoreValueUnit("+")
                 .build(), config.curated());
     }
 

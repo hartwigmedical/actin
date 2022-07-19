@@ -183,8 +183,9 @@ public final class TestClinicalFactory {
                 .item("ERBB2")
                 .measure(null)
                 .scoreText("negative")
+                .scoreValuePrefix(null)
                 .scoreValue(null)
-                .unit(null)
+                .scoreValueUnit(null)
                 .build());
 
         return priorMolecularTests;

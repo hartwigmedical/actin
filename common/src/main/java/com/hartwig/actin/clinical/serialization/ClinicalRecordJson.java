@@ -326,8 +326,9 @@ public final class ClinicalRecordJson {
                         .item(string(object, "item"))
                         .measure(nullableString(object, "measure"))
                         .scoreText(nullableString(object, "scoreText"))
+                        .scoreValuePrefix(nullableString(object, "scoreValuePrefix"))
                         .scoreValue(nullableNumber(object, "scoreValue"))
-                        .unit(nullableString(object, "unit"))
+                        .scoreValueUnit(nullableString(object, "scoreValueUnit"))
                         .build());
             }
             return priorMolecularTestList;

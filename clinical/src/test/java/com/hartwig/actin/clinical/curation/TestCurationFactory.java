@@ -272,8 +272,9 @@ public final class TestCurationFactory {
                         .item("ERBB2")
                         .measure(null)
                         .scoreText(null)
+                        .scoreValuePrefix(null)
                         .scoreValue(3D)
-                        .unit("+")
+                        .scoreValueUnit("+")
                         .build())
                 .build());
 

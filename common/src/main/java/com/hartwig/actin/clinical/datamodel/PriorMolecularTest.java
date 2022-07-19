@@ -21,8 +21,11 @@ public abstract class PriorMolecularTest {
     public abstract String scoreText();
 
     @Nullable
+    public abstract String scoreValuePrefix();
+
+    @Nullable
     public abstract Double scoreValue();
 
     @Nullable
-    public abstract String unit();
+    public abstract String scoreValueUnit();
 }
