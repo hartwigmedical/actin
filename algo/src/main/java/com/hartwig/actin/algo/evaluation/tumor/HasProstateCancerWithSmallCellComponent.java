@@ -12,7 +12,7 @@ import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasProstateCancerWithSmallCellHistology implements EvaluationFunction {
+public class HasProstateCancerWithSmallCellComponent implements EvaluationFunction {
 
     static final String PROSTATE_CANCER_DOID = "10283";
     static final String PROSTATE_SMALL_CELL_CARCINOMA = "7141";
@@ -28,7 +28,7 @@ public class HasProstateCancerWithSmallCellHistology implements EvaluationFuncti
     @NotNull
     private final DoidModel doidModel;
 
-    HasProstateCancerWithSmallCellHistology(@NotNull final DoidModel doidModel) {
+    HasProstateCancerWithSmallCellComponent(@NotNull final DoidModel doidModel) {
         this.doidModel = doidModel;
     }
 

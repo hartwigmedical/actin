@@ -27,7 +27,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, hasSolidPrimaryTumorCreatorIncludingLymphomaCreator());
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, hasPrimaryTumorBelongsToDoidTermCreator());
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
-        map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_HISTOLOGY, hasProstateCancerWithSmallCellHistologyCreator());
+        map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT, hasProstateCancerWithSmallCellComponentCreator());
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -91,8 +91,8 @@ public class TumorRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hasProstateCancerWithSmallCellHistologyCreator() {
-        return function -> new HasProstateCancerWithSmallCellHistology(doidModel());
+    private FunctionCreator hasProstateCancerWithSmallCellComponentCreator() {
+        return function -> new HasProstateCancerWithSmallCellComponent(doidModel());
     }
 
     @NotNull

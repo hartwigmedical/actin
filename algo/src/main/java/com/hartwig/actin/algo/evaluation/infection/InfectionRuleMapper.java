@@ -17,7 +17,7 @@ public class InfectionRuleMapper extends RuleMapper {
     private static final String HEPATITIS_C_DOID = "1883";
     private static final String HIV_DOID = "526";
     private static final String CYTOMEGALOVIRUS_DOID = "0080827";
-    private static final String TUBERCOLOSIS_DOID = "399";
+    private static final String TUBERCULOSIS_DOID = "399";
 
     public InfectionRuleMapper(@NotNull final RuleMappingResources resources) {
         super(resources);
@@ -36,7 +36,7 @@ public class InfectionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasSpecificInfectionCreator(HIV_DOID));
         map.put(EligibilityRule.HAS_KNOWN_HTLV_INFECTION, hasKnownHTLVInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(CYTOMEGALOVIRUS_DOID));
-        map.put(EligibilityRule.HAS_KNOWN_TUBERCOLOSIS_INFECTION, hasSpecificInfectionCreator(TUBERCOLOSIS_DOID));
+        map.put(EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION, hasSpecificInfectionCreator(TUBERCULOSIS_DOID));
         map.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, meetsCovid19InfectionRequirementsCreator());
         map.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, isFullyVaccinatedCovid19Creator());
         map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToAttenuatedVaccineUseCreator());
