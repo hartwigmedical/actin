@@ -150,6 +150,7 @@ HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to `UNDETERMIN
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
 HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
+HAS_HAD_ANY_CANCER_TREATMENT | Prior tumor treatments > not empty.
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_ OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y% | Also see 'Notes' below
@@ -264,10 +265,10 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X | Creatinine (CREA) in mg/dL <= X | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42
 HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN 
-HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y | Creatinine clearance (Cockcroft Gault formula) between X and Y. | In case CrCl is measured in another unit, the value is converted using
+HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted
+HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted
+HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted
+HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y | Creatinine clearance (Cockcroft Gault formula) between X and Y. | In case CrCl is measured in another unit, the value is converted
 
 _Cardiac / cardiovascular function_
 
@@ -301,6 +302,9 @@ HAS_CORRECTED_PHOSPHORUS_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN 
 HAS_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X | Potassium (K) in mmol/l => X
 HAS_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | Potassium (K) LLN<X<ULN (isOutsideRef=0)
 HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_ NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)
+HAS_POTENTIAL_HYPOKALEMIA |  Potassium (K) <= LLN, or history of specific condition with DOID 4500
+HAS_POTENTIAL_HYPOMAGNESEMIA | Magnesium (MG) <= LLN, or history of specific condition with DOID 0060879
+HAS_POTENTIAL_HYPOCALCEMIA | Calcium (Ca) <= LLN, or history of specific condition with DOID 0090109
 
 _Hormones_
 
@@ -386,6 +390,7 @@ HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF 
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to `PASS`, out of range LVEF leads to `FAIL`
 HAS_QTC_OF_AT_MOST_X | QTcF or QTcB. Currently: Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
+HAS_QTCF_OF_AT_LEAST_X | Clinical status > qtcfValue in ms => X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
 HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to `WARN` in case LVEF is known and < 50%, otherwise resolve to `NOT_EVALUATED` 
 
@@ -401,7 +406,7 @@ HAS_KNOWN_HEPATITIS_C_INFECTION | Prior other conditions > configured doid shoul
 HAS_KNOWN_HIV_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 526
 HAS_KNOWN_HTLV_INFECTION | Prior other conditions > name like %HTLV%
 HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION |  Prior other conditions > configured doid should be equal or be a child of DOID 0080827
-HAS_KNOWN_TUBERCOLOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
+HAS_KNOWN_TUBERCULOSIS_INFECTION | Prior other conditions > configured doid should be equal or be a child of DOID 399
 MEETS_COVID_19_INFECTION_REQUIREMENTS | Currently resolves to `UNDETERMINED`
 IS_FULLY_VACCINATED_AGAINST_COVID_19 | Currently resolves to `UNDETERMINED`
 ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated
@@ -526,6 +531,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_HAD_RECENT_SURGERY | Surgeries > presence of surgery entry within 2 months
 HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
+HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
 
 ##### Rules related to lifestyle
  
