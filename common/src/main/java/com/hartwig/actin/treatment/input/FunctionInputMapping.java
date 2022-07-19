@@ -30,7 +30,12 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, FunctionInput.ONE_TUMOR_TYPE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_STAGE_X, FunctionInput.ONE_TUMOR_STAGE);

@@ -27,7 +27,12 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, hasSolidPrimaryTumorCreatorIncludingLymphomaCreator());
         map.put(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, hasPrimaryTumorBelongsToDoidTermCreator());
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
+        map.put(EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT, hasCancerWithNeuroendocrineComponentCreator());
+        map.put(EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT, hasCancerWithSmallCellComponentCreator());
         map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT, hasProstateCancerWithSmallCellComponentCreator());
+        map.put(EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT, hasOvarianCancerWithMucinousComponentCreator());
+        map.put(EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR, hasOvarianBorderlineTumorCreator());
+        map.put(EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR, hasStomachUndifferentiatedTumorCreator());
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -91,8 +96,33 @@ public class TumorRuleMapper extends RuleMapper {
     }
 
     @NotNull
+    private FunctionCreator hasCancerWithNeuroendocrineComponentCreator() {
+        return function -> new HasCancerWithNeuroendocrineComponent();
+    }
+
+    @NotNull
+    private FunctionCreator hasCancerWithSmallCellComponentCreator() {
+        return function -> new HasCancerWithSmallCellComponent();
+    }
+
+    @NotNull
     private FunctionCreator hasProstateCancerWithSmallCellComponentCreator() {
         return function -> new HasProstateCancerWithSmallCellComponent(doidModel());
+    }
+
+    @NotNull
+    private FunctionCreator hasOvarianCancerWithMucinousComponentCreator() {
+        return function -> new HasOvarianCancerWithMucinousComponent();
+    }
+
+    @NotNull
+    private FunctionCreator hasOvarianBorderlineTumorCreator() {
+        return function -> new HasOvarianBorderlineTumor();
+    }
+
+    @NotNull
+    private FunctionCreator hasStomachUndifferentiatedTumorCreator() {
+        return function -> new HasStomachUndifferentiatedTumor();
     }
 
     @NotNull
