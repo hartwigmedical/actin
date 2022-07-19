@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory;
 import java.time.LocalDate;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
@@ -10,10 +11,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
+import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
+import com.hartwig.actin.treatment.input.single.TwoDoubles;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +71,8 @@ public class LaboratoryRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD));
         map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X,
                 hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
-        map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y, hasCreatinineClearanceBetweenValuesCreator());
+        map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y,
+                hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
 
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));
         map.put(EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TROPONIN_IT));
@@ -195,8 +199,19 @@ public class LaboratoryRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hasCreatinineClearanceBetweenValuesCreator() {
-        return function -> new HasCreatinineClearanceBetweenValues();
+    private FunctionCreator hasCreatinineClearanceBetweenValuesCreator(@NotNull CreatinineClearanceMethod method) {
+        return function -> {
+            TwoDoubles inputs = functionInputResolver().createTwoDoublesInput(function);
+            LabMeasurement measurement = retrieveForMethod(method);
+
+            EvaluationFunction minFunction = createLabEvaluator(measurement,
+                    new HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1()));
+
+            EvaluationFunction maxFunction = createLabEvaluator(measurement,
+                    new HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2()));
+
+            return new And(Lists.newArrayList(minFunction, maxFunction));
+        };
     }
 
     @NotNull

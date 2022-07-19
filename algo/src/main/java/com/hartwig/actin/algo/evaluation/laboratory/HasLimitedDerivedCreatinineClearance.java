@@ -15,20 +15,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFunction {
+public class HasLimitedDerivedCreatinineClearance implements LabEvaluationFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(HasSufficientDerivedCreatinineClearance.class);
+    private static final Logger LOGGER = LogManager.getLogger(HasLimitedDerivedCreatinineClearance.class);
 
     private final int referenceYear;
     @NotNull
     private final CreatinineClearanceMethod method;
-    private final double minCreatinineClearance;
+    private final double maxCreatinineClearance;
 
-    HasSufficientDerivedCreatinineClearance(final int referenceYear, @NotNull final CreatinineClearanceMethod method,
-            final double minCreatinineClearance) {
+    HasLimitedDerivedCreatinineClearance(final int referenceYear, @NotNull final CreatinineClearanceMethod method,
+            final double maxCreatinineClearance) {
         this.referenceYear = referenceYear;
         this.method = method;
-        this.minCreatinineClearance = minCreatinineClearance;
+        this.maxCreatinineClearance = maxCreatinineClearance;
     }
 
     @NotNull
@@ -77,7 +77,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
                 weight,
                 creatinine);
 
-        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance);
+        EvaluationResult result = LabEvaluation.evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance);
 
         if (weight == null) {
             if (result == EvaluationResult.FAIL) {
@@ -94,7 +94,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
         Set<EvaluationResult> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LabEvaluation.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
+            evaluations.add(LabEvaluation.evaluateVersusMaxValue(value, comparator, maxCreatinineClearance));
         }
 
         return toEvaluation(CreatinineFunctions.interpretEGFREvaluations(evaluations), code);
@@ -104,14 +104,14 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(code + " is insufficient");
-            builder.addFailGeneralMessages(code + " insufficient");
+            builder.addFailSpecificMessages(code + " is too high");
+            builder.addFailGeneralMessages(code + " too high");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(code + " evaluation led to ambiguous results");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(code + " sufficient");
+            builder.addPassSpecificMessages("limited " + code);
         } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages(code + " sufficient");
+            builder.addWarnSpecificMessages("limited " + code);
         }
         return builder.build();
     }
