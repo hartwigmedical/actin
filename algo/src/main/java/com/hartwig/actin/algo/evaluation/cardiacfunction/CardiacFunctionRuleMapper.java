@@ -26,6 +26,7 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
         map.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, hasLimitedQTCFCreator());
         map.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, hasLimitedQTCFCreator());
+        map.put(EligibilityRule.HAS_QTCF_OF_AT_LEAST_X, hasSufficientQTCFCreator());
         map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator());
         map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, hasNormalCardiacFunctionByMUGAOrTTECreator());
 
@@ -50,6 +51,14 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
         return function -> {
             double maxQTCF = functionInputResolver().createOneDoubleInput(function);
             return new HasLimitedQTCF(maxQTCF);
+        };
+    }
+
+    @NotNull
+    private FunctionCreator hasSufficientQTCFCreator() {
+        return function -> {
+            double minQTCF = functionInputResolver().createOneDoubleInput(function);
+            return new HasSufficientQTCF(minQTCF);
         };
     }
 
