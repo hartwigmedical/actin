@@ -99,6 +99,9 @@ public class LaboratoryRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.POTASSIUM));
         map.put(EligibilityRule.HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
                 undeterminedLabValueCreator("corrected potassium"));
+        map.put(EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA, hasPotentialHypokalemiaCreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA, hasPotentialHypomagnesemiaCreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA, hasPotentialHypocalcemiaCreator());
 
         map.put(EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X, undeterminedLabValueCreator("serum testosterone"));
 
@@ -245,5 +248,20 @@ public class LaboratoryRuleMapper extends RuleMapper {
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("It is not clear yet under what code '" + measure + "' is measured")
                 .build();
+    }
+
+    @NotNull
+    private FunctionCreator hasPotentialHypokalemiaCreator() {
+        return function -> new HasPotentialHypokalemia();
+    }
+
+    @NotNull
+    private FunctionCreator hasPotentialHypomagnesemiaCreator() {
+        return function -> new HasPotentialHypomagnesemia();
+    }
+
+    @NotNull
+    private FunctionCreator hasPotentialHypocalcemiaCreator() {
+        return function -> new HasPotentialHypocalcemia();
     }
 }
