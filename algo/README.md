@@ -267,7 +267,7 @@ HAS_CREATININE_ULN_OF_AT_MOST_X | Creatinine (CREA) <= X*ULN
 HAS_EGFR_CKD_EPI_OF_AT_LEAST_X | eGFR (CKD-EPI formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_EGFR_MDRD_OF_AT_LEAST_X | eGFR (MDRD formula) => X. | In case CrCl is measured in another unit, the value is converted using
 HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X | Creatinine clearance (Cockcroft Gault formula) => X. | In case CrCl is measured in another unit, the value is converted using
-HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y | Creatinine clearance (Any formula) between X and Y.
+HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y | Creatinine clearance (Cockcroft Gault formula) between X and Y. | In case CrCl is measured in another unit, the value is converted using
 
 _Cardiac / cardiovascular function_
 
