@@ -13,6 +13,9 @@ import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Fallback;
+import com.hartwig.actin.algo.evaluation.composite.Not;
+import com.hartwig.actin.algo.evaluation.composite.Or;
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
@@ -23,6 +26,10 @@ import org.jetbrains.annotations.NotNull;
 public class LaboratoryRuleMapper extends RuleMapper {
 
     private static final int MAX_LAB_VALUE_AGE_DAYS = 30;
+
+    private static final String AUTOSOMAL_DOMINANT_HYPOCALCEMIA_DOID = "0090109";
+    private static final String PRIMARY_HYPOMAGNESEMIA_DOID = "0060879";
+    private static final String HYPOKALEMIA_DOID = "4500";
 
     public LaboratoryRuleMapper(@NotNull final RuleMappingResources resources) {
         super(resources);
@@ -233,6 +240,36 @@ public class LaboratoryRuleMapper extends RuleMapper {
     }
 
     @NotNull
+    private FunctionCreator hasPotentialHypokalemiaCreator() {
+        return function -> {
+            EvaluationFunction potassiumBelowLLN = new Not(createLabEvaluator(LabMeasurement.POTASSIUM, new HasSufficientLabValueLLN(1D)));
+            EvaluationFunction hasHadPriorHypokalemia =
+                    OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(doidModel(), HYPOKALEMIA_DOID);
+            return new Or(Lists.newArrayList(potassiumBelowLLN, hasHadPriorHypokalemia));
+        };
+    }
+
+    @NotNull
+    private FunctionCreator hasPotentialHypomagnesemiaCreator() {
+        return function -> {
+            EvaluationFunction magnesiumBelowLLN = new Not(createLabEvaluator(LabMeasurement.MAGNESIUM, new HasSufficientLabValueLLN(1D)));
+            EvaluationFunction hasHadPriorHypomagnesemia =
+                    OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(doidModel(), PRIMARY_HYPOMAGNESEMIA_DOID);
+            return new Or(Lists.newArrayList(magnesiumBelowLLN, hasHadPriorHypomagnesemia));
+        };
+    }
+
+    @NotNull
+    private FunctionCreator hasPotentialHypocalcemiaCreator() {
+        return function -> {
+            EvaluationFunction calciumBelowLLN = new Not(createLabEvaluator(LabMeasurement.CALCIUM, new HasSufficientLabValueLLN(1D)));
+            EvaluationFunction hasHadPriorHypocalcemia =
+                    OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(doidModel(), AUTOSOMAL_DOMINANT_HYPOCALCEMIA_DOID);
+            return new Or(Lists.newArrayList(calciumBelowLLN, hasHadPriorHypocalcemia));
+        };
+    }
+
+    @NotNull
     private EvaluationFunction createLabEvaluator(@NotNull LabMeasurement measurement, @NotNull LabEvaluationFunction function) {
         return new LabMeasurementEvaluator(measurement, function, minValidLabDate());
     }
@@ -248,20 +285,5 @@ public class LaboratoryRuleMapper extends RuleMapper {
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("It is not clear yet under what code '" + measure + "' is measured")
                 .build();
-    }
-
-    @NotNull
-    private FunctionCreator hasPotentialHypokalemiaCreator() {
-        return function -> new HasPotentialHypokalemia();
-    }
-
-    @NotNull
-    private FunctionCreator hasPotentialHypomagnesemiaCreator() {
-        return function -> new HasPotentialHypomagnesemia();
-    }
-
-    @NotNull
-    private FunctionCreator hasPotentialHypocalcemiaCreator() {
-        return function -> new HasPotentialHypocalcemia();
     }
 }
