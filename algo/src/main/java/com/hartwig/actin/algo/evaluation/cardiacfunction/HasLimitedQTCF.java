@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLimitedQTCF implements EvaluationFunction {
 
-    static final String EXPECTED_QTCF_UNIT = "ms";
-
     private final double maxQTCF;
 
     HasLimitedQTCF(final double maxQTCF) {
@@ -24,7 +22,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         ECG ecg = record.clinical().clinicalStatus().ecg();
-        if (ecg == null || ecg.qtcfValue() == null || ecg.qtcfUnit() == null) {
+        if (!QTCFFunctions.hasQTCF(ecg)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No measurement found for QTCF")
@@ -34,10 +32,10 @@ public class HasLimitedQTCF implements EvaluationFunction {
         Integer value = ecg.qtcfValue();
         String unit = ecg.qtcfUnit();
 
-        if (!unit.equalsIgnoreCase(EXPECTED_QTCF_UNIT)) {
+        if (!QTCFFunctions.isExpectedQTCFUnit(unit)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("QTCF measure not in '" + EXPECTED_QTCF_UNIT + "': " + unit)
+                    .addUndeterminedSpecificMessages("QTCF measure not in '" + QTCFFunctions.EXPECTED_QTCF_UNIT + "': " + unit)
                     .build();
         }
 

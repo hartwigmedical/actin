@@ -26,14 +26,14 @@ public class HasLimitedQTCFTest {
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
                         .qtcfValue(500)
-                        .qtcfUnit(HasLimitedQTCF.EXPECTED_QTCF_UNIT)
+                        .qtcfUnit(QTCFFunctions.EXPECTED_QTCF_UNIT)
                         .build())));
 
         // Within bounds
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
                         .qtcfValue(300)
-                        .qtcfUnit(HasLimitedQTCF.EXPECTED_QTCF_UNIT)
+                        .qtcfUnit(QTCFFunctions.EXPECTED_QTCF_UNIT)
                         .build())));
     }
 }

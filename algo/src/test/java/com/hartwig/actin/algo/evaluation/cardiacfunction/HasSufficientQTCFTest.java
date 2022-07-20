@@ -26,14 +26,14 @@ public class HasSufficientQTCFTest {
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
                         .qtcfValue(500)
-                        .qtcfUnit(HasSufficientQTCF.EXPECTED_QTCF_UNIT)
+                        .qtcfUnit(QTCFFunctions.EXPECTED_QTCF_UNIT)
                         .build())));
 
         // Below min threshold
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
                         .qtcfValue(300)
-                        .qtcfUnit(HasSufficientQTCF.EXPECTED_QTCF_UNIT)
+                        .qtcfUnit(QTCFFunctions.EXPECTED_QTCF_UNIT)
                         .build())));
     }
 }

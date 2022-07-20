@@ -10,10 +10,7 @@ import com.hartwig.actin.clinical.datamodel.ECG;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Refactoring combining with HasLimitedQTCF?
 public class HasSufficientQTCF implements EvaluationFunction {
-
-    static final String EXPECTED_QTCF_UNIT = "ms";
 
     private final double minQTCF;
 
@@ -25,7 +22,7 @@ public class HasSufficientQTCF implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         ECG ecg = record.clinical().clinicalStatus().ecg();
-        if (ecg == null || ecg.qtcfValue() == null || ecg.qtcfUnit() == null) {
+        if (!QTCFFunctions.hasQTCF(ecg)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No measurement found for QTCF")
@@ -35,10 +32,10 @@ public class HasSufficientQTCF implements EvaluationFunction {
         Integer value = ecg.qtcfValue();
         String unit = ecg.qtcfUnit();
 
-        if (!unit.equalsIgnoreCase(EXPECTED_QTCF_UNIT)) {
+        if (!QTCFFunctions.isExpectedQTCFUnit(unit)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("QTCF measure not in '" + EXPECTED_QTCF_UNIT + "': " + unit)
+                    .addUndeterminedSpecificMessages("QTCF measure not in '" + QTCFFunctions.EXPECTED_QTCF_UNIT + "': " + unit)
                     .build();
         }
 
