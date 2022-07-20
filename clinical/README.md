@@ -118,9 +118,10 @@ Field | Example Value | Details
 test | IHC | Type of test
 item | PD-L1 | Item measured
 measure | CPS | Measure of test (if applicable)
-scoreText | | Test score in text 
+scoreText | | Test score in text
+scoreValuePrefix | > | Prefix for test score in value (if applicable)
 scoreValue | 10 | Test score in value 
-unit | | Corresponding unit (if applicable)
+scoreValueUnit | | Unit for test score in value (if applicable)
 
 N cancer related complications
 
