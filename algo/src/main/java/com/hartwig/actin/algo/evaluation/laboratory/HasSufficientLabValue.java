@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -37,7 +38,7 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(convertedValue, labValue.comparator(), minValue);
+        EvaluationResult result = ValueComparison.evaluateVersusMinValue(convertedValue, labValue.comparator(), minValue);
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {

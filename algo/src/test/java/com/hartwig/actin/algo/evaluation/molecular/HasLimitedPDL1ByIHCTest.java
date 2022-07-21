@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
@@ -30,6 +31,10 @@ public class HasLimitedPDL1ByIHCTest {
 
         // Add test with value too high
         priorTests.add(pdl1Builder().scoreValue(3D).build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+
+        // Add test with right value but wrong prefix
+        priorTests.add(pdl1Builder().scoreValuePrefix(ValueComparison.LARGER_THAN).scoreValue(1D).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with right value

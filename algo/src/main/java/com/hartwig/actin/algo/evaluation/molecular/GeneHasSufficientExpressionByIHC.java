@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,28 +27,33 @@ public class GeneHasSufficientExpressionByIHC implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
-        boolean hasPositiveOrNegativeResult = false;
+        boolean mightMeetMinExpressionLevelByIHC = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
             Double scoreValue = ihcTest.scoreValue();
             if (scoreValue != null) {
                 // We assume IHC prior molecular tests always have integer score values.
-                if (Double.compare(Math.round(scoreValue), minExpressionLevel) >= 0) {
+                EvaluationResult evaluation =
+                        ValueComparison.evaluateVersusMinValue(Math.round(scoreValue), ihcTest.scoreValuePrefix(), minExpressionLevel);
+
+                if (evaluation == EvaluationResult.PASS) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages(
                                     "Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
                             .addPassGeneralMessages("Adequate " + gene + " IHC expression level")
                             .build();
+                } else if (evaluation == EvaluationResult.UNDETERMINED) {
+                    mightMeetMinExpressionLevelByIHC = true;
                 }
             }
 
             String scoreText = ihcTest.scoreText();
             if (scoreText != null && (scoreText.equalsIgnoreCase("positive") || scoreText.equalsIgnoreCase("negative"))) {
-                hasPositiveOrNegativeResult = true;
+                mightMeetMinExpressionLevelByIHC = true;
             }
         }
 
-        if (hasPositiveOrNegativeResult) {
+        if (mightMeetMinExpressionLevelByIHC) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(

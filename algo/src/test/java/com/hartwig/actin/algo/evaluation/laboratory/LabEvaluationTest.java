@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
-import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class LabEvaluationTest {
@@ -19,18 +18,6 @@ public class LabEvaluationTest {
 
         assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinULN(builder.value(80D).build(), 2D));
         assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinULN(builder.value(50D).build(), 2D));
-    }
-
-    @Test
-    public void canEvaluateVersusMinValue() {
-        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinValue(4D, Strings.EMPTY, 2D));
-        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinValue(1D, Strings.EMPTY, 2D));
-
-        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinValue(4D, LabEvaluation.LARGER_THAN, 2D));
-        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinValue(1D, LabEvaluation.SMALLER_THAN, 2D));
-
-        assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMinValue(4D, LabEvaluation.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMinValue(1D, LabEvaluation.LARGER_THAN, 2D));
     }
 
     @Test
@@ -50,17 +37,5 @@ public class LabEvaluationTest {
 
         LabValue value = LabTestFactory.builder().code(firstCode).value(1.8 * overrideRefLimitUp).build();
         assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMaxULN(value, 2D));
-    }
-
-    @Test
-    public void canEvaluateVersusMaxValue() {
-        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMaxValue(1D, Strings.EMPTY, 2D));
-        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMaxValue(4D, Strings.EMPTY, 2D));
-
-        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMaxValue(1D, LabEvaluation.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMaxValue(4D, LabEvaluation.LARGER_THAN, 2D));
-
-        assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMaxValue(4D, LabEvaluation.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMaxValue(1D, LabEvaluation.LARGER_THAN, 2D));
     }
 }

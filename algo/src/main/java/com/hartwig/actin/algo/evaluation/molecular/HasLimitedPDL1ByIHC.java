@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,18 +29,17 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<PriorMolecularTest> pdl1Tests = PriorMolecularTestFunctions.allPDL1Tests(record.clinical().priorMolecularTests(), measure);
         for (PriorMolecularTest ihcTest : pdl1Tests) {
-            boolean hasLimitedPDL1 = false;
-
             Double scoreValue = ihcTest.scoreValue();
-            if (scoreValue != null && scoreValue <= maxPDL1) {
-                hasLimitedPDL1 = true;
-            }
+            if (scoreValue != null) {
+                EvaluationResult evaluation =
+                        ValueComparison.evaluateVersusMaxValue(Math.round(scoreValue), ihcTest.scoreValuePrefix(), maxPDL1);
 
-            if (hasLimitedPDL1) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("PD-L1 expression measured by " + measure + " does not exceed maximum of " + maxPDL1)
-                        .build();
+                if (evaluation == EvaluationResult.PASS) {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.PASS)
+                            .addPassSpecificMessages("PD-L1 expression measured by " + measure + " does not exceed maximum of " + maxPDL1)
+                            .build();
+                }
             }
         }
 

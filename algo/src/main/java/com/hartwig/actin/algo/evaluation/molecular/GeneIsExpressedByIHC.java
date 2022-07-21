@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,8 @@ public class GeneIsExpressedByIHC implements EvaluationFunction {
             }
 
             Double scoreValue = ihcTest.scoreValue();
-            if (scoreValue != null && scoreValue > 0) {
+            if (scoreValue != null
+                    && ValueComparison.evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix(), 0D) == EvaluationResult.PASS) {
                 isExpressed = true;
             }
 

@@ -35,6 +35,10 @@ public class GeneHasExactExpressionByIHCTest {
         priorTests.add(ihcBuilder(gene).scoreValue(3D).build());
         assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
+        // Add test with exact result but with prefix
+        priorTests.add(ihcBuilder(gene).scoreValuePrefix(">").scoreValue(2D).build());
+        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+
         // Add test with 'positive' result
         priorTests.add(ihcBuilder(gene).scoreText("Positive").build());
         assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));

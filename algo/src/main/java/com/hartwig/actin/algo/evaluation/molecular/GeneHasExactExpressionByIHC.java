@@ -30,8 +30,9 @@ public class GeneHasExactExpressionByIHC implements EvaluationFunction {
         for (PriorMolecularTest ihcTest : ihcTests) {
             Double scoreValue = ihcTest.scoreValue();
             if (scoreValue != null) {
+                String scoreValuePrefix = ihcTest.scoreValuePrefix();
                 // We assume IHC prior molecular tests always have integer score values.
-                if (expressionLevel == Math.round(scoreValue)) {
+                if (expressionLevel == Math.round(scoreValue) && (scoreValuePrefix == null || scoreValuePrefix.isEmpty())) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Gene " + gene + " has exact expression level " + expressionLevel + " (by IHC)")

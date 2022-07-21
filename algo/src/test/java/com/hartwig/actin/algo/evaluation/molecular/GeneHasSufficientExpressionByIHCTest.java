@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
@@ -31,13 +32,18 @@ public class GeneHasSufficientExpressionByIHCTest {
         priorTests.add(ihcBuilder(gene).scoreValue(1D).build());
         assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
-        // Add test with unclear result
-        priorTests.add(ihcBuilder(gene).scoreText("Negative").build());
+        // Add test with too low result but a suitable comparator
+        priorTests.add(ihcBuilder(gene).scoreValuePrefix(ValueComparison.LARGER_THAN).scoreValue(1D).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
         // Add test with valid result
         priorTests.add(ihcBuilder(gene).scoreValue(3D).build());
         assertEvaluation(EvaluationResult.PASS, exact.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+
+        // Test with unclear result
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                exact.evaluate(MolecularTestFactory.withPriorMolecularTests(Lists.newArrayList(ihcBuilder(gene).scoreText("Negative")
+                        .build()))));
     }
 
     @NotNull

@@ -5,6 +5,7 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -23,7 +24,7 @@ public class HasSufficientLabValueTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(300D).build()));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(record,
-                        LabTestFactory.forMeasurement(measurement).value(300D).comparator(LabEvaluation.SMALLER_THAN).build()));
+                        LabTestFactory.forMeasurement(measurement).value(300D).comparator(ValueComparison.SMALLER_THAN).build()));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(100D).build()));
     }
 

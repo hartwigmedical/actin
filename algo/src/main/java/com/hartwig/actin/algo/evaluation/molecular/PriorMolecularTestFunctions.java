@@ -3,11 +3,17 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
 final class PriorMolecularTestFunctions {
+
+    private static final String LARGER_THAN = ">";
+    private static final String LARGER_THAN_OR_EQUAL = ">=";
+    private static final String SMALLER_THAN = "<";
+    private static final String SMALLER_THAN_OR_EQUAL = "<=";
 
     private PriorMolecularTestFunctions() {
     }
@@ -48,5 +54,40 @@ final class PriorMolecularTestFunctions {
         }
 
         return filtered;
+    }
+
+    @NotNull
+    public static EvaluationResult evaluateVersusMinValue(double value, @NotNull String comparator, double minValue) {
+        if (canBeDetermined(value, comparator, minValue)) {
+            return EvaluationResult.UNDETERMINED;
+        }
+
+        return Double.compare(value, minValue) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+    }
+
+    @NotNull
+    public static EvaluationResult evaluateVersusMaxValue(double value, @NotNull String comparator, double maxValue) {
+        if (canBeDetermined(value, comparator, maxValue)) {
+            return EvaluationResult.UNDETERMINED;
+        }
+
+        return Double.compare(value, maxValue) <= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+    }
+
+    private static boolean canBeDetermined(double value, @NotNull String comparator, double refValue) {
+        switch (comparator) {
+            case LARGER_THAN: {
+                return value > refValue;
+            } case LARGER_THAN_OR_EQUAL: {
+                return value >= refValue;
+            } case SMALLER_THAN: {
+                return value < refValue;
+            } case SMALLER_THAN_OR_EQUAL: {
+                return value <= refValue;
+            }
+            default: {
+                return true;
+            }
+        }
     }
 }

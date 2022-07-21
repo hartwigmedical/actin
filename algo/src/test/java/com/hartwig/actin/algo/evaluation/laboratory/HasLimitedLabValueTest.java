@@ -5,6 +5,7 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -23,7 +24,7 @@ public class HasLimitedLabValueTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(2).build()));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(record,
-                        LabTestFactory.forMeasurement(measurement).value(0.5).comparator(LabEvaluation.LARGER_THAN).build()));
+                        LabTestFactory.forMeasurement(measurement).value(0.5).comparator(ValueComparison.LARGER_THAN).build()));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(0.5).build()));
     }
 

@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 
 import org.apache.logging.log4j.LogManager;
@@ -77,7 +78,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
                 weight,
                 creatinine);
 
-        EvaluationResult result = LabEvaluation.evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance);
+        EvaluationResult result = ValueComparison.evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance);
 
         if (weight == null) {
             if (result == EvaluationResult.FAIL) {
@@ -94,7 +95,7 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
     private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
         Set<EvaluationResult> evaluations = Sets.newHashSet();
         for (Double value : values) {
-            evaluations.add(LabEvaluation.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
+            evaluations.add(ValueComparison.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
         }
 
         return toEvaluation(CreatinineFunctions.interpretEGFREvaluations(evaluations), code);
