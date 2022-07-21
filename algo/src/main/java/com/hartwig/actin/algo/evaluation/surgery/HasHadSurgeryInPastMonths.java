@@ -58,7 +58,7 @@ public class HasHadSurgeryInPastMonths implements EvaluationFunction {
         if (hasSurgeryWithUndeterminedDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has had surgery but not clear how long ago")
+                    .addUndeterminedSpecificMessages("Patient has had surgery but undetermined how long ago")
                     .addUndeterminedGeneralMessages("Recent surgery")
                     .build();
         }
