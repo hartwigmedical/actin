@@ -16,7 +16,8 @@ public class HasCancerWithSmallCellComponentTest {
                 HasCancerWithSmallCellComponent.SMALL_CELL_TERMS.iterator().next());
         HasCancerWithSmallCellComponent function = new HasCancerWithSmallCellComponent(doidModel);
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().build())));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().build())));
 
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().addDoids("wrong").build())));

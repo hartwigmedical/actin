@@ -39,6 +39,14 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        if (record.clinical().tumor().doids() == null && record.clinical().tumor().primaryTumorExtraDetails() == null) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Could not determine whether patient has neuroendocrine component")
+                    .addUndeterminedGeneralMessages("Neuroendocrine component")
+                    .build();
+        }
+
         boolean hasNeuroendocrineComponent = DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
                 record.clinical().tumor(),
                 NEUROENDOCRINE_DOIDS,

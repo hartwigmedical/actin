@@ -37,6 +37,14 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        if (record.clinical().tumor().doids() == null && record.clinical().tumor().primaryTumorExtraDetails() == null) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Could not determine whether patient has small component")
+                    .addUndeterminedGeneralMessages("Small cell component")
+                    .build();
+        }
+
         boolean hasSmallCellComponent = DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
                 record.clinical().tumor(),
                 SMALL_CELL_DOIDS,

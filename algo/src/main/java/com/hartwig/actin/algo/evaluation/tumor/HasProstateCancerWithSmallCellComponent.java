@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class HasProstateCancerWithSmallCellComponent implements EvaluationFunction {
 
     static final String PROSTATE_CANCER_DOID = "10283";
-    static final String PROSTATE_SMALL_CELL_CARCINOMA = "7141";
+    static final String PROSTATE_SMALL_CELL_CARCINOMA_DOID = "7141";
 
     static final Set<Set<String>> PROSTATE_WARN_DOID_SETS = Sets.newHashSet();
 
@@ -53,7 +53,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
         if (expanded.contains(PROSTATE_CANCER_DOID)) {
             String extraDetails = record.clinical().tumor().primaryTumorExtraDetails();
             boolean hasSmallCellHistology = (extraDetails != null && extraDetails.toLowerCase().contains("small cell"));
-            if (expanded.contains(PROSTATE_SMALL_CELL_CARCINOMA) || hasSmallCellHistology) {
+            if (expanded.contains(PROSTATE_SMALL_CELL_CARCINOMA_DOID) || hasSmallCellHistology) {
                 hasExactDoidMatch = true;
             }
         }

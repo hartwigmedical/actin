@@ -16,7 +16,8 @@ public class HasCancerWithNeuroendocrineComponentTest {
                 HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_TERMS.iterator().next());
         HasCancerWithNeuroendocrineComponent function = new HasCancerWithNeuroendocrineComponent(doidModel);
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().build())));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().build())));
 
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().addDoids("wrong").build())));

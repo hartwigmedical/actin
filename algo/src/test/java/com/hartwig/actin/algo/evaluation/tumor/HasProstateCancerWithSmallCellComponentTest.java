@@ -16,12 +16,12 @@ public class HasProstateCancerWithSmallCellComponentTest {
     @Test
     public void canEvaluate() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(HasProstateCancerWithSmallCellComponent.PROSTATE_CANCER_DOID,
-                HasProstateCancerWithSmallCellComponent.PROSTATE_SMALL_CELL_CARCINOMA);
+                HasProstateCancerWithSmallCellComponent.PROSTATE_SMALL_CELL_CARCINOMA_DOID);
         HasProstateCancerWithSmallCellComponent function = new HasProstateCancerWithSmallCellComponent(doidModel);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
 
-        PatientRecord exact = TumorTestFactory.withDoids(HasProstateCancerWithSmallCellComponent.PROSTATE_SMALL_CELL_CARCINOMA);
+        PatientRecord exact = TumorTestFactory.withDoids(HasProstateCancerWithSmallCellComponent.PROSTATE_SMALL_CELL_CARCINOMA_DOID);
         assertEvaluation(EvaluationResult.PASS, function.evaluate(exact));
 
         PatientRecord smallCellHistology =
