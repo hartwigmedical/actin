@@ -1,26 +1,66 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Implement according to README
 public class HasOvarianBorderlineTumor implements EvaluationFunction {
 
-    HasOvarianBorderlineTumor() {
+    static final String OVARIAN_CANCER_DOID = "2394";
+
+    static final Set<String> OVARIAN_BORDERLINE_TYPES = Sets.newHashSet();
+
+    static {
+        OVARIAN_BORDERLINE_TYPES.add("Borderline tumor");
+        OVARIAN_BORDERLINE_TYPES.add("Borderline ovarian tumor");
+    }
+
+    @NotNull
+    private final DoidModel doidModel;
+
+    HasOvarianBorderlineTumor(@NotNull final DoidModel doidModel) {
+        this.doidModel = doidModel;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        if (record.clinical().tumor().doids() == null || (record.clinical().tumor().primaryTumorType() == null
+                && record.clinical().tumor().primaryTumorSubType() == null)) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Could not determine whether patient has ovarian borderline tumor")
+                    .addUndeterminedGeneralMessages("Ovarian borderline tumor")
+                    .build();
+        }
+
+        boolean isOvarianCancer = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
+                record.clinical().tumor(),
+                Sets.newHashSet(OVARIAN_CANCER_DOID),
+                Sets.newHashSet());
+
+        boolean hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), OVARIAN_BORDERLINE_TYPES);
+
+        if (isOvarianCancer && hasBorderlineType) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has ovarian borderline tumor")
+                    .addPassGeneralMessages("Ovarian borderline")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently cannot be determined if cancer is ovarian borderline tumor")
-                .addUndeterminedGeneralMessages("Undetermined ovarian borderline tumor")
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient does not have ovarian borderline tumor")
+                .addFailGeneralMessages("Ovarian borderline")
                 .build();
     }
 }

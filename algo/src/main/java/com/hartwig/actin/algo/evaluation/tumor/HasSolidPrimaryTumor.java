@@ -48,7 +48,7 @@ public class HasSolidPrimaryTumor implements EvaluationFunction {
         }
 
         EvaluationResult result =
-                DoidEvaluationFunctions.hasExclusiveTumorTypeOfDoid(doidModel, doids, CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS);
+                DoidEvaluationFunctions.hasExclusiveDoidOfType(doidModel, doids, CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS);
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {

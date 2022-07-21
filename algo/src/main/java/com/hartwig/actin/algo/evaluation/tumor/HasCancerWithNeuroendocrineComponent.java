@@ -47,33 +47,40 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .build();
         }
 
-        boolean hasNeuroendocrineComponent = DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        boolean hasNeuroendocrineDoid = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 record.clinical().tumor(),
                 NEUROENDOCRINE_DOIDS,
-                NEUROENDOCRINE_TERMS,
-                NEUROENDOCRINE_EXTRA_DETAILS);
+                NEUROENDOCRINE_TERMS);
 
-        if (hasNeuroendocrineComponent) {
-            return EvaluationFactory.unrecoverable().result(EvaluationResult.PASS)
+        boolean hasNeuroendocrineDetails =
+                TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), NEUROENDOCRINE_EXTRA_DETAILS);
+
+        if (hasNeuroendocrineDoid || hasNeuroendocrineDetails) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has cancer with neuroendocrine component")
                     .addPassGeneralMessages("Neuroendocrine component")
                     .build();
         }
 
-        boolean hasSmallCellComponent = DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        boolean hasSmallCellDoid = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 record.clinical().tumor(),
                 HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS,
-                HasCancerWithSmallCellComponent.SMALL_CELL_TERMS,
+                HasCancerWithSmallCellComponent.SMALL_CELL_TERMS);
+
+        boolean hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(),
                 HasCancerWithSmallCellComponent.SMALL_CELL_EXTRA_DETAILS);
 
-        if (hasSmallCellComponent) {
-            return EvaluationFactory.unrecoverable().result(EvaluationResult.UNDETERMINED)
+        if (hasSmallCellDoid || hasSmallCellDetails) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has small cell component so may have neuroendocrine cancer")
                     .addUndeterminedGeneralMessages("Neuroendocrine component")
                     .build();
         }
 
-        return EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL)
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have cancer with neuroendocrine component")
                 .addFailGeneralMessages("Neuroendocrine component")
                 .build();

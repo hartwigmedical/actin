@@ -25,7 +25,7 @@ public class DoidEvaluationFunctionsTest {
     private static final DoidModel MATCHING_TEST_MODEL = createTestDoidModelForMatching();
 
     @Test
-    public void canMatchToExclusiveTumorDoid() {
+    public void canDetermineIfDoidIsOfExclusiveType() {
         assertEquals(EvaluationResult.PASS, hasExclusiveTumorTypeOfDoid(MATCH_DOID));
 
         String firstWarnDoid = WARN_DOIDS.iterator().next();
@@ -40,7 +40,7 @@ public class DoidEvaluationFunctionsTest {
 
     @NotNull
     private static EvaluationResult hasExclusiveTumorTypeOfDoid(@NotNull String... patientDoids) {
-        return DoidEvaluationFunctions.hasExclusiveTumorTypeOfDoid(MATCHING_TEST_MODEL,
+        return DoidEvaluationFunctions.hasExclusiveDoidOfType(MATCHING_TEST_MODEL,
                 Sets.newHashSet(patientDoids),
                 MATCH_DOID,
                 FAIL_DOIDS,
@@ -62,42 +62,31 @@ public class DoidEvaluationFunctionsTest {
     }
 
     @Test
-    public void canDetermineIfTumorIsOfType() {
+    public void canDetermineIfDoidIsOfType() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("other doid", "match doid term");
 
         Set<String> validDoids = Sets.newHashSet("match doid");
         Set<String> validDoidTerms = Sets.newHashSet("match doid term");
-        Set<String> validPrimaryTumorExtraDetails = Sets.newHashSet("match details");
 
-        assertFalse(DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        assertFalse(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 TumorTestFactory.builder().build(),
                 validDoids,
-                validDoidTerms,
-                validPrimaryTumorExtraDetails));
+                validDoidTerms));
 
-        assertTrue(DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        assertTrue(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 TumorTestFactory.builder().addDoids("match doid").build(),
                 validDoids,
-                validDoidTerms,
-                validPrimaryTumorExtraDetails));
+                validDoidTerms));
 
-        assertTrue(DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        assertTrue(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 TumorTestFactory.builder().addDoids("other doid").build(),
                 validDoids,
-                validDoidTerms,
-                validPrimaryTumorExtraDetails));
+                validDoidTerms));
 
-        assertFalse(DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        assertFalse(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 TumorTestFactory.builder().primaryTumorExtraDetails("wrong").build(),
                 validDoids,
-                validDoidTerms,
-                validPrimaryTumorExtraDetails));
-
-        assertTrue(DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
-                TumorTestFactory.builder().primaryTumorExtraDetails("tumor match details").build(),
-                validDoids,
-                validDoidTerms,
-                validPrimaryTumorExtraDetails));
+                validDoidTerms));
     }
 
     @Test

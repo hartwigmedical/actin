@@ -45,20 +45,21 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
                     .build();
         }
 
-        boolean hasSmallCellComponent = DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
-                record.clinical().tumor(),
-                SMALL_CELL_DOIDS,
-                SMALL_CELL_TERMS,
-                SMALL_CELL_EXTRA_DETAILS);
+        boolean hasSmallCellDoid =
+                DoidEvaluationFunctions.hasDoidOfCertainType(doidModel, record.clinical().tumor(), SMALL_CELL_DOIDS, SMALL_CELL_TERMS);
 
-        if (hasSmallCellComponent) {
-            return EvaluationFactory.unrecoverable().result(EvaluationResult.PASS)
+        boolean hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), SMALL_CELL_EXTRA_DETAILS);
+
+        if (hasSmallCellDoid || hasSmallCellDetails) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has cancer with small cell component")
                     .addPassGeneralMessages("Small cell component")
                     .build();
         }
 
-        return EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL)
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have cancer with small cell component")
                 .addFailGeneralMessages("Small cell component")
                 .build();

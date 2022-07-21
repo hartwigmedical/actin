@@ -52,10 +52,9 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
                     .build();
         }
 
-        boolean isOvarianMucinousType = DoidEvaluationFunctions.hasTumorOfCertainType(doidModel,
+        boolean isOvarianMucinousType = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
                 record.clinical().tumor(),
                 OVARIAN_MUCINOUS_DOIDS,
-                Sets.newHashSet(),
                 Sets.newHashSet());
 
         boolean hasSpecificOvarianMucinousCombination =

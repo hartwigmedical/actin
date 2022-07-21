@@ -18,7 +18,7 @@ final class DoidEvaluationFunctions {
     }
 
     @NotNull
-    public static EvaluationResult hasExclusiveTumorTypeOfDoid(@NotNull DoidModel doidModel, @NotNull Set<String> patientDoids,
+    public static EvaluationResult hasExclusiveDoidOfType(@NotNull DoidModel doidModel, @NotNull Set<String> patientDoids,
             @NotNull String doidToMatch, @NotNull Set<String> failDoids, @NotNull Set<String> warnDoids) {
         boolean allDoidsAreMatch = true;
         boolean hasAtLeastOneFailDoid = false;
@@ -51,8 +51,8 @@ final class DoidEvaluationFunctions {
         return EvaluationResult.FAIL;
     }
 
-    public static boolean hasTumorOfCertainType(@NotNull DoidModel doidModel, @NotNull TumorDetails tumor, @NotNull Set<String> validDoids,
-            @NotNull Set<String> validDoidTerms, @NotNull Set<String> validPrimaryTumorExtraDetails) {
+    public static boolean hasDoidOfCertainType(@NotNull DoidModel doidModel, @NotNull TumorDetails tumor, @NotNull Set<String> validDoids,
+            @NotNull Set<String> validDoidTerms) {
         Set<String> patientDoids = tumor.doids();
         if (patientDoids != null) {
             for (String patientDoid : patientDoids) {
@@ -74,16 +74,6 @@ final class DoidEvaluationFunctions {
                             }
                         }
                     }
-                }
-            }
-        }
-
-        String primaryTumorExtraDetails = tumor.primaryTumorExtraDetails();
-        if (primaryTumorExtraDetails != null) {
-            String lowerCaseDetails = primaryTumorExtraDetails.toLowerCase();
-            for (String validPrimaryTumorExtraDetail : validPrimaryTumorExtraDetails) {
-                if (lowerCaseDetails.contains(validPrimaryTumorExtraDetail.toLowerCase())) {
-                    return true;
                 }
             }
         }
