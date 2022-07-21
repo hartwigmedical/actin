@@ -13,7 +13,6 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class HasHadSurgeryInPastMonths implements EvaluationFunction {
 
@@ -42,15 +41,23 @@ public class HasHadSurgeryInPastMonths implements EvaluationFunction {
         boolean hasSurgeryWithUndeterminedDate = false;
         for (PriorTumorTreatment priorTumorTreatment : record.clinical().priorTumorTreatments()) {
             if (priorTumorTreatment.categories().contains(TreatmentCategory.SURGERY)) {
-                LocalDate surgeryDate = toSurgeryDate(priorTumorTreatment);
-                if (surgeryDate == null) {
+                Integer year = priorTumorTreatment.startYear();
+                if (year == null) {
                     hasSurgeryWithUndeterminedDate = true;
-                } else if (minDate.isBefore(surgeryDate)) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
-                            .addPassGeneralMessages("Recent surgery")
-                            .build();
+                } else {
+                    Integer month = priorTumorTreatment.startMonth();
+                    boolean isAfterMinDate =
+                            minDate.getYear() < year || (minDate.getYear() == year && month != null && minDate.getMonthValue() <= month);
+
+                    if (isAfterMinDate) {
+                        return EvaluationFactory.unrecoverable()
+                                .result(EvaluationResult.PASS)
+                                .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
+                                .addPassGeneralMessages("Recent surgery")
+                                .build();
+                    } else if (minDate.getYear() == year && month == null) {
+                        hasSurgeryWithUndeterminedDate = true;
+                    }
                 }
             }
         }
@@ -68,16 +75,5 @@ public class HasHadSurgeryInPastMonths implements EvaluationFunction {
                 .addFailSpecificMessages("Patient has not received surgery in past nr of months")
                 .addFailGeneralMessages("Recent surgery")
                 .build();
-    }
-
-    @Nullable
-    private static LocalDate toSurgeryDate(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        Integer year = priorTumorTreatment.startYear();
-        if (year == null) {
-            return null;
-        }
-
-        Integer month = priorTumorTreatment.startMonth();
-        return month == null ? LocalDate.of(year, 1, 1) : LocalDate.of(year, month, 1);
     }
 }

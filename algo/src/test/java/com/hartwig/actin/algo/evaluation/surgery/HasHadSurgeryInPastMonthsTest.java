@@ -44,15 +44,30 @@ public class HasHadSurgeryInPastMonthsTest {
         treatments.add(builder().build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)));
 
+        // A surgery that is too long ago.
+        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).startYear(minDate.minusYears(1).getYear()).build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)));
+
+        // A surgery with just the same year (and no month).
+        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).startYear(minDate.getYear()).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)));
+
         // A surgery prior treatment with no date
         treatments.add(builder().addCategories(TreatmentCategory.SURGERY).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)));
 
-        // A surgery with just the year (and no month).
-        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).startYear(2020).build());
+        // A surgery with a month just before min date.
+        treatments.add(builder().addCategories(TreatmentCategory.SURGERY)
+                .startYear(minDate.getYear())
+                .startMonth(minDate.getMonthValue() - 1)
+                .build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)));
 
-        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).startYear(2020).startMonth(4).build());
+        // A surgery with a month just after min date.
+        treatments.add(builder().addCategories(TreatmentCategory.SURGERY)
+                .startYear(minDate.getYear())
+                .startMonth(minDate.getMonthValue() + 1)
+                .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)));
     }
 
