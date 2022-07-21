@@ -122,7 +122,7 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasStomachUndifferentiatedTumorCreator() {
-        return function -> new HasStomachUndifferentiatedTumor();
+        return function -> new HasStomachUndifferentiatedTumor(doidModel());
     }
 
     @NotNull
