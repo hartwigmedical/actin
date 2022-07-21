@@ -99,4 +99,31 @@ public class DoidEvaluationFunctionsTest {
                 validDoidTerms,
                 validPrimaryTumorExtraDetails));
     }
+
+    @Test
+    public void canEvaluateIfPatientHasSpecificDoidCombination() {
+        Set<String> patientDoids = Sets.newHashSet("1", "2", "3");
+
+        Set<String> set1 = Sets.newHashSet("1", "4");
+        Set<String> set2 = Sets.newHashSet("2", "3");
+        Set<String> set3 = Sets.newHashSet("1");
+
+        Set<Set<String>> combinationSet1 = Sets.newHashSet();
+        combinationSet1.add(set1);
+
+        Set<Set<String>> combinationSet2 = Sets.newHashSet();
+        combinationSet2.add(set2);
+
+        Set<Set<String>> combinationSet3 = Sets.newHashSet();
+        combinationSet3.add(set3);
+
+        Set<Set<String>> combinationSet4 = Sets.newHashSet();
+        combinationSet4.add(set1);
+        combinationSet4.add(set2);
+
+        assertFalse(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet1));
+        assertTrue(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet2));
+        assertTrue(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet3));
+        assertTrue(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet4));
+    }
 }

@@ -53,20 +53,20 @@ final class DoidEvaluationFunctions {
 
     public static boolean hasTumorOfCertainType(@NotNull DoidModel doidModel, @NotNull TumorDetails tumor, @NotNull Set<String> validDoids,
             @NotNull Set<String> validDoidTerms, @NotNull Set<String> validPrimaryTumorExtraDetails) {
-        Set<String> doids = tumor.doids();
-        if (doids != null) {
-            for (String doid : doids) {
-                Set<String> expandedDoids = doidModel.doidWithParents(doid);
+        Set<String> patientDoids = tumor.doids();
+        if (patientDoids != null) {
+            for (String patientDoid : patientDoids) {
+                Set<String> doidTree = doidModel.doidWithParents(patientDoid);
                 for (String validDoid : validDoids) {
-                    if (expandedDoids.contains(validDoid)) {
+                    if (doidTree.contains(validDoid)) {
                         return true;
                     }
                 }
 
-                for (String expandedDoid : expandedDoids) {
-                    String term = doidModel.resolveTermForDoid(expandedDoid);
+                for (String doid : doidTree) {
+                    String term = doidModel.resolveTermForDoid(doid);
                     if (term == null) {
-                        LOGGER.warn("Could not resolve term for doid '{}'", expandedDoid);
+                        LOGGER.warn("Could not resolve term for doid '{}'", doid);
                     } else {
                         for (String validDoidTerm : validDoidTerms) {
                             if (term.toLowerCase().contains(validDoidTerm.toLowerCase())) {
@@ -85,6 +85,25 @@ final class DoidEvaluationFunctions {
                 if (lowerCaseDetails.contains(validPrimaryTumorExtraDetail.toLowerCase())) {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean hasSpecificCombinationOfDoids(@NotNull Set<String> patientDoids,
+            @NotNull Set<Set<String>> validDoidCombinations) {
+        for (Set<String> validDoidCombination : validDoidCombinations) {
+            boolean containsAll = true;
+            for (String doid : validDoidCombination) {
+                if (!patientDoids.contains(doid)) {
+                    containsAll = false;
+                    break;
+                }
+            }
+
+            if (containsAll) {
+                return true;
             }
         }
 

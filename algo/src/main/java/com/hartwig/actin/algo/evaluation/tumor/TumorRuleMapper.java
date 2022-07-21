@@ -112,7 +112,7 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasOvarianCancerWithMucinousComponentCreator() {
-        return function -> new HasOvarianCancerWithMucinousComponent();
+        return function -> new HasOvarianCancerWithMucinousComponent(doidModel());
     }
 
     @NotNull
