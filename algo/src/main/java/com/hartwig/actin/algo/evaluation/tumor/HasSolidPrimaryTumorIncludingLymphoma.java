@@ -53,7 +53,7 @@ public class HasSolidPrimaryTumorIncludingLymphoma implements EvaluationFunction
         }
 
         EvaluationResult result =
-                DoidEvaluationFunctions.evaluate(doidModel, doids, CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS);
+                DoidEvaluationFunctions.hasExclusiveTumorTypeOfDoid(doidModel, doids, CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS);
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
