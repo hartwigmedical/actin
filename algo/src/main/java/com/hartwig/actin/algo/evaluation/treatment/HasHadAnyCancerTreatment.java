@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Implement according to README
 public class HasHadAnyCancerTreatment implements EvaluationFunction {
 
     HasHadAnyCancerTreatment() {
@@ -17,10 +16,18 @@ public class HasHadAnyCancerTreatment implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        if (record.clinical().priorTumorTreatments().isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient did not get any prior cancer treatments")
+                    .addFailGeneralMessages("Prior cancer treatment")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently undetermined if patient has had any cancer treatment")
-                .addUndeterminedGeneralMessages("Undetermined cancer treatment")
+                .result(EvaluationResult.PASS)
+                .addPassSpecificMessages("Patient got prior cancer treatment")
+                .addPassGeneralMessages("Prior cancer treatment")
                 .build();
     }
 }
