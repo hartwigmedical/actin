@@ -42,7 +42,7 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
         if (record.clinical().tumor().doids() == null && record.clinical().tumor().primaryTumorExtraDetails() == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine whether patient has neuroendocrine component")
+                    .addUndeterminedSpecificMessages("Could not determine whether tumor of patient may have a neuroendocrine component")
                     .addUndeterminedGeneralMessages("Neuroendocrine component")
                     .build();
         }
@@ -74,7 +74,8 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
         if (hasSmallCellDoid || hasSmallCellDetails) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has small cell component so may have neuroendocrine cancer")
+                    .addUndeterminedSpecificMessages(
+                            "Patient has cancer with small cell component, undetermined if neuroendocrine component could be present as well")
                     .addUndeterminedGeneralMessages("Neuroendocrine component")
                     .build();
         }

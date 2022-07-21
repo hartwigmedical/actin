@@ -19,14 +19,14 @@ public class HasHadAnyCancerTreatment implements EvaluationFunction {
         if (record.clinical().priorTumorTreatments().isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient did not get any prior cancer treatments")
+                    .addFailSpecificMessages("Patient has not had any prior cancer treatments")
                     .addFailGeneralMessages("Prior cancer treatment")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("Patient got prior cancer treatment")
+                .addPassSpecificMessages("Patient has had prior cancer treatment")
                 .addPassGeneralMessages("Prior cancer treatment")
                 .build();
     }

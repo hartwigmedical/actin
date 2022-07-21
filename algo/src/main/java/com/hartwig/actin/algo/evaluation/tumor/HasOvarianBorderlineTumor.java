@@ -53,14 +53,14 @@ public class HasOvarianBorderlineTumor implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has ovarian borderline tumor")
-                    .addPassGeneralMessages("Ovarian borderline")
+                    .addPassGeneralMessages("Ovarian borderline tumor")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have ovarian borderline tumor")
-                .addFailGeneralMessages("Ovarian borderline")
+                .addFailGeneralMessages("Ovarian borderline tumor")
                 .build();
     }
 }

@@ -55,7 +55,7 @@ public class HasSolidPrimaryTumor implements EvaluationFunction {
             builder.addFailSpecificMessages("Patient has non-solid primary tumor");
             builder.addFailGeneralMessages("Tumor type");
         } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Patient has potentially non-solid primary tumor");
+            builder.addWarnSpecificMessages("Unclear if tumor type of patient should be considered solid or non-solid");
             builder.addWarnGeneralMessages("Tumor type");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has solid primary tumor");

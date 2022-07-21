@@ -40,7 +40,7 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
         if (record.clinical().tumor().doids() == null && record.clinical().tumor().primaryTumorExtraDetails() == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine whether patient has small component")
+                    .addUndeterminedSpecificMessages("Could not determine whether tumor of patient may have a small component")
                     .addUndeterminedGeneralMessages("Small cell component")
                     .build();
         }
