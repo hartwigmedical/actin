@@ -151,7 +151,7 @@ Rule | When does a patient pass evaluation? | Note
 IS_ELIGIBLE_FOR_TREATMENT_WITH_ CURATIVE_INTENT | Currently resolves to `NOT_EVALUATED`
 IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X | Currently resolves to `UNDETERMINED`
 HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to `UNDETERMINED`
-HAS_HAD_AT_LEAST_X_ APPROVED_TREATMENT_LINES | Currently resolves to `UNDETERMINED`, unless there is no prior treatment history and X>0, then resolve to `FAIL`
+HAS_HAD_AT_LEAST_X_APPROVED_ TREATMENT_LINES | Currently resolves to `UNDETERMINED`, unless there is no prior treatment history and X>0, then resolve to `FAIL`
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
 HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
@@ -535,8 +535,8 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_HAD_RECENT_SURGERY | Surgeries > presence of surgery entry within 2 months
-HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
-HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
+HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks. X should be <= 8, in case nr of weeks is higher, the rule below should be used | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
+HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the rule above should be used | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
 
 ##### Rules related to lifestyle
  
