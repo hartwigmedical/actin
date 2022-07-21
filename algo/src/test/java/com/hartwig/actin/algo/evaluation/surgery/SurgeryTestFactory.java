@@ -6,6 +6,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
@@ -23,6 +24,17 @@ final class SurgeryTestFactory {
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .surgeries(surgeries)
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withPriorTumorTreatments(@NotNull List<PriorTumorTreatment> treatments) {
+        return ImmutablePatientRecord.builder()
+                .from(TestDataFactory.createMinimalTestPatientRecord())
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                        .priorTumorTreatments(treatments)
                         .build())
                 .build();
     }

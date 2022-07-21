@@ -46,7 +46,11 @@ public final class SurgeryRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadSurgeryInPastMonthsCreator() {
-        return function -> new HasHadSurgeryInPastMonths();
-    }
+        return function -> {
+            int maxAgeMonths = functionInputResolver().createOneIntegerInput(function);
+            LocalDate minDate = referenceDateProvider().date().minusMonths(maxAgeMonths);
 
+            return new HasHadSurgeryInPastMonths(minDate);
+        };
+    }
 }
