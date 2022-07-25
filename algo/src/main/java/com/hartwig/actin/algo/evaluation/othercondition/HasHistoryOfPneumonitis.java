@@ -68,7 +68,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no pneumonitis")
-                .addFailSpecificMessages("No pneumonitis")
+                .addFailGeneralMessages("No pneumonitis")
                 .build();
     }
 }
