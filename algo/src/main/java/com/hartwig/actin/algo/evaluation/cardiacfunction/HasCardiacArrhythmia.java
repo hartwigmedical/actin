@@ -33,9 +33,12 @@ public class HasCardiacArrhythmia implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No known ECG abnormalities");
             builder.addFailGeneralMessages("No known ECG abnormalities");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
-            builder.addPassGeneralMessages("Known ECG abnormalities: " + ecg.aberrationDescription());
+        } else if (result == EvaluationResult.PASS && ecg.aberrationDescription().equals("Unknown")) {
+            builder.addPassSpecificMessages("Patient has present ECG abnormalities, but aberration details unknown");
+            builder.addPassGeneralMessages("ECG abnormalities");
+        } else if (result == EvaluationResult.PASS && !ecg.aberrationDescription().equals("Unknown")) {
+            builder.addPassSpecificMessages("Patient has known ECG abnormalities: " + ecg.aberrationDescription());
+            builder.addPassGeneralMessages("ECG abnormalities: " + ecg.aberrationDescription());
         }
 
         return builder.build();
