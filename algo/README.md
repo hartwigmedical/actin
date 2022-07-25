@@ -121,6 +121,7 @@ HAS_UNRESECTABLE_STAGE_III_CANCER | Tumor details > stage, `UNDETERMINED` in cas
 HAS_RECURRENT_CANCER | Currently resolves to `UNDETERMINED`
 HAS_INCURABLE_CANCER | Tumor details > stage should be IV | `UNDETERMINED` in case of III(A/B/C/)
 HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainLesions, hasBoneLesions or hasOtherLesions = 1
+HAS_AT_LEAST_X_LESIONS_WITH_SPECIFIC_CRITERIA | Currently resolves to `UNDETERMINED`
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
 HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or hasActiveBrainLesions = 1
@@ -134,7 +135,7 @@ HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_ X_MONTHS_BEFORE_IC | Presence of WGS (to be e
 CAN_PROVIDE_FRESH_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
 CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_ SAMPLE_FOR_FFPE_ANALYSIS | Has biopsy amenable lesion (to be extended)
 HAS_MEASURABLE_DISEASE | Tumor details > hasMeasurableDisease = 1 
-HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to `WARN` in case of tumor type equal or belonging to DOID 2531, 1319, 0060058, 9538
+HAS_MEASURABLE_DISEASE_RECIST | Tumor details > hasMeasurableDisease = 1. | Resolve to `WARN` in case of tumor type equal or belonging to DOID 2531 (hematologic cancer), 1319 (brain  cancer), 0060058 (lymphoma), 9538 (multiple myeloma)
 HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA | Currently resolves to `UNDETERMINED`
 HAS_INJECTION_AMENABLE_LESION | Currently resolves to `UNDETERMINED`
 HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION | Currently resolves to `UNDETERMINED`
