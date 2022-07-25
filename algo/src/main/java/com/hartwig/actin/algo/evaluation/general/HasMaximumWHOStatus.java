@@ -13,6 +13,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
 
     private final int maximumWHO;
 
+    //TODO: Update WHO rules according to README
     HasMaximumWHOStatus(final int maximumWHO) {
         this.maximumWHO = maximumWHO;
     }

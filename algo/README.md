@@ -84,8 +84,8 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | `UNDETERMINED` in case of exactly X
 IS_MALE | Patient > Gender = Male
-HAS_WHO_STATUS_OF_AT_MOST_X | WHO <= X
-HAS_WHO_STATUS_OF_AT_EXACTLY_X | WHO = X
+HAS_WHO_STATUS_OF_AT_MOST_X | Patient > WHO <= X | Resolve to `WARN` in case patient WHO equals X+1 (e.g. if patient WHO = 2 and requested max WHO = 1)
+HAS_WHO_STATUS_OF_AT_EXACTLY_X | Patient > WHO = X  | Resolve to `WARN` in case patient WHO equals X+1 or X-1 (e.g. if patient WHO = 2 or 0 and requested max WHO = 1)
 HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
 HAS_LANSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
 CAN_GIVE_ADEQUATE_INFORMED_CONSENT | > Won't be evaluated
