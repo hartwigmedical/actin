@@ -213,8 +213,8 @@ TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
 TML_OF_AT_LEAST_X | Tumor Mutational Load (TML) should be => X
 TML_OF_AT_MOST_X | TML should be <= X
 HAS_HLA_TYPE_X | HLA type should be type X
-OVEREXPRESSION_OF_GENE_X | Currently set to `FAIL` (T.B.D.)
-NON_EXPRESSION_OF_GENE_X | Currently set to `FAIL` (T.B.D.)
+OVEREXPRESSION_OF_GENE_X | Currently set to `UNDETERMINED` (to be supported)
+NON_EXPRESSION_OF_GENE_X | Currently set to `UNDETERMINED` (to be supported)
 EXPRESSION_OF_GENE_X_BY_IHC | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)
 EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y | Prior molecular test > Test = IHC, Item = X and scoreValue = Y | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`
 EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y | Prior molecular test > Test = IHC, Item = X and scoreValue => Y | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`

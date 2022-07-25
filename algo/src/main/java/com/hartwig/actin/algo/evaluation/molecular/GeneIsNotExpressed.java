@@ -17,8 +17,9 @@ public class GeneIsNotExpressed implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("RNA expression not yet supported")
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages("RNA gene expression not yet supported")
+                .addUndeterminedGeneralMessages("RNA gene expression unsupported")
                 .build();
     }
 }
