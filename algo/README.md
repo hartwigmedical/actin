@@ -84,6 +84,7 @@ Rule | When does a patient pass evaluation? | Note
 ---|---|---
 IS_AT_LEAST_X_YEARS_OLD | Current year minus birth year > X | `UNDETERMINED` in case of exactly X
 IS_MALE | Patient > Gender = Male
+IS_FEMALE | Patient > Gender = Female
 HAS_WHO_STATUS_OF_AT_MOST_X | Patient > WHO <= X | Resolve to `WARN` in case patient WHO equals X+1 (e.g. if patient WHO = 2 and requested max WHO = 1)
 HAS_WHO_STATUS_OF_AT_EXACTLY_X | Patient > WHO = X  | Resolve to `WARN` in case patient WHO equals X+1 or X-1 (e.g. if patient WHO = 2 or 0 and requested max WHO = 1)
 HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X | > Currently resolves to `NOT_EVALUATED`
@@ -155,7 +156,6 @@ HAS_EXHAUSTED_SOC_TREATMENTS | Currently resolves to `UNDETERMINED`
 HAS_HAD_AT_LEAST_X_APPROVED_ TREATMENT_LINES | Currently resolves to `UNDETERMINED`, unless there is no prior treatment history and X>0, then resolve to `FAIL`
 HAS_HAD_AT_LEAST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X | 'Minimal' refers to the number of distinct lines (by name). In case minimal nr of lines does not meet the requirements but maximal does, resolve to `UNDETERMINED`
 HAS_HAD_AT_MOST_X_SYSTEMIC_ TREATMENT_LINES | Prior tumor treatments > maximal nr of lines in case systemic = 1 <= X | 'Maximal' refers to the total number of lines. In case maximal nr of lines does not meet the requirements but minimal does, resolve to `UNDETERMINED`
-HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
 HAS_HAD_ANY_CANCER_TREATMENT | Prior tumor treatments > not empty.
 HAS_HAD_TREATMENT_NAME_X | Prior tumor treatments > name contains X
 HAS_HAD_CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below | Also see 'Notes' below
@@ -166,7 +166,9 @@ HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment o
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z  | Also see 'Notes' below
-HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ WITH_STOP_REASON_PD | Patient has had any treatment of category X with at least one stop reason due to PD | `UNDETERMINED` in case stop reason is unknown but category X treatment is received
+HAS_PROGRESSIVE_DISEASE_FOLLOWING_ CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below. Stop reason of any of these treatments should be PD | In case PD cannot be determined, resolve to `UNDETERMINED`
+HAS_PROGRESSIVE_DISEASE_FOLLOWING_ CATEGORY_X_TREATMENT_OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%. Stop reason of latest treatment should be PD | In case PD cannot be determined, resolve to `UNDETERMINED`
+HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
 HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT | Currently resolves to `UNDETERMINED`
 HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_ MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT | Resolve to `UNDETERMINED` in case patient has received Chemotherapy of type Anthracycline; or patient has cancer belonging to DOID terms "Breast cancer", "Lymph node cancer", "Sarcoma", "Ovarian cancer", "Multiple myeloma" or "Leukemia" AND "Chemotherapy" (without a type specified) in treatment history; or patient has had prior second primary belonging to DOID terms "Breast cancer", "Lymph node cancer", "Sarcoma", "Ovarian cancer", "Multiple myeloma" or "Leukemia" AND "Chemotherapy" in treatment history (or treatment history is empty)
 IS_PARTICIPATING_IN_ANOTHER_TRIAL | Won't be evaluated
@@ -208,6 +210,7 @@ MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
 FUSION_IN_GENE_X | High driver fusion with fusion partner gene X is found
 WILDTYPE_OF_GENE_X | No driver mutation or fusion is found in gene X
+EXON_SKIPPING_GENE_X_EXON_Y | High driver splice mutation in gene X in splice region of exon Y, or intra-gene fusion in gene X leading to skipping of exon Y.
 MSI_SIGNATURE | MS Status = MSI
 HRD_SIGNATURE | HR Status = HRD
 TMB_OF_AT_LEAST_X | Tumor Mutational Burden (TMB) should be => X
@@ -356,9 +359,11 @@ Rule | When does a patient pass evaluation? | Note
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_TERM_X | Prior other conditions > any configured DOID should be equal or be a child of DOID belongin to term "X"
 HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME | Prior other conditions > name like %X%
 HAS_HISTORY_OF_AUTOIMMUNE_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 417
+HAS_HISTORY_OF_ANGINA | Prior other conditions > any configured doid equal or a child of DOID 8805 or 0111151 
 HAS_HISTORY_OF_BRAIN_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 936
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
+HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X | Resolve to `WARN` in case any configured doid equal or a child of DOID 6000 | X should be one of: I, II, III, IV
 HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 331
 HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 77
 HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
@@ -366,6 +371,7 @@ HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE |  Prior other conditions > any configu
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
+HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS | Prior other conditions > any configured doid should be equal or be a child of DOID 5844, and date should be <= X months. | In case myocardial infarct occurred within the last 2 months as limited by X, resolve to `WARN`. When date is not known, resolve to `Undetermined`
 HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logic as described later)
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
@@ -391,6 +397,7 @@ For all Prior other conditions applies that in case the condition is indicated a
 
 Rule | When does a patient pass evaluation?
 ---|---
+HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE | Clinical status > hasSigAberrationLatestECG = 1, or Prior other conditions > any configured doid should be equal or be a child of DOID 114, 10763 or 3393, or name like %angina% or %pacemaker%
 HAS_CARDIAC_ARRHYTHMIA | Clinical status > hasSigAberrationLatestECG = 1
 HAS_LVEF_OF_AT_LEAST_X | clinicalStatus > lvef should be => x. Unavailable LVEF data leads to `UNDETERMINED`, out of range LVEF leads to `FAIL`
 HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN | clinicalStatus > lvef should be => X. Unavailable LVEF data leads to `PASS`, out of range LVEF leads to `FAIL`
@@ -485,6 +492,7 @@ ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
 HAS_COMPLICATION_X | complication > Name like %X%
+HAS_COMPLICATION_OF_CATEGORY_X | complication > Categories like %X%
 HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
 HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | `WARN` in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
 HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %cervical%spondylotic%myelopathy% 
