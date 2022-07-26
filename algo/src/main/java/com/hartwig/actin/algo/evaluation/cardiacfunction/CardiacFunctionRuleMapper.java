@@ -21,6 +21,7 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE, hasPotentialSignificantHeartDiseaseCreator());
         map.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, hasAnyTypeOfCardiacArrhythmiaCreator());
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X, hasSufficientLVEFCreator(false));
         map.put(EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN, hasSufficientLVEFCreator(true));
@@ -31,6 +32,11 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, hasNormalCardiacFunctionByMUGAOrTTECreator());
 
         return map;
+    }
+
+    @NotNull
+    private FunctionCreator hasPotentialSignificantHeartDiseaseCreator() {
+        return function -> new HasPotentialSignificantHeartDisease();
     }
 
     @NotNull
@@ -68,7 +74,7 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private  FunctionCreator hasNormalCardiacFunctionByMUGAOrTTECreator() {
+    private FunctionCreator hasNormalCardiacFunctionByMUGAOrTTECreator() {
         return function -> new HasNormalCardiacFunctionByMUGAOrTTE();
     }
 }

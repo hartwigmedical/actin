@@ -43,9 +43,11 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X, hasPriorConditionWithConfiguredDOIDTermCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithConfiguredNameCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(AUTOIMMUNE_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_ANGINA, hasHistoryOfAnginaCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_BRAIN_DISEASE, hasPriorConditionWithDoidCreator(BRAIN_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasPriorConditionWithDoidCreator(CARDIAC_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, hasPriorConditionWithDoidCreator(CARDIOVASCULAR_DISEASE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X, hasHistoryOfCongestiveHeartFailureWithNYHACreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE,
                 hasPriorConditionWithDoidCreator(CENTRAL_NERVOUS_SYSTEM_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE, hasPriorConditionWithDoidCreator(GASTROINTESTINAL_DISEASE_DOID));
@@ -54,6 +56,7 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE, hasPriorConditionWithDoidCreator(LIVER_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE, hasPriorConditionWithDoidCreator(LUNG_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT, hasPriorConditionWithDoidCreator(MYOCARDIAL_INFARCT_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS, hasHistoryOfMyocardialInfarctWithinMonthsCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS, hasHistoryOfPneumonitisCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasPriorConditionWithDoidCreator(STROKE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionWithDoidCreator(VASCULAR_DISEASE_DOID));
@@ -94,6 +97,21 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasPriorConditionWithDoidCreator(@NotNull String doidToFind) {
         return function -> new HasHadPriorConditionWithDoid(doidModel(), doidToFind);
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfAnginaCreator() {
+        return function -> new HasHistoryOfAngina();
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfCongestiveHeartFailureWithNYHACreator() {
+        return function -> new HasHistoryOfCongestiveHeartFailureWithNYHA();
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfMyocardialInfarctWithinMonthsCreator() {
+        return function -> new HasHistoryOfMyocardialInfarctWithinMonths();
     }
 
     @NotNull
