@@ -11,12 +11,12 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.junit.Test;
 
-public class HasHadTreatmentWithCategoryOfTypesAndStopReasonPDTest {
+public class HasProgressiveDiseaseFollowingTreatmentsOfCategoryCreatorTest {
 
     @Test
     public void canEvaluate() {
-        HasHadTreatmentWithCategoryOfTypesAndStopReasonPD function =
-                new HasHadTreatmentWithCategoryOfTypesAndStopReasonPD(TreatmentCategory.CHEMOTHERAPY, Lists.newArrayList("type 1"));
+        HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator function =
+                new HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(TreatmentCategory.CHEMOTHERAPY, Lists.newArrayList("type 1"));
 
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
@@ -45,7 +45,7 @@ public class HasHadTreatmentWithCategoryOfTypesAndStopReasonPDTest {
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .chemoType("type 1")
-                .stopReason(HasHadTreatmentWithCategoryOfTypesAndStopReasonPD.STOP_REASON_PD)
+                .stopReason(HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator.STOP_REASON_PD)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }

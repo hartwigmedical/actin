@@ -33,8 +33,6 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES, hasHadSomeApprovedTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
-        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
-                hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT, hasHadAnyCancerTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
@@ -47,8 +45,12 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasHadSomeTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
-        map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITH_STOP_REASON_PD,
-                hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator());
+        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT,
+                hasProgressiveDiseaseFollowingTreatmentCategoryCreator());
+        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y,
+                hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator());
+        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
+                hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
                 hasLimitedCumulativeAnthracyclineExposureCreator());
@@ -93,14 +95,6 @@ public class TreatmentRuleMapper extends RuleMapper {
         return function -> {
             int maxSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasHadLimitedSystemicTreatments(maxSystemicTreatments);
-        };
-    }
-
-    @NotNull
-    private FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
-        return function -> {
-            int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
-            return new HasProgressiveDiseaseFollowingSomeSystemicTreatments(minSystemicTreatments);
         };
     }
 
@@ -201,10 +195,23 @@ public class TreatmentRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hasHadSomeTreatmentsOfCategoryWithStopReasonPDCreator() {
+    private FunctionCreator hasProgressiveDiseaseFollowingTreatmentCategoryCreator() {
+        return function -> new HasProgressiveDiseaseFollowingTreatmentCategoryCreator();
+    }
+
+    @NotNull
+    private FunctionCreator hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator() {
         return function -> {
             OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
-            return new HasHadTreatmentWithCategoryOfTypesAndStopReasonPD(input.category(), input.strings());
+            return new HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(input.category(), input.strings());
+        };
+    }
+
+    @NotNull
+    private FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
+        return function -> {
+            int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
+            return new HasProgressiveDiseaseFollowingSomeSystemicTreatments(minSystemicTreatments);
         };
     }
 

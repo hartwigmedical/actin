@@ -14,7 +14,7 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadTreatmentWithCategoryOfTypesAndStopReasonPD implements EvaluationFunction {
+public class HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator implements EvaluationFunction {
 
     static final String STOP_REASON_PD = "PD";
 
@@ -23,7 +23,7 @@ public class HasHadTreatmentWithCategoryOfTypesAndStopReasonPD implements Evalua
     @NotNull
     private final List<String> types;
 
-    HasHadTreatmentWithCategoryOfTypesAndStopReasonPD(@NotNull final TreatmentCategory category, @NotNull final List<String> types) {
+    HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(@NotNull final TreatmentCategory category, @NotNull final List<String> types) {
         this.category = category;
         this.types = types;
     }
