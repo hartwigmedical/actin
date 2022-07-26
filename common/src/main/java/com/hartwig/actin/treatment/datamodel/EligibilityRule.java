@@ -10,6 +10,7 @@ public enum EligibilityRule {
     // Rules related to general patient characteristics / statements
     IS_AT_LEAST_X_YEARS_OLD,
     IS_MALE,
+    IS_FEMALE,
     HAS_WHO_STATUS_OF_AT_MOST_X,
     HAS_WHO_STATUS_OF_AT_EXACTLY_X,
     HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X,

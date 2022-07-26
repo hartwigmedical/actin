@@ -23,6 +23,7 @@ public class GeneralRuleMapper extends RuleMapper {
 
         map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator());
         map.put(EligibilityRule.IS_MALE, isMaleCreator());
+        map.put(EligibilityRule.IS_FEMALE, isFemaleCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
         map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_EXACTLY_X, hasWHOStatusCreator());
         map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
@@ -50,6 +51,11 @@ public class GeneralRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator isMaleCreator() {
         return function -> new IsMale();
+    }
+
+    @NotNull
+    private FunctionCreator isFemaleCreator() {
+        return function -> new IsFemale();
     }
 
     @NotNull

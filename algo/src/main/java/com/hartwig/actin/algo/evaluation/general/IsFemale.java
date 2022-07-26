@@ -10,22 +10,24 @@ import com.hartwig.actin.clinical.datamodel.Gender;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IsMale implements EvaluationFunction {
+//TODO: Check if clean-up is needed with IsMale rule
+//TODO: Allow option of missing data for IsFemale & IsMale
+public class IsFemale implements EvaluationFunction {
 
-    IsMale() {
+    IsFemale() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        EvaluationResult result = record.clinical().patient().gender() == Gender.MALE ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = record.clinical().patient().gender() == Gender.FEMALE ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient is not male");
+            builder.addFailSpecificMessages("Patient is not female");
             builder.addFailGeneralMessages("Inadequate gender");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient is male");
+            builder.addPassSpecificMessages("Patient is female");
             builder.addPassGeneralMessages("Adequate gender");
         }
 

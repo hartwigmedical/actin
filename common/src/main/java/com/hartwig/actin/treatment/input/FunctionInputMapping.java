@@ -13,6 +13,7 @@ final class FunctionInputMapping {
     static {
         RULE_INPUT_MAP.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.IS_MALE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.IS_FEMALE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_EXACTLY_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
