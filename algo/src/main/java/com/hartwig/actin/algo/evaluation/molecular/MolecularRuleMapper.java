@@ -32,6 +32,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasFusionInGeneCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildTypeCreator());
+        map.put(EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y, geneHasSpecificExonSkippingCreator());
         map.put(EligibilityRule.MSI_SIGNATURE, isMicrosatelliteUnstableCreator());
         map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
@@ -119,6 +120,11 @@ public class MolecularRuleMapper extends RuleMapper {
             String gene = functionInputResolver().createOneStringInput(function);
             return new GeneIsWildType(gene);
         };
+    }
+
+    @NotNull
+    private FunctionCreator geneHasSpecificExonSkippingCreator() {
+        return function -> new GeneHasSpecificExonSkipping();
     }
 
     @NotNull
