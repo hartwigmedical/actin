@@ -128,7 +128,10 @@ N cancer related complications
 
 Field | Example Value | Details
 ---|---|---
-name | Ascites | Complication considered relevant for treatment decision making
+name | Uncontrolled pain | Complication considered relevant for treatment decision making
+categories | Pain | Categories considered relevant for corresponding complication, separated by ";"
+year | 2020 | Year in which complication occurred  
+month | 7 | Month in which complication occurred  
 
 N lab values
 
