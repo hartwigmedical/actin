@@ -24,6 +24,7 @@ public class ComplicationRuleMapper extends RuleMapper {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         map.put(EligibilityRule.HAS_COMPLICATION_X, hasSpecificComplicationCreator());
+        map.put(EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X, hasComplicationOfCategoryCreator());
         map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
         map.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, hasLeptomeningealDiseaseCreator());
         map.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, hasSpinalCordCompressionCreator());
@@ -39,6 +40,11 @@ public class ComplicationRuleMapper extends RuleMapper {
             String termToFind = functionInputResolver().createOneStringInput(function);
             return new HasSpecificComplication(termToFind);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasComplicationOfCategoryCreator() {
+        return function -> new HasComplicationOfCategory();
     }
 
     @NotNull
