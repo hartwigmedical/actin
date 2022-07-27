@@ -30,6 +30,7 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
             return ImmutablePriorOtherCondition.builder()
                     .name(parts[fields.get("name")])
                     .year(ResourceFile.optionalInteger(parts[fields.get("year")]))
+                    .month(ResourceFile.optionalInteger(parts[fields.get("month")]))
                     .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
                     .category(parts[fields.get("category")])
                     .isContraindicationForTherapy(ResourceFile.bool(parts[fields.get("isContraindicationForTherapy")]))

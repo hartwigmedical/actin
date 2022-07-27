@@ -100,6 +100,7 @@ CREATE TABLE priorOtherCondition
     sampleId varchar(50) NOT NULL,
     name varchar(500) NOT NULL,
     year int,
+    month int,
     doids varchar(50) NOT NULL,
     category varchar(50) NOT NULL,
     isContraindicationForTherapy BOOLEAN NOT NULL,

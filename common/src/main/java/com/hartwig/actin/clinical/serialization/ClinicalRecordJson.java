@@ -309,6 +309,7 @@ public final class ClinicalRecordJson {
                 priorOtherConditionList.add(ImmutablePriorOtherCondition.builder()
                         .name(string(object, "name"))
                         .year(nullableInteger(object, "year"))
+                        .month(nullableInteger(object, "month"))
                         .doids(stringList(object, "doids"))
                         .category(string(object, "category"))
                         .isContraindicationForTherapy(bool(object, "isContraindicationForTherapy"))

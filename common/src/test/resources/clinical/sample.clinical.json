@@ -94,6 +94,7 @@
     {
       "name": "Liver cirrhosis",
       "year": null,
+      "month": null,
       "doids": [
         "11335",
         "5082"
