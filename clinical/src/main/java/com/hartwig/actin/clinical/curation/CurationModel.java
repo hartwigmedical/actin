@@ -307,7 +307,7 @@ public class CurationModel {
 
     @Nullable
     public List<Complication> curateComplications(@Nullable List<String> inputs) {
-        if (inputs == null) {
+        if (inputs == null || inputs.isEmpty()) {
             return null;
         }
 
@@ -333,7 +333,7 @@ public class CurationModel {
         }
 
         // If there are complications but every single one of them implies an unknown state, return null
-        if (unknownStateCount > 0 && unknownStateCount == inputs.size()) {
+        if (unknownStateCount == inputs.size()) {
             return null;
         }
 

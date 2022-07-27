@@ -171,6 +171,7 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         assertNull(model.curateComplications(null));
+        assertNull(model.curateComplications(Lists.newArrayList()));
 
         List<Complication> complications = model.curateComplications(Lists.newArrayList("term", "no curation"));
 
