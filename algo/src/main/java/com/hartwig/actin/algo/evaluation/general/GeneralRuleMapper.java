@@ -69,8 +69,8 @@ public class GeneralRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasWHOStatusCreator() {
         return function -> {
-            int exactWHO = functionInputResolver().createOneIntegerInput(function);
-            return new HasWHOStatus(exactWHO);
+            int requiredWHO = functionInputResolver().createOneIntegerInput(function);
+            return new HasWHOStatus(requiredWHO);
         };
     }
 

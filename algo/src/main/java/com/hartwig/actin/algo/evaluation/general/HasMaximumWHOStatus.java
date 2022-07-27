@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.general;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
@@ -13,7 +12,6 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
 
     private final int maximumWHO;
 
-    //TODO: Update WHO rules according to README
     HasMaximumWHOStatus(final int maximumWHO) {
         this.maximumWHO = maximumWHO;
     }
@@ -24,23 +22,31 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         Integer who = record.clinical().clinicalStatus().who();
 
         if (who == null) {
-            return EvaluationFactory.unrecoverable()
+            return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("WHO status is missing")
                     .addUndeterminedGeneralMessages("WHO status missing")
                     .build();
         }
 
-        EvaluationResult result = who <= maximumWHO ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")");
-            builder.addFailGeneralMessages("Inadequate WHO status");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient WHO status " + who + " is within requested max (WHO " + maximumWHO + ")");
-            builder.addPassGeneralMessages("Adequate WHO status");
+        if (who <= maximumWHO) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient WHO status " + who + " is within requested max (WHO " + maximumWHO + ")")
+                    .addPassGeneralMessages("Adequate WHO status")
+                    .build();
+        } else if (who - maximumWHO == 1) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("Patient WHO status " + who + " is just above requested max (WHO " + maximumWHO + ")")
+                    .addWarnGeneralMessages("Inadequate WHO status")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")")
+                    .addFailGeneralMessages("Inadequate WHO status")
+                    .build();
         }
-
-        return builder.build();
     }
 }

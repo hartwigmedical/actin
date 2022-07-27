@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.general;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
@@ -11,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasWHOStatus implements EvaluationFunction {
 
-    private final int exactWHO;
+    private final int requiredWHO;
 
-    HasWHOStatus(final int exactWHO) {
-        this.exactWHO = exactWHO;
+    HasWHOStatus(final int requiredWHO) {
+        this.requiredWHO = requiredWHO;
     }
 
     @NotNull
@@ -30,16 +29,24 @@ public class HasWHOStatus implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = who == exactWHO ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient WHO status " + who + " is not requested WHO (WHO " + exactWHO + ")");
-            builder.addFailGeneralMessages("Inadequate WHO status");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient WHO status " + who + " is requested WHO (WHO " + exactWHO + ")");
-            builder.addPassGeneralMessages("Adequate WHO status");
+        if (who == requiredWHO) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient WHO status " + who + " is requested WHO (WHO " + requiredWHO + ")")
+                    .addPassGeneralMessages("Adequate WHO status")
+                    .build();
+        } else if (Math.abs(who - requiredWHO) == 1) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("Patient WHO status " + who + " is close t requested WHO (WHO " + requiredWHO + ")")
+                    .addWarnGeneralMessages("Inadequate WHO status")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient WHO status " + who + " is not requested WHO (WHO " + requiredWHO + ")")
+                    .addFailGeneralMessages("Inadequate WHO status")
+                    .build();
         }
-
-        return builder.build();
     }
 }
