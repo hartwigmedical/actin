@@ -105,7 +105,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS, FunctionInput.ONE_INTEGER);
 
-        RULE_INPUT_MAP.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, FunctionInput.ONE_STRING); //TODO: input ONE_GENE ?
+        RULE_INPUT_MAP.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.INACTIVATION_OF_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, FunctionInput.TWO_STRINGS);
@@ -198,7 +198,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_BRAIN_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X, FunctionInput.ONE_STRING); //TODO: input ONE_NYHA_CLASS?
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE, FunctionInput.NONE);
@@ -292,7 +292,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_X, FunctionInput.ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X, FunctionInput.ONE_STRING); //TODO: input ONE_COMPLICATION_CATEGORY ?
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, FunctionInput.NONE);

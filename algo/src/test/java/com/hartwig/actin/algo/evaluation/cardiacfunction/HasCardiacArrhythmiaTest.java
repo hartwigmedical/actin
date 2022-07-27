@@ -15,6 +15,8 @@ public class HasCardiacArrhythmiaTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withECG(null)));
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(false)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(true)));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(true, "with description")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(true, null)));
     }
 }

@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +19,17 @@ final class CardiacFunctionTestFactory {
 
     @NotNull
     public static ImmutableECG.Builder builder() {
-        return ImmutableECG.builder().hasSigAberrationLatestECG(false).aberrationDescription(Strings.EMPTY);
+        return ImmutableECG.builder().hasSigAberrationLatestECG(false);
     }
 
     @NotNull
     public static PatientRecord withHasSignificantECGAberration(boolean hasSignificantECGAberration) {
         return withECG(builder().hasSigAberrationLatestECG(hasSignificantECGAberration).build());
+    }
+
+    @NotNull
+    public static PatientRecord withHasSignificantECGAberration(boolean hasSignificantECGAberration, @Nullable String description) {
+        return withECG(builder().hasSigAberrationLatestECG(hasSignificantECGAberration).aberrationDescription(description).build());
     }
 
     @NotNull
