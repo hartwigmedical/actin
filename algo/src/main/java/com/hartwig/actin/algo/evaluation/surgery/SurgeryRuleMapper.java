@@ -32,7 +32,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHadRecentSurgeryCreator() {
         LocalDate minDate = referenceDateProvider().date().minusMonths(2);
-        return function -> new HasHadSurgeryInPastWeeks(minDate);
+        return function -> new HasHadRecentSurgery(minDate);
     }
 
     @NotNull
@@ -41,7 +41,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
             int maxAgeWeeks = functionInputResolver().createOneIntegerInput(function);
             LocalDate minDate = referenceDateProvider().date().minusWeeks(maxAgeWeeks).plusWeeks(2);
 
-            return new HasHadSurgeryInPastWeeks(minDate);
+            return new HasHadRecentSurgery(minDate);
         };
     }
 
@@ -51,7 +51,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
             int maxAgeMonths = functionInputResolver().createOneIntegerInput(function);
             LocalDate minDate = referenceDateProvider().date().minusMonths(maxAgeMonths);
 
-            return new HasHadSurgeryInPastMonths(minDate);
+            return new HasHadAnySurgeryAfterSpecificDate(minDate);
         };
     }
 }

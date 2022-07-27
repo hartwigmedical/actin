@@ -17,12 +17,12 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class HasHadSurgeryInPastMonthsTest {
+public class HasHadAnySurgeryAfterSpecificDateTest {
 
     @Test
     public void canEvaluate() {
         LocalDate minDate = LocalDate.of(2020, 2, 20);
-        HasHadSurgeryInPastMonths function = new HasHadSurgeryInPastMonths(minDate);
+        HasHadAnySurgeryAfterSpecificDate function = new HasHadAnySurgeryAfterSpecificDate(minDate);
 
         // No surgeries
         List<Surgery> surgeries = Lists.newArrayList();

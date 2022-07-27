@@ -14,14 +14,14 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasHadSurgeryInPastMonths implements EvaluationFunction {
+public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @NotNull
     private final LocalDate minDate;
 
-    HasHadSurgeryInPastMonths(@NotNull final LocalDate minDate) {
+    HasHadAnySurgeryAfterSpecificDate(@NotNull final LocalDate minDate) {
         this.minDate = minDate;
     }
 
