@@ -196,14 +196,21 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasProgressiveDiseaseFollowingTreatmentCategoryCreator() {
-        return function -> new HasProgressiveDiseaseFollowingTreatmentCategory();
+        return function -> {
+            TreatmentInput treatment = functionInputResolver().createOneTreatmentInput(function);
+            if (treatment.mappedNames() == null) {
+                return new HasHadPDFollowingTreatmentWithCategory(treatment.mappedCategory());
+            } else {
+                return new HasHadPDFollowingSpecificTreatment(treatment.mappedNames(), treatment.mappedCategory());
+            }
+        };
     }
 
     @NotNull
     private FunctionCreator hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator() {
         return function -> {
             OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
-            return new HasProgressiveDiseaseFollowingTypedTreatmentsOfCategory(input.category(), input.strings());
+            return new HasHadPDFollowingTreatmentWithCategoryOfTypes(input.category(), input.strings());
         };
     }
 
@@ -211,7 +218,7 @@ public class TreatmentRuleMapper extends RuleMapper {
     private FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
         return function -> {
             int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
-            return new HasProgressiveDiseaseFollowingSomeSystemicTreatments(minSystemicTreatments);
+            return new HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments);
         };
     }
 

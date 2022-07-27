@@ -8,13 +8,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasProgressiveDiseaseFollowingSomeSystemicTreatments implements EvaluationFunction {
+public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFunction {
 
     static final String STOP_REASON_PD = "PD";
 
     private final int minSystemicTreatments;
 
-    HasProgressiveDiseaseFollowingSomeSystemicTreatments(final int minSystemicTreatments) {
+    HasHadPDFollowingSomeSystemicTreatments(final int minSystemicTreatments) {
         this.minSystemicTreatments = minSystemicTreatments;
     }
 

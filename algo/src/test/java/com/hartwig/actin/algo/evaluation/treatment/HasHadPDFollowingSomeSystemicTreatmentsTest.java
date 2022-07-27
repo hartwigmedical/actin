@@ -10,11 +10,11 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.junit.Test;
 
-public class HasProgressiveDiseaseFollowingSomeSystemicTreatmentsTest {
+public class HasHadPDFollowingSomeSystemicTreatmentsTest {
 
     @Test
     public void canEvaluate() {
-        HasProgressiveDiseaseFollowingSomeSystemicTreatments function = new HasProgressiveDiseaseFollowingSomeSystemicTreatments(1);
+        HasHadPDFollowingSomeSystemicTreatments function = new HasHadPDFollowingSomeSystemicTreatments(1);
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
@@ -29,7 +29,7 @@ public class HasProgressiveDiseaseFollowingSomeSystemicTreatmentsTest {
                 .name("treatment 1")
                 .isSystemic(true)
                 .startYear(2020)
-                .stopReason(HasProgressiveDiseaseFollowingSomeSystemicTreatments.STOP_REASON_PD)
+                .stopReason(HasHadPDFollowingSomeSystemicTreatments.STOP_REASON_PD)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
