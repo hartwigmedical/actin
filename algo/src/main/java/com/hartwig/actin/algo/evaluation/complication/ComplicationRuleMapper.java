@@ -44,7 +44,10 @@ public class ComplicationRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasComplicationOfCategoryCreator() {
-        return function -> new HasComplicationOfCategory();
+        return function -> {
+            String categoryToFind = functionInputResolver().createOneStringInput(function);
+            return new HasComplicationOfCategory(categoryToFind);
+        };
     }
 
     @NotNull

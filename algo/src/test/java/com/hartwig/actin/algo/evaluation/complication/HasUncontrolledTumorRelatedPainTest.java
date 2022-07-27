@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
 import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
@@ -20,10 +19,10 @@ public class HasUncontrolledTumorRelatedPainTest {
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(Lists.newArrayList())));
 
-        Complication wrong = ImmutableComplication.builder().name("just a name").build();
+        Complication wrong = ComplicationTestFactory.builder().name("just a name").build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(wrong)));
 
-        Complication match = ImmutableComplication.builder()
+        Complication match = ComplicationTestFactory.builder()
                 .name("this is complication: " + HasUncontrolledTumorRelatedPain.SEVERE_PAIN_COMPLICATION)
                 .build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(match)));

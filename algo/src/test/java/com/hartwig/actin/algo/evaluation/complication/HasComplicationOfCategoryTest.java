@@ -8,18 +8,20 @@ import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.junit.Test;
 
-public class HasUrinaryIncontinenceTest {
+public class HasComplicationOfCategoryTest {
 
     @Test
     public void canEvaluate() {
-        HasUrinaryIncontinence function = new HasUrinaryIncontinence();
+        HasComplicationOfCategory function = new HasComplicationOfCategory("category X");
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComplicationTestFactory.withComplications(null)));
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(Lists.newArrayList())));
 
-        Complication different = ComplicationTestFactory.builder().name("other complication").build();
+        Complication different = ComplicationTestFactory.builder().addCategories("this is category Y").build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(different)));
 
-        Complication matching = ComplicationTestFactory.builder().name("this is bladder loss of control").build();
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(matching)));
+        Complication match = ComplicationTestFactory.builder().addCategories("this is category X").build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(match)));
     }
 }
