@@ -545,9 +545,9 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_HAD_RECENT_SURGERY | Surgeries > presence of surgery entry within 2 months
-HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks. X should be <= 8, in case nr of weeks is higher, the rule below should be used | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date.
-HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the rule above should be used | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
+HAS_HAD_RECENT_SURGERY | Surgeries > Presence of surgery entry within 2 months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= 2 months. | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
+HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X weeks. X should be <= 8, in case nr of weeks is higher, below rule should be used | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date. In case treatment with category 'surgery' is present but no date available, resolve to 'Fail'
+HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the above rule should be used | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
 
 ##### Rules related to lifestyle
  

@@ -22,6 +22,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        //TODO: Update below rules according to README
         map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS, hasHadSurgeryInPastMonthsCreator());
