@@ -55,7 +55,7 @@ public class TumorDetailsGenerator implements TableGenerator {
         }
 
         if (tumor.hasCnsLesions()) {
-            return activeLesionString("CNS", tumor.hasActiveCnsLesions());
+            return activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions());
         } else {
             return "No known CNS lesions";
         }
@@ -68,7 +68,7 @@ public class TumorDetailsGenerator implements TableGenerator {
         }
 
         if (tumor.hasBrainLesions()) {
-            return activeLesionString("Brain", tumor.hasActiveBrainLesions());
+            return activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions());
         } else {
             return "No known brain lesions";
         }
