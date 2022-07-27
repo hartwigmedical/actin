@@ -174,10 +174,8 @@ public class CurationModelTest {
         assertNull(model.curateComplications(Lists.newArrayList()));
 
         List<Complication> complications = model.curateComplications(Lists.newArrayList("term", "no curation"));
-
-        assertEquals(2, complications.size());
+        assertEquals(1, complications.size());
         assertNotNull(findComplicationByName(complications, "Curated"));
-        assertNotNull(findComplicationByName(complications, "No curation"));
 
         List<Complication> ignore = model.curateComplications(Lists.newArrayList("none"));
         assertEquals(0, ignore.size());
@@ -276,8 +274,8 @@ public class CurationModelTest {
         List<String> noOtherLesions = Lists.newArrayList("No");
         assertTrue(model.curateOtherLesions(noOtherLesions).isEmpty());
 
-        List<String> otherLesions = Lists.newArrayList("lymph node", "not a lesion", "no curation needed");
-        assertEquals(2, model.curateOtherLesions(otherLesions).size());
+        List<String> otherLesions = Lists.newArrayList("lymph node", "not a lesion", "no curation available");
+        assertEquals(1, model.curateOtherLesions(otherLesions).size());
 
         model.evaluate();
     }
@@ -288,7 +286,7 @@ public class CurationModelTest {
 
         assertEquals("Liver", model.curateBiopsyLocation("lever"));
         assertTrue(model.curateBiopsyLocation("Not a lesion").isEmpty());
-        assertEquals("No curation needed", model.curateBiopsyLocation("No curation needed"));
+        assertNull(model.curateBiopsyLocation("No curation configured"));
         assertNull(model.curateBiopsyLocation(null));
 
         model.evaluate();

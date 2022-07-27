@@ -144,8 +144,7 @@ public class CurationModel {
         }
 
         for (String lesion : lesionsToCheck) {
-            String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
-            Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), reformatted);
+            Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), lesion);
             for (LesionLocationConfig config : configs) {
                 if (config.category() != null) {
                     matches.add(config.category());
@@ -313,12 +312,14 @@ public class CurationModel {
 
         List<Complication> complications = Lists.newArrayList();
         int unknownStateCount = 0;
+        int validInputCount = 0;
         for (String input : inputs) {
-            String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
-            Set<ComplicationConfig> configs = find(database.complicationConfigs(), reformatted);
+            Set<ComplicationConfig> configs = find(database.complicationConfigs(), input);
 
             if (configs.isEmpty()) {
-                complications.add(ImmutableComplication.builder().name(reformatted).build());
+                LOGGER.warn(" Could not find complication config for input '{}'", input);
+            } else {
+                validInputCount++;
             }
 
             if (hasConfigImplyingUnknownState(configs)) {
@@ -333,7 +334,7 @@ public class CurationModel {
         }
 
         // If there are complications but every single one of them implies an unknown state, return null
-        if (unknownStateCount == inputs.size()) {
+        if (unknownStateCount == validInputCount) {
             return null;
         }
 
@@ -453,10 +454,9 @@ public class CurationModel {
 
         List<String> curatedOtherLesions = Lists.newArrayList();
         for (String lesion : otherLesions) {
-            String reformatted = CurationUtil.capitalizeFirstLetterOnly(lesion);
-            Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), reformatted);
+            Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), lesion);
             if (configs.isEmpty()) {
-                curatedOtherLesions.add(reformatted);
+                LOGGER.warn(" Could not find lesion config for input '{}'", lesion);
             }
 
             for (LesionLocationConfig config : configs) {
@@ -476,13 +476,12 @@ public class CurationModel {
             return null;
         }
 
-        String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
-
-        Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), reformatted);
+        Set<LesionLocationConfig> configs = find(database.lesionLocationConfigs(), input);
         if (configs.isEmpty()) {
-            return reformatted;
+            LOGGER.warn(" Could not find lesion config for biopsy location '{}'", input);
+            return null;
         } else if (configs.size() > 1) {
-            LOGGER.warn(" Multiple lesion location configs matched for biopsy location '{}'", reformatted);
+            LOGGER.warn(" Multiple lesion location configs matched for biopsy location '{}'", input);
             return null;
         }
 
@@ -555,11 +554,11 @@ public class CurationModel {
 
     @NotNull
     public Medication annotateWithMedicationCategory(@NotNull Medication medication) {
-        return ImmutableMedication.builder().from(medication).categories(lookupCategories(medication.name())).build();
+        return ImmutableMedication.builder().from(medication).categories(lookupMedicationCategories(medication.name())).build();
     }
 
     @NotNull
-    private Set<String> lookupCategories(@NotNull String medication) {
+    private Set<String> lookupMedicationCategories(@NotNull String medication) {
         String trimmedMedication = CurationUtil.fullTrim(medication);
         Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), trimmedMedication);
 
@@ -593,7 +592,7 @@ public class CurationModel {
         }
 
         if (intolerance.category().equalsIgnoreCase("medication")) {
-            builder.subcategories(lookupCategories(name));
+            builder.subcategories(lookupMedicationCategories(name));
         }
 
         return builder.build();
@@ -681,7 +680,7 @@ public class CurationModel {
             Collection<String> evaluated = entry.getValue();
             for (CurationConfig config : configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
-                if (!evaluated.contains(config.input()) && !(config instanceof ImmutableMedicationDosageConfig)) {
+                if (!evaluated.contains(config.input().toLowerCase()) && !(config instanceof ImmutableMedicationDosageConfig)) {
                     warnCount++;
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input(), entry.getKey().getSimpleName());
                 }
@@ -753,9 +752,9 @@ public class CurationModel {
     private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
         Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
-            evaluatedCurationInputs.put(configs.get(0).getClass(), input);
+            evaluatedCurationInputs.put(configs.get(0).getClass(), input.toLowerCase());
             for (T config : configs) {
-                if (config.input().equals(input)) {
+                if (config.input().equalsIgnoreCase(input)) {
                     results.add(config);
                 }
             }

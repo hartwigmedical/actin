@@ -162,6 +162,8 @@ public final class TestCurationFactory {
     private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
         List<LesionLocationConfig> configs = Lists.newArrayList();
 
+        configs.add(ImmutableLesionLocationConfig.builder().input("Abdominal").location("Abdominal").build());
+
         configs.add(ImmutableLesionLocationConfig.builder()
                 .input("Lever")
                 .location("Liver")
