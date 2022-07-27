@@ -181,7 +181,7 @@ public class SummaryChapter implements ReportChapter {
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth;
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularSummaryGenerator(report.clinical(), report.molecular(), keyWidth, valueWidth),
+                new MolecularSummaryGenerator(report.clinical(), report.molecular(), report.treatmentMatch(), keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
                 EligibleActinTrialsGenerator.forOpenTrials(report.treatmentMatch(), report.molecular().evidence(), contentWidth()));
 

@@ -3,13 +3,18 @@ package com.hartwig.actin.report.pdf.tables.molecular;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
@@ -29,13 +34,16 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     private final ClinicalRecord clinical;
     @NotNull
     private final MolecularRecord molecular;
+    @NotNull
+    private final TreatmentMatch treatmentMatch;
     private final float keyWidth;
     private final float valueWidth;
 
     public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            final float keyWidth, final float valueWidth) {
+            @NotNull final TreatmentMatch treatmentMatch, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
+        this.treatmentMatch = treatmentMatch;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -63,9 +71,8 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
         table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
 
-        // TODO Remove events which by themselves are not sufficient for molecular inclusion, or are only implied in blacklisted cohorts.
         table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithInclusiveActinEvidence(evidence))));
+        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch, evidence.actinTrials()))));
 
         table.addCell(addIndent(Cells.createKey(
                 "Additional events with trial eligibility in NL (" + evidence.externalTrialSource() + ")")));
@@ -84,6 +91,18 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         }
 
         return table;
+    }
+
+    @NotNull
+    private static Set<String> eventsForEligibleTrials(@NotNull TreatmentMatch treatmentMatch,
+            @NotNull Set<ActinTrialEvidence> actinTrialEvidences) {
+        Set<String> molecularEvents = Sets.newTreeSet(Ordering.natural());
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, actinTrialEvidences)) {
+            if (trial.isPotentiallyEligible() && trial.isOpen()) {
+                molecularEvents.addAll(trial.molecularEvents());
+            }
+        }
+        return molecularEvents;
     }
 
     @NotNull

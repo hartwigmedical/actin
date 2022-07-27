@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.sort.PriorMolecularTestComparator;
@@ -26,13 +27,16 @@ public class MolecularSummaryGenerator implements TableGenerator {
     private final ClinicalRecord clinical;
     @NotNull
     private final MolecularRecord molecular;
+    @NotNull
+    private final TreatmentMatch treatmentMatch;
     private final float keyWidth;
     private final float valueWidth;
 
-    public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular, final float keyWidth,
-            final float valueWidth) {
+    public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
+            @NotNull final TreatmentMatch treatmentMatch, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
+        this.treatmentMatch = treatmentMatch;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -51,7 +55,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.create(prior()));
         table.addCell(Cells.createEmpty());
 
-        TableGenerator recentGenerator = new RecentMolecularSummaryGenerator(clinical, molecular, keyWidth, valueWidth);
+        TableGenerator recentGenerator = new RecentMolecularSummaryGenerator(clinical, molecular, treatmentMatch, keyWidth, valueWidth);
         table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
         table.addCell(Cells.create(recentGenerator.contents()));
 
