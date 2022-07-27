@@ -22,18 +22,22 @@ public class EvaluatedTrialComparatorTest {
         EvaluatedTrial trial2 = create("trial 1", "cohort 2");
         EvaluatedTrial trial3 = create("trial 1", null);
         EvaluatedTrial trial4 = create("trial 2", "cohort 1");
-        EvaluatedTrial trial5 = create("trial 5", "cohort 1", "Event C");
-        EvaluatedTrial trial6 = create("trial 5", "cohort 1", "Event D", "Event A");
+        EvaluatedTrial trial5 = create("trial 3", "cohort 1", "Event B");
+        EvaluatedTrial trial6 = create("trial 3", "cohort 2 + cohort 3", "Event C");
+        EvaluatedTrial trial7 = create("trial 5", "cohort 1", "Event C");
+        EvaluatedTrial trial8 = create("trial 5", "cohort 1", "Event D", "Event A");
 
-        List<EvaluatedTrial> trials = Lists.newArrayList(trial1, trial2, trial3, trial4, trial5, trial6);
+        List<EvaluatedTrial> trials = Lists.newArrayList(trial1, trial2, trial3, trial4, trial5, trial6, trial7, trial8);
         trials.sort(new EvaluatedTrialComparator());
 
         assertEquals(trial6, trials.get(0));
         assertEquals(trial5, trials.get(1));
-        assertEquals(trial3, trials.get(2));
-        assertEquals(trial1, trials.get(3));
-        assertEquals(trial2, trials.get(4));
-        assertEquals(trial4, trials.get(5));
+        assertEquals(trial8, trials.get(2));
+        assertEquals(trial7, trials.get(3));
+        assertEquals(trial3, trials.get(4));
+        assertEquals(trial1, trials.get(5));
+        assertEquals(trial2, trials.get(6));
+        assertEquals(trial4, trials.get(7));
     }
 
     @NotNull
