@@ -32,7 +32,7 @@ CREATE TABLE tumor
     hasLiverLesions BOOLEAN,
     hasLungLesions BOOLEAN,
     otherLesions varchar(500),
-    biopsyLocation varchar(65),
+    biopsyLocation varchar(100),
     PRIMARY KEY (id)
 );
 
@@ -113,7 +113,7 @@ CREATE TABLE priorMolecularTest
     test varchar(50) NOT NULL,
     item varchar(50) NOT NULL,
     measure varchar(50),
-    scoreText varchar(50),
+    scoreText varchar(100),
     scoreValuePrefix varchar(50),
     scoreValue double precision,
     scoreValueUnit varchar(50),
