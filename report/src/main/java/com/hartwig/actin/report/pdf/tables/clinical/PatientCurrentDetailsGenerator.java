@@ -19,6 +19,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PatientCurrentDetailsGenerator implements TableGenerator {
 
@@ -100,8 +101,12 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String complications(@NotNull List<Complication> complications) {
+    private static String complications(@Nullable List<Complication> complications) {
         StringJoiner joiner = Formats.commaJoiner();
+        if (complications == null) {
+            return "Unknown";
+        }
+
         for (Complication complication : complications) {
             joiner.add(complication.name());
         }

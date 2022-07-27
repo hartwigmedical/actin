@@ -305,13 +305,14 @@ public class CurationModel {
         return priorMolecularTests;
     }
 
-    @NotNull
+    @Nullable
     public List<Complication> curateComplications(@Nullable List<String> inputs) {
         if (inputs == null) {
-            return Lists.newArrayList();
+            return null;
         }
 
         List<Complication> complications = Lists.newArrayList();
+        int unknownStateCount = 0;
         for (String input : inputs) {
             String reformatted = CurationUtil.capitalizeFirstLetterOnly(input);
             Set<ComplicationConfig> configs = find(database.complicationConfigs(), reformatted);
@@ -320,17 +321,32 @@ public class CurationModel {
                 complications.add(ImmutableComplication.builder().name(reformatted).build());
             }
 
+            if (hasConfigImplyingUnknownState(configs)) {
+                unknownStateCount++;
+            }
+
             for (ComplicationConfig config : configs) {
-                complications.add(ImmutableComplication.builder().from(config.curated()).build());
+                if (!config.ignore()) {
+                    complications.add(ImmutableComplication.builder().from(config.curated()).build());
+                }
             }
         }
 
-        // Add an entry if there is nothing known about complications.
-        if (complications.isEmpty()) {
-            complications.add(ImmutableComplication.builder().name("Unknown").build());
+        // If there are complications but every single one of them implies an unknown state, return null
+        if (unknownStateCount > 0 && unknownStateCount == inputs.size()) {
+            return null;
         }
 
         return complications;
+    }
+
+    private static boolean hasConfigImplyingUnknownState(@NotNull Set<ComplicationConfig> configs) {
+        for (ComplicationConfig config : configs) {
+            if (config.impliesUnknownComplicationState()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull

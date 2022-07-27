@@ -36,9 +36,11 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> leptomeningealComplications = Sets.newHashSet();
-        for (Complication complication : record.clinical().complications()) {
-            if (isPotentialLeptomeningealDisease(complication.name())) {
-                leptomeningealComplications.add(complication.name());
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                if (isPotentialLeptomeningealDisease(complication.name())) {
+                    leptomeningealComplications.add(complication.name());
+                }
             }
         }
 

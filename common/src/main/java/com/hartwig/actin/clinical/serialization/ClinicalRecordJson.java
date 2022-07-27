@@ -4,6 +4,7 @@ import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.nullableArray;
 import static com.hartwig.actin.util.json.Json.nullableBool;
 import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
@@ -157,7 +158,7 @@ public final class ClinicalRecordJson {
                     .priorSecondPrimaries(toPriorSecondPrimaries(array(record, "priorSecondPrimaries")))
                     .priorOtherConditions(toPriorOtherConditions(array(record, "priorOtherConditions")))
                     .priorMolecularTests(toPriorMolecularTests(array(record, "priorMolecularTests")))
-                    .complications(toComplications(array(record, "complications")))
+                    .complications(toComplications(nullableArray(record, "complications")))
                     .labValues(toLabValues(array(record, "labValues")))
                     .toxicities(toToxicities(array(record, "toxicities")))
                     .intolerances(toIntolerances(array(record, "intolerances")))
@@ -334,13 +335,18 @@ public final class ClinicalRecordJson {
             return priorMolecularTestList;
         }
 
-        @NotNull
-        private static List<Complication> toComplications(@NotNull JsonArray complications) {
+        @Nullable
+        private static List<Complication> toComplications(@Nullable JsonArray complications) {
+            if (complications == null) {
+                return null;
+            }
+
             List<Complication> complicationList = Lists.newArrayList();
             for (JsonElement element : complications) {
                 JsonObject object = element.getAsJsonObject();
                 complicationList.add(ImmutableComplication.builder()
                         .name(string(object, "name"))
+                        .categories(stringList(object, "categories"))
                         .year(nullableInteger(object, "year"))
                         .month(nullableInteger(object, "month"))
                         .build());

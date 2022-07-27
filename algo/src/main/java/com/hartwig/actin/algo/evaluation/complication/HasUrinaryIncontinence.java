@@ -31,9 +31,11 @@ public class HasUrinaryIncontinence implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> urinaryIncontinences = Sets.newHashSet();
-        for (Complication complication : record.clinical().complications()) {
-            if (isPotentialUrinaryIncontinence(complication.name())) {
-                urinaryIncontinences.add(complication.name());
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                if (isPotentialUrinaryIncontinence(complication.name())) {
+                    urinaryIncontinences.add(complication.name());
+                }
             }
         }
 

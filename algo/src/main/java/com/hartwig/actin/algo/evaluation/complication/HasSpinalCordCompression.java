@@ -31,9 +31,11 @@ public class HasSpinalCordCompression implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> spinalCordCompressions = Sets.newHashSet();
-        for (Complication complication : record.clinical().complications()) {
-            if (isPotentialSpinalCordCompression(complication.name())) {
-                spinalCordCompressions.add(complication.name());
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                if (isPotentialSpinalCordCompression(complication.name())) {
+                    spinalCordCompressions.add(complication.name());
+                }
             }
         }
 

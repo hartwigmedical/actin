@@ -13,6 +13,6 @@ public class GeneIsOverexpressedTest {
     public void canEvaluate() {
         GeneIsOverexpressed function = new GeneIsOverexpressed();
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

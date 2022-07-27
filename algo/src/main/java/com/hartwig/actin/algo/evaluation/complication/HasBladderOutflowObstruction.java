@@ -37,10 +37,13 @@ public class HasBladderOutflowObstruction implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+
         Set<String> bladderOutflowObstructions = Sets.newHashSet();
-        for (Complication complication : record.clinical().complications()) {
-            if (isPotentialBladderOutflowObstruction(complication.name())) {
-                bladderOutflowObstructions.add(complication.name());
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                if (isPotentialBladderOutflowObstruction(complication.name())) {
+                    bladderOutflowObstructions.add(complication.name());
+                }
             }
         }
 

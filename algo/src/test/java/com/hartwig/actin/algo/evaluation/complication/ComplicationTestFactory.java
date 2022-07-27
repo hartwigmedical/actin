@@ -13,6 +13,7 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class ComplicationTestFactory {
 
@@ -25,7 +26,7 @@ final class ComplicationTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withComplications(@NotNull List<Complication> complications) {
+    public static PatientRecord withComplications(@Nullable List<Complication> complications) {
         PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
 
         return ImmutablePatientRecord.builder()

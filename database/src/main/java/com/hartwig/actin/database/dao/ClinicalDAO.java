@@ -42,6 +42,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 
 class ClinicalDAO {
@@ -292,11 +293,22 @@ class ClinicalDAO {
         }
     }
 
-    private void writeComplications(@NotNull String sampleId, @NotNull List<Complication> complications) {
-        for (Complication complication : complications) {
-            context.insertInto(COMPLICATION, COMPLICATION.SAMPLEID, COMPLICATION.NAME, COMPLICATION.YEAR, COMPLICATION.MONTH)
-                    .values(sampleId, complication.name(), complication.year(), complication.month())
-                    .execute();
+    private void writeComplications(@NotNull String sampleId, @Nullable List<Complication> complications) {
+        if (complications != null) {
+            for (Complication complication : complications) {
+                context.insertInto(COMPLICATION,
+                        COMPLICATION.SAMPLEID,
+                        COMPLICATION.NAME,
+                        COMPLICATION.CATEGORIES,
+                        COMPLICATION.YEAR,
+                        COMPLICATION.MONTH)
+                        .values(sampleId,
+                                complication.name(),
+                                DataUtil.concat(complication.categories()),
+                                complication.year(),
+                                complication.month())
+                        .execute();
+            }
         }
     }
 

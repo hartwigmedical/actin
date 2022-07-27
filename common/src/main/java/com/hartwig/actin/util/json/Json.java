@@ -36,6 +36,11 @@ public final class Json {
         return object.has(field) ? array(object, field) : null;
     }
 
+    @Nullable
+    public static JsonArray nullableArray(@NotNull JsonObject object, @NotNull String field) {
+        return !isNull(object, field) ? array(object, field) : null;
+    }
+
     @NotNull
     public static JsonArray array(@NotNull JsonObject object, @NotNull String field) {
         return object.getAsJsonArray(field);

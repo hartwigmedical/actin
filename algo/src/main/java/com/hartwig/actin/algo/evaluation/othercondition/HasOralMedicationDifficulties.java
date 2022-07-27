@@ -27,14 +27,16 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (Complication complication : record.clinical().complications()) {
-            for (String termToFind : COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES) {
-                if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
-                            .addPassGeneralMessages("Potential oral medication difficulties")
-                            .build();
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                for (String termToFind : COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES) {
+                    if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
+                        return EvaluationFactory.unrecoverable()
+                                .result(EvaluationResult.PASS)
+                                .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
+                                .addPassGeneralMessages("Potential oral medication difficulties")
+                                .build();
+                    }
                 }
             }
         }

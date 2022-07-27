@@ -17,7 +17,6 @@ import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
@@ -171,18 +170,32 @@ public class CurationModelTest {
     public void canCurateComplications() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
+        assertNull(model.curateComplications(null));
+
         List<Complication> complications = model.curateComplications(Lists.newArrayList("term", "no curation"));
 
         assertEquals(2, complications.size());
-        assertTrue(complications.contains(ImmutableComplication.builder().name("Curated").build()));
-        assertTrue(complications.contains(ImmutableComplication.builder().name("No curation").build()));
+        assertNotNull(findComplicationByName(complications, "Curated"));
+        assertNotNull(findComplicationByName(complications, "No curation"));
 
-        assertTrue(model.curateComplications(null).isEmpty());
+        List<Complication> ignore = model.curateComplications(Lists.newArrayList("none"));
+        assertEquals(0, ignore.size());
 
-        // Add "Unknown" in case field is not filled in
-        assertEquals(1, model.curateComplications(Lists.newArrayList()).size());
+        List<Complication> unknown = model.curateComplications(Lists.newArrayList("unknown"));
+        assertNull(unknown);
 
         model.evaluate();
+    }
+
+    @NotNull
+    private static Complication findComplicationByName(@NotNull List<Complication> complications, @NotNull String nameToFind) {
+        for (Complication complication : complications) {
+            if (complication.name().equals(nameToFind)) {
+                return complication;
+            }
+        }
+
+        throw new IllegalStateException("Could not find complication with name '" + nameToFind + "'");
     }
 
     @Test

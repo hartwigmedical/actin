@@ -87,14 +87,16 @@ public class HasContraindicationToCT implements EvaluationFunction {
             }
         }
 
-        for (Complication complication : record.clinical().complications()) {
-            for (String term : COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT) {
-                if (complication.name().toLowerCase().contains(term)) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has a contraindication to CT due to complication " + complication.name())
-                            .addPassGeneralMessages("CT contraindication")
-                            .build();
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                for (String term : COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT) {
+                    if (complication.name().toLowerCase().contains(term)) {
+                        return EvaluationFactory.unrecoverable()
+                                .result(EvaluationResult.PASS)
+                                .addPassSpecificMessages("Patient has a contraindication to CT due to complication " + complication.name())
+                                .addPassGeneralMessages("CT contraindication")
+                                .build();
+                    }
                 }
             }
         }

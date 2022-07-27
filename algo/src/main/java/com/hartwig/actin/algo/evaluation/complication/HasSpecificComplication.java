@@ -26,6 +26,14 @@ public class HasSpecificComplication implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> complications = Sets.newHashSet();
+        if (record.clinical().complications() == null) {
+            return EvaluationFactory.recoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedGeneralMessages("Unknown complication status")
+                    .addUndeterminedSpecificMessages("Unknown complication status")
+                    .build();
+        }
+
         for (Complication complication : record.clinical().complications()) {
             if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
                 complications.add(complication.name());

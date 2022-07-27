@@ -15,6 +15,8 @@ public class HasSpecificComplicationTest {
     public void canEvaluate() {
         HasSpecificComplication function = new HasSpecificComplication("name to find");
 
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComplicationTestFactory.withComplications(null)));
+
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(Lists.newArrayList())));
 
         Complication wrong = ImmutableComplication.builder().name("just a name").build();

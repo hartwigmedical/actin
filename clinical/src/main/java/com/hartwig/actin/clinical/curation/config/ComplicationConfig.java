@@ -15,11 +15,11 @@ public abstract class ComplicationConfig implements CurationConfig {
     public abstract String input();
 
     @Override
-    public boolean ignore() {
-        return false;
-    }
+    public abstract boolean ignore();
 
-    @NotNull
+    public abstract boolean impliesUnknownComplicationState();
+
+    @Nullable
     public abstract Complication curated();
 
 }

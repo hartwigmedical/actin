@@ -245,7 +245,23 @@ public final class TestCurationFactory {
 
         configs.add(ImmutableComplicationConfig.builder()
                 .input("Term")
-                .curated(ImmutableComplication.builder().name("Curated").build())
+                .ignore(false)
+                .impliesUnknownComplicationState(false)
+                .curated(ImmutableComplication.builder().name("Curated").addCategories("Curated category").build())
+                .build());
+
+        configs.add(ImmutableComplicationConfig.builder()
+                .input("Unknown")
+                .ignore(false)
+                .impliesUnknownComplicationState(true)
+                .curated(ImmutableComplication.builder().name(Strings.EMPTY).build())
+                .build());
+
+        configs.add(ImmutableComplicationConfig.builder()
+                .input("None")
+                .ignore(true)
+                .impliesUnknownComplicationState(false)
+                .curated(null)
                 .build());
 
         return configs;

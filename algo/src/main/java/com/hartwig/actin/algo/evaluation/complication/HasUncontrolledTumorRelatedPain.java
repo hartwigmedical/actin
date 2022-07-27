@@ -35,9 +35,11 @@ public class HasUncontrolledTumorRelatedPain implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> painComplications = Sets.newHashSet();
-        for (Complication complication : record.clinical().complications()) {
-            if (complication.name().toLowerCase().contains(SEVERE_PAIN_COMPLICATION.toLowerCase())) {
-                painComplications.add(complication.name());
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                if (complication.name().toLowerCase().contains(SEVERE_PAIN_COMPLICATION.toLowerCase())) {
+                    painComplications.add(complication.name());
+                }
             }
         }
 

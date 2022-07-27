@@ -58,14 +58,16 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             }
         }
 
-        for (Complication complication : record.clinical().complications()) {
-            for (String termToFind : COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY) {
-                if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has potential absorption difficulties due to " + complication.name())
-                            .addPassGeneralMessages("Potential absorption difficulties")
-                            .build();
+        if (record.clinical().complications() != null) {
+            for (Complication complication : record.clinical().complications()) {
+                for (String termToFind : COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY) {
+                    if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
+                        return EvaluationFactory.unrecoverable()
+                                .result(EvaluationResult.PASS)
+                                .addPassSpecificMessages("Patient has potential absorption difficulties due to " + complication.name())
+                                .addPassGeneralMessages("Potential absorption difficulties")
+                                .build();
+                    }
                 }
             }
         }

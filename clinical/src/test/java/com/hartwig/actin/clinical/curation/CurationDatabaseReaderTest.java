@@ -194,13 +194,23 @@ public class CurationDatabaseReaderTest {
     }
 
     private static void assertComplicationConfigs(@NotNull List<ComplicationConfig> configs) {
-        assertEquals(1, configs.size());
+        assertEquals(2, configs.size());
 
-        ComplicationConfig config = configs.get(0);
-        assertEquals("something", config.input());
-        assertEquals("curated something", config.curated().name());
-        assertEquals(2000, (int) config.curated().year());
-        assertEquals(1, (int) config.curated().month());
+        ComplicationConfig config1 = find(configs, "something");
+        assertFalse(config1.ignore());
+        assertFalse(config1.impliesUnknownComplicationState());
+        assertEquals("curated something", config1.curated().name());
+        assertEquals(2, config1.curated().categories().size());
+        assertEquals(2000, (int) config1.curated().year());
+        assertEquals(1, (int) config1.curated().month());
+
+        ComplicationConfig config2 = find(configs, "unknown");
+        assertFalse(config2.ignore());
+        assertTrue(config2.impliesUnknownComplicationState());
+        assertEquals(Strings.EMPTY, config2.curated().name());
+        assertEquals(0, config2.curated().categories().size());
+        assertNull(config2.curated().year());
+        assertNull(config2.curated().month());
     }
 
     private static void assertToxicityConfigs(@NotNull List<ToxicityConfig> configs) {

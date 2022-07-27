@@ -195,7 +195,7 @@ public final class TestClinicalFactory {
     private static List<Complication> createTestComplications() {
         List<Complication> complications = Lists.newArrayList();
 
-        complications.add(ImmutableComplication.builder().name("Ascites").build());
+        complications.add(ImmutableComplication.builder().name("Ascites").addCategories("Ascites").build());
 
         return complications;
     }

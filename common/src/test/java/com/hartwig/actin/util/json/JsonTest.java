@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import org.junit.Test;
@@ -37,20 +38,28 @@ public class JsonTest {
         assertNull(Json.optionalArray(object, "array1"));
 
         object.add("array1", new JsonArray());
+        assertNotNull(Json.nullableArray(object, "array1"));
         assertNotNull(Json.optionalArray(object, "array1"));
         assertNotNull(Json.array(object, "array1"));
 
+        object.add("array2", JsonNull.INSTANCE);
+        assertNull(Json.nullableArray(object, "array2"));
+    }
+
+    @Test
+    public void canExtractStringLists() {
+        JsonObject object = new JsonObject();
+
         object.addProperty("nullable", (String) null);
         assertNull(Json.nullableStringList(object, "nullable"));
-
-        assertNull(Json.optionalStringList(object, "array2"));
+        assertNull(Json.optionalStringList(object, "array1"));
 
         JsonArray array = new JsonArray();
         array.add("value1");
         array.add("value2");
-        object.add("array2", array);
-        assertEquals(2, Json.nullableStringList(object, "array2").size());
-        assertEquals(2, Json.optionalStringList(object, "array2").size());
+        object.add("array1", array);
+        assertEquals(2, Json.nullableStringList(object, "array1").size());
+        assertEquals(2, Json.optionalStringList(object, "array1").size());
 
         object.addProperty("string", "string");
         assertEquals(1, Json.nullableStringList(object, "string").size());
