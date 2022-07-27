@@ -24,6 +24,7 @@ final class LabUnitResolver {
         CURATION_MAP.put("µg/L", LabUnit.MICROGRAMS_PER_LITER);
         CURATION_MAP.put("µmol/L", LabUnit.MICROMOLES_PER_LITER);
         CURATION_MAP.put("micromol/l", LabUnit.MICROMOLES_PER_LITER);
+        CURATION_MAP.put("E/ml", LabUnit.UNITS_PER_MILLILITER);
 
         // L/L is an implied unit used for hematocrit
         CURATION_MAP.put("L/L", LabUnit.NONE);
