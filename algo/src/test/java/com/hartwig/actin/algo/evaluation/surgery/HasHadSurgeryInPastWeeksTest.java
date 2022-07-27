@@ -12,20 +12,20 @@ import com.hartwig.actin.clinical.datamodel.Surgery;
 
 import org.junit.Test;
 
-public class HasHadAnySurgeryTest {
+public class HasHadSurgeryInPastWeeksTest {
 
     @Test
     public void canEvaluate() {
-        LocalDate minDate = LocalDate.of(2019, 8, 20);
-        HasHadAnySurgery function = new HasHadAnySurgery(minDate);
+        LocalDate minDate = LocalDate.of(2020, 2, 20);
+        HasHadSurgeryInPastWeeks function = new HasHadSurgeryInPastWeeks(minDate);
 
         List<Surgery> surgeries = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
 
-        surgeries.add(ImmutableSurgery.builder().endDate(LocalDate.of(2010, 10, 10)).build());
+        surgeries.add(ImmutableSurgery.builder().endDate(minDate.minusWeeks(4)).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
 
-        surgeries.add(ImmutableSurgery.builder().endDate(minDate).build());
+        surgeries.add(ImmutableSurgery.builder().endDate(minDate.plusWeeks(2)).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
     }
 }

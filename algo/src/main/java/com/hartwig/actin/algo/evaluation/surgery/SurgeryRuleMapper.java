@@ -23,16 +23,16 @@ public final class SurgeryRuleMapper extends RuleMapper {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
         //TODO: Update below rules according to README
-        map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadAnySurgeryCreator());
+        map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadRecentSurgeryCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS, hasHadSurgeryInPastMonthsCreator());
         return map;
     }
 
     @NotNull
-    private FunctionCreator hasHadAnySurgeryCreator() {
+    private FunctionCreator hasHadRecentSurgeryCreator() {
         LocalDate minDate = referenceDateProvider().date().minusMonths(2);
-        return function -> new HasHadAnySurgery(minDate);
+        return function -> new HasHadSurgeryInPastWeeks(minDate);
     }
 
     @NotNull
