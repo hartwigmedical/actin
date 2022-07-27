@@ -223,6 +223,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_IN_DIALYSIS, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_RECENT_TRAUMA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE, FunctionInput.NONE);
@@ -234,6 +235,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTCF_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LONG_QT_SYNDROME, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_EBV_INFECTION, FunctionInput.NONE);

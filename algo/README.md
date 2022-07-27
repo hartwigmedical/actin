@@ -388,6 +388,7 @@ HAS_POTENTIAL_CONTRAINDICATION_TO_CT | > prior other condition > name like %clau
 HAS_POTENTIAL_CONTRAINDICATION_TO_MRI | > prior other condition > category like %Implant% or name like %Claustrophobia% or any other condition belonging to DOID 557, or intolerance name like %contrast agent%
 HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI | > Same contraindications as for HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, and: (T.B.D.)
 IS_IN_DIALYSIS | Won't be evaluated
+HAS_HAD_RECENT_TRAUMA | Won't be evaluated
 HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS | Currently resolves to `UNDETERMINED`
 
 Note:
@@ -406,6 +407,7 @@ HAS_QTCF_OF_AT_MOST_X | Clinical status > qtcfValue in ms <= X
 HAS_QTCF_OF_AT_LEAST_X | Clinical status > qtcfValue in ms => X
 HAS_LONG_QT_SYNDROME | Prior other conditions > any configured doid should be equal or be a child of DOID 2843
 HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE | Resolve to `WARN` in case LVEF is known and < 50%, otherwise resolve to `NOT_EVALUATED` 
+HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH | Currently resolves to `UNDETERMINED`
 
 ##### Rules related to infections
 

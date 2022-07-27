@@ -73,6 +73,7 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, hasContraindicationToMRICreator());
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI, hasContraindicationToMRICreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
+        map.put(EligibilityRule.HAS_HAD_RECENT_TRAUMA, hasHadRecentTraumaCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
 
         return map;
@@ -166,6 +167,11 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator isInDialysisCreator() {
         return function -> new IsInDialysis();
+    }
+
+    @NotNull
+    private FunctionCreator hasHadRecentTraumaCreator() {
+        return function -> new HasHadRecentTrauma();
     }
 
     @NotNull
