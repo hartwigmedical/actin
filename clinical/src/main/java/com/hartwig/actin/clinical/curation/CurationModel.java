@@ -381,7 +381,7 @@ public class CurationModel {
 
     @Nullable
     public ECG curateECG(@Nullable ECG input) {
-        if (input == null) {
+        if (input == null || input.aberrationDescription() == null) {
             return null;
         }
 
@@ -399,9 +399,10 @@ public class CurationModel {
         if (config.ignore()) {
             return null;
         } else {
+            String description = !config.interpretation().isEmpty() ? config.interpretation() : null;
             return ImmutableECG.builder()
                     .from(input)
-                    .aberrationDescription(config.interpretation())
+                    .aberrationDescription(description)
                     .qtcfValue(config.qtcfValue())
                     .qtcfUnit(config.qtcfUnit())
                     .build();

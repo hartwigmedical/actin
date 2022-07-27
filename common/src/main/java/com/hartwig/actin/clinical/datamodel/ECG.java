@@ -10,7 +10,7 @@ public abstract class ECG {
 
     public abstract boolean hasSigAberrationLatestECG();
 
-    @NotNull
+    @Nullable
     public abstract String aberrationDescription();
 
     @Nullable

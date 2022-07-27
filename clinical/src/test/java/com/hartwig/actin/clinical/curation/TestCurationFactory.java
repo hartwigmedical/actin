@@ -229,6 +229,13 @@ public final class TestCurationFactory {
 
         configs.add(ImmutableECGConfig.builder().input("No aberration").ignore(true).interpretation(Strings.EMPTY).isQTCF(false).build());
 
+        configs.add(ImmutableECGConfig.builder()
+                .input("Yes but unknown what aberration")
+                .ignore(false)
+                .interpretation(Strings.EMPTY)
+                .isQTCF(false)
+                .build());
+
         return configs;
     }
 

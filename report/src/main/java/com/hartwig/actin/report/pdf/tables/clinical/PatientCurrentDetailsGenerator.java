@@ -58,7 +58,9 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         if (ecg != null && ecg.hasSigAberrationLatestECG()) {
             if (ecg.hasSigAberrationLatestECG()) {
                 table.addCell(Cells.createKey("Significant aberration on latest ECG"));
-                table.addCell(Cells.createValue(ecg.aberrationDescription()));
+                String aberration = ecg.aberrationDescription();
+                String description = aberration != null ? aberration : "Yes (ECG aberration details unknown)";
+                table.addCell(Cells.createValue(description));
             }
 
             if (ecg.qtcfValue() != null && ecg.qtcfUnit() != null) {

@@ -235,7 +235,7 @@ public final class ClinicalRecordJson {
 
             return ImmutableECG.builder()
                     .hasSigAberrationLatestECG(bool(object, "hasSigAberrationLatestECG"))
-                    .aberrationDescription(string(object, "aberrationDescription"))
+                    .aberrationDescription(nullableString(object, "aberrationDescription"))
                     .qtcfValue(nullableInteger(object, "qtcfValue"))
                     .qtcfUnit(nullableString(object, "qtcfUnit"))
                     .build();
