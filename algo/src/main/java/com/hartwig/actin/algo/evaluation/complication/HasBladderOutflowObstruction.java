@@ -12,6 +12,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
@@ -56,12 +57,10 @@ public class HasBladderOutflowObstruction implements EvaluationFunction {
         }
 
         Set<String> priorBladderConditions = Sets.newHashSet();
-        for (PriorOtherCondition condition : record.clinical().priorOtherConditions()) {
-            if (condition.isContraindicationForTherapy()) {
-                for (String doid : condition.doids()) {
-                    if (doid.equals(BLADDER_NECK_OBSTRUCTION_DOID)) {
-                        priorBladderConditions.add(condition.name());
-                    }
+        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            for (String doid : condition.doids()) {
+                if (doid.equals(BLADDER_NECK_OBSTRUCTION_DOID)) {
+                    priorBladderConditions.add(condition.name());
                 }
             }
         }

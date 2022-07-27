@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -7,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +53,17 @@ final class CardiacFunctionTestFactory {
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .clinicalStatus(ImmutableClinicalStatus.builder().ecg(ecg).build())
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withPriorOtherCondition(@NotNull PriorOtherCondition priorOtherCondition) {
+        return ImmutablePatientRecord.builder()
+                .from(TestDataFactory.createMinimalTestPatientRecord())
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                        .priorOtherConditions(Lists.newArrayList(priorOtherCondition))
                         .build())
                 .build();
     }

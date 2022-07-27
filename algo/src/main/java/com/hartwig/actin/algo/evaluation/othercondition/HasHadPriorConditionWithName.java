@@ -1,12 +1,11 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
-import java.util.List;
-
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +22,8 @@ public class HasHadPriorConditionWithName implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorOtherCondition> clinicallyRelevant =
-                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
-        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
-            if (priorOtherCondition.name().toLowerCase().contains(nameToFind.toLowerCase())) {
+        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            if (condition.name().toLowerCase().contains(nameToFind.toLowerCase())) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has history of " + nameToFind)

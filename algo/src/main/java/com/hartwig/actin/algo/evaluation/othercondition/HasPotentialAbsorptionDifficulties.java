@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -46,12 +47,13 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorOtherCondition priorOtherCondition : record.clinical().priorOtherConditions()) {
-            for (String doid : priorOtherCondition.doids()) {
+        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            for (String doid : condition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has potential absorption difficulties due to " + doidModel.resolveTermForDoid(doid))
+                            .addPassSpecificMessages(
+                                    "Patient has potential absorption difficulties due to " + doidModel.resolveTermForDoid(doid))
                             .addPassGeneralMessages("Potential absorption difficulties")
                             .build();
                 }

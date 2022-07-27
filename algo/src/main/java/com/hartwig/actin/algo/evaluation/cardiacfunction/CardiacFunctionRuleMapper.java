@@ -37,7 +37,7 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasPotentialSignificantHeartDiseaseCreator() {
-        return function -> new HasPotentialSignificantHeartDisease();
+        return function -> new HasPotentialSignificantHeartDisease(doidModel());
     }
 
     @NotNull

@@ -1,7 +1,5 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -11,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,16 +29,13 @@ public class HasHadOrganTransplant implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorOtherCondition> clinicallyRelevant =
-                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
-
         boolean hasOrganTransplantWithUnknownYear = false;
-        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
-            if (priorOtherCondition.category().equals(ORGAN_TRANSPLANT_CATEGORY)) {
+        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            if (condition.category().equals(ORGAN_TRANSPLANT_CATEGORY)) {
 
                 boolean isPass = minYear == null;
                 if (minYear != null) {
-                    Integer conditionYear = priorOtherCondition.year();
+                    Integer conditionYear = condition.year();
                     if (conditionYear == null) {
                         hasOrganTransplantWithUnknownYear = true;
                     } else {

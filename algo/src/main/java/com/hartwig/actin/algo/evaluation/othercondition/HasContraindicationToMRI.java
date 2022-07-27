@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -9,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.doid.DoidModel;
@@ -33,10 +33,8 @@ public class HasContraindicationToMRI implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorOtherCondition> clinicallyRelevant =
-                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
-        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
-            for (String doid : priorOtherCondition.doids()) {
+        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            for (String doid : condition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
@@ -47,10 +45,10 @@ public class HasContraindicationToMRI implements EvaluationFunction {
             }
 
             for (String term : OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI) {
-                if (priorOtherCondition.name().toLowerCase().contains(term)) {
+                if (condition.name().toLowerCase().contains(term)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has a contraindication to MRI due to condition " + priorOtherCondition.name())
+                            .addPassSpecificMessages("Patient has a contraindication to MRI due to condition " + condition.name())
                             .addPassGeneralMessages("MRI contraindication")
                             .build();
                 }

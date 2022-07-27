@@ -1,13 +1,11 @@
 package com.hartwig.actin.algo.evaluation.infection;
 
-import java.util.List;
-
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctions;
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.doid.DoidModel;
 
@@ -30,10 +28,8 @@ public class HasSpecificInfection implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         String doidTerm = doidModel.resolveTermForDoid(doidToFind);
 
-        List<PriorOtherCondition> clinicallyRelevant =
-                OtherConditionFunctions.selectClinicallyRelevant(record.clinical().priorOtherConditions());
-        for (PriorOtherCondition priorOtherCondition : clinicallyRelevant) {
-            for (String doid : priorOtherCondition.doids()) {
+        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            for (String doid : condition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(doidToFind)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
