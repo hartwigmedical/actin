@@ -31,6 +31,9 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("tes", true);
         OPTION_MAPPING.put("Yes", true);
         OPTION_MAPPING.put("YES", true);
+        OPTION_MAPPING.put("JA", true);
+        OPTION_MAPPING.put("Ja", true);
+        OPTION_MAPPING.put("ja", true);
         OPTION_MAPPING.put("uknown", null);
         OPTION_MAPPING.put("UNKOWN", null);
         OPTION_MAPPING.put("unknown", null);
