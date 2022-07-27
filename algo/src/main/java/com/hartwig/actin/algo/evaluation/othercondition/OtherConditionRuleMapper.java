@@ -1,11 +1,15 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
+import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 public class OtherConditionRuleMapper extends RuleMapper {
 
     private static final String AUTOIMMUNE_DISEASE_DOID = "417";
+    private static final String INTERMEDIATE_CORONARY_SYNDROME_DOID = "8805";
+    private static final String PRINZMETAL_ANGINA_DOID = "0111151";
     private static final String BRAIN_DISEASE_DOID = "936";
     private static final String CARDIAC_DISEASE_DOID = "114";
     private static final String CARDIOVASCULAR_DISEASE_DOID = "1287";
@@ -102,7 +108,12 @@ public class OtherConditionRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHistoryOfAnginaCreator() {
-        return function -> new HasHistoryOfAngina();
+        return function -> {
+            List<EvaluationFunction> functions = Lists.newArrayList();
+            functions.add(new HasHadPriorConditionWithDoid(doidModel(), INTERMEDIATE_CORONARY_SYNDROME_DOID));
+            functions.add(new HasHadPriorConditionWithDoid(doidModel(), PRINZMETAL_ANGINA_DOID));
+            return new Or(functions);
+        };
     }
 
     @NotNull
