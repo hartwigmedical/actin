@@ -110,10 +110,25 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         }
 
         for (Complication complication : complications) {
-            joiner.add(complication.name());
-        }
 
+            String date = toDateString(complication.year(), complication.month());
+            String dateAddition = Strings.EMPTY;
+            if (date != null) {
+                dateAddition = " (" + date + ")";
+            }
+
+            joiner.add(complication.name() + dateAddition);
+        }
         return Formats.valueOrDefault(joiner.toString(), "None");
+    }
+
+    @Nullable
+    private static String toDateString(@Nullable Integer year, @Nullable Integer month) {
+        if (year != null) {
+            return month != null ? month + "/" + year : String.valueOf(year);
+        } else {
+            return null;
+        }
     }
 
     @NotNull

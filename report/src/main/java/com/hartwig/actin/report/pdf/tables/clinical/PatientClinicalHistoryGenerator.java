@@ -203,7 +203,14 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
             if (!priorOtherCondition.isContraindicationForTherapy()) {
                 addon = " (no contraindication for therapy)";
             }
-            joiner.add(priorOtherCondition.name() + addon);
+
+            String date = toDateString(priorOtherCondition.year(), priorOtherCondition.month());
+            String dateAddition = Strings.EMPTY;
+            if (date != null) {
+                dateAddition = " (" + date + ")";
+            }
+
+            joiner.add(priorOtherCondition.name() + dateAddition + addon);
         }
         return Formats.valueOrDefault(joiner.toString(), "None");
     }
