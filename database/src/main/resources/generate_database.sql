@@ -32,7 +32,7 @@ CREATE TABLE tumor
     hasLiverLesions BOOLEAN,
     hasLungLesions BOOLEAN,
     otherLesions varchar(500),
-    biopsyLocation varchar(50),
+    biopsyLocation varchar(65),
     PRIMARY KEY (id)
 );
 
