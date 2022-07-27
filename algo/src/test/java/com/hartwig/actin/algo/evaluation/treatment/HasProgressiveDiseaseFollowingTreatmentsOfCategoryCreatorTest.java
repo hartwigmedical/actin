@@ -15,8 +15,8 @@ public class HasProgressiveDiseaseFollowingTreatmentsOfCategoryCreatorTest {
 
     @Test
     public void canEvaluate() {
-        HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator function =
-                new HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(TreatmentCategory.CHEMOTHERAPY, Lists.newArrayList("type 1"));
+        HasProgressiveDiseaseFollowingTypedTreatmentsOfCategory function =
+                new HasProgressiveDiseaseFollowingTypedTreatmentsOfCategory(TreatmentCategory.CHEMOTHERAPY, Lists.newArrayList("type 1"));
 
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
@@ -45,7 +45,7 @@ public class HasProgressiveDiseaseFollowingTreatmentsOfCategoryCreatorTest {
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .chemoType("type 1")
-                .stopReason(HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator.STOP_REASON_PD)
+                .stopReason(HasProgressiveDiseaseFollowingTypedTreatmentsOfCategory.STOP_REASON_PD)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
