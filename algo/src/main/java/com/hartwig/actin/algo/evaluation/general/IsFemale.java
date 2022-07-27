@@ -10,8 +10,6 @@ import com.hartwig.actin.clinical.datamodel.Gender;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Check if clean-up is needed with IsMale rule
-//TODO: Allow option of missing data for IsFemale & IsMale
 public class IsFemale implements EvaluationFunction {
 
     IsFemale() {
