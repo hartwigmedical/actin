@@ -36,8 +36,8 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(
-                                "Patient received at least " + minSystemicTreatments + " systemic treatments but undetermined final stop reason")
+                        .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
+                                + " systemic treatments but undetermined final stop reason")
                         .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
                         .build();
             }
