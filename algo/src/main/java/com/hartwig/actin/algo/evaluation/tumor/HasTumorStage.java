@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasTumorStage implements EvaluationFunction {
 
     @NotNull

@@ -114,7 +114,7 @@ HAS_OVARIAN_BORDERLINE_TUMOR | Any DOID equal or child of DOID 2394 and primary 
 HAS_STOMACH_UNDIFFERENTIATED_TUMOR | Any DOID equal or child of DOID 10534 and primary tumor (sub)type like %Undifferentiated% 
 HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
 HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE | Won't be evaluated
-HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV
+HAS_STAGE_X | Tumor details > stage should be X. X can be one of: I, II, III, IIIA, IIIB, IIIC, IV. | Note: In case tumor stage is unknown, it is assumed to be stage IV in case of known liver, CNS, brain, lung and/or bone lesions, unless patient also has accompanying primary tumor DOID belonging to DOID 3571 (Liver cancer), 3620 (CNS cancer), 1319 (Brain cancer), 1324 (Lung cancer) or 184 (Bone cancer), respectively.
 HAS_LOCALLY_ADVANCED_CANCER | Tumor details > stage should be III(A/B/C)
 HAS_METASTATIC_CANCER | Tumor details > stage should be IV 
 HAS_UNRESECTABLE_CANCER | Tumor details > stage should be IV | `UNDETERMINED` in case of III(A/B/C/)
