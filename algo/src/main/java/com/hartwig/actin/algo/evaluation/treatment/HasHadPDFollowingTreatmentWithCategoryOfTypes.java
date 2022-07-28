@@ -68,19 +68,19 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypes implements Evaluation
             if (hasHadTreatment) {
                 builder.addFailSpecificMessages("Patient has received " + treatment() + " but not with stop reason PD");
             } else {
-                builder.addFailSpecificMessages("No " + category.display() + " treatment");
+                builder.addFailSpecificMessages("No " + category.display() + " treatment with PD");
             }
             builder.addFailGeneralMessages("Systemic treatments");
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (hasPotentiallyHadTreatment) {
-                builder.addUndeterminedSpecificMessages("Can't determine whether patient has received " + treatment());
+                builder.addUndeterminedSpecificMessages("Undetermined whether patient has received " + treatment());
             } else {
-                builder.addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with unclear stop reason");
+                builder.addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with undetermined stop reason");
             }
-            builder.addUndeterminedGeneralMessages("Unclear " + category.display() + " treatment");
+            builder.addUndeterminedGeneralMessages("Undetermined " + category.display() + " treatment with PD");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has received " + treatment() + " with stop reason PD");
-            builder.addPassGeneralMessages(category.display() + " treatment");
+            builder.addPassGeneralMessages(category.display() + " treatment with PD");
         }
 
         return builder.build();

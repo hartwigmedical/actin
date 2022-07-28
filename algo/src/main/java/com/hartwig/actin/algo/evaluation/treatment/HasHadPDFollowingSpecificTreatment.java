@@ -68,21 +68,21 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             if (hasHadTreatmentWithExactType) {
-                builder.addFailSpecificMessages("Patient has received specific treatment but without stop reason PD");
+                builder.addFailSpecificMessages("Patient has received specific " + names + " treatment, but stop reason was not PD");
             } else {
-                builder.addFailSpecificMessages("No treatment");
+                builder.addFailSpecificMessages("Patient has not received specific " + names + " treatment");
             }
-            builder.addFailGeneralMessages("Systemic treatments");
+            builder.addFailGeneralMessages("No treatment with PD");
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (hasHadTreatmentWithWarnType) {
-                builder.addUndeterminedSpecificMessages("Can't determine whether patient has received specific treatment ");
+                builder.addUndeterminedSpecificMessages("Undetermined whether patient has received specific " + names + " treatment");
             } else {
-                builder.addUndeterminedSpecificMessages("Patient has received specific treatment but with unclear stop reason");
+                builder.addUndeterminedSpecificMessages("Patient has received specific " + names + " treatment but undetermined if stop reason is PD");
             }
-            builder.addUndeterminedGeneralMessages("Unclear treatment");
+            builder.addUndeterminedGeneralMessages("Undetermined treatment with PD");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has received specific treatment with stop reason PD");
-            builder.addPassGeneralMessages("Treatment");
+            builder.addPassSpecificMessages("Patient has received specific " + names + " treatment with stop reason PD");
+            builder.addPassGeneralMessages("Treatment with PD");
         }
 
         return builder.build();

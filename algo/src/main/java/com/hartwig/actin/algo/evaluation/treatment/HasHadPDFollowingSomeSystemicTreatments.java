@@ -37,23 +37,23 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages(
-                                "Patient received at least " + minSystemicTreatments + " systemic treatments but unclear final stop reason")
-                        .addUndeterminedGeneralMessages("Nr of systemic treatments")
+                                "Patient received at least " + minSystemicTreatments + " systemic treatments but undetermined final stop reason")
+                        .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
                         .build();
             }
         } else if (maxSystemicCount >= minSystemicTreatments) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                            "Could not determine if patient received at least " + minSystemicTreatments + " systemic treatments")
-                    .addUndeterminedGeneralMessages("Nr of systemic treatments")
+                            "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments")
+                    .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments")
-                .addFailGeneralMessages("Nr of systemic treatments")
+                .addFailGeneralMessages("Nr of systemic treatments with PD")
                 .build();
     }
 }

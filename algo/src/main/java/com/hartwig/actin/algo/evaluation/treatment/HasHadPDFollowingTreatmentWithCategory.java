@@ -45,21 +45,21 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had progressive disease following treatment with category " + category.display())
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassGeneralMessages(category.display() + " treatment with PD")
                     .build();
         } else if (hasHadTreatmentWithUnclearStopReason) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                            "Patient has had treatment with category " + category.display() + " but with unknown stop reason")
-                    .addUndeterminedGeneralMessages("Unclear " + category.display() + " treatment")
+                            "Patient has had treatment with category " + category.display() + " but stop reason undetermined")
+                    .addUndeterminedGeneralMessages("Undetermined " + category.display() + " treatment with PD")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no progressive disease following treatment with category " + category.display())
-                .addFailGeneralMessages("No " + category.display() + " treatment")
+                .addFailGeneralMessages("No " + category.display() + " treatment with PD")
                 .build();
     }
 }
