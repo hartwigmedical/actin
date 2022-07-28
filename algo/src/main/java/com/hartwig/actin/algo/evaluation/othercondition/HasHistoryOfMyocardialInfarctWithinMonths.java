@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Implement according to README
 public class HasHistoryOfMyocardialInfarctWithinMonths implements EvaluationFunction {
 
     HasHistoryOfMyocardialInfarctWithinMonths() {
