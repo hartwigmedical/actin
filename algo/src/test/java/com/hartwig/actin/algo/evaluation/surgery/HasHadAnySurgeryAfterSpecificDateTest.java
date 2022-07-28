@@ -75,5 +75,4 @@ public class HasHadAnySurgeryAfterSpecificDateTest {
     private static ImmutablePriorTumorTreatment.Builder builder() {
         return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true);
     }
-
 }

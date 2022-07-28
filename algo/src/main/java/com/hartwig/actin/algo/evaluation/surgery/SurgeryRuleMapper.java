@@ -22,7 +22,6 @@ public final class SurgeryRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        //TODO: Update below rules according to README
         map.put(EligibilityRule.HAS_HAD_RECENT_SURGERY, hasHadRecentSurgeryCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, hasHadSurgeryInPastWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS, hasHadSurgeryInPastMonthsCreator());
@@ -32,7 +31,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHadRecentSurgeryCreator() {
         LocalDate minDate = referenceDateProvider().date().minusMonths(2);
-        return function -> new HasHadRecentSurgery(minDate);
+        return function -> new HasHadAnySurgeryAfterSpecificDate(minDate);
     }
 
     @NotNull
@@ -41,7 +40,7 @@ public final class SurgeryRuleMapper extends RuleMapper {
             int maxAgeWeeks = functionInputResolver().createOneIntegerInput(function);
             LocalDate minDate = referenceDateProvider().date().minusWeeks(maxAgeWeeks).plusWeeks(2);
 
-            return new HasHadRecentSurgery(minDate);
+            return new HasHadAnySurgeryAfterSpecificDate(minDate);
         };
     }
 
