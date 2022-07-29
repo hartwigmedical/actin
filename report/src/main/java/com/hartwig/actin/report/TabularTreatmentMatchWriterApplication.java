@@ -22,34 +22,34 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public class TabularTreatmentMatchApplication {
+public class TabularTreatmentMatchWriterApplication {
 
-    private static final Logger LOGGER = LogManager.getLogger(TabularTreatmentMatchApplication.class);
+    private static final Logger LOGGER = LogManager.getLogger(TabularTreatmentMatchWriterApplication.class);
 
     private static final String DELIMITER = "\t";
 
-    private static final String APPLICATION = "ACTIN Tabular Treatment Match";
-    public static final String VERSION = TabularTreatmentMatchApplication.class.getPackage().getImplementationVersion();
+    private static final String APPLICATION = "ACTIN Tabular Treatment Match Writer";
+    public static final String VERSION = TabularTreatmentMatchWriterApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
-        Options options = TabularTreatmentMatchConfig.createOptions();
+        Options options = TabularTreatmentMatchWriterConfig.createOptions();
 
-        TabularTreatmentMatchConfig config = null;
+        TabularTreatmentMatchWriterConfig config = null;
         try {
-            config = TabularTreatmentMatchConfig.createConfig(new DefaultParser().parse(options, args));
+            config = TabularTreatmentMatchWriterConfig.createConfig(new DefaultParser().parse(options, args));
         } catch (ParseException exception) {
             LOGGER.warn(exception);
             new HelpFormatter().printHelp(APPLICATION, options);
             System.exit(1);
         }
 
-        new TabularTreatmentMatchApplication(config).run();
+        new TabularTreatmentMatchWriterApplication(config).run();
     }
 
     @NotNull
-    private final TabularTreatmentMatchConfig config;
+    private final TabularTreatmentMatchWriterConfig config;
 
-    private TabularTreatmentMatchApplication(@NotNull final TabularTreatmentMatchConfig config) {
+    private TabularTreatmentMatchWriterApplication(@NotNull final TabularTreatmentMatchWriterConfig config) {
         this.config = config;
     }
 
@@ -67,14 +67,15 @@ public class TabularTreatmentMatchApplication {
 
     private static void writeTreatmentMatchToTsv(@NotNull TreatmentMatch treatmentMatch, @NotNull String tsv) throws IOException {
         List<String> lines = Lists.newArrayList();
+
         StringJoiner header = tabular();
         header.add("Trial ID");
         header.add("Trial Acronym");
         header.add("Cohort ID");
         header.add("Cohort Description");
         header.add("Is algorithmically potentially eligible?");
-
         lines.add(header.toString());
+
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 StringJoiner record = trialJoiner(trialMatch.identification());

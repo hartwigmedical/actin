@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface TabularTreatmentMatchConfig {
+public interface TabularTreatmentMatchWriterConfig {
 
     Logger LOGGER = LogManager.getLogger(ReporterConfig.class);
 
@@ -44,13 +44,13 @@ public interface TabularTreatmentMatchConfig {
     String outputTsv();
 
     @NotNull
-    static TabularTreatmentMatchConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
+    static TabularTreatmentMatchWriterConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         if (cmd.hasOption(LOG_DEBUG)) {
             Configurator.setRootLevel(Level.DEBUG);
             LOGGER.debug("Switched root level logging to DEBUG");
         }
 
-        return ImmutableTabularTreatmentMatchConfig.builder()
+        return ImmutableTabularTreatmentMatchWriterConfig.builder()
                 .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
                 .outputTsv(ApplicationConfig.nonOptionalValue(cmd, OUTPUT_TSV))
                 .build();
