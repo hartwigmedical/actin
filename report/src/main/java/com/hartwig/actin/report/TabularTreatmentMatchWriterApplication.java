@@ -74,7 +74,7 @@ public class TabularTreatmentMatchWriterApplication {
         header.add("Cohort ID");
         header.add("Cohort Description");
         header.add("Is algorithmically potentially eligible?");
-        header.add("Curation");
+        header.add("Is correct?");
         header.add("Comment");
         lines.add(header.toString());
 
