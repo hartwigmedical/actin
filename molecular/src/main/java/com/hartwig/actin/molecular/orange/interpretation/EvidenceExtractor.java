@@ -55,7 +55,7 @@ class EvidenceExtractor {
                 .approvedEvidence(createApprovedEvidence(record.protect().reportableEvidences()))
                 .onLabelExperimentalEvidence(createOnLabelExperimentalEvidence(record.protect().reportableEvidences()))
                 .offLabelExperimentalEvidence(createOffLabelExperimentalEvidence(record.protect().reportableEvidences()))
-                .preClinicalEvidence(createReportedPreClinicalEvidence(record.protect().reportableEvidences()))
+                .preClinicalEvidence(createPreClinicalEvidence(record.protect().reportableEvidences()))
                 .knownResistanceEvidence(createKnownResistanceEvidence(record.protect().reportableEvidences()))
                 .suspectResistanceEvidence(createSuspectResistanceEvidence(record.protect().reportableEvidences()))
                 .build();
@@ -122,7 +122,7 @@ class EvidenceExtractor {
     }
 
     @NotNull
-    private static Set<TreatmentEvidence> createReportedPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
+    private static Set<TreatmentEvidence> createPreClinicalEvidence(@NotNull Iterable<ProtectEvidence> reportableEvidences) {
         Set<TreatmentEvidence> result = Sets.newTreeSet(new TreatmentEvidenceComparator());
 
         Set<ProtectEvidence> ckbEvidences = applicableForSource(reportableEvidences, EvidenceConstants.EVIDENCE_SOURCE);
