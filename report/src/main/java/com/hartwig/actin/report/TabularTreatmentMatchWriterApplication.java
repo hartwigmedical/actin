@@ -135,6 +135,9 @@ public class TabularTreatmentMatchWriterApplication {
             }
 
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
+                if (cohortMatch.evaluations().isEmpty()) {
+                    lines.add(toTabularLine(treatmentMatch, trialMatch, cohortMatch, null, null));
+                }
                 for (Map.Entry<Eligibility, Evaluation> entry : cohortMatch.evaluations().entrySet()) {
                     lines.add(toTabularLine(treatmentMatch, trialMatch, cohortMatch, entry.getKey(), entry.getValue()));
                 }
@@ -146,7 +149,7 @@ public class TabularTreatmentMatchWriterApplication {
 
     @NotNull
     private static String toTabularLine(@NotNull TreatmentMatch treatmentMatch, @NotNull TrialMatch trialMatch,
-            @Nullable CohortMatch cohortMatch, @NotNull Eligibility eligibility, @NotNull Evaluation evaluation) {
+            @Nullable CohortMatch cohortMatch, @Nullable Eligibility eligibility, @Nullable Evaluation evaluation) {
         StringJoiner line = tabular();
         line.add(DATE_FORMAT.format(treatmentMatch.referenceDate()));
         line.add(String.valueOf(treatmentMatch.referenceDateIsLive()));
@@ -161,17 +164,17 @@ public class TabularTreatmentMatchWriterApplication {
         line.add(cohortMatch != null ? String.valueOf(cohortMatch.metadata().slotsAvailable()) : Strings.EMPTY);
         line.add(cohortMatch != null ? String.valueOf(cohortMatch.metadata().blacklist()) : Strings.EMPTY);
         line.add(cohortMatch != null ? String.valueOf(cohortMatch.isPotentiallyEligible()) : Strings.EMPTY);
-        line.add(EligibilityFunctionDisplay.format(eligibility.function()));
-        line.add(evaluation.result().toString());
-        line.add(String.valueOf(evaluation.recoverable()));
-        line.add(concat(evaluation.passSpecificMessages()));
-        line.add(concat(evaluation.passGeneralMessages()));
-        line.add(concat(evaluation.warnSpecificMessages()));
-        line.add(concat(evaluation.warnGeneralMessages()));
-        line.add(concat(evaluation.undeterminedSpecificMessages()));
-        line.add(concat(evaluation.undeterminedGeneralMessages()));
-        line.add(concat(evaluation.failSpecificMessages()));
-        line.add(concat(evaluation.failGeneralMessages()));
+        line.add(eligibility != null ? EligibilityFunctionDisplay.format(eligibility.function()) : Strings.EMPTY);
+        line.add(evaluation != null ? evaluation.result().toString() : Strings.EMPTY);
+        line.add(evaluation != null ? String.valueOf(evaluation.recoverable()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.passSpecificMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.passGeneralMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.warnSpecificMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.warnGeneralMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.undeterminedSpecificMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.undeterminedGeneralMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.failSpecificMessages()) : Strings.EMPTY);
+        line.add(evaluation != null ? concat(evaluation.failGeneralMessages()) : Strings.EMPTY);
         return line.toString();
     }
 
