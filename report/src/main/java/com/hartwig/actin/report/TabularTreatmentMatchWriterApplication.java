@@ -74,6 +74,7 @@ public class TabularTreatmentMatchWriterApplication {
         header.add("Cohort ID");
         header.add("Cohort Description");
         header.add("Is algorithmically potentially eligible?");
+        header.add("Curation");
         lines.add(header.toString());
 
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
@@ -82,6 +83,7 @@ public class TabularTreatmentMatchWriterApplication {
                 record.add(cohortMatch.metadata().cohortId());
                 record.add(cohortMatch.metadata().description());
                 record.add(String.valueOf(cohortMatch.isPotentiallyEligible()));
+                record.add(Strings.EMPTY);
                 lines.add(record.toString());
             }
 
@@ -90,6 +92,7 @@ public class TabularTreatmentMatchWriterApplication {
                 record.add(Strings.EMPTY);
                 record.add(Strings.EMPTY);
                 record.add(String.valueOf(trialMatch.isPotentiallyEligible()));
+                record.add(Strings.EMPTY);
                 lines.add(record.toString());
             }
         }
