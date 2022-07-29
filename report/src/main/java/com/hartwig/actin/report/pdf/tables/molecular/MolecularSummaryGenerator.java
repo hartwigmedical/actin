@@ -72,6 +72,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
         return table;
     }
 
+    //TODO: Add scoreValuePrefix for display
     @NotNull
     private static String concat(@NotNull List<PriorMolecularTest> priorMolecularTests) {
         List<PriorMolecularTest> sorted = Lists.newArrayList();
