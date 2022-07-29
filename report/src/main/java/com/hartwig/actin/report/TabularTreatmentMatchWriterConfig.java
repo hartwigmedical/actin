@@ -20,7 +20,7 @@ public interface TabularTreatmentMatchWriterConfig {
     Logger LOGGER = LogManager.getLogger(ReporterConfig.class);
 
     String TREATMENT_MATCH_JSON = "treatment_match_json";
-    String OUTPUT_TSV = "output_tsv";
+    String OUTPUT_DIRECTORY = "output_directory";
 
     String LOG_DEBUG = "log_debug";
 
@@ -30,7 +30,7 @@ public interface TabularTreatmentMatchWriterConfig {
 
         options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the sample");
 
-        options.addOption(OUTPUT_TSV, true, "TSV where the output will be written to");
+        options.addOption(OUTPUT_DIRECTORY, true, "Directory where output will be written to");
 
         options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled");
 
@@ -41,7 +41,7 @@ public interface TabularTreatmentMatchWriterConfig {
     String treatmentMatchJson();
 
     @NotNull
-    String outputTsv();
+    String outputDirectory();
 
     @NotNull
     static TabularTreatmentMatchWriterConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
@@ -52,7 +52,7 @@ public interface TabularTreatmentMatchWriterConfig {
 
         return ImmutableTabularTreatmentMatchWriterConfig.builder()
                 .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
-                .outputTsv(ApplicationConfig.nonOptionalValue(cmd, OUTPUT_TSV))
+                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }
 }
