@@ -107,7 +107,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
     public void canResolveToMainCancerType() {
         String stomachCancer = "10534";
         String stomachAdenocarcinoma = "5517";
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(stomachCancer, stomachAdenocarcinoma);
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentMainCancerTypeChild(stomachCancer, stomachAdenocarcinoma);
 
         PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachAdenocarcinoma, true, true);
         assertEvaluation(EvaluationResult.FAIL,

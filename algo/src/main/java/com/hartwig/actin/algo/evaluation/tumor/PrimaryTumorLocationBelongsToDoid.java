@@ -78,7 +78,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
             return false;
         }
 
-        Set<String> mainCancerTypesToMatch = doidModel.mainCancerTypes(doidToMatch);
+        Set<String> mainCancerTypesToMatch = doidModel.mainCancerDoids(doidToMatch);
         for (String doid : doids) {
             for (String entry : doidModel.doidWithParents(doid)) {
                 if (mainCancerTypesToMatch.contains(entry)) {

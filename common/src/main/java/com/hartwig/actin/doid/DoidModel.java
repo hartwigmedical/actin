@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.doid.config.DoidManualConfig;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,12 +19,15 @@ public class DoidModel {
     private final Map<String, String> termPerDoidMap;
     @NotNull
     private final Map<String, String> doidPerLowerCaseTermMap;
+    @NotNull
+    private final DoidManualConfig doidManualConfig;
 
     DoidModel(@NotNull final Multimap<String, String> relationship, @NotNull final Map<String, String> termPerDoidMap,
-            @NotNull final Map<String, String> doidPerLowerCaseTermMap) {
+            @NotNull final Map<String, String> doidPerLowerCaseTermMap, @NotNull final DoidManualConfig doidManualConfig) {
         this.relationship = relationship;
         this.termPerDoidMap = termPerDoidMap;
         this.doidPerLowerCaseTermMap = doidPerLowerCaseTermMap;
+        this.doidManualConfig = doidManualConfig;
     }
 
     @NotNull
@@ -52,12 +56,12 @@ public class DoidModel {
     }
 
     @NotNull
-    public Set<String> mainCancerTypes(@NotNull String doid) {
+    public Set<String> mainCancerDoids(@NotNull String doid) {
         Set<String> doids = doidWithParents(doid);
         Set<String> matches = Sets.newHashSet();
-        for (String mainCancerType : DoidMainCancerTypesConfig.MAIN_CANCER_TYPES) {
-            if (doids.contains(mainCancerType)) {
-                matches.add(mainCancerType);
+        for (String mainCancerDoid : doidManualConfig.mainCancerDoids()) {
+            if (doids.contains(mainCancerDoid)) {
+                matches.add(mainCancerDoid);
             }
         }
         return matches;

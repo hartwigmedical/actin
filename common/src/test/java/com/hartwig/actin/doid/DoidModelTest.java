@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.hartwig.actin.doid.config.ImmutableDoidManualConfig;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -44,17 +45,10 @@ public class DoidModelTest {
 
     @Test
     public void canResolveMainCancerTypes() {
-        String firstMainCancerType = DoidMainCancerTypesConfig.MAIN_CANCER_TYPES.iterator().next();
-        String child = "012345";
-        assertFalse(DoidMainCancerTypesConfig.MAIN_CANCER_TYPES.contains(child));
+        DoidModel doidModel = TestDoidModelFactory.createWithOneMainCancerDoid("123");
 
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(firstMainCancerType, child);
-
-        Set<String> mainCancerTypes = doidModel.mainCancerTypes(child);
-        assertFalse(mainCancerTypes.isEmpty());
-        assertTrue(mainCancerTypes.contains(firstMainCancerType));
-
-        assertTrue(doidModel.mainCancerTypes("does not exist").isEmpty());
+        assertFalse(doidModel.mainCancerDoids("123").isEmpty());
+        assertTrue(doidModel.mainCancerDoids("does not exist").isEmpty());
     }
 
     @Test
@@ -87,6 +81,6 @@ public class DoidModelTest {
         Map<String, String> doidPerLowerCaseTermMap = Maps.newHashMap();
         doidPerLowerCaseTermMap.put("tumor a", "200");
 
-        return new DoidModel(relations, termPerDoidMap, doidPerLowerCaseTermMap);
+        return new DoidModel(relations, termPerDoidMap, doidPerLowerCaseTermMap, ImmutableDoidManualConfig.builder().build());
     }
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.hartwig.actin.doid.config.DoidManualConfigFactory;
 import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.datamodel.Edge;
 import com.hartwig.actin.doid.datamodel.Node;
@@ -56,6 +57,6 @@ public final class DoidModelFactory {
             }
         }
 
-        return new DoidModel(relationship, termPerDoidMap, doidPerLowerCaseTermMap);
+        return new DoidModel(relationship, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create());
     }
 }
