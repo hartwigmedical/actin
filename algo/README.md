@@ -494,13 +494,11 @@ ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_COMPLICATION_X | complication > Name like %X%
-HAS_COMPLICATION_OF_CATEGORY_X | complication > Categories like %X%
-HAS_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Name like %pain% or current use of medication with name Hydromorphone (T.B.D.)
-HAS_LEPTOMENINGEAL_DISEASE | complication > Name like %leptomeningeal%disease% or %leptomeningeal%metastases% or %carcinomatous%meningitis%. | `WARN` in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
-HAS_SPINAL_CORD_COMPRESSION | complication > Name like %spinal%cord%compression% or %cervical%spondylotic%myelopathy% 
-HAS_URINARY_INCONTINENCE | complication > Name like %incontinence% or %bladder%control% 
-HAS_BLADDER_OUTFLOW_OBSTRUCTION | complication > Name like %bladder%outflow% or %bladder%outlet% or %bladder%obstruction% or %bladder%retention%, or prior other condition belonging to DOID 13948
+HAS_ANY_COMPLICATION | complication > Any entry | `UNDETERMINED` in case complication details unknown
+HAS_COMPLICATION_X | complication > Name like %X% | `UNDETERMINED` in case complication details unknown
+HAS_COMPLICATION_OF_CATEGORY_X | complication > Categories like %X% | `UNDETERMINED` in case complication details unknown
+HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN | complication > Categories like %Pain% or current use of medication with name Hydromorphone (T.B.D.)
+HAS_LEPTOMENINGEAL_DISEASE | complication > Categories like %leptomeningeal disease% | `WARN` in case of hasCnsLesions=1 or otherLesions like %leptomeningeal% or %carcinomatous%meningitis%
 
 ##### Rules related to intolerances/toxicities
 

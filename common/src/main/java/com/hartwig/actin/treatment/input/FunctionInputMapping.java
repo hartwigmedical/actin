@@ -294,13 +294,11 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS, FunctionInput.NONE);
 
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_ANY_COMPLICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X, FunctionInput.ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_URINARY_INCONTINENCE, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_BLADDER_OUTFLOW_OBSTRUCTION, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);

@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasLeptomeningealDisease implements EvaluationFunction {
 
     private static final Set<List<String>> LEPTOMENINGEAL_DISEASE_PATTERNS = Sets.newHashSet();

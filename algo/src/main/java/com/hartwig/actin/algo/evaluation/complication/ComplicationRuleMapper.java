@@ -23,15 +23,18 @@ public class ComplicationRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.HAS_ANY_COMPLICATION, hasAnyComplicationCreator());
         map.put(EligibilityRule.HAS_COMPLICATION_X, hasSpecificComplicationCreator());
         map.put(EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X, hasComplicationOfCategoryCreator());
-        map.put(EligibilityRule.HAS_UNCONTROLLED_TUMOR_RELATED_PAIN, hasUncontrolledTumorRelatedPainCreator());
+        map.put(EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN, hasPotentialUncontrolledTumorRelatedPainCreator());
         map.put(EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE, hasLeptomeningealDiseaseCreator());
-        map.put(EligibilityRule.HAS_SPINAL_CORD_COMPRESSION, hasSpinalCordCompressionCreator());
-        map.put(EligibilityRule.HAS_URINARY_INCONTINENCE, hasUrinaryIncontinenceCreator());
-        map.put(EligibilityRule.HAS_BLADDER_OUTFLOW_OBSTRUCTION, hasBladderOutflowObstructionCreator());
 
         return map;
+    }
+
+    @NotNull
+    private FunctionCreator hasAnyComplicationCreator() {
+        return function -> new HasAnyComplication();
     }
 
     @NotNull
@@ -51,9 +54,9 @@ public class ComplicationRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hasUncontrolledTumorRelatedPainCreator() {
+    private FunctionCreator hasPotentialUncontrolledTumorRelatedPainCreator() {
         MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date());
-        return function -> new HasUncontrolledTumorRelatedPain(interpreter);
+        return function -> new HasPotentialUncontrolledTumorRelatedPain(interpreter);
     }
 
     @NotNull
@@ -61,18 +64,4 @@ public class ComplicationRuleMapper extends RuleMapper {
         return function -> new HasLeptomeningealDisease();
     }
 
-    @NotNull
-    private FunctionCreator hasSpinalCordCompressionCreator() {
-        return function -> new HasSpinalCordCompression();
-    }
-
-    @NotNull
-    private FunctionCreator hasUrinaryIncontinenceCreator() {
-        return function -> new HasUrinaryIncontinence();
-    }
-
-    @NotNull
-    private FunctionCreator hasBladderOutflowObstructionCreator() {
-        return function -> new HasBladderOutflowObstruction();
-    }
 }

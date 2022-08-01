@@ -17,7 +17,8 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasUncontrolledTumorRelatedPain implements EvaluationFunction {
+//TODO: Update according to README
+public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunction {
 
     @VisibleForTesting
     static final String SEVERE_PAIN_COMPLICATION = "pain";
@@ -27,7 +28,7 @@ public class HasUncontrolledTumorRelatedPain implements EvaluationFunction {
     @NotNull
     private final MedicationStatusInterpreter interpreter;
 
-    HasUncontrolledTumorRelatedPain(@NotNull final MedicationStatusInterpreter interpreter) {
+    HasPotentialUncontrolledTumorRelatedPain(@NotNull final MedicationStatusInterpreter interpreter) {
         this.interpreter = interpreter;
     }
 
