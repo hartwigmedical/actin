@@ -12,6 +12,7 @@ import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update logics
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
     private static final String UNCLEAR_TUMOR_TYPE = "carcinoma";
