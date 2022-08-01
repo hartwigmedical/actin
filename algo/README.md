@@ -106,7 +106,7 @@ HAS_SOLID_PRIMARY_TUMOR | All configured DOIDs equal or child of DOID 162, no DO
 HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 or 4960. | Resolve to `WARN` in case any DOID equal or child of DOID 5772, 3282, 5621, 3664, 8683 (but does not resolve to `FAIL` already) 
 HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X | Any configured DOID term should be equal of a child of DOID belonging to term X | In case the sample configured DOID is defined in the list of "Main cancer types" and is a parent of the requested DOID, AND when sample tumor type = empty or 'carcinoma' (without a subtype), the tumor type may actually be correct but the required details were missing in the clinical data. Therefore, in these situations, resolve to `UNDETERMINED`.
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to `UNDETERMINED` in case ALL configured DOIDs exactly equal to DOID 162 and tumor sublocation is not "CUP" (TODO) | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
-HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT | Term of any configured DOIDs like '%neuroendocrine%', or a child of a DOID with term like %neuroendocrine%, or any configured DOID equal or child of DOID 169 or 1800, or primary tumor extra details like %neuroendocrine% or %NEC% or %NET%. Resolve to `UNDETERMINED` in case the tumor has a small cell component (according to rule below)
+HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT | Term of any configured DOIDs like '%neuroendocrine%', or a child of a DOID with term like %neuroendocrine%, or any configured DOID equal or child of DOID 169 or 1800, or primary tumor extra details like %neuroendocrine% or %NEC% or %NET%. Resolve to `UNDETERMINED` in case the tumor has a small cell component (according to rule below), or inactivation of at least 2 of 3 genes: TP53, PTEN, RB1.
 HAS_CANCER_WITH_SMALL_CELL_COMPONENT | Term of any configured DOIDs like '%small cell%', or a child of a DOID with term like %small cell%, or any configured DOID equal or child of DOID 0050685, or primary tumor extra details like %small cell% or %SCNEC%
 HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `UNDETERMINED` in case of DOID exactly equal to DOID 10283   
 HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT | Any configured DOID equal or child of DOID 6278, 7013, 3267, 3604, 3606, 6067, 6469 or 6898, or both DOIDs 3030 & 2394 configured. 
@@ -125,9 +125,9 @@ HAS_ANY_LESION | Tumor details > Either hasLiverLesion, hasCnsLesions, hasBrainL
 HAS_AT_LEAST_X_LESIONS_WITH_SPECIFIC_CRITERIA | Currently resolves to `UNDETERMINED`
 HAS_LIVER_METASTASES | Tumor details > hasLiverLesions = 1
 HAS_KNOWN_CNS_METASTASES | Tumor details > hasCnsLesions = 1 or hasBrainLesions = 1
-HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or hasActiveBrainLesions = 1
+HAS_KNOWN_ACTIVE_CNS_METASTASES | Tumor details > hasActiveCnsLesions = 1 or hasActiveBrainLesions = 1 | Resolve to `FAIL` rather than `UNDETERMINED` in case of information regarding active CNS or Brain metastases is missing, but when it is confirmed that there are no CNS and brain metastases
 HAS_KNOWN_BRAIN_METASTASES | Tumor details > hasBrainLesions = 1
-HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1
+HAS_KNOWN_ACTIVE_BRAIN_METASTASES | Tumor details > hasActiveBrainLesions = 1 | Resolve to `FAIL` rather than `UNDETERMINED` in case of information regarding active brain metastases is missing, but when it is confirmed that there are no CNS and brain metastases
 HAS_BONE_METASTASES | Tumor details > hasBoneLesions = 1
 HAS_BONE_METASTASES_ONLY | Tumor details > hasBoneLesions = 1, while hasLiverLesions, hasBrainLesions, hasCnsLesions and hasLungLesions = 0 or missing, and otherLesions is empty | `WARN` in case hasBoneLesions = 1 while all others are missing
 HAS_LUNG_METASTASES | Tumor details > hasLungLesions = 1
@@ -166,6 +166,7 @@ HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_LEAST_Y_LINES | Patient has had treatment o
 HAS_HAD_CATEGORY_X_TREATMENT_AND_ AT_MOST_Y_LINES | Patient has had treatment of category X according to described in 1] below and number of lines <= Y | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_LEAST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines => Z | Also see 'Notes' below
 HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_ AND_AT_MOST_Z_LINES | Patient has had treatment of category X according to described in 2] below, corresponding type like any %Y% and number of lines <= Z  | Also see 'Notes' below
+HAS_PROGRESSIVE_DISEASE_FOLLOWING_ NAME_X_TREATMENT | Prior tumor treatments > name contains X. Stop reason of any of these treatments should be PD | In case PD cannot be determined, resolve to `UNDETERMINED`
 HAS_PROGRESSIVE_DISEASE_FOLLOWING_ CATEGORY_X_TREATMENT | Patient has had treatment of category X according to described in 1] below. Stop reason of any of these treatments should be PD | In case PD cannot be determined, resolve to `UNDETERMINED`
 HAS_PROGRESSIVE_DISEASE_FOLLOWING_ CATEGORY_X_TREATMENT_OF_TYPES_Y | Patient has had treatment of category X according to described in 2] below, and corresponding type like any %Y%. Stop reason of latest treatment should be PD | In case PD cannot be determined, resolve to `UNDETERMINED`
 HAS_PROGRESSIVE_DISEASE_FOLLOWING_ AT_LEAST_X_TREATMENT_LINES | Prior tumor treatments > minimal nr of lines in case systemic = 1 => X, Stop reason of latest treatment should be PD | In case latest treatment or PD cannot be determined, resolve to `UNDETERMINED`
@@ -375,7 +376,7 @@ HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS | Prior other conditions > any
 HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logic as described later)
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
-HAS_SEVERE_CONCOMITANT_CONDITION | Won't be evaluated
+HAS_SEVERE_CONCOMITANT_CONDITION | `WARN` in case of WHO 3, 4 (or 5). Otherwise, it is assumed there are none.
 HAS_HAD_ORGAN_TRANSPLANT | Prior other conditions > categories contains "Organ transplant"
 HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS | Prior other conditions > categories contains "Organ transplant" and years ago <= X | `UNDETERMINED` in case year is unknown
 HAS_GILBERT_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2739

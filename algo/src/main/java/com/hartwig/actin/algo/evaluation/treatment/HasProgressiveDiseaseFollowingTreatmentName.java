@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -9,18 +9,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import org.jetbrains.annotations.NotNull;
 
 //TODO: Update according to README
-public class HasSevereConcomitantIllness implements EvaluationFunction {
+public class HasProgressiveDiseaseFollowingTreatmentName implements EvaluationFunction {
 
-    HasSevereConcomitantIllness() {
+    HasProgressiveDiseaseFollowingTreatmentName() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.NOT_EVALUATED)
-                .addPassSpecificMessages("Any severe concomitant illnesses are assumed not to be present")
-                .addPassGeneralMessages("Assumed no severe concomitant illnesses")
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages("Progressive disease following specific treatment currently cannot be determined")
                 .build();
     }
 }
