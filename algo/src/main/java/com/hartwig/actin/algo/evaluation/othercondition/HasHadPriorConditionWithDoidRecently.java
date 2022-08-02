@@ -56,13 +56,15 @@ public class HasHadPriorConditionWithDoidRecently implements EvaluationFunction 
             if (matchingConditionIsWithinWarnDate) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Patient has had recent " + matchingConditionAfterMinDate + " belonging to " + doidTerm)
+                        .addWarnSpecificMessages("Patient has had " + matchingConditionAfterMinDate + " (belonging to " + doidTerm
+                                + ") within specified time frame")
                         .addWarnGeneralMessages("Recent " + doidTerm)
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Patient has had recent " + matchingConditionAfterMinDate + " belonging to " + doidTerm)
+                        .addPassSpecificMessages("Patient has had " + matchingConditionAfterMinDate + " (belonging to " + doidTerm
+                                + ") within specified time frame")
                         .addPassGeneralMessages("Recent " + doidTerm)
                         .build();
             }
@@ -71,8 +73,8 @@ public class HasHadPriorConditionWithDoidRecently implements EvaluationFunction 
         if (hasHadPriorConditionWithUnclearDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has had " + matchingConditionAfterMinDate + " belonging to " + doidTerm
-                            + " but unclear whether that was recent")
+                    .addUndeterminedSpecificMessages("Patient has had " + matchingConditionAfterMinDate + " (belonging to " + doidTerm
+                            + "), but undetermined whether that is within specified time frame")
                     .addUndeterminedGeneralMessages("Recent " + doidTerm)
                     .build();
         }
