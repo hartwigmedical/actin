@@ -17,7 +17,6 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunction {
 
     @VisibleForTesting
@@ -38,7 +37,7 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
         Set<String> painComplications = Sets.newHashSet();
         if (record.clinical().complications() != null) {
             for (Complication complication : record.clinical().complications()) {
-                if (complication.name().toLowerCase().contains(SEVERE_PAIN_COMPLICATION.toLowerCase())) {
+                if (isPotentialPainComplication(complication)) {
                     painComplications.add(complication.name());
                 }
             }
@@ -72,5 +71,14 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not uncontrolled tumor related pain")
                 .build();
+    }
+
+    private static boolean isPotentialPainComplication(@NotNull Complication complication) {
+        for (String category : complication.categories()) {
+            if (category.toLowerCase().contains(SEVERE_PAIN_COMPLICATION.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

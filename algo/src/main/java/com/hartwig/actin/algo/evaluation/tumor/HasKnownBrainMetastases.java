@@ -17,9 +17,9 @@ public class HasKnownBrainMetastases implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasKnownBrainMetastases = record.clinical().tumor().hasBrainLesions();
+        Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
 
-        if (hasKnownBrainMetastases == null) {
+        if (hasBrainMetastases == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Data regarding presence of brain metastases is missing, assuming there are none")
@@ -27,7 +27,7 @@ public class HasKnownBrainMetastases implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = hasKnownBrainMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasBrainMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
