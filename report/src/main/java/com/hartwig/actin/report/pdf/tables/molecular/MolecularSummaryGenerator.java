@@ -72,7 +72,6 @@ public class MolecularSummaryGenerator implements TableGenerator {
         return table;
     }
 
-    //TODO: Add scoreValuePrefix for display
     @NotNull
     private static String concat(@NotNull List<PriorMolecularTest> priorMolecularTests) {
         List<PriorMolecularTest> sorted = Lists.newArrayList();
@@ -88,6 +87,9 @@ public class MolecularSummaryGenerator implements TableGenerator {
             if (priorMolecularTest.scoreText() != null) {
                 entry += (" " + priorMolecularTest.scoreText());
             } else if (priorMolecularTest.scoreValue() != null) {
+                if (priorMolecularTest.scoreValuePrefix() != null) {
+                    entry += (" " + priorMolecularTest.scoreValuePrefix());
+                }
                 entry += (" " + Formats.twoDigitNumber(priorMolecularTest.scoreValue()));
                 if (priorMolecularTest.scoreValueUnit() != null) {
                     entry += (" " + priorMolecularTest.scoreValueUnit());

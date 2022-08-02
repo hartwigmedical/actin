@@ -14,7 +14,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction {
 
     static final Set<String> NEUROENDOCRINE_DOIDS = Sets.newHashSet();

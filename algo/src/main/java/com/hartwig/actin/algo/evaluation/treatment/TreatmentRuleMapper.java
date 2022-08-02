@@ -198,7 +198,10 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasProgressiveDiseaseFollowingTreatmentNameCreator() {
-        return function -> new HasProgressiveDiseaseFollowingTreatmentName();
+        return function -> {
+            String nameToFind = functionInputResolver().createOneStringInput(function);
+            return new HasHadPDFollowingSpecificTreatment(Sets.newHashSet(nameToFind), null);
+        };
     }
 
     @NotNull
