@@ -29,14 +29,14 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
         }
 
         boolean hasKnownCnsMetastases = false;
-        boolean hasAtLeastKnownCnsMetastases = false;
         if (hasCnsLesions != null && hasCnsLesions) {
             hasKnownCnsMetastases = true;
-            hasAtLeastKnownCnsMetastases = true;
         }
 
+        boolean hasAtLeastActiveBrainMetastases = false;
         if (hasBrainLesions != null && hasBrainLesions) {
             hasKnownCnsMetastases = true;
+            hasAtLeastActiveBrainMetastases = true;
         }
 
         EvaluationResult result = hasKnownCnsMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
@@ -45,12 +45,14 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No known CNS metastases present");
             builder.addFailGeneralMessages("No known CNS metastases");
-        } else if (result == EvaluationResult.PASS && !hasAtLeastKnownCnsMetastases) {
-            builder.addPassSpecificMessages("Brain metastases are present");
-            builder.addPassGeneralMessages("Brain metastases");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("CNS metastases are present");
-            builder.addPassGeneralMessages("CNS metastases");
+            if (hasAtLeastActiveBrainMetastases) {
+                builder.addPassSpecificMessages("Brain metastases are present");
+                builder.addPassGeneralMessages("Brain metastases");
+            } else {
+                builder.addPassSpecificMessages("CNS metastases are present");
+                builder.addPassGeneralMessages("CNS metastases");
+            }
         }
 
         return builder.build();
