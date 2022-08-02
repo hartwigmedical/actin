@@ -364,7 +364,7 @@ HAS_HISTORY_OF_ANGINA | Prior other conditions > any configured doid equal or a 
 HAS_HISTORY_OF_BRAIN_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 936
 HAS_HISTORY_OF_CARDIAC_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 114
 HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 1287
-HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X | Resolve to `WARN` in case any configured doid equal or a child of DOID 6000 | X should be one of: I, II, III, IV
+HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_ WITH_AT_LEAST_NYHA_CLASS_X | Resolve to `WARN` in case any configured doid equal or a child of DOID 6000 | X should be one of: I, II, III, IV
 HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 331
 HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 77
 HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 2914
@@ -372,7 +372,7 @@ HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE |  Prior other conditions > any configu
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
-HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS | Prior other conditions > any configured doid should be equal or be a child of DOID 5844, and date should be <= X months. | In case myocardial infarct occurred within the last 2 months as limited by X, resolve to `WARN`. When date is not known, resolve to `Undetermined`
+HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS | Prior other conditions > any configured doid should be equal or be a child of DOID 5844, and date should be <= X months. | In case myocardial infarct occurred within the last 2 months as limited by X, resolve to `WARN`. When date is not known, resolve to `UNDETERMINED`
 HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logic as described later)
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
@@ -544,9 +544,9 @@ HAS_HAD_THROMBOCYTE_TRANSFUSION_ WITHIN_LAST_X_WEEKS | Blood transfusions > prod
 
 Rule | When does a patient pass evaluation? | Note
 ---|---|---
-HAS_HAD_RECENT_SURGERY | Surgeries > Presence of surgery entry within 2 months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= 2 months. | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
-HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X weeks. X should be <= 8, in case nr of weeks is higher, below rule should be used | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date. In case treatment with category 'surgery' is present but no date available, resolve to 'Fail'
-HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the above rule should be used | In case treatment with category 'surgery' is present but no date available, resolve to 'Undetermined'
+HAS_HAD_RECENT_SURGERY | Surgeries > Presence of surgery entry within 2 months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= 2 months. | In case treatment with category 'surgery' is present but no date available, resolve to `UNDETERMINED`
+HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS | Surgeries > Current date minus latest surgery date <= X weeks, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X weeks. X should be <= 8, in case nr of weeks is higher, below rule should be used | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date. In case treatment with category 'surgery' is present but no date available, resolve to `FAIL`
+HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the above rule should be used | In case treatment with category 'surgery' is present but no date available, resolve to `UNDETERMINED`
 
 ##### Rules related to lifestyle
  
