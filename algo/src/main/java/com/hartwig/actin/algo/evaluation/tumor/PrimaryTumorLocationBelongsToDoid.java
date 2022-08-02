@@ -97,7 +97,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     private boolean isPotentialAdenoSquamousMatch(@NotNull Set<String> patientDoids, @NotNull String doidToMatch) {
         Set<String> doidTreeToMatch = doidModel.expandedDoidWithParents(doidToMatch);
 
-        Set<String> patientDoidTree = expandToDoidTree(patientDoids);
+        Set<String> patientDoidTree = expandToFullDoidTree(patientDoids);
         for (String doidEntryToMatch : doidTreeToMatch) {
             for (AdenoSquamousMapping mapping : doidModel.adenoSquamousMappingsForDoid(doidEntryToMatch)) {
                 if (patientDoidTree.contains(mapping.adenoSquamousDoid())) {
@@ -130,7 +130,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     }
 
     @NotNull
-    private Set<String> expandToDoidTree(@NotNull Set<String> doids) {
+    private Set<String> expandToFullDoidTree(@NotNull Set<String> doids) {
         Set<String> doidTree = Sets.newHashSet();
         for (String doid : doids) {
             doidTree.addAll(doidModel.expandedDoidWithParents(doid));
