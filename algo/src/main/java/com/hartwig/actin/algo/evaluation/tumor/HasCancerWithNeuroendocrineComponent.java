@@ -8,7 +8,9 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.molecular.MolecularInterpretation;
 import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -81,10 +83,35 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .build();
         }
 
+        if (hasNeuroendocrineMolecularProfile(record.molecular())) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has cancer with neuroendocrine molecular profile")
+                    .addUndeterminedGeneralMessages("Neuroendocrine component")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have cancer with neuroendocrine component")
                 .addFailGeneralMessages("Neuroendocrine component")
                 .build();
+    }
+
+    private static boolean hasNeuroendocrineMolecularProfile(@NotNull MolecularRecord molecular) {
+        int inactivationCount = 0;
+        if (MolecularInterpretation.hasGeneInactivated(molecular, "TP53")) {
+            inactivationCount++;
+        }
+
+        if (MolecularInterpretation.hasGeneInactivated(molecular, "PTEN")) {
+            inactivationCount++;
+        }
+
+        if (MolecularInterpretation.hasGeneInactivated(molecular, "RB1")) {
+            inactivationCount++;
+        }
+
+        return inactivationCount >= 2;
     }
 }

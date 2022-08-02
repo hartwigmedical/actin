@@ -13,12 +13,12 @@ import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
@@ -109,7 +109,7 @@ public final class TestMolecularFactory {
     @NotNull
     private static MolecularDrivers createProperTestDrivers() {
         return ImmutableMolecularDrivers.builder()
-                .addVariants(ImmutableVariant.builder()
+                .addVariants(TestVariantFactory.builder()
                         .event("BRAF V600E")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("BRAF")
@@ -119,7 +119,7 @@ public final class TestMolecularFactory {
                         .driverType(VariantDriverType.HOTSPOT)
                         .clonalLikelihood(1.0)
                         .build())
-                .addLosses(ImmutableLoss.builder()
+                .addLosses(TestLossFactory.builder()
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
@@ -267,7 +267,7 @@ public final class TestMolecularFactory {
                         .copies(38)
                         .isPartial(false)
                         .build())
-                .addHomozygousDisruptions(ImmutableHomozygousDisruption.builder()
+                .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
                         .event("PTEN disruption")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
