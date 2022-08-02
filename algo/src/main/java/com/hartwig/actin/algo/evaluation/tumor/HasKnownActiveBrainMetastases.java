@@ -11,24 +11,29 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasKnownActiveBrainMetastases implements EvaluationFunction {
 
-    //TODO: Update according to README
     HasKnownActiveBrainMetastases() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasKnownActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions();
+        Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
+        Boolean hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions();
 
-        if (hasKnownActiveBrainMetastases == null) {
+        // If a patient is known to have no brain metastases, update active to false in case it is unknown.
+        if (hasBrainMetastases != null && !hasBrainMetastases) {
+            hasActiveBrainMetastases = hasActiveBrainMetastases != null ? hasActiveBrainMetastases : false;
+        }
+
+        if (hasActiveBrainMetastases == null) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Data regarding presence of active brain metastases is missing")
-                    .addFailGeneralMessages("Missing active brain metastases data")
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Data regarding presence of active brain metastases is missing")
+                    .addUndeterminedGeneralMessages("Missing active brain metastases data")
                     .build();
         }
 
-        EvaluationResult result = hasKnownActiveBrainMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result = hasActiveBrainMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {

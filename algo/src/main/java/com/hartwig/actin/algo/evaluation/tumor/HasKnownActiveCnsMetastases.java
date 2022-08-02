@@ -11,33 +11,44 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasKnownActiveCnsMetastases implements EvaluationFunction {
 
-    //TODO: Update according to README
     HasKnownActiveCnsMetastases() {
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
         Boolean hasActiveCnsLesions = record.clinical().tumor().hasActiveCnsLesions();
-        Boolean hasActiveBrainLesions = record.clinical().tumor().hasActiveBrainLesions();
+        Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
+        Boolean hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions();
 
-        if (hasActiveCnsLesions == null && hasActiveBrainLesions == null) {
+        // If a patient is known to have no cns metastases, update active to false in case it is unknown.
+        if (hasCnsMetastases != null && !hasCnsMetastases) {
+            hasActiveCnsLesions = hasActiveCnsLesions != null ? hasActiveCnsLesions : false;
+        }
+
+        // If a patient is known to have no brain metastases, update active to false in case it is unknown.
+        if (hasBrainMetastases != null && !hasBrainMetastases) {
+            hasActiveBrainMetastases = hasActiveBrainMetastases != null ? hasActiveBrainMetastases : false;
+        }
+
+        if (hasActiveCnsLesions == null && hasActiveBrainMetastases == null) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Data regarding presence of active CNS metastases is missing")
-                    .addFailGeneralMessages("Missing active CNS metastases data")
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Data regarding presence of active CNS metastases is missing")
+                    .addUndeterminedGeneralMessages("Missing active CNS metastases data")
                     .build();
         }
 
         boolean hasActiveCnsMetastases = false;
-        boolean hasAtLeastActiveCnsMetastases = false;
         if (hasActiveCnsLesions != null && hasActiveCnsLesions) {
             hasActiveCnsMetastases = true;
-            hasAtLeastActiveCnsMetastases = true;
         }
 
-        if (hasActiveBrainLesions != null && hasActiveBrainLesions) {
+        boolean hasAtLeastActiveBrainMetastases = false;
+        if (hasActiveBrainMetastases != null && hasActiveBrainMetastases) {
             hasActiveCnsMetastases = true;
+            hasAtLeastActiveBrainMetastases = true;
         }
 
         EvaluationResult result = hasActiveCnsMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
@@ -46,12 +57,14 @@ public class HasKnownActiveCnsMetastases implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("No known active CNS metastases present");
             builder.addFailGeneralMessages("No known active CNS metastases");
-        } else if (result == EvaluationResult.PASS && hasAtLeastActiveCnsMetastases) {
-            builder.addPassSpecificMessages("Active brain metastases are present");
-            builder.addPassGeneralMessages("Active brain metastases");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Active CNS metastases are present");
-            builder.addPassGeneralMessages("Active CNS metastases");
+            if (hasAtLeastActiveBrainMetastases) {
+                builder.addPassSpecificMessages("Active brain metastases are present");
+                builder.addPassGeneralMessages("Active brain metastases");
+            } else {
+                builder.addPassSpecificMessages("Active CNS metastases are present");
+                builder.addPassGeneralMessages("Active CNS metastases");
+            }
         }
 
         return builder.build();

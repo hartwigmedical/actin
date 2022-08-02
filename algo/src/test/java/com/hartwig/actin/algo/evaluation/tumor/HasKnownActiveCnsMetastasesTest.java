@@ -12,16 +12,30 @@ public class HasKnownActiveCnsMetastasesTest {
     public void canEvaluate() {
         HasKnownActiveCnsMetastases function = new HasKnownActiveCnsMetastases();
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(null, null)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(null, false)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(false, null)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(false, false)));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(null, null, null, null)));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, null, true, null)));
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(null, true)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(true, null)));
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(false, null, false, null)));
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, null, true, false)));
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, false, true, null)));
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, false, true, false)));
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(false, true)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(true, false)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesions(true, true)));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, null, true, true)));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, true, true, null)));
+
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, false, true, true)));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, true, true, false)));
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(TumorTestFactory.withActiveBrainAndCnsLesionStatus(true, true, true, true)));
     }
 }

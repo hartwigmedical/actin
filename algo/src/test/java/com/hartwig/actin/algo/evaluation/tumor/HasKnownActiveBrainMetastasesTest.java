@@ -12,8 +12,14 @@ public class HasKnownActiveBrainMetastasesTest {
     public void canEvaluate() {
         HasKnownActiveBrainMetastases function = new HasKnownActiveBrainMetastases();
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withActiveBrainLesions(null)));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withActiveBrainLesions(true)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withActiveBrainLesions(false)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withBrainLesionStatus(null, null)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withBrainLesionStatus(true, null)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesionStatus(false, null)));
+
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesionStatus(null, true)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesionStatus(true, true)));
+
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesionStatus(null, false)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesionStatus(true, false)));
     }
 }
