@@ -16,13 +16,14 @@ public class HasLeptomeningealDiseaseTest {
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(Lists.newArrayList())));
 
-        Complication different = ComplicationTestFactory.builder().name("other complication").build();
+        Complication different = ComplicationTestFactory.builder().addCategories("other complication").build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(different)));
 
-        Complication matching = ComplicationTestFactory.builder().name("this is a carcinomatous serious meningitis for sure").build();
+        Complication matching = ComplicationTestFactory.builder().addCategories("leptomeningeal disease type 1").build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(matching)));
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withCnsLesion("just a lesion")));
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(ComplicationTestFactory.withCnsLesion("carcinomatous meningitis")));
+        assertEvaluation(EvaluationResult.WARN,
+                function.evaluate(ComplicationTestFactory.withCnsLesion("carcinomatous furious meningitis")));
     }
 }

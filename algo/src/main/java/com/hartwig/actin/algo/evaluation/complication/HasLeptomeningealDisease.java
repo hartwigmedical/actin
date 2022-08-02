@@ -15,17 +15,12 @@ import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasLeptomeningealDisease implements EvaluationFunction {
 
-    private static final Set<List<String>> LEPTOMENINGEAL_DISEASE_PATTERNS = Sets.newHashSet();
+    private static final String LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN = "leptomeningeal disease";
     private static final Set<List<String>> LESION_WARNING_PATTERNS = Sets.newHashSet();
 
     static {
-        LEPTOMENINGEAL_DISEASE_PATTERNS.add(Lists.newArrayList("leptomeningeal", "disease"));
-        LEPTOMENINGEAL_DISEASE_PATTERNS.add(Lists.newArrayList("leptomeningeal", "metastases"));
-        LEPTOMENINGEAL_DISEASE_PATTERNS.add(Lists.newArrayList("carcinomatous", "meningitis"));
-
         LESION_WARNING_PATTERNS.add(Lists.newArrayList("leptomeningeal"));
         LESION_WARNING_PATTERNS.add(Lists.newArrayList("carcinomatous", "meningitis"));
     }
@@ -39,7 +34,7 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
         Set<String> leptomeningealComplications = Sets.newHashSet();
         if (record.clinical().complications() != null) {
             for (Complication complication : record.clinical().complications()) {
-                if (isPotentialLeptomeningealDisease(complication.name())) {
+                if (isPotentialLeptomeningealDisease(complication)) {
                     leptomeningealComplications.add(complication.name());
                 }
             }
@@ -78,8 +73,13 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
                 .build();
     }
 
-    private static boolean isPotentialLeptomeningealDisease(@NotNull String complication) {
-       return PatternMatcher.isMatch(complication, LEPTOMENINGEAL_DISEASE_PATTERNS);
+    private static boolean isPotentialLeptomeningealDisease(@NotNull Complication complication) {
+       for (String category : complication.categories()) {
+           if (category.toLowerCase().contains(LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN.toLowerCase())) {
+               return true;
+           }
+       }
+       return false;
     }
 
     private static boolean isPotentialLeptomeningealLesion(@NotNull String lesion) {
