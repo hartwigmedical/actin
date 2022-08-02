@@ -42,7 +42,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (doids == null || doids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor type known for patient")
+                    .addUndeterminedSpecificMessages("Tumor type of patient is not configured")
                     .addUndeterminedGeneralMessages("Unknown tumor type")
                     .build();
         }
@@ -58,8 +58,8 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isPotentialAdenoSquamousMatch(doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Unclear whether patient may have " + doidTerm + " due to adeno-squamous nature of tumor")
+                    .addUndeterminedSpecificMessages("Undetermined whether tumor type of patient can be considered " + doidTerm
+                            + ", because patient has adenosquamous tumor type")
                     .addUndeterminedGeneralMessages("Tumor type")
                     .build();
         }
