@@ -70,6 +70,11 @@ public final class TestDoidModelFactory {
     }
 
     @NotNull
+    public static DoidModel createWithDoidManualConfig(@NotNull DoidManualConfig config) {
+        return create(ArrayListMultimap.create(), Maps.newHashMap(), Maps.newHashMap(), config);
+    }
+
+    @NotNull
     private static DoidModel createWithRelationship(@NotNull Multimap<String, String> relationship) {
         return create(relationship, Maps.newHashMap(), Maps.newHashMap(), TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
     }

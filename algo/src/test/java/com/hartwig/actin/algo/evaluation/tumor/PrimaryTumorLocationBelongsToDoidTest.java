@@ -11,6 +11,10 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
+import com.hartwig.actin.doid.config.AdenoSquamousMapping;
+import com.hartwig.actin.doid.config.DoidManualConfig;
+import com.hartwig.actin.doid.config.ImmutableAdenoSquamousMapping;
+import com.hartwig.actin.doid.config.TestDoidManualConfigFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -120,6 +124,19 @@ public class PrimaryTumorLocationBelongsToDoidTest {
                 function.evaluate(TumorTestFactory.withTumorTypeAndDoids(null, null, stomachCancer)));
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(TumorTestFactory.withTumorTypeAndDoids(null, null, stomachAdenocarcinoma)));
+    }
+
+    @Test
+    public void canResolveToAdenoSquamousType() {
+        AdenoSquamousMapping mapping =
+                ImmutableAdenoSquamousMapping.builder().adenoSquamousDoid("1").squamousDoid("2").adenoDoid("3").build();
+        DoidManualConfig config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping);
+        DoidModel doidModel = TestDoidModelFactory.createWithDoidManualConfig(config);
+
+        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, "2", true, true);
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("4")));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids("1")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids("2")));
     }
 
     @NotNull

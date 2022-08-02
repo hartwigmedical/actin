@@ -16,4 +16,9 @@ public final class TestDoidManualConfigFactory {
     public static DoidManualConfig createWithOneMainCancerDoid(@NotNull String mainCancerDoid) {
         return ImmutableDoidManualConfig.builder().addMainCancerDoids(mainCancerDoid).build();
     }
+
+    @NotNull
+    public static DoidManualConfig createWithOneAdenoSquamousMapping(@NotNull AdenoSquamousMapping mapping) {
+        return ImmutableDoidManualConfig.builder().addAdenoSquamousMappings(mapping).build();
+    }
 }

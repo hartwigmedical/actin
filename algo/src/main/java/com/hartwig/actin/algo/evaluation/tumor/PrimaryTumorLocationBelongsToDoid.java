@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -9,10 +10,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.config.AdenoSquamousMapping;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update logics
+//TODO: Update logic
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
     private static final String UNCLEAR_TUMOR_TYPE = "carcinoma";
@@ -46,7 +48,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isDoidMatch(doids, doidToMatch)) {
+        if (isMatch(doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has " + doidTerm)
@@ -54,7 +56,16 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isPotentialMatch(record.clinical().tumor(), doids, doidToMatch)) {
+        if (isPotentialAdenoSquamousMatch(doids, doidToMatch)) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Unclear whether patient may have " + doidTerm + " due to adeno-squamous nature of tumor")
+                    .addUndeterminedGeneralMessages("Tumor type")
+                    .build();
+        }
+
+        if (isPotentialMatchWithMainCancerType(record.clinical().tumor(), doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidTerm)
@@ -69,7 +80,36 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                 .build();
     }
 
-    private boolean isPotentialMatch(@NotNull TumorDetails tumor, @NotNull Set<String> doids, @NotNull String doidToMatch) {
+    private boolean isMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {
+        int numMatches = 0;
+        int numMismatches = 0;
+        for (String doid : doids) {
+            boolean isMatch = requireExact ? doid.equals(doidToMatch) : doidModel.doidWithParents(doid).contains(doidToMatch);
+            if (isMatch) {
+                numMatches++;
+            } else {
+                numMismatches++;
+            }
+        }
+
+        return requireExclusive ? numMatches > 0 && numMismatches == 0 : numMatches > 0;
+    }
+
+    private boolean isPotentialAdenoSquamousMatch(@NotNull Set<String> patientDoids, @NotNull String doidToMatch) {
+        Set<String> doidTreeToMatch = doidModel.doidWithParents(doidToMatch);
+
+        Set<String> patientDoidTree = expandToDoidTree(patientDoids);
+        for (String doidEntryToMatch : doidTreeToMatch) {
+            for (AdenoSquamousMapping mapping : doidModel.adenoSquamousMappingsForDoid(doidEntryToMatch)) {
+                if (patientDoidTree.contains(mapping.adenoSquamousDoid())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isPotentialMatchWithMainCancerType(@NotNull TumorDetails tumor, @NotNull Set<String> doids, @NotNull String doidToMatch) {
         String primaryTumorType = tumor.primaryTumorType();
         String primaryTumorSubType = tumor.primaryTumorSubType();
 
@@ -89,18 +129,12 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         return false;
     }
 
-    private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {
-        int numMatches = 0;
-        int numMismatches = 0;
+    @NotNull
+    private Set<String> expandToDoidTree(@NotNull Set<String> doids) {
+        Set<String> doidTree = Sets.newHashSet();
         for (String doid : doids) {
-            boolean isMatch = requireExact ? doid.equals(doidToMatch) : doidModel.doidWithParents(doid).contains(doidToMatch);
-            if (isMatch) {
-                numMatches++;
-            } else {
-                numMismatches++;
-            }
+            doidTree.addAll(doidModel.doidWithParents(doid));
         }
-
-        return requireExclusive ? numMatches > 0 && numMismatches == 0 : numMatches > 0;
+        return doidTree;
     }
 }

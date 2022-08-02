@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public final class DoidManualConfigFactory {
 
     private static final Set<String> MAIN_CANCER_DOIDS = Sets.newHashSet();
+    private static final Set<AdenoSquamousMapping> ADENO_SQUAMOUS_MAPPINGS = Sets.newHashSet();
 
     static {
         MAIN_CANCER_DOIDS.add("0050619"); // paranasal sinus cancer
@@ -56,6 +57,22 @@ public final class DoidManualConfigFactory {
         MAIN_CANCER_DOIDS.add("11920"); // tracheal cancer
         MAIN_CANCER_DOIDS.add("11934"); // head and neck cancer
         MAIN_CANCER_DOIDS.add("14110"); // anus cancer
+
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("4829", "3907", "3910")); // Lung
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5623", "5514", "3458")); // Breast
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5624", "5537", "4896")); // Bile duct
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5625", "3748", "4914")); // Esophageal
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5626", "5530", "4923")); // Thymus
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5627", "5535", "3500")); // Gallbladder
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5628", "5527", "3502")); // Ampulla of vater
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5629", "234", "5519")); // Colon
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5630", "6961", "6316")); // Bartholin's gland / Vulva
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5631", "5533", "2870")); // Endometrial
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5634", "10287", "2526")); // Prostate
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5635", "5516", "5517")); // Stomach
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5636", "3744", "3702")); // Cervical
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5637", "0080323", "4074")); // Stomach
+        ADENO_SQUAMOUS_MAPPINGS.add(createMapping("4830", "1749", "299")); // Adenosquamous carcinoma
     }
 
     private DoidManualConfigFactory() {
@@ -63,6 +80,19 @@ public final class DoidManualConfigFactory {
 
     @NotNull
     public static DoidManualConfig create() {
-        return ImmutableDoidManualConfig.builder().mainCancerDoids(MAIN_CANCER_DOIDS).build();
+        return ImmutableDoidManualConfig.builder()
+                .mainCancerDoids(MAIN_CANCER_DOIDS)
+                .adenoSquamousMappings(ADENO_SQUAMOUS_MAPPINGS)
+                .build();
+    }
+
+    @NotNull
+    private static AdenoSquamousMapping createMapping(@NotNull String adenoSquamousDoid, @NotNull String squamousDoid,
+            @NotNull String adenoDoid) {
+        return ImmutableAdenoSquamousMapping.builder()
+                .adenoSquamousDoid(adenoSquamousDoid)
+                .squamousDoid(squamousDoid)
+                .adenoDoid(adenoDoid)
+                .build();
     }
 }

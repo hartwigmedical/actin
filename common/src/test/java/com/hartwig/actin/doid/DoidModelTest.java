@@ -11,7 +11,11 @@ import java.util.Set;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.hartwig.actin.doid.config.AdenoSquamousMapping;
+import com.hartwig.actin.doid.config.DoidManualConfig;
+import com.hartwig.actin.doid.config.ImmutableAdenoSquamousMapping;
 import com.hartwig.actin.doid.config.ImmutableDoidManualConfig;
+import com.hartwig.actin.doid.config.TestDoidManualConfigFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -52,6 +56,19 @@ public class DoidModelTest {
     }
 
     @Test
+    public void canResolveAdenoSquamousMappings() {
+        AdenoSquamousMapping mapping =
+                ImmutableAdenoSquamousMapping.builder().adenoSquamousDoid("1").squamousDoid("2").adenoDoid("3").build();
+        DoidManualConfig config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping);
+        DoidModel doidModel = TestDoidModelFactory.createWithDoidManualConfig(config);
+
+        assertEquals(0, doidModel.adenoSquamousMappingsForDoid("1").size());
+        assertEquals(1, doidModel.adenoSquamousMappingsForDoid("2").size());
+        assertEquals(1, doidModel.adenoSquamousMappingsForDoid("3").size());
+        assertEquals(0, doidModel.adenoSquamousMappingsForDoid("4").size());
+    }
+
+    @Test
     public void canResolveTerms() {
         DoidModel model = createTestModel();
 
@@ -68,6 +85,8 @@ public class DoidModelTest {
         assertEquals("200", model.resolveDoidForTerm("Tumor A"));
         assertNull(model.resolveDoidForTerm("tumor B"));
     }
+
+
 
     @NotNull
     private static DoidModel createTestModel() {

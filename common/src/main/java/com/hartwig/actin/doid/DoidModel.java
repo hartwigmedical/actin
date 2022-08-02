@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.doid.config.AdenoSquamousMapping;
 import com.hartwig.actin.doid.config.DoidManualConfig;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,16 +68,19 @@ public class DoidModel {
         return matches;
     }
 
-    private void addParents(@NotNull String child, @NotNull Set<String> result) {
-        if (!relationship.containsKey(child)) {
-            return;
-        }
+    @NotNull
+    public Set<AdenoSquamousMapping> adenoSquamousMappingsForDoid(@NotNull String doidToFind) {
+        Set<AdenoSquamousMapping> mappings = Sets.newHashSet();
 
-        for (String parent : relationship.get(child)) {
-            if (result.add(parent)) {
-                addParents(parent, result);
+        for (String doid : doidWithParents(doidToFind)) {
+            for (AdenoSquamousMapping mapping : doidManualConfig.adenoSquamousMappings()) {
+                if (mapping.adenoDoid().equals(doid) || mapping.squamousDoid().equals(doid)) {
+                    mappings.add(mapping);
+                }
             }
         }
+
+        return mappings;
     }
 
     @Nullable
@@ -87,5 +91,17 @@ public class DoidModel {
     @Nullable
     public String resolveDoidForTerm(@NotNull String term) {
         return doidPerLowerCaseTermMap.get(term.toLowerCase());
+    }
+
+    private void addParents(@NotNull String child, @NotNull Set<String> result) {
+        if (!relationship.containsKey(child)) {
+            return;
+        }
+
+        for (String parent : relationship.get(child)) {
+            if (result.add(parent)) {
+                addParents(parent, result);
+            }
+        }
     }
 }
