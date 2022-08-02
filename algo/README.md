@@ -372,7 +372,7 @@ HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE |  Prior other conditions > any configu
 HAS_HISTORY_OF_LIVER_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 409
 HAS_HISTORY_OF_LUNG_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 850
 HAS_HISTORY_OF_MYOCARDIAL_INFARCT | Prior other conditions > any configured doid should be equal or be a child of DOID 5844 
-HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS | Prior other conditions > any configured doid should be equal or be a child of DOID 5844, and date should be <= X months. | In case myocardial infarct occurred within the last 2 months as limited by X, resolve to `WARN`. When date is not known, resolve to `UNDETERMINED`
+HAS_HISTORY_OF_MYOCARDIAL_INFARCT _WITHIN_X_MONTHS | Prior other conditions > any configured doid should be equal or be a child of DOID 5844, and date should be <= X months. | In case myocardial infarct occurred within the last 2 months as limited by X, resolve to `WARN`. When date is not known, resolve to `UNDETERMINED`
 HAS_HISTORY_OF_PNEUMONITIS | Prior other conditions > any configured DOID should be equal or be a child of DOID 552 ; Toxicity > Name like %pneumonia% or %pneumonitis% with grade => 2 (following Toxicity specific logic as described later)
 HAS_HISTORY_OF_STROKE | Prior other conditions > any configured doid should be equal or be a child of DOID 6713 
 HAS_HISTORY_OF_VASCULAR_DISEASE | Prior other conditions > any configured doid should be equal or be a child of DOID 178
