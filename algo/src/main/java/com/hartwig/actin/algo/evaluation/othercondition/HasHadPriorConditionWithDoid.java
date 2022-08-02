@@ -29,14 +29,12 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
         String doidTerm = doidModel.resolveTermForDoid(doidToFind);
 
         for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            for (String doid : condition.doids()) {
-                if (doidModel.doidWithParents(doid).contains(doidToFind)) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has " + condition.name() + ", which belongs to category " + doidTerm)
-                            .addPassGeneralMessages("Present " + condition.name())
-                            .build();
-                }
+            if (conditionHasDoid(condition, doidToFind)) {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.PASS)
+                        .addPassSpecificMessages("Patient has " + condition.name() + ", which belongs to category " + doidTerm)
+                        .addPassGeneralMessages("Present " + condition.name())
+                        .build();
             }
         }
 
@@ -45,5 +43,14 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
                 .addFailSpecificMessages("Patient has no other condition belonging to category " + doidTerm)
                 .addFailGeneralMessages("No relevant non-oncological condition")
                 .build();
+    }
+
+    private boolean conditionHasDoid(@NotNull PriorOtherCondition condition, @NotNull String doidToFind) {
+        for (String doid : condition.doids()) {
+            if (doidModel.doidWithParents(doid).contains(doidToFind)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
