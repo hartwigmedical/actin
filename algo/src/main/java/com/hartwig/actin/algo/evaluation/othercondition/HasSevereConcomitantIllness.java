@@ -16,7 +16,23 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        Integer whoStatus = record.clinical().clinicalStatus().who();
 
+        if (whoStatus == null) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Cannot determine whether patient has concomitant illnesses - who status unknown")
+                    .addUndeterminedGeneralMessages("Unclear concomitant illnesses")
+                    .build();
+        }
+
+        if (whoStatus >= 3) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("Patient has potential concomitant illnesses based on WHO status of " + whoStatus)
+                    .addWarnGeneralMessages("Potential concomitant illnesses")
+                    .build();
+        }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)

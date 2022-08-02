@@ -8,6 +8,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -17,6 +18,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class OtherConditionTestFactory {
 
@@ -84,6 +86,19 @@ final class OtherConditionTestFactory {
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .medications(medications)
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withWHO(@Nullable Integer who) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(base.clinical())
+                        .clinicalStatus(ImmutableClinicalStatus.builder().from(base.clinical().clinicalStatus()).who(who).build())
                         .build())
                 .build();
     }
