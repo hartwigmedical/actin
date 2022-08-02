@@ -140,7 +140,7 @@ public class TumorRuleMapper extends RuleMapper {
     private FunctionCreator hasTumorStageCreator() {
         return function -> {
             TumorStage stageToMatch = functionInputResolver().createOneTumorStageInput(function);
-            return new HasTumorStage(stageToMatch);
+            return new HasTumorStage(doidModel(), stageToMatch);
         };
     }
 
