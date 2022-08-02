@@ -77,14 +77,14 @@ public final class DoidManualConfigFactory {
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5637", "0080323", "4074")); // Stomach
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("4830", "1749", "299")); // Adenosquamous carcinoma
 
-        ADDITIONAL_DOIDS_PER_DOID.put("4829", "3908");
-        ADDITIONAL_DOIDS_PER_DOID.put("6438", "6039");
-        ADDITIONAL_DOIDS_PER_DOID.put("7807", "6039");
-        ADDITIONAL_DOIDS_PER_DOID.put("6994", "6039");
-        ADDITIONAL_DOIDS_PER_DOID.put("6524", "6039");
-        ADDITIONAL_DOIDS_PER_DOID.put("234", "0050861");
-        ADDITIONAL_DOIDS_PER_DOID.put("1996", "0050861");
-        ADDITIONAL_DOIDS_PER_DOID.put("1520", "0080199");
+        ADDITIONAL_DOIDS_PER_DOID.put("4829", "3908"); // Lung adenosquamous > NSCLC
+        ADDITIONAL_DOIDS_PER_DOID.put("6438", "6039"); // Choroid melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("7807", "6039"); // Choroid melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("6994", "6039"); // Iris melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("6524", "6039"); // Ciliary body melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("234", "0050861"); // Colon adenocarcinoma > Colorectal adenocarcinoma
+        ADDITIONAL_DOIDS_PER_DOID.put("1996", "0050861"); // Rectum adenocarcinoma > Colorectal adenocarcinoma
+        ADDITIONAL_DOIDS_PER_DOID.put("1520", "0080199"); // Colon carcinoma > Colorectal carcinoma
     }
 
     private DoidManualConfigFactory() {
