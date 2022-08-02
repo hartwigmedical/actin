@@ -45,6 +45,6 @@ public class HasSolidPrimaryTumorTest {
             childParentMap.put(warnDoid, HasSolidPrimaryTumor.CANCER_DOID);
         }
 
-        return TestDoidModelFactory.createWithChildParentMap(childParentMap);
+        return TestDoidModelFactory.createWithChildToParentMap(childParentMap);
     }
 }

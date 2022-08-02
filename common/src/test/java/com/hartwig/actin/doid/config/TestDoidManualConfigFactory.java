@@ -21,4 +21,9 @@ public final class TestDoidManualConfigFactory {
     public static DoidManualConfig createWithOneAdenoSquamousMapping(@NotNull AdenoSquamousMapping mapping) {
         return ImmutableDoidManualConfig.builder().addAdenoSquamousMappings(mapping).build();
     }
+
+    @NotNull
+    public static DoidManualConfig createWithOneAdditionalDoid(@NotNull String baseDoid, @NotNull String expandedDoid) {
+        return ImmutableDoidManualConfig.builder().putAdditionalDoidsPerDoid(baseDoid, expandedDoid).build();
+    }
 }

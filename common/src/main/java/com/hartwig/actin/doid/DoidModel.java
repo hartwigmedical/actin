@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class DoidModel {
 
     @NotNull
-    private final Multimap<String, String> relationship;
+    private final Multimap<String, String> childToParentsMap;
     @NotNull
     private final Map<String, String> termPerDoidMap;
     @NotNull
@@ -23,9 +23,9 @@ public class DoidModel {
     @NotNull
     private final DoidManualConfig doidManualConfig;
 
-    DoidModel(@NotNull final Multimap<String, String> relationship, @NotNull final Map<String, String> termPerDoidMap,
+    DoidModel(@NotNull final Multimap<String, String> childToParentsMap, @NotNull final Map<String, String> termPerDoidMap,
             @NotNull final Map<String, String> doidPerLowerCaseTermMap, @NotNull final DoidManualConfig doidManualConfig) {
-        this.relationship = relationship;
+        this.childToParentsMap = childToParentsMap;
         this.termPerDoidMap = termPerDoidMap;
         this.doidPerLowerCaseTermMap = doidPerLowerCaseTermMap;
         this.doidManualConfig = doidManualConfig;
@@ -33,8 +33,8 @@ public class DoidModel {
 
     @NotNull
     @VisibleForTesting
-    Multimap<String, String> relationship() {
-        return relationship;
+    Multimap<String, String> childToParentsMap() {
+        return childToParentsMap;
     }
 
     @NotNull
@@ -54,6 +54,19 @@ public class DoidModel {
         Set<String> doids = Sets.newHashSet(doid);
         addParents(doid, doids);
         return doids;
+    }
+    @NotNull
+    public Set<String> expandedDoidWithParents(@NotNull String doid) {
+        Set<String> expandedDoids = Sets.newHashSet();
+        for (String expandedDoid : doidWithParents(doid)) {
+            expandedDoids.add(expandedDoid);
+            String additionalDoid = doidManualConfig.additionalDoidsPerDoid().get(expandedDoid);
+            if (additionalDoid != null) {
+                expandedDoids.addAll(doidWithParents(additionalDoid));
+            }
+        }
+
+        return expandedDoids;
     }
 
     @NotNull
@@ -94,11 +107,11 @@ public class DoidModel {
     }
 
     private void addParents(@NotNull String child, @NotNull Set<String> result) {
-        if (!relationship.containsKey(child)) {
+        if (!childToParentsMap.containsKey(child)) {
             return;
         }
 
-        for (String parent : relationship.get(child)) {
+        for (String parent : childToParentsMap.get(child)) {
             if (result.add(parent)) {
                 addParents(parent, result);
             }

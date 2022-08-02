@@ -58,7 +58,7 @@ public class DoidEvaluationFunctionsTest {
             childParentMap.put(warnDoid, MATCH_DOID);
         }
 
-        return TestDoidModelFactory.createWithChildParentMap(childParentMap);
+        return TestDoidModelFactory.createWithChildToParentMap(childParentMap);
     }
 
     @Test

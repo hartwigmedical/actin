@@ -24,19 +24,19 @@ public final class DoidModelFactory {
 
     @NotNull
     public static DoidModel createFromDoidEntry(@NotNull DoidEntry doidEntry) {
-        Multimap<String, String> relationship = ArrayListMultimap.create();
+        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
         for (Edge edge : doidEntry.edges()) {
             if (edge.predicate().equals("is_a")) {
                 String child = edge.subjectDoid();
                 String parent = edge.objectDoid();
 
-                if (relationship.containsKey(child)) {
-                    Collection<String> parents = relationship.get(child);
+                if (childToParentsMap.containsKey(child)) {
+                    Collection<String> parents = childToParentsMap.get(child);
                     if (!parents.contains(parent)) {
                         parents.add(parent);
                     }
                 } else {
-                    relationship.put(child, parent);
+                    childToParentsMap.put(child, parent);
                 }
             }
         }
@@ -57,6 +57,6 @@ public final class DoidModelFactory {
             }
         }
 
-        return new DoidModel(relationship, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create());
+        return new DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create());
     }
 }

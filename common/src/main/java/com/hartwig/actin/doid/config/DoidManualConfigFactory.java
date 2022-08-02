@@ -1,7 +1,9 @@
 package com.hartwig.actin.doid.config;
 
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +12,7 @@ public final class DoidManualConfigFactory {
 
     private static final Set<String> MAIN_CANCER_DOIDS = Sets.newHashSet();
     private static final Set<AdenoSquamousMapping> ADENO_SQUAMOUS_MAPPINGS = Sets.newHashSet();
+    private static final Map<String, String> ADDITIONAL_DOIDS_PER_DOID = Maps.newHashMap();
 
     static {
         MAIN_CANCER_DOIDS.add("0050619"); // paranasal sinus cancer
@@ -73,6 +76,15 @@ public final class DoidManualConfigFactory {
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5636", "3744", "3702")); // Cervical
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5637", "0080323", "4074")); // Stomach
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("4830", "1749", "299")); // Adenosquamous carcinoma
+
+        ADDITIONAL_DOIDS_PER_DOID.put("4829", "3908");
+        ADDITIONAL_DOIDS_PER_DOID.put("6438", "6039");
+        ADDITIONAL_DOIDS_PER_DOID.put("7807", "6039");
+        ADDITIONAL_DOIDS_PER_DOID.put("6994", "6039");
+        ADDITIONAL_DOIDS_PER_DOID.put("6524", "6039");
+        ADDITIONAL_DOIDS_PER_DOID.put("234", "0050861");
+        ADDITIONAL_DOIDS_PER_DOID.put("1996", "0050861");
+        ADDITIONAL_DOIDS_PER_DOID.put("1520", "0080199");
     }
 
     private DoidManualConfigFactory() {
@@ -83,6 +95,7 @@ public final class DoidManualConfigFactory {
         return ImmutableDoidManualConfig.builder()
                 .mainCancerDoids(MAIN_CANCER_DOIDS)
                 .adenoSquamousMappings(ADENO_SQUAMOUS_MAPPINGS)
+                .additionalDoidsPerDoid(ADDITIONAL_DOIDS_PER_DOID)
                 .build();
     }
 

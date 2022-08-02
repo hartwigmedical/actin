@@ -1,5 +1,6 @@
 package com.hartwig.actin.doid.config;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -15,4 +16,7 @@ public abstract class DoidManualConfig {
 
     @NotNull
     public abstract Set<AdenoSquamousMapping> adenoSquamousMappings();
+
+    @NotNull
+    public abstract Map<String, String> additionalDoidsPerDoid();
 }

@@ -38,13 +38,13 @@ public class DoidModelFactoryTest {
                 ImmutableDoidEntry.builder().from(DoidEntryTestFactory.createMinimalTestDoidEntry()).edges(edges).nodes(nodes).build();
         DoidModel model = DoidModelFactory.createFromDoidEntry(entry);
 
-        assertEquals(2, model.relationship().size());
+        assertEquals(2, model.childToParentsMap().size());
 
-        Collection<String> relations299 = model.relationship().get("200");
+        Collection<String> relations299 = model.childToParentsMap().get("200");
         assertEquals(1, relations299.size());
         assertTrue(relations299.contains("300"));
 
-        Collection<String> relations305 = model.relationship().get("300");
+        Collection<String> relations305 = model.childToParentsMap().get("300");
         assertEquals(1, relations305.size());
         assertTrue(relations305.contains("400"));
 

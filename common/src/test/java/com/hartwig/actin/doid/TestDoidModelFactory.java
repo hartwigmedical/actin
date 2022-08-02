@@ -24,35 +24,31 @@ public final class TestDoidModelFactory {
     }
 
     @NotNull
-    public static DoidModel createWithOneMainCancerDoid(@NotNull String mainCancerDoid) {
-        return create(ArrayListMultimap.create(),
-                Maps.newHashMap(),
-                Maps.newHashMap(),
-                TestDoidManualConfigFactory.createWithOneMainCancerDoid(mainCancerDoid));
+    public static DoidModel createWithOneParentChild(@NotNull String parent, @NotNull String child) {
+        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
+        childToParentsMap.put(child, parent);
+
+        return createWithChildToParentsMap(childToParentsMap);
     }
 
     @NotNull
-    public static DoidModel createWithOneParentChild(@NotNull String parent, @NotNull String child) {
-        Multimap<String, String> relationship = ArrayListMultimap.create();
-        relationship.put(child, parent);
-        return createWithRelationship(relationship);
+    public static DoidModel createWithChildToParentMap(@NotNull Map<String, String> childToParentMap) {
+        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
+        for (Map.Entry<String, String> entry : childToParentMap.entrySet()) {
+            childToParentsMap.put(entry.getKey(), entry.getValue());
+        }
+        return createWithChildToParentsMap(childToParentsMap);
     }
 
     @NotNull
     public static DoidModel createWithOneParentMainCancerTypeChild(@NotNull String parent, @NotNull String child) {
-        Multimap<String, String> relationship = ArrayListMultimap.create();
-        relationship.put(child, parent);
+        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
+        childToParentsMap.put(child, parent);
 
-        return create(relationship, Maps.newHashMap(), Maps.newHashMap(), TestDoidManualConfigFactory.createWithOneMainCancerDoid(parent));
-    }
-
-    @NotNull
-    public static DoidModel createWithChildParentMap(@NotNull Map<String, String> childParentMap) {
-        Multimap<String, String> relationship = ArrayListMultimap.create();
-        for (Map.Entry<String, String> entry : childParentMap.entrySet()) {
-            relationship.put(entry.getKey(), entry.getValue());
-        }
-        return createWithRelationship(relationship);
+        return create(childToParentsMap,
+                Maps.newHashMap(),
+                Maps.newHashMap(),
+                TestDoidManualConfigFactory.createWithOneMainCancerDoid(parent));
     }
 
     @NotNull
@@ -75,13 +71,16 @@ public final class TestDoidModelFactory {
     }
 
     @NotNull
-    private static DoidModel createWithRelationship(@NotNull Multimap<String, String> relationship) {
-        return create(relationship, Maps.newHashMap(), Maps.newHashMap(), TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
+    private static DoidModel createWithChildToParentsMap(@NotNull Multimap<String, String> childToParentsMap) {
+        return create(childToParentsMap,
+                Maps.newHashMap(),
+                Maps.newHashMap(),
+                TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
     }
 
     @NotNull
-    private static DoidModel create(@NotNull Multimap<String, String> relationship, @NotNull Map<String, String> termPerDoidMap,
+    private static DoidModel create(@NotNull Multimap<String, String> childToParentsMap, @NotNull Map<String, String> termPerDoidMap,
             @NotNull Map<String, String> doidPerLowerCaseTermMap, @NotNull DoidManualConfig config) {
-        return new DoidModel(relationship, termPerDoidMap, doidPerLowerCaseTermMap, config);
+        return new DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, config);
     }
 }

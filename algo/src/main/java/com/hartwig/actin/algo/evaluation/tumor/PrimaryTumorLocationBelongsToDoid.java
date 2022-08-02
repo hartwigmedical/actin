@@ -14,7 +14,6 @@ import com.hartwig.actin.doid.config.AdenoSquamousMapping;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update logic
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
     private static final String UNCLEAR_TUMOR_TYPE = "carcinoma";
@@ -84,7 +83,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         int numMatches = 0;
         int numMismatches = 0;
         for (String doid : doids) {
-            boolean isMatch = requireExact ? doid.equals(doidToMatch) : doidModel.doidWithParents(doid).contains(doidToMatch);
+            boolean isMatch = requireExact ? doid.equals(doidToMatch) : doidModel.expandedDoidWithParents(doid).contains(doidToMatch);
             if (isMatch) {
                 numMatches++;
             } else {
@@ -96,7 +95,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     }
 
     private boolean isPotentialAdenoSquamousMatch(@NotNull Set<String> patientDoids, @NotNull String doidToMatch) {
-        Set<String> doidTreeToMatch = doidModel.doidWithParents(doidToMatch);
+        Set<String> doidTreeToMatch = doidModel.expandedDoidWithParents(doidToMatch);
 
         Set<String> patientDoidTree = expandToDoidTree(patientDoids);
         for (String doidEntryToMatch : doidTreeToMatch) {
@@ -109,7 +108,8 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         return false;
     }
 
-    private boolean isPotentialMatchWithMainCancerType(@NotNull TumorDetails tumor, @NotNull Set<String> doids, @NotNull String doidToMatch) {
+    private boolean isPotentialMatchWithMainCancerType(@NotNull TumorDetails tumor, @NotNull Set<String> doids,
+            @NotNull String doidToMatch) {
         String primaryTumorType = tumor.primaryTumorType();
         String primaryTumorSubType = tumor.primaryTumorSubType();
 
@@ -120,7 +120,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
         Set<String> mainCancerTypesToMatch = doidModel.mainCancerDoids(doidToMatch);
         for (String doid : doids) {
-            for (String entry : doidModel.doidWithParents(doid)) {
+            for (String entry : doidModel.expandedDoidWithParents(doid)) {
                 if (mainCancerTypesToMatch.contains(entry)) {
                     return true;
                 }
@@ -133,7 +133,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     private Set<String> expandToDoidTree(@NotNull Set<String> doids) {
         Set<String> doidTree = Sets.newHashSet();
         for (String doid : doids) {
-            doidTree.addAll(doidModel.doidWithParents(doid));
+            doidTree.addAll(doidModel.expandedDoidWithParents(doid));
         }
         return doidTree;
     }
