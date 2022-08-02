@@ -23,15 +23,16 @@ public class HasAnyComplication implements EvaluationFunction {
         if (complications == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Unclear whether patient has any complications")
+                    .addUndeterminedSpecificMessages("Undetermined whether patient has cancer-related complications")
                     .addUndeterminedGeneralMessages("Undetermined complication status")
                     .build();
         }
 
+        //TODO: Is this specific message correct?
         if (!complications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has at least one complication")
+                    .addPassSpecificMessages("Patient has at least one cancer-related complication: " + complications)
                     .addPassGeneralMessages("Present complication")
                     .build();
         }

@@ -43,7 +43,7 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
         if (!leptomeningealComplications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has leptomeningeal disease " + Format.concat(leptomeningealComplications))
+                    .addPassSpecificMessages("Patient has complication " + Format.concat(leptomeningealComplications))
                     .addPassGeneralMessages(Format.concat(leptomeningealComplications))
                     .build();
         }
@@ -63,13 +63,15 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages(
-                            "Patient has lesions that suggests leptomeningeal disease: " + Format.concat(potentialMeningealLesions))
+                            "Patient has lesions suggesting leptomeningeal disease: " + Format.concat(potentialMeningealLesions))
+                    .addWarnGeneralMessages("Potential leptomeningeal disease")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient does not have leptomeningeal disease")
+                .addFailSpecificMessages("Patient has no leptomeningeal disease")
+                .addFailGeneralMessages("No leptomeningeal disease")
                 .build();
     }
 

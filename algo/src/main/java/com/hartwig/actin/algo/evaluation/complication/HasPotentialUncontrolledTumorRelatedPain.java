@@ -46,7 +46,7 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
         if (!painComplications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has severe pain complication " + Format.concat(painComplications))
+                    .addPassSpecificMessages("Patient has complication related to pain: " + Format.concat(painComplications))
                     .addPassGeneralMessages(Format.concat(painComplications))
                     .build();
         }
@@ -62,14 +62,14 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
         if (!activePainMedications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has active pain medication " + Format.concat(activePainMedications))
+                    .addPassSpecificMessages("Patient receives pain medication: " + Format.concat(activePainMedications))
                     .addPassGeneralMessages(Format.concat(activePainMedications))
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient does not uncontrolled tumor related pain")
+                .addFailSpecificMessages("Patient has no uncontrolled tumor related pain")
                 .build();
     }
 
