@@ -1,12 +1,15 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,11 +31,15 @@ public class HasAnyComplication implements EvaluationFunction {
                     .build();
         }
 
-        //TODO: Is this specific message correct?
-        if (!complications.isEmpty()) {
+        Set<String> complicationNames = Sets.newHashSet();
+        for (Complication complication :complications) {
+            complicationNames.add(complication.name());
+        }
+
+        if (!complicationNames.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has at least one cancer-related complication: " + complications)
+                    .addPassSpecificMessages("Patient has at least one cancer-related complication: " + Format.concat(complicationNames))
                     .addPassGeneralMessages("Present complication")
                     .build();
         }
