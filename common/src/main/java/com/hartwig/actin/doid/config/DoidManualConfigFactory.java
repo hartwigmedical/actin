@@ -78,8 +78,8 @@ public final class DoidManualConfigFactory {
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("4830", "1749", "299")); // Adenosquamous carcinoma
 
         ADDITIONAL_DOIDS_PER_DOID.put("4829", "3908"); // Lung adenosquamous > NSCLC
-        ADDITIONAL_DOIDS_PER_DOID.put("6438", "6039"); // Choroid melanoma > Uveal melanoma
-        ADDITIONAL_DOIDS_PER_DOID.put("7807", "6039"); // Choroid melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("6438", "6039"); // Malignant choroid melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("7807", "6039"); // Choroid necrotic melanoma > Uveal melanoma
         ADDITIONAL_DOIDS_PER_DOID.put("6994", "6039"); // Iris melanoma > Uveal melanoma
         ADDITIONAL_DOIDS_PER_DOID.put("6524", "6039"); // Ciliary body melanoma > Uveal melanoma
         ADDITIONAL_DOIDS_PER_DOID.put("234", "0050861"); // Colon adenocarcinoma > Colorectal adenocarcinoma
