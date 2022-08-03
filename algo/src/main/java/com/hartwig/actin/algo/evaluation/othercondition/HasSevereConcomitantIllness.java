@@ -21,16 +21,25 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
         if (whoStatus == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Undetermined whether patient may have severe concomitant illnesses (who status unknown)")
+                    .addUndeterminedSpecificMessages(
+                            "Undetermined whether patient may have severe concomitant illnesses (who status unknown)")
                     .addUndeterminedGeneralMessages("Undetermined severe concomitant illnesses")
                     .build();
         }
 
-        if (whoStatus >= 3) {
+        if (whoStatus == 3 || whoStatus == 4) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient may have severe concomitant illnesses based on WHO status of " + whoStatus)
                     .addWarnGeneralMessages("Potential severe concomitant illnesses")
+                    .build();
+        }
+
+        if (whoStatus == 5) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("WHO status of patient is WHO 5")
+                    .addPassGeneralMessages("Severe concomitant illnesses")
                     .build();
         }
 
