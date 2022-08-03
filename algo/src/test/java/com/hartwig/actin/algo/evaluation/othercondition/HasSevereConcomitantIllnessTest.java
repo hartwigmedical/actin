@@ -14,6 +14,7 @@ public class HasSevereConcomitantIllnessTest {
 
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(OtherConditionTestFactory.withWHO(0)));
         assertEvaluation(EvaluationResult.WARN, function.evaluate(OtherConditionTestFactory.withWHO(4)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withWHO(5)));
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(OtherConditionTestFactory.withWHO(null)));
     }
 }
