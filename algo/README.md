@@ -33,9 +33,9 @@ Every criterion evaluates to one of the following options:
 Evaluation | Description
 ---|---
 PASS | The patient complies with the inclusion or exclusion criterion.  
-WARN | The patient has a condition that makes complying with inclusion or exclusion criterion unclear. A manual evaluation is required.
+WARN | The patient may or may not comply with inclusion or exclusion criterion. A manual evaluation is required.
 FAIL | The patient does not comply with the inclusion or exclusion criterion. 
-UNDETERMINED | The data provided to the inclusion or exclusion criterion is insufficient for determining eligibility.
+UNDETERMINED | The data that is required to evaluate the inclusion or exclusion criterion is unavailable.
 NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. 
 NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.
 
