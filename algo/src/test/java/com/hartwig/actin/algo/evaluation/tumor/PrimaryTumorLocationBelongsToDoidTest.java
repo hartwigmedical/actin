@@ -135,7 +135,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
 
         PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, "2", true, true);
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("4")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids("1")));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids("1")));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids("2")));
     }
 

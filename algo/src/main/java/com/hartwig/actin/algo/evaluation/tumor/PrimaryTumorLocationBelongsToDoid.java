@@ -57,10 +57,10 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
         if (isPotentialAdenoSquamousMatch(doids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Undetermined whether tumor type of patient can be considered " + doidTerm
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("Unclear whether tumor type of patient can be considered " + doidTerm
                             + ", because patient has adenosquamous tumor type")
-                    .addUndeterminedGeneralMessages("Tumor type")
+                    .addWarnGeneralMessages("Tumor type")
                     .build();
         }
 
