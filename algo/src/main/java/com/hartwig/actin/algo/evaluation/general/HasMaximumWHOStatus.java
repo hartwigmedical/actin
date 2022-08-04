@@ -39,13 +39,13 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient WHO status " + who + " is just above requested max (WHO " + maximumWHO + ")")
-                    .addWarnGeneralMessages("Inadequate WHO status")
+                    .addWarnGeneralMessages("WHO " + who + ", max allowed WHO is " + maximumWHO)
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient WHO status " + who + " is worse than requested max (WHO " + maximumWHO + ")")
-                    .addFailGeneralMessages("Inadequate WHO status")
+                    .addFailGeneralMessages("WHO status " + who + " too high")
                     .build();
         }
     }
