@@ -209,7 +209,7 @@ INACTIVATION_OF_GENE_X | Inactivating mutation or deletion/disruption is found i
 ACTIVATING_MUTATION_IN_GENE_X | Activating mutation is found in gene X
 MUTATION_IN_GENE_X_OF_TYPE_Y | Specific mutation Y is found in gene X
 AMPLIFICATION_OF_GENE_X | Amplification is found in gene X
-FUSION_IN_GENE_X | High driver fusion with fusion partner gene X is found
+FUSION_IN_GENE_X | Driver fusion with fusion partner gene X is found | `WARN` in case of fusion with low driver likelihood
 WILDTYPE_OF_GENE_X | No driver mutation or fusion is found in gene X
 EXON_SKIPPING_GENE_X_EXON_Y | High driver splice mutation in gene X in splice region of exon Y, or intra-gene fusion in gene X leading to skipping of exon Y.
 MSI_SIGNATURE | MS Status = MSI

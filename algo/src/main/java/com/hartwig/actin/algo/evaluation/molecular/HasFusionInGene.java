@@ -10,6 +10,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasFusionInGene implements EvaluationFunction {
 
     @NotNull
