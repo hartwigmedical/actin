@@ -14,6 +14,7 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasCancerOfUnknownPrimary implements EvaluationFunction {
 
     static final String CANCER_DOID = "162";
