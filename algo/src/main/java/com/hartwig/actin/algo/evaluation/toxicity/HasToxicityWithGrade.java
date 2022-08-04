@@ -29,6 +29,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     @NotNull
     private final Set<String> ignoreFilters;
 
+    //TODO: Update according to README (2 TODOs in README)
     HasToxicityWithGrade(final int minGrade, @Nullable final String nameFilter, @NotNull final Set<String> ignoreFilters) {
         this.minGrade = minGrade;
         this.nameFilter = nameFilter;
