@@ -66,10 +66,10 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         EvaluationResult result = isMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no cancer of unknown primary (CUP) of category " + categoryOfCUP.display());
+            builder.addFailSpecificMessages("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display());
             builder.addFailGeneralMessages("Tumor type is no CUP (" + categoryOfCUP.display() + ")");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has cancer of unknown primary (CUP) of category " + categoryOfCUP.display());
+            builder.addPassSpecificMessages("Patient has cancer of unknown primary (CUP) of type " + categoryOfCUP.display());
             builder.addPassGeneralMessages("Tumor type is CUP (" + categoryOfCUP.display() + ")");
         }
 
