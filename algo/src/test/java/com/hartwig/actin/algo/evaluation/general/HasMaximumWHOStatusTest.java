@@ -17,7 +17,7 @@ public class HasMaximumWHOStatusTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withWHO(0)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withWHO(1)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withWHO(2)));
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(GeneralTestFactory.withWHO(3)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(3)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(4)));
     }
 }

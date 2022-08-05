@@ -36,10 +36,10 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
                     .addPassGeneralMessages("Adequate WHO status")
                     .build();
         } else if (who - maximumWHO == 1) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient WHO status " + who + " is just above requested max (WHO " + maximumWHO + ")")
-                    .addWarnGeneralMessages("WHO " + who + ", max allowed WHO is " + maximumWHO)
+            return EvaluationFactory.recoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient WHO status " + who + " is 1 higher than requested max (WHO " + maximumWHO + ")")
+                    .addFailGeneralMessages("WHO " + who + ", max allowed WHO is " + maximumWHO)
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
