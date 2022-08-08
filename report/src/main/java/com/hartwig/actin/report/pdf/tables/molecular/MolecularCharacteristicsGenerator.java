@@ -36,6 +36,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         return "General";
     }
 
+    //TODO: Show selection of content in case of WGS QC fail
     @NotNull
     @Override
     public Table contents() {
