@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class MolecularCharacteristicsGenerator implements TableGenerator {
 
+    private static final String VALUE_NOT_AVAILABLE = "N/A";
+
     @NotNull
     private final MolecularRecord molecular;
     private final float width;
@@ -36,7 +38,6 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         return "General";
     }
 
-    //TODO: Show selection of content in case of WGS QC fail
     @NotNull
     @Override
     public Table contents() {
@@ -44,7 +45,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth * 3, colWidth, colWidth, colWidth, colWidth, colWidth * 3);
 
         table.addHeaderCell(Cells.createHeader("Purity"));
-        table.addHeaderCell(Cells.createHeader("Reliable Quality"));
+        table.addHeaderCell(Cells.createHeader("Sufficient Quality"));
         table.addHeaderCell(Cells.createHeader("Predicted tumor origin"));
         table.addHeaderCell(Cells.createHeader("TML Status"));
         table.addHeaderCell(Cells.createHeader("TMB Status"));
@@ -65,17 +66,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Cell createPredictedTumorOriginCell(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
-        String interpretation = TumorOriginInterpreter.interpret(predictedTumorOrigin);
-        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin)) {
-            return Cells.createContent(interpretation);
-        } else {
-            return Cells.createContentWarn(interpretation);
+    private Cell createPurityCell(@Nullable Double purity) {
+        if (!molecular.containsTumorCells() ) {
+            return Cells.createContentWarn("None");
         }
-    }
 
-    @NotNull
-    private static Cell createPurityCell(@Nullable Double purity) {
         if (purity == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
@@ -89,7 +84,25 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Cell createTMLStatusCell(@Nullable Integer tumorMutationalLoad) {
+    private Cell createPredictedTumorOriginCell(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
+        if (!molecular.hasSufficientQuality()) {
+            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+        }
+
+        String interpretation = TumorOriginInterpreter.interpret(predictedTumorOrigin);
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin)) {
+            return Cells.createContent(interpretation);
+        } else {
+            return Cells.createContentWarn(interpretation);
+        }
+    }
+
+    @NotNull
+    private Cell createTMLStatusCell(@Nullable Integer tumorMutationalLoad) {
+        if (!molecular.hasSufficientQuality()) {
+            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+        }
+
         if (tumorMutationalLoad == null) {
             return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
         }
@@ -103,7 +116,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Cell createTMBStatusCell(@Nullable Double tumorMutationalBurden) {
+    private Cell createTMBStatusCell(@Nullable Double tumorMutationalBurden) {
+        if (!molecular.hasSufficientQuality()) {
+            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+        }
+
         if (tumorMutationalBurden == null) {
             return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
         }
@@ -117,7 +134,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Cell createMSStabilityCell(@Nullable Boolean isMicrosatelliteUnstable) {
+    private Cell createMSStabilityCell(@Nullable Boolean isMicrosatelliteUnstable) {
+        if (!molecular.hasSufficientQuality()) {
+            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+        }
+
         if (isMicrosatelliteUnstable == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
@@ -131,7 +152,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Cell createHRStatusCell(@Nullable Boolean isHomologousRepairDeficient) {
+    private Cell createHRStatusCell(@Nullable Boolean isHomologousRepairDeficient) {
+        if (!molecular.hasSufficientQuality()) {
+            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+        }
+
         if (isHomologousRepairDeficient == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
