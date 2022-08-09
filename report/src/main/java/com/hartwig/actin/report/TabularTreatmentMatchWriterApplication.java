@@ -6,11 +6,15 @@ import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson;
@@ -87,12 +91,16 @@ public class TabularTreatmentMatchWriterApplication {
         lines.add(createEvaluationSummaryHeader());
 
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
+            Set<String> trialFails = extractUnrecoverableFails(trialMatch.evaluations());
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
+                Set<String> cohortFails = extractUnrecoverableFails(cohortMatch.evaluations());
+
                 StringJoiner record = trialJoiner(trialMatch.identification());
                 record.add(cohortMatch.metadata().cohortId());
                 record.add(cohortMatch.metadata().description());
                 record.add(String.valueOf(cohortMatch.isPotentiallyEligible()));
-                record.add("Yes"); //TODO: Check if correct
+                record.add("Yes");
+                record.add(cohortMatch.isPotentiallyEligible() ? Strings.EMPTY : concat(Sets.union(trialFails, cohortFails)));
                 record.add(Strings.EMPTY);
                 lines.add(record.toString());
             }
@@ -102,7 +110,8 @@ public class TabularTreatmentMatchWriterApplication {
                 record.add(Strings.EMPTY);
                 record.add(Strings.EMPTY);
                 record.add(String.valueOf(trialMatch.isPotentiallyEligible()));
-                record.add("Yes"); //TODO: Check if correct
+                record.add(trialMatch.isPotentiallyEligible() ? Strings.EMPTY : concat(trialFails));
+                record.add("Yes");
                 record.add(Strings.EMPTY);
                 lines.add(record.toString());
             }
@@ -120,8 +129,20 @@ public class TabularTreatmentMatchWriterApplication {
         header.add("Cohort description");
         header.add("Is algorithmically potentially eligible?");
         header.add("Is correct?");
+        header.add("Fail messages");
         header.add("Comment");
         return header.toString();
+    }
+
+    @NotNull
+    private static Set<String> extractUnrecoverableFails(@NotNull Map<Eligibility, Evaluation> evaluations) {
+        Set<String> messages = Sets.newTreeSet(Ordering.natural());
+        for (Evaluation evaluation : evaluations.values()) {
+            if (evaluation.result() == EvaluationResult.FAIL && !evaluation.recoverable()) {
+                messages.addAll(evaluation.failGeneralMessages());
+            }
+        }
+        return messages;
     }
 
     private static void writeEvaluationDetailsToTsv(@NotNull TreatmentMatch treatmentMatch, @NotNull String tsv) throws IOException {
