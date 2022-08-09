@@ -108,6 +108,7 @@ HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X | Any configured DOID term s
 HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X | ALL configured DOIDs equal or child of DOID of tumor type X specified, and none of configured DOIDs should be equal or child of DOID 0050686. Resolve to `UNDETERMINED` in case ALL configured DOIDs exactly equal to DOID 162 and tumor sublocation is not "CUP" (TODO) | X can be one of: Carcinoma (DOID 305), Adenocarcinoma (DOID: 299), Squamous cell carcinoma (DOID: 1749), Melanoma (DOID: 1909)
 HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT | Term of any configured DOIDs like '%neuroendocrine%', or a child of a DOID with term like %neuroendocrine%, or any configured DOID equal or child of DOID 169 or 1800, or primary tumor extra details like %neuroendocrine% or %NEC% or %NET%. Resolve to `UNDETERMINED` in case the tumor has a small cell component (according to rule below), or inactivation of at least 2 of 3 genes: TP53, PTEN, RB1.
 HAS_CANCER_WITH_SMALL_CELL_COMPONENT | Term of any configured DOIDs like '%small cell%', or a child of a DOID with term like %small cell%, or any configured DOID equal or child of DOID 0050685, or primary tumor extra details like %small cell% or %SCNEC%
+HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE | Any configured DOID equal or belonging to DOID 0060080 and or (0060077, 0060075) | `WARN` in case DOID equal or belonging to DOID 0060077 or 0060075 only (without 0060080), `UNDETERMINED` in case DOID equal or belonging to DOID 1612, and not one or more DOIDs belonging to: 0060079, 0060076 or 0060078 (and not resolving to `WARN` already), `WARN` in case amplification or overexpression of HER2 is detected.
 HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT | DOID equal or child of DOID 7141, or DOID equal or child of DOID 10283 & primary tumor extra details like %Small cell% | `WARN` in case DOID equal or child of DOIDs 2992, or 10283 & 1800, or 10283 & 169. `UNDETERMINED` in case of DOID exactly equal to DOID 10283   
 HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT | Any configured DOID equal or child of DOID 6278, 7013, 3267, 3604, 3606, 6067, 6469 or 6898, or both DOIDs 3030 & 2394 configured. 
 HAS_OVARIAN_BORDERLINE_TUMOR | Any DOID equal or child of DOID 2394 and primary tumor (sub)type = "Borderline tumor" or "Borderline ovarian tumor"
@@ -264,6 +265,7 @@ HAS_ALBUMIN_LLN_OF_AT_LEAST_X | Albumin (ALB) > X*ULN
 HAS_ASAT_ULN_OF_AT_MOST_X | Aspartate aminotransferase (ASAT) <= X*ULN 
 HAS_ALAT_ULN_OF_AT_MOST_X | Alanine aminotransferase (ALAT) <= X*ULN
 HAS_ALP_ULN_OF_AT_MOST_X | Alkaline phosphatase (ALP) <= X*ULN
+HAS_ALP_ULN_OF_AT_LEAST_X | Alkaline phosphatase (ALP) => X*ULN
 HAS_TOTAL_BILIRUBIN_ULN_ OF_AT_MOST_X | Total Bilirubin (TBIL) <= X*ULN
 HAS_TOTAL_BILIRUBIN_UMOL_ PER_L_OF_AT_MOST_X | Total Bilirubin (TBIL) in umol/L <= X
 HAS_DIRECT_BILIRUBIN_ULN_ OF_AT_MOST_X | Direct Bilirubin (DBIL) <= X*ULN 
@@ -438,6 +440,7 @@ CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type 
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
+CURRENTLY_GETS_ENDOCRINE_THERAPY | T.B.D.
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active 
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to `UNDETERMINED`
@@ -489,6 +492,7 @@ IS_BREASTFEEDING | Applicable only for women. Won't be evaluated
 IS_PREGNANT | Applicable only for women. Won't be evaluated
 USES_ADEQUATE_ANTICONCEPTION | Won't be evaluated
 ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated
+IS_WOMAN_OF_CHILD_BEARING_POTENTIAL | Currently resolves to `UNDETERMINED` in case female
 
 ##### Rules related to complications
 

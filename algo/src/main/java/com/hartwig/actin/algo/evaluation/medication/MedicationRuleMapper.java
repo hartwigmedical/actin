@@ -53,6 +53,7 @@ public class MedicationRuleMapper extends RuleMapper {
         map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_ENDOCRINE_THERAPY, getsEndocrineTherapyCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
@@ -115,6 +116,11 @@ public class MedicationRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator getsCoumarinDerivativeMedicationCreator() {
         return getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS);
+    }
+
+    @NotNull
+    private FunctionCreator getsEndocrineTherapyCreator() {
+        return function -> new GetsEndocrineTherapy();
     }
 
     @NotNull

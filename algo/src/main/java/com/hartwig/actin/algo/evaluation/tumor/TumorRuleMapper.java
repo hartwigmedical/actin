@@ -29,6 +29,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, hasCancerOfUnknownPrimaryCreator());
         map.put(EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT, hasCancerWithNeuroendocrineComponentCreator());
         map.put(EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT, hasCancerWithSmallCellComponentCreator());
+        map.put(EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE, hasBreastCancerHormonePositiveHER2NegativeCreator());
         map.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT, hasProstateCancerWithSmallCellComponentCreator());
         map.put(EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT, hasOvarianCancerWithMucinousComponentCreator());
         map.put(EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR, hasOvarianBorderlineTumorCreator());
@@ -94,6 +95,11 @@ public class TumorRuleMapper extends RuleMapper {
             TumorTypeInput categoryOfCUP = functionInputResolver().createOneTumorTypeInput(function);
             return new HasCancerOfUnknownPrimary(doidModel(), categoryOfCUP);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasBreastCancerHormonePositiveHER2NegativeCreator() {
+        return function -> new HasBreastCancerHormonePositiveHER2Negative();
     }
 
     @NotNull

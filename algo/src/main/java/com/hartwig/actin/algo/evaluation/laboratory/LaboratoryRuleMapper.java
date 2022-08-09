@@ -65,6 +65,7 @@ public class LaboratoryRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
+        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X, hasSufficientLabValueULNCreator());
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
@@ -167,6 +168,11 @@ public class LaboratoryRuleMapper extends RuleMapper {
             double maxULN = functionInputResolver().createOneDoubleInput(function);
             return createLabEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasSufficientLabValueULNCreator() {
+        return function -> new HasSufficientLabValueULN();
     }
 
     @NotNull
