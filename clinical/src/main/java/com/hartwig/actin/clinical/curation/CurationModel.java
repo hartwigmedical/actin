@@ -629,6 +629,7 @@ public class CurationModel {
         ToxicityTranslation translation = findToxicityTranslation(input);
 
         if (translation == null) {
+            LOGGER.warn("Could not find translation for toxicity with input '{}'", input.name());
             return input;
         }
 
