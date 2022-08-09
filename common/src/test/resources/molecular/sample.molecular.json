@@ -6,10 +6,10 @@
     "month": 2,
     "day": 23
   },
-  "hasReliableQuality": true,
+  "containsTumorCells": true,
+  "hasSufficientQuality": true,
   "characteristics": {
     "purity": 0.98,
-    "hasReliablePurity": true,
     "predictedTumorOrigin": {
       "tumorType": "Melanoma",
       "likelihood": 0.99

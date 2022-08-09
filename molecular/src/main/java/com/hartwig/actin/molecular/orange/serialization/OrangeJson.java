@@ -117,10 +117,11 @@ public final class OrangeJson {
 
             JsonObject purpleFit = object(purple, "fit");
             JsonObject purpleCharacteristics = object(purple, "characteristics");
+
             return ImmutablePurpleRecord.builder()
-                    .hasReliableQuality(bool(purpleFit, "hasReliableQuality"))
+                    .containsTumorCells(bool(purpleFit, "hasReliablePurity"))
                     .purity(number(purpleFit, "purity"))
-                    .hasReliablePurity(bool(purpleFit, "hasReliablePurity"))
+                    .hasSufficientQuality(bool(purpleFit, "hasReliableQuality"))
                     .microsatelliteStabilityStatus(string(purpleCharacteristics, "microsatelliteStatus"))
                     .tumorMutationalBurden(number(purpleCharacteristics, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))

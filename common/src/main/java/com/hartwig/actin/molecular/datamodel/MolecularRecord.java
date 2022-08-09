@@ -26,7 +26,9 @@ public abstract class MolecularRecord {
     @Nullable
     public abstract LocalDate date();
 
-    public abstract boolean hasReliableQuality();
+    public abstract boolean containsTumorCells();
+
+    public abstract boolean hasSufficientQuality();
 
     @NotNull
     public abstract MolecularCharacteristics characteristics();

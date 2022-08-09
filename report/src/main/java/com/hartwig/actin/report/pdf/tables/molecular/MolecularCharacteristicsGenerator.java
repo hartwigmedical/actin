@@ -53,7 +53,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("DPYD"));
 
         table.addCell(createPurityCell(molecular.characteristics().purity()));
-        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasReliableQuality())));
+        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQuality())));
         table.addCell(createPredictedTumorOriginCell(molecular.characteristics().predictedTumorOrigin()));
         table.addCell(createTMLStatusCell(molecular.characteristics().tumorMutationalLoad()));
         table.addCell(createTMBStatusCell(molecular.characteristics().tumorMutationalBurden()));

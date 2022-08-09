@@ -26,22 +26,22 @@ public class WildTypeExtractionTest {
         assertEquals(1, wildTypeGenes.size());
         assertEquals("KRAS", wildTypeGenes.iterator().next());
 
-        OrangeRecord unreliableQuality = create(false, true, Sets.newHashSet("KRAS"));
-        assertNull(WildTypeExtraction.extract(unreliableQuality));
+        OrangeRecord noTumorCellsPresent = create(false, true, Sets.newHashSet("KRAS"));
+        assertNull(WildTypeExtraction.extract(noTumorCellsPresent));
 
-        OrangeRecord unreliablePurity = create(false, true, Sets.newHashSet("KRAS"));
-        assertNull(WildTypeExtraction.extract(unreliablePurity));
+        OrangeRecord insufficientQuality = create(true, false, Sets.newHashSet("KRAS"));
+        assertNull(WildTypeExtraction.extract(insufficientQuality));
     }
 
     @NotNull
-    private static OrangeRecord create(boolean hasReliableQuality, boolean hasReliablePurity, @NotNull Set<String> wildTypeGenes) {
+    private static OrangeRecord create(boolean containsTumorCells, boolean hasSufficientQuality, @NotNull Set<String> wildTypeGenes) {
         OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
         return ImmutableOrangeRecord.builder()
                 .from(base)
                 .purple(ImmutablePurpleRecord.builder()
                         .from(base.purple())
-                        .hasReliableQuality(hasReliableQuality)
-                        .hasReliablePurity(hasReliablePurity)
+                        .containsTumorCells(containsTumorCells)
+                        .hasSufficientQuality(hasSufficientQuality)
                         .build())
                 .wildTypeGenes(wildTypeGenes)
                 .build();

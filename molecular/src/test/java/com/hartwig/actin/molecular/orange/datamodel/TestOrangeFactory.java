@@ -86,9 +86,9 @@ public final class TestOrangeFactory {
     @NotNull
     private static PurpleRecord createMinimalTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
-                .hasReliableQuality(true)
+                .containsTumorCells(true)
                 .purity(0.98)
-                .hasReliablePurity(true)
+                .hasSufficientQuality(true)
                 .microsatelliteStabilityStatus("MSS")
                 .tumorMutationalBurden(13D)
                 .tumorMutationalLoad(189)

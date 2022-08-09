@@ -38,7 +38,8 @@ public class MolecularPrinter {
     public void print(@NotNull MolecularRecord record) {
         printer.print("Sample: " + record.sampleId());
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
-        printer.print(" Has reliable quality: " + toYesNoUnknown(record.hasReliableQuality()));
+        printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells()));
+        printer.print(" Has sufficient quality: " + toYesNoUnknown(record.hasSufficientQuality()));
         printer.print(" Purity: " + formatPercentage(record.characteristics().purity()));
         printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()));
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()));

@@ -24,7 +24,6 @@ public class CharacteristicsExtractionTest {
         MolecularCharacteristics characteristics = CharacteristicsExtraction.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(0.98, characteristics.purity(), EPSILON);
-        assertTrue(characteristics.hasReliablePurity());
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
         assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
         assertFalse(characteristics.isMicrosatelliteUnstable());

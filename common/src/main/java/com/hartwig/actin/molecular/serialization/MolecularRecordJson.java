@@ -140,7 +140,8 @@ public class MolecularRecordJson {
                     .sampleId(string(record, "sampleId"))
                     .type(ExperimentType.valueOf(string(record, "type")))
                     .date(nullableDate(record, "date"))
-                    .hasReliableQuality(bool(record, "hasReliableQuality"))
+                    .containsTumorCells(bool(record, "containsTumorCells"))
+                    .hasSufficientQuality(bool(record, "hasSufficientQuality"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toMolecularDrivers(object(record, "drivers")))
                     .immunology(toMolecularImmunology(object(record, "immunology")))
@@ -154,7 +155,6 @@ public class MolecularRecordJson {
         private static MolecularCharacteristics toMolecularCharacteristics(@NotNull JsonObject characteristics) {
             return ImmutableMolecularCharacteristics.builder()
                     .purity(nullableNumber(characteristics, "purity"))
-                    .hasReliablePurity(nullableBool(characteristics, "hasReliablePurity"))
                     .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(characteristics, "predictedTumorOrigin")))
                     .isMicrosatelliteUnstable(nullableBool(characteristics, "isMicrosatelliteUnstable"))
                     .isHomologousRepairDeficient(nullableBool(characteristics, "isHomologousRepairDeficient"))

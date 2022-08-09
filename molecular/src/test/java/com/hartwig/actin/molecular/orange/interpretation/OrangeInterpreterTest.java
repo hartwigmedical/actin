@@ -32,7 +32,7 @@ public class OrangeInterpreterTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
-        assertTrue(record.hasReliableQuality());
+        assertTrue(record.hasSufficientQuality());
 
         assertNotNull(record.characteristics());
 

@@ -19,7 +19,7 @@ final class WildTypeExtraction {
 
     @Nullable
     public static Set<String> extract(@NotNull OrangeRecord record) {
-        if (!record.purple().hasReliableQuality() || !record.purple().hasReliablePurity()) {
+        if (!record.purple().hasSufficientQuality() || !record.purple().containsTumorCells()) {
             return null;
         }
 

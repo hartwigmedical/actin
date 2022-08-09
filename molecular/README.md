@@ -27,14 +27,14 @@ Field | Example Value | Details
 ---|---|---
 type | WGS | The type of molecular experiment done. Currently only 'WGS' is supported.
 date | 2022-01-14 | The date on which the molecular results were obtained (optional field).
-hasReliableQuality | 1 | Whether the molecular results have reliable quality. 
+containsTumorCells | true | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold.
+hasSufficientQuality | true | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage).  
  
 1 molecular characteristics
 
 Field | Example Value | Details
 ---|---|---
 purity | 78% | The percentage of cells in the sequenced biopsy that originated from the tumor.
-hasReliablePurity | 1 | Indicates whether the purity estimate can be trusted.
 predictedTumorType | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
 isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
 isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.

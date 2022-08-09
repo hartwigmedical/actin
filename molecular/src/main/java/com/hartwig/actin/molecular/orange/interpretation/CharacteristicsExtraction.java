@@ -37,9 +37,9 @@ final class CharacteristicsExtraction {
                 : null;
 
         PurpleRecord purple = record.purple();
+
         return ImmutableMolecularCharacteristics.builder()
                 .purity(purple.purity())
-                .hasReliablePurity(purple.hasReliablePurity())
                 .predictedTumorOrigin(predictedTumorOrigin)
                 .isMicrosatelliteUnstable(isMSI(purple.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.chord().hrStatus()))
