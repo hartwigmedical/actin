@@ -36,8 +36,8 @@ Field | Example Value | Details
 ---|---|---
 purity | 78% | The percentage of cells in the sequenced biopsy that originated from the tumor.
 predictedTumorType | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood. 
-isMicrosatelliteUnstable | 0 | If 1, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
-isHomologousRepairDeficient | 0 | If 1, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
+isMicrosatelliteUnstable | false | If true, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI.
+isHomologousRepairDeficient | false | If true, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD.
 tumorMutationalBurden | 14.2 | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB.
 tumorMutationalLoad | 115 | Number of missense mutations across the genome. Can be left blank in case experiment does not determine TML.
 
@@ -62,7 +62,7 @@ event | MYC amp | A single representation of the event, expected to match with t
 driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 gene | MYC | The gene that has been amplified
 copies | 150 | Number of copies of this gene in the tumor
-isPartial | 0 | Indicates whether the gene has been partially or fully amplified in the tumor
+isPartial | false| Indicates whether the gene has been partially or fully amplified in the tumor
 
 N losses
 
@@ -71,7 +71,7 @@ Field | Example Value | Details
 event | TPS del | A single representation of the event, expected to match with the event string from evidence section.
 driverLikelihood | HIGH | Either `HIGH`, `MEDIUM` or `LOW`
 gene | TP53 | The gene that has been lost in the tumor 
-isPartial | 1 | Indicates whether the gene has been partially or fully lost in the tumor 
+isPartial | true | Indicates whether the gene has been partially or fully lost in the tumor 
 
 N homozygous disruptions
 
@@ -172,14 +172,14 @@ Field | Mapping
 sampleId | The ORANGE field `sampleId`
 type | Hard-coded to `WGS` 
 date | The ORANGE field `experimentDate`
-hasReliableQuality | The PURPLE field `hasReliableQuality` 
+containsTumorCells | The PURPLE field `hasReliablePurity`
+hasSufficientQuality | The PURPLE field `hasReliableQuality` 
 
 The characteristics are extracted as follows:
 
 Field | Mapping
 ---|---
 purity | The PURPLE field `purity`
-hasReliablePurity | The PURPLE field `hasReliablePurity`
 predictedTumorOrigin | The CUPPA best cancer-type prediction along with the likelihood
 isMicrosatelliteUnstable | The interpretation of PURPLE `microsatelliteStabilityStatus`
 isHomologousRepairDeficient | The interpretation of CHORD `hrStatus`
