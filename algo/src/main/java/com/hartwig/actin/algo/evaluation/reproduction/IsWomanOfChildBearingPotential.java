@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.datamodel.Gender;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Check according to README
 public class IsWomanOfChildBearingPotential implements EvaluationFunction {
 
     IsWomanOfChildBearingPotential() {
@@ -18,16 +17,16 @@ public class IsWomanOfChildBearingPotential implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().patient().gender() != Gender.FEMALE) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient is not a woman")
-                    .build();
-        } else {
+        if (record.clinical().patient().gender() == Gender.FEMALE) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("It is currently not determined if patient is of child bearing potential")
                     .addUndeterminedGeneralMessages("Woman of child-bearing potential")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient is not a woman")
                     .build();
         }
     }
