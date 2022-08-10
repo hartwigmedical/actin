@@ -18,6 +18,7 @@ final class QuestionnaireCuration {
 
     static {
         OPTION_MAPPING.put("no", false);
+        OPTION_MAPPING.put("nee", false);
         OPTION_MAPPING.put("No", false);
         OPTION_MAPPING.put("NO", false);
         OPTION_MAPPING.put("none", false);
