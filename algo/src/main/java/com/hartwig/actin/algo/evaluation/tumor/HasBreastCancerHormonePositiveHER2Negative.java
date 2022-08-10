@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Implement according to README
 public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFunction {
 
     static final String BREAST_CANCER_DOID = "1612";
