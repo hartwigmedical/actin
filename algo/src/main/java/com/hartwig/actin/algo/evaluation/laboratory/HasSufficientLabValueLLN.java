@@ -11,16 +11,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSufficientLabValueLLN implements LabEvaluationFunction {
 
-    private final double minLLN;
+    private final double minLLNFactor;
 
-    HasSufficientLabValueLLN(final double minLLN) {
-        this.minLLN = minLLN;
+    HasSufficientLabValueLLN(final double minLLNFactor) {
+        this.minLLNFactor = minLLNFactor;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        EvaluationResult result = LabEvaluation.evaluateVersusMinULN(labValue, minLLN);
+        EvaluationResult result = LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor);
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {

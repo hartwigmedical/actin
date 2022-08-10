@@ -65,7 +65,7 @@ public class LaboratoryRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE));
         map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
-        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X, hasSufficientLabValueULNCreator());
+        map.put(EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X, hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X, hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN));
         map.put(EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN));
@@ -144,8 +144,8 @@ public class LaboratoryRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasSufficientLabValueLLNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double minLLN = functionInputResolver().createOneDoubleInput(function);
-            return createLabEvaluator(measurement, new HasSufficientLabValueLLN(minLLN));
+            double minLLNFactor = functionInputResolver().createOneDoubleInput(function);
+            return createLabEvaluator(measurement, new HasSufficientLabValueLLN(minLLNFactor));
         };
     }
 
@@ -165,14 +165,17 @@ public class LaboratoryRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasLimitedLabValueULNCreator(@NotNull LabMeasurement measurement) {
         return function -> {
-            double maxULN = functionInputResolver().createOneDoubleInput(function);
-            return createLabEvaluator(measurement, new HasLimitedLabValueULN(maxULN));
+            double maxULNFactor = functionInputResolver().createOneDoubleInput(function);
+            return createLabEvaluator(measurement, new HasLimitedLabValueULN(maxULNFactor));
         };
     }
 
     @NotNull
-    private FunctionCreator hasSufficientLabValueULNCreator() {
-        return function -> new HasSufficientLabValueULN();
+    private FunctionCreator hasSufficientLabValueULNCreator(@NotNull LabMeasurement measurement) {
+        return function -> {
+            double minULNFactor = functionInputResolver().createOneDoubleInput(function);
+            return createLabEvaluator(measurement, new HasSufficientLabValueULN(minULNFactor));
+        };
     }
 
     @NotNull

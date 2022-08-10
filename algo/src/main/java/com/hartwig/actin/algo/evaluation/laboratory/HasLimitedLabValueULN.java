@@ -11,16 +11,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLimitedLabValueULN implements LabEvaluationFunction {
 
-    private final double maxULN;
+    private final double maxULNFactor;
 
-    HasLimitedLabValueULN(final double maxULN) {
-        this.maxULN = maxULN;
+    HasLimitedLabValueULN(final double maxULNFactor) {
+        this.maxULNFactor = maxULNFactor;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        EvaluationResult result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULN);
+        EvaluationResult result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULNFactor);
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {

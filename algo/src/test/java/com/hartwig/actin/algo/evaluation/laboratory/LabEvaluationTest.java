@@ -11,13 +11,23 @@ import org.junit.Test;
 public class LabEvaluationTest {
 
     @Test
-    public void canEvaluateVersusMinULN() {
+    public void canEvaluateVersusMinLLN() {
         ImmutableLabValue.Builder builder = LabTestFactory.builder().refLimitLow(30D);
+
+        assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMinLLN(LabTestFactory.builder().build(), 2D));
+
+        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinLLN(builder.value(80D).build(), 2D));
+        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinLLN(builder.value(50D).build(), 2D));
+    }
+
+    @Test
+    public void canEvaluateVersusMinULN() {
+        ImmutableLabValue.Builder builder = LabTestFactory.builder().refLimitUp(50D);
 
         assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMinULN(LabTestFactory.builder().build(), 2D));
 
-        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinULN(builder.value(80D).build(), 2D));
-        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinULN(builder.value(50D).build(), 2D));
+        assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinULN(builder.value(40D).build(), 0.5));
+        assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinULN(builder.value(20D).build(), 0.5));
     }
 
     @Test
