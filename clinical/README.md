@@ -174,6 +174,7 @@ N surgeries
 Field | Example Value | Details
 ---|---|---
 endDate | 2021-07-01 | Date on which surgery ended
+status | finished | Status of surgery
 
 N vital function measurements
 
