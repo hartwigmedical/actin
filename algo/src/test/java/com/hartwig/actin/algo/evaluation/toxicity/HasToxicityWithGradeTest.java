@@ -25,12 +25,15 @@ public class HasToxicityWithGradeTest {
         toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(1).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.EHR).grade(2).build());
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
+
         toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 
     @Test
-    public void canEvaluateQuestionnaireToxicity() {
+    public void canEvaluateQuestionnaireToxicityWithoutGrade() {
         List<Toxicity> toxicities = Lists.newArrayList();
         toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).build());
 
@@ -41,7 +44,10 @@ public class HasToxicityWithGradeTest {
                 new HasToxicityWithGrade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 1, null, Sets.newHashSet());
         assertEvaluation(EvaluationResult.UNDETERMINED, noMatch.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
-        toxicities.add(ToxicityTestFactory.toxicity().grade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 2).build());
+        toxicities.add(ToxicityTestFactory.toxicity()
+                .source(ToxicitySource.QUESTIONNAIRE)
+                .grade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 2)
+                .build());
         assertEvaluation(EvaluationResult.PASS, noMatch.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 
@@ -50,10 +56,10 @@ public class HasToxicityWithGradeTest {
         HasToxicityWithGrade function = new HasToxicityWithGrade(2, null, Sets.newHashSet("ignore"));
 
         List<Toxicity> toxicities = Lists.newArrayList();
-        toxicities.add(ToxicityTestFactory.toxicity().grade(2).name("ignore me please").build());
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).name("ignore me please").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
-        toxicities.add(ToxicityTestFactory.toxicity().grade(2).name("keep me please").build());
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).name("keep me please").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 
@@ -62,31 +68,31 @@ public class HasToxicityWithGradeTest {
         HasToxicityWithGrade function = new HasToxicityWithGrade(2, "specific", Sets.newHashSet());
 
         List<Toxicity> toxicities = Lists.newArrayList();
-        toxicities.add(ToxicityTestFactory.toxicity().grade(2).name("something random").build());
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).name("something random").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
-        toxicities.add(ToxicityTestFactory.toxicity().grade(2).name("something specific").build());
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).name("something specific").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 
     @Test
     public void picksOnlyMostRecentEHRToxicities() {
-        HasToxicityWithGrade function = new HasToxicityWithGrade(2, "specific", Sets.newHashSet());
+        HasToxicityWithGrade function = new HasToxicityWithGrade(2, null, Sets.newHashSet());
 
         List<Toxicity> toxicities = Lists.newArrayList();
         toxicities.add(ToxicityTestFactory.toxicity()
                 .source(ToxicitySource.EHR)
                 .grade(2)
-                .name("specific match")
+                .name("toxicity 1")
                 .evaluatedDate(LocalDate.of(2020, 1, 1))
                 .build());
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
         toxicities.add(ToxicityTestFactory.toxicity()
                 .source(ToxicitySource.EHR)
                 .grade(1)
-                .name("specific match")
+                .name("toxicity 1")
                 .evaluatedDate(LocalDate.of(2021, 1, 1))
                 .build());
 
@@ -95,11 +101,11 @@ public class HasToxicityWithGradeTest {
         toxicities.add(ToxicityTestFactory.toxicity()
                 .source(ToxicitySource.EHR)
                 .grade(3)
-                .name("specific match")
+                .name("toxicity 1")
                 .evaluatedDate(LocalDate.of(2022, 1, 1))
                 .build());
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 
     @Test
@@ -111,7 +117,6 @@ public class HasToxicityWithGradeTest {
                 function.evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(questionnaireToxicity)));
 
         Toxicity ehrToxicity = ToxicityTestFactory.toxicity().source(ToxicitySource.EHR).grade(2).build();
-        assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity)));
     }
 }

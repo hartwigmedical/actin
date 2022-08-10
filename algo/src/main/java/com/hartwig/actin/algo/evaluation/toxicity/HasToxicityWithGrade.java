@@ -33,7 +33,6 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     @NotNull
     private final Set<String> ignoreFilters;
 
-    //TODO: Update according to README (3 TODOs in README)
     HasToxicityWithGrade(final int minGrade, @Nullable final String nameFilter, @NotNull final Set<String> ignoreFilters) {
         this.minGrade = minGrade;
         this.nameFilter = nameFilter;
@@ -44,6 +43,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasUnresolvableQuestionnaireToxicities = false;
+        boolean hasAtLeastOneMatchingQuestionnaireToxicity = false;
 
         Set<String> unresolvableToxicities = Sets.newHashSet();
         Set<String> toxicities = Sets.newHashSet();
@@ -60,20 +60,32 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             boolean gradeMatch = grade != null && grade >= minGrade;
             boolean nameMatch = nameFilter == null || toxicity.name().toLowerCase().contains(nameFilter.toLowerCase());
             if (gradeMatch && nameMatch) {
+                if (toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
+                    hasAtLeastOneMatchingQuestionnaireToxicity = true;
+                }
                 toxicities.add(toxicity.name());
             }
         }
 
         if (!toxicities.isEmpty()) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities))
-                    .addPassGeneralMessages(Format.concat(toxicities))
-                    .build();
+            if (hasAtLeastOneMatchingQuestionnaireToxicity) {
+                return EvaluationFactory.recoverable()
+                        .result(EvaluationResult.PASS)
+                        .addPassSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities))
+                        .addPassGeneralMessages(Format.concat(toxicities))
+                        .build();
+            } else {
+                return EvaluationFactory.recoverable()
+                        .result(EvaluationResult.WARN)
+                        .addWarnSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities))
+                        .addWarnGeneralMessages(Format.concat(toxicities))
+                        .build();
+            }
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("The exact grade (2, 3 or 4) is not known for all toxicities")
+                    .addUndeterminedSpecificMessages(
+                            "The exact grade (2, 3 or 4) is not known for toxicities: " + Format.concat(unresolvableToxicities))
                     .addUndeterminedGeneralMessages(Format.concat(unresolvableToxicities))
                     .build();
         }

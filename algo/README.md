@@ -523,7 +523,7 @@ Note for all TOXICITY rules:
 In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
 - For all EHR toxicities, ignore the toxicity if the name of the toxicity is also indicated as a complication
 - For all EHR toxicities, only the most recent toxicity examination per toxicity is considered for evaluation.
-- (TODO) Resolve to `WARN` in case EHR toxicity leads to `PASS`, without presence of Questionnaire toxicity with the same name
+- In case toxicity evaluation resolves to `PASS` without support of at least one questionnaire toxicity, the evaluation resolves to `WARN` instead.
 
 ##### Rules related to vital function / body weight measurements
 
