@@ -15,7 +15,11 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +48,29 @@ final class TumorTestFactory {
     @NotNull
     public static PatientRecord withDoids(@NotNull String... doids) {
         return withDoids(Sets.newHashSet(doids));
+    }
+
+    @NotNull
+    public static PatientRecord withDoidsAndAmplification(@NotNull Set<String> doids, @NotNull String amplifiedGene) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).tumor(builder().doids(doids).build()).build())
+                .molecular(ImmutableMolecularRecord.builder()
+                        .from(base.molecular())
+                        .drivers(ImmutableMolecularDrivers.builder()
+                                .from(base.molecular().drivers())
+                                .addAmplifications(ImmutableAmplification.builder()
+                                        .event(Strings.EMPTY)
+                                        .driverLikelihood(DriverLikelihood.HIGH)
+                                        .gene(amplifiedGene)
+                                        .isPartial(false)
+                                        .copies(100)
+                                        .build())
+                                .build())
+                        .build())
+                .build();
     }
 
     @NotNull

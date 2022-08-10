@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
@@ -15,6 +16,11 @@ final class DoidEvaluationFunctions {
     private static final Logger LOGGER = LogManager.getLogger(DoidEvaluationFunctions.class);
 
     private DoidEvaluationFunctions() {
+    }
+
+    public static boolean isOfDoidType(@NotNull DoidModel doidModel, @NotNull Set<String> patientDoids, @NotNull String doidToMatch) {
+        Set<String> fullExpandedDoidTree = createFullExpandedDoidTree(doidModel, patientDoids);
+        return fullExpandedDoidTree.contains(doidToMatch);
     }
 
     @NotNull
@@ -36,8 +42,8 @@ final class DoidEvaluationFunctions {
                 }
             }
 
-            for (String warnSolidCancer : warnDoids) {
-                if (doidTree.contains(warnSolidCancer)) {
+            for (String warnDoid : warnDoids) {
+                if (doidTree.contains(warnDoid)) {
                     hasAtLeastOneWarnDoid = true;
                     break;
                 }
@@ -98,5 +104,14 @@ final class DoidEvaluationFunctions {
         }
 
         return false;
+    }
+
+    @NotNull
+    private static Set<String> createFullExpandedDoidTree(@NotNull DoidModel doidModel, @NotNull Set<String> doidsToExpand) {
+        Set<String> expanded = Sets.newHashSet();
+        for (String doid : doidsToExpand) {
+            expanded.addAll(doidModel.expandedDoidWithParents(doid));
+        }
+        return expanded;
     }
 }

@@ -99,7 +99,7 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasBreastCancerHormonePositiveHER2NegativeCreator() {
-        return function -> new HasBreastCancerHormonePositiveHER2Negative();
+        return function -> new HasBreastCancerHormonePositiveHER2Negative(doidModel());
     }
 
     @NotNull
