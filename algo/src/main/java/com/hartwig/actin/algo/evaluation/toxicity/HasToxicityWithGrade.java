@@ -1,10 +1,12 @@
 package com.hartwig.actin.algo.evaluation.toxicity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -43,7 +45,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
 
         Set<String> unresolvableToxicities = Sets.newHashSet();
         Set<String> toxicities = Sets.newHashSet();
-        for (Toxicity toxicity : removeIgnored(record.clinical().toxicities())) {
+        for (Toxicity toxicity : selectRelevant(record.clinical().toxicities())) {
             Integer grade = toxicity.grade();
             if (grade == null && toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
@@ -82,7 +84,33 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     }
 
     @NotNull
-    private List<Toxicity> removeIgnored(@NotNull List<Toxicity> toxicities) {
+    private List<Toxicity> selectRelevant(@NotNull List<Toxicity> toxicities) {
+        return applyIgnoreFilters(dropOutdatedEHRToxicities(toxicities), ignoreFilters);
+    }
+
+    @NotNull
+    private static List<Toxicity> dropOutdatedEHRToxicities(@NotNull List<Toxicity> toxicities) {
+        List<Toxicity> filtered = Lists.newArrayList();
+
+        Map<String, Toxicity> mostRecentToxicityByName = Maps.newHashMap();
+        for (Toxicity toxicity : toxicities) {
+            if (toxicity.source() == ToxicitySource.EHR) {
+                Toxicity current = mostRecentToxicityByName.get(toxicity.name());
+                if (current == null || current.evaluatedDate().isBefore(toxicity.evaluatedDate())) {
+                    mostRecentToxicityByName.put(toxicity.name(), toxicity);
+                }
+            } else {
+                filtered.add(toxicity);
+            }
+        }
+
+        filtered.addAll(mostRecentToxicityByName.values());
+
+        return filtered;
+    }
+
+    @NotNull
+    private static List<Toxicity> applyIgnoreFilters(@NotNull List<Toxicity> toxicities, @NotNull Set<String> ignoreFilters) {
         List<Toxicity> filtered = Lists.newArrayList();
         for (Toxicity toxicity : toxicities) {
             boolean hasIgnoredName = false;

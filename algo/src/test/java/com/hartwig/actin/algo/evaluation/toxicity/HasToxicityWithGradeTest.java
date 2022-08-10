@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -21,10 +22,10 @@ public class HasToxicityWithGradeTest {
         List<Toxicity> toxicities = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
-        toxicities.add(ToxicityTestFactory.toxicity().grade(1).build());
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(1).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
-        toxicities.add(ToxicityTestFactory.toxicity().grade(2).build());
+        toxicities.add(ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 
@@ -65,6 +66,39 @@ public class HasToxicityWithGradeTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
 
         toxicities.add(ToxicityTestFactory.toxicity().grade(2).name("something specific").build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
+    }
+
+    @Test
+    public void picksOnlyMostRecentEHRToxicities() {
+        HasToxicityWithGrade function = new HasToxicityWithGrade(2, "specific", Sets.newHashSet());
+
+        List<Toxicity> toxicities = Lists.newArrayList();
+        toxicities.add(ToxicityTestFactory.toxicity()
+                .source(ToxicitySource.EHR)
+                .grade(2)
+                .name("specific match")
+                .evaluatedDate(LocalDate.of(2020, 1, 1))
+                .build());
+
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
+
+        toxicities.add(ToxicityTestFactory.toxicity()
+                .source(ToxicitySource.EHR)
+                .grade(1)
+                .name("specific match")
+                .evaluatedDate(LocalDate.of(2021, 1, 1))
+                .build());
+
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
+
+        toxicities.add(ToxicityTestFactory.toxicity()
+                .source(ToxicitySource.EHR)
+                .grade(3)
+                .name("specific match")
+                .evaluatedDate(LocalDate.of(2022, 1, 1))
+                .build());
+
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
 }
