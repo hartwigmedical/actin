@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.surgery;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +18,11 @@ import org.jetbrains.annotations.NotNull;
 final class SurgeryTestFactory {
 
     private SurgeryTestFactory() {
+    }
+
+    @NotNull
+    public static ImmutableSurgery.Builder builder() {
+        return ImmutableSurgery.builder().endDate(LocalDate.of(2020, 4, 5)).status(SurgeryStatus.UNKNOWN);
     }
 
     @NotNull

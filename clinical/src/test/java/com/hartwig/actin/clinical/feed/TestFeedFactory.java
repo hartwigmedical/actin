@@ -100,8 +100,12 @@ public final class TestFeedFactory {
     private static List<EncounterEntry> createTestEncounterEntries() {
         List<EncounterEntry> entries = Lists.newArrayList();
 
-        ImmutableEncounterEntry.Builder builder =
-                ImmutableEncounterEntry.builder().subject(TEST_SUBJECT).classDisplay("surgery").codeCodingDisplayOriginal("diagnostics");
+        ImmutableEncounterEntry.Builder builder = ImmutableEncounterEntry.builder()
+                .subject(TEST_SUBJECT)
+                .classDisplay("surgery")
+                .codeCodingDisplayOriginal("diagnostics")
+                .status("planned")
+                .reasonText("reason");
 
         entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());
         entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());

@@ -358,7 +358,7 @@ public final class TestClinicalFactory {
     private static List<Surgery> createTestSurgeries() {
         List<Surgery> surgeries = Lists.newArrayList();
 
-        surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(DAYS_SINCE_SURGERY)).build());
+        surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(DAYS_SINCE_SURGERY)).status(SurgeryStatus.FINISHED).build());
 
         return surgeries;
     }

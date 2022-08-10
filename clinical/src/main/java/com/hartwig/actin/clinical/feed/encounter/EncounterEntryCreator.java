@@ -21,6 +21,8 @@ public class EncounterEntryCreator implements FeedEntryCreator<EncounterEntry> {
                 .periodStart(line.date("period_start"))
                 .periodEnd(line.date("period_end"))
                 .codeCodingDisplayOriginal(line.string("code_coding_display_original"))
+                .status(line.string("status"))
+                .reasonText(line.string("reason_text"))
                 .build();
     }
 

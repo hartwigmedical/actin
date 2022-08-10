@@ -25,6 +25,7 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -147,6 +148,7 @@ public class ClinicalRecordsFactoryTest {
 
         Surgery surgery = surgeries.get(0);
         assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
+        assertEquals(SurgeryStatus.PLANNED, surgery.status());
     }
 
     private static void assertBodyWeights(@NotNull List<BodyWeight> bodyWeights) {

@@ -75,6 +75,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -414,7 +415,10 @@ public final class ClinicalRecordJson {
             List<Surgery> surgeryList = Lists.newArrayList();
             for (JsonElement element : surgeries) {
                 JsonObject object = element.getAsJsonObject();
-                surgeryList.add(ImmutableSurgery.builder().endDate(date(object, "endDate")).build());
+                surgeryList.add(ImmutableSurgery.builder()
+                        .endDate(date(object, "endDate"))
+                        .status(SurgeryStatus.valueOf(string(object, "status")))
+                        .build());
             }
             return surgeryList;
         }

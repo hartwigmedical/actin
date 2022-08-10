@@ -32,6 +32,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -251,13 +252,13 @@ public class ClinicalRecordsFactory {
         return priorMolecularTests;
     }
 
-    @NotNull
+    @Nullable
     private List<Complication> extractComplications(@Nullable Questionnaire questionnaire) {
         if (questionnaire != null) {
             List<String> complications = questionnaire.complications();
             return curation.curateComplications(complications);
         } else {
-            return Lists.newArrayList();
+            return null;
         }
     }
 
@@ -319,9 +320,21 @@ public class ClinicalRecordsFactory {
     private List<Surgery> extractSurgeries(@NotNull String subject) {
         List<Surgery> surgeries = Lists.newArrayList();
         for (EncounterEntry entry : feed.uniqueEncounterEntries(subject)) {
-            surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).build());
+            surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).status(resolveSurgeryStatus(entry.status())).build());
         }
         return surgeries;
+    }
+
+    @NotNull
+    private static SurgeryStatus resolveSurgeryStatus(@NotNull String status) {
+        for (SurgeryStatus option : SurgeryStatus.values()) {
+            if (option.toString().equalsIgnoreCase(status)) {
+                return option;
+            }
+        }
+
+        LOGGER.warn("Could not resolve surgery status '{}'", status);
+        return SurgeryStatus.UNKNOWN;
     }
 
     @NotNull

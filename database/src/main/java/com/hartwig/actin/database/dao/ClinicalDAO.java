@@ -376,7 +376,9 @@ class ClinicalDAO {
 
     private void writeSurgeries(@NotNull String sampleId, @NotNull List<Surgery> surgeries) {
         for (Surgery surgery : surgeries) {
-            context.insertInto(SURGERY, SURGERY.SAMPLEID, SURGERY.ENDDATE).values(sampleId, surgery.endDate()).execute();
+            context.insertInto(SURGERY, SURGERY.SAMPLEID, SURGERY.ENDDATE, SURGERY.STATUS)
+                    .values(sampleId, surgery.endDate(), surgery.status().toString())
+                    .execute();
         }
     }
 

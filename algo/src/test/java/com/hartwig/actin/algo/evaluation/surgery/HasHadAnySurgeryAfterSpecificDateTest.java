@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -29,11 +28,11 @@ public class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
 
         // One surgery but too long ago
-        surgeries.add(ImmutableSurgery.builder().endDate(minDate.minusWeeks(4)).build());
+        surgeries.add(SurgeryTestFactory.builder().endDate(minDate.minusWeeks(4)).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
 
         // One surgery within the requested time period.
-        surgeries.add(ImmutableSurgery.builder().endDate(minDate.plusWeeks(2)).build());
+        surgeries.add(SurgeryTestFactory.builder().endDate(minDate.plusWeeks(2)).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
 
         // No prior tumor treatments

@@ -12,4 +12,7 @@ public abstract class Surgery {
 
     @NotNull
     public abstract LocalDate endDate();
+
+    @NotNull
+    public abstract SurgeryStatus status();
 }

@@ -179,6 +179,7 @@ CREATE TABLE surgery
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     endDate DATE NOT NULL,
+    status varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
