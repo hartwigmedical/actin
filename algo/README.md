@@ -521,7 +521,7 @@ HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y | Toxicities > grade => X and ignori
 Note for all TOXICITY rules: 
 - In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
 In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
-- (TODO) In case X = 2, 3 or 4, and source is not Questionnaire: ignore the toxicity if the name of the toxicity is also indicated as a complication
+- For all EHR toxicities, ignore the toxicity if the name of the toxicity is also indicated as a complication
 - For all EHR toxicities, only the most recent toxicity examination per toxicity is considered for evaluation.
 - (TODO) Resolve to `WARN` in case EHR toxicity leads to `PASS`, without presence of Questionnaire toxicity with the same name
 

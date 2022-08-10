@@ -14,6 +14,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 
@@ -45,7 +47,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
 
         Set<String> unresolvableToxicities = Sets.newHashSet();
         Set<String> toxicities = Sets.newHashSet();
-        for (Toxicity toxicity : selectRelevant(record.clinical().toxicities())) {
+        for (Toxicity toxicity : selectRelevantToxicities(record.clinical())) {
             Integer grade = toxicity.grade();
             if (grade == null && toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
@@ -84,8 +86,11 @@ public class HasToxicityWithGrade implements EvaluationFunction {
     }
 
     @NotNull
-    private List<Toxicity> selectRelevant(@NotNull List<Toxicity> toxicities) {
-        return applyIgnoreFilters(dropOutdatedEHRToxicities(toxicities), ignoreFilters);
+    private List<Toxicity> selectRelevantToxicities(@NotNull ClinicalRecord clinical) {
+        List<Toxicity> withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(clinical.toxicities());
+        List<Toxicity> withoutEHRToxicitiesThatAreComplications =
+                dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, clinical.complications());
+        return applyIgnoreFilters(withoutEHRToxicitiesThatAreComplications, ignoreFilters);
     }
 
     @NotNull
@@ -107,6 +112,32 @@ public class HasToxicityWithGrade implements EvaluationFunction {
         filtered.addAll(mostRecentToxicityByName.values());
 
         return filtered;
+    }
+
+    @NotNull
+    private static List<Toxicity> dropEHRToxicitiesThatAreComplications(@NotNull List<Toxicity> toxicities,
+            @Nullable List<Complication> complications) {
+        List<Toxicity> filtered = Lists.newArrayList();
+        for (Toxicity toxicity : toxicities) {
+            if (toxicity.source() != ToxicitySource.EHR || !hasComplicationWithName(complications, toxicity.name())) {
+                filtered.add(toxicity);
+            }
+        }
+        return filtered;
+    }
+
+    private static boolean hasComplicationWithName(@Nullable List<Complication> complications, @NotNull String nameToFind) {
+        if (complications == null) {
+            return false;
+        }
+
+        for (Complication complication : complications) {
+            if (complication.name().equals(nameToFind)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NotNull

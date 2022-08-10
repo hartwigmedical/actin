@@ -7,7 +7,9 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
@@ -32,6 +34,20 @@ final class ToxicityTestFactory {
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                         .toxicities(toxicities)
+                        .build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withToxicityThatIsAlsoComplication(@NotNull Toxicity toxicity) {
+        Complication complication = ImmutableComplication.builder().name(toxicity.name()).build();
+
+        return ImmutablePatientRecord.builder()
+                .from(TestDataFactory.createMinimalTestPatientRecord())
+                .clinical(ImmutableClinicalRecord.builder()
+                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                        .toxicities(Lists.newArrayList(toxicity))
+                        .complications(Lists.newArrayList(complication))
                         .build())
                 .build();
     }

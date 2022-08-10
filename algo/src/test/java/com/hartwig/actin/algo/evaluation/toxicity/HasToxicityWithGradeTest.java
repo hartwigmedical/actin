@@ -101,4 +101,17 @@ public class HasToxicityWithGradeTest {
 
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)));
     }
+
+    @Test
+    public void ignoresEHRToxicitiesThatAreAlsoComplications() {
+        HasToxicityWithGrade function = new HasToxicityWithGrade(2, null, Sets.newHashSet());
+
+        Toxicity questionnaireToxicity = ToxicityTestFactory.toxicity().source(ToxicitySource.QUESTIONNAIRE).grade(2).build();
+        assertEvaluation(EvaluationResult.PASS,
+                function.evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(questionnaireToxicity)));
+
+        Toxicity ehrToxicity = ToxicityTestFactory.toxicity().source(ToxicitySource.EHR).grade(2).build();
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity)));
+    }
 }
