@@ -117,7 +117,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin)) {
             return Cells.createValue(interpretation);
         } else {
-            return Cells.createValueWarn(interpretation);
+            return Cells.createValueWarn("Inconclusive, highest prediction: " + interpretation);
         }
     }
 
