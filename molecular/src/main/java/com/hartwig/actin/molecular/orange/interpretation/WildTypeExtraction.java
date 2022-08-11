@@ -24,7 +24,7 @@ final class WildTypeExtraction {
         }
 
         if (record.wildTypeGenes().isEmpty()) {
-            LOGGER.warn("No wild-type genes found even though purple has both reliable quality and purity!");
+            LOGGER.warn("No wild-type genes found even though purple indicates tumor cells are present and data is of sufficient quality!");
         }
 
         return Sets.newHashSet(record.wildTypeGenes().iterator());
