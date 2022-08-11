@@ -16,7 +16,6 @@ public class GeneIsWildType implements EvaluationFunction {
     @NotNull
     private final String gene;
 
-    //TODO: Update Undetermined evaluation
     GeneIsWildType(@NotNull final String gene) {
         this.gene = gene;
     }
