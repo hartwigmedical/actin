@@ -94,14 +94,18 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
             builder.addFailGeneralMessages("Cockcroft-Gault insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (weight == null) {
-                builder.addUndeterminedSpecificMessages("Cockcroft-Gault likely insufficient but weight of patient is not known");
+                builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient, but weight of patient is not known");
+                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation");
             } else {
                 builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results");
+                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation");
             }
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Cockcroft-Gault sufficient");
+            builder.addPassSpecificMessages("Cockcroft-Gault is sufficient");
+            builder.addPassGeneralMessages("Cockcroft-Gault sufficient");
         } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Cockcroft-Gault likely sufficient but weight of patient is not known");
+            builder.addWarnSpecificMessages("Cockcroft-Gault is likely sufficient, but body weight of patient is not known");
+            builder.addWarnGeneralMessages("Cockcroft-Gault evaluation");
         }
         return builder.build();
     }
@@ -121,8 +125,10 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
             builder.addFailGeneralMessages(code + " insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(code + " evaluation led to ambiguous results");
+            builder.addUndeterminedGeneralMessages(code + " undetermined");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(code + " sufficient");
+            builder.addPassSpecificMessages(code + " is sufficient");
+            builder.addPassGeneralMessages(code + " sufficient");
         }
 
         return builder.build();
