@@ -247,8 +247,8 @@ public class ClinicalRecordsFactory {
         }
 
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
-        priorMolecularTests.addAll(curation.curatePriorMolecularTests(questionnaire.ihcTestResults()));
-        priorMolecularTests.addAll(curation.curatePriorMolecularTests(questionnaire.pdl1TestResults()));
+        priorMolecularTests.addAll(curation.curatePriorMolecularTests("IHC", questionnaire.ihcTestResults()));
+        priorMolecularTests.addAll(curation.curatePriorMolecularTests("PD-L1", questionnaire.pdl1TestResults()));
         return priorMolecularTests;
     }
 

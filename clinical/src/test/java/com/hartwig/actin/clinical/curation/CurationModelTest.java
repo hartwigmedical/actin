@@ -157,7 +157,7 @@ public class CurationModelTest {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
         List<PriorMolecularTest> priorMolecularTests =
-                model.curatePriorMolecularTests(Lists.newArrayList("IHC ERBB2 3+", "not a molecular test"));
+                model.curatePriorMolecularTests("IHC", Lists.newArrayList("IHC ERBB2 3+", "not a molecular test"));
 
         assertEquals(1, priorMolecularTests.size());
         assertEquals("IHC", priorMolecularTests.get(0).test());

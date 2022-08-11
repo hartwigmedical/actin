@@ -281,7 +281,7 @@ public class CurationModel {
     }
 
     @NotNull
-    public List<PriorMolecularTest> curatePriorMolecularTests(@Nullable List<String> inputs) {
+    public List<PriorMolecularTest> curatePriorMolecularTests(@NotNull String type, @Nullable List<String> inputs) {
         if (inputs == null) {
             return Lists.newArrayList();
         }
@@ -291,7 +291,7 @@ public class CurationModel {
             String trimmedInput = CurationUtil.fullTrim(input);
             Set<MolecularTestConfig> configs = find(database.molecularTestConfigs(), trimmedInput);
             if (configs.isEmpty()) {
-                LOGGER.warn(" Could not find molecular test config for input '{}'", trimmedInput);
+                LOGGER.warn(" Could not find molecular test config for input '{}: {}'", type, trimmedInput);
             }
 
             for (MolecularTestConfig config : configs) {
