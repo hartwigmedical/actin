@@ -110,8 +110,8 @@ public class TabularTreatmentMatchWriterApplication {
                 record.add(Strings.EMPTY);
                 record.add(Strings.EMPTY);
                 record.add(String.valueOf(trialMatch.isPotentiallyEligible()));
-                record.add(trialMatch.isPotentiallyEligible() ? Strings.EMPTY : concat(trialFails));
                 record.add("Yes");
+                record.add(trialMatch.isPotentiallyEligible() ? Strings.EMPTY : concat(trialFails));
                 record.add(Strings.EMPTY);
                 lines.add(record.toString());
             }
