@@ -88,7 +88,22 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
             }
         }
 
-        return toEvaluation(result, "Cockcroft-Gault");
+        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailSpecificMessages("Cockcroft-Gault is insufficient");
+            builder.addFailGeneralMessages("Cockcroft-Gault insufficient");
+        } else if (result == EvaluationResult.UNDETERMINED) {
+            if (weight == null) {
+                builder.addUndeterminedSpecificMessages("Cockcroft-Gault likely insufficient but weight of patient is not known");
+            } else {
+                builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results");
+            }
+        } else if (result == EvaluationResult.PASS) {
+            builder.addPassSpecificMessages("Cockcroft-Gault sufficient");
+        } else if (result == EvaluationResult.WARN) {
+            builder.addWarnSpecificMessages("Cockcroft-Gault likely sufficient but weight of patient is not known");
+        }
+        return builder.build();
     }
 
     @NotNull
@@ -98,12 +113,8 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
             evaluations.add(ValueComparison.evaluateVersusMinValue(value, comparator, minCreatinineClearance));
         }
 
-        return toEvaluation(CreatinineFunctions.interpretEGFREvaluations(evaluations), code);
-    }
+        EvaluationResult result = CreatinineFunctions.interpretEGFREvaluations(evaluations);
 
-    //TODO: Improve messaging
-    @NotNull
-    private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(code + " is insufficient");
@@ -112,9 +123,8 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
             builder.addUndeterminedSpecificMessages(code + " evaluation led to ambiguous results");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(code + " sufficient");
-        } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages(code + " sufficient");
         }
+
         return builder.build();
     }
 }
