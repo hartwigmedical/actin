@@ -95,7 +95,7 @@ public class TabularTreatmentMatchWriterApplication {
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortFails = extractUnrecoverableFails(cohortMatch.evaluations());
 
-                StringJoiner record = trialJoiner(trialMatch.identification());
+                StringJoiner record = trialJoiner(treatmentMatch.sampleId(), trialMatch.identification());
                 record.add(cohortMatch.metadata().cohortId());
                 record.add(cohortMatch.metadata().description());
                 record.add(String.valueOf(cohortMatch.isPotentiallyEligible()));
@@ -106,7 +106,7 @@ public class TabularTreatmentMatchWriterApplication {
             }
 
             if (trialMatch.cohorts().isEmpty()) {
-                StringJoiner record = trialJoiner(trialMatch.identification());
+                StringJoiner record = trialJoiner(treatmentMatch.sampleId(), trialMatch.identification());
                 record.add(Strings.EMPTY);
                 record.add(Strings.EMPTY);
                 record.add(String.valueOf(trialMatch.isPotentiallyEligible()));
@@ -123,6 +123,7 @@ public class TabularTreatmentMatchWriterApplication {
     @NotNull
     private static String createEvaluationSummaryHeader() {
         StringJoiner header = tabular();
+        header.add("Sample");
         header.add("Trial ID");
         header.add("Trial acronym");
         header.add("Cohort ID");
@@ -143,6 +144,15 @@ public class TabularTreatmentMatchWriterApplication {
             }
         }
         return messages;
+    }
+
+    @NotNull
+    private static StringJoiner trialJoiner(@NotNull String sampleId, @NotNull TrialIdentification identification) {
+        StringJoiner joiner = new StringJoiner(DELIMITER);
+        joiner.add(sampleId);
+        joiner.add(identification.trialId());
+        joiner.add(identification.acronym());
+        return joiner;
     }
 
     private static void writeEvaluationDetailsToTsv(@NotNull TreatmentMatch treatmentMatch, @NotNull String tsv) throws IOException {
@@ -227,14 +237,6 @@ public class TabularTreatmentMatchWriterApplication {
         header.add("FAIL specific messages");
         header.add("FAIL general messages");
         return header.toString();
-    }
-
-    @NotNull
-    private static StringJoiner trialJoiner(@NotNull TrialIdentification identification) {
-        StringJoiner joiner = new StringJoiner(DELIMITER);
-        joiner.add(identification.trialId());
-        joiner.add(identification.acronym());
-        return joiner;
     }
 
     @NotNull
