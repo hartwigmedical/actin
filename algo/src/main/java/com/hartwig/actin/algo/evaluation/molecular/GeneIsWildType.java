@@ -27,7 +27,7 @@ public class GeneIsWildType implements EvaluationFunction {
         if (wildTypeGenes == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Wild-type status of gene " + gene + " could not be detected")
+                    .addUndeterminedSpecificMessages("Wild-type status of gene " + gene + " could not be assessed")
                     .addUndeterminedGeneralMessages("Molecular requirements")
                     .build();
         }
