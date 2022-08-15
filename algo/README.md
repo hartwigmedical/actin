@@ -440,7 +440,6 @@ CURRENTLY_GETS_ANTICOAGULANT_MEDICATION | Medication > categories contains type 
 CURRENTLY_GETS_AZOLE_MEDICATION | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active
 CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active
 CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION | Medication > categories contains type of "Vitamin K Antagonists" and status is active
-CURRENTLY_GETS_ENDOCRINE_THERAPY | T.B.D.
 CURRENTLY_GETS_GONADORELIN_MEDICATION | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active
 CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active 
 CURRENTLY_GETS_PROHIBITED_MEDICATION | T.B.D., currently resolves to `UNDETERMINED`
@@ -481,6 +480,7 @@ HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS | medicati
 4] PARP inhibitors: medication drug names Olaparib, Rucaparib  
 5] Gonadorelin: includes medication categories like %Gonadorelin agonist%, %Gonadorelin antagonist%   
 6] Immunosuppressants: includes medication categories like %Immunosuppressants, selective%, %Immunosuppressants, other%   
+7] Hypomethylating agents: medication drug names Azacitidine and Decitabine
 
 Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway. 
 
