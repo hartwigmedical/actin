@@ -45,6 +45,7 @@ public final class Tables {
             finalTable.addHeaderCell(Cells.createTitle(title));
         }
         finalTable.addCell(Cells.create(wrappingTable));
+
         return finalTable;
     }
 }

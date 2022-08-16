@@ -55,9 +55,18 @@ public class MolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.create(prior()));
         table.addCell(Cells.createEmpty());
 
-        TableGenerator recentGenerator = new RecentMolecularSummaryGenerator(clinical, molecular, treatmentMatch, keyWidth, valueWidth);
-        table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
-        table.addCell(Cells.create(recentGenerator.contents()));
+        if (molecular.containsTumorCells()) {
+            TableGenerator recentGenerator = new RecentMolecularSummaryGenerator(clinical, molecular, treatmentMatch, keyWidth, valueWidth);
+            table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
+            table.addCell(Cells.create(recentGenerator.contents()));
+        } else {
+            Table noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth);
+
+            noRecent.addCell(Cells.createKey(molecular.type() + " molecular results"));
+            noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"));
+
+            table.addCell(Cells.create(noRecent));
+        }
 
         return table;
     }
