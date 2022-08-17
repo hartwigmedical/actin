@@ -19,7 +19,8 @@ public enum TreatmentCategory {
     VACCINE(false),
     CAR_T(true),
     TCR_T(false),
-    GENE_THERAPY(false);
+    GENE_THERAPY(false),
+    PROPHYLACTIC_TREATMENT(false);
 
     private final boolean hasType;
 
