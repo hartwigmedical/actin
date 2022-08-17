@@ -83,6 +83,25 @@ public class DriverExtractionTest {
     }
 
     @Test
+    public void canRemoveDriversInCaseOfNoTumorCells() {
+        OrangeRecord base = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord orange = ImmutableOrangeRecord.builder()
+                .from(base)
+                .purple(ImmutablePurpleRecord.builder().from(base.purple()).containsTumorCells(false).build())
+                .build();
+
+        MolecularDrivers drivers = DriverExtraction.extract(orange);
+
+        assertTrue(drivers.variants().isEmpty());
+        assertTrue(drivers.amplifications().isEmpty());
+        assertTrue(drivers.losses().isEmpty());
+        assertTrue(drivers.homozygousDisruptions().isEmpty());
+        assertTrue(drivers.disruptions().isEmpty());
+        assertTrue(drivers.fusions().isEmpty());
+        assertTrue(drivers.viruses().isEmpty());
+    }
+
+    @Test
     public void canExtractFromProperTestData() {
         MolecularDrivers drivers = DriverExtraction.extract(TestOrangeFactory.createProperTestOrangeRecord());
 

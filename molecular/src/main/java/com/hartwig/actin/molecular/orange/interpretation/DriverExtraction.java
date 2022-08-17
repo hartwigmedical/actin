@@ -55,6 +55,11 @@ final class DriverExtraction {
 
     @NotNull
     public static MolecularDrivers extract(@NotNull OrangeRecord record) {
+        // In case purple contains no tumor cells, we wipe all drivers.
+        if (!record.purple().containsTumorCells()) {
+            return ImmutableMolecularDrivers.builder().build();
+        }
+
         Set<Loss> losses  = extractLosses(record.purple());
 
         return ImmutableMolecularDrivers.builder()

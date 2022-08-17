@@ -46,19 +46,24 @@ class EvidenceExtractor {
 
     @NotNull
     public MolecularEvidence extract(@NotNull OrangeRecord record) {
-        return ImmutableMolecularEvidence.builder()
+        ImmutableMolecularEvidence.Builder builder = ImmutableMolecularEvidence.builder()
                 .actinSource(ACTIN_SOURCE_NAME)
-                .actinTrials(createActinTrials(record.protect().reportableTrials()))
                 .externalTrialSource(EXTERNAL_SOURCE_NAME)
-                .externalTrials(createExternalTrials(record.protect().reportableTrials()))
-                .evidenceSource(EVIDENCE_SOURCE_NAME)
-                .approvedEvidence(createApprovedEvidence(record.protect().reportableEvidences()))
-                .onLabelExperimentalEvidence(createOnLabelExperimentalEvidence(record.protect().reportableEvidences()))
-                .offLabelExperimentalEvidence(createOffLabelExperimentalEvidence(record.protect().reportableEvidences()))
-                .preClinicalEvidence(createPreClinicalEvidence(record.protect().reportableEvidences()))
-                .knownResistanceEvidence(createKnownResistanceEvidence(record.protect().reportableEvidences()))
-                .suspectResistanceEvidence(createSuspectResistanceEvidence(record.protect().reportableEvidences()))
-                .build();
+                .evidenceSource(EVIDENCE_SOURCE_NAME);
+
+        // We wipe any evidence if present, in case purple indicated tumor contained no tumor cells.
+        if (record.purple().containsTumorCells()) {
+            builder.externalTrials(createExternalTrials(record.protect().reportableTrials()))
+                    .actinTrials(createActinTrials(record.protect().reportableTrials()))
+                    .approvedEvidence(createApprovedEvidence(record.protect().reportableEvidences()))
+                    .onLabelExperimentalEvidence(createOnLabelExperimentalEvidence(record.protect().reportableEvidences()))
+                    .offLabelExperimentalEvidence(createOffLabelExperimentalEvidence(record.protect().reportableEvidences()))
+                    .preClinicalEvidence(createPreClinicalEvidence(record.protect().reportableEvidences()))
+                    .knownResistanceEvidence(createKnownResistanceEvidence(record.protect().reportableEvidences()))
+                    .suspectResistanceEvidence(createSuspectResistanceEvidence(record.protect().reportableEvidences()));
+        }
+
+        return builder.build();
     }
 
     @NotNull

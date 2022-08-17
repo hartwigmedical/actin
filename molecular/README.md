@@ -231,5 +231,7 @@ preClinicalEvidence | All responsive evidence that is neither approved nor exper
 knownResistanceEvidence | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level compared to the resistance evidence level.  
 suspectResistanceEvidence | Any other resistance evidence for a treatment with evidence with equal or lower evidence level compared to the resistance evidence level.
 
+Note that in case of no tumor cells, both evidence and drivers are wiped empty. Any driver (and related evidence) is considered to be unreliable in such a case.
+
 ### Version History and Download Links
  - Upcoming (first release) 

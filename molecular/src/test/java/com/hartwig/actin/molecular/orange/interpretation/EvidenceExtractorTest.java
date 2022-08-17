@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectTestFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +36,30 @@ public class EvidenceExtractorTest {
 
         MolecularEvidence evidence = extractor.extract(withProtectRecord(createTestProtectRecord()));
         assertEquals("mapped!", evidence.externalTrials().iterator().next().trial());
+    }
+
+    @Test
+    public void canRemoveEvidenceInCaseOfNoTumorCells() {
+        EvidenceExtractor extractor = new EvidenceExtractor(ExternalTreatmentMapperTestFactory.create());
+
+        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
+
+        OrangeRecord orange = ImmutableOrangeRecord.builder()
+                .from(base)
+                .purple(ImmutablePurpleRecord.builder().from(base.purple()).containsTumorCells(false).build())
+                .protect(createTestProtectRecord())
+                .build();
+
+        MolecularEvidence evidence = extractor.extract(orange);
+
+        assertTrue(evidence.actinTrials().isEmpty());
+        assertTrue(evidence.externalTrials().isEmpty());
+        assertTrue(evidence.approvedEvidence().isEmpty());
+        assertTrue(evidence.onLabelExperimentalEvidence().isEmpty());
+        assertTrue(evidence.offLabelExperimentalEvidence().isEmpty());
+        assertTrue(evidence.preClinicalEvidence().isEmpty());
+        assertTrue(evidence.knownResistanceEvidence().isEmpty());
+        assertTrue(evidence.suspectResistanceEvidence().isEmpty());
     }
 
     @Test
