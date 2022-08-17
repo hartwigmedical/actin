@@ -18,11 +18,11 @@ final class QuestionnaireCuration {
 
     static {
         OPTION_MAPPING.put("no", false);
-        OPTION_MAPPING.put("nee", false);
         OPTION_MAPPING.put("No", false);
         OPTION_MAPPING.put("NO", false);
         OPTION_MAPPING.put("none", false);
         OPTION_MAPPING.put("no indien ja welke", false);
+        OPTION_MAPPING.put("nee", false);
         OPTION_MAPPING.put("n.v.t.", null);
         OPTION_MAPPING.put("n.v.t", null);
         OPTION_MAPPING.put("nvt", null);
@@ -35,14 +35,16 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("JA", true);
         OPTION_MAPPING.put("Ja", true);
         OPTION_MAPPING.put("ja", true);
-        OPTION_MAPPING.put("uknown", null);
-        OPTION_MAPPING.put("UNKOWN", null);
         OPTION_MAPPING.put("unknown", null);
         OPTION_MAPPING.put("Unknown", null);
         OPTION_MAPPING.put("UNKNOWN", null);
+        OPTION_MAPPING.put("uknown", null);
+        OPTION_MAPPING.put("onknown", null);
+        OPTION_MAPPING.put("UNKOWN", null);
         OPTION_MAPPING.put("-", null);
         OPTION_MAPPING.put("yes/no", null);
         OPTION_MAPPING.put("yes/no/unknown", null);
+        OPTION_MAPPING.put("(yes/no)", null);
         OPTION_MAPPING.put("botaantasting bij weke delen massa", false);
         OPTION_MAPPING.put("YES related to prostatecarcinoma", true);
 
