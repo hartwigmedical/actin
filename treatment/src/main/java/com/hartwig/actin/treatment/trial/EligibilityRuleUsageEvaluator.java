@@ -21,6 +21,14 @@ public final class EligibilityRuleUsageEvaluator {
 
     private static final Logger LOGGER = LogManager.getLogger(EligibilityRuleUsageEvaluator.class);
 
+    private static final Set<EligibilityRule> UNUSED_RULES_TO_KEEP = Sets.newHashSet();
+
+    static {
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_RECURRENT_CANCER);
+    }
+
     private EligibilityRuleUsageEvaluator() {
     }
 
@@ -35,6 +43,21 @@ public final class EligibilityRuleUsageEvaluator {
             }
         }
 
+        Set<EligibilityRule> unusedRulesThatAreUsed = Sets.newHashSet();
+        for (EligibilityRule rule : UNUSED_RULES_TO_KEEP) {
+            if (!unusedRules.contains(rule)) {
+                unusedRulesThatAreUsed.add(rule);
+            }
+        }
+
+        if (!unusedRulesThatAreUsed.isEmpty()) {
+            LOGGER.warn(" Found {} eligibility rules that are used while they are configured as unused.", unusedRulesThatAreUsed.size());
+            for (EligibilityRule rule : unusedRulesThatAreUsed) {
+                LOGGER.warn("  '{}' used in at least one trial or cohort but configured as unused", rule.toString());
+            }
+        }
+
+        unusedRules.removeAll(UNUSED_RULES_TO_KEEP);
         if (!unusedRules.isEmpty()) {
             LOGGER.warn(" Found {} unused eligibility rules.", unusedRules.size());
             for (EligibilityRule rule : unusedRules) {
