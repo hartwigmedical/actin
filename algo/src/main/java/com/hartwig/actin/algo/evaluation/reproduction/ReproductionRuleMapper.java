@@ -24,7 +24,6 @@ public class ReproductionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
         map.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, canUseAdequateAnticonceptionCreator());
         map.put(EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS, willingToAdhereToDonationPrescriptionsCreator());
-        map.put(EligibilityRule.IS_WOMAN_OF_CHILD_BEARING_POTENTIAL, isWomanOfChildBearingPotentialCreator());
 
         return map;
     }
@@ -49,8 +48,4 @@ public class ReproductionRuleMapper extends RuleMapper {
         return function -> new WillingToAdhereToDonationPrescriptions();
     }
 
-    @NotNull
-    private FunctionCreator isWomanOfChildBearingPotentialCreator() {
-        return function -> new IsWomanOfChildBearingPotential();
-    }
 }

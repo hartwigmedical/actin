@@ -44,7 +44,6 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_RECURRENT_CANCER, hasRecurrentCancerCreator());
         map.put(EligibilityRule.HAS_INCURABLE_CANCER, hasIncurableCancerCreator());
         map.put(EligibilityRule.HAS_ANY_LESION, hasAnyLesionCreator());
-        map.put(EligibilityRule.HAS_AT_LEAST_X_LESIONS_WITH_SPECIFIC_CRITERIA, hasCertainLesionsWithAdditionalCriteriaCreator());
         map.put(EligibilityRule.HAS_LIVER_METASTASES, hasLivesMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, hasKnownCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());
@@ -183,11 +182,6 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasAnyLesionCreator() {
         return function -> new HasAnyLesion();
-    }
-
-    @NotNull
-    private FunctionCreator hasCertainLesionsWithAdditionalCriteriaCreator() {
-        return function -> new HasCertainLesionsWithAdditionalCriteria();
     }
 
     @NotNull

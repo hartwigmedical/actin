@@ -48,7 +48,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RECURRENT_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INCURABLE_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ANY_LESION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_AT_LEAST_X_LESIONS_WITH_SPECIFIC_CRITERIA, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIVER_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, FunctionInput.NONE);
@@ -271,7 +270,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_WILLING_TO_TAKE_PREMEDICATION, FunctionInput.NONE);
 
@@ -295,7 +293,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.IS_PREGNANT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.IS_WOMAN_OF_CHILD_BEARING_POTENTIAL, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ANY_COMPLICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COMPLICATION_X, FunctionInput.ONE_STRING);
