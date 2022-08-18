@@ -42,7 +42,7 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> tumorDoids = record.clinical().tumor().doids();
-        if (tumorDoids == null || tumorDoids.isEmpty()) {
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has ovarian cancer with mucinous component")

@@ -25,5 +25,4 @@ public class HasMeasurableDiseaseRecistTest {
                 function.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true,
                         HasMeasurableDiseaseRecist.NON_RECIST_TUMOR_DOIDS.iterator().next())));
     }
-
 }

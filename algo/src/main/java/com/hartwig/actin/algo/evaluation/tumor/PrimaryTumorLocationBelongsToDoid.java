@@ -37,9 +37,9 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         String doidTerm = doidModel.resolveTermForDoid(doidToMatch);
-        Set<String> doids = record.clinical().tumor().doids();
+        Set<String> tumorDoids = record.clinical().tumor().doids();
 
-        if (doids == null || doids.isEmpty()) {
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Tumor type of patient is not configured")
@@ -47,7 +47,24 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isMatch(doids, doidToMatch)) {
+        boolean hasExactMatch = false;
+        for (String doid : tumorDoids) {
+            if (doid.equals(doidToMatch)) {
+                hasExactMatch = true;
+                break;
+            }
+        }
+
+        boolean isPass;
+        if (requireExclusive) {
+            boolean isExclusiveMatch = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, doidToMatch);
+            isPass = requireExact ? isExclusiveMatch && hasExactMatch : isExclusiveMatch;
+        } else {
+            boolean isMatch = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch);
+            isPass = requireExact ? isMatch && hasExactMatch : isMatch;
+        }
+
+        if (isPass) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has " + doidTerm)
@@ -55,7 +72,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isPotentialAdenoSquamousMatch(doids, doidToMatch)) {
+        if (isPotentialAdenoSquamousMatch(tumorDoids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Unclear whether tumor type of patient can be considered " + doidTerm
@@ -64,7 +81,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isPotentialMatchWithMainCancerType(record.clinical().tumor(), doids, doidToMatch)) {
+        if (isPotentialMatchWithMainCancerType(record.clinical().tumor(), tumorDoids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidTerm)
@@ -77,21 +94,6 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                 .addFailSpecificMessages("Patient has no " + doidTerm)
                 .addFailGeneralMessages("Tumor type")
                 .build();
-    }
-
-    private boolean isMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {
-        int numMatches = 0;
-        int numMismatches = 0;
-        for (String doid : doids) {
-            boolean isMatch = requireExact ? doid.equals(doidToMatch) : doidModel.expandedDoidWithParents(doid).contains(doidToMatch);
-            if (isMatch) {
-                numMatches++;
-            } else {
-                numMismatches++;
-            }
-        }
-
-        return requireExclusive ? numMatches > 0 && numMismatches == 0 : numMatches > 0;
     }
 
     private boolean isPotentialAdenoSquamousMatch(@NotNull Set<String> patientDoids, @NotNull String doidToMatch) {
@@ -108,7 +110,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         return false;
     }
 
-    private boolean isPotentialMatchWithMainCancerType(@NotNull TumorDetails tumor, @NotNull Set<String> doids,
+    private boolean isPotentialMatchWithMainCancerType(@NotNull TumorDetails tumor, @NotNull Set<String> tumorDoids,
             @NotNull String doidToMatch) {
         String primaryTumorType = tumor.primaryTumorType();
         String primaryTumorSubType = tumor.primaryTumorSubType();
@@ -119,7 +121,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         }
 
         Set<String> mainCancerTypesToMatch = doidModel.mainCancerDoids(doidToMatch);
-        for (String doid : doids) {
+        for (String doid : tumorDoids) {
             for (String entry : doidModel.expandedDoidWithParents(doid)) {
                 if (mainCancerTypesToMatch.contains(entry)) {
                     return true;

@@ -12,11 +12,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class HasMeasurableDiseaseRecist implements EvaluationFunction {
 
-    static final Set<String> NON_RECIST_TUMOR_DOIDS = Sets.newHashSet("2531", "1319", "0060058", "9538");
+    static final Set<String> NON_RECIST_TUMOR_DOIDS = Sets.newHashSet();
+
+    static {
+        NON_RECIST_TUMOR_DOIDS.add("2531"); // hematologic cancer
+        NON_RECIST_TUMOR_DOIDS.add("1319"); // brain cancer
+        NON_RECIST_TUMOR_DOIDS.add("0060058"); // lymphoma
+        NON_RECIST_TUMOR_DOIDS.add("9538"); // multiple myeloma
+    }
 
     @NotNull
     private final DoidModel doidModel;
@@ -40,7 +46,9 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
 
         EvaluationResult result;
         if (hasMeasurableDisease) {
-            result = hasNonRecistDoid(record.clinical().tumor().doids()) ? EvaluationResult.WARN : EvaluationResult.PASS;
+            result = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, record.clinical().tumor().doids(), NON_RECIST_TUMOR_DOIDS)
+                    ? EvaluationResult.WARN
+                    : EvaluationResult.PASS;
         } else {
             result = EvaluationResult.FAIL;
         }
@@ -59,22 +67,5 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
         }
 
         return builder.build();
-    }
-
-    private boolean hasNonRecistDoid(@Nullable Set<String> doids) {
-        if (doids == null) {
-            return false;
-        }
-
-        for (String doid : doids) {
-            Set<String> doidTree = doidModel.doidWithParents(doid);
-            for (String doidToMatch : NON_RECIST_TUMOR_DOIDS) {
-                if (doidTree.contains(doidToMatch)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

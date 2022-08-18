@@ -8,6 +8,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
@@ -18,7 +19,15 @@ import org.junit.Test;
 public class MolecularInterpretationTest {
 
     @Test
-    public void canDetermineWhetherGeneIsActivated() {
+    public void canDetermineWhetherGeneIsAmplified() {
+        assertFalse(MolecularInterpretation.hasGeneAmplified(TestMolecularFactory.createMinimalTestMolecularRecord(), "gene 1"));
+
+        assertFalse(MolecularInterpretation.hasGeneAmplified(withAmplification("gene 2"), "gene 1"));
+        assertTrue(MolecularInterpretation.hasGeneAmplified(withAmplification("gene 1"), "gene 1"));
+    }
+
+    @Test
+    public void canDetermineWhetherGeneIsInactivated() {
         assertFalse(MolecularInterpretation.hasGeneInactivated(TestMolecularFactory.createMinimalTestMolecularRecord(), "gene 1"));
 
         assertFalse(MolecularInterpretation.hasGeneInactivated(withLoss("gene 2"), "gene 1"));
@@ -30,6 +39,19 @@ public class MolecularInterpretationTest {
         assertFalse(MolecularInterpretation.hasGeneInactivated(withVariant("gene 2", DriverLikelihood.HIGH), "gene 1"));
         assertFalse(MolecularInterpretation.hasGeneInactivated(withVariant("gene 1", DriverLikelihood.LOW), "gene 1"));
         assertTrue(MolecularInterpretation.hasGeneInactivated(withVariant("gene 1", DriverLikelihood.HIGH), "gene 1"));
+    }
+
+    @NotNull
+    private static MolecularRecord withAmplification(@NotNull String gene) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return ImmutableMolecularRecord.builder()
+                .from(base)
+                .drivers(ImmutableMolecularDrivers.builder()
+                        .from(base.drivers())
+                        .addAmplifications(TestAmplificationFactory.builder().gene(gene).build())
+                        .build())
+                .build();
     }
 
     @NotNull

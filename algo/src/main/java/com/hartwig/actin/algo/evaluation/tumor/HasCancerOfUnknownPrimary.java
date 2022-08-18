@@ -5,7 +5,6 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -13,11 +12,12 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasCancerOfUnknownPrimary implements EvaluationFunction {
 
     static final String CANCER_DOID = "162";
     static final String ORGAN_SYSTEM_CANCER_DOID = "0050686";
+
+    static final String CUP_PRIMARY_TUMOR_SUB_TYPE = "CUP";
 
     @NotNull
     private final DoidModel doidModel;
@@ -43,37 +43,33 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         }
 
         if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, CANCER_DOID)) {
+            String tumorSubType = record.clinical().tumor().primaryTumorSubType();
+            if (tumorSubType == null || !tumorSubType.equals(CUP_PRIMARY_TUMOR_SUB_TYPE)) {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.UNDETERMINED)
+                        .addUndeterminedSpecificMessages(
+                                "Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
+                        .addUndeterminedGeneralMessages("Undetermined CUP tumor type / if actually CUP")
+                        .build();
+            }
+        }
+
+        boolean hasCorrectCUPCategory = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, categoryOfCUP.doid());
+        boolean hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ORGAN_SYSTEM_CANCER_DOID);
+
+        if (hasCorrectCUPCategory && !hasOrganSystemCancer) {
             return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
-                    .addUndeterminedGeneralMessages("Undetermined CUP tumor type / if actually CUP")
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has cancer of unknown primary (CUP) of type " + categoryOfCUP.display())
+                    .addPassGeneralMessages("Tumor type is CUP (" + categoryOfCUP.display() + ")")
                     .build();
         }
 
-        boolean isMatch = true;
-        for (String doid : tumorDoids) {
-            Set<String> doidTree = doidModel.doidWithParents(doid);
-            if (doidTree.contains(ORGAN_SYSTEM_CANCER_DOID)) {
-                isMatch = false;
-            }
-
-            if (!doidTree.contains(categoryOfCUP.doid())) {
-                isMatch = false;
-            }
-        }
-
-        EvaluationResult result = isMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display());
-            builder.addFailGeneralMessages("Tumor type is no CUP (" + categoryOfCUP.display() + ")");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has cancer of unknown primary (CUP) of type " + categoryOfCUP.display());
-            builder.addPassGeneralMessages("Tumor type is CUP (" + categoryOfCUP.display() + ")");
-        }
-
-        return builder.build();
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display())
+                .addFailGeneralMessages("Tumor type is no CUP (" + categoryOfCUP.display() + ")")
+                .build();
     }
 }
 

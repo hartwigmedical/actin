@@ -24,8 +24,8 @@ public class HasProstateCancerWithSmallCellComponentTest {
         PatientRecord exact = TumorTestFactory.withDoids(HasProstateCancerWithSmallCellComponent.PROSTATE_SMALL_CELL_CARCINOMA_DOID);
         assertEvaluation(EvaluationResult.PASS, function.evaluate(exact));
 
-        PatientRecord smallCellHistology =
-                TumorTestFactory.withDoidAndDetails(HasProstateCancerWithSmallCellComponent.PROSTATE_CANCER_DOID, "small cell");
+        PatientRecord smallCellHistology = TumorTestFactory.withDoidAndDetails(HasProstateCancerWithSmallCellComponent.PROSTATE_CANCER_DOID,
+                HasProstateCancerWithSmallCellComponent.SMALL_CELL_DETAILS);
         assertEvaluation(EvaluationResult.PASS, function.evaluate(smallCellHistology));
 
         PatientRecord warnProstateCancer =

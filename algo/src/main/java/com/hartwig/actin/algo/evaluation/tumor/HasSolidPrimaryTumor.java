@@ -39,7 +39,7 @@ public class HasSolidPrimaryTumor implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> tumorDoids = record.clinical().tumor().doids();
 
-        if (tumorDoids == null || tumorDoids.isEmpty()) {
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor location/type configured for patient, unknown if solid primary tumor")

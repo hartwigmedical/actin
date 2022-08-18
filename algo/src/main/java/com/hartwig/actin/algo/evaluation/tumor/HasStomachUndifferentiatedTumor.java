@@ -33,7 +33,7 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> tumorDoids = record.clinical().tumor().doids();
-        if ((tumorDoids == null || tumorDoids.isEmpty()) || (record.clinical().tumor().primaryTumorType() == null
+        if ((!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) || (record.clinical().tumor().primaryTumorType() == null
                 && record.clinical().tumor().primaryTumorSubType() == null)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

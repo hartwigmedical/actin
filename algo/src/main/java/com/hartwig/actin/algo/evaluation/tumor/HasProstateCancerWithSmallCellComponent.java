@@ -14,8 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasProstateCancerWithSmallCellComponent implements EvaluationFunction {
 
-    static final String PROSTATE_CANCER_DOID = "10283";
     static final String PROSTATE_SMALL_CELL_CARCINOMA_DOID = "7141";
+    static final String PROSTATE_CANCER_DOID = "10283";
+    static final String SMALL_CELL_DETAILS = "small cell";
 
     static final Set<Set<String>> PROSTATE_WARN_DOID_SETS = Sets.newHashSet();
 
@@ -36,7 +37,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> tumorDoids = record.clinical().tumor().doids();
-        if (tumorDoids == null || tumorDoids.isEmpty()) {
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has prostate cancer with small cell histology")
@@ -44,61 +45,54 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
                     .build();
         }
 
-        Set<String> expanded = Sets.newHashSet();
-        for (String doid : tumorDoids) {
-            expanded.addAll(doidModel.doidWithParents(doid));
-        }
+        boolean isProstateSmallCellCarcinoma =
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROSTATE_SMALL_CELL_CARCINOMA_DOID);
+        boolean hasProstateCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROSTATE_CANCER_DOID);
+        boolean hasSmallCellDetails =
+                TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), Sets.newHashSet(SMALL_CELL_DETAILS));
 
-        boolean hasExactDoidMatch = false;
-        if (expanded.contains(PROSTATE_CANCER_DOID)) {
-            String extraDetails = record.clinical().tumor().primaryTumorExtraDetails();
-            boolean hasSmallCellHistology = (extraDetails != null && extraDetails.toLowerCase().contains("small cell"));
-            if (expanded.contains(PROSTATE_SMALL_CELL_CARCINOMA_DOID) || hasSmallCellHistology) {
-                hasExactDoidMatch = true;
-            }
-        }
-
-        boolean hasSuspiciousDoidMatch = false;
-        for (Set<String> warnDoids : PROSTATE_WARN_DOID_SETS) {
-            boolean containsEntireSet = true;
-            for (String warnDoid : warnDoids) {
-                containsEntireSet = containsEntireSet && expanded.contains(warnDoid);
-            }
-            if (containsEntireSet) {
-                hasSuspiciousDoidMatch = true;
-                break;
-            }
-        }
-
-        boolean hasUndeterminedDoidMatch = false;
-        if (tumorDoids.contains(PROSTATE_CANCER_DOID)) {
-            hasUndeterminedDoidMatch = true;
-        }
-
-        if (hasExactDoidMatch) {
+        if (isProstateSmallCellCarcinoma || (hasProstateCancer && hasSmallCellDetails)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassGeneralMessages("Patient has prostate cancer with small cell histology")
                     .addPassSpecificMessages("Tumor type")
                     .build();
-        } else if (hasSuspiciousDoidMatch) {
+        }
+
+        boolean hasProstateWarnType = false;
+        for (Set<String> warnDoidCombination : PROSTATE_WARN_DOID_SETS) {
+            boolean matchesWithCombination = true;
+            for (String warnDoid : warnDoidCombination) {
+                if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, warnDoid)) {
+                    matchesWithCombination = false;
+                }
+            }
+            if (matchesWithCombination) {
+                hasProstateWarnType = true;
+            }
+        }
+
+        if (hasProstateWarnType) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnGeneralMessages("Patient has prostate cancer but potentially no small cell histology")
                     .addWarnSpecificMessages("Tumor type")
                     .build();
-        } else if (hasUndeterminedDoidMatch) {
+        }
+
+        boolean isExactProstateCancer = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, PROSTATE_CANCER_DOID);
+        if (isExactProstateCancer) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedGeneralMessages("Patient has prostate cancer but with no configured histology subtype")
                     .addUndeterminedSpecificMessages("Tumor type")
                     .build();
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient has no prostate cancer with small cell histology")
-                    .addFailGeneralMessages("Tumor type")
-                    .build();
         }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient has no prostate cancer with small cell histology")
+                .addFailGeneralMessages("Tumor type")
+                .build();
     }
 }

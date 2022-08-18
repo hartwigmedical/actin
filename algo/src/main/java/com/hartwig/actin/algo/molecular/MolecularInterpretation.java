@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.molecular;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
@@ -11,6 +12,15 @@ import org.jetbrains.annotations.NotNull;
 public final class MolecularInterpretation {
 
     private MolecularInterpretation() {
+    }
+
+    public static boolean hasGeneAmplified(@NotNull MolecularRecord molecular, @NotNull String gene) {
+        for (Amplification amplification : molecular.drivers().amplifications()) {
+            if (amplification.gene().equals(gene)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean hasGeneInactivated(@NotNull MolecularRecord molecular, @NotNull String gene) {

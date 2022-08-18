@@ -50,13 +50,13 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .build();
         }
 
-        boolean hasNeuroendocrineDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, NEUROENDOCRINE_DOIDS)
-                || DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, NEUROENDOCRINE_TERMS);
+        boolean hasNeuroendocrineDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, NEUROENDOCRINE_DOIDS);
+        boolean hasNeuroendocrineTerm = DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, NEUROENDOCRINE_TERMS);
 
         boolean hasNeuroendocrineDetails =
                 TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), NEUROENDOCRINE_EXTRA_DETAILS);
 
-        if (hasNeuroendocrineDoid || hasNeuroendocrineDetails) {
+        if (hasNeuroendocrineDoid || hasNeuroendocrineTerm || hasNeuroendocrineDetails) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has cancer with neuroendocrine component")

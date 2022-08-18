@@ -2,10 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -75,7 +73,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("200")));
         assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("10", "100")));
         assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(withConcreteTumorType((List<String>) null)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(withConcreteTumorType((Set<String>) null)));
 
         PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200", false, true);
 
@@ -83,7 +81,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         assertEvaluation(EvaluationResult.PASS, function200.evaluate(withConcreteTumorType("200")));
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("10", "100")));
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(withConcreteTumorType(Lists.newArrayList())));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(withConcreteTumorType(Sets.newHashSet())));
     }
 
     @Test
@@ -96,7 +94,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("200")));
         assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("10", "100")));
         assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(withConcreteTumorType((List<String>) null)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(withConcreteTumorType((Set<String>) null)));
 
         PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200", true, true);
 
@@ -104,7 +102,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         assertEvaluation(EvaluationResult.PASS, function200.evaluate(withConcreteTumorType("200")));
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("10", "100")));
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(withConcreteTumorType(Lists.newArrayList())));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(withConcreteTumorType(Sets.newHashSet())));
     }
 
     @Test
@@ -145,7 +143,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @NotNull
-    private static PatientRecord withConcreteTumorType(@Nullable List<String> doids) {
+    private static PatientRecord withConcreteTumorType(@Nullable Set<String> doids) {
         return TumorTestFactory.withTumorTypeAndDoids("concrete type", "concrete sub type", doids);
     }
 }

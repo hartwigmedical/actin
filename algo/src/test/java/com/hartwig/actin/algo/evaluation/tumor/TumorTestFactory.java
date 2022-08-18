@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
@@ -15,11 +14,9 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,12 +33,12 @@ final class TumorTestFactory {
     @NotNull
     public static PatientRecord withTumorTypeAndDoids(@Nullable String primaryTumorType, @Nullable String primaryTumorSubType,
             @NotNull String... doids) {
-        return withTumorTypeAndDoids(primaryTumorType, primaryTumorSubType, Lists.newArrayList(doids));
+        return withTumorTypeAndDoids(primaryTumorType, primaryTumorSubType, Sets.newHashSet(doids));
     }
 
     @NotNull
     public static PatientRecord withTumorTypeAndDoids(@Nullable String primaryTumorType, @Nullable String primaryTumorSubType,
-            @Nullable List<String> doids) {
+            @Nullable Set<String> doids) {
         return withTumorDetails(builder().primaryTumorType(primaryTumorType).primaryTumorSubType(primaryTumorSubType).doids(doids).build());
     }
 
@@ -61,16 +58,15 @@ final class TumorTestFactory {
                         .from(base.molecular())
                         .drivers(ImmutableMolecularDrivers.builder()
                                 .from(base.molecular().drivers())
-                                .addAmplifications(ImmutableAmplification.builder()
-                                        .event(Strings.EMPTY)
-                                        .driverLikelihood(DriverLikelihood.HIGH)
-                                        .gene(amplifiedGene)
-                                        .isPartial(false)
-                                        .copies(100)
-                                        .build())
+                                .addAmplifications(TestAmplificationFactory.builder().gene(amplifiedGene).build())
                                 .build())
                         .build())
                 .build();
+    }
+
+    @NotNull
+    public static PatientRecord withDoidAndSubType(@NotNull String doid, @Nullable String primaryTumorSubType) {
+        return withTumorDetails(builder().addDoids(doid).primaryTumorSubType(primaryTumorSubType).build());
     }
 
     @NotNull

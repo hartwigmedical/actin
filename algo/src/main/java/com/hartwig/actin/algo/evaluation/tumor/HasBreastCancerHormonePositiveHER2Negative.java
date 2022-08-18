@@ -7,9 +7,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.molecular.MolecularInterpretation;
 import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +55,7 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
                 DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
         boolean isEstrogenNegative = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
 
-        boolean hasHer2Amplified = hasHer2Amplified(record.molecular());
+        boolean hasHer2Amplified = MolecularInterpretation.hasGeneAmplified(record.molecular(), "ERBB2");
 
         if (isHer2Negative && (isProgesteronePositive || isEstrogenPositive)) {
             if (hasHer2Amplified) {
@@ -95,14 +94,5 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
                 .addFailSpecificMessages("Patient has no her2-negative hormone-positive breast cancer")
                 .addFailGeneralMessages("Tumor type")
                 .build();
-    }
-
-    private static boolean hasHer2Amplified(@NotNull MolecularRecord molecular) {
-        for (Amplification amplification : molecular.drivers().amplifications()) {
-            if (amplification.gene().equals("ERBB2")) {
-                return true;
-            }
-        }
-        return false;
     }
 }
