@@ -25,7 +25,10 @@ public class HasTumorStageTest {
         HasTumorStage function = new HasTumorStage(TestDoidModelFactory.createMinimalTestDoidModel(), TumorStage.IV);
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().hasLiverLesions(true).build())));
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
+                        .addDoids("some doid")
+                        .hasLiverLesions(true)
+                        .build())));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasLiverLesions(true)
@@ -33,7 +36,10 @@ public class HasTumorStageTest {
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().hasCnsLesions(true).build())));
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
+                        .addDoids("some doid")
+                        .hasCnsLesions(true)
+                        .build())));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasCnsLesions(true)
@@ -41,7 +47,10 @@ public class HasTumorStageTest {
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().hasBrainLesions(true).build())));
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
+                        .addDoids("some doid")
+                        .hasBrainLesions(true)
+                        .build())));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasBrainLesions(true)
@@ -49,7 +58,10 @@ public class HasTumorStageTest {
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().hasLungLesions(true).build())));
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
+                        .addDoids("some doid")
+                        .hasLungLesions(true)
+                        .build())));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasLungLesions(true)
@@ -57,7 +69,10 @@ public class HasTumorStageTest {
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().hasBoneLesions(true).build())));
+                function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
+                        .addDoids("some doid")
+                        .hasBoneLesions(true)
+                        .build())));
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasBoneLesions(true)

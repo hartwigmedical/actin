@@ -37,7 +37,8 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().tumor().doids() == null && record.clinical().tumor().primaryTumorExtraDetails() == null) {
+        Set<String> tumorDoids = record.clinical().tumor().doids();
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) && record.clinical().tumor().primaryTumorExtraDetails() == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether tumor of patient may have a small component")
@@ -45,8 +46,10 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
                     .build();
         }
 
-        boolean hasSmallCellDoid =
-                DoidEvaluationFunctions.hasDoidOfCertainType(doidModel, record.clinical().tumor(), SMALL_CELL_DOIDS, SMALL_CELL_TERMS);
+        boolean hasSmallCellDoid = false;
+        if (DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+            hasSmallCellDoid = DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, tumorDoids, SMALL_CELL_DOIDS, SMALL_CELL_TERMS);
+        }
 
         boolean hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), SMALL_CELL_EXTRA_DETAILS);
 

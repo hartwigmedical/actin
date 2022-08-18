@@ -20,14 +20,16 @@ public class CanProvideSampleForFFPEAnalysis implements EvaluationFunction {
         if (record.molecular().type() != ExperimentType.WGS) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Can't determine whether patient can provide archival/fresh sample for FFPE analysis without WGS")
+                    .addUndeterminedSpecificMessages(
+                            "Can't determine whether patient can provide archival/fresh sample for FFPE analysis without WGS")
                     .addUndeterminedGeneralMessages("FFPE analysis")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("It is assumed that patient can provide archival/fresh sample for FFPE analysis (presence of WGS analysis)")
+                .addPassSpecificMessages(
+                        "It is assumed that patient can provide archival/fresh sample for FFPE analysis (presence of WGS analysis)")
                 .addPassGeneralMessages("FFPE analysis")
                 .build();
     }

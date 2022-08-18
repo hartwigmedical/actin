@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -67,14 +66,18 @@ public class HasTumorStage implements EvaluationFunction {
         return builder.build();
     }
 
+    @Nullable
     private TumorStage resolveTumorStageFromLesions(@NotNull TumorDetails tumor) {
-        Set<String> fullPatientDoidTree = fullDoidTree(tumor.doids());
+        Set<String> tumorDoids = tumor.doids();
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+            return null;
+        }
 
-        boolean hasLiverMetastases = evaluateMetastases(tumor.hasLiverLesions(), fullPatientDoidTree, LIVER_CANCER_DOID);
-        boolean hasCnsMetastases = evaluateMetastases(tumor.hasCnsLesions(), fullPatientDoidTree, CNS_CANCER_DOID);
-        boolean hasBrainMetastases = evaluateMetastases(tumor.hasBrainLesions(), fullPatientDoidTree, BRAIN_CANCER_DOID);
-        boolean hasLungMetastases = evaluateMetastases(tumor.hasLungLesions(), fullPatientDoidTree, LUNG_CANCER_DOID);
-        boolean hasBoneMetastases = evaluateMetastases(tumor.hasBoneLesions(), fullPatientDoidTree, BONE_CANCER_DOID);
+        boolean hasLiverMetastases = evaluateMetastases(tumor.hasLiverLesions(), tumorDoids, LIVER_CANCER_DOID);
+        boolean hasCnsMetastases = evaluateMetastases(tumor.hasCnsLesions(), tumorDoids, CNS_CANCER_DOID);
+        boolean hasBrainMetastases = evaluateMetastases(tumor.hasBrainLesions(), tumorDoids, BRAIN_CANCER_DOID);
+        boolean hasLungMetastases = evaluateMetastases(tumor.hasLungLesions(), tumorDoids, LUNG_CANCER_DOID);
+        boolean hasBoneMetastases = evaluateMetastases(tumor.hasBoneLesions(), tumorDoids, BONE_CANCER_DOID);
 
         if (hasLiverMetastases || hasCnsMetastases || hasBrainMetastases || hasLungMetastases || hasBoneMetastases) {
             return TumorStage.IV;
@@ -83,24 +86,11 @@ public class HasTumorStage implements EvaluationFunction {
         return null;
     }
 
-    private Set<String> fullDoidTree(@Nullable Set<String> patientDoids) {
-        if (patientDoids == null) {
-            return Sets.newHashSet();
-        }
-
-        Set<String> expandedDoids = Sets.newHashSet();
-        for (String patientDoid : patientDoids) {
-            expandedDoids.addAll(doidModel.expandedDoidWithParents(patientDoid));
-        }
-        return expandedDoids;
-    }
-
-    private static boolean evaluateMetastases(@Nullable Boolean hasLesions, @NotNull Set<String> fullPatientDoidTree,
-            @NotNull String doidToFind) {
+    private boolean evaluateMetastases(@Nullable Boolean hasLesions, @NotNull Set<String> tumorDoids, @NotNull String doidToMatch) {
         if (hasLesions == null) {
             return false;
         }
 
-        return hasLesions && !fullPatientDoidTree.contains(doidToFind);
+        return hasLesions && !DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, doidToMatch);
     }
 }

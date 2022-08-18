@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -33,9 +32,9 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> doids = record.clinical().tumor().doids();
+        Set<String> tumorDoids = record.clinical().tumor().doids();
 
-        if (doids == null || doids.isEmpty()) {
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor location/type configured for patient, undetermined if CUP")
@@ -43,16 +42,17 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
                     .build();
         }
 
-        if (doids.equals(Sets.newHashSet(CANCER_DOID))) {
+        if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, CANCER_DOID)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
+                    .addUndeterminedSpecificMessages(
+                            "Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
                     .addUndeterminedGeneralMessages("Undetermined CUP tumor type / if actually CUP")
                     .build();
         }
 
         boolean isMatch = true;
-        for (String doid : doids) {
+        for (String doid : tumorDoids) {
             Set<String> doidTree = doidModel.doidWithParents(doid);
             if (doidTree.contains(ORGAN_SYSTEM_CANCER_DOID)) {
                 isMatch = false;

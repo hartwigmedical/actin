@@ -41,9 +41,9 @@ public class HasSolidPrimaryTumorIncludingLymphoma implements EvaluationFunction
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> doids = record.clinical().tumor().doids();
+        Set<String> tumorDoids = record.clinical().tumor().doids();
 
-        if (doids == null || doids.isEmpty()) {
+        if (tumorDoids == null || tumorDoids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
@@ -52,8 +52,11 @@ public class HasSolidPrimaryTumorIncludingLymphoma implements EvaluationFunction
                     .build();
         }
 
-        EvaluationResult result =
-                DoidEvaluationFunctions.hasExclusiveDoidOfType(doidModel, doids, CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS);
+        EvaluationResult result = DoidEvaluationFunctions.evaluateForExclusiveMatchWithFailAndWarns(doidModel,
+                tumorDoids,
+                CANCER_DOID,
+                NON_SOLID_CANCER_DOIDS,
+                WARN_SOLID_CANCER_DOIDS);
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {

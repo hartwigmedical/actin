@@ -25,7 +25,76 @@ public class DoidEvaluationFunctionsTest {
     private static final DoidModel MATCHING_TEST_MODEL = createTestDoidModelForMatching();
 
     @Test
-    public void canDetermineIfDoidIsOfExclusiveType() {
+    public void canDetermineIfHavingConfiguredDoids() {
+        assertFalse(DoidEvaluationFunctions.hasConfiguredDoids(null));
+        assertFalse(DoidEvaluationFunctions.hasConfiguredDoids(Sets.newHashSet()));
+        assertTrue(DoidEvaluationFunctions.hasConfiguredDoids(Sets.newHashSet("yes!")));
+    }
+
+    @Test
+    public void canDetermineIfPatientHasSpecificDoid() {
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child");
+
+        assertFalse(DoidEvaluationFunctions.isOfSpecificDoid(doidModel, Sets.newHashSet("parent"), "child"));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoid(doidModel, Sets.newHashSet("child"), "child"));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoid(doidModel, Sets.newHashSet("child"), "parent"));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoid(doidModel, Sets.newHashSet("child", "other"), "parent"));
+    }
+
+    @Test
+    public void canDetermineIfTumorIsOfLeastOneSpecificDoid() {
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child");
+
+        assertFalse(DoidEvaluationFunctions.isOfAtLeastOneSpecificDoid(doidModel, Sets.newHashSet("parent"), Sets.newHashSet("child")));
+        assertTrue(DoidEvaluationFunctions.isOfAtLeastOneSpecificDoid(doidModel,
+                Sets.newHashSet("child"),
+                Sets.newHashSet("child", "other")));
+        assertTrue(DoidEvaluationFunctions.isOfAtLeastOneSpecificDoid(doidModel, Sets.newHashSet("child"), Sets.newHashSet("parent")));
+        assertTrue(DoidEvaluationFunctions.isOfAtLeastOneSpecificDoid(doidModel,
+                Sets.newHashSet("child", "other"),
+                Sets.newHashSet("and another", "parent")));
+    }
+
+    @Test
+    public void canDetermineIfPatientHasExactDoid() {
+        assertFalse(DoidEvaluationFunctions.isOfExactDoid(Sets.newHashSet("1", "2"), "1"));
+        assertFalse(DoidEvaluationFunctions.isOfExactDoid(Sets.newHashSet("1", "2"), "2"));
+        assertFalse(DoidEvaluationFunctions.isOfExactDoid(Sets.newHashSet("2"), "1"));
+        assertTrue(DoidEvaluationFunctions.isOfExactDoid(Sets.newHashSet("1"), "1"));
+    }
+
+    @Test
+    public void canDetermineIfPatientHasSpecificDoidCombination() {
+        assertFalse(DoidEvaluationFunctions.isOfSpecificDoidCombination(Sets.newHashSet("1"), Sets.newHashSet("1", "2")));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoidCombination(Sets.newHashSet("1", "2"), Sets.newHashSet("2")));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoidCombination(Sets.newHashSet("1", "2"), Sets.newHashSet("2", "1")));
+    }
+
+    @Test
+    public void canDetermineIfPatientHasExclusiveDoid() {
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child");
+
+        assertFalse(DoidEvaluationFunctions.isOfExclusiveDoid(doidModel, Sets.newHashSet("parent"), "child"));
+        assertTrue(DoidEvaluationFunctions.isOfExclusiveDoid(doidModel, Sets.newHashSet("child"), "child"));
+        assertTrue(DoidEvaluationFunctions.isOfExclusiveDoid(doidModel, Sets.newHashSet("child"), "parent"));
+        assertFalse(DoidEvaluationFunctions.isOfExclusiveDoid(doidModel, Sets.newHashSet("child", "other"), "parent"));
+    }
+
+    @Test
+    public void canDetermineIfPatientHasTumorOfAtLeastOneType() {
+        DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("other doid", "match doid term");
+
+        Set<String> validDoids = Sets.newHashSet("match doid");
+        Set<String> validDoidTerms = Sets.newHashSet("match doid term");
+
+        assertFalse(DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, Sets.newHashSet(), validDoids, validDoidTerms));
+        assertFalse(DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, Sets.newHashSet("wrong"), validDoids, validDoidTerms));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, Sets.newHashSet("match doid"), validDoids, validDoidTerms));
+        assertTrue(DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, Sets.newHashSet("other doid"), validDoids, validDoidTerms));
+    }
+
+    @Test
+    public void canDetermineIfDoidIsExclusiveType() {
         assertEquals(EvaluationResult.PASS, hasExclusiveTumorTypeOfDoid(MATCH_DOID));
 
         String firstWarnDoid = WARN_DOIDS.iterator().next();
@@ -39,9 +108,9 @@ public class DoidEvaluationFunctionsTest {
     }
 
     @NotNull
-    private static EvaluationResult hasExclusiveTumorTypeOfDoid(@NotNull String... patientDoids) {
-        return DoidEvaluationFunctions.hasExclusiveDoidOfType(MATCHING_TEST_MODEL,
-                Sets.newHashSet(patientDoids),
+    private static EvaluationResult hasExclusiveTumorTypeOfDoid(@NotNull String... tumorDoids) {
+        return DoidEvaluationFunctions.evaluateForExclusiveMatchWithFailAndWarns(MATCHING_TEST_MODEL,
+                Sets.newHashSet(tumorDoids),
                 MATCH_DOID,
                 FAIL_DOIDS,
                 WARN_DOIDS);
@@ -62,36 +131,8 @@ public class DoidEvaluationFunctionsTest {
     }
 
     @Test
-    public void canDetermineIfDoidIsOfType() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("other doid", "match doid term");
-
-        Set<String> validDoids = Sets.newHashSet("match doid");
-        Set<String> validDoidTerms = Sets.newHashSet("match doid term");
-
-        assertFalse(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                TumorTestFactory.builder().build(),
-                validDoids,
-                validDoidTerms));
-
-        assertTrue(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                TumorTestFactory.builder().addDoids("match doid").build(),
-                validDoids,
-                validDoidTerms));
-
-        assertTrue(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                TumorTestFactory.builder().addDoids("other doid").build(),
-                validDoids,
-                validDoidTerms));
-
-        assertFalse(DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                TumorTestFactory.builder().primaryTumorExtraDetails("wrong").build(),
-                validDoids,
-                validDoidTerms));
-    }
-
-    @Test
     public void canEvaluateIfPatientHasSpecificDoidCombination() {
-        Set<String> patientDoids = Sets.newHashSet("1", "2", "3");
+        Set<String> tumorDoids = Sets.newHashSet("1", "2", "3");
 
         Set<String> set1 = Sets.newHashSet("1", "4");
         Set<String> set2 = Sets.newHashSet("2", "3");
@@ -110,9 +151,9 @@ public class DoidEvaluationFunctionsTest {
         combinationSet4.add(set1);
         combinationSet4.add(set2);
 
-        assertFalse(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet1));
-        assertTrue(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet2));
-        assertTrue(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet3));
-        assertTrue(DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, combinationSet4));
+        assertFalse(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet1));
+        assertTrue(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet2));
+        assertTrue(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet3));
+        assertTrue(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet4));
     }
 }

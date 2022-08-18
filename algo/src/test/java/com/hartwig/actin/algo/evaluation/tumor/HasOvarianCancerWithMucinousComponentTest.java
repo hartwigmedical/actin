@@ -25,7 +25,7 @@ public class HasOvarianCancerWithMucinousComponentTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(matchSingle));
 
         PatientRecord matchCombination =
-                TumorTestFactory.withDoids(HasOvarianCancerWithMucinousComponent.OVARIAN_MUCINOUS_DOID_SETS.iterator().next());
+                TumorTestFactory.withDoids(HasOvarianCancerWithMucinousComponent.OVARIAN_MUCINOUS_DOID_SET);
         assertEvaluation(EvaluationResult.PASS, function.evaluate(matchCombination));
 
         PatientRecord somethingElse = TumorTestFactory.withDoids("something else");

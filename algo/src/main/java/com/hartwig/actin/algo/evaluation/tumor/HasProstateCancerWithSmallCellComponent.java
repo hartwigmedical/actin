@@ -35,8 +35,8 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> patientDoids = record.clinical().tumor().doids();
-        if (patientDoids == null) {
+        Set<String> tumorDoids = record.clinical().tumor().doids();
+        if (tumorDoids == null || tumorDoids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has prostate cancer with small cell histology")
@@ -45,7 +45,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
         }
 
         Set<String> expanded = Sets.newHashSet();
-        for (String doid : patientDoids) {
+        for (String doid : tumorDoids) {
             expanded.addAll(doidModel.doidWithParents(doid));
         }
 
@@ -71,7 +71,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
         }
 
         boolean hasUndeterminedDoidMatch = false;
-        if (patientDoids.contains(PROSTATE_CANCER_DOID)) {
+        if (tumorDoids.contains(PROSTATE_CANCER_DOID)) {
             hasUndeterminedDoidMatch = true;
         }
 

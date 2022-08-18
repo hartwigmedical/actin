@@ -32,7 +32,8 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().tumor().doids() == null || (record.clinical().tumor().primaryTumorType() == null
+        Set<String> tumorDoids = record.clinical().tumor().doids();
+        if ((tumorDoids == null || tumorDoids.isEmpty()) || (record.clinical().tumor().primaryTumorType() == null
                 && record.clinical().tumor().primaryTumorSubType() == null)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
@@ -41,11 +42,7 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
                     .build();
         }
 
-        boolean isStomachCancer = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                record.clinical().tumor(),
-                Sets.newHashSet(STOMACH_CANCER_DOID),
-                Sets.newHashSet());
-
+        boolean isStomachCancer = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, STOMACH_CANCER_DOID);
         boolean isUndifferentiatedType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), UNDIFFERENTIATED_TYPES);
 
         if (isStomachCancer && isUndifferentiatedType) {

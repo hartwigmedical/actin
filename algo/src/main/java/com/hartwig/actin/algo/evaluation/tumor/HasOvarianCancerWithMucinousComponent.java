@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction {
 
     static final Set<String> OVARIAN_MUCINOUS_DOIDS = Sets.newHashSet();
-    static final Set<Set<String>> OVARIAN_MUCINOUS_DOID_SETS = Sets.newHashSet();
+    static final Set<String> OVARIAN_MUCINOUS_DOID_SET = Sets.newHashSet();
 
     static {
         OVARIAN_MUCINOUS_DOIDS.add("6278"); // ovarian mucinous malignant adenofibroma
@@ -27,10 +27,8 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
         OVARIAN_MUCINOUS_DOIDS.add("6469"); // ovarian mucinous adenofibroma
         OVARIAN_MUCINOUS_DOIDS.add("6898"); // ovarian seromucinous carcinoma
 
-        Set<String> ovarianMucinousSet = Sets.newHashSet();
-        ovarianMucinousSet.add("3030"); // mucinous adenocarcinoma
-        ovarianMucinousSet.add("2394"); // ovarian cancer
-        OVARIAN_MUCINOUS_DOID_SETS.add(ovarianMucinousSet);
+        OVARIAN_MUCINOUS_DOID_SET.add("3030"); // mucinous adenocarcinoma
+        OVARIAN_MUCINOUS_DOID_SET.add("2394"); // ovarian cancer
     }
 
     @NotNull
@@ -43,8 +41,8 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> patientDoids = record.clinical().tumor().doids();
-        if (patientDoids == null) {
+        Set<String> tumorDoids = record.clinical().tumor().doids();
+        if (tumorDoids == null || tumorDoids.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has ovarian cancer with mucinous component")
@@ -52,13 +50,10 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
                     .build();
         }
 
-        boolean isOvarianMucinousType = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                record.clinical().tumor(),
-                OVARIAN_MUCINOUS_DOIDS,
-                Sets.newHashSet());
+        boolean isOvarianMucinousType = DoidEvaluationFunctions.isOfAtLeastOneSpecificDoid(doidModel, tumorDoids, OVARIAN_MUCINOUS_DOIDS);
 
         boolean hasSpecificOvarianMucinousCombination =
-                DoidEvaluationFunctions.hasSpecificCombinationOfDoids(patientDoids, OVARIAN_MUCINOUS_DOID_SETS);
+                DoidEvaluationFunctions.isOfSpecificDoidCombination(tumorDoids, OVARIAN_MUCINOUS_DOID_SET);
 
         if (isOvarianMucinousType || hasSpecificOvarianMucinousCombination) {
             return EvaluationFactory.unrecoverable()

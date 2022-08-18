@@ -33,7 +33,8 @@ public class HasOvarianBorderlineTumor implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().tumor().doids() == null || (record.clinical().tumor().primaryTumorType() == null
+        Set<String> tumorDoids = record.clinical().tumor().doids();
+        if ((tumorDoids == null || tumorDoids.isEmpty()) || (record.clinical().tumor().primaryTumorType() == null
                 && record.clinical().tumor().primaryTumorSubType() == null)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
@@ -42,11 +43,7 @@ public class HasOvarianBorderlineTumor implements EvaluationFunction {
                     .build();
         }
 
-        boolean isOvarianCancer = DoidEvaluationFunctions.hasDoidOfCertainType(doidModel,
-                record.clinical().tumor(),
-                Sets.newHashSet(OVARIAN_CANCER_DOID),
-                Sets.newHashSet());
-
+        boolean isOvarianCancer = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, OVARIAN_CANCER_DOID);
         boolean hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), OVARIAN_BORDERLINE_TYPES);
 
         if (isOvarianCancer && hasBorderlineType) {

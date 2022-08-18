@@ -35,8 +35,8 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> patientDoids = record.clinical().tumor().doids();
-        if (patientDoids == null) {
+        Set<String> tumorDoids = record.clinical().tumor().doids();
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has hormone-positive HER2-negative breast cancer")
@@ -44,17 +44,17 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
                     .build();
         }
 
-        boolean isBreastCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, BREAST_CANCER_DOID);
+        boolean isBreastCancer = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, BREAST_CANCER_DOID);
 
-        boolean isHer2Negative = DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, HER2_NEGATIVE_BREAST_CANCER_DOID);
+        boolean isHer2Negative = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, HER2_NEGATIVE_BREAST_CANCER_DOID);
         boolean isProgesteronePositive =
-                DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, PROGESTERONE_POSITIVE_BREAST_CANCER_DOID);
-        boolean isEstrogenPositive = DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, ESTROGEN_POSITIVE_BREAST_CANCER_DOID);
+                DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, PROGESTERONE_POSITIVE_BREAST_CANCER_DOID);
+        boolean isEstrogenPositive = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, ESTROGEN_POSITIVE_BREAST_CANCER_DOID);
 
-        boolean isHer2Positive = DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, HER2_POSITIVE_BREAST_CANCER_DOID);
+        boolean isHer2Positive = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, HER2_POSITIVE_BREAST_CANCER_DOID);
         boolean isProgesteroneNegative =
-                DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
-        boolean isEstrogenNegative = DoidEvaluationFunctions.isOfDoidType(doidModel, patientDoids, ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
+                DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
+        boolean isEstrogenNegative = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
 
         boolean hasHer2Amplified = hasHer2Amplified(record.molecular());
 
