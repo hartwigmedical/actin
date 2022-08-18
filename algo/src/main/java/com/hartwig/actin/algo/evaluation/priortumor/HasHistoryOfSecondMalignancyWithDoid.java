@@ -52,7 +52,7 @@ public class HasHistoryOfSecondMalignancyWithDoid implements EvaluationFunction 
 
     private boolean isDoidMatch(@NotNull Set<String> doids, @NotNull String doidToMatch) {
         for (String doid : doids) {
-            if (doidModel.expandedDoidWithParents(doid).contains(doidToMatch)) {
+            if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
                 return true;
             }
         }

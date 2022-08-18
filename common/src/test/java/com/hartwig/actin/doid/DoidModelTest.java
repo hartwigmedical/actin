@@ -23,38 +23,30 @@ public class DoidModelTest {
 
     @Test
     public void canAddParents() {
-        DoidModel model = createTestModel(TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
+        DoidModel model = createTestModel(TestDoidManualConfigFactory.createWithOneAdditionalDoid("300", "301"));
 
         Set<String> withParents200 = model.doidWithParents("200");
-        assertEquals(3, withParents200.size());
+        assertEquals(4, withParents200.size());
         assertTrue(withParents200.contains("200"));
         assertTrue(withParents200.contains("300"));
+        assertTrue(withParents200.contains("301"));
         assertTrue(withParents200.contains("400"));
 
         Set<String> withParents300 = model.doidWithParents("300");
-        assertEquals(2, withParents300.size());
+        assertEquals(3, withParents300.size());
         assertFalse(withParents300.contains("200"));
         assertTrue(withParents300.contains("300"));
+        assertTrue(withParents300.contains("301"));
         assertTrue(withParents300.contains("400"));
 
         Set<String> withParents400 = model.doidWithParents("400");
         assertEquals(1, withParents400.size());
         assertFalse(withParents400.contains("200"));
         assertFalse(withParents400.contains("300"));
+        assertFalse(withParents400.contains("301"));
         assertTrue(withParents400.contains("400"));
 
         assertEquals(1, model.doidWithParents("500").size());
-    }
-
-    @Test
-    public void canAddParentsAndExpand() {
-        DoidModel doidModel = createTestModel(TestDoidManualConfigFactory.createWithOneAdditionalDoid("300", "301"));
-
-        Set<String> expandedWithParents300 = doidModel.expandedDoidWithParents("300");
-        assertEquals(3, expandedWithParents300.size());
-        assertTrue(expandedWithParents300.contains("300"));
-        assertTrue(expandedWithParents300.contains("301"));
-        assertTrue(expandedWithParents300.contains("400"));
     }
 
     @Test

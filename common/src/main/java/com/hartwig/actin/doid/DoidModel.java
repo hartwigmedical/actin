@@ -51,18 +51,12 @@ public class DoidModel {
 
     @NotNull
     public Set<String> doidWithParents(@NotNull String doid) {
-        Set<String> doids = Sets.newHashSet(doid);
-        addParents(doid, doids);
-        return doids;
-    }
-    @NotNull
-    public Set<String> expandedDoidWithParents(@NotNull String doid) {
         Set<String> expandedDoids = Sets.newHashSet();
-        for (String expandedDoid : doidWithParents(doid)) {
+        for (String expandedDoid : expandedWithAllParents(doid)) {
             expandedDoids.add(expandedDoid);
             String additionalDoid = doidManualConfig.additionalDoidsPerDoid().get(expandedDoid);
             if (additionalDoid != null) {
-                expandedDoids.addAll(doidWithParents(additionalDoid));
+                expandedDoids.addAll(expandedWithAllParents(additionalDoid));
             }
         }
 
@@ -104,6 +98,13 @@ public class DoidModel {
     @Nullable
     public String resolveDoidForTerm(@NotNull String term) {
         return doidPerLowerCaseTermMap.get(term.toLowerCase());
+    }
+
+    @NotNull
+    private Set<String> expandedWithAllParents(@NotNull String doid) {
+        Set<String> doids = Sets.newHashSet(doid);
+        addParents(doid, doids);
+        return doids;
     }
 
     private void addParents(@NotNull String child, @NotNull Set<String> result) {

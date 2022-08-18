@@ -97,7 +97,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     }
 
     private boolean isPotentialAdenoSquamousMatch(@NotNull Set<String> patientDoids, @NotNull String doidToMatch) {
-        Set<String> doidTreeToMatch = doidModel.expandedDoidWithParents(doidToMatch);
+        Set<String> doidTreeToMatch = doidModel.doidWithParents(doidToMatch);
 
         Set<String> patientDoidTree = expandToFullDoidTree(patientDoids);
         for (String doidEntryToMatch : doidTreeToMatch) {
@@ -122,7 +122,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
         Set<String> mainCancerTypesToMatch = doidModel.mainCancerDoids(doidToMatch);
         for (String doid : tumorDoids) {
-            for (String entry : doidModel.expandedDoidWithParents(doid)) {
+            for (String entry : doidModel.doidWithParents(doid)) {
                 if (mainCancerTypesToMatch.contains(entry)) {
                     return true;
                 }
@@ -135,7 +135,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     private Set<String> expandToFullDoidTree(@NotNull Set<String> doids) {
         Set<String> doidTree = Sets.newHashSet();
         for (String doid : doids) {
-            doidTree.addAll(doidModel.expandedDoidWithParents(doid));
+            doidTree.addAll(doidModel.doidWithParents(doid));
         }
         return doidTree;
     }

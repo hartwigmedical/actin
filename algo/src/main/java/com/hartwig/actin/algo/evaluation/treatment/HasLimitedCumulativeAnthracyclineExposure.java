@@ -107,9 +107,9 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
         }
 
         for (String tumorDoid : tumorDoids) {
-            Set<String> doidWithParents = doidModel.doidWithParents(tumorDoid);
+            Set<String> expandedDoids = doidModel.doidWithParents(tumorDoid);
             for (String suspiciousDoid : CANCER_DOIDS_FOR_ANTHRACYCLINE) {
-                if (doidWithParents.contains(suspiciousDoid)) {
+                if (expandedDoids.contains(suspiciousDoid)) {
                     return true;
                 }
             }

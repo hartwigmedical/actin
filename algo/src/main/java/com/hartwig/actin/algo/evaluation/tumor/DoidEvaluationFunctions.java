@@ -88,7 +88,7 @@ final class DoidEvaluationFunctions {
         boolean hasAtLeastOneFailDoid = false;
         boolean hasAtLeastOneWarnDoid = false;
         for (String doid : tumorDoids) {
-            Set<String> expandedDoids = doidModel.expandedDoidWithParents(doid);
+            Set<String> expandedDoids = doidModel.doidWithParents(doid);
             if (!expandedDoids.contains(doidToMatch)) {
                 allDoidsAreMatch = false;
             }
@@ -146,7 +146,7 @@ final class DoidEvaluationFunctions {
 
         Set<String> expanded = Sets.newHashSet();
         for (String doid : doidsToExpand) {
-            expanded.addAll(doidModel.expandedDoidWithParents(doid));
+            expanded.addAll(doidModel.doidWithParents(doid));
         }
         return expanded;
     }
