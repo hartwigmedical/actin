@@ -30,27 +30,32 @@ public final class SurgeryRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadRecentSurgeryCreator() {
-        LocalDate minDate = referenceDateProvider().date().minusMonths(2);
-        return function -> new HasHadAnySurgeryAfterSpecificDate(minDate);
+        LocalDate evaluationDate = referenceDateProvider().date();
+        LocalDate minDate = evaluationDate.minusMonths(2);
+        return function -> new HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate);
     }
 
     @NotNull
     private FunctionCreator hasHadSurgeryInPastWeeksCreator() {
         return function -> {
-            int maxAgeWeeks = functionInputResolver().createOneIntegerInput(function);
-            LocalDate minDate = referenceDateProvider().date().minusWeeks(maxAgeWeeks).plusWeeks(2);
+            LocalDate evaluationDate = referenceDateProvider().date();
 
-            return new HasHadAnySurgeryAfterSpecificDate(minDate);
+            int maxAgeWeeks = functionInputResolver().createOneIntegerInput(function);
+            LocalDate minDate = evaluationDate.minusWeeks(maxAgeWeeks).plusWeeks(2);
+
+            return new HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate);
         };
     }
 
     @NotNull
     private FunctionCreator hasHadSurgeryInPastMonthsCreator() {
         return function -> {
-            int maxAgeMonths = functionInputResolver().createOneIntegerInput(function);
-            LocalDate minDate = referenceDateProvider().date().minusMonths(maxAgeMonths);
+            LocalDate evaluationDate = referenceDateProvider().date();
 
-            return new HasHadAnySurgeryAfterSpecificDate(minDate);
+            int maxAgeMonths = functionInputResolver().createOneIntegerInput(function);
+            LocalDate minDate = evaluationDate.minusMonths(maxAgeMonths);
+
+            return new HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate);
         };
     }
 }

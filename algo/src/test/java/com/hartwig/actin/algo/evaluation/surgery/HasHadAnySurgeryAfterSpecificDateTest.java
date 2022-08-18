@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.apache.logging.log4j.util.Strings;
@@ -19,21 +20,40 @@ import org.junit.Test;
 public class HasHadAnySurgeryAfterSpecificDateTest {
 
     @Test
-    public void canEvaluate() {
-        LocalDate minDate = LocalDate.of(2020, 2, 20);
-        HasHadAnySurgeryAfterSpecificDate function = new HasHadAnySurgeryAfterSpecificDate(minDate);
+    public void canEvaluateBasedOnSurgeries() {
+        LocalDate evaluationDate = LocalDate.of(2020, 4, 20);
+        LocalDate minDate = evaluationDate.minusMonths(2);
+        HasHadAnySurgeryAfterSpecificDate function = new HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate);
 
-        // No surgeries
-        List<Surgery> surgeries = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(Lists.newArrayList())));
 
-        // One surgery but too long ago
-        surgeries.add(SurgeryTestFactory.builder().endDate(minDate.minusWeeks(4)).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
+        Surgery tooLongAgo = SurgeryTestFactory.builder().endDate(minDate.minusWeeks(4)).build();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgery(tooLongAgo)));
 
-        // One surgery within the requested time period.
-        surgeries.add(SurgeryTestFactory.builder().endDate(minDate.plusWeeks(2)).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgeries(surgeries)));
+        Surgery recentFinished = SurgeryTestFactory.builder().status(SurgeryStatus.FINISHED).endDate(minDate.plusWeeks(2)).build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgery(recentFinished)));
+
+        Surgery recentPlanned = SurgeryTestFactory.builder().status(SurgeryStatus.PLANNED).endDate(minDate.plusWeeks(2)).build();
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(SurgeryTestFactory.withSurgery(recentPlanned)));
+
+        Surgery recentCancelled = SurgeryTestFactory.builder().status(SurgeryStatus.CANCELLED).endDate(minDate.plusWeeks(2)).build();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgery(recentCancelled)));
+
+        Surgery futureFinished = SurgeryTestFactory.builder().status(SurgeryStatus.FINISHED).endDate(evaluationDate.plusWeeks(2)).build();
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(SurgeryTestFactory.withSurgery(futureFinished)));
+
+        Surgery futurePlanned = SurgeryTestFactory.builder().status(SurgeryStatus.PLANNED).endDate(evaluationDate.plusWeeks(2)).build();
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgery(futurePlanned)));
+
+        Surgery futureCancelled = SurgeryTestFactory.builder().status(SurgeryStatus.CANCELLED).endDate(evaluationDate.plusWeeks(2)).build();
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgery(futureCancelled)));
+    }
+
+    @Test
+    public void canEvaluateBasedOnPriorTumorTreatments() {
+        LocalDate evaluationDate = LocalDate.of(2020, 4, 20);
+        LocalDate minDate = evaluationDate.minusMonths(2);
+        HasHadAnySurgeryAfterSpecificDate function = new HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate);
 
         // No prior tumor treatments
         List<PriorTumorTreatment> treatments = Lists.newArrayList();

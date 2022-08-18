@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.surgery;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -23,6 +24,11 @@ final class SurgeryTestFactory {
     @NotNull
     public static ImmutableSurgery.Builder builder() {
         return ImmutableSurgery.builder().endDate(LocalDate.of(2020, 4, 5)).status(SurgeryStatus.UNKNOWN);
+    }
+
+    @NotNull
+    public static PatientRecord withSurgery(@NotNull Surgery surgery) {
+        return withSurgeries(Lists.newArrayList(surgery));
     }
 
     @NotNull
