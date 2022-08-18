@@ -48,7 +48,8 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
 
         boolean hasSmallCellDoid = false;
         if (DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            hasSmallCellDoid = DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, tumorDoids, SMALL_CELL_DOIDS, SMALL_CELL_TERMS);
+            hasSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, SMALL_CELL_DOIDS)
+                    || DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, SMALL_CELL_TERMS);
         }
 
         boolean hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), SMALL_CELL_EXTRA_DETAILS);

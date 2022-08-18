@@ -50,10 +50,10 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
                     .build();
         }
 
-        boolean isOvarianMucinousType = DoidEvaluationFunctions.isOfAtLeastOneSpecificDoid(doidModel, tumorDoids, OVARIAN_MUCINOUS_DOIDS);
+        boolean isOvarianMucinousType = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, OVARIAN_MUCINOUS_DOIDS);
 
         boolean hasSpecificOvarianMucinousCombination =
-                DoidEvaluationFunctions.isOfSpecificDoidCombination(tumorDoids, OVARIAN_MUCINOUS_DOID_SET);
+                DoidEvaluationFunctions.isOfDoidCombinationType(tumorDoids, OVARIAN_MUCINOUS_DOID_SET);
 
         if (isOvarianMucinousType || hasSpecificOvarianMucinousCombination) {
             return EvaluationFactory.unrecoverable()

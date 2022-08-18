@@ -42,7 +42,7 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
                     .build();
         }
 
-        boolean isStomachCancer = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, STOMACH_CANCER_DOID);
+        boolean isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, STOMACH_CANCER_DOID);
         boolean isUndifferentiatedType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), UNDIFFERENTIATED_TYPES);
 
         if (isStomachCancer && isUndifferentiatedType) {

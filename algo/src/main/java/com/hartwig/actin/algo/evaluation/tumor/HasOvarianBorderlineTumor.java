@@ -43,7 +43,7 @@ public class HasOvarianBorderlineTumor implements EvaluationFunction {
                     .build();
         }
 
-        boolean isOvarianCancer = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, OVARIAN_CANCER_DOID);
+        boolean isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, OVARIAN_CANCER_DOID);
         boolean hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), OVARIAN_BORDERLINE_TYPES);
 
         if (isOvarianCancer && hasBorderlineType) {

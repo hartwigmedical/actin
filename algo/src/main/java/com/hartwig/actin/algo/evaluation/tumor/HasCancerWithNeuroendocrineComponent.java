@@ -50,11 +50,8 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .build();
         }
 
-        boolean hasNeuroendocrineDoid = false;
-        if (DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            hasNeuroendocrineDoid =
-                    DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel, tumorDoids, NEUROENDOCRINE_DOIDS, NEUROENDOCRINE_TERMS);
-        }
+        boolean hasNeuroendocrineDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, NEUROENDOCRINE_DOIDS)
+                || DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, NEUROENDOCRINE_TERMS);
 
         boolean hasNeuroendocrineDetails =
                 TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), NEUROENDOCRINE_EXTRA_DETAILS);
@@ -67,18 +64,16 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .build();
         }
 
-        boolean hasSmallCellDoid = false;
-        if (DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            hasSmallCellDoid = DoidEvaluationFunctions.isOfSpecificDoidOrTerm(doidModel,
-                    tumorDoids,
-                    HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS,
-                    HasCancerWithSmallCellComponent.SMALL_CELL_TERMS);
-        }
+        boolean hasSmallCellDoid =
+                DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS);
+
+        boolean hasSmallCellDoidTerm =
+                DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, HasCancerWithSmallCellComponent.SMALL_CELL_TERMS);
 
         boolean hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(),
                 HasCancerWithSmallCellComponent.SMALL_CELL_EXTRA_DETAILS);
 
-        if (hasSmallCellDoid || hasSmallCellDetails) {
+        if (hasSmallCellDoid || hasSmallCellDoidTerm || hasSmallCellDetails) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has cancer with small cell component, "

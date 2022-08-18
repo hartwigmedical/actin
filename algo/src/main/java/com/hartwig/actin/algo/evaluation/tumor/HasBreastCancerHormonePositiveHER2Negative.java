@@ -44,17 +44,17 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
                     .build();
         }
 
-        boolean isBreastCancer = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, BREAST_CANCER_DOID);
+        boolean isBreastCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, BREAST_CANCER_DOID);
 
-        boolean isHer2Negative = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, HER2_NEGATIVE_BREAST_CANCER_DOID);
+        boolean isHer2Negative = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, HER2_NEGATIVE_BREAST_CANCER_DOID);
         boolean isProgesteronePositive =
-                DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, PROGESTERONE_POSITIVE_BREAST_CANCER_DOID);
-        boolean isEstrogenPositive = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, ESTROGEN_POSITIVE_BREAST_CANCER_DOID);
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROGESTERONE_POSITIVE_BREAST_CANCER_DOID);
+        boolean isEstrogenPositive = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ESTROGEN_POSITIVE_BREAST_CANCER_DOID);
 
-        boolean isHer2Positive = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, HER2_POSITIVE_BREAST_CANCER_DOID);
+        boolean isHer2Positive = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, HER2_POSITIVE_BREAST_CANCER_DOID);
         boolean isProgesteroneNegative =
-                DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
-        boolean isEstrogenNegative = DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
+        boolean isEstrogenNegative = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
 
         boolean hasHer2Amplified = hasHer2Amplified(record.molecular());
 

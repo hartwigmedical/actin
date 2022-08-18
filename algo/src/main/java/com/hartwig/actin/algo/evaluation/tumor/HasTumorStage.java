@@ -91,6 +91,6 @@ public class HasTumorStage implements EvaluationFunction {
             return false;
         }
 
-        return hasLesions && !DoidEvaluationFunctions.isOfSpecificDoid(doidModel, tumorDoids, doidToMatch);
+        return hasLesions && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch);
     }
 }
