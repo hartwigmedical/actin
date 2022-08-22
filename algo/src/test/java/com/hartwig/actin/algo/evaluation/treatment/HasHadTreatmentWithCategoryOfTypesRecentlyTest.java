@@ -2,15 +2,10 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
@@ -21,68 +16,45 @@ public class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 
     @Test
     public void canEvaluate() {
-        LocalDate referenceDate = LocalDate.of(2020, 4, 1);
+        LocalDate minDate = LocalDate.of(2020, 4, 1);
         HasHadTreatmentWithCategoryOfTypesRecently function =
                 new HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY,
                         Lists.newArrayList("Anti-EGFR"),
-                        referenceDate);
+                        minDate);
 
         // No treatments yet
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
-        PatientRecord noPriorTreatmentRecord = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(noPriorTreatmentRecord));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one wrong category
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        PatientRecord immunoRecord = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(immunoRecord));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
-        // Add one correct category but wrong type
+        // Add one correct category but no type
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build());
-        PatientRecord multiRecord1 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(multiRecord1));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
+        // Add one correct category with matching type but long time ago.
+        treatments.add(TreatmentTestFactory.builder()
+                .addCategories(TreatmentCategory.TARGETED_THERAPY)
+                .targetedType("Some anti-EGFR Type")
+                .startYear(minDate.getYear() - 1)
+                .build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one correct category with matching type
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some anti-EGFR Type")
                 .build());
-        PatientRecord multiRecord2 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(multiRecord2));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one correct category with matching type and recent date
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .targetedType("Some anti-EGFR Type")
-                .startYear(referenceDate.getYear() + 1)
+                .startYear(minDate.getYear() + 1)
                 .build());
-        PatientRecord multiRecord3 = TreatmentTestFactory.withPriorTumorTreatments(treatments);
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(multiRecord3));
-    }
-
-    @Test
-    public void canDeterminePastDate() {
-        LocalDate referenceDate = LocalDate.of(2020, 4, 1);
-
-        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().build(), referenceDate));
-        assertTrue(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().startYear(2021).build(),
-                referenceDate));
-        assertFalse(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().startYear(2019).build(),
-                referenceDate));
-        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder().startYear(2020).build(),
-                referenceDate));
-
-        assertTrue(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder()
-                .startYear(2020)
-                .startMonth(7)
-                .build(), referenceDate));
-        assertFalse(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder()
-                .startYear(2020)
-                .startMonth(3)
-                .build(), referenceDate));
-        assertNull(HasHadTreatmentWithCategoryOfTypesRecently.startedPastDate(TreatmentTestFactory.builder()
-                .startYear(2020)
-                .startMonth(4)
-                .build(), referenceDate));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 }

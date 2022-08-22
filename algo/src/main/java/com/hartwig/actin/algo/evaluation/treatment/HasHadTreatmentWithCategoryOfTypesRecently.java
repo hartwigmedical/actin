@@ -3,18 +3,17 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.DateComparison;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFunction {
 
@@ -39,7 +38,7 @@ public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFun
         boolean hasInconclusiveDate = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (hasValidCategoryAndType(treatment)) {
-                Boolean startedPastMinDate = startedPastDate(treatment, minDate);
+                Boolean startedPastMinDate = DateComparison.isAfterDate(minDate, treatment.startYear(), treatment.startMonth());
                 if (startedPastMinDate == null) {
                     hasInconclusiveDate = true;
                 } else if (startedPastMinDate) {
@@ -79,26 +78,5 @@ public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFun
             }
         }
         return false;
-    }
-
-    @VisibleForTesting
-    @Nullable
-    static Boolean startedPastDate(@NotNull PriorTumorTreatment treatment, @NotNull LocalDate minDate) {
-        Integer year = treatment.startYear();
-
-        if (year == null) {
-            return null;
-        } else if (year > minDate.getYear()) {
-            return true;
-        } else if (year == minDate.getYear()) {
-            Integer month = treatment.startMonth();
-            if (month == null || month == minDate.getMonthValue()) {
-                return null;
-            } else {
-                return month > minDate.getMonthValue();
-            }
-        } else {
-            return false;
-        }
     }
 }

@@ -76,14 +76,14 @@ public class HasLimitedCumulativeAnthracyclineExposureTest {
     }
 
     @NotNull
-    private static PatientRecord create(@Nullable Set<String> primaryTumorDoids, @NotNull List<PriorSecondPrimary> priorSecondPrimaries,
+    private static PatientRecord create(@Nullable Set<String> tumorDoids, @NotNull List<PriorSecondPrimary> priorSecondPrimaries,
             @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
         PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
         return ImmutablePatientRecord.builder()
                 .from(base)
                 .clinical(ImmutableClinicalRecord.builder()
                         .from(base.clinical())
-                        .tumor(ImmutableTumorDetails.builder().from(base.clinical().tumor()).doids(primaryTumorDoids).build())
+                        .tumor(ImmutableTumorDetails.builder().from(base.clinical().tumor()).doids(tumorDoids).build())
                         .priorTumorTreatments(priorTumorTreatments)
                         .priorSecondPrimaries(priorSecondPrimaries)
                         .build())
