@@ -9,12 +9,12 @@ ACTIN is a system that determines available treatment options for cancer patient
  
 More details on the following modules are available from the links below:
 
-Module  | Description
----|---
-[Clinical](clinical) | Ingestion and curation of an external electronic health record (EHR) clinical data stream.
-[Molecular](molecular) | Interpretation of molecular tests and ingestion into ACTIN.
-[Treatment](treatment) | Generation of available treatment options (standard-of-care and experimental).
-[Algo](algo) | Matching all data from a patient to available treatment options.
-[Database](database) | Capture of all ACTIN data in a database.
-[Report](report) | Create a patient-centric PDF report with available treatment options
+| Module                 | Description                                                                                |
+|------------------------|--------------------------------------------------------------------------------------------|
+| [Clinical](clinical)   | Ingestion and curation of an external electronic health record (EHR) clinical data stream. |
+| [Molecular](molecular) | Interpretation of molecular tests and ingestion into ACTIN.                                |
+| [Treatment](treatment) | Generation of available treatment options (standard-of-care and experimental).             |
+| [Algo](algo)           | Matching all data from a patient to available treatment options.                           |
+| [Database](database)   | Capture of all ACTIN data in a database.                                                   |
+| [Report](report)       | Create a patient-centric PDF report with available treatment options                       |
   
