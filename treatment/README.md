@@ -27,27 +27,27 @@ An example trial configuration database can be found [here](src/test/resources/t
  
 #### Trial Definition
 
-Field | Example
----|---
-trialId	| ACTN 2021
-open | 1
-acronym	| ACTIN
-title | ACTIN is a study to evaluate a new treatment decision system  
- 
+| Field    | Example                                                      |
+|----------|--------------------------------------------------------------|
+| trialId	 | ACTN 2021                                                    |
+| open     | 1                                                            |
+| acronym	 | ACTIN                                                        |
+| title    | ACTIN is a study to evaluate a new treatment decision system |
+
 The following checks are done on the level of trial definitions:
  - Every trial ID must be unique
  - Every file identifier generated for any trial must be unique. The file identifier is the trial ID with spaces replaced by underscores.
 
 #### Cohort Definition
 
-Field | Example
----|---
-trialId | ACTN 2021
-cohortId | A
-open | 1
-slotsAvailable | 1
-blacklist | 0
-description | First evaluation phase
+| Field          | Example                |
+|----------------|------------------------|
+| trialId        | ACTN 2021              |
+| cohortId       | A                      |
+| open           | 1                      |
+| slotsAvailable | 1                      |
+| blacklist      | 0                      |
+| description    | First evaluation phase |
 
 The following checks are done on the level of cohort definitions:
  - Every trial ID referenced from a cohort must be defined in the trial definitions file
@@ -55,12 +55,12 @@ The following checks are done on the level of cohort definitions:
 
 #### Inclusion Criteria
 
-Field | Example
----|---
-trialId | ACTN 2021
-referenceIds | I-01, I-02
-appliesToCohorts | all
-inclusionRule | AND(IS_AT_LEAST_X_YEARS_OLD[18], HAS_METASTATIC_CANCER)
+| Field            | Example                                                 |
+|------------------|---------------------------------------------------------|
+| trialId          | ACTN 2021                                               |
+| referenceIds     | I-01, I-02                                              |
+| appliesToCohorts | all                                                     |
+| inclusionRule    | AND(IS_AT_LEAST_X_YEARS_OLD[18], HAS_METASTATIC_CANCER) |
 
 The following checks are done on the level of inclusion criteria:
  - Every trial ID referenced in an inclusion criterion must be defined in the trial definition file
@@ -70,11 +70,11 @@ The following checks are done on the level of inclusion criteria:
  
 #### Inclusion Criteria Reference
 
-Field | Example
----|---
-trialId | ACTN 2021
-referenceId | I-01
-referenceText | Patient has to be 18 years old
+| Field         | Example                        |
+|---------------|--------------------------------|
+| trialId       | ACTN 2021                      |
+| referenceId   | I-01                           |
+| referenceText | Patient has to be 18 years old |
 
 The following checks are done on the level of inclusion criteria references:
  - Every trial ID referenced in a criteria reference must be defined in the trial definition file.
@@ -92,11 +92,11 @@ type of input expected by the function.
 
 Some examples:
 
-Human readable rule | How to configure as a inclusion rule
----|---
-Patient has to be an adult | IS_AT_LEAST_X_YEARS_OLD[18]
-Has a maximum total bilirubin of 2.5 ULN, or 5.0 ULN in case patient has Gilbert's disease | OR(HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X[2.5], AND(HAS_GILBERT_DISEASE, HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X[5]))
-Patient has no active CNS metastases | NOT(HAS_ACTIVE_CNS_METASTASES)
+| Human readable rule                                                                        | How to configure as a inclusion rule                                                                        |
+|--------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Patient has to be an adult                                                                 | IS_AT_LEAST_X_YEARS_OLD[18]                                                                                 |
+| Has a maximum total bilirubin of 2.5 ULN, or 5.0 ULN in case patient has Gilbert's disease | OR(HAS_TOTAL_BILIRUBIN_ULN_AT_MOST_X[2.5], AND(HAS_GILBERT_DISEASE, HAS_DIRECT_BILIRUBIN_ULN_AT_MOST_X[5])) |
+| Patient has no active CNS metastases                                                       | NOT(HAS_ACTIVE_CNS_METASTASES)                                                                              |
 
 ### Version History and Download Links
  - Upcoming (first release) 
