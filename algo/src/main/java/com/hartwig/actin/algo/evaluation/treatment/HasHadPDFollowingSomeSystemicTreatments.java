@@ -23,9 +23,9 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
     public Evaluation evaluate(@NotNull PatientRecord record) {
         int minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments());
         int maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments());
-        String stopReason = SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(record.clinical().priorTumorTreatments());
 
         if (minSystemicCount >= minSystemicTreatments) {
+            String stopReason = SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(record.clinical().priorTumorTreatments());
             if (stopReason != null && stopReason.equals(STOP_REASON_PD)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
