@@ -184,17 +184,17 @@ In addition, 3 following 'Categories' can be assigned:
 - Nonsteroidal anti-androgen - Treatment names: Flutamide, Nilutamide, Bicalutamide, Enzalutamide, Darolutamide, Ketodarolutamide, Apalutamide
 
 Notes: 
-- For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' configured for a treatment (without further details), resolve to `UNDETERMINED`
-- For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' configured for a treatment (without further details), resolve to `UNDETERMINED`
-- For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' configured for a treatment (without further details), resolve to `UNDETERMINED`
+- For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' is configured for a treatment (without further details), resolve to `UNDETERMINED`
+- For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' is configured for a treatment (without further details), resolve to `UNDETERMINED`
+- For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' is configured for a treatment (without further details), resolve to `UNDETERMINED`
 
 2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
 Notes:
-- If only the requested category configured for a treatment (without further details), resolve to `UNDETERMINED` 
+- If the type of the requested category is not configured for a treatment, resolve to `UNDETERMINED` 
 
 Finally, any trial that a patient has participated in counts as one potential treatment of any type or category. 
-Trials can lead to `UNDETERMINED` in case knowing the exact trial treatment is required to do a conclusive evaluation.
+Trials could lead to `UNDETERMINED` in case knowing the exact trial treatment is required to do a conclusive evaluation.
 
 ##### Rules related to prior primary tumors
 
