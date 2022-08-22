@@ -5,7 +5,6 @@ import java.util.List;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -35,6 +34,7 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypes implements Evaluation
         boolean hasPotentiallyHadTreatment = false;
         boolean hasHadTreatmentWithPD = false;
         boolean hasHadTreatmentWithUnclearStopReason = false;
+        boolean hasHadTrial = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 if (hasValidType(treatment)) {
@@ -52,38 +52,41 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypes implements Evaluation
                     hasPotentiallyHadTreatment = true;
                 }
             }
+
+            if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+                hasHadTrial = true;
+            }
         }
 
-        EvaluationResult result;
         if (hasHadTreatmentWithPD) {
-            result = EvaluationResult.PASS;
-        } else if (hasHadTreatmentWithUnclearStopReason || hasPotentiallyHadTreatment) {
-            result = EvaluationResult.UNDETERMINED;
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has received " + treatment() + " with stop reason PD")
+                    .addPassGeneralMessages(category.display() + " treatment with PD")
+                    .build();
+        } else if (hasHadTreatmentWithUnclearStopReason) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with undetermined stop reason")
+                    .build();
+        } else if (hasPotentiallyHadTreatment || hasHadTrial) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Undetermined whether patient has received " + treatment())
+                    .build();
+        } else if (hasHadTreatment) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient has received " + treatment() + " but not with stop reason PD")
+                    .addFailGeneralMessages("Systemic treatments")
+                    .build();
         } else {
-            result = EvaluationResult.FAIL;
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("No " + category.display() + " treatment with PD")
+                    .addFailGeneralMessages("Systemic treatments")
+                    .build();
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            if (hasHadTreatment) {
-                builder.addFailSpecificMessages("Patient has received " + treatment() + " but not with stop reason PD");
-            } else {
-                builder.addFailSpecificMessages("No " + category.display() + " treatment with PD");
-            }
-            builder.addFailGeneralMessages("Systemic treatments");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            if (hasPotentiallyHadTreatment) {
-                builder.addUndeterminedSpecificMessages("Undetermined whether patient has received " + treatment());
-            } else {
-                builder.addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with undetermined stop reason");
-            }
-            builder.addUndeterminedGeneralMessages("Undetermined " + category.display() + " treatment with PD");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has received " + treatment() + " with stop reason PD");
-            builder.addPassGeneralMessages(category.display() + " treatment with PD");
-        }
-
-        return builder.build();
     }
 
     private boolean hasValidType(@NotNull PriorTumorTreatment treatment) {

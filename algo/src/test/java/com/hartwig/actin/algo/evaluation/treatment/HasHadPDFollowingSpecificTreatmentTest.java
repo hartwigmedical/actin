@@ -42,4 +42,38 @@ public class HasHadPDFollowingSpecificTreatmentTest {
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
+    @Test
+    public void canEvaluateStopReasons() {
+        String treatment = "right treatment";
+        HasHadPDFollowingSpecificTreatment function = new HasHadPDFollowingSpecificTreatment(Sets.newHashSet(treatment), null);
+
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+
+        // Right category but different stop reason
+        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason("toxicity").build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
+        // Right category but no stop reason
+        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason(null).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
+        // Right category and right stop reason
+        treatments.add(TreatmentTestFactory.builder()
+                .name(treatment)
+                .stopReason(HasHadPDFollowingSpecificTreatment.STOP_REASON_PD)
+                .build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    }
+
+    @Test
+    public void canEvaluateWithTrials() {
+        HasHadPDFollowingSpecificTreatment function = new HasHadPDFollowingSpecificTreatment(Sets.newHashSet("right treatment"), null);
+
+        // Add trial
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.TRIAL)
+                        .build())));
+    }
 }

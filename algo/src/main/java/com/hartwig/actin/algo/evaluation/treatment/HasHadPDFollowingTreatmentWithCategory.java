@@ -26,6 +26,7 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasHadPDFollowingTreatmentWithCategory = false;
         boolean hasHadTreatmentWithUnclearStopReason = false;
+        boolean hasHadTrial = false;
 
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
@@ -38,6 +39,10 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
                 } else {
                     hasHadTreatmentWithUnclearStopReason = true;
                 }
+            }
+
+            if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+                hasHadTrial = true;
             }
         }
 
@@ -53,6 +58,12 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
                     .addUndeterminedSpecificMessages(
                             "Patient has had treatment with category " + category.display() + " but stop reason undetermined")
                     .addUndeterminedGeneralMessages("Undetermined " + category.display() + " treatment with PD")
+                    .build();
+        } else if (hasHadTrial) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has had trial with unclear treatment category")
+                    .addUndeterminedGeneralMessages("Trial treatment")
                     .build();
         }
 

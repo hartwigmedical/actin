@@ -129,7 +129,7 @@ public class TreatmentRuleMapper extends RuleMapper {
     private FunctionCreator hasHadTreatmentCategoryOfTypesCreator() {
         return function -> {
             OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
-            return new HasHadTreatmentWithCategoryOfTypes(input.category(), input.strings());
+            return new HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.strings(), 1);
         };
     }
 

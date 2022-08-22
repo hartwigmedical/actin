@@ -5,7 +5,6 @@ import java.util.List;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -30,6 +29,7 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements EvaluationFunct
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasHadValidTreatment = false;
+        boolean hasHadOtherTrial = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 boolean hasCorrectType = true;
@@ -41,19 +41,30 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements EvaluationFunct
                 if (hasCorrectType) {
                     hasHadValidTreatment = true;
                 }
+            } else if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+                hasHadOtherTrial = true;
             }
         }
 
-        EvaluationResult result = hasHadValidTreatment ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
-            builder.addFailGeneralMessages("No " + category.display() + " treatment");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes));
-            builder.addPassGeneralMessages(category.display() + " treatment");
+        if (hasHadValidTreatment) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
+                    .addPassGeneralMessages(category.display() + " treatment")
+                    .build();
+        } else if (hasHadOtherTrial) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Patient may have received " + category.display() + " in a trial, ignoring " + Format.concat(ignoreTypes))
+                    .addUndeterminedGeneralMessages(category.display() + " treatment")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
+                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .build();
         }
-
-        return builder.build();
     }
 }

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -22,6 +23,11 @@ final class TreatmentTestFactory {
     @NotNull
     public static ImmutablePriorTumorTreatment.Builder builder() {
         return ImmutablePriorTumorTreatment.builder().isSystemic(false).name(Strings.EMPTY);
+    }
+
+    @NotNull
+    public static PatientRecord withPriorTumorTreatment(@NotNull PriorTumorTreatment priorTumorTreatment) {
+        return withPriorTumorTreatments(Lists.newArrayList(priorTumorTreatment));
     }
 
     @NotNull

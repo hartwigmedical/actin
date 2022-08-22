@@ -57,4 +57,26 @@ public class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
+    @Test
+    public void canEvaluateWithTrials() {
+        LocalDate minDate = LocalDate.of(2020, 4, 1);
+        HasHadTreatmentWithCategoryOfTypesRecently function =
+                new HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY,
+                        Lists.newArrayList("Anti-EGFR"),
+                        minDate);
+
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+        treatments.add(TreatmentTestFactory.builder()
+                .addCategories(TreatmentCategory.TRIAL)
+                .startYear(minDate.minusYears(1).getYear())
+                .build());
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
+        treatments.add(TreatmentTestFactory.builder()
+                .addCategories(TreatmentCategory.TRIAL)
+                .startYear(minDate.plusYears(1).getYear())
+                .build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    }
 }

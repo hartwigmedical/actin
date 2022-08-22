@@ -33,6 +33,7 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
     public Evaluation evaluate(@NotNull PatientRecord record) {
         int numMatchingTreatmentLines = 0;
         int numApproximateTreatmentLines = 0;
+        int numOtherTrials = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 if (TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
@@ -42,10 +43,12 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
                 } else {
                     numApproximateTreatmentLines++;
                 }
+            } else if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+                numOtherTrials++;
             }
         }
 
-        if (numMatchingTreatmentLines + numApproximateTreatmentLines <= maxTreatmentLines) {
+        if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials <= maxTreatmentLines) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "

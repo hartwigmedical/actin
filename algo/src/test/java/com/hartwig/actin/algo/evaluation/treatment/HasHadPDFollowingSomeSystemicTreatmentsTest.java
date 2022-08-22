@@ -37,4 +37,17 @@ public class HasHadPDFollowingSomeSystemicTreatmentsTest {
         treatments.add(TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).startYear(2021).stopReason("toxicity").build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
+    @Test
+    public void canEvaluateUninterruptedTreatments() {
+        HasHadPDFollowingSomeSystemicTreatments function = new HasHadPDFollowingSomeSystemicTreatments(2);
+
+        // No treatments yet
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+
+        // Add 2 consecutive treatments
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).name("treatment").startYear(2020).build());
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).name("treatment").startYear(2021).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    }
 }

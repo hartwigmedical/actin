@@ -30,6 +30,10 @@ public class HasHadSomeTreatmentsWithCategoryTest {
         treatments.add(TreatmentTestFactory.builder().addCategories(category).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
+        // Add a trial as well
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
         // Add another correct treatment category
         treatments.add(TreatmentTestFactory.builder().addCategories(category).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));

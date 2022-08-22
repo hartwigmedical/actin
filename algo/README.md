@@ -194,7 +194,7 @@ Notes:
 - If the type of the requested category is not configured for a treatment, resolve to `UNDETERMINED` 
 
 Finally, any trial that a patient has participated in counts as one potential treatment of any type or category. 
-Trials could lead to `UNDETERMINED` in case knowing the exact trial treatment is required to do a conclusive evaluation.
+Trials could lead to `WARN` in case knowing the exact trial treatment is required to do a conclusive evaluation.
 
 ##### Rules related to prior primary tumors
 

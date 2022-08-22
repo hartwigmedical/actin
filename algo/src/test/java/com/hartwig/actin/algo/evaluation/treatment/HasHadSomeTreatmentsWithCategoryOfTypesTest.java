@@ -43,4 +43,16 @@ public class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("Another anti-EGFR").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
+    @Test
+    public void canEvaluateWithTrials() {
+        HasHadSomeTreatmentsWithCategoryOfTypes function =
+                new HasHadSomeTreatmentsWithCategoryOfTypes(TreatmentCategory.TARGETED_THERAPY, Lists.newArrayList(), 1);
+
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.TRIAL)
+                        .build())));
+
+    }
 }

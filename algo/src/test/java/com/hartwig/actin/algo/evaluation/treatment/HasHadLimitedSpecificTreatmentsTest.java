@@ -41,6 +41,21 @@ public class HasHadLimitedSpecificTreatmentsTest {
     }
 
     @Test
+    public void canEvaluateWithTrials() {
+        HasHadLimitedSpecificTreatments function = new HasHadLimitedSpecificTreatments(Sets.newHashSet("right treatment"), null, 1);
+
+        List<PriorTumorTreatment> treatments = Lists.newArrayList();
+
+        // Add correct treatment within trial
+        treatments.add(TreatmentTestFactory.builder().name("right treatment").addCategories(TreatmentCategory.TRIAL).build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+
+        // Add aonther trial with unclear treatment
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build());
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    }
+
+    @Test
     public void canHandleNoWarnCategory() {
         HasHadLimitedSpecificTreatments function = new HasHadLimitedSpecificTreatments(Sets.newHashSet("treatment"), null, 1);
 

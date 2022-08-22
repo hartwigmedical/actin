@@ -37,7 +37,9 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
         List<String> matchTreatments = Lists.newArrayList();
         List<String> warnTreatments = Lists.newArrayList();
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (warnCategory != null && treatment.categories().contains(warnCategory)) {
+            boolean isWarnCategory = warnCategory != null && treatment.categories().contains(warnCategory);
+            boolean isTrial = treatment.categories().contains(TreatmentCategory.TRIAL);
+            if (isWarnCategory || isTrial) {
                 warnTreatments.add(treatment.name());
             }
 
@@ -56,11 +58,13 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
                     .addFailGeneralMessages("Nr of specific treatments")
                     .build();
         } else if (warnTreatments.size() > maxTreatmentLines) {
+            String undeterminedMessage =
+                    warnCategory != null ? "Patient has received " + warnCategory.display() + " or trial treatment " + warnTreatments.size()
+                            + " times" : "Patient has received " + Format.concat(warnTreatments) + " treatments including trials";
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Patient has received " + warnCategory.display() + " treatment " + warnTreatments.size() + " times")
-                    .addUndeterminedGeneralMessages("Nr of specific treatments")
+                    .addUndeterminedSpecificMessages(undeterminedMessage)
+                    .addUndeterminedSpecificMessages("Nr of specific treatments")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()

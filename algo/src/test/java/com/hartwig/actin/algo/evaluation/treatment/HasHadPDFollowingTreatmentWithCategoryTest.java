@@ -39,4 +39,15 @@ public class HasHadPDFollowingTreatmentWithCategoryTest {
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
+    @Test
+    public void canEvaluateWithTrial() {
+        HasHadPDFollowingTreatmentWithCategory function = new HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY);
+
+        // Add one trial
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.TRIAL)
+                        .build())));
+    }
 }

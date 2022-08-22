@@ -35,36 +35,45 @@ public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFun
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasHadValidTreatment = false;
+        boolean hasHadTrialAfterMinDate = false;
         boolean hasInconclusiveDate = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+            Boolean startedPastMinDate = DateComparison.isAfterDate(minDate, treatment.startYear(), treatment.startMonth());
             if (hasValidCategoryAndType(treatment)) {
-                Boolean startedPastMinDate = DateComparison.isAfterDate(minDate, treatment.startYear(), treatment.startMonth());
                 if (startedPastMinDate == null) {
                     hasInconclusiveDate = true;
                 } else if (startedPastMinDate) {
                     hasHadValidTreatment = true;
                 }
+            } else if (treatment.categories().contains(TreatmentCategory.TRIAL) && startedPastMinDate != null && startedPastMinDate) {
+                hasHadTrialAfterMinDate = true;
             }
         }
 
         if (hasHadValidTreatment) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassGeneralMessages(category.display() + " treatment")
                     .addPassSpecificMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment")
+                    .addPassGeneralMessages(category.display() + " treatment")
                     .build();
         } else if (hasInconclusiveDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment")
                     .addUndeterminedSpecificMessages(
                             "Patient has received " + Format.concat(types) + " " + category.display() + " treatment with inconclusive date")
+                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment")
+                    .build();
+        } else if (hasHadTrialAfterMinDate) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has participated in a trial recently")
+                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
                     .addFailSpecificMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment")
+                    .addFailGeneralMessages("No " + category.display() + " treatment")
                     .build();
         }
     }

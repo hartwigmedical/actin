@@ -49,4 +49,15 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesTest {
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
+
+    @Test
+    public void canEvaluateWithTrials() {
+        HasHadPDFollowingTreatmentWithCategoryOfTypes function =
+                new HasHadPDFollowingTreatmentWithCategoryOfTypes(TreatmentCategory.CHEMOTHERAPY, Lists.newArrayList("type 1"));
+
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.TRIAL)
+                        .build())));
+    }
 }

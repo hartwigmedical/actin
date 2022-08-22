@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -26,22 +25,34 @@ public class HasHadLimitedTreatmentsWithCategory implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         int numTreatmentLines = 0;
+        int numOtherTrials = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 numTreatmentLines++;
+            } else if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+                numOtherTrials++;
             }
         }
 
-        EvaluationResult result = numTreatmentLines <= maxTreatmentLines ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has received more than " + maxTreatmentLines + " lines of " + category.display());
-            builder.addFailGeneralMessages("No " + category.display() + " treatment");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + category.display());
-            builder.addPassGeneralMessages(category.display() + " treatment");
+        if (numTreatmentLines + numOtherTrials <= maxTreatmentLines) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + category.display())
+                    .addPassGeneralMessages(category.display() + " treatment")
+                    .build();
+        } else if (numTreatmentLines <= maxTreatmentLines) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Patient may have received more than " + maxTreatmentLines + " lines of " + category.display())
+                    .addUndeterminedGeneralMessages(category.display() + " treatment")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("Patient has received more than " + maxTreatmentLines + " lines of " + category.display())
+                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .build();
         }
-
-        return builder.build();
     }
 }

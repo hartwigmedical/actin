@@ -39,7 +39,9 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
         boolean hasHadTreatmentWithWarnType = false;
 
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            if (warnCategory != null && treatment.categories().contains(warnCategory)) {
+            boolean isWarnCategory = warnCategory != null && treatment.categories().contains(warnCategory);
+            boolean isTrial = treatment.categories().contains(TreatmentCategory.TRIAL);
+            if (isWarnCategory || isTrial) {
                 hasHadTreatmentWithWarnType = true;
             }
 

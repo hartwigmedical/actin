@@ -58,6 +58,15 @@ public class TreatmentTypeResolverTest {
     }
 
     @Test
+    public void canRetrieveAcronymForTrial() {
+        String acronym = "acronym";
+
+        PriorTumorTreatment trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).trialAcronym(acronym).build();
+
+        assertTrue(TreatmentTypeResolver.isOfType(trial, TreatmentCategory.TRIAL, acronym));
+    }
+
+    @Test
     public void canHandleCategoryWithoutType() {
         PriorTumorTreatment vaccine = TreatmentTestFactory.builder().categories(Lists.newArrayList(TreatmentCategory.VACCINE)).build();
 

@@ -33,6 +33,7 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
     public Evaluation evaluate(@NotNull PatientRecord record) {
         int numMatchingTreatmentLines = 0;
         int numApproximateTreatmentLines = 0;
+        int numOtherTrials = 0;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 if (TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
@@ -42,6 +43,8 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
                 } else {
                     numApproximateTreatmentLines++;
                 }
+            } else if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+                numOtherTrials++;
             }
         }
 
@@ -53,7 +56,7 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
                                     + category.display())
                     .addPassGeneralMessages(category.display() + " treatment")
                     .build();
-        } else if (numMatchingTreatmentLines + numApproximateTreatmentLines >= minTreatmentLines) {
+        } else if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials >= minTreatmentLines) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
