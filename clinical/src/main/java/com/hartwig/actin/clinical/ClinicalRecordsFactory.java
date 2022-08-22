@@ -138,7 +138,7 @@ public class ClinicalRecordsFactory {
     @VisibleForTesting
     static String toSampleId(@NotNull String subject) {
         String adjusted = subject;
-        // Subjects have been passed with unexpected subject IDs in the past (eg without ACTN prefix)
+        // Subjects have been passed with unexpected subject IDs in the past (e.g. without ACTN prefix)
         if (subject.length() == 10 && !subject.startsWith("ACTN")) {
             LOGGER.warn("Suspicious subject detected. Pre-fixing with 'ACTN': {}", subject);
             adjusted = "ACTN" + subject;

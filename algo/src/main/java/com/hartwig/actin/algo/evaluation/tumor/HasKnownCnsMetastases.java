@@ -28,10 +28,7 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
                     .build();
         }
 
-        boolean hasKnownCnsMetastases = false;
-        if (hasCnsLesions != null && hasCnsLesions) {
-            hasKnownCnsMetastases = true;
-        }
+        boolean hasKnownCnsMetastases = hasCnsLesions != null && hasCnsLesions;
 
         boolean hasAtLeastActiveBrainMetastases = false;
         if (hasBrainLesions != null && hasBrainLesions) {

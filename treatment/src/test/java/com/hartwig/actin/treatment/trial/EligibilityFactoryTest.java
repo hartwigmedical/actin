@@ -25,7 +25,7 @@ public class EligibilityFactoryTest {
         // Trailing whitespace is allowed
         assertTrue(factory.isValidInclusionCriterion("NOT(HAS_INR_ULN_OF_AT_MOST_X[1])  "));
 
-        // Complex rule with multiple AND and OR.
+        // Complex rule with multiple AND & OR.
         assertTrue(factory.isValidInclusionCriterion("OR(AND(OR(HAS_INR_ULN_OF_AT_MOST_X[1], HAS_PT_ULN_OF_AT_MOST_X[2]), "
                 + "HAS_APTT_ULN_OF_AT_MOST_X[3]), HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING)"));
 

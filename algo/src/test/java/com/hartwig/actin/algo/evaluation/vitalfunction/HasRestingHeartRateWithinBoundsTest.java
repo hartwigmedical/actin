@@ -40,7 +40,7 @@ public class HasRestingHeartRateWithinBoundsTest {
         heartRates.add(heartRate().date(referenceDate.plusDays(1)).value(200).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)));
 
-        // Succeed when we add bunch of more recent correct measures.
+        // Succeed when we add a bunch of more recent correct measures.
         heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
         heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());
         heartRates.add(heartRate().date(referenceDate.plusDays(2)).value(70).build());

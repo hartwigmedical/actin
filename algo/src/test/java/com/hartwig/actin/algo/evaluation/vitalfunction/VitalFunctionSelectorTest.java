@@ -63,7 +63,7 @@ public class VitalFunctionSelectorTest {
         vitalFunctions.add(systolic().date(mostRecentDate.minusMonths(3)).build());
         assertEquals(1, selectSystolic(vitalFunctions).size());
 
-        // Add bunch of valid systolic measures
+        // Add a bunch of valid systolic measures
         vitalFunctions.add(systolic().date(mostRecentDate.minusDays(1)).build());
         vitalFunctions.add(systolic().date(mostRecentDate.minusDays(2)).build());
         vitalFunctions.add(systolic().date(mostRecentDate.minusDays(3)).build());

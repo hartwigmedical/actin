@@ -22,7 +22,7 @@ public class LabValueDescendingDateComparator implements Comparator<LabValue> {
             return codeCompare;
         }
 
-        // In case a code has been measured twice on the same date -> put highest value first.
+        // In case a code has been measured twice on the same date -> put the highest value first.
         return Doubles.compare(lab2.value(), lab1.value());
     }
 }

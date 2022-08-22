@@ -83,7 +83,7 @@ final class CreatinineFunctions {
         boolean isFemale = gender == Gender.FEMALE;
 
         double effectiveWeight =
-                Objects.requireNonNullElseGet(weight, () -> isFemale ? DEFAULT_MIN_WEIGHT_FEMALE : DEFAULT_MIN_WEIGHT_MALE);
+                Objects.requireNonNullElse(weight, isFemale ? DEFAULT_MIN_WEIGHT_FEMALE : DEFAULT_MIN_WEIGHT_MALE);
 
         int age = referenceYear - birthYear;
 

@@ -53,7 +53,7 @@ public class SystemicTreatmentAnalyserTest {
         assertEquals(3, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(6, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));
 
-        // Make sure one older non-systemic doesnt screw up.
+        // Make sure one older non-systemic doesn't screw up.
         treatments.add(TreatmentTestFactory.builder().name("treatment D").startYear(2019).startMonth(5).isSystemic(false).build());
         assertEquals(3, SystemicTreatmentAnalyser.minSystemicTreatments(treatments));
         assertEquals(6, SystemicTreatmentAnalyser.maxSystemicTreatments(treatments));

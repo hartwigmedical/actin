@@ -210,7 +210,7 @@ In case the ORANGE results were not reliable, no wild-type genes will be set.
 The evidence is extracted from PROTECT in the following steps:
  1. Evidence is filtered for applicability based on ACTIN's internal applicability model. This applicability model removes evidence 
  from any source that is never considered to be applicable. 
- 1. Reported evidence is used exclusively for the inputs to the steps defined below
+ 2. Reported evidence is used exclusively for the inputs to the steps defined below
 
 For ACTIN trial evidence, the following mapping is performed based on the assumption that PROTECT has been run against a SERVE database 
 containing all ACTIN molecular criteria:

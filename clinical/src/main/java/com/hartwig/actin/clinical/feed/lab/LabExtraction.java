@@ -68,7 +68,7 @@ public final class LabExtraction {
 
         boolean isReadingDigit = false;
         for (int i = 0; i < referenceRangeText.length(); i++) {
-            if (isReadingDigit && referenceRangeText.substring(i, i + 1).equals("-")) {
+            if (isReadingDigit && referenceRangeText.charAt(i) == '-') {
                 return i;
             } else if (isDigit(referenceRangeText.charAt(i))) {
                 isReadingDigit = true;

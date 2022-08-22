@@ -44,7 +44,7 @@ Every criterion evaluates to one of the following options:
 Every criterion algorithm also provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly understand which 
 evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`) is as it is. 
 
-Finally, each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether or not the outcome of the criterion evaluation 
+Finally, each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation 
 could be recovered in case of a `FAIL`. For example, lab values may be insufficient at moment of evaluation, but turn out to be sufficient in 2 weeks
 when a new lab test is done ('recoverable'), while a tumor type cannot change ('unrecoverable'). 
 
@@ -53,7 +53,7 @@ when a new lab test is done ('recoverable'), while a tumor type cannot change ('
 Once all criteria are evaluated, the following algorithm determines whether a patient is potentially eligible for a trial:
  1. For every cohort within a trial, the patient is considered potentially eligible for that cohort in case none of the cohort-specific 
  criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED`.
- 1. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED` and the trial 
+ 2. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED` and the trial 
  either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
 Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered  eligible 
@@ -359,7 +359,7 @@ or that this value is also out of requested range, the evaluation resolves to `F
 
 | Rule                                                                | When does a patient pass evaluation?                                                                                                                                                                                                         | Note                                                                                                                                               |
 |---------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_TERM_X                 | Prior other conditions > any configured DOID should be equal or be a child of DOID belongin to term "X"                                                                                                                                      |                                                                                                                                                    |
+| HAS_HISTORY_OF_SPECIFIC_CONDITION_ WITH_DOID_TERM_X                 | Prior other conditions > any configured DOID should be equal or be a child of DOID belonging to term "X"                                                                                                                                     |                                                                                                                                                    |
 | HAS_HISTORY_OF_SPECIFIC_CONDITION_ X_BY_NAME                        | Prior other conditions > name like %X%                                                                                                                                                                                                       |                                                                                                                                                    |
 | HAS_HISTORY_OF_AUTOIMMUNE_DISEASE                                   | Prior other conditions > any configured doid should be equal or be a child of DOID 417                                                                                                                                                       |                                                                                                                                                    |
 | HAS_HISTORY_OF_ANGINA                                               | Prior other conditions > any configured doid equal or a child of DOID 8805 or 0111151                                                                                                                                                        |                                                                                                                                                    |
