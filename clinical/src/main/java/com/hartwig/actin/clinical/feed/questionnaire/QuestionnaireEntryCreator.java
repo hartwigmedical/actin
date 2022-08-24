@@ -7,7 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class QuestionnaireEntryCreator implements FeedEntryCreator<QuestionnaireEntry> {
 
-    public QuestionnaireEntryCreator() {
+    private static final String MANUAL_QUESTIONNAIRE_DESCRIPTION = "INT Consult";
+
+    private final boolean invalidateManualQuestionnaires;
+
+    public QuestionnaireEntryCreator(final boolean invalidateManualQuestionnaires) {
+        this.invalidateManualQuestionnaires = invalidateManualQuestionnaires;
     }
 
     @NotNull
@@ -24,6 +29,6 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
 
     @Override
     public boolean isValid(@NotNull final FeedLine line) {
-        return true;
+        return !invalidateManualQuestionnaires || !line.string("description").equals(MANUAL_QUESTIONNAIRE_DESCRIPTION);
     }
 }

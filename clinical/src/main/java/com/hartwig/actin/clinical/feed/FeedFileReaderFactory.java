@@ -32,7 +32,13 @@ public final class FeedFileReaderFactory {
     @NotNull
     public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader() {
         // Questionnaires have line breaks in the free-text field
-        return new FeedFileReader<>(new QuestionnaireEntryCreator(), true);
+        // We filter manual questionnaires.
+        return new FeedFileReader<>(new QuestionnaireEntryCreator(true), true);
+    }
+
+    @NotNull
+    public static FeedFileReader<QuestionnaireEntry> createManualQuestionnaireReader() {
+        return new FeedFileReader<>(new QuestionnaireEntryCreator(false), true);
     }
 
     @NotNull

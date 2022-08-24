@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
@@ -23,6 +24,7 @@ public final class ClinicalFeedReader {
 
     private static final String PATIENT_TSV = "patient.tsv";
     private static final String QUESTIONNAIRE_TSV = "questionnaire.tsv";
+    private static final String MANUAL_QUESTIONNAIRE_TSV = "manual_questionnaire.tsv";
     private static final String ENCOUNTER_TSV = "encounter.tsv";
     private static final String MEDICATION_TSV = "medication.tsv";
     private static final String LAB_TSV = "lab.tsv";
@@ -40,7 +42,7 @@ public final class ClinicalFeedReader {
         String basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory);
         ClinicalFeed feed = ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
-                .questionnaireEntries(readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV))
+                .questionnaireEntries(readAllQuestionnaires(basePath))
                 .encounterEntries(readEncounterEntries(basePath + ENCOUNTER_TSV))
                 .medicationEntries(readMedicationEntries(basePath + MEDICATION_TSV))
                 .labEntries(readLabEntries(basePath + LAB_TSV))
@@ -62,9 +64,28 @@ public final class ClinicalFeedReader {
     }
 
     @NotNull
+    private static List<QuestionnaireEntry> readAllQuestionnaires(@NotNull String basePath) throws IOException {
+        List<QuestionnaireEntry> baseQuestionnaires = readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV);
+        List<QuestionnaireEntry> manualQuestionnaires = readManualQuestionnaireEntries(basePath + MANUAL_QUESTIONNAIRE_TSV);
+
+        List<QuestionnaireEntry> merged = Lists.newArrayList();
+        merged.addAll(baseQuestionnaires);
+        merged.addAll(manualQuestionnaires);
+
+        return merged;
+    }
+
+    @NotNull
     private static List<QuestionnaireEntry> readQuestionnaireEntries(@NotNull String questionnaireTsv) throws IOException {
         List<QuestionnaireEntry> entries = FeedFileReaderFactory.createQuestionnaireReader().read(questionnaireTsv);
         LOGGER.info(" Read {} questionnaire entries from {}", entries.size(), questionnaireTsv);
+        return entries;
+    }
+
+    @NotNull
+    private static List<QuestionnaireEntry> readManualQuestionnaireEntries(@NotNull String manualQuestionnaireTsv) throws IOException {
+        List<QuestionnaireEntry> entries = FeedFileReaderFactory.createManualQuestionnaireReader().read(manualQuestionnaireTsv);
+        LOGGER.info(" Read {} manual questionnaire entries from {}", entries.size(), manualQuestionnaireTsv);
         return entries;
     }
 
