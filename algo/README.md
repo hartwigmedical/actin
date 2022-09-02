@@ -356,7 +356,7 @@ ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimi
 
 Notes: 
  - For all lab values, the most recent available lab value (up to 90 days old) is evaluated. 
- - If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolved to `WARN` instead of `PASS`
+ - If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolves to `WARN` instead of `PASS`
  - If the most recent lab value is out of the requested range, the second-last lab value is evaluated. 
    - In case that a second-last lab value is available, less than 90 days old and within requested range, the evaluation resolves to `WARN`. 
    - In case there is no applicable second-last value, or this value is also out of requested range, the evaluation resolves to `FAIL`.
