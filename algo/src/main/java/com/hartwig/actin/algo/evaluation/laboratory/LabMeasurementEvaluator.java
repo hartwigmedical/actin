@@ -24,12 +24,15 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     private final LabEvaluationFunction function;
     @NotNull
     private final LocalDate minValidDate;
+    @NotNull
+    private final LocalDate minPassDate;
 
-    LabMeasurementEvaluator(@NotNull final LabMeasurement measurement, @NotNull final LabEvaluationFunction function,
-            @NotNull final LocalDate minValidDate) {
+    public LabMeasurementEvaluator(@NotNull final LabMeasurement measurement, @NotNull final LabEvaluationFunction function,
+            @NotNull final LocalDate minValidDate, @NotNull final LocalDate minPassDate) {
         this.measurement = measurement;
         this.function = function;
         this.minValidDate = minValidDate;
+        this.minPassDate = minPassDate;
     }
 
     @NotNull
@@ -61,11 +64,18 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
                 Evaluation secondEvaluation = function.evaluate(record, secondMostRecent);
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
                     return EvaluationFactory.recoverable()
-                            .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Latest measurement fails for " + measurement.code() + ", but second-latest succeeded")
+                            .result(EvaluationResult.WARN)
+                            .addWarnSpecificMessages("Latest measurement fails for " + measurement.code() + ", but second-latest succeeded")
                             .build();
                 }
             }
+        }
+
+        if (evaluation.result() == EvaluationResult.PASS && !mostRecent.date().isAfter(minPassDate)) {
+            return EvaluationFactory.recoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllWarnSpecificMessages(evaluation.passSpecificMessages())
+                    .build();
         }
 
         return evaluation;

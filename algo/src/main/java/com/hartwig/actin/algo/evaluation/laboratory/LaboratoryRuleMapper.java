@@ -25,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class LaboratoryRuleMapper extends RuleMapper {
 
-    private static final int MAX_LAB_VALUE_AGE_DAYS = 30;
+    private static final int MAX_LAB_VALUE_AGE_DAYS_FOR_VALIDITY = 90;
+    private static final int MAX_LAB_VALUE_AGE_DAYS_FOR_PASS = 30;
 
     private static final String AUTOSOMAL_DOMINANT_HYPOCALCEMIA_DOID = "0090109";
     private static final String PRIMARY_HYPOMAGNESEMIA_DOID = "0060879";
@@ -280,12 +281,17 @@ public class LaboratoryRuleMapper extends RuleMapper {
 
     @NotNull
     private EvaluationFunction createLabEvaluator(@NotNull LabMeasurement measurement, @NotNull LabEvaluationFunction function) {
-        return new LabMeasurementEvaluator(measurement, function, minValidLabDate());
+        return new LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate());
     }
 
     @NotNull
     private LocalDate minValidLabDate() {
-        return referenceDateProvider().date().minusDays(MAX_LAB_VALUE_AGE_DAYS);
+        return referenceDateProvider().date().minusDays(MAX_LAB_VALUE_AGE_DAYS_FOR_VALIDITY);
+    }
+
+    @NotNull
+    private LocalDate minPassLabDate() {
+        return referenceDateProvider().date().minusDays(MAX_LAB_VALUE_AGE_DAYS_FOR_PASS);
     }
 
     @NotNull

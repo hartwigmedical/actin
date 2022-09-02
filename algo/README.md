@@ -354,10 +354,12 @@ _Other_
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
-Note: for all lab values, the latest available lab value (up to 30 days) is evaluated. 
-If the latest lab value is out of the requested range, the second-last lab value is evaluated. 
-In case that a second-last lab value is available and within requested range as configured in the rule, the evaluation resolves to `UNDETERMINED`. In case no second-last value is applicable, 
-or that this value is also out of requested range, the evaluation resolves to `FAIL`.
+Notes: 
+ - For all lab values, the most recent available lab value (up to 90 days old) is evaluated. 
+ - If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolved to `WARN`.
+ - If the most recent lab value is out of the requested range, the second-last lab value is evaluated. 
+   - In case that a second-last lab value is available, less than 90 days old and within requested range, the evaluation resolves to `WARN`. 
+   - In case there is no applicable second-last value, or this value is also out of requested range, the evaluation resolves to `FAIL`.
 
 ##### Rules related to other conditions
 
