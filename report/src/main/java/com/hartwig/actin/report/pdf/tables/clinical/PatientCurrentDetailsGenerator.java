@@ -77,6 +77,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Cancer-related complications"));
         table.addCell(Cells.createValue(complications(record.complications())));
 
+        //TODO: Ignore allergies with name "None" for display on report in case patient also has allergies that != "None"
         table.addCell(Cells.createKey("Known allergies"));
         table.addCell(Cells.createValue(allergies(record.intolerances())));
 
