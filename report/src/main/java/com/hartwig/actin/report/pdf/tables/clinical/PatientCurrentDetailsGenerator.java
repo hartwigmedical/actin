@@ -77,7 +77,6 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Cancer-related complications"));
         table.addCell(Cells.createValue(complications(record.complications())));
 
-        //TODO: Ignore allergies with name "None" for display on report in case patient also has allergies that != "None"
         table.addCell(Cells.createKey("Known allergies"));
         table.addCell(Cells.createValue(allergies(record.intolerances())));
 
@@ -133,11 +132,13 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String allergies(@NotNull List<Intolerance> allergies) {
+    private static String allergies(@NotNull List<Intolerance> intolerances) {
         StringJoiner joiner = Formats.commaJoiner();
-        for (Intolerance intolerance : allergies) {
-            String addition = !intolerance.category().isEmpty() ? " (" + intolerance.category() + ")" : Strings.EMPTY;
-            joiner.add(intolerance.name() + addition);
+        for (Intolerance intolerance : intolerances) {
+            if (!intolerance.name().equalsIgnoreCase("none")) {
+                String addition = !intolerance.category().isEmpty() ? " (" + intolerance.category() + ")" : Strings.EMPTY;
+                joiner.add(intolerance.name() + addition);
+            }
         }
 
         return Formats.valueOrDefault(joiner.toString(), "None");
