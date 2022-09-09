@@ -65,8 +65,8 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withDoidAndSubType(@NotNull String doid, @Nullable String primaryTumorSubType) {
-        return withTumorDetails(builder().addDoids(doid).primaryTumorSubType(primaryTumorSubType).build());
+    public static PatientRecord withDoidAndSubLocation(@NotNull String doid, @Nullable String primaryTumorSubLocation) {
+        return withTumorDetails(builder().addDoids(doid).primaryTumorSubLocation(primaryTumorSubLocation).build());
     }
 
     @NotNull

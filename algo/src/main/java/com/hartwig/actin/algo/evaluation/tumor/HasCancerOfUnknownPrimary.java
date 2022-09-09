@@ -17,7 +17,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
     static final String CANCER_DOID = "162";
     static final String ORGAN_SYSTEM_CANCER_DOID = "0050686";
 
-    static final String CUP_PRIMARY_TUMOR_SUB_TYPE = "CUP";
+    static final String CUP_PRIMARY_TUMOR_SUB_LOCATION = "CUP";
 
     @NotNull
     private final DoidModel doidModel;
@@ -43,8 +43,8 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         }
 
         if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, CANCER_DOID)) {
-            String tumorSubType = record.clinical().tumor().primaryTumorSubType();
-            if (tumorSubType == null || !tumorSubType.equals(CUP_PRIMARY_TUMOR_SUB_TYPE)) {
+            String tumorSubLocation = record.clinical().tumor().primaryTumorSubLocation();
+            if (tumorSubLocation == null || !tumorSubLocation.equals(CUP_PRIMARY_TUMOR_SUB_LOCATION)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages(
