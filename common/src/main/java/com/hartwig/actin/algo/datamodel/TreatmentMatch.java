@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TreatmentMatch {
 
     @NotNull
+    public abstract String patientId();
+
+    @NotNull
     public abstract String sampleId();
 
     @NotNull

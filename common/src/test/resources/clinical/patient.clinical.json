@@ -1,5 +1,5 @@
 {
-  "sampleId": "ACTN01029999T",
+  "patientId": "ACTN01029999",
   "patient": {
     "gender": "MALE",
     "birthYear": 1960,

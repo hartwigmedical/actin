@@ -51,6 +51,7 @@ public final class TestMolecularFactory {
     @NotNull
     public static MolecularRecord createMinimalTestMolecularRecord() {
         return ImmutableMolecularRecord.builder()
+                .patientId(TestDataFactory.TEST_PATIENT)
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
                 .containsTumorCells(true)

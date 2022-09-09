@@ -87,17 +87,17 @@ public class ClinicalRecordsFactory {
         List<ClinicalRecord> records = Lists.newArrayList();
         LOGGER.info("Creating clinical model");
         for (String subject : feed.subjects()) {
-            String sampleId = toSampleId(subject);
-            LOGGER.info(" Extracting data for sample {}", sampleId);
+            String patientId = toPatientId(subject);
+            LOGGER.info(" Extracting data for patient {}", patientId);
 
             Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
 
-            if (containsSampleId(records, sampleId)) {
-                throw new IllegalStateException("Cannot create clinical records. Duplicate sampleId: " + sampleId);
+            if (containsPatientId(records, patientId)) {
+                throw new IllegalStateException("Cannot create clinical records. Duplicate patientId: " + patientId);
             }
 
             records.add(ImmutableClinicalRecord.builder()
-                    .sampleId(sampleId)
+                    .patientId(patientId)
                     .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
@@ -124,9 +124,9 @@ public class ClinicalRecordsFactory {
         return records;
     }
 
-    private static boolean containsSampleId(@NotNull List<ClinicalRecord> records, @NotNull String sampleId) {
+    private static boolean containsPatientId(@NotNull List<ClinicalRecord> records, @NotNull String patientId) {
         for (ClinicalRecord record : records) {
-            if (record.sampleId().equals(sampleId)) {
+            if (record.patientId().equals(patientId)) {
                 return true;
             }
         }
@@ -136,7 +136,7 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     @VisibleForTesting
-    static String toSampleId(@NotNull String subject) {
+    static String toPatientId(@NotNull String subject) {
         String adjusted = subject;
         // Subjects have been passed with unexpected subject IDs in the past (e.g. without ACTN prefix)
         if (subject.length() == 10 && !subject.startsWith("ACTN")) {
@@ -144,8 +144,7 @@ public class ClinicalRecordsFactory {
             adjusted = "ACTN" + subject;
         }
 
-        // Assume a single sample per patient ending with "T". No "TII" supported yet.
-        return adjusted.replaceAll("-", "") + "T";
+        return adjusted.replaceAll("-", "");
     }
 
     @NotNull

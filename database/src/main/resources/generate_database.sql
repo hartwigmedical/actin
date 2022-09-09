@@ -4,7 +4,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(20) UNIQUE,
+    patientId varchar(20) UNIQUE,
     gender varchar(10) NOT NULL,
     birthYear int NOT NULL,
     registrationDate DATE NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE patient
 DROP TABLE IF EXISTS tumor;
 CREATE TABLE tumor
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) UNIQUE,
+    patientId varchar(50) UNIQUE,
     primaryTumorLocation varchar(50),
     primaryTumorSubLocation varchar(50),
     primaryTumorType varchar(50),
@@ -39,7 +39,7 @@ CREATE TABLE tumor
 DROP TABLE IF EXISTS clinicalStatus;
 CREATE TABLE clinicalStatus
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) UNIQUE,
+    patientId varchar(50) UNIQUE,
     who int,
     hasActiveInfection BOOLEAN,
     activeInfectionDescription varchar(50),
@@ -54,7 +54,7 @@ CREATE TABLE clinicalStatus
 DROP TABLE IF EXISTS priorTumorTreatment;
 CREATE TABLE priorTumorTreatment
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     name varchar(100) NOT NULL,
     startYear int,
     startMonth int,
@@ -79,7 +79,7 @@ CREATE TABLE priorTumorTreatment
 DROP TABLE IF EXISTS priorSecondPrimary;
 CREATE TABLE priorSecondPrimary
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     tumorLocation varchar(50) NOT NULL,
     tumorSubLocation varchar(50) NOT NULL,
     tumorType varchar(50) NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE priorSecondPrimary
 DROP TABLE IF EXISTS priorOtherCondition;
 CREATE TABLE priorOtherCondition
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     name varchar(500) NOT NULL,
     year int,
     month int,
@@ -110,7 +110,7 @@ CREATE TABLE priorOtherCondition
 DROP TABLE IF EXISTS priorMolecularTest;
 CREATE TABLE priorMolecularTest
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     test varchar(50) NOT NULL,
     item varchar(50) NOT NULL,
     measure varchar(50),
@@ -124,7 +124,7 @@ CREATE TABLE priorMolecularTest
 DROP TABLE IF EXISTS complication;
 CREATE TABLE complication
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     name varchar(150) NOT NULL,
     categories varchar(150) NOT NULL,
     year int,
@@ -135,7 +135,7 @@ CREATE TABLE complication
 DROP TABLE IF EXISTS labValue;
 CREATE TABLE labValue
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     date DATE NOT NULL,
     code varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
@@ -151,7 +151,7 @@ CREATE TABLE labValue
 DROP TABLE IF EXISTS toxicity;
 CREATE TABLE toxicity
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
     evaluatedDate DATE NOT NULL,
     source varchar(50) NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE toxicity
 DROP TABLE IF EXISTS intolerance;
 CREATE TABLE intolerance
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
     doids varchar(50) NOT NULL,
     category varchar(50) NOT NULL,
@@ -177,7 +177,7 @@ CREATE TABLE intolerance
 DROP TABLE IF EXISTS surgery;
 CREATE TABLE surgery
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     endDate DATE NOT NULL,
     status varchar(50) NOT NULL,
     PRIMARY KEY (id)
@@ -186,7 +186,7 @@ CREATE TABLE surgery
 DROP TABLE IF EXISTS bodyWeight;
 CREATE TABLE bodyWeight
 (   id int NOT NULL AUTO_INCREMENT,
-     sampleId varchar(50) NOT NULL,
+     patientId varchar(50) NOT NULL,
      date DATE NOT NULL,
      value double precision NOT NULL,
      unit varchar(50) NOT NULL,
@@ -196,7 +196,7 @@ CREATE TABLE bodyWeight
 DROP TABLE IF EXISTS vitalFunction;
 CREATE TABLE vitalFunction
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     date DATE NOT NULL,
     category varchar(50) NOT NULL,
     subcategory varchar(150) NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE vitalFunction
 DROP TABLE IF EXISTS bloodTransfusion;
 CREATE TABLE bloodTransfusion
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     date DATE NOT NULL,
     product varchar(50) NOT NULL,
     PRIMARY KEY (id)
@@ -217,7 +217,7 @@ CREATE TABLE bloodTransfusion
 DROP TABLE IF EXISTS medication;
 CREATE TABLE medication
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
+    patientId varchar(50) NOT NULL,
     name varchar(100) NOT NULL,
     categories varchar(100) NOT NULL,
     status varchar(50),
@@ -238,7 +238,8 @@ CREATE TABLE medication
 DROP TABLE IF EXISTS molecular;
 CREATE TABLE molecular
 (   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) UNIQUE,
+    patientId varchar(50) NOT NULL,
+    sampleId varchar(50) NOT NULL UNIQUE,
     experimentType varchar(50) NOT NULL,
     experimentDate DATE,
     containsTumorCells BOOLEAN NOT NULL,
@@ -462,6 +463,7 @@ CREATE TABLE eligibilityReference
 DROP TABLE IF EXISTS treatmentMatch;
 CREATE TABLE treatmentMatch
 (   id int NOT NULL AUTO_INCREMENT,
+    patientId varchar(50) NOT NULL,
     sampleId varchar(50) NOT NULL,
     referenceDate DATE NOT NULL,
     referenceDateIsLive BOOLEAN NOT NULL,

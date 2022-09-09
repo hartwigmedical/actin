@@ -100,7 +100,7 @@ public final class ClinicalRecordJson {
     public static void write(@NotNull List<ClinicalRecord> records, @NotNull String directory) throws IOException {
         String path = Paths.forceTrailingFileSeparator(directory);
         for (ClinicalRecord record : records) {
-            String jsonFile = path + record.sampleId() + CLINICAL_JSON_EXTENSION;
+            String jsonFile = path + record.patientId() + CLINICAL_JSON_EXTENSION;
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
             writer.write(toJson(record));
@@ -151,7 +151,7 @@ public final class ClinicalRecordJson {
             JsonObject record = jsonElement.getAsJsonObject();
 
             return ImmutableClinicalRecord.builder()
-                    .sampleId(string(record, "sampleId"))
+                    .patientId(string(record, "patientId"))
                     .patient(toPatientDetails(object(record, "patient")))
                     .tumor(toTumorDetails(object(record, "tumor")))
                     .clinicalStatus(toClinicalStatus(object(record, "clinicalStatus")))

@@ -66,10 +66,9 @@ class MolecularDAO {
     }
 
     public void writeMolecularRecord(@NotNull MolecularRecord record) {
+        writeMolecularDetails(record);
+
         String sampleId = record.sampleId();
-
-        writeMolecularDetails(sampleId, record);
-
         MolecularDrivers drivers = record.drivers();
         writeVariants(sampleId, drivers.variants());
         writeAmplifications(sampleId, drivers.amplifications());
@@ -89,23 +88,25 @@ class MolecularDAO {
         writeTreatmentEvidence(sampleId, evidence);
     }
 
-    private void writeMolecularDetails(@NotNull String sampleId, @NotNull MolecularRecord record) {
+    private void writeMolecularDetails(@NotNull MolecularRecord record) {
         PredictedTumorOrigin predictedTumorOrigin = record.characteristics().predictedTumorOrigin();
 
         context.insertInto(MOLECULAR,
-                MOLECULAR.SAMPLEID,
-                MOLECULAR.EXPERIMENTTYPE,
-                MOLECULAR.EXPERIMENTDATE,
-                MOLECULAR.CONTAINSTUMORCELLS,
-                MOLECULAR.HASSUFFICIENTQUALITY,
-                MOLECULAR.PURITY,
-                MOLECULAR.PREDICTEDTUMORTYPE,
-                MOLECULAR.PREDICTEDTUMORLIKELIHOOD,
-                MOLECULAR.ISMICROSATELLITEUNSTABLE,
-                MOLECULAR.ISHOMOLOGOUSREPAIRDEFICIENT,
-                MOLECULAR.TUMORMUTATIONALBURDEN,
-                MOLECULAR.TUMORMUTATIONALLOAD)
-                .values(sampleId,
+                        MOLECULAR.PATIENTID,
+                        MOLECULAR.SAMPLEID,
+                        MOLECULAR.EXPERIMENTTYPE,
+                        MOLECULAR.EXPERIMENTDATE,
+                        MOLECULAR.CONTAINSTUMORCELLS,
+                        MOLECULAR.HASSUFFICIENTQUALITY,
+                        MOLECULAR.PURITY,
+                        MOLECULAR.PREDICTEDTUMORTYPE,
+                        MOLECULAR.PREDICTEDTUMORLIKELIHOOD,
+                        MOLECULAR.ISMICROSATELLITEUNSTABLE,
+                        MOLECULAR.ISHOMOLOGOUSREPAIRDEFICIENT,
+                        MOLECULAR.TUMORMUTATIONALBURDEN,
+                        MOLECULAR.TUMORMUTATIONALLOAD)
+                .values(record.patientId(),
+                        record.sampleId(),
                         record.type().toString(),
                         record.date(),
                         DataUtil.toByte(record.containsTumorCells()),
@@ -123,15 +124,15 @@ class MolecularDAO {
     private void writeVariants(@NotNull String sampleId, @NotNull Set<Variant> variants) {
         for (Variant variant : variants) {
             context.insertInto(VARIANT,
-                    VARIANT.SAMPLEID,
-                    VARIANT.EVENT,
-                    VARIANT.DRIVERLIKELIHOOD,
-                    VARIANT.GENE,
-                    VARIANT.IMPACT,
-                    VARIANT.VARIANTCOPYNUMBER,
-                    VARIANT.TOTALCOPYNUMBER,
-                    VARIANT.DRIVERTYPE,
-                    VARIANT.CLONALLIKELIHOOD)
+                            VARIANT.SAMPLEID,
+                            VARIANT.EVENT,
+                            VARIANT.DRIVERLIKELIHOOD,
+                            VARIANT.GENE,
+                            VARIANT.IMPACT,
+                            VARIANT.VARIANTCOPYNUMBER,
+                            VARIANT.TOTALCOPYNUMBER,
+                            VARIANT.DRIVERTYPE,
+                            VARIANT.CLONALLIKELIHOOD)
                     .values(sampleId,
                             variant.event(),
                             variant.driverLikelihood().toString(),
@@ -148,12 +149,12 @@ class MolecularDAO {
     private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {
         for (Amplification amplification : amplifications) {
             context.insertInto(AMPLIFICATION,
-                    AMPLIFICATION.SAMPLEID,
-                    AMPLIFICATION.EVENT,
-                    AMPLIFICATION.DRIVERLIKELIHOOD,
-                    AMPLIFICATION.GENE,
-                    AMPLIFICATION.ISPARTIAL,
-                    AMPLIFICATION.COPIES)
+                            AMPLIFICATION.SAMPLEID,
+                            AMPLIFICATION.EVENT,
+                            AMPLIFICATION.DRIVERLIKELIHOOD,
+                            AMPLIFICATION.GENE,
+                            AMPLIFICATION.ISPARTIAL,
+                            AMPLIFICATION.COPIES)
                     .values(sampleId,
                             amplification.event(),
                             amplification.driverLikelihood().toString(),
@@ -175,10 +176,10 @@ class MolecularDAO {
     private void writeHomozygousDisruptions(@NotNull String sampleId, @NotNull Set<HomozygousDisruption> homozygousDisruptions) {
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
             context.insertInto(HOMOZYGOUSDISRUPTION,
-                    HOMOZYGOUSDISRUPTION.SAMPLEID,
-                    HOMOZYGOUSDISRUPTION.EVENT,
-                    HOMOZYGOUSDISRUPTION.DRIVERLIKELIHOOD,
-                    HOMOZYGOUSDISRUPTION.GENE)
+                            HOMOZYGOUSDISRUPTION.SAMPLEID,
+                            HOMOZYGOUSDISRUPTION.EVENT,
+                            HOMOZYGOUSDISRUPTION.DRIVERLIKELIHOOD,
+                            HOMOZYGOUSDISRUPTION.GENE)
                     .values(sampleId,
                             homozygousDisruption.event(),
                             homozygousDisruption.driverLikelihood().toString(),
@@ -190,14 +191,14 @@ class MolecularDAO {
     private void writeDisruptions(@NotNull String sampleId, @NotNull Set<Disruption> disruptions) {
         for (Disruption disruption : disruptions) {
             context.insertInto(DISRUPTION,
-                    DISRUPTION.SAMPLEID,
-                    DISRUPTION.EVENT,
-                    DISRUPTION.DRIVERLIKELIHOOD,
-                    DISRUPTION.GENE,
-                    DISRUPTION.TYPE,
-                    DISRUPTION.JUNCTIONCOPYNUMBER,
-                    DISRUPTION.UNDISRUPTEDCOPYNUMBER,
-                    DISRUPTION.DISRUPTEDRANGE)
+                            DISRUPTION.SAMPLEID,
+                            DISRUPTION.EVENT,
+                            DISRUPTION.DRIVERLIKELIHOOD,
+                            DISRUPTION.GENE,
+                            DISRUPTION.TYPE,
+                            DISRUPTION.JUNCTIONCOPYNUMBER,
+                            DISRUPTION.UNDISRUPTEDCOPYNUMBER,
+                            DISRUPTION.DISRUPTEDRANGE)
                     .values(sampleId,
                             disruption.event(),
                             disruption.driverLikelihood().toString(),
@@ -213,13 +214,13 @@ class MolecularDAO {
     private void writeFusions(@NotNull String sampleId, @NotNull Set<Fusion> fusions) {
         for (Fusion fusion : fusions) {
             context.insertInto(FUSION,
-                    FUSION.SAMPLEID,
-                    FUSION.EVENT,
-                    FUSION.DRIVERLIKELIHOOD,
-                    FUSION.FIVEGENE,
-                    FUSION.THREEGENE,
-                    FUSION.DETAILS,
-                    FUSION.DRIVERTYPE)
+                            FUSION.SAMPLEID,
+                            FUSION.EVENT,
+                            FUSION.DRIVERLIKELIHOOD,
+                            FUSION.FIVEGENE,
+                            FUSION.THREEGENE,
+                            FUSION.DETAILS,
+                            FUSION.DRIVERTYPE)
                     .values(sampleId,
                             fusion.event(),
                             fusion.driverLikelihood().toString(),
@@ -242,11 +243,11 @@ class MolecularDAO {
     private void writeImmunology(@NotNull String sampleId, @NotNull MolecularImmunology immunology) {
         for (HlaAllele hlaAllele : immunology.hlaAlleles()) {
             context.insertInto(HLAALLELE,
-                    HLAALLELE.SAMPLEID,
-                    HLAALLELE.ISRELIABLE,
-                    HLAALLELE.NAME,
-                    HLAALLELE.TUMORCOPYNUMBER,
-                    HLAALLELE.HASSOMATICMUTATIONS)
+                            HLAALLELE.SAMPLEID,
+                            HLAALLELE.ISRELIABLE,
+                            HLAALLELE.NAME,
+                            HLAALLELE.TUMORCOPYNUMBER,
+                            HLAALLELE.HASSOMATICMUTATIONS)
                     .values(sampleId,
                             DataUtil.toByte(immunology.isReliable()),
                             hlaAllele.name(),
@@ -270,15 +271,15 @@ class MolecularDAO {
             @NotNull Set<ActinTrialEvidence> actinTrials) {
         for (ActinTrialEvidence evidence : actinTrials) {
             context.insertInto(ACTINTRIALEVIDENCE,
-                    ACTINTRIALEVIDENCE.SAMPLEID,
-                    ACTINTRIALEVIDENCE.SOURCE,
-                    ACTINTRIALEVIDENCE.EVENT,
-                    ACTINTRIALEVIDENCE.TRIALACRONYM,
-                    ACTINTRIALEVIDENCE.COHORTCODE,
-                    ACTINTRIALEVIDENCE.ISINCLUSIONCRITERION,
-                    ACTINTRIALEVIDENCE.TYPE,
-                    ACTINTRIALEVIDENCE.GENE,
-                    ACTINTRIALEVIDENCE.MUTATION)
+                            ACTINTRIALEVIDENCE.SAMPLEID,
+                            ACTINTRIALEVIDENCE.SOURCE,
+                            ACTINTRIALEVIDENCE.EVENT,
+                            ACTINTRIALEVIDENCE.TRIALACRONYM,
+                            ACTINTRIALEVIDENCE.COHORTCODE,
+                            ACTINTRIALEVIDENCE.ISINCLUSIONCRITERION,
+                            ACTINTRIALEVIDENCE.TYPE,
+                            ACTINTRIALEVIDENCE.GENE,
+                            ACTINTRIALEVIDENCE.MUTATION)
                     .values(sampleId,
                             actinSource,
                             evidence.event(),
@@ -317,12 +318,12 @@ class MolecularDAO {
             @NotNull Iterable<TreatmentEvidence> evidences) {
         for (TreatmentEvidence evidence : evidences) {
             context.insertInto(TREATMENTEVIDENCE,
-                    TREATMENTEVIDENCE.SAMPLEID,
-                    TREATMENTEVIDENCE.SOURCE,
-                    TREATMENTEVIDENCE.TYPE,
-                    TREATMENTEVIDENCE.EVENT,
-                    TREATMENTEVIDENCE.TREATMENT,
-                    TREATMENTEVIDENCE.ISRESPONSIVE)
+                            TREATMENTEVIDENCE.SAMPLEID,
+                            TREATMENTEVIDENCE.SOURCE,
+                            TREATMENTEVIDENCE.TYPE,
+                            TREATMENTEVIDENCE.EVENT,
+                            TREATMENTEVIDENCE.TREATMENT,
+                            TREATMENTEVIDENCE.ISRESPONSIVE)
                     .values(sampleId, source, type, evidence.event(), evidence.treatment(), DataUtil.toByte(isResponsive))
                     .execute();
         }

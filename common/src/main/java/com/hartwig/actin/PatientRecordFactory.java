@@ -16,12 +16,12 @@ public final class PatientRecordFactory {
 
     @NotNull
     public static PatientRecord fromInputs(@NotNull ClinicalRecord clinical, @NotNull MolecularRecord molecular) {
-        if (!clinical.sampleId().equals(molecular.sampleId())) {
-            LOGGER.warn("Clinical sampleId '{}' not the same as molecular sampleId '{}'! Using clinical sampleId",
-                    clinical.sampleId(),
-                    molecular.sampleId());
+        if (!clinical.patientId().equals(molecular.patientId())) {
+            LOGGER.warn("Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical sampleId",
+                    clinical.patientId(),
+                    molecular.patientId());
         }
 
-        return ImmutablePatientRecord.builder().sampleId(clinical.sampleId()).clinical(clinical).molecular(molecular).build();
+        return ImmutablePatientRecord.builder().patientId(clinical.patientId()).clinical(clinical).molecular(molecular).build();
     }
 }

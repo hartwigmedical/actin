@@ -75,7 +75,7 @@ public class DatabaseAccess {
         LOGGER.info(" Clearing all clinical data");
         clinicalDAO.clear();
         for (ClinicalRecord record : records) {
-            LOGGER.info(" Writing clinical data for {}", record.sampleId());
+            LOGGER.info(" Writing clinical data for {}", record.patientId());
             clinicalDAO.writeClinicalRecord(record);
         }
     }

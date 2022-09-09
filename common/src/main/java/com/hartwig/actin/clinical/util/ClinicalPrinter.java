@@ -21,7 +21,7 @@ public class ClinicalPrinter {
     }
 
     public void print(@NotNull ClinicalRecord record) {
-        printer.print("Sample: " + record.sampleId());
+        printer.print("Sample: " + record.patientId());
         printer.print("Birth year: " + record.patient().birthYear());
         printer.print("Gender: " + record.patient().gender());
         printer.print("Primary tumor location: " + tumorLocation(record.tumor()));

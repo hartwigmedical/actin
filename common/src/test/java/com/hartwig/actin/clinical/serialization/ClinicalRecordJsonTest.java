@@ -16,7 +16,7 @@ import org.junit.Test;
 public class ClinicalRecordJsonTest {
 
     private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
-    private static final String CLINICAL_JSON = CLINICAL_DIRECTORY + File.separator + "sample.clinical.json";
+    private static final String CLINICAL_JSON = CLINICAL_DIRECTORY + File.separator + "patient.clinical.json";
 
     @Test
     public void canConvertBackAndForthJson() {
@@ -51,7 +51,7 @@ public class ClinicalRecordJsonTest {
     }
 
     private static void assertClinicalRecord(@NotNull ClinicalRecord record) {
-        assertEquals("ACTN01029999T", record.sampleId());
+        assertEquals("ACTN01029999", record.patientId());
         assertEquals(1, record.priorTumorTreatments().size());
         assertEquals(1, record.priorSecondPrimaries().size());
         assertEquals(1, record.priorOtherConditions().size());

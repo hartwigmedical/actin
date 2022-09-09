@@ -39,7 +39,7 @@ public final class TestClinicalFactory {
     @NotNull
     public static ClinicalRecord createMinimalTestClinicalRecord() {
         return ImmutableClinicalRecord.builder()
-                .sampleId(TestDataFactory.TEST_SAMPLE)
+                .patientId(TestDataFactory.TEST_PATIENT)
                 .patient(createTestPatientDetails())
                 .tumor(ImmutableTumorDetails.builder().build())
                 .clinicalStatus(ImmutableClinicalStatus.builder().build())

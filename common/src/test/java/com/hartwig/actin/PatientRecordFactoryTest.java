@@ -40,15 +40,15 @@ public class PatientRecordFactoryTest {
     public void clinicalSampleBeatsMolecularSample() {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .sampleId("clinical")
+                .patientId("clinical")
                 .build();
 
         MolecularRecord molecular = ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .sampleId("molecular")
+                .patientId("molecular")
                 .build();
 
         PatientRecord patient = PatientRecordFactory.fromInputs(clinical, molecular);
-        assertEquals("clinical", patient.sampleId());
+        assertEquals("clinical", patient.patientId());
     }
 }

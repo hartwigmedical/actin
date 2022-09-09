@@ -27,7 +27,7 @@ public class BuildClinicalFromDoidsOnly {
     private static final Logger LOGGER = LogManager.getLogger(BuildClinicalFromDoidsOnly.class);
 
     private static final String OUTPUT_DIRECTORY = "output_directory";
-    private static final String SAMPLE = "sample";
+    private static final String PATIENT = "patient";
     private static final String PRIMARY_TUMOR_DOIDS = "primary_tumor_doids";
 
     private static final String APPLICATION = "ACTIN Build Clinical From Doids Only";
@@ -49,24 +49,28 @@ public class BuildClinicalFromDoidsOnly {
     public void run() throws IOException {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
-        String sampleId = command.getOptionValue(SAMPLE);
+        String patientId = command.getOptionValue(PATIENT);
         Set<String> doids = toStringSet(command.getOptionValue(PRIMARY_TUMOR_DOIDS), ";");
 
-        LOGGER.info("Creating clinical record for {} with doids {}", sampleId, doids);
-        ClinicalRecord record = createRecord(sampleId, doids);
+        LOGGER.info("Creating clinical record for {} with doids {}", patientId, doids);
+        ClinicalRecord record = createRecord(patientId, doids);
 
         String outputDirectory = command.getOptionValue(OUTPUT_DIRECTORY);
-        LOGGER.info("Writing clinical record for {} to {}", sampleId, outputDirectory);
+        LOGGER.info("Writing clinical record for {} to {}", patientId, outputDirectory);
         ClinicalRecordJson.write(Lists.newArrayList(record), outputDirectory);
 
         LOGGER.info("Done!");
     }
 
     @NotNull
-    private static ClinicalRecord createRecord(@NotNull String sampleId, @NotNull Set<String> doids) {
+    private static ClinicalRecord createRecord(@NotNull String patientId, @NotNull Set<String> doids) {
         return ImmutableClinicalRecord.builder()
-                .sampleId(sampleId)
-                .patient(ImmutablePatientDetails.builder().gender(Gender.FEMALE).birthYear(2022).registrationDate(LocalDate.now()).build())
+                .patientId(patientId)
+                .patient(ImmutablePatientDetails.builder()
+                        .gender(Gender.FEMALE)
+                        .birthYear(LocalDate.now().getYear())
+                        .registrationDate(LocalDate.now())
+                        .build())
                 .tumor(ImmutableTumorDetails.builder().doids(doids).build())
                 .clinicalStatus(ImmutableClinicalStatus.builder().build())
                 .build();
@@ -77,7 +81,7 @@ public class BuildClinicalFromDoidsOnly {
         Options options = new Options();
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to");
-        options.addOption(SAMPLE, true, "The sample for which clinical data is generated");
+        options.addOption(PATIENT, true, "The patient for which clinical data is generated");
         options.addOption(PRIMARY_TUMOR_DOIDS, true, "A semicolon-separated list of DOIDs representing the primary tumor of patient.");
 
         return options;

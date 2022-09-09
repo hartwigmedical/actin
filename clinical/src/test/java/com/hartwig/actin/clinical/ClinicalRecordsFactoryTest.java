@@ -42,14 +42,14 @@ public class ClinicalRecordsFactoryTest {
     private static final String FEED_DIRECTORY = Resources.getResource("feed").getPath();
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
-    private static final String TEST_SAMPLE = "ACTN01029999T";
+    private static final String TEST_PATIENT = "ACTN01029999";
 
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canGenerateSampleIds() {
-        assertEquals("ACTN01029999T", ClinicalRecordsFactory.toSampleId("ACTN-01-02-9999"));
-        assertEquals("ACTN01029999T", ClinicalRecordsFactory.toSampleId("01-02-9999"));
+    public void canGeneratePatientIds() {
+        assertEquals("ACTN01029999", ClinicalRecordsFactory.toPatientId("ACTN-01-02-9999"));
+        assertEquals("ACTN01029999", ClinicalRecordsFactory.toPatientId("01-02-9999"));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ClinicalRecordsFactoryTest {
         List<ClinicalRecord> records = createMinimalTestClinicalRecords();
 
         assertEquals(1, records.size());
-        assertEquals(TEST_SAMPLE, records.get(0).sampleId());
+        assertEquals(TEST_PATIENT, records.get(0).patientId());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ClinicalRecordsFactoryTest {
         assertEquals(1, records.size());
         ClinicalRecord record = records.get(0);
 
-        assertEquals(TEST_SAMPLE, record.sampleId());
+        assertEquals(TEST_PATIENT, record.patientId());
         assertPatientDetails(record.patient());
         assertTumorDetails(record.tumor());
         assertClinicalStatus(record.clinicalStatus());

@@ -7,7 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TestDataFactory {
 
-    public static final String TEST_SAMPLE = "ACTN01029999T";
+    public static final String TEST_PATIENT = "ACTN01029999";
+    public static final String TEST_SAMPLE = TEST_PATIENT + "T";
 
     private TestDataFactory() {
     }
@@ -15,7 +16,7 @@ public final class TestDataFactory {
     @NotNull
     public static PatientRecord createMinimalTestPatientRecord() {
         return ImmutablePatientRecord.builder()
-                .sampleId(TEST_SAMPLE)
+                .patientId(TEST_PATIENT)
                 .clinical(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .molecular(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .build();

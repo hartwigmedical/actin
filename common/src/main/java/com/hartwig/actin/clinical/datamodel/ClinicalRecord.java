@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ClinicalRecord {
 
     @NotNull
-    public abstract String sampleId();
+    public abstract String patientId();
 
     @NotNull
     public abstract PatientDetails patient();

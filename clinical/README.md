@@ -1,7 +1,7 @@
 ## ACTIN-Clinical
 
 ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described below.
-This clinical model is written to a per-sample json file. The clinical data can be loaded into a mysql database via [ACTIN-Database](../database/README.md).
+This clinical model is written to a per-patient json file. The clinical data can be loaded into a mysql database via [ACTIN-Database](../database/README.md).
 
 This application requires Java 11+ and can be run as follows: 
 
@@ -19,7 +19,7 @@ one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see
 
 ## Clinical Datamodel
 
-Every sample, uniquely defined by their sample ID, has a clinical record with the following data:
+Every patient, uniquely defined by their patient ID, has a clinical record with the following data:
 
 1 patient details
 

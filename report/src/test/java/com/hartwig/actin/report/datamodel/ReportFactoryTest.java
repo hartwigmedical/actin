@@ -31,7 +31,7 @@ public class ReportFactoryTest {
     public void usePatientSampleIdOnMismatch() {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .sampleId("clinical")
+                .patientId("clinical")
                 .build();
 
         MolecularRecord molecular = TestMolecularFactory.createMinimalTestMolecularRecord();

@@ -95,12 +95,12 @@ class TreatmentDAO {
 
     private int writeCohortMetadata(int trialId, @NotNull CohortMetadata metadata) {
         return context.insertInto(COHORT,
-                COHORT.TRIALID,
-                COHORT.CODE,
-                COHORT.OPEN,
-                COHORT.SLOTSAVAILABLE,
-                COHORT.BLACKLIST,
-                COHORT.DESCRIPTION)
+                        COHORT.TRIALID,
+                        COHORT.CODE,
+                        COHORT.OPEN,
+                        COHORT.SLOTSAVAILABLE,
+                        COHORT.BLACKLIST,
+                        COHORT.DESCRIPTION)
                 .values(trialId,
                         metadata.cohortId(),
                         DataUtil.toByte(metadata.open()),
@@ -131,12 +131,12 @@ class TreatmentDAO {
         String parameters = isComposite ? Strings.EMPTY : DataUtil.concatObjects(function.parameters());
 
         int id = context.insertInto(ELIGIBILITY,
-                ELIGIBILITY.TRIALID,
-                ELIGIBILITY.COHORTID,
-                ELIGIBILITY.PARENTID,
-                ELIGIBILITY.RULE,
-                ELIGIBILITY.PARAMETERS,
-                ELIGIBILITY.DISPLAY)
+                        ELIGIBILITY.TRIALID,
+                        ELIGIBILITY.COHORTID,
+                        ELIGIBILITY.PARENTID,
+                        ELIGIBILITY.RULE,
+                        ELIGIBILITY.PARAMETERS,
+                        ELIGIBILITY.DISPLAY)
                 .values(trialId, cohortId, parentId, function.rule().toString(), parameters, EligibilityFunctionDisplay.format(function))
                 .returning(ELIGIBILITY.ID)
                 .fetchOne()

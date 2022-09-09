@@ -18,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class MolecularRecord {
 
     @NotNull
+    public abstract String patientId();
+    
+    @NotNull
     public abstract String sampleId();
 
     @NotNull

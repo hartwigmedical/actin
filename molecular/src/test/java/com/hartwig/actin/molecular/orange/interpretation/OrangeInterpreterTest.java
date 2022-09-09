@@ -29,6 +29,7 @@ public class OrangeInterpreterTest {
     public void canInterpretOrangeRecord() {
         MolecularRecord record = createTestInterpreter().interpret(TestOrangeFactory.createProperTestOrangeRecord());
 
+        assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
@@ -52,6 +53,17 @@ public class OrangeInterpreterTest {
         assertEquals(1, evidence.externalTrials().size());
         assertEquals(1, evidence.approvedEvidence().size());
         assertEquals(0, evidence.knownResistanceEvidence().size());
+    }
+
+    @Test
+    public void canConvertSampleIdToPatientId() {
+        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"));
+        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void crashOnInvalidSampleId() {
+        OrangeInterpreter.toPatientId("no sample");
     }
 
     @NotNull

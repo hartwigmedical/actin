@@ -28,6 +28,7 @@ public final class TestTreatmentMatchFactory {
     @NotNull
     public static TreatmentMatch createMinimalTreatmentMatch() {
         return ImmutableTreatmentMatch.builder()
+                .patientId(TestDataFactory.TEST_PATIENT)
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .referenceDate(LocalDate.of(2021, 8, 2))
                 .referenceDateIsLive(true)

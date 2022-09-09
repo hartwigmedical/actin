@@ -32,7 +32,7 @@ public class TreatmentMatchPrinter {
     }
 
     public void print(@NotNull TreatmentMatch treatmentMatch) {
-        printer.print("Sample: " + treatmentMatch.sampleId());
+        printer.print("Patient: " + treatmentMatch.patientId());
 
         TrialMatchSummary matchSummary = TrialMatchSummarizer.summarize(treatmentMatch.trialMatches());
         printer.print("Trials: " + matchSummary.trialCount());
@@ -111,5 +111,4 @@ public class TreatmentMatchPrinter {
     private static String cohortName(@NotNull TrialIdentification trial, @NotNull CohortMetadata cohort) {
         return trial.trialId() + " - " + cohort.description();
     }
-
 }

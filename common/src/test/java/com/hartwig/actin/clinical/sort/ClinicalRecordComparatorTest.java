@@ -16,9 +16,9 @@ public class ClinicalRecordComparatorTest {
 
     @Test
     public void canSortClinicalRecords() {
-        ClinicalRecord record1 = withSampleId("1");
-        ClinicalRecord record2 = withSampleId("2");
-        ClinicalRecord record3 = withSampleId("3");
+        ClinicalRecord record1 = withPatientId("1");
+        ClinicalRecord record2 = withPatientId("2");
+        ClinicalRecord record3 = withPatientId("3");
 
         List<ClinicalRecord> records = Lists.newArrayList(record2, record3, record1);
         records.sort(new ClinicalRecordComparator());
@@ -30,7 +30,7 @@ public class ClinicalRecordComparatorTest {
     }
 
     @NotNull
-    private static ClinicalRecord withSampleId(@NotNull String sampleId) {
-        return ImmutableClinicalRecord.builder().from(TestClinicalFactory.createMinimalTestClinicalRecord()).sampleId(sampleId).build();
+    private static ClinicalRecord withPatientId(@NotNull String patientId) {
+        return ImmutableClinicalRecord.builder().from(TestClinicalFactory.createMinimalTestClinicalRecord()).patientId(patientId).build();
     }
 }

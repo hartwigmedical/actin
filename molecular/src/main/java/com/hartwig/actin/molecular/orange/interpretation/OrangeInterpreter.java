@@ -29,6 +29,7 @@ public class OrangeInterpreter {
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
         return ImmutableMolecularRecord.builder()
+                .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
                 .date(record.experimentDate())
@@ -41,5 +42,14 @@ public class OrangeInterpreter {
                 .wildTypeGenes(WildTypeExtraction.extract(record))
                 .evidence(evidenceExtractor.extract(record))
                 .build();
+    }
+
+    @VisibleForTesting
+    @NotNull
+    static String toPatientId(@NotNull String sampleId) {
+        if (sampleId.length() < 12) {
+            throw new IllegalArgumentException("Cannot convert sampleId to patientId: " + sampleId);
+        }
+        return sampleId.substring(0, 12);
     }
 }

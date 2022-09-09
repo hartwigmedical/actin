@@ -103,6 +103,7 @@ public final class TreatmentMatchJson {
             JsonObject match = jsonElement.getAsJsonObject();
 
             return ImmutableTreatmentMatch.builder()
+                    .patientId(string(match, "patientId"))
                     .sampleId(string(match, "sampleId"))
                     .referenceDate(date(match, "referenceDate"))
                     .referenceDateIsLive(bool(match, "referenceDateIsLive"))

@@ -137,6 +137,7 @@ public class MolecularRecordJson {
             JsonObject record = jsonElement.getAsJsonObject();
 
             return ImmutableMolecularRecord.builder()
+                    .patientId(string(record, "patientId"))
                     .sampleId(string(record, "sampleId"))
                     .type(ExperimentType.valueOf(string(record, "type")))
                     .date(nullableDate(record, "date"))

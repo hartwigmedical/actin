@@ -52,10 +52,14 @@ public class TreatmentMatchDAO {
 
     public void writeTreatmentMatch(@NotNull TreatmentMatch treatmentMatch) {
         int treatmentMatchId = context.insertInto(TREATMENTMATCH,
-                TREATMENTMATCH.SAMPLEID,
-                TREATMENTMATCH.REFERENCEDATE,
-                TREATMENTMATCH.REFERENCEDATEISLIVE)
-                .values(treatmentMatch.sampleId(), treatmentMatch.referenceDate(), DataUtil.toByte(treatmentMatch.referenceDateIsLive()))
+                        TREATMENTMATCH.PATIENTID,
+                        TREATMENTMATCH.SAMPLEID,
+                        TREATMENTMATCH.REFERENCEDATE,
+                        TREATMENTMATCH.REFERENCEDATEISLIVE)
+                .values(treatmentMatch.patientId(),
+                        treatmentMatch.sampleId(),
+                        treatmentMatch.referenceDate(),
+                        DataUtil.toByte(treatmentMatch.referenceDateIsLive()))
                 .returning(TREATMENTMATCH.ID)
                 .fetchOne()
                 .getValue(TREATMENTMATCH.ID);
@@ -73,12 +77,12 @@ public class TreatmentMatchDAO {
 
     private int writeTrialMatch(int treatmentMatchId, @NotNull TrialMatch trialMatch) {
         return context.insertInto(TRIALMATCH,
-                TRIALMATCH.TREATMENTMATCHID,
-                TRIALMATCH.CODE,
-                TRIALMATCH.OPEN,
-                TRIALMATCH.ACRONYM,
-                TRIALMATCH.TITLE,
-                TRIALMATCH.ISELIGIBLE)
+                        TRIALMATCH.TREATMENTMATCHID,
+                        TRIALMATCH.CODE,
+                        TRIALMATCH.OPEN,
+                        TRIALMATCH.ACRONYM,
+                        TRIALMATCH.TITLE,
+                        TRIALMATCH.ISELIGIBLE)
                 .values(treatmentMatchId,
                         trialMatch.identification().trialId(),
                         DataUtil.toByte(trialMatch.identification().open()),
@@ -92,13 +96,13 @@ public class TreatmentMatchDAO {
 
     private int writeCohortMatch(int trialMatchId, @NotNull CohortMatch cohortMatch) {
         return context.insertInto(COHORTMATCH,
-                COHORTMATCH.TRIALMATCHID,
-                COHORTMATCH.CODE,
-                COHORTMATCH.OPEN,
-                COHORTMATCH.SLOTSAVAILABLE,
-                COHORTMATCH.BLACKLIST,
-                COHORTMATCH.DESCRIPTION,
-                TRIALMATCH.ISELIGIBLE)
+                        COHORTMATCH.TRIALMATCHID,
+                        COHORTMATCH.CODE,
+                        COHORTMATCH.OPEN,
+                        COHORTMATCH.SLOTSAVAILABLE,
+                        COHORTMATCH.BLACKLIST,
+                        COHORTMATCH.DESCRIPTION,
+                        TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
                         cohortMatch.metadata().cohortId(),
                         DataUtil.toByte(cohortMatch.metadata().open()),
@@ -117,19 +121,19 @@ public class TreatmentMatchDAO {
             Evaluation evaluation = entry.getValue();
 
             context.insertInto(EVALUATION,
-                    EVALUATION.TRIALMATCHID,
-                    EVALUATION.COHORTMATCHID,
-                    EVALUATION.ELIGIBILITY,
-                    EVALUATION.RESULT,
-                    EVALUATION.RECOVERABLE,
-                    EVALUATION.PASSSPECIFICMESSAGES,
-                    EVALUATION.PASSGENERALMESSAGES,
-                    EVALUATION.WARNSPECIFICMESSAGES,
-                    EVALUATION.WARNGENERALMESSAGES,
-                    EVALUATION.UNDETERMINEDSPECIFICMESSAGES,
-                    EVALUATION.UNDETERMINEDGENERALMESSAGES,
-                    EVALUATION.FAILSPECIFICMESSAGES,
-                    EVALUATION.FAILGENERALMESSAGES)
+                            EVALUATION.TRIALMATCHID,
+                            EVALUATION.COHORTMATCHID,
+                            EVALUATION.ELIGIBILITY,
+                            EVALUATION.RESULT,
+                            EVALUATION.RECOVERABLE,
+                            EVALUATION.PASSSPECIFICMESSAGES,
+                            EVALUATION.PASSGENERALMESSAGES,
+                            EVALUATION.WARNSPECIFICMESSAGES,
+                            EVALUATION.WARNGENERALMESSAGES,
+                            EVALUATION.UNDETERMINEDSPECIFICMESSAGES,
+                            EVALUATION.UNDETERMINEDGENERALMESSAGES,
+                            EVALUATION.FAILSPECIFICMESSAGES,
+                            EVALUATION.FAILGENERALMESSAGES)
                     .values(trialMatchId,
                             cohortMatchId,
                             eligibility,

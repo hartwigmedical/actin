@@ -10,6 +10,6 @@ public class ClinicalRecordComparator implements Comparator<ClinicalRecord> {
 
     @Override
     public int compare(@NotNull ClinicalRecord record1, @NotNull ClinicalRecord record2) {
-        return record1.sampleId().compareTo(record2.sampleId());
+        return record1.patientId().compareTo(record2.patientId());
     }
 }
