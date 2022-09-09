@@ -18,14 +18,15 @@ public final class ReportFactory {
     @NotNull
     public static Report fromInputs(@NotNull ClinicalRecord clinical, @NotNull MolecularRecord molecular,
             @NotNull TreatmentMatch treatmentMatch) {
-        if (!clinical.patientId().equals(treatmentMatch.sampleId())) {
-            LOGGER.warn("Clinical sampleId '{}' not the same as treatment match sampleId '{}'! Using clinical sampleId",
+        if (!clinical.patientId().equals(treatmentMatch.patientId())) {
+            LOGGER.warn("Clinical patientId '{}' not the same as treatment match patientId '{}'! Using clinical patientId",
                     clinical.patientId(),
-                    treatmentMatch.sampleId());
+                    treatmentMatch.patientId());
         }
 
         return ImmutableReport.builder()
-                .sampleId(clinical.patientId())
+                .patientId(clinical.patientId())
+                .sampleId(molecular.sampleId())
                 .clinical(clinical)
                 .molecular(molecular)
                 .treatmentMatch(treatmentMatch)

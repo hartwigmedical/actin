@@ -38,9 +38,9 @@ public class ReportFactoryTest {
 
         TreatmentMatch treatmentMatch = ImmutableTreatmentMatch.builder()
                 .from(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
-                .sampleId("treatment-match")
+                .patientId("treatment-match")
                 .build();
 
-        assertEquals("clinical", ReportFactory.fromInputs(clinical, molecular, treatmentMatch).sampleId());
+        assertEquals("clinical", ReportFactory.fromInputs(clinical, molecular, treatmentMatch).patientId());
     }
 }

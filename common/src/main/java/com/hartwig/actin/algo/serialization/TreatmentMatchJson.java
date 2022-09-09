@@ -69,9 +69,9 @@ public final class TreatmentMatchJson {
 
     public static void write(@NotNull TreatmentMatch match, @NotNull String directory) throws IOException {
         String path = Paths.forceTrailingFileSeparator(directory);
-        String jsonFile = path + match.sampleId() + TREATMENT_MATCH_EXTENSION;
+        String jsonFile = path + match.patientId() + TREATMENT_MATCH_EXTENSION;
 
-        LOGGER.info("Writing sample treatment match to {}", jsonFile);
+        LOGGER.info("Writing patient treatment match to {}", jsonFile);
         BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
         writer.write(toJson(match));
         writer.close();

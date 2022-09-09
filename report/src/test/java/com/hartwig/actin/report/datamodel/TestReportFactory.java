@@ -15,6 +15,7 @@ public final class TestReportFactory {
     @NotNull
     public static Report createMinimalTestReport() {
         return ImmutableReport.builder()
+                .patientId(TestDataFactory.TEST_PATIENT)
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .clinical(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .molecular(TestMolecularFactory.createMinimalTestMolecularRecord())

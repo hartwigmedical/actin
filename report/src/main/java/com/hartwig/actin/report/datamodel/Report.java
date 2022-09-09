@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class Report {
 
     @NotNull
+    public abstract String patientId();
+
+    @NotNull
     public abstract String sampleId();
 
     @NotNull
