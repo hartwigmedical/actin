@@ -15,6 +15,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.TestFunctionInputResolveFactory;
+import com.hartwig.actin.treatment.input.datamodel.ImmutableTreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
@@ -24,6 +25,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
+import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
@@ -42,10 +44,6 @@ public class FunctionInputResolverTest {
     public void canDetermineInputValidityForEveryRule() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
         for (EligibilityRule rule : EligibilityRule.values()) {
-            Boolean exists = resolver.hasValidInputs(create(rule, Lists.newArrayList()));
-            if (exists == null) {
-                int x = 1;
-            }
             assertNotNull(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         }
     }
@@ -324,6 +322,28 @@ public class FunctionInputResolverTest {
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "BRAF;KRAS"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("BRAF;KRAS", "1"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("BRAF;KRAS", "1", "not an integer"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithManyTreatmentsWithNameInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_TREATMENTS_WITH_NAME);
+
+        EligibilityFunction valid = create(rule,
+                Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display() + "; name1", TreatmentInput.ANTIVIRAL_THERAPY.display()));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        ManyTreatmentsWithName output = resolver.createManyTreatmentsWithNames(valid);
+        assertEquals(2, output.treatmentsWithName().size());
+        assertTrue(output.treatmentsWithName()
+                .contains(ImmutableTreatmentInputWithName.builder().treatment(TreatmentInput.IMMUNOTHERAPY).name("name1").build()));
+        assertTrue(output.treatmentsWithName()
+                .contains(ImmutableTreatmentInputWithName.builder().treatment(TreatmentInput.ANTIVIRAL_THERAPY).name(null).build()));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment;"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display() + ";name1;name2"))));
     }
 
     @Test
