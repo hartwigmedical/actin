@@ -15,6 +15,9 @@ public abstract class TreatmentMatch {
     public abstract String patientId();
 
     @NotNull
+    public abstract String sampleId();
+
+    @NotNull
     public abstract LocalDate referenceDate();
 
     public abstract boolean referenceDateIsLive();

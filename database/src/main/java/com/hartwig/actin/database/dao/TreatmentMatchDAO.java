@@ -53,9 +53,11 @@ public class TreatmentMatchDAO {
     public void writeTreatmentMatch(@NotNull TreatmentMatch treatmentMatch) {
         int treatmentMatchId = context.insertInto(TREATMENTMATCH,
                         TREATMENTMATCH.PATIENTID,
+                        TREATMENTMATCH.SAMPLEID,
                         TREATMENTMATCH.REFERENCEDATE,
                         TREATMENTMATCH.REFERENCEDATEISLIVE)
                 .values(treatmentMatch.patientId(),
+                        treatmentMatch.sampleId(),
                         treatmentMatch.referenceDate(),
                         DataUtil.toByte(treatmentMatch.referenceDateIsLive()))
                 .returning(TREATMENTMATCH.ID)

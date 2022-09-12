@@ -92,6 +92,7 @@ public class TreatmentMatcherApplication {
 
         TreatmentMatch match = ImmutableTreatmentMatch.builder()
                 .patientId(patient.patientId())
+                .sampleId(patient.molecular().sampleId())
                 .referenceDate(referenceDateProvider.date())
                 .referenceDateIsLive(referenceDateProvider.isLive())
                 .trialMatches(trialMatches)
