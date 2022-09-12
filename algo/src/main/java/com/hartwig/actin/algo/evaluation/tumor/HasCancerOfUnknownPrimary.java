@@ -37,7 +37,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No tumor location/type configured for patient, undetermined if CUP")
+                    .addUndeterminedSpecificMessages("No tumor location/type configured for patient, CUP status undetermined")
                     .addUndeterminedGeneralMessages("Unconfigured tumor location/type")
                     .build();
         }
@@ -57,8 +57,9 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Patient has cancer of type " + categoryOfCUP.display() + " but not a CUP")
-                        .addWarnGeneralMessages("Tumor type may be CUP (" + categoryOfCUP.display() + ")")
+                        .addWarnSpecificMessages("Patient has cancer of type " + categoryOfCUP.display()
+                                + ", but not explicitly configured as CUP, hence may not actually be a CUP?")
+                        .addWarnGeneralMessages("Tumor type " + categoryOfCUP.display() + ", uncertain if actually CUP")
                         .build();
             }
         }
@@ -67,16 +68,15 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
             if (isCUP) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(
-                                "Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
-                        .addUndeterminedGeneralMessages("Undetermined CUP tumor type / if actually CUP")
+                        .addUndeterminedSpecificMessages("Cancer type is CUP, but exact tumor type is unknown")
+                        .addUndeterminedGeneralMessages("Undetermined CUP tumor type")
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages(
-                                "Patient has tumor type 'cancer' configured, unknown tumor type and uncertain if actually CUP")
-                        .addUndeterminedGeneralMessages("Undetermined CUP tumor type / if actually CUP")
+                                "Tumor type is unknown, and cancer is not explicitly configured as 'CUP' - hence undetermined if actually CUP?")
+                        .addUndeterminedGeneralMessages("Undetermined CUP tumor type & if actually CUP")
                         .build();
             }
         }
@@ -84,7 +84,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display())
-                .addFailGeneralMessages("Tumor type is no CUP (" + categoryOfCUP.display() + ")")
+                .addFailGeneralMessages("No CUP " + categoryOfCUP.display())
                 .build();
     }
 }
