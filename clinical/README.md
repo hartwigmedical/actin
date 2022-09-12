@@ -14,7 +14,7 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
 
 ### Disease Ontology ID
 
-For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical data model, 
+For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical datamodel, 
 one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
 ## Clinical Datamodel
