@@ -16,23 +16,24 @@ public class HasCancerOfUnknownPrimaryTest {
     @Test
     public void canEvaluate() {
         TumorTypeInput category = TumorTypeInput.ADENOCARCINOMA;
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(category.doid(), "200");
+        String childDoid = "child";
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(category.doid(), childDoid);
 
         HasCancerOfUnknownPrimary function = new HasCancerOfUnknownPrimary(doidModel, category);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TumorTestFactory.withDoidAndSubLocation(HasCancerOfUnknownPrimary.CANCER_DOID, "unknown")));
-        assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withDoids(HasCancerOfUnknownPrimary.CANCER_DOID)));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TumorTestFactory.withDoidAndSubLocation(HasCancerOfUnknownPrimary.CANCER_DOID, "unknown")));
 
-//        assertEvaluation(EvaluationResult.PASS,
-//                function.evaluate(TumorTestFactory.withDoidAndSubLocation(HasCancerOfUnknownPrimary.CANCER_DOID,
-//                        HasCancerOfUnknownPrimary.CUP_PRIMARY_TUMOR_SUB_LOCATION)));
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(TumorTestFactory.withDoidAndSubLocation(HasCancerOfUnknownPrimary.CANCER_DOID,
+                        HasCancerOfUnknownPrimary.CUP_PRIMARY_TUMOR_SUB_LOCATION)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("random doid")));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(category.doid(), "other doid")));
 
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(category.doid())));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(category.doid(), "200")));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(category.doid(), childDoid)));
     }
 }
