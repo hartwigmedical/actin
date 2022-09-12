@@ -29,7 +29,7 @@ public class MolecularDetailsChapter implements ReportChapter {
     @NotNull
     @Override
     public String name() {
-        return "Molecular Details (" + report.molecular().type() + ")";
+        return "Molecular Details (" + report.molecular().type() + " performed on " + report.molecular().sampleId() + ")";
     }
 
     @NotNull
