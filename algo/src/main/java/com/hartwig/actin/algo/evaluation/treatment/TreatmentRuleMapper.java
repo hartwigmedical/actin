@@ -34,7 +34,7 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT, hasHadAnyCancerTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_X_AND_OR_NAMES_Y,
+        map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_WITH_NAME_X,
                 hasHadAnyCancerTreatmentIgnoringCategoriesAndNamesCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
