@@ -42,6 +42,10 @@ public class FunctionInputResolverTest {
     public void canDetermineInputValidityForEveryRule() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
         for (EligibilityRule rule : EligibilityRule.values()) {
+            Boolean exists = resolver.hasValidInputs(create(rule, Lists.newArrayList()));
+            if (exists == null) {
+                int x = 1;
+            }
             assertNotNull(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         }
     }

@@ -91,7 +91,6 @@ public class ParameterizedFunctionTestFactory {
             case MANY_STRINGS_TWO_INTEGERS: {
                 return Lists.newArrayList("string1;string2", "1", "2");
             }
-            //TODO: Check code
             case MANY_TREATMENTS_MANY_STRINGS: {
                 return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display(), TreatmentInput.CHEMOTHERAPY.display(), "string1;string2");
             }
