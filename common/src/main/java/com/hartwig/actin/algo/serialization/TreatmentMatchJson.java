@@ -104,7 +104,6 @@ public final class TreatmentMatchJson {
 
             return ImmutableTreatmentMatch.builder()
                     .patientId(string(match, "patientId"))
-                    .sampleId(string(match, "sampleId"))
                     .referenceDate(date(match, "referenceDate"))
                     .referenceDateIsLive(bool(match, "referenceDateIsLive"))
                     .trialMatches(toTrialMatches(array(match, "trialMatches")))

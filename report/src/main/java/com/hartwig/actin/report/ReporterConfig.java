@@ -33,9 +33,9 @@ public interface ReporterConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the sample");
-        options.addOption(MOLECULAR_JSON, true, "File containing the molecular record of the sample");
-        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the sample");
+        options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient");
+        options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient");
+        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to");
 

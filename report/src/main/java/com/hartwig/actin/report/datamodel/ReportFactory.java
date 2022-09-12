@@ -26,7 +26,6 @@ public final class ReportFactory {
 
         return ImmutableReport.builder()
                 .patientId(clinical.patientId())
-                .sampleId(molecular.sampleId())
                 .clinical(clinical)
                 .molecular(molecular)
                 .treatmentMatch(treatmentMatch)

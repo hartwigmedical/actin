@@ -31,12 +31,12 @@ public class TreatmentMatchDAO {
     }
 
     public void clear(@NotNull TreatmentMatch treatmentMatch) {
-        String sampleId = treatmentMatch.sampleId();
+        String patientId = treatmentMatch.patientId();
 
-        Result<Record1<Integer>> treatmentResults =
-                context.select(TREATMENTMATCH.ID).from(TREATMENTMATCH).where(TREATMENTMATCH.SAMPLEID.eq(sampleId)).fetch();
-        for (Record treatmentResult : treatmentResults) {
-            int treatmentMatchId = treatmentResult.getValue(TREATMENTMATCH.ID);
+        Result<Record1<Integer>> treatmentMatchResults =
+                context.select(TREATMENTMATCH.ID).from(TREATMENTMATCH).where(TREATMENTMATCH.PATIENTID.eq(patientId)).fetch();
+        for (Record treatmentMatchResult : treatmentMatchResults) {
+            int treatmentMatchId = treatmentMatchResult.getValue(TREATMENTMATCH.ID);
             Result<Record1<Integer>> trialResults =
                     context.select(TRIALMATCH.ID).from(TRIALMATCH).where(TRIALMATCH.TREATMENTMATCHID.eq(treatmentMatchId)).fetch();
             for (Record trialResult : trialResults) {
@@ -47,17 +47,15 @@ public class TreatmentMatchDAO {
             context.delete(TRIALMATCH).where(TRIALMATCH.TREATMENTMATCHID.eq(treatmentMatchId)).execute();
         }
 
-        context.delete(TREATMENTMATCH).where(TREATMENTMATCH.SAMPLEID.eq(sampleId)).execute();
+        context.delete(TREATMENTMATCH).where(TREATMENTMATCH.PATIENTID.eq(patientId)).execute();
     }
 
     public void writeTreatmentMatch(@NotNull TreatmentMatch treatmentMatch) {
         int treatmentMatchId = context.insertInto(TREATMENTMATCH,
                         TREATMENTMATCH.PATIENTID,
-                        TREATMENTMATCH.SAMPLEID,
                         TREATMENTMATCH.REFERENCEDATE,
                         TREATMENTMATCH.REFERENCEDATEISLIVE)
                 .values(treatmentMatch.patientId(),
-                        treatmentMatch.sampleId(),
                         treatmentMatch.referenceDate(),
                         DataUtil.toByte(treatmentMatch.referenceDateIsLive()))
                 .returning(TREATMENTMATCH.ID)

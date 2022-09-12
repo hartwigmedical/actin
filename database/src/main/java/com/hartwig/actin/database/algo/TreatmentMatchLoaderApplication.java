@@ -51,7 +51,7 @@ public class TreatmentMatchLoaderApplication {
         TreatmentMatch treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson());
 
         DatabaseAccess access = DatabaseAccess.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl());
-        LOGGER.info("Writing treatment match results for {}", treatmentMatch.sampleId());
+        LOGGER.info("Writing treatment match results for {}", treatmentMatch.patientId());
         access.writeTreatmentMatch(treatmentMatch);
 
         LOGGER.info("Done!");

@@ -34,8 +34,8 @@ public interface TreatmentMatcherConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the sample");
-        options.addOption(MOLECULAR_JSON, true, "File containing the molecular record of the sample");
+        options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient");
+        options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient");
 
         options.addOption(TREATMENT_DATABASE_DIRECTORY, true, "Directory containing all available treatments");
         options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.");

@@ -74,11 +74,11 @@ public class TabularTreatmentMatchWriterApplication {
         LOGGER.info("Writing tabular evaluation results to {}", config.outputDirectory());
         String outputPath = Paths.forceTrailingFileSeparator(config.outputDirectory());
 
-        String evaluationSummaryTsv = outputPath + treatmentMatch.sampleId() + ".evaluation.summary.tsv";
+        String evaluationSummaryTsv = outputPath + treatmentMatch.patientId() + ".evaluation.summary.tsv";
         writeEvaluationSummaryToTsv(treatmentMatch, evaluationSummaryTsv);
         LOGGER.info(" Written summary data to {}", evaluationSummaryTsv);
 
-        String evaluationDetailsTsv = outputPath + treatmentMatch.sampleId() + ".evaluation.details.tsv";
+        String evaluationDetailsTsv = outputPath + treatmentMatch.patientId() + ".evaluation.details.tsv";
         writeEvaluationDetailsToTsv(treatmentMatch, evaluationDetailsTsv);
         LOGGER.info(" Written detailed data to {}", evaluationDetailsTsv);
 
@@ -95,7 +95,7 @@ public class TabularTreatmentMatchWriterApplication {
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortFails = extractUnrecoverableFails(cohortMatch.evaluations());
 
-                StringJoiner record = trialJoiner(treatmentMatch.sampleId(), trialMatch.identification());
+                StringJoiner record = trialJoiner(treatmentMatch.patientId(), trialMatch.identification());
                 record.add(cohortMatch.metadata().cohortId());
                 record.add(cohortMatch.metadata().description());
                 record.add(String.valueOf(cohortMatch.isPotentiallyEligible()));
@@ -106,7 +106,7 @@ public class TabularTreatmentMatchWriterApplication {
             }
 
             if (trialMatch.cohorts().isEmpty()) {
-                StringJoiner record = trialJoiner(treatmentMatch.sampleId(), trialMatch.identification());
+                StringJoiner record = trialJoiner(treatmentMatch.patientId(), trialMatch.identification());
                 record.add(Strings.EMPTY);
                 record.add(Strings.EMPTY);
                 record.add(String.valueOf(trialMatch.isPotentiallyEligible()));
@@ -123,7 +123,7 @@ public class TabularTreatmentMatchWriterApplication {
     @NotNull
     private static String createEvaluationSummaryHeader() {
         StringJoiner header = tabular();
-        header.add("Sample");
+        header.add("Patient");
         header.add("Trial ID");
         header.add("Trial acronym");
         header.add("Cohort ID");
@@ -147,9 +147,9 @@ public class TabularTreatmentMatchWriterApplication {
     }
 
     @NotNull
-    private static StringJoiner trialJoiner(@NotNull String sampleId, @NotNull TrialIdentification identification) {
+    private static StringJoiner trialJoiner(@NotNull String patientId, @NotNull TrialIdentification identification) {
         StringJoiner joiner = new StringJoiner(DELIMITER);
-        joiner.add(sampleId);
+        joiner.add(patientId);
         joiner.add(identification.trialId());
         joiner.add(identification.acronym());
         return joiner;

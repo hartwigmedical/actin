@@ -28,7 +28,7 @@ public class ReportFactoryTest {
     }
 
     @Test
-    public void usePatientSampleIdOnMismatch() {
+    public void useClinicalPatientIdOnMismatch() {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .patientId("clinical")

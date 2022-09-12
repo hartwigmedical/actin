@@ -28,7 +28,7 @@ public interface TabularTreatmentMatchWriterConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the sample");
+        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where output will be written to");
 

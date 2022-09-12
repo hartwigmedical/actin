@@ -16,9 +16,6 @@ public abstract class Report {
     public abstract String patientId();
 
     @NotNull
-    public abstract String sampleId();
-
-    @NotNull
     public abstract ClinicalRecord clinical();
 
     @NotNull

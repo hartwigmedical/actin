@@ -21,7 +21,7 @@ public class TestReportWriterApplication {
     private static final Logger LOGGER = LogManager.getLogger(TestReportWriterApplication.class);
 
     private static final String WORK_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp";
-    private static final String OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "sample.treatment_match.json";
+    private static final String OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json";
 
     public static void main(String[] args) throws IOException {
         ReportWriter writer = ReportWriterFactory.createProductionReportWriter(WORK_DIRECTORY);

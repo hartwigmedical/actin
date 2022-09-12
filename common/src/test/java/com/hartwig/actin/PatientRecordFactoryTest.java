@@ -37,7 +37,7 @@ public class PatientRecordFactoryTest {
     }
 
     @Test
-    public void clinicalSampleBeatsMolecularSample() {
+    public void clinicalPatientBeatsMolecularPatient() {
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .patientId("clinical")

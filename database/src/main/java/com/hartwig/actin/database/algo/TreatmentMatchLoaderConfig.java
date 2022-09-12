@@ -32,7 +32,7 @@ public interface TreatmentMatchLoaderConfig extends DatabaseLoaderConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the sample");
+        options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient");
 
         options.addOption(DB_USER, true, "Database username");
         options.addOption(DB_PASS, true, "Database password");

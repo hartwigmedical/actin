@@ -55,14 +55,14 @@ public class ReportWriter {
                     new ClinicalDetailsChapter(report), new TrialMatchingChapter(report), new TrialMatchingDetailsChapter(report) };
         }
 
-        writePdfChapters(report.sampleId(), chapters);
+        writePdfChapters(report.patientId(), chapters);
     }
 
-    private void writePdfChapters(@NotNull String sampleId, @NotNull ReportChapter[] chapters) throws IOException {
-        Document doc = initializeReport(sampleId);
+    private void writePdfChapters(@NotNull String patientId, @NotNull ReportChapter[] chapters) throws IOException {
+        Document doc = initializeReport(patientId);
         PdfDocument pdfDocument = doc.getPdfDocument();
 
-        PageEventHandler pageEventHandler = PageEventHandler.create(sampleId);
+        PageEventHandler pageEventHandler = PageEventHandler.create(patientId);
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler);
 
         for (int i = 0; i < chapters.length; i++) {
@@ -84,10 +84,10 @@ public class ReportWriter {
     }
 
     @NotNull
-    private Document initializeReport(@NotNull String sampleId) throws IOException {
+    private Document initializeReport(@NotNull String patientId) throws IOException {
         PdfWriter writer;
         if (writeToDisk && outputDirectory != null) {
-            String outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + sampleId + ".actin.pdf";
+            String outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
             writer = new PdfWriter(outputFilePath);
         } else {

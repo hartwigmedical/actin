@@ -98,10 +98,10 @@ public class DatabaseAccess {
     }
 
     public void writeTreatmentMatch(@NotNull TreatmentMatch treatmentMatch) {
-        LOGGER.info(" Clearing treatment match data for {}", treatmentMatch.sampleId());
+        LOGGER.info(" Clearing treatment match data for {}", treatmentMatch.patientId());
         treatmentMatchDAO.clear(treatmentMatch);
 
-        LOGGER.info(" Writing treatment match data for {}", treatmentMatch.sampleId());
+        LOGGER.info(" Writing treatment match data for {}", treatmentMatch.patientId());
         treatmentMatchDAO.writeTreatmentMatch(treatmentMatch);
     }
 }

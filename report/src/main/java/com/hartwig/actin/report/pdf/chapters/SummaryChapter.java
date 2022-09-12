@@ -60,8 +60,8 @@ public class SummaryChapter implements ReportChapter {
 
     private void addPatientDetails(@NotNull Document document) {
         Paragraph patientDetailsLine = new Paragraph();
-        patientDetailsLine.add(new Text("Sample ID: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(report.sampleId()).addStyle(Styles.reportHeaderValueStyle()));
+        patientDetailsLine.add(new Text("Patient ID: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(report.patientId()).addStyle(Styles.reportHeaderValueStyle()));
         patientDetailsLine.add(new Text(" | Gender: ").addStyle(Styles.reportHeaderLabelStyle()));
         patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.reportHeaderValueStyle()));
         patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.reportHeaderLabelStyle()));

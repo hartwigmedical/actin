@@ -15,7 +15,7 @@ import org.junit.Test;
 public class TreatmentMatchJsonTest {
 
     private static final String ALGO_DIRECTORY = Resources.getResource("algo").getPath();
-    private static final String TREATMENT_MATCH_JSON = ALGO_DIRECTORY + File.separator + "sample.treatment_match.json";
+    private static final String TREATMENT_MATCH_JSON = ALGO_DIRECTORY + File.separator + "patient.treatment_match.json";
 
     @Test
     public void canConvertBackAndForthJson() {
@@ -34,7 +34,7 @@ public class TreatmentMatchJsonTest {
     public void canReadTreatmentMatchJson() throws IOException {
         TreatmentMatch match = TreatmentMatchJson.read(TREATMENT_MATCH_JSON);
 
-        assertEquals("ACTN01029999T", match.sampleId());
+        assertEquals("ACTN01029999", match.patientId());
         assertEquals(1, match.trialMatches().size());
 
         TrialMatch trialMatch = match.trialMatches().get(0);
