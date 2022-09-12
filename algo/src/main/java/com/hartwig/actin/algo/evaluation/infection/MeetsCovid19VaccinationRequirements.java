@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
+public class MeetsCovid19VaccinationRequirements implements EvaluationFunction {
 
-    MeetsCovid19InfectionRequirements() {
+    MeetsCovid19VaccinationRequirements() {
     }
 
     @NotNull
@@ -18,8 +18,8 @@ public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently Covid-19 infection status cannot be determined")
-                .addUndeterminedSpecificMessages("COVID-19 infection")
+                .addUndeterminedSpecificMessages("Currently Covid-19 vaccination status cannot be determined")
+                .addUndeterminedSpecificMessages("COVID-19 vaccination status")
                 .build();
     }
 }

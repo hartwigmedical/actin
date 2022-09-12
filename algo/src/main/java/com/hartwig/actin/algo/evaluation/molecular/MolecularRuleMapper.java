@@ -23,8 +23,6 @@ public class MolecularRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
-        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
-        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableForGeneCreator());
         map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, geneIsActivatedOrAmplifiedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, geneIsInactivatedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, geneHasActivatingMutationCreator());
@@ -48,22 +46,15 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
         map.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, hasPSMAPositivePETScanCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableForGeneCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_PROMOTER_OF_GENE_X,
+                molecularResultsAreAvailableForPromotorOfGeneCreator());
+        map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_BUT_NOT_INDETERMINATE_FOR_PROMOTER_OF_GENE_X,
+                molecularResultsAreAvailableNotIndeterminateForPromotorOfGeneCreator());
         map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
-    }
-
-    @NotNull
-    private FunctionCreator molecularResultsAreGenerallyAvailableCreator() {
-        return function -> new MolecularResultsAreGenerallyAvailable();
-    }
-
-    @NotNull
-    private FunctionCreator molecularResultsAreAvailableForGeneCreator() {
-        return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new MolecularResultsAreAvailableForGene(gene);
-        };
     }
 
     @NotNull
@@ -230,6 +221,35 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasPSMAPositivePETScanCreator() {
         return function -> new HasPSMAPositivePETScan();
+    }
+
+    @NotNull
+    private FunctionCreator molecularResultsAreGenerallyAvailableCreator() {
+        return function -> new MolecularResultsAreGenerallyAvailable();
+    }
+
+    @NotNull
+    private FunctionCreator molecularResultsAreAvailableForGeneCreator() {
+        return function -> {
+            String gene = functionInputResolver().createOneStringInput(function);
+            return new MolecularResultsAreAvailableForGene(gene);
+        };
+    }
+
+    @NotNull
+    private FunctionCreator molecularResultsAreAvailableForPromotorOfGeneCreator() {
+        return function -> {
+            String gene = functionInputResolver().createOneStringInput(function);
+            return new MolecularResultsAreAvailableForPromoterOfGene(gene);
+        };
+    }
+
+    @NotNull
+    private FunctionCreator molecularResultsAreAvailableNotIndeterminateForPromotorOfGeneCreator() {
+        return function -> {
+            String gene = functionInputResolver().createOneStringInput(function);
+            return new MolecularResultsAreAvailableNotIndeterminateForPromoterOfGene(gene);
+        };
     }
 
     @NotNull

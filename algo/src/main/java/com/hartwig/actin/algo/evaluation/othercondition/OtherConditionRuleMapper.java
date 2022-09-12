@@ -81,6 +81,9 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT, hasContraindicationToCTCreator());
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI, hasContraindicationToMRICreator());
         map.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI, hasContraindicationToMRICreator());
+        map.put(EligibilityRule.HAS_POST_OPERATIVE_BASELINE_CONTRAST_ENHANCED_MRI_SCAN,
+                hasPostOperativeBaselineContrastEnhancedMRIScanCreator());
+        map.put(EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE, hasMRIScanDocumentingStableDiseaseCreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
         map.put(EligibilityRule.HAS_HAD_RECENT_TRAUMA, hasHadRecentTraumaCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
@@ -180,6 +183,16 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasContraindicationToMRICreator() {
         return function -> new HasContraindicationToMRI(doidModel());
+    }
+
+    @NotNull
+    private FunctionCreator hasPostOperativeBaselineContrastEnhancedMRIScanCreator() {
+        return function -> new HasPostOperativeBaselineContrastEnhancedMRIScan();
+    }
+
+    @NotNull
+    private FunctionCreator hasMRIScanDocumentingStableDiseaseCreator() {
+        return function -> new HasMRIScanDocumentingStableDisease();
     }
 
     @NotNull

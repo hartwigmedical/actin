@@ -53,6 +53,9 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
                 hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
+        map.put(EligibilityRule.HAS_HAD_COMPLETE_RESECTION, hasHadCompleteResectionCreator());
+        map.put(EligibilityRule.HAS_HAD_PARTIAL_RESECTION, hasHadPartialResectionCreator());
+        map.put(EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS, hasHadResectionWithinWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
                 hasLimitedCumulativeAnthracyclineExposureCreator());
@@ -230,6 +233,21 @@ public class TreatmentRuleMapper extends RuleMapper {
             int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasHadCompleteResectionCreator() {
+        return function -> new HasHadCompleteResection();
+    }
+
+    @NotNull
+    private FunctionCreator hasHadPartialResectionCreator() {
+        return function -> new HasHadPartialResection();
+    }
+
+    @NotNull
+    private FunctionCreator hasHadResectionWithinWeeksCreator() {
+        return function -> new HasHadResectionWithinWeeks();
     }
 
     @NotNull

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.infection;
+package com.hartwig.actin.algo.evaluation.treatment;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,9 +8,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
+//TODO: Update according to README
+public class HasHadPartialResection implements EvaluationFunction {
 
-    MeetsCovid19InfectionRequirements() {
+    HasHadPartialResection() {
     }
 
     @NotNull
@@ -18,8 +19,8 @@ public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently Covid-19 infection status cannot be determined")
-                .addUndeterminedSpecificMessages("COVID-19 infection")
+                .addUndeterminedSpecificMessages("Currently history of partial resection cannot be determined yet")
+                .addUndeterminedGeneralMessages("Undetermined partial resection")
                 .build();
     }
 }

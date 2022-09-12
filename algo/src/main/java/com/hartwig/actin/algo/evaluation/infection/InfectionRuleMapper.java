@@ -38,6 +38,7 @@ public class InfectionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(CYTOMEGALOVIRUS_DOID));
         map.put(EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION, hasSpecificInfectionCreator(TUBERCULOSIS_DOID));
         map.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, meetsCovid19InfectionRequirementsCreator());
+        map.put(EligibilityRule.MEETS_COVID_19_VACCINATION_REQUIREMENTS, meetsCovid19VaccinationRequirementsCreator());
         map.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, isFullyVaccinatedCovid19Creator());
         map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToAttenuatedVaccineUseCreator());
 
@@ -67,6 +68,11 @@ public class InfectionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator meetsCovid19InfectionRequirementsCreator() {
         return function -> new MeetsCovid19InfectionRequirements();
+    }
+
+    @NotNull
+    private FunctionCreator meetsCovid19VaccinationRequirementsCreator() {
+        return function -> new MeetsCovid19VaccinationRequirements();
     }
 
     @NotNull

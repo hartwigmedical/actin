@@ -60,6 +60,7 @@ public final class DoidManualConfigFactory {
         MAIN_CANCER_DOIDS.add("11920"); // tracheal cancer
         MAIN_CANCER_DOIDS.add("11934"); // head and neck cancer
         MAIN_CANCER_DOIDS.add("14110"); // anus cancer
+        MAIN_CANCER_DOIDS.add("3068"); // glioblastoma
 
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("4829", "3907", "3910")); // Lung
         ADENO_SQUAMOUS_MAPPINGS.add(createMapping("5623", "5514", "3458")); // Breast

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.infection;
+package com.hartwig.actin.algo.evaluation.othercondition;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
+public class HasMRIScanDocumentingStableDisease implements EvaluationFunction {
 
-    MeetsCovid19InfectionRequirements() {
+    HasMRIScanDocumentingStableDisease() {
     }
 
     @NotNull
@@ -18,8 +18,8 @@ public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently Covid-19 infection status cannot be determined")
-                .addUndeterminedSpecificMessages("COVID-19 infection")
+                .addUndeterminedSpecificMessages("Currently presence of MRI scan documenting stable disease is undetermined")
+                .addUndeterminedGeneralMessages("Undetermined MRI scan documenting SD")
                 .build();
     }
 }

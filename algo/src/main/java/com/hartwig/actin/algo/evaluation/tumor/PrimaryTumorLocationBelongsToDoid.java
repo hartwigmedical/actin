@@ -14,6 +14,7 @@ import com.hartwig.actin.doid.config.AdenoSquamousMapping;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to TODO in README
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
     private static final String UNCLEAR_TUMOR_TYPE = "carcinoma";

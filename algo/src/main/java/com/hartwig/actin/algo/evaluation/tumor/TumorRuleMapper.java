@@ -34,6 +34,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT, hasOvarianCancerWithMucinousComponentCreator());
         map.put(EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR, hasOvarianBorderlineTumorCreator());
         map.put(EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR, hasStomachUndifferentiatedTumorCreator());
+        map.put(EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA, hasSecondaryGlioblastomaCreator());
         map.put(EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasCytologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE, hasHistologicalDocumentationOfTumorTypeCreator());
         map.put(EligibilityRule.HAS_STAGE_X, hasTumorStageCreator());
@@ -49,6 +50,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, hasKnownActiveCnsMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_BRAIN_METASTASES, hasKnownBrainMetastasesCreator());
         map.put(EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, hasKnownActiveBrainMetastasesCreator());
+        map.put(EligibilityRule.HAS_EXTRACRANIAL_METASTASES, hasExtracranialMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES_ONLY, hasOnlyBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
@@ -61,6 +63,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
         map.put(EligibilityRule.HAS_INJECTION_AMENABLE_LESION, hasInjectionAmenableLesionCreator());
         map.put(EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION, hasMRIVolumeAmenableLesionCreator());
+        map.put(EligibilityRule.HAS_EVIDENCE_OF_CNS_HEMORRHAGE_BY_MRI, hasEvidenceOfCNSHemorrhageByMRICreator());
         map.put(EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI, hasIntratumoralHemorrhageByMRICreator());
         map.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, hasLowRiskOfHemorrhageUponTreatmentCreator());
         map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
@@ -129,6 +132,11 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasStomachUndifferentiatedTumorCreator() {
         return function -> new HasStomachUndifferentiatedTumor(doidModel());
+    }
+
+    @NotNull
+    private FunctionCreator hasSecondaryGlioblastomaCreator() {
+        return function -> new HasSecondaryGlioblastoma();
     }
 
     @NotNull
@@ -210,6 +218,11 @@ public class TumorRuleMapper extends RuleMapper {
     }
 
     @NotNull
+    private FunctionCreator hasExtracranialMetastasesCreator() {
+        return function -> new HasExtracranialMetastases();
+    }
+
+    @NotNull
     private FunctionCreator hasBoneMetastasesCreator() {
         return function -> new HasBoneMetastases();
     }
@@ -267,6 +280,11 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasMRIVolumeAmenableLesionCreator() {
         return function -> new HasMRIVolumeAmenableLesion();
+    }
+
+    @NotNull
+    private FunctionCreator hasEvidenceOfCNSHemorrhageByMRICreator() {
+        return function -> new HasEvidenceOfCNSHemorrhageByMRI();
     }
 
     @NotNull

@@ -22,12 +22,18 @@ public class BloodTransfusionRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT, requiresRegularHematopoieticSupportCreator());
         map.put(EligibilityRule.HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS,
                 hasHadRecentBloodTransfusion(TransfusionProduct.ERYTHROCYTE));
         map.put(EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS,
                 hasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE));
 
         return map;
+    }
+
+    @NotNull
+    private FunctionCreator requiresRegularHematopoieticSupportCreator() {
+        return function -> new RequiresRegularHematopoieticSupport();
     }
 
     @NotNull
