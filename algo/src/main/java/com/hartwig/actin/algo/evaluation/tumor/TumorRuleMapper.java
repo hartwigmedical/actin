@@ -58,6 +58,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
         map.put(EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FFPE_ANALYSIS, canProvideFreshSampleForFFPEAnalysisCreator());
         map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FFPE_ANALYSIS, canProvideSampleForFFPEAnalysisCreator());
+        map.put(EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY, meetsSpecificBiopsyRequirementsCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE, hasMeasurableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
@@ -255,6 +256,11 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator canProvideSampleForFFPEAnalysisCreator() {
         return function -> new CanProvideSampleForFFPEAnalysis();
+    }
+
+    @NotNull
+    private FunctionCreator meetsSpecificBiopsyRequirementsCreator() {
+        return function -> new MeetsSpecificBiopsyRequirements();
     }
 
     @NotNull
