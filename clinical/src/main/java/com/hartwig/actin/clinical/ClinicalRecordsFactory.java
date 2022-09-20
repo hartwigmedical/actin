@@ -326,8 +326,9 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private static SurgeryStatus resolveSurgeryStatus(@NotNull String status) {
+        String valueToFind = status.trim().replaceAll("-", "_");
         for (SurgeryStatus option : SurgeryStatus.values()) {
-            if (option.toString().equalsIgnoreCase(status)) {
+            if (option.toString().equalsIgnoreCase(valueToFind)) {
                 return option;
             }
         }
