@@ -16,5 +16,5 @@ More details on the following modules are available from the links below:
 | [Treatment](treatment) | Generation of available treatment options (standard-of-care and experimental).             |
 | [Algo](algo)           | Matching all data from a patient to available treatment options.                           |
 | [Database](database)   | Capture of all ACTIN data in a database.                                                   |
-| [Report](report)       | Create a patient-centric PDF report with available treatment options                       |
+| [Report](report)       | Create a patient-centric PDF report with available treatment options.                      |
   
