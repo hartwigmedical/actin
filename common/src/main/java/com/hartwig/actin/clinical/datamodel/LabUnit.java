@@ -41,6 +41,7 @@ public enum LabUnit {
     PERCENTAGE_OF_T_CELLS("% of T-cells"),
     MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"),
     INTERNATIONAL_UNITS_PER_MILLILITER("IU/ml"),
+    PRNT50("PRNT50"),
     NONE(Strings.EMPTY);
 
     @NotNull
