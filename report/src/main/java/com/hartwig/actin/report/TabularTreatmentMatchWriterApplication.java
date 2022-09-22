@@ -95,7 +95,7 @@ public class TabularTreatmentMatchWriterApplication {
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortFails = extractUnrecoverableFails(cohortMatch.evaluations());
 
-                StringJoiner record = trialJoiner(treatmentMatch.patientId(), trialMatch.identification());
+                StringJoiner record = trialJoiner(treatmentMatch.patientId(), treatmentMatch.sampleId(), trialMatch.identification());
                 record.add(cohortMatch.metadata().cohortId());
                 record.add(cohortMatch.metadata().description());
                 record.add(String.valueOf(cohortMatch.isPotentiallyEligible()));
@@ -106,7 +106,7 @@ public class TabularTreatmentMatchWriterApplication {
             }
 
             if (trialMatch.cohorts().isEmpty()) {
-                StringJoiner record = trialJoiner(treatmentMatch.patientId(), trialMatch.identification());
+                StringJoiner record = trialJoiner(treatmentMatch.patientId(), treatmentMatch.sampleId(), trialMatch.identification());
                 record.add(Strings.EMPTY);
                 record.add(Strings.EMPTY);
                 record.add(String.valueOf(trialMatch.isPotentiallyEligible()));
@@ -124,6 +124,7 @@ public class TabularTreatmentMatchWriterApplication {
     private static String createEvaluationSummaryHeader() {
         StringJoiner header = tabular();
         header.add("Patient");
+        header.add("Sample ID");
         header.add("Trial ID");
         header.add("Trial acronym");
         header.add("Cohort ID");
@@ -147,9 +148,10 @@ public class TabularTreatmentMatchWriterApplication {
     }
 
     @NotNull
-    private static StringJoiner trialJoiner(@NotNull String patientId, @NotNull TrialIdentification identification) {
+    private static StringJoiner trialJoiner(@NotNull String patientId, @NotNull String sampleId, @NotNull TrialIdentification identification) {
         StringJoiner joiner = new StringJoiner(DELIMITER);
         joiner.add(patientId);
+        joiner.add(sampleId);
         joiner.add(identification.trialId());
         joiner.add(identification.acronym());
         return joiner;
