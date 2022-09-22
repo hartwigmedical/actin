@@ -26,6 +26,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No measurement found for QTCF")
+                    .addUndeterminedGeneralMessages("Undetermined QTCF")
                     .build();
         }
 
@@ -36,6 +37,7 @@ public class HasLimitedQTCF implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("QTCF measure not in '" + QTCFFunctions.EXPECTED_QTCF_UNIT + "': " + unit)
+                    .addUndeterminedGeneralMessages("Unrecognized unit of QTCF evaluation")
                     .build();
         }
 

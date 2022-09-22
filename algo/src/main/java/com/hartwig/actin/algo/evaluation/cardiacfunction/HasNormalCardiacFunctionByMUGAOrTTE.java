@@ -21,14 +21,14 @@ public class HasNormalCardiacFunctionByMUGAOrTTE implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("LVEF of " + lvef + " exceeds 50%")
-                    .addWarnGeneralMessages("MUGA or TTE")
+                    .addWarnGeneralMessages("LVEF > 50%")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.NOT_EVALUATED)
-                .addPassSpecificMessages("Currently normal cardiac function by MUGA or TTE cannot be evaluated")
-                .addPassGeneralMessages("MUGA or TTE")
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages("Currently normal cardiac function by MUGA or TTE cannot be determined")
+                .addUndeterminedGeneralMessages("Undetermined cardiac function by MUGA or TTE")
                 .build();
     }
 }
