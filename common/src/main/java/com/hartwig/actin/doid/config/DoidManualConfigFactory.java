@@ -40,7 +40,6 @@ public final class DoidManualConfigFactory {
         MAIN_CANCER_DOIDS.add("3277"); // thymus cancer
         MAIN_CANCER_DOIDS.add("3571"); // liver cancer
         MAIN_CANCER_DOIDS.add("3953"); // adrenal gland cancer
-        MAIN_CANCER_DOIDS.add("3996"); // urinary system cancer
         MAIN_CANCER_DOIDS.add("4159"); // skin cancer
         MAIN_CANCER_DOIDS.add("4362"); // cervical cancer
         MAIN_CANCER_DOIDS.add("4607"); // biliary tract cancer
