@@ -82,6 +82,8 @@ public final class DoidManualConfigFactory {
         ADDITIONAL_DOIDS_PER_DOID.put("7807", "6039"); // Choroid necrotic melanoma > Uveal melanoma
         ADDITIONAL_DOIDS_PER_DOID.put("6994", "6039"); // Iris melanoma > Uveal melanoma
         ADDITIONAL_DOIDS_PER_DOID.put("6524", "6039"); // Ciliary body melanoma > Uveal melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("6039", "1752"); // Uveal melanoma > Ocular melanoma
+        ADDITIONAL_DOIDS_PER_DOID.put("1751", "1752"); // Malignant conjunctival melanoma > Ocular melanoma
         ADDITIONAL_DOIDS_PER_DOID.put("234", "0050861"); // Colon adenocarcinoma > Colorectal adenocarcinoma
         ADDITIONAL_DOIDS_PER_DOID.put("1996", "0050861"); // Rectum adenocarcinoma > Colorectal adenocarcinoma
         ADDITIONAL_DOIDS_PER_DOID.put("1520", "0080199"); // Colon carcinoma > Colorectal carcinoma
