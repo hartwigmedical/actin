@@ -26,15 +26,16 @@ public class HasExperiencedImmuneRelatedAdverseEvents implements EvaluationFunct
             }
         }
 
-        EvaluationResult result = hasHadImmuneTherapy ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+        EvaluationResult result = hasHadImmuneTherapy ? EvaluationResult.WARN : EvaluationResult.FAIL;
 
+        //TODO: Also use stopReason in WARN message if stopReason for immunotherapy like %toxicity%
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not experienced immune related adverse events");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Cannot be determined if patient has experienced immune related adverse events");
+        } else if (result == EvaluationResult.WARN) {
+            builder.addWarnSpecificMessages("Undetermined if patient has experienced immune related adverse events by immunotherapy treatment");
+            builder.addWarnGeneralMessages("Potential immunotherapy related adverse events");
         }
-
         return builder.build();
     }
 }

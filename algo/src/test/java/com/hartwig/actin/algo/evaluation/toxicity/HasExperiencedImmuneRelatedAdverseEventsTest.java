@@ -27,6 +27,6 @@ public class HasExperiencedImmuneRelatedAdverseEventsTest {
 
         // Treatment with matching category
         treatments.add(ToxicityTestFactory.treatment().addCategories(TreatmentCategory.IMMUNOTHERAPY).build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withPriorTumorTreatments(treatments)));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ToxicityTestFactory.withPriorTumorTreatments(treatments)));
     }
 }
