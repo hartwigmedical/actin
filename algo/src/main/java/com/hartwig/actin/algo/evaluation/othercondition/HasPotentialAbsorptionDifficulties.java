@@ -60,6 +60,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             }
         }
 
+        //TODO: Update according to README
         if (record.clinical().complications() != null) {
             for (Complication complication : record.clinical().complications()) {
                 for (String termToFind : COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY) {
