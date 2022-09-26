@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasActiveInfection implements EvaluationFunction {
 
     HasActiveInfection() {
