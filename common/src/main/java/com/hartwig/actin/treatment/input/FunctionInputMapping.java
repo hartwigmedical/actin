@@ -84,6 +84,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, FunctionInput.ONE_STRING);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, FunctionInput.ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_WITH_NAME_X,
                 FunctionInput.MANY_TREATMENTS_WITH_NAME);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT);
@@ -110,6 +111,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
                 FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, FunctionInput.NONE);
@@ -139,6 +141,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, FunctionInput.ONE_STRING);
@@ -251,6 +254,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTC_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTCF_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_QTCF_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_JTC_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LONG_QT_SYNDROME, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH, FunctionInput.NONE);
@@ -267,6 +271,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MEETS_COVID_19_VACCINATION_REQUIREMENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, FunctionInput.ONE_STRING);

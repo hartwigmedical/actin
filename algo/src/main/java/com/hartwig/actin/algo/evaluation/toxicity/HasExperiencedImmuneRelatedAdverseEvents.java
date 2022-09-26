@@ -33,7 +33,7 @@ public class HasExperiencedImmuneRelatedAdverseEvents implements EvaluationFunct
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not experienced immune related adverse events");
         } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Undetermined if patient has experienced immune related adverse events by immunotherapy treatment");
+            builder.addWarnSpecificMessages("Patient may have experienced immune related adverse events by immunotherapy treatment");
             builder.addWarnGeneralMessages("Potential immunotherapy related adverse events");
         }
         return builder.build();

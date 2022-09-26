@@ -45,6 +45,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
+        map.put(EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE, hasAvailablePDL1StatusCreator());
         map.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, hasPSMAPositivePETScanCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_FOR_GENE_X, molecularResultsAreAvailableForGeneCreator());
@@ -216,6 +217,11 @@ public class MolecularRuleMapper extends RuleMapper {
             double maxPDL1Percentage = functionInputResolver().createOneDoubleInput(function);
             return new HasLimitedPDL1ByIHC("TPS", maxPDL1Percentage);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasAvailablePDL1StatusCreator() {
+        return function -> new HasAvailablePDL1Status();
     }
 
     @NotNull

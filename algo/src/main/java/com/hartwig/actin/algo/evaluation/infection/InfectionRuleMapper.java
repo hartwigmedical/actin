@@ -40,6 +40,7 @@ public class InfectionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, meetsCovid19InfectionRequirementsCreator());
         map.put(EligibilityRule.MEETS_COVID_19_VACCINATION_REQUIREMENTS, meetsCovid19VaccinationRequirementsCreator());
         map.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, isFullyVaccinatedCovid19Creator());
+        map.put(EligibilityRule.HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS, hasReceivedLiveVaccineWithinMonthsCreator());
         map.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, canAdhereToAttenuatedVaccineUseCreator());
 
         return map;
@@ -78,6 +79,11 @@ public class InfectionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator isFullyVaccinatedCovid19Creator() {
         return function -> new IsFullyVaccinatedCovid19();
+    }
+
+    @NotNull
+    private FunctionCreator hasReceivedLiveVaccineWithinMonthsCreator() {
+        return function -> new HasReceivedLiveVaccineWithinMonths();
     }
 
     @NotNull

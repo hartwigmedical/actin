@@ -37,6 +37,7 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_WITH_NAME_X,
                 hasHadAnyCancerTreatmentIgnoringCategoriesAndNamesCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
+        map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, hasHadSpecificTreatmentWithinWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS, hasHadTreatmentCategoryOfTypesWithinWeeksCreator());
@@ -62,6 +63,7 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
                 hasLimitedCumulativeAnthracyclineExposureCreator());
+        map.put(EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL, hasPreviouslyParticipatedInCurrentTrialCreator());
         map.put(EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL, participatesInAnotherTrialCreator());
 
         return map;
@@ -122,6 +124,11 @@ public class TreatmentRuleMapper extends RuleMapper {
             String treatment = functionInputResolver().createOneStringInput(function);
             return new HasHadSomeSpecificTreatments(Sets.newHashSet(treatment), null, 1);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasHadSpecificTreatmentWithinWeeksCreator() {
+        return function -> new HasHadSpecificTreatmentWithinWeeks();
     }
 
     @NotNull
@@ -271,6 +278,11 @@ public class TreatmentRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasLimitedCumulativeAnthracyclineExposureCreator() {
         return function -> new HasLimitedCumulativeAnthracyclineExposure(doidModel());
+    }
+
+    @NotNull
+    private FunctionCreator hasPreviouslyParticipatedInCurrentTrialCreator() {
+        return function -> new HasPreviouslyParticipatedInCurrentTrial();
     }
 
     @NotNull
