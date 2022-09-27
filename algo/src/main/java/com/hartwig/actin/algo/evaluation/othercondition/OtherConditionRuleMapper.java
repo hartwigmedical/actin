@@ -68,6 +68,9 @@ public class OtherConditionRuleMapper extends RuleMapper {
                 hasRecentPriorConditionWithDoidCreator(MYOCARDIAL_INFARCT_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS, hasHistoryOfPneumonitisCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasPriorConditionWithDoidCreator(STROKE_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
+        map.put(EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE, hasPriorConditionWithDoidCreator(VASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION, hasSevereConcomitantIllnessCreator());
         map.put(EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT, hasHadOrganTransplantCreator());
@@ -144,6 +147,11 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHistoryOfPneumonitisCreator() {
         return function -> new HasHistoryOfPneumonitis(doidModel());
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfThromboembolicEventCreator() {
+        return function -> new HasHistoryOfThromboembolicEvent();
     }
 
     @NotNull
