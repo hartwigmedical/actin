@@ -88,7 +88,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
                 hasPostOperativeBaselineContrastEnhancedMRIScanCreator());
         map.put(EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE, hasMRIScanDocumentingStableDiseaseCreator());
         map.put(EligibilityRule.IS_IN_DIALYSIS, isInDialysisCreator());
-        map.put(EligibilityRule.HAS_HAD_RECENT_TRAUMA, hasHadRecentTraumaCreator());
         map.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, hasAdequateVeinAccessCreator());
 
         return map;
@@ -206,11 +205,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator isInDialysisCreator() {
         return function -> new IsInDialysis();
-    }
-
-    @NotNull
-    private FunctionCreator hasHadRecentTraumaCreator() {
-        return function -> new HasHadRecentTrauma();
     }
 
     @NotNull

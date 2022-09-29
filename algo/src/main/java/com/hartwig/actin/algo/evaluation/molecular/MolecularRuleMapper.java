@@ -53,7 +53,6 @@ public class MolecularRuleMapper extends RuleMapper {
                 molecularResultsAreAvailableForPromotorOfGeneCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE_BUT_NOT_INDETERMINATE_FOR_PROMOTER_OF_GENE_X,
                 molecularResultsAreAvailableNotIndeterminateForPromotorOfGeneCreator());
-        map.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, manufacturedTCellsWithinShelfLifeCreator());
 
         return map;
     }
@@ -258,8 +257,4 @@ public class MolecularRuleMapper extends RuleMapper {
         };
     }
 
-    @NotNull
-    private FunctionCreator manufacturedTCellsWithinShelfLifeCreator() {
-        return function -> new ManufacturedTCellsWithinShelfLife();
-    }
 }

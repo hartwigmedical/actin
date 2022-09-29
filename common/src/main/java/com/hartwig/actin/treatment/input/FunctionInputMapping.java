@@ -74,7 +74,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BCLC_STAGE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.MANUFACTURED_T_CELLS_ARE_WITHIN_SHELF_LIFE, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X, FunctionInput.ONE_STRING);
@@ -247,7 +246,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POST_OPERATIVE_BASELINE_CONTRAST_ENHANCED_MRI_SCAN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_IN_DIALYSIS, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_RECENT_TRAUMA, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE, FunctionInput.NONE);
@@ -268,7 +266,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HEPATITIS_B_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_HTLV_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, FunctionInput.NONE);

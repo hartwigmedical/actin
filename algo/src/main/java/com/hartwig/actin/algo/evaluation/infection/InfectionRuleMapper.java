@@ -34,7 +34,6 @@ public class InfectionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_B_INFECTION, hasSpecificInfectionCreator(HEPATITIS_B_DOID));
         map.put(EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION, hasSpecificInfectionCreator(HEPATITIS_C_DOID));
         map.put(EligibilityRule.HAS_KNOWN_HIV_INFECTION, hasSpecificInfectionCreator(HIV_DOID));
-        map.put(EligibilityRule.HAS_KNOWN_HTLV_INFECTION, hasKnownHTLVInfectionCreator());
         map.put(EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION, hasSpecificInfectionCreator(CYTOMEGALOVIRUS_DOID));
         map.put(EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION, hasSpecificInfectionCreator(TUBERCULOSIS_DOID));
         map.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, meetsCovid19InfectionRequirementsCreator());
@@ -59,11 +58,6 @@ public class InfectionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasSpecificInfectionCreator(@NotNull String doidToFind) {
         return function -> new HasSpecificInfection(doidModel(), doidToFind);
-    }
-
-    @NotNull
-    private FunctionCreator hasKnownHTLVInfectionCreator() {
-        return function -> new HasKnownHTLVInfection();
     }
 
     @NotNull

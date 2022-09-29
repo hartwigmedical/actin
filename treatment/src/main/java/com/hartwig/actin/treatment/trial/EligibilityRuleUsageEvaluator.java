@@ -27,6 +27,14 @@ public final class EligibilityRuleUsageEvaluator {
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X);
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION);
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_RECURRENT_CANCER);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_QTC_OF_AT_MOST_X);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_HLA_TYPE_X);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_KNOWN_EBV_INFECTION);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_ANY_COMPLICATION);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X);
     }
 
     private EligibilityRuleUsageEvaluator() {
