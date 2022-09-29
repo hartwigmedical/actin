@@ -274,7 +274,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MEETS_COVID_19_VACCINATION_REQUIREMENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, FunctionInput.ONE_STRING);
