@@ -72,7 +72,7 @@ public final class EligibilityRuleUsageEvaluator {
                 LOGGER.warn("  '{}' not used in any trial or cohort", rule.toString());
             }
         } else {
-            LOGGER.info(" Found no unused eligibility rules.");
+            LOGGER.info(" Found no unused eligibility rules to curate.");
         }
     }
 
