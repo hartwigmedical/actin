@@ -34,7 +34,7 @@ public class OtherConditionRuleMapper extends RuleMapper {
     private static final String LIVER_DISEASE_DOID = "409";
     private static final String MYOCARDIAL_INFARCT_DOID = "5844";
     private static final String STROKE_DOID = "6713";
-    private static final String VASCULAR_DISEASE_DOID = "114";
+    private static final String VASCULAR_DISEASE_DOID = "178";
 
     private static final String HYPOTENSION_NAME = "hypotension";
 
