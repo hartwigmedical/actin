@@ -16,16 +16,15 @@ import com.hartwig.actin.doid.config.TestDoidManualConfigFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class PrimaryTumorLocationBelongsToDoidTest {
 
     @Test
-    public void canEvaluateNonExclusiveNonExact() {
+    public void canEvaluate() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
 
-        PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100", false, false);
+        PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100");
 
         assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("100")));
         assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("200")));
@@ -33,76 +32,13 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("50", "250")));
         assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
 
-        PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200", false, false);
+        PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200");
 
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("100")));
         assertEvaluation(EvaluationResult.PASS, function200.evaluate(withConcreteTumorType("200")));
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("10", "100")));
         assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("50", "250")));
         assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(TumorTestFactory.withDoids(Sets.newHashSet())));
-    }
-
-    @Test
-    public void canEvaluateExclusiveNonExact() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
-
-        PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100", true, false);
-
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("100")));
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("200")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("10", "100")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
-
-        PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200", true, false);
-
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("100")));
-        assertEvaluation(EvaluationResult.PASS, function200.evaluate(withConcreteTumorType("200")));
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("10", "100")));
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(TumorTestFactory.withDoids(Sets.newHashSet())));
-    }
-
-    @Test
-    public void canEvaluateNonExclusiveExact() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
-
-        PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100", false, true);
-
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("100")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("200")));
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("10", "100")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(withConcreteTumorType((Set<String>) null)));
-
-        PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200", false, true);
-
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("100")));
-        assertEvaluation(EvaluationResult.PASS, function200.evaluate(withConcreteTumorType("200")));
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("10", "100")));
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(withConcreteTumorType(Sets.newHashSet())));
-    }
-
-    @Test
-    public void canEvaluateExclusiveExact() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
-
-        PrimaryTumorLocationBelongsToDoid function100 = new PrimaryTumorLocationBelongsToDoid(doidModel, "100", true, true);
-
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(withConcreteTumorType("100")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("200")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("10", "100")));
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(withConcreteTumorType((Set<String>) null)));
-
-        PrimaryTumorLocationBelongsToDoid function200 = new PrimaryTumorLocationBelongsToDoid(doidModel, "200", true, true);
-
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("100")));
-        assertEvaluation(EvaluationResult.PASS, function200.evaluate(withConcreteTumorType("200")));
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("10", "100")));
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(withConcreteTumorType("50", "250")));
-        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(withConcreteTumorType(Sets.newHashSet())));
     }
 
     @Test
@@ -111,7 +47,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         String stomachAdenocarcinoma = "5517";
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentMainCancerTypeChild(stomachCancer, stomachAdenocarcinoma);
 
-        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachAdenocarcinoma, true, true);
+        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachAdenocarcinoma);
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(TumorTestFactory.withTumorTypeAndDoids("concrete cancer", "concrete subtype", stomachCancer)));
         assertEvaluation(EvaluationResult.UNDETERMINED,
@@ -131,7 +67,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         DoidManualConfig config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping);
         DoidModel doidModel = TestDoidModelFactory.createWithDoidManualConfig(config);
 
-        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, "2", true, true);
+        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, "2");
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("4")));
         assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids("1")));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids("2")));
@@ -139,11 +75,6 @@ public class PrimaryTumorLocationBelongsToDoidTest {
 
     @NotNull
     private static PatientRecord withConcreteTumorType(@NotNull String... doids) {
-        return TumorTestFactory.withTumorTypeAndDoids("concrete type", "concrete sub type", doids);
-    }
-
-    @NotNull
-    private static PatientRecord withConcreteTumorType(@Nullable Set<String> doids) {
         return TumorTestFactory.withTumorTypeAndDoids("concrete type", "concrete sub type", doids);
     }
 }

@@ -23,15 +23,10 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
     private final DoidModel doidModel;
     @NotNull
     private final String doidToMatch;
-    private final boolean requireExclusive;
-    private final boolean requireExact;
 
-    public PrimaryTumorLocationBelongsToDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch,
-            final boolean requireExclusive, final boolean requireExact) {
+    public PrimaryTumorLocationBelongsToDoid(@NotNull final DoidModel doidModel, @NotNull final String doidToMatch) {
         this.doidModel = doidModel;
         this.doidToMatch = doidToMatch;
-        this.requireExclusive = requireExclusive;
-        this.requireExact = requireExact;
     }
 
     @NotNull
@@ -48,24 +43,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        boolean hasExactMatch = false;
-        for (String doid : tumorDoids) {
-            if (doid.equals(doidToMatch)) {
-                hasExactMatch = true;
-                break;
-            }
-        }
-
-        boolean isPass;
-        if (requireExclusive) {
-            boolean isExclusiveMatch = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, doidToMatch);
-            isPass = requireExact ? isExclusiveMatch && hasExactMatch : isExclusiveMatch;
-        } else {
-            boolean isMatch = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch);
-            isPass = requireExact ? isMatch && hasExactMatch : isMatch;
-        }
-
-        if (isPass) {
+        if (DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has " + doidTerm)
