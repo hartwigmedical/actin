@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.config.AdenoSquamousMapping;
 
@@ -16,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 //TODO: Update according to TODO in README
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
-
-    private static final String UNCLEAR_TUMOR_TYPE = "carcinoma";
 
     @NotNull
     private final DoidModel doidModel;
@@ -60,7 +57,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isPotentialMatchWithMainCancerType(record.clinical().tumor(), tumorDoids, doidToMatch)) {
+        if (isPotentialMatchWithMainCancerType(tumorDoids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidTerm)
@@ -89,22 +86,11 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         return false;
     }
 
-    private boolean isPotentialMatchWithMainCancerType(@NotNull TumorDetails tumor, @NotNull Set<String> tumorDoids,
-            @NotNull String doidToMatch) {
-        String primaryTumorType = tumor.primaryTumorType();
-        String primaryTumorSubType = tumor.primaryTumorSubType();
-
-        if (primaryTumorType != null && primaryTumorSubType != null && !(
-                (primaryTumorType.equalsIgnoreCase(UNCLEAR_TUMOR_TYPE) || primaryTumorType.isEmpty()) && primaryTumorSubType.isEmpty())) {
-            return false;
-        }
-
+    private boolean isPotentialMatchWithMainCancerType(@NotNull Set<String> tumorDoids, @NotNull String doidToMatch) {
         Set<String> mainCancerTypesToMatch = doidModel.mainCancerDoids(doidToMatch);
-        for (String doid : tumorDoids) {
-            for (String entry : doidModel.doidWithParents(doid)) {
-                if (mainCancerTypesToMatch.contains(entry)) {
-                    return true;
-                }
+        for (String doid : expandToFullDoidTree(tumorDoids)) {
+            if (mainCancerTypesToMatch.contains(doid)) {
+                return true;
             }
         }
         return false;
