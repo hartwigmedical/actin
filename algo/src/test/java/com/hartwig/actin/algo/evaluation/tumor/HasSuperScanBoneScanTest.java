@@ -13,6 +13,6 @@ public class HasSuperScanBoneScanTest {
     public void canEvaluate() {
         HasSuperScanBoneScan function = new HasSuperScanBoneScan();
 
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

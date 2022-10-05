@@ -17,9 +17,9 @@ public class HasSuperScanBoneScan implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.NOT_EVALUATED)
-                .addPassSpecificMessages("Currently it is assumed that super scan bone scan is not present")
-                .addPassGeneralMessages("Super scan bone scan")
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages("Presence of superscan bone scan currently cannot be evaluated")
+                .addUndeterminedGeneralMessages("Undetermined superscan bone scan")
                 .build();
     }
 }
