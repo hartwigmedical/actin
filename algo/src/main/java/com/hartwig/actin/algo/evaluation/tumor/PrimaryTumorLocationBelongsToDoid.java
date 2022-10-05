@@ -13,7 +13,6 @@ import com.hartwig.actin.doid.config.AdenoSquamousMapping;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to TODO in README
 public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
 
     @NotNull
@@ -60,7 +59,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         if (isPotentialMatchWithMainCancerType(tumorDoids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine if patient may have " + doidTerm)
+                    .addUndeterminedSpecificMessages("Could not determine based on configured tumor type if patient may have " + doidTerm)
                     .addUndeterminedGeneralMessages("Tumor type")
                     .build();
         }
