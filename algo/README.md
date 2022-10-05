@@ -39,14 +39,16 @@ Every criterion evaluates to one of the following options:
 | NOT_EVALUATED   | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. |
 | NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.                                                                                     |
 
-#### Criteria evaluation feedback / Recoverable status
+#### Recoverable status 
 
-Every criterion algorithm also provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly understand which 
+Each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation
+could potentially be recovered in case of a `FAIL`. For example, lab values may be insufficient at the moment of evaluation, leading to `FAIL`, but may be sufficient 2 weeks later
+when a new lab test has been done. Hence, lab rules can be 'recoverable', whereas a primary tumor location cannot change and primary tumor location rules are thus 'unrecoverable'. 
+
+#### Evaluation feedback
+
+Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly understand which 
 evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`) is as it is. 
-
-Finally, each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation 
-could be recovered in case of a `FAIL`. For example, lab values may be insufficient at moment of evaluation, but turn out to be sufficient in 2 weeks
-when a new lab test is done ('recoverable'), while a tumor type cannot change ('unrecoverable'). 
 
 #### Treatment eligibility
 
@@ -59,18 +61,18 @@ Once all criteria are evaluated, the following algorithm determines whether a pa
 Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered  eligible 
 _and_ the trial that the cohort is part of is considered eligible.
    
-#### Criteria algorithms
+#### Criterion algorithms
 
 Inclusion and exclusion criteria can be defined as a set of rules that are combined using composite functions, to determine overall eligibility. 
 
 The following composite functions are available:
 
-| Function | Description                                                                                              |
-|----------|----------------------------------------------------------------------------------------------------------|
-| AND      | indicates that all combined rules should PASS in order to PASS                                           |
-| OR       | indicates that one of the combined rules should PASS in order to PASS                                    |
-| NOT      | indicates that the rule should not be PASS in order to PASS                                              |
-| WARN_IF  | indicates that a warning should be displayed in case evaluation leads to PASS, thereby resolving to WARN |
+| Function | Description                                                                     |
+|----------|---------------------------------------------------------------------------------|
+| AND      | indicates that all combined rules should PASS in order to PASS                  |
+| OR       | indicates that one of the combined rules should PASS in order to PASS           |
+| NOT      | indicates that the rule should resolve to FAIL in order to PASS                 |
+| WARN_IF  | indicates that the rule should resolve to WARN in case evaluation leads to PASS |
 
 Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. 
 Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly 
@@ -80,23 +82,23 @@ The following rules are available:
 
 ##### Rules related to general characteristics / statements
 
-| Rule                                     | When does a patient pass evaluation?    | Note                                                                                                                                                                                                                                                                               |
-|------------------------------------------|-----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| IS_AT_LEAST_X_YEARS_OLD                  | Current year minus birth year > X       | `UNDETERMINED` in case of exactly X                                                                                                                                                                                                                                                |
-| IS_MALE                                  | Patient > Gender = Male                 |                                                                                                                                                                                                                                                                                    |
-| IS_FEMALE                                | Patient > Gender = Female               |                                                                                                                                                                                                                                                                                    |
-| HAS_WHO_STATUS_OF_AT_MOST_X              | Patient > WHO <= X                      | Resolve to `WARN` in case patient WHO equals X+1 (e.g. if patient WHO = 2 and requested max WHO = 1), or TODO: if patient WHO = X and has complication with one of following categories: %Ascites%, %Pleural effusion%, %Pericardial effusion%, %Pain% or %Spinal cord compression |
-| HAS_WHO_STATUS_OF_AT_EXACTLY_X           | Patient > WHO = X                       | Resolve to `WARN` in case patient WHO equals X+1 or X-1 (e.g. if patient WHO = 2 or 0 and requested max WHO = 1), or TODO: if patient has complication with one of following categories: %Ascites%, %Pleural effusion%, %Pericardial effusion%, %Pain% or %Spinal cord compression |
-| HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X        | > Currently resolves to `NOT_EVALUATED` |                                                                                                                                                                                                                                                                                    |
-| HAS_LANSKY_SCORE_OF_AT_LEAST_X           | > Currently resolves to `NOT_EVALUATED` |                                                                                                                                                                                                                                                                                    |
-| CAN_GIVE_ADEQUATE_INFORMED_CONSENT       | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
-| HAS_RAPIDLY_DETERIORATING_CONDITION      | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
-| HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS  | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
-| HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
-| IS_TREATED_IN_HOSPITAL_X                 | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
-| WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X   | > Currently set to the Netherlands      |                                                                                                                                                                                                                                                                                    |
-| IS_LEGALLY_INSTITUTIONALIZED             | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
-| IS_INVOLVED_IN_STUDY_PROCEDURES          | > Won't be evaluated                    |                                                                                                                                                                                                                                                                                    |
+| Rule                                     | When does a patient pass evaluation?                | Note                                                                                                                                                                                                                                                                               |
+|------------------------------------------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| IS_AT_LEAST_X_YEARS_OLD                  | Current year minus birth year > X                   | `UNDETERMINED` in case of exactly X                                                                                                                                                                                                                                                |
+| IS_MALE                                  | Patient > Gender = Male                             |                                                                                                                                                                                                                                                                                    |
+| IS_FEMALE                                | Patient > Gender = Female                           |                                                                                                                                                                                                                                                                                    |
+| HAS_WHO_STATUS_OF_AT_MOST_X              | Patient > WHO <= X                                  | Resolve to `WARN` in case patient WHO equals X+1 (e.g. if patient WHO = 2 and requested max WHO = 1), or TODO: if patient WHO = X and has complication with one of following categories: %Ascites%, %Pleural effusion%, %Pericardial effusion%, %Pain% or %Spinal cord compression |
+| HAS_WHO_STATUS_OF_AT_EXACTLY_X           | Patient > WHO = X                                   | Resolve to `WARN` in case patient WHO equals X+1 or X-1 (e.g. if patient WHO = 2 or 0 and requested max WHO = 1), or TODO: if patient has complication with one of following categories: %Ascites%, %Pleural effusion%, %Pericardial effusion%, %Pain% or %Spinal cord compression |
+| HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X        | (TODO) Patient > WHO in accordance with Karnofsky X | Resolve to `WARN` in case patient WHO equals Karnofsky X+1                                                                                                                                                                                                                         |
+| HAS_LANSKY_SCORE_OF_AT_LEAST_X           | (TODO) Patient > WHO in accordance with Lansky X    | Resolve to `WARN` in case patient WHO equals Lansky X+1                                                                                                                                                                                                                            |
+| CAN_GIVE_ADEQUATE_INFORMED_CONSENT       | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
+| HAS_RAPIDLY_DETERIORATING_CONDITION      | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
+| HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS  | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
+| HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
+| IS_TREATED_IN_HOSPITAL_X                 | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
+| WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X   | > Currently set to the Netherlands                  |                                                                                                                                                                                                                                                                                    |
+| IS_LEGALLY_INSTITUTIONALIZED             | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
+| IS_INVOLVED_IN_STUDY_PROCEDURES          | > Won't be evaluated                                |                                                                                                                                                                                                                                                                                    |
 
 ##### Rules related to tumor and lesion localization
  
