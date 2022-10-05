@@ -181,13 +181,13 @@ public final class TestMolecularFactory {
         Set<ActinTrialEvidence> result = Sets.newHashSet();
 
         result.add(ImmutableActinTrialEvidence.builder()
-                .event("BRAF V600E")
+                .event("PTEN del")
                 .trialAcronym("TEST-1")
                 .cohortId("B")
                 .isInclusionCriterion(true)
-                .type(MolecularEventType.MUTATED_GENE)
-                .gene("BRAF")
-                .mutation("V600E")
+                .type(MolecularEventType.INACTIVATED_GENE)
+                .gene("PTEN")
+                .mutation("del")
                 .build());
 
         return result;
@@ -197,7 +197,7 @@ public final class TestMolecularFactory {
     private static Set<ExternalTrialEvidence> createTestExternalTrials() {
         Set<ExternalTrialEvidence> result = Sets.newHashSet();
 
-        result.add(ImmutableExternalTrialEvidence.builder().event("BRAF V600E").trial("External test trial 1").build());
+        result.add(ImmutableExternalTrialEvidence.builder().event("PTEN del").trial("External test trial 1").build());
         result.add(ImmutableExternalTrialEvidence.builder().event("High TML").trial("External test trial 2").build());
 
         return result;

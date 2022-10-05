@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
@@ -103,7 +102,7 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static ClinicalStatus createTestClinicalStatus() {
-        ECG ecg = ImmutableECG.builder().hasSigAberrationLatestECG(true).aberrationDescription("Atrial arrhythmia").build();
+        ECG ecg = ImmutableECG.builder().hasSigAberrationLatestECG(false).aberrationDescription(Strings.EMPTY).build();
 
         InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).description(Strings.EMPTY).build();
 
@@ -179,10 +178,10 @@ public final class TestClinicalFactory {
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
 
         priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
-                .test("IHC")
-                .item("ERBB2")
+                .test("BRAF test")
+                .item("BRAF")
                 .measure(null)
-                .scoreText("negative")
+                .scoreText("V600E positive")
                 .scoreValuePrefix(null)
                 .scoreValue(null)
                 .scoreValueUnit(null)
@@ -318,13 +317,6 @@ public final class TestClinicalFactory {
                 .grade(2)
                 .build());
 
-        toxicities.add(ImmutableToxicity.builder()
-                .name("Dizziness")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                .source(ToxicitySource.QUESTIONNAIRE)
-                .grade(null)
-                .build());
-
         return toxicities;
     }
 
@@ -339,16 +331,6 @@ public final class TestClinicalFactory {
                 .clinicalStatus("Active")
                 .verificationStatus("Confirmed")
                 .criticality("Unable-to-assess")
-                .build());
-
-        intolerances.add(ImmutableIntolerance.builder()
-                .name("Pembrolizumab")
-                .category("Medication")
-                .subcategories(Sets.newHashSet("Immunotherapy"))
-                .type("Allergy")
-                .clinicalStatus("Active")
-                .verificationStatus("Confirmed")
-                .criticality("High")
                 .build());
 
         return intolerances;
