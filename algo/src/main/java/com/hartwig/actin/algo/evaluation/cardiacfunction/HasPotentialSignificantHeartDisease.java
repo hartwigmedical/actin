@@ -61,7 +61,7 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
             if (hasHeartDiseaseDoid || hasHeartDiseaseTerm) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Patient has " + condition.name() + ", which classifies as potential heart disease)")
+                        .addPassSpecificMessages("Patient has " + condition.name() + ", which classifies as potential heart disease")
                         .addPassGeneralMessages("Present " + condition.name())
                         .build();
             }

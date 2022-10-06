@@ -95,17 +95,17 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (weight == null) {
                 builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient, but weight of patient is not known");
-                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation");
+                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation weight unknown");
             } else {
                 builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results");
-                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation");
+                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation ambiguous");
             }
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Cockcroft-Gault is sufficient");
             builder.addPassGeneralMessages("Cockcroft-Gault sufficient");
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("Cockcroft-Gault is likely sufficient, but body weight of patient is not known");
-            builder.addWarnGeneralMessages("Cockcroft-Gault evaluation");
+            builder.addWarnGeneralMessages("Cockcroft-Gault evaluation weight unknown");
         }
         return builder.build();
     }

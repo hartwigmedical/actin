@@ -71,6 +71,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             }
         }
 
+        //TODO: Make clearer that evaluation is fine but > 30 days
         if (evaluation.result() == EvaluationResult.PASS && !mostRecent.date().isAfter(minPassDate)) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.WARN)
