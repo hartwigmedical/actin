@@ -60,6 +60,7 @@ CREATE TABLE priorTumorTreatment
     startMonth int,
     stopYear int,
     stopMonth int,
+    cycles int,
     bestResponse varchar(50),
     stopReason varchar(50),
     categories varchar(100) NOT NULL,

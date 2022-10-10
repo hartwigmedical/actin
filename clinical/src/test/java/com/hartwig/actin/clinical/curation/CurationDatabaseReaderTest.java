@@ -94,6 +94,7 @@ public class CurationDatabaseReaderTest {
         assertNull(curated.startMonth());
         assertEquals(2021, (int) curated.stopYear());
         assertNull(curated.stopMonth());
+        assertEquals(6, (int) curated.cycles());
         assertEquals("PR", curated.bestResponse());
         assertEquals("toxicity", curated.stopReason());
         assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated.categories());

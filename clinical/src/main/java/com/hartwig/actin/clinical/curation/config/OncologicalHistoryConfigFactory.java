@@ -31,6 +31,7 @@ public class OncologicalHistoryConfigFactory implements CurationConfigFactory<On
                 .startMonth(ResourceFile.optionalInteger(parts[fields.get("startMonth")]))
                 .stopYear(ResourceFile.optionalInteger(parts[fields.get("stopYear")]))
                 .stopMonth(ResourceFile.optionalInteger(parts[fields.get("stopMonth")]))
+                .cycles(ResourceFile.optionalInteger(parts[fields.get("cycles")]))
                 .bestResponse(ResourceFile.optionalString(parts[fields.get("bestResponse")]))
                 .stopReason(ResourceFile.optionalString(parts[fields.get("stopReason")]))
                 .categories(TreatmentCategoryResolver.fromStringList(parts[fields.get("category")]))

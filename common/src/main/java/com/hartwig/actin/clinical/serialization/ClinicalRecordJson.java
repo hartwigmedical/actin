@@ -253,6 +253,7 @@ public final class ClinicalRecordJson {
                         .startMonth(nullableInteger(object, "startMonth"))
                         .stopYear(nullableInteger(object, "stopYear"))
                         .stopMonth(nullableInteger(object, "stopMonth"))
+                        .cycles(nullableInteger(object, "cycles"))
                         .bestResponse(nullableString(object, "bestResponse"))
                         .stopReason(nullableString(object, "stopReason"))
                         .categories(toTreatmentCategories(array(object, "categories")))

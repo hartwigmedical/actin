@@ -26,6 +26,9 @@ public abstract class PriorTumorTreatment {
     public abstract Integer stopMonth();
 
     @Nullable
+    public abstract Integer cycles();
+
+    @Nullable
     public abstract String bestResponse();
 
     @Nullable
