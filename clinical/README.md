@@ -67,26 +67,27 @@ Every patient, uniquely defined by their patient ID, has a clinical record with 
 
 N prior tumor treatments
 
-| Field          | Example Value     | Details                                         |
-|----------------|-------------------|-------------------------------------------------|
-| name           | Ipilimumab        | Treatment name                                  |
-| cycles         | 6                 | Nr of cycles received                           |
-| startYear      | 2021              | Year in which treatment was started             |
-| startMonth     | 11                | Month in which treatment was started            |
-| stopYear       | 2021              | Year in which treatment was stopped             |
-| stopMonth      | 12                | Month in which treatment was stopped            |
-| bestResponse   | Complete response | Best response to treatment                      |
-| stopReason     |                   | Reason of treatment end                         |
-| categories     | Immunotherapy     | A set of categories assigned to the treatment   |
-| isSystemic     | 1                 | Treatment is systemic?                          |
-| chemoType      |                   | Type of chemotherapy (if applicable)            |
-| immunoType     | Anti-CTLA-4       | Type of immunotherapy (if applicable)           |
-| targetedType   |                   | Type of targeted therapy (if applicable)        |
-| hormoneType    |                   | Type of hormonal therapy (if applicable)        |
-| carTType       |                   | Type of car-T therapy (if applicable)           |
-| transplantType |                   | Type of transplantation therapy (if applicable) |
-| supportiveType |                   | Type of supportive treatment (if applicable)    |
-| trialAcronym   |                   | Acronym of trial (if applicable)                |
+| Field          | Example Value     | Details                                           |
+|----------------|-------------------|---------------------------------------------------|
+| name           | Ipilimumab        | Treatment name                                    |
+| cycles         | 6                 | Nr of cycles received                             |
+| startYear      | 2021              | Year in which treatment was started               |
+| startMonth     | 11                | Month in which treatment was started              |
+| stopYear       | 2021              | Year in which treatment was stopped               |
+| stopMonth      | 12                | Month in which treatment was stopped              |
+| cycles         | 6                 | The number of cycles which have been administered |
+| bestResponse   | Complete response | Best response to treatment                        |
+| stopReason     |                   | Reason of treatment end                           |
+| categories     | Immunotherapy     | A set of categories assigned to the treatment     |
+| isSystemic     | 1                 | Treatment is systemic?                            |
+| chemoType      |                   | Type of chemotherapy (if applicable)              |
+| immunoType     | Anti-CTLA-4       | Type of immunotherapy (if applicable)             |
+| targetedType   |                   | Type of targeted therapy (if applicable)          |
+| hormoneType    |                   | Type of hormonal therapy (if applicable)          |
+| carTType       |                   | Type of car-T therapy (if applicable)             |
+| transplantType |                   | Type of transplantation therapy (if applicable)   |
+| supportiveType |                   | Type of supportive treatment (if applicable)      |
+| trialAcronym   |                   | Acronym of trial (if applicable)                  |
 
 N prior second primaries   
 
