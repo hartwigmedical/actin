@@ -56,7 +56,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .build();
         }
 
-        if (isPotentialMatchWithMainCancerType(tumorDoids, doidToMatch)) {
+        if (isUndeterminateUnderMainCancerType(tumorDoids, doidToMatch)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine based on configured tumor type if patient may have " + doidTerm)
@@ -85,12 +85,16 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         return false;
     }
 
-    //TODO: Update according to README
-    private boolean isPotentialMatchWithMainCancerType(@NotNull Set<String> tumorDoids, @NotNull String doidToMatch) {
+    private boolean isUndeterminateUnderMainCancerType(@NotNull Set<String> tumorDoids, @NotNull String doidToMatch) {
+        Set<String> fullDoidToMatchTree = doidModel.doidWithParents(doidToMatch);
         Set<String> mainCancerTypesToMatch = doidModel.mainCancerDoids(doidToMatch);
-        for (String doid : expandToFullDoidTree(tumorDoids)) {
-            if (mainCancerTypesToMatch.contains(doid)) {
-                return true;
+        for (String tumorDoid : tumorDoids) {
+            Set<String> fullTumorDoidTree = doidModel.doidWithParents(tumorDoid);
+            for (String doid : fullTumorDoidTree) {
+                if (mainCancerTypesToMatch.contains(doid) && fullDoidToMatchTree.contains(doid)
+                        && !fullTumorDoidTree.contains(doidToMatch)) {
+                    return true;
+                }
             }
         }
         return false;

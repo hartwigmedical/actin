@@ -41,14 +41,17 @@ public final class TestDoidModelFactory {
     }
 
     @NotNull
-    public static DoidModel createWithOneParentMainCancerTypeChild(@NotNull String parent, @NotNull String child) {
+    public static DoidModel createWithMainCancerTypeAndChildToParentMap(@NotNull String mainCancerDoid,
+            @NotNull Map<String, String> childToParentMap) {
         Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
-        childToParentsMap.put(child, parent);
+        for (Map.Entry<String, String> entry : childToParentMap.entrySet()) {
+            childToParentsMap.put(entry.getKey(), entry.getValue());
+        }
 
         return create(childToParentsMap,
                 Maps.newHashMap(),
                 Maps.newHashMap(),
-                TestDoidManualConfigFactory.createWithOneMainCancerDoid(parent));
+                TestDoidManualConfigFactory.createWithOneMainCancerDoid(mainCancerDoid));
     }
 
     @NotNull

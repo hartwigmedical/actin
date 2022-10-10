@@ -2,8 +2,10 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.doid.DoidModel;
@@ -39,15 +41,26 @@ public class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @Test
-    public void canResolveToMainCancerType() {
-        String stomachCancer = "10534";
-        String stomachAdenocarcinoma = "5517";
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentMainCancerTypeChild(stomachCancer, stomachAdenocarcinoma);
+    public void canEvaluateUndeterminateMainCancerType() {
+        String cancer = "1";
+        String stomachCancer = "2";
+        String stomachCarcinoma = "3";
+        String stomachAdenocarcinoma = "4";
 
-        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachAdenocarcinoma);
+        Map<String, String> childToParentMap = Maps.newHashMap();
+        childToParentMap.put(stomachAdenocarcinoma, stomachCarcinoma);
+        childToParentMap.put(stomachCarcinoma, stomachCancer);
+        childToParentMap.put(stomachCancer, cancer);
+
+        DoidModel doidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap);
+
+        PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachCarcinoma);
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("something else")));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(cancer)));
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(stomachCancer)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachCarcinoma)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachAdenocarcinoma)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids("something else", stomachAdenocarcinoma)));
     }
 
     @Test
