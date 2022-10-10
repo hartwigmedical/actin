@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class MolecularResultsAreAvailableNotIndeterminateForPromoterOfGene implements EvaluationFunction {
 
     @NotNull
@@ -23,11 +22,10 @@ public class MolecularResultsAreAvailableNotIndeterminateForPromoterOfGene imple
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorMolecularTest priorMolecularTest : record.clinical().priorMolecularTests()) {
-            if (priorMolecularTest.item().equals(gene)) {
+            if (priorMolecularTest.item().equals(gene) && !priorMolecularTest.impliesPotentialIndeterminateStatus()) {
                 return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(
-                                gene + " has been tested in a prior molecular test but indeterminate status is undetermined")
+                        .result(EvaluationResult.PASS)
+                        .addPassSpecificMessages(gene + " has been tested in a prior molecular test with no potential indeterminate status")
                         .build();
             }
         }
