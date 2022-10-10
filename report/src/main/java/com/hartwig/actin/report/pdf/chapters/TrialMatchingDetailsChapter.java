@@ -179,25 +179,28 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
         for (Map.Entry<Eligibility, Evaluation> entry : evaluations.entrySet()) {
             Evaluation evaluation = entry.getValue();
             for (CriterionReference reference : entry.getKey().references()) {
-                if (evaluation.result() == worstResultPerCriterion.get(reference)) {
-                    Evaluation current = worstEvaluationPerCriterion.get(reference);
-                    if (current == null) {
-                        worstEvaluationPerCriterion.put(reference, evaluation);
-                    } else {
-                        Evaluation updated = ImmutableEvaluation.builder()
-                                .from(current)
-                                .recoverable(current.recoverable() && evaluation.recoverable())
-                                .addAllPassSpecificMessages(evaluation.passSpecificMessages())
-                                .addAllPassGeneralMessages(evaluation.passGeneralMessages())
-                                .addAllWarnSpecificMessages(evaluation.warnSpecificMessages())
-                                .addAllWarnGeneralMessages(evaluation.warnGeneralMessages())
-                                .addAllUndeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
-                                .addAllUndeterminedGeneralMessages(evaluation.undeterminedGeneralMessages())
-                                .addAllFailSpecificMessages(evaluation.failSpecificMessages())
-                                .addAllFailGeneralMessages(evaluation.failGeneralMessages())
-                                .build();
-                        worstEvaluationPerCriterion.put(reference, updated);
+                EvaluationResult worst = worstResultPerCriterion.get(reference);
+
+                Evaluation current = worstEvaluationPerCriterion.get(reference);
+                if (current == null) {
+                    worstEvaluationPerCriterion.put(reference, ImmutableEvaluation.builder().from(evaluation).result(worst).build());
+                } else {
+                    ImmutableEvaluation.Builder updatedBuilder = ImmutableEvaluation.builder()
+                            .from(current)
+                            .addAllPassSpecificMessages(evaluation.passSpecificMessages())
+                            .addAllPassGeneralMessages(evaluation.passGeneralMessages())
+                            .addAllWarnSpecificMessages(evaluation.warnSpecificMessages())
+                            .addAllWarnGeneralMessages(evaluation.warnGeneralMessages())
+                            .addAllUndeterminedSpecificMessages(evaluation.undeterminedSpecificMessages())
+                            .addAllUndeterminedGeneralMessages(evaluation.undeterminedGeneralMessages())
+                            .addAllFailSpecificMessages(evaluation.failSpecificMessages())
+                            .addAllFailGeneralMessages(evaluation.failGeneralMessages());
+
+                    if (evaluation.result() == worst) {
+                        updatedBuilder.recoverable(current.recoverable() && evaluation.recoverable());
                     }
+
+                    worstEvaluationPerCriterion.put(reference, updatedBuilder.build());
                 }
             }
         }
@@ -313,6 +316,14 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                 } else if (evaluation.result() == EvaluationResult.FAIL) {
                     for (String failMessage : evaluation.failSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(failMessage)));
+                    }
+                    if (evaluation.recoverable()) {
+                        for (String warnMessage : evaluation.warnSpecificMessages()) {
+                            evalTable.addCell(Cells.create(new Paragraph(warnMessage)));
+                        }
+                        for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
+                            evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
+                        }
                     }
                 }
                 table.addCell(Cells.createContent(evalTable));
