@@ -202,8 +202,7 @@ Notes:
 
 2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
 
-Notes:
-- If the type of the requested category is not configured for a treatment, resolve to `UNDETERMINED` 
+Note that if the type of the requested category is not configured for a treatment, evaluation resolves to `UNDETERMINED` 
 
 Finally, any trial that a patient has participated in counts as one potential treatment of any type or category. 
 Trials could lead to `WARN` in case knowing the exact trial treatment is required to do a conclusive evaluation.
