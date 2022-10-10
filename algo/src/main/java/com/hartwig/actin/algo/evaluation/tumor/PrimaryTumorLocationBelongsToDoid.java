@@ -91,7 +91,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
         for (String tumorDoid : tumorDoids) {
             Set<String> fullTumorDoidTree = doidModel.doidWithParents(tumorDoid);
             for (String doid : fullTumorDoidTree) {
-                if (mainCancerTypesToMatch.contains(doid) && fullDoidToMatchTree.contains(doid)
+                if (mainCancerTypesToMatch.contains(doid) && fullDoidToMatchTree.contains(tumorDoid)
                         && !fullTumorDoidTree.contains(doidToMatch)) {
                     return true;
                 }

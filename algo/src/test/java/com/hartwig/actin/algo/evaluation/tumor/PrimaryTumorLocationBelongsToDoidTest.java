@@ -59,7 +59,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachCarcinoma);
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("something else")));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(cancer)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(stomachLymphoma))); //TODO: Fix to FAIL evaluation
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(stomachLymphoma)));
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(stomachCancer)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachCarcinoma)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachAdenocarcinoma)));
