@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -19,7 +20,7 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
     static final Set<String> SMALL_CELL_EXTRA_DETAILS = Sets.newHashSet();
 
     static {
-        SMALL_CELL_DOIDS.add("0050685"); // small cell carcinoma
+        SMALL_CELL_DOIDS.add(DoidConstants.SMALL_CELL_CARCINOMA_DOID);
 
         SMALL_CELL_TERMS.add("small cell");
 

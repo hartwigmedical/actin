@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.molecular.MolecularInterpretation;
@@ -21,8 +22,8 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
     static final Set<String> NEUROENDOCRINE_EXTRA_DETAILS = Sets.newHashSet();
 
     static {
-        NEUROENDOCRINE_DOIDS.add("169"); // neuroendocrine tumor
-        NEUROENDOCRINE_DOIDS.add("1800"); // neuroendocrine carcinoma
+        NEUROENDOCRINE_DOIDS.add(DoidConstants.NEUROENDOCRINE_TUMOR_DOID);
+        NEUROENDOCRINE_DOIDS.add(DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID);
 
         NEUROENDOCRINE_TERMS.add("neuroendocrine");
 

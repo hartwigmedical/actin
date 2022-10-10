@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
@@ -21,9 +22,9 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
     static final Set<String> HEART_DISEASE_TERMS = Sets.newHashSet();
 
     static {
-        HEART_DISEASE_DOIDS.add("114"); // heart disease
-        HEART_DISEASE_DOIDS.add("10763"); // hypertension
-        HEART_DISEASE_DOIDS.add("3393"); // coronary artery disease
+        HEART_DISEASE_DOIDS.add(DoidConstants.HEART_DISEASE_DOID);
+        HEART_DISEASE_DOIDS.add(DoidConstants.HYPERTENSION_DOID);
+        HEART_DISEASE_DOIDS.add(DoidConstants.CORONARY_ARTERY_DISEASE_DOID);
 
         HEART_DISEASE_TERMS.add("angina");
         HEART_DISEASE_TERMS.add("pacemaker");

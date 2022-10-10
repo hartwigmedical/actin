@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -18,17 +19,17 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
     static final Set<String> OVARIAN_MUCINOUS_DOID_SET = Sets.newHashSet();
 
     static {
-        OVARIAN_MUCINOUS_DOIDS.add("6278"); // ovarian mucinous malignant adenofibroma
-        OVARIAN_MUCINOUS_DOIDS.add("7013"); // ovarian mucinous cystadenofibroma
-        OVARIAN_MUCINOUS_DOIDS.add("3267"); // mucinous ovarian cystadenoma
-        OVARIAN_MUCINOUS_DOIDS.add("3604"); // ovarian mucinous cystadenocarcinoma
-        OVARIAN_MUCINOUS_DOIDS.add("3606"); // ovarian mucinous adenocarcinoma
-        OVARIAN_MUCINOUS_DOIDS.add("6067"); // ovarian mucinous neoplasm
-        OVARIAN_MUCINOUS_DOIDS.add("6469"); // ovarian mucinous adenofibroma
-        OVARIAN_MUCINOUS_DOIDS.add("6898"); // ovarian seromucinous carcinoma
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_MUCINOUS_MALIGNANT_ADENOFIBROMA_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_MUCINOUS_CYSTADENOFIBROMA_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.MUCINOUS_OVARIAN_CYSTADENOMA_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_MUCINOUS_CYSTADENOCARCINOMA_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_MUCINOUS_ADENOCARCINOMA_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_MUCINOUS_NEOPLASM_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_MUCINOUS_ADENOFIBROMA_DOID);
+        OVARIAN_MUCINOUS_DOIDS.add(DoidConstants.OVARIAN_SEROMUCINOUS_CARCINOMA_DOID);
 
-        OVARIAN_MUCINOUS_DOID_SET.add("3030"); // mucinous adenocarcinoma
-        OVARIAN_MUCINOUS_DOID_SET.add("2394"); // ovarian cancer
+        OVARIAN_MUCINOUS_DOID_SET.add(DoidConstants.MUCINOUS_ADENOCARCINOMA_DOID);
+        OVARIAN_MUCINOUS_DOID_SET.add(DoidConstants.OVARIAN_CANCER_DOID);
     }
 
     @NotNull

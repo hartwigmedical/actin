@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -18,10 +19,10 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
     static final Set<String> NON_RECIST_TUMOR_DOIDS = Sets.newHashSet();
 
     static {
-        NON_RECIST_TUMOR_DOIDS.add("2531"); // hematologic cancer
-        NON_RECIST_TUMOR_DOIDS.add("1319"); // brain cancer
-        NON_RECIST_TUMOR_DOIDS.add("0060058"); // lymphoma
-        NON_RECIST_TUMOR_DOIDS.add("9538"); // multiple myeloma
+        NON_RECIST_TUMOR_DOIDS.add(DoidConstants.HEMATOLOGIC_CANCER_DOID);
+        NON_RECIST_TUMOR_DOIDS.add(DoidConstants.BRAIN_CANCER_DOID);
+        NON_RECIST_TUMOR_DOIDS.add(DoidConstants.LYMPHOMA_DOID);
+        NON_RECIST_TUMOR_DOIDS.add(DoidConstants.MULTIPLE_MYELOMA_DOID);
     }
 
     @NotNull
