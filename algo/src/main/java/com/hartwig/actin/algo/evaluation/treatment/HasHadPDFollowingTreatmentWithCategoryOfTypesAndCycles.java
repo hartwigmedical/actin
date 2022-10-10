@@ -88,28 +88,31 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles implements E
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with undetermined stop reason")
+                    .addUndeterminedGeneralMessages(category.display() + " undetermined stop reason")
                     .build();
         } else if (hasHadTreatmentWithUnclearCycles) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with unclear number of cycles")
+                    .addUndeterminedGeneralMessages(category.display() + " undetermined nr of cycles")
                     .build();
         } else if (hasPotentiallyHadTreatment || hasHadTrial) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Undetermined whether patient has received " + treatment())
+                    .addUndeterminedGeneralMessages("Undetermined received" + category.display())
                     .build();
         } else if (hasHadTreatment) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has received " + treatment() + " but not with stop reason PD")
-                    .addFailGeneralMessages("Systemic treatments")
+                    .addFailGeneralMessages("No PD after " + category.display())
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("No " + category.display() + " treatment with PD")
-                    .addFailGeneralMessages("Systemic treatments")
+                    .addFailSpecificMessages("No " + treatment() + " treatment with PD")
+                    .addFailGeneralMessages("No " + category.display())
                     .build();
         }
     }
