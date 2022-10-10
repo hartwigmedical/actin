@@ -32,6 +32,7 @@ public class MolecularTestConfigFactory implements CurationConfigFactory<Molecul
                 .scoreValuePrefix(ResourceFile.optionalString(parts[fields.get("scoreValuePrefix")]))
                 .scoreValue(ResourceFile.optionalNumber(parts[fields.get("scoreValue")]))
                 .scoreValueUnit(ResourceFile.optionalString(parts[fields.get("scoreValueUnit")]))
+                .impliesPotentialIndeterminateStatus(ResourceFile.bool(parts[fields.get("impliesPotentialIndeterminateStatus")]))
                 .build();
     }
 }

@@ -111,7 +111,8 @@
       "scoreText": null,
       "scoreValuePrefix": null,
       "scoreValue": 3,
-      "scoreValueUnit": "+"
+      "scoreValueUnit": "+",
+      "impliesPotentialIndeterminateStatus": false
     }
   ],
   "complications": [

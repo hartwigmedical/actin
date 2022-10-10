@@ -236,6 +236,7 @@ public class CurationDatabaseReaderTest {
                 .scoreValuePrefix(null)
                 .scoreValue(3D)
                 .scoreValueUnit("+")
+                .impliesPotentialIndeterminateStatus(false)
                 .build(), config.curated());
     }
 

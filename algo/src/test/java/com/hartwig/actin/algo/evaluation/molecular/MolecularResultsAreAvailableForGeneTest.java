@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 
@@ -28,6 +27,6 @@ public class MolecularResultsAreAvailableForGeneTest {
 
     @NotNull
     private static PriorMolecularTest createForGene(@NotNull String gene) {
-        return ImmutablePriorMolecularTest.builder().test(Strings.EMPTY).item(gene).build();
+        return MolecularTestFactory.priorBuilder().test(Strings.EMPTY).item(gene).build();
     }
 }

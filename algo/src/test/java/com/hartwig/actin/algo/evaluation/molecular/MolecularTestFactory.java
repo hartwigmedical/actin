@@ -7,6 +7,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
@@ -20,12 +21,18 @@ import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class MolecularTestFactory {
 
     private MolecularTestFactory() {
+    }
+
+    @NotNull
+    public static ImmutablePriorMolecularTest.Builder priorBuilder() {
+        return ImmutablePriorMolecularTest.builder().test(Strings.EMPTY).item(Strings.EMPTY).impliesPotentialIndeterminateStatus(false);
     }
 
     @NotNull

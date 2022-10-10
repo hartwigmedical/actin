@@ -332,6 +332,7 @@ public final class ClinicalRecordJson {
                         .scoreValuePrefix(nullableString(object, "scoreValuePrefix"))
                         .scoreValue(nullableNumber(object, "scoreValue"))
                         .scoreValueUnit(nullableString(object, "scoreValueUnit"))
+                        .impliesPotentialIndeterminateStatus(bool(object, "impliesPotentialIndeterminateStatus"))
                         .build());
             }
             return priorMolecularTestList;

@@ -32,6 +32,6 @@ public class PriorMolecularTestComparatorTest {
 
     @NotNull
     private static PriorMolecularTest withItem(@NotNull String item) {
-        return ImmutablePriorMolecularTest.builder().item(item).test(Strings.EMPTY).build();
+        return ImmutablePriorMolecularTest.builder().item(item).test(Strings.EMPTY).impliesPotentialIndeterminateStatus(false).build();
     }
 }

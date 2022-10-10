@@ -48,6 +48,6 @@ public class GeneHasSufficientExpressionByIHCTest {
 
     @NotNull
     private static ImmutablePriorMolecularTest.Builder ihcBuilder(@NotNull String gene) {
-        return ImmutablePriorMolecularTest.builder().test("IHC").item(gene);
+        return MolecularTestFactory.priorBuilder().test("IHC").item(gene);
     }
 }

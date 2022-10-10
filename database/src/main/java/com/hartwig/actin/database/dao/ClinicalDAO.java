@@ -282,7 +282,8 @@ class ClinicalDAO {
                             PRIORMOLECULARTEST.SCORETEXT,
                             PRIORMOLECULARTEST.SCOREVALUEPREFIX,
                             PRIORMOLECULARTEST.SCOREVALUE,
-                            PRIORMOLECULARTEST.SCOREVALUEUNIT)
+                            PRIORMOLECULARTEST.SCOREVALUEUNIT,
+                            PRIORMOLECULARTEST.IMPLIESPOTENTIALINDETERMINATESTATUS)
                     .values(patientId,
                             priorMolecularTest.test(),
                             priorMolecularTest.item(),
@@ -290,7 +291,8 @@ class ClinicalDAO {
                             priorMolecularTest.scoreText(),
                             priorMolecularTest.scoreValuePrefix(),
                             priorMolecularTest.scoreValue(),
-                            priorMolecularTest.scoreValueUnit())
+                            priorMolecularTest.scoreValueUnit(),
+                            DataUtil.toByte(priorMolecularTest.impliesPotentialIndeterminateStatus()))
                     .execute();
         }
     }

@@ -185,6 +185,7 @@ public final class TestClinicalFactory {
                 .scoreValuePrefix(null)
                 .scoreValue(null)
                 .scoreValueUnit(null)
+                .impliesPotentialIndeterminateStatus(false)
                 .build());
 
         return priorMolecularTests;

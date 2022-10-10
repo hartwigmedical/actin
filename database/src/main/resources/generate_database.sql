@@ -118,6 +118,7 @@ CREATE TABLE priorMolecularTest
     scoreValuePrefix varchar(50),
     scoreValue double precision,
     scoreValueUnit varchar(50),
+    impliesPotentialIndeterminateStatus BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 

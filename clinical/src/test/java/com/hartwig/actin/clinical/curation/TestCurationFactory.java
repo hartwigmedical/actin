@@ -300,6 +300,7 @@ public final class TestCurationFactory {
                         .scoreValuePrefix(null)
                         .scoreValue(3D)
                         .scoreValueUnit("+")
+                        .impliesPotentialIndeterminateStatus(false)
                         .build())
                 .build());
 

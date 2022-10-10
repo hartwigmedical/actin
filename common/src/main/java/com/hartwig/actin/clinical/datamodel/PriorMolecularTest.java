@@ -28,4 +28,6 @@ public abstract class PriorMolecularTest {
 
     @Nullable
     public abstract String scoreValueUnit();
+
+    public abstract boolean impliesPotentialIndeterminateStatus();
 }

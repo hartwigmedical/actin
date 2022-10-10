@@ -44,6 +44,6 @@ public class HasSufficientPDL1ByIHCTest {
 
     @NotNull
     private static ImmutablePriorMolecularTest.Builder pdl1Builder() {
-        return ImmutablePriorMolecularTest.builder().test("IHC").item("PD-L1").measure(MEASURE);
+        return MolecularTestFactory.priorBuilder().test("IHC").item("PD-L1").measure(MEASURE);
     }
 }
