@@ -30,9 +30,9 @@ public class MolecularResultsAreAvailableNotIndeterminateForPromoterOfGeneTest {
         priorTests.add(createForGeneAndIndeterminateStatus("gene 2", false));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
 
-        // Add determinate test for gene 1 -> PASS
+        // Add determinate test for gene 1 -> Undetermined (promoter uncertain)
         priorTests.add(createForGeneAndIndeterminateStatus("gene 1", false));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
     }
 
     @NotNull

@@ -23,15 +23,23 @@ public class MolecularResultsAreAvailableForPromoterOfGene implements Evaluation
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorMolecularTest priorMolecularTest : record.clinical().priorMolecularTests()) {
-            if (priorMolecularTest.item().equals(gene)) {
+            if (priorMolecularTest.item().contains(gene) && priorMolecularTest.item().contains("promoter")) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages(gene + " has been tested in a prior molecular test")
+                        .addPassSpecificMessages(gene + " promoter has been tested in a prior molecular test")
+                        .addPassGeneralMessages("Molecular requirements")
+                        .build();
+
+            } else if (priorMolecularTest.item().contains(gene)) {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.UNDETERMINED)
+                        .addUndeterminedSpecificMessages(gene + " has been tested in a prior molecular test, but uncertain if this covered the promoter")
+                        .addUndeterminedGeneralMessages("Molecular requirements")
                         .build();
             }
         }
 
-        return EvaluationFactory.unrecoverable()
+        return EvaluationFactory.recoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages(gene + " has not been tested")
                 .addFailGeneralMessages("Molecular requirements")
