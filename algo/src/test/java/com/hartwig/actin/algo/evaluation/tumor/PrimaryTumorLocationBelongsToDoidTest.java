@@ -46,10 +46,12 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         String stomachCancer = "2";
         String stomachCarcinoma = "3";
         String stomachAdenocarcinoma = "4";
+        String stomachLymphoma = "5";
 
         Map<String, String> childToParentMap = Maps.newHashMap();
         childToParentMap.put(stomachAdenocarcinoma, stomachCarcinoma);
         childToParentMap.put(stomachCarcinoma, stomachCancer);
+        childToParentMap.put(stomachLymphoma, stomachCancer);
         childToParentMap.put(stomachCancer, cancer);
 
         DoidModel doidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap);
@@ -57,6 +59,7 @@ public class PrimaryTumorLocationBelongsToDoidTest {
         PrimaryTumorLocationBelongsToDoid function = new PrimaryTumorLocationBelongsToDoid(doidModel, stomachCarcinoma);
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("something else")));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(cancer)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(stomachLymphoma))); //TODO: Fix to FAIL evaluation
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(stomachCancer)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachCarcinoma)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachAdenocarcinoma)));
