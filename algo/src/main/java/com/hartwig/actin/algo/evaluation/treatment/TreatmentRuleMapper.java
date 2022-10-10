@@ -238,13 +238,17 @@ public class TreatmentRuleMapper extends RuleMapper {
     private FunctionCreator hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator() {
         return function -> {
             OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
-            return new HasHadPDFollowingTreatmentWithCategoryOfTypes(input.category(), input.strings());
+            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(input.category(), input.strings(), null);
         };
     }
 
     @NotNull
     private FunctionCreator hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator() {
-        return function -> new HasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCycles();
+        return function -> {
+            OneTypedTreatmentManyStringsOneInteger input =
+                    functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
+            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(input.category(), input.strings(), input.integer());
+        };
     }
 
     @NotNull
