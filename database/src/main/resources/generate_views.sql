@@ -22,7 +22,7 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
     FROM evaluation
     INNER JOIN trialMatch ON trialMatch.id = evaluation.trialMatchId
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
-    INNER JOIN trial ON trial.code = trialMatch.code
+    LEFT JOIN trial ON trial.code = trialMatch.code
     LEFT JOIN cohortMatch ON trialMatch.id = cohortMatch.trialMatchId AND cohortMatch.Id = evaluation.cohortMatchId
 UNION
 SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trial.acronym AS trialAcronym, trial.open AS trialOpen,
@@ -35,7 +35,7 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code 
     FROM cohortMatch
     INNER JOIN trialMatch ON trialMatch.id = cohortMatch.trialMatchId
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
-    INNER JOIN trial ON trial.code = trialMatch.code
+    LEFT JOIN trial ON trial.code = trialMatch.code
     WHERE cohortMatch.id NOT IN (SELECT DISTINCT cohortMatchId FROM evaluation WHERE NOT isnull(cohortMatchId))
     ORDER BY patientId, cohortId)
 AS a
