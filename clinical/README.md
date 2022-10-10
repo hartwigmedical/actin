@@ -115,15 +115,16 @@ N prior other conditions
 
 N prior (non-WGS) molecular tests
 
-| Field            | Example Value | Details                                        |
-|------------------|---------------|------------------------------------------------|
-| test             | IHC           | Type of test                                   |
-| item             | PD-L1         | Item measured                                  |
-| measure          | CPS           | Measure of test (if applicable)                |
-| scoreText        |               | Test score in text                             |
-| scoreValuePrefix | >             | Prefix for test score in value (if applicable) |
-| scoreValue       | 10            | Test score in value                            |
-| scoreValueUnit   |               | Unit for test score in value (if applicable)   |
+| Field                                    | Example Value | Details                                                               |
+|------------------------------------------|---------------|-----------------------------------------------------------------------|
+| test                                     | IHC           | Type of test                                                          |
+| item                                     | PD-L1         | Item measured                                                         |
+| measure                                  | CPS           | Measure of test (if applicable)                                       |
+| scoreText                                |               | Test score in text                                                    |
+| scoreValuePrefix                         | >             | Prefix for test score in value (if applicable)                        |
+| scoreValue                               | 10            | Test score in value                                                   |
+| scoreValueUnit                           |               | Unit for test score in value (if applicable)                          |
+| impliesPotentialPriorIndeterminateStatus | false         | Indicates whether the prior test was potentially indeterminate or not |
 
 N cancer related complications
 
