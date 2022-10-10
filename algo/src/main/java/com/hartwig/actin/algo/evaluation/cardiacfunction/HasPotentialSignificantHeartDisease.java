@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -49,6 +50,7 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
                     .build();
         }
 
+        Set<String> heartConditions = Sets.newHashSet();
         for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
             boolean hasHeartDiseaseDoid = false;
             for (String doid : condition.doids()) {
@@ -60,12 +62,16 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
             boolean hasHeartDiseaseTerm = isPotentiallyHeartDisease(condition.name());
 
             if (hasHeartDiseaseDoid || hasHeartDiseaseTerm) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Patient has " + condition.name() + ", which classifies as potential heart disease")
-                        .addPassGeneralMessages("Present " + condition.name())
-                        .build();
+                heartConditions.add(condition.name());
             }
+        }
+
+        if (!heartConditions.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has " + Format.concat(heartConditions) + ", which classifies as potential heart disease")
+                    .addPassGeneralMessages("Present " + Format.concat(heartConditions))
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()
