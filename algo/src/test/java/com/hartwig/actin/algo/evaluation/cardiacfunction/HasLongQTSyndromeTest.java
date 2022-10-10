@@ -9,6 +9,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -34,7 +35,7 @@ public class HasLongQTSyndromeTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(conditions)));
 
         // The correct condition
-        conditions.add(builder().addDoids(HasLongQTSyndrome.LONG_QT_SYNDROME_DOID).build());
+        conditions.add(builder().addDoids(DoidConstants.LONG_QT_SYNDROME_DOID).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorOtherConditions(conditions)));
     }
 

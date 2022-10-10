@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -13,8 +14,6 @@ import com.hartwig.actin.doid.DoidModel;
 import org.jetbrains.annotations.NotNull;
 
 public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
-
-    static final String STOMACH_CANCER_DOID = "10534";
 
     static final Set<String> UNDIFFERENTIATED_TYPES = Sets.newHashSet();
 
@@ -42,7 +41,7 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
                     .build();
         }
 
-        boolean isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, STOMACH_CANCER_DOID);
+        boolean isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.STOMACH_CANCER_DOID);
         boolean isUndifferentiatedType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), UNDIFFERENTIATED_TYPES);
 
         if (isStomachCancer && isUndifferentiatedType) {

@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -13,8 +14,6 @@ import com.hartwig.actin.doid.DoidModel;
 import org.jetbrains.annotations.NotNull;
 
 public class HasOvarianBorderlineTumor implements EvaluationFunction {
-
-    static final String OVARIAN_CANCER_DOID = "2394";
 
     static final Set<String> OVARIAN_BORDERLINE_TYPES = Sets.newHashSet();
 
@@ -43,7 +42,7 @@ public class HasOvarianBorderlineTumor implements EvaluationFunction {
                     .build();
         }
 
-        boolean isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, OVARIAN_CANCER_DOID);
+        boolean isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.OVARIAN_CANCER_DOID);
         boolean hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), OVARIAN_BORDERLINE_TYPES);
 
         if (isOvarianCancer && hasBorderlineType) {

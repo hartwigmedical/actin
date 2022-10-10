@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.doid.TestDoidModelFactory;
@@ -31,7 +32,7 @@ public class HasContraindicationToMRITest {
                         .build())));
 
         // Add a condition with correct DOID
-        String contraindicationDoid = HasContraindicationToMRI.KIDNEY_DISEASE_DOID;
+        String contraindicationDoid = DoidConstants.KIDNEY_DISEASE_DOID;
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(OtherConditionTestFactory.builder()
                         .addDoids(contraindicationDoid)

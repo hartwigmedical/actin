@@ -5,6 +5,7 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -13,9 +14,6 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import org.jetbrains.annotations.NotNull;
 
 public class HasCancerOfUnknownPrimary implements EvaluationFunction {
-
-    static final String CANCER_DOID = "162";
-    static final String ORGAN_SYSTEM_CANCER_DOID = "0050686";
 
     static final String CUP_PRIMARY_TUMOR_SUB_LOCATION = "CUP";
 
@@ -45,7 +43,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
         String tumorSubLocation = record.clinical().tumor().primaryTumorSubLocation();
         boolean isCUP = tumorSubLocation != null && tumorSubLocation.equals(CUP_PRIMARY_TUMOR_SUB_LOCATION);
         boolean hasCorrectCUPCategory = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, categoryOfCUP.doid());
-        boolean hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ORGAN_SYSTEM_CANCER_DOID);
+        boolean hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ORGAN_SYSTEM_CANCER_DOID);
 
         if (hasCorrectCUPCategory && !hasOrganSystemCancer) {
             if (isCUP) {
@@ -64,7 +62,7 @@ public class HasCancerOfUnknownPrimary implements EvaluationFunction {
             }
         }
 
-        if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, CANCER_DOID)) {
+        if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.CANCER_DOID)) {
             if (isCUP) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)

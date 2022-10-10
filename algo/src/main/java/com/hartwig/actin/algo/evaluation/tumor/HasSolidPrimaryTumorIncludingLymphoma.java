@@ -7,6 +7,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -15,20 +16,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasSolidPrimaryTumorIncludingLymphoma implements EvaluationFunction {
 
-    static final String CANCER_DOID = "162";
     static final Set<String> NON_SOLID_CANCER_DOIDS = Sets.newHashSet();
     static final Set<String> WARN_SOLID_CANCER_DOIDS = Sets.newHashSet();
 
     static {
-        NON_SOLID_CANCER_DOIDS.add("1240"); // leukemia
-        NON_SOLID_CANCER_DOIDS.add("712"); // refractory hematologic cancer
-        NON_SOLID_CANCER_DOIDS.add("4960"); // bone marrow cancer
+        NON_SOLID_CANCER_DOIDS.add(DoidConstants.LEUKEMIA_DOID);
+        NON_SOLID_CANCER_DOIDS.add(DoidConstants.REFRACTORY_HEMATOLOGIC_CANCER_DOID);
+        NON_SOLID_CANCER_DOIDS.add(DoidConstants.BONE_MARROW_CANCER_DOID);
 
-        WARN_SOLID_CANCER_DOIDS.add("5772"); // central nervous system hematologic cancer
-        WARN_SOLID_CANCER_DOIDS.add("3282"); // dendritic cell thymoma
-        WARN_SOLID_CANCER_DOIDS.add("5621"); // histiocytic and denditric cell cancer
-        WARN_SOLID_CANCER_DOIDS.add("3664"); // mast cell neoplasm
-        WARN_SOLID_CANCER_DOIDS.add("8683"); // myeloid sarcoma
+        WARN_SOLID_CANCER_DOIDS.add(DoidConstants.CENTRAL_NERVOUS_SYSTEM_HEMATOLOGIC_CANCER_DOID);
+        WARN_SOLID_CANCER_DOIDS.add(DoidConstants.DENDRITIC_CELL_THYMOMA_DOID);
+        WARN_SOLID_CANCER_DOIDS.add(DoidConstants.HISTIOCYTIC_AND_DENDRITIC_CELL_CANCER_DOID);
+        WARN_SOLID_CANCER_DOIDS.add(DoidConstants.MAST_CELL_NEOPLASM_DOID);
+        WARN_SOLID_CANCER_DOIDS.add(DoidConstants.MYELOID_SARCOMA_DOID);
     }
 
     @NotNull
@@ -54,7 +54,7 @@ public class HasSolidPrimaryTumorIncludingLymphoma implements EvaluationFunction
 
         EvaluationResult result = DoidEvaluationFunctions.evaluateForExclusiveMatchWithFailAndWarns(doidModel,
                 tumorDoids,
-                CANCER_DOID,
+                DoidConstants.CANCER_DOID,
                 NON_SOLID_CANCER_DOIDS,
                 WARN_SOLID_CANCER_DOIDS);
 

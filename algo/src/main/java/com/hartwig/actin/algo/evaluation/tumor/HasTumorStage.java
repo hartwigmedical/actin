@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -16,12 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class HasTumorStage implements EvaluationFunction {
-
-    static final String LIVER_CANCER_DOID = "3571";
-    static final String CNS_CANCER_DOID = "3620";
-    static final String BRAIN_CANCER_DOID = "1319";
-    static final String LUNG_CANCER_DOID = "1324";
-    static final String BONE_CANCER_DOID = "184";
 
     @NotNull
     private final DoidModel doidModel;
@@ -73,11 +68,11 @@ public class HasTumorStage implements EvaluationFunction {
             return null;
         }
 
-        boolean hasLiverMetastases = evaluateMetastases(tumor.hasLiverLesions(), tumorDoids, LIVER_CANCER_DOID);
-        boolean hasCnsMetastases = evaluateMetastases(tumor.hasCnsLesions(), tumorDoids, CNS_CANCER_DOID);
-        boolean hasBrainMetastases = evaluateMetastases(tumor.hasBrainLesions(), tumorDoids, BRAIN_CANCER_DOID);
-        boolean hasLungMetastases = evaluateMetastases(tumor.hasLungLesions(), tumorDoids, LUNG_CANCER_DOID);
-        boolean hasBoneMetastases = evaluateMetastases(tumor.hasBoneLesions(), tumorDoids, BONE_CANCER_DOID);
+        boolean hasLiverMetastases = evaluateMetastases(tumor.hasLiverLesions(), tumorDoids, DoidConstants.LIVER_CANCER_DOID);
+        boolean hasCnsMetastases = evaluateMetastases(tumor.hasCnsLesions(), tumorDoids, DoidConstants.CNS_CANCER_DOID);
+        boolean hasBrainMetastases = evaluateMetastases(tumor.hasBrainLesions(), tumorDoids, DoidConstants.BRAIN_CANCER_DOID);
+        boolean hasLungMetastases = evaluateMetastases(tumor.hasLungLesions(), tumorDoids, DoidConstants.LUNG_CANCER_DOID);
+        boolean hasBoneMetastases = evaluateMetastases(tumor.hasBoneLesions(), tumorDoids, DoidConstants.BONE_CANCER_DOID);
 
         if (hasLiverMetastases || hasCnsMetastases || hasBrainMetastases || hasLungMetastases || hasBoneMetastases) {
             return TumorStage.IV;

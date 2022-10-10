@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
@@ -18,8 +19,6 @@ import com.hartwig.actin.doid.DoidModel;
 import org.jetbrains.annotations.NotNull;
 
 public class HasContraindicationToCT implements EvaluationFunction {
-
-    static final String KIDNEY_DISEASE_DOID = "557";
 
     static final Set<String> OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT = Sets.newHashSet("claustrophobia");
 
@@ -41,7 +40,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
             for (String doid : condition.doids()) {
-                if (doidModel.doidWithParents(doid).contains(KIDNEY_DISEASE_DOID)) {
+                if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to " + doidModel.resolveTermForDoid(doid))

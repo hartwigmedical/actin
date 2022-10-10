@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
@@ -34,7 +35,7 @@ public class HasPotentialAbsorptionDifficultiesTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
 
         // Add a condition with correct DOID
-        String absorptionDoid = HasPotentialAbsorptionDifficulties.GASTROINTESTINAL_SYSTEM_DISEASE_DOID;
+        String absorptionDoid = DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID;
         conditions.add(OtherConditionTestFactory.builder().addDoids(absorptionDoid).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
     }

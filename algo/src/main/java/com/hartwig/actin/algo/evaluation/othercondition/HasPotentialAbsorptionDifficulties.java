@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
@@ -18,8 +19,6 @@ import com.hartwig.actin.doid.DoidModel;
 import org.jetbrains.annotations.NotNull;
 
 public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
-
-    static final String GASTROINTESTINAL_SYSTEM_DISEASE_DOID = "77";
 
     static final Set<String> COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY = Sets.newHashSet();
 
@@ -49,7 +48,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
             for (String doid : condition.doids()) {
-                if (doidModel.doidWithParents(doid).contains(GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
+                if (doidModel.doidWithParents(doid).contains(DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages(

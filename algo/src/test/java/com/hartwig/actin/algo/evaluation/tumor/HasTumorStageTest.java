@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 
@@ -32,7 +33,7 @@ public class HasTumorStageTest {
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasLiverLesions(true)
-                        .addDoids(HasTumorStage.LIVER_CANCER_DOID)
+                        .addDoids(DoidConstants.LIVER_CANCER_DOID)
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
@@ -43,7 +44,7 @@ public class HasTumorStageTest {
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasCnsLesions(true)
-                        .addDoids(HasTumorStage.CNS_CANCER_DOID)
+                        .addDoids(DoidConstants.CNS_CANCER_DOID)
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
@@ -54,7 +55,7 @@ public class HasTumorStageTest {
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasBrainLesions(true)
-                        .addDoids(HasTumorStage.BRAIN_CANCER_DOID)
+                        .addDoids(DoidConstants.BRAIN_CANCER_DOID)
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
@@ -65,7 +66,7 @@ public class HasTumorStageTest {
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasLungLesions(true)
-                        .addDoids(HasTumorStage.LUNG_CANCER_DOID)
+                        .addDoids(DoidConstants.LUNG_CANCER_DOID)
                         .build())));
 
         assertEvaluation(EvaluationResult.PASS,
@@ -76,7 +77,7 @@ public class HasTumorStageTest {
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()
                         .hasBoneLesions(true)
-                        .addDoids(HasTumorStage.BONE_CANCER_DOID)
+                        .addDoids(DoidConstants.BONE_CANCER_DOID)
                         .build())));
 
     }

@@ -5,6 +5,7 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 import java.util.Set;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
@@ -22,10 +23,9 @@ public class HasCancerOfUnknownPrimaryTest {
         HasCancerOfUnknownPrimary function = new HasCancerOfUnknownPrimary(doidModel, category);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)));
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TumorTestFactory.withDoids(HasCancerOfUnknownPrimary.CANCER_DOID)));
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TumorTestFactory.withDoidAndSubLocation(HasCancerOfUnknownPrimary.CANCER_DOID,
+                function.evaluate(TumorTestFactory.withDoidAndSubLocation(DoidConstants.CANCER_DOID,
                         HasCancerOfUnknownPrimary.CUP_PRIMARY_TUMOR_SUB_LOCATION)));
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("random doid")));

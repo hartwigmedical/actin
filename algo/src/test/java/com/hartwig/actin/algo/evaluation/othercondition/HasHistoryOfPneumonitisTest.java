@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
@@ -32,7 +33,7 @@ public class HasHistoryOfPneumonitisTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
 
         // Add a condition with correct DOID
-        String pneumonitisDoid = HasHistoryOfPneumonitis.PNEUMONITIS_DOID;
+        String pneumonitisDoid = DoidConstants.PNEUMONITIS_DOID;
         conditions.add(OtherConditionTestFactory.builder().addDoids(pneumonitisDoid).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)));
     }

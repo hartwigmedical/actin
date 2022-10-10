@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
@@ -17,8 +18,6 @@ import com.hartwig.actin.doid.DoidModel;
 import org.jetbrains.annotations.NotNull;
 
 public class HasHistoryOfPneumonitis implements EvaluationFunction {
-
-    static final String PNEUMONITIS_DOID = "552";
 
     static final Set<String> TOXICITIES_CAUSING_PNEUMONITIS = Sets.newHashSet();
 
@@ -39,7 +38,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
             for (String doid : condition.doids()) {
-                if (doidModel.doidWithParents(doid).contains(PNEUMONITIS_DOID)) {
+                if (doidModel.doidWithParents(doid).contains(DoidConstants.PNEUMONITIS_DOID)) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid))

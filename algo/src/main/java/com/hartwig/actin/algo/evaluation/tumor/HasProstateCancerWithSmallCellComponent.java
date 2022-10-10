@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.doid.DoidModel;
@@ -14,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasProstateCancerWithSmallCellComponent implements EvaluationFunction {
 
-    static final String PROSTATE_SMALL_CELL_CARCINOMA_DOID = "7141";
-    static final String PROSTATE_CANCER_DOID = "10283";
     static final String SMALL_CELL_DETAILS = "small cell";
 
     static final Set<Set<String>> PROSTATE_WARN_DOID_SETS = Sets.newHashSet();
@@ -46,8 +45,8 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
         }
 
         boolean isProstateSmallCellCarcinoma =
-                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROSTATE_SMALL_CELL_CARCINOMA_DOID);
-        boolean hasProstateCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROSTATE_CANCER_DOID);
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROSTATE_SMALL_CELL_CARCINOMA_DOID);
+        boolean hasProstateCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROSTATE_CANCER_DOID);
         boolean hasSmallCellDetails =
                 TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), Sets.newHashSet(SMALL_CELL_DETAILS));
 
@@ -80,7 +79,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
                     .build();
         }
 
-        boolean isExactProstateCancer = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, PROSTATE_CANCER_DOID);
+        boolean isExactProstateCancer = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.PROSTATE_CANCER_DOID);
         if (isExactProstateCancer) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

@@ -5,6 +5,7 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.molecular.MolecularInterpretation;
@@ -13,16 +14,6 @@ import com.hartwig.actin.doid.DoidModel;
 import org.jetbrains.annotations.NotNull;
 
 public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFunction {
-
-    static final String BREAST_CANCER_DOID = "1612";
-
-    static final String HER2_NEGATIVE_BREAST_CANCER_DOID = "0060080";
-    static final String PROGESTERONE_POSITIVE_BREAST_CANCER_DOID = "0060077";
-    static final String ESTROGEN_POSITIVE_BREAST_CANCER_DOID = "0060075";
-
-    static final String HER2_POSITIVE_BREAST_CANCER_DOID = "0060079";
-    static final String PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID = "0060078";
-    static final String ESTROGEN_NEGATIVE_BREAST_CANCER_DOID = "0060076";
 
     @NotNull
     private final DoidModel doidModel;
@@ -43,17 +34,21 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
                     .build();
         }
 
-        boolean isBreastCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, BREAST_CANCER_DOID);
+        boolean isBreastCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.BREAST_CANCER_DOID);
 
-        boolean isHer2Negative = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, HER2_NEGATIVE_BREAST_CANCER_DOID);
+        boolean isHer2Negative =
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID);
         boolean isProgesteronePositive =
-                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROGESTERONE_POSITIVE_BREAST_CANCER_DOID);
-        boolean isEstrogenPositive = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ESTROGEN_POSITIVE_BREAST_CANCER_DOID);
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID);
+        boolean isEstrogenPositive =
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID);
 
-        boolean isHer2Positive = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, HER2_POSITIVE_BREAST_CANCER_DOID);
+        boolean isHer2Positive =
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.HER2_POSITIVE_BREAST_CANCER_DOID);
         boolean isProgesteroneNegative =
-                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
-        boolean isEstrogenNegative = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID);
+        boolean isEstrogenNegative =
+                DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
 
         boolean hasHer2Amplified = MolecularInterpretation.hasGeneAmplified(record.molecular(), "ERBB2");
 

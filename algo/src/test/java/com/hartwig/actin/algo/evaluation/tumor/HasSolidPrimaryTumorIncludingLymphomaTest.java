@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 
@@ -22,15 +23,15 @@ public class HasSolidPrimaryTumorIncludingLymphomaTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids((Set<String>) null)));
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TumorTestFactory.withDoids(HasSolidPrimaryTumorIncludingLymphoma.CANCER_DOID)));
+                function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)));
 
         String firstWarnDoid = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.iterator().next();
         assertEvaluation(EvaluationResult.WARN,
-                function.evaluate(TumorTestFactory.withDoids(HasSolidPrimaryTumorIncludingLymphoma.CANCER_DOID, firstWarnDoid)));
+                function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid)));
 
         String firstNonSolidDoid = HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS.iterator().next();
         assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(TumorTestFactory.withDoids(HasSolidPrimaryTumorIncludingLymphoma.CANCER_DOID,
+                function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID,
                         firstWarnDoid,
                         firstNonSolidDoid)));
 
@@ -41,11 +42,11 @@ public class HasSolidPrimaryTumorIncludingLymphomaTest {
     private static DoidModel createTestDoidModel() {
         Map<String, String> childParentMap = Maps.newHashMap();
         for (String nonSolidDoid : HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS) {
-            childParentMap.put(nonSolidDoid, HasSolidPrimaryTumorIncludingLymphoma.CANCER_DOID);
+            childParentMap.put(nonSolidDoid, DoidConstants.CANCER_DOID);
         }
 
         for (String warnDoid : HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS) {
-            childParentMap.put(warnDoid, HasSolidPrimaryTumorIncludingLymphoma.CANCER_DOID);
+            childParentMap.put(warnDoid, DoidConstants.CANCER_DOID);
         }
 
         return TestDoidModelFactory.createWithChildToParentMap(childParentMap);

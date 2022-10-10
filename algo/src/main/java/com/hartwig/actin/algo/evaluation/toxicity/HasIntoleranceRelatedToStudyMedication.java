@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -14,8 +15,6 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 import org.jetbrains.annotations.NotNull;
 
 public class HasIntoleranceRelatedToStudyMedication implements EvaluationFunction {
-
-    static final String DRUG_ALLERGY_DOID = "0060500";
 
     static final String MEDICATION_CATEGORY = "Medication";
     static final String CLINICAL_STATUS_ACTIVE = "Active";
@@ -29,7 +28,7 @@ public class HasIntoleranceRelatedToStudyMedication implements EvaluationFunctio
         Set<String> allergies = Sets.newHashSet();
         for (Intolerance intolerance : record.clinical().intolerances()) {
             if (intolerance.clinicalStatus().equalsIgnoreCase(CLINICAL_STATUS_ACTIVE)) {
-                boolean doidMatch = intolerance.doids().contains(DRUG_ALLERGY_DOID);
+                boolean doidMatch = intolerance.doids().contains(DoidConstants.DRUG_ALLERGY_DOID);
                 boolean categoryMatch = intolerance.category().equalsIgnoreCase(MEDICATION_CATEGORY);
 
                 if (doidMatch || categoryMatch) {

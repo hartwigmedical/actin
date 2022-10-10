@@ -4,6 +4,7 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class HasIntoleranceRelatedToStudyMedicationTest {
 
         // Actual relevant allergy due to DOID
         Intolerance relevantDoid = ToxicityTestFactory.intolerance()
-                .addDoids(HasIntoleranceRelatedToStudyMedication.DRUG_ALLERGY_DOID)
+                .addDoids(DoidConstants.DRUG_ALLERGY_DOID)
                 .clinicalStatus(HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE)
                 .build();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(relevantDoid)));
