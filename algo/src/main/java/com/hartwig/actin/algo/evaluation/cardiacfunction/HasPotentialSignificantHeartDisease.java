@@ -69,7 +69,8 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
         if (!heartConditions.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has " + Format.concat(heartConditions) + ", which classifies as potential heart disease")
+                    .addPassSpecificMessages(
+                            "Patient has " + Format.concat(heartConditions) + ", which classifies as potential heart disease")
                     .addPassGeneralMessages("Present " + Format.concat(heartConditions))
                     .build();
         }
