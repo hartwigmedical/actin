@@ -247,7 +247,7 @@ Trials could lead to `WARN` in case knowing the exact trial treatment is require
 | MOLECULAR_RESULTS_MUST_BE_AVAILABLE                                               | Currently set to ingestion of molecular results (T.B.D.)                                                                        |                                                                         |
 | MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_GENE_X                                   | Ingestion of molecular results with experiment type 'WGS', or presence of previous molecular test for gene X                    |                                                                         |
 | MOLECULAR_RESULTS_MUST_BE_AVAILABLE_ FOR_PROMOTER_OF_GENE_X                       | Previous molecular test for gene X and item contains %promoter%                                                                 | Resolve to recovarable `FAIL` in case results not present.              |
-| MOLECULAR_RESULTS_MUST_BE_AVAILABLE_BUT_NOT_INDETERMINATE_ FOR_PROMOTER_OF_GENE_X | Previous molecular test for gene X and item contains %promoter% and impliesPotentialIndeterminateStatus != 1                    | Resolve to recovarable `FAIL` in case results not present.              |
+| MOLECULAR_RESULTS_MUST_BE_AVAILABLE_BUT_NOT_INDETERMINATE_ FOR_PROMOTER_OF_GENE_X | Previous molecular test for gene X and item contains %promoter% and impliesPotentialIndeterminateStatus = false                 | Resolve to recovarable `FAIL` in case results not present.              |
 
 ##### Rules related to recent laboratory measurements
 _Blood components / blood cell components_
