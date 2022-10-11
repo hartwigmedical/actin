@@ -76,12 +76,18 @@ public class GeneralRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasMinimumKarnofskyScoreCreator() {
-        return function -> new HasMinimumKarnofskyScore();
+        return function -> {
+            int minScore = functionInputResolver().createOneIntegerInput(function);
+            return new HasMinimumLanskyKarnofskyScore(PerformanceScore.KARNOFSKY, minScore);
+        };
     }
 
     @NotNull
     private FunctionCreator hasMinimumLanskyScoreCreator() {
-        return function -> new HasMinimumLanskyScore();
+        return function -> {
+            int minScore = functionInputResolver().createOneIntegerInput(function);
+            return new HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, minScore);
+        };
     }
 
     @NotNull
