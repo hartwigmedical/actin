@@ -20,7 +20,13 @@ public abstract class MedicationEntry implements FeedEntry {
     public abstract String codeText();
 
     @NotNull
+    public abstract String code5ATCCode();
+
+    @NotNull
     public abstract String code5ATCDisplay();
+
+    @NotNull
+    public abstract String dosageInstructionRouteDisplay();
 
     @NotNull
     public abstract String dosageInstructionDoseQuantityUnit();

@@ -121,6 +121,8 @@ public final class TestFeedFactory {
         ImmutableMedicationEntry.Builder builder = ImmutableMedicationEntry.builder()
                 .subject(TEST_SUBJECT)
                 .codeText(Strings.EMPTY)
+                .code5ATCCode(Strings.EMPTY)
+                .dosageInstructionRouteDisplay(Strings.EMPTY)
                 .dosageInstructionDoseQuantityUnit(Strings.EMPTY)
                 .dosageInstructionDoseQuantityValue(0D)
                 .dosageInstructionFrequencyUnit(Strings.EMPTY)
