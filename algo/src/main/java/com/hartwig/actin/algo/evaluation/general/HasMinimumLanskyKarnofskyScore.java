@@ -33,9 +33,9 @@ public class HasMinimumLanskyKarnofskyScore implements EvaluationFunction {
                     .build();
         }
 
-        int passScore = toPassScore(who);
-        int undeterminedScore = toUndeterminedScore(who);
-        int warnScore = toPassScore(Math.max(0, who - 1));
+        int passScore = toMaxScoreForWHO(who);
+        int undeterminedScore = toMinScoreForWHO(who);
+        int warnScore = toMinScoreForWHO(Math.max(0, who - 1));
 
         if (passScore >= minScore) {
             return EvaluationFactory.unrecoverable()
@@ -65,7 +65,7 @@ public class HasMinimumLanskyKarnofskyScore implements EvaluationFunction {
                 .build();
     }
 
-    private static int toPassScore(int who) {
+    private static int toMaxScoreForWHO(int who) {
         switch (who) {
             case 0:
                 return 100;
@@ -84,7 +84,7 @@ public class HasMinimumLanskyKarnofskyScore implements EvaluationFunction {
         }
     }
 
-    private static int toUndeterminedScore(int who) {
+    private static int toMinScoreForWHO(int who) {
         switch (who) {
             case 0:
                 return 100;
