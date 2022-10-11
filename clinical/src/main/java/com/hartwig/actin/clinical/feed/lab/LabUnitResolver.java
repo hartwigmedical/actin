@@ -16,6 +16,7 @@ final class LabUnitResolver {
     static {
         CURATION_MAP.put("10*6/L", LabUnit.MILLIONS_PER_LITER);
         CURATION_MAP.put("10*9/L", LabUnit.BILLIONS_PER_LITER);
+        CURATION_MAP.put("*10E9/l", LabUnit.BILLIONS_PER_LITER);
         CURATION_MAP.put("10*12/L", LabUnit.TRILLIONS_PER_LITER);
         CURATION_MAP.put("% van de leukocyten", LabUnit.PERCENTAGE_OF_LEUKOCYTES);
         CURATION_MAP.put("% van de T-cellen", LabUnit.PERCENTAGE_OF_T_CELLS);
