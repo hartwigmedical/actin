@@ -86,14 +86,21 @@ public final class TestTreatmentFactory {
 
         cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("C")).build());
 
+        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("D", false)).build());
+
         return cohorts;
     }
 
     @NotNull
     private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
+        return createTestMetadata(cohortId, true);
+    }
+
+    @NotNull
+    private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean evaluable) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortId)
-                .evaluable(true)
+                .evaluable(evaluable)
                 .open(true)
                 .slotsAvailable(true)
                 .blacklist(false)
