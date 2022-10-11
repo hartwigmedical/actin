@@ -126,12 +126,26 @@ public class ClinicalRecordsFactoryTest {
     }
 
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
-        assertEquals(1, toxicities.size());
+        assertEquals(2, toxicities.size());
 
-        Toxicity toxicity = toxicities.get(0);
-        assertEquals("Nausea", toxicity.name());
-        assertEquals(ToxicitySource.EHR, toxicity.source());
-        assertEquals(2, (int) toxicity.grade());
+        Toxicity toxicity1 = findByName(toxicities, "Nausea");
+        assertEquals(ToxicitySource.EHR, toxicity1.source());
+        assertEquals(2, (int) toxicity1.grade());
+
+        Toxicity toxicity2 = findByName(toxicities, "Pain");
+        assertEquals(ToxicitySource.EHR, toxicity2.source());
+        assertEquals(0, (int) toxicity2.grade());
+    }
+
+    @NotNull
+    private static Toxicity findByName(@NotNull List<Toxicity> toxicities, @NotNull String name) {
+        for (Toxicity toxicity : toxicities) {
+            if (toxicity.name().equals(name)) {
+                return toxicity;
+            }
+        }
+
+        throw new IllegalStateException("Could not find toxicity with name: " + name);
     }
 
     private static void assertAllergies(@NotNull List<Intolerance> allergies) {

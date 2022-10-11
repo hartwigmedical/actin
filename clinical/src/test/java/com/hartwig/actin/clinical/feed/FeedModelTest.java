@@ -51,7 +51,7 @@ public class FeedModelTest {
 
         List<QuestionnaireEntry> toxicities = model.toxicityQuestionnaireEntries(TestFeedFactory.TEST_SUBJECT);
 
-        assertEquals(2, toxicities.size());
+        assertEquals(3, toxicities.size());
     }
 
     @Test

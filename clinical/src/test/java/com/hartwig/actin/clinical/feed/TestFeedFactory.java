@@ -84,6 +84,7 @@ public final class TestFeedFactory {
 
         entries.add(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build());
         entries.add(toxicityBuilder.itemText("Vomiting").itemAnswerValueValueString(Strings.EMPTY).build());
+        entries.add(toxicityBuilder.itemText("Pain").itemAnswerValueValueString("0. Not applicable").build());
 
         ImmutableQuestionnaireEntry.Builder bloodTransfusionBuilder = ImmutableQuestionnaireEntry.builder()
                 .subject(TEST_SUBJECT)

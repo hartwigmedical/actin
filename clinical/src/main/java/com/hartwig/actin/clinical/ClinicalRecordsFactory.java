@@ -283,7 +283,7 @@ public class ClinicalRecordsFactory {
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
-            Integer grade = !entry.itemAnswerValueValueString().isEmpty() ? Integer.valueOf(entry.itemAnswerValueValueString()) : null;
+            Integer grade = extractGrade(entry);
             if (grade != null) {
                 Toxicity toxicity = ImmutableToxicity.builder()
                         .name(entry.itemText())
@@ -296,6 +296,23 @@ public class ClinicalRecordsFactory {
             }
         }
         return toxicities;
+    }
+
+    @Nullable
+    private static Integer extractGrade(@NotNull QuestionnaireEntry entry) {
+        String value = entry.itemAnswerValueValueString();
+        if (value.isEmpty()) {
+            return null;
+        }
+
+        String curated;
+        int notApplicableIndex = value.indexOf(". Not applicable");
+        if (notApplicableIndex > 0) {
+            curated = value.substring(0, notApplicableIndex);
+        } else {
+            curated = value;
+        }
+        return Integer.valueOf(curated);
     }
 
     @NotNull
