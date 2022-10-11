@@ -555,19 +555,22 @@ public class CurationModel {
 
     @NotNull
     public Medication annotateWithMedicationCategory(@NotNull Medication medication) {
-        return ImmutableMedication.builder().from(medication).categories(lookupMedicationCategories(medication.name())).build();
+        return ImmutableMedication.builder()
+                .from(medication)
+                .categories(lookupMedicationCategories("medication", medication.name()))
+                .build();
     }
 
     @NotNull
-    private Set<String> lookupMedicationCategories(@NotNull String medication) {
+    private Set<String> lookupMedicationCategories(@NotNull String source, @NotNull String medication) {
         String trimmedMedication = CurationUtil.fullTrim(medication);
         Set<MedicationCategoryConfig> configs = find(database.medicationCategoryConfigs(), trimmedMedication);
 
         if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find medication category config for '{}'", trimmedMedication);
+            LOGGER.warn(" Could not find medication category config for {} with name '{}'", source, trimmedMedication);
             return Sets.newHashSet();
         } else if (configs.size() > 1) {
-            LOGGER.warn(" Multiple category configs found for medication with name '{}'", trimmedMedication);
+            LOGGER.warn(" Multiple category configs found for {} with name '{}'", source, trimmedMedication);
             return Sets.newHashSet();
         }
 
@@ -593,7 +596,7 @@ public class CurationModel {
         }
 
         if (intolerance.category().equalsIgnoreCase("medication")) {
-            builder.subcategories(lookupMedicationCategories(name));
+            builder.subcategories(lookupMedicationCategories("intolerance", name));
         }
 
         return builder.build();
