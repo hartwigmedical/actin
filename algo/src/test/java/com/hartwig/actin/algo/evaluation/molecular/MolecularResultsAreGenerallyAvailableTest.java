@@ -13,6 +13,6 @@ public class MolecularResultsAreGenerallyAvailableTest {
     public void canEvaluate() {
         MolecularResultsAreGenerallyAvailable function = new MolecularResultsAreGenerallyAvailable();
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

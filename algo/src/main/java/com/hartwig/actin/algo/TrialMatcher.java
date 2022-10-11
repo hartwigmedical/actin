@@ -52,18 +52,20 @@ public class TrialMatcher {
             boolean hasEligibleCohort = false;
             List<CohortMatch> cohortMatches = Lists.newArrayList();
             for (Cohort cohort : trial.cohorts()) {
-                Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
-                boolean isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values());
+                if (cohort.metadata().evaluable()) {
+                    Map<Eligibility, Evaluation> cohortEvaluations = evaluateEligibility(patient, cohort.eligibility());
+                    boolean isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values());
 
-                if (isPotentiallyEligible) {
-                    hasEligibleCohort = true;
+                    if (isPotentiallyEligible) {
+                        hasEligibleCohort = true;
+                    }
+
+                    cohortMatches.add(ImmutableCohortMatch.builder()
+                            .metadata(cohort.metadata())
+                            .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations)
+                            .evaluations(cohortEvaluations)
+                            .build());
                 }
-
-                cohortMatches.add(ImmutableCohortMatch.builder()
-                        .metadata(cohort.metadata())
-                        .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations)
-                        .evaluations(cohortEvaluations)
-                        .build());
             }
 
             cohortMatches.sort(new CohortMatchComparator());
