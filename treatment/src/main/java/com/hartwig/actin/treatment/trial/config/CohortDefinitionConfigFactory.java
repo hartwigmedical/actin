@@ -14,6 +14,7 @@ public class CohortDefinitionConfigFactory implements TrialConfigFactory<CohortD
         return ImmutableCohortDefinitionConfig.builder()
                 .trialId(parts[fields.get("trialId")])
                 .cohortId(parts[fields.get("cohortId")])
+                .evaluable(ResourceFile.bool(parts[fields.get("evaluable")]))
                 .open(ResourceFile.bool(parts[fields.get("open")]))
                 .slotsAvailable(ResourceFile.bool(parts[fields.get("slotsAvailable")]))
                 .blacklist(ResourceFile.bool(parts[fields.get("blacklist")]))

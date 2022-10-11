@@ -50,6 +50,7 @@ public class TrialConfigDatabaseValidatorTest {
 
                 .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
                         .trialId(trial1)
+                        .evaluable(true)
                         .open(true)
                         .slotsAvailable(true)
                         .blacklist(false)
@@ -58,6 +59,7 @@ public class TrialConfigDatabaseValidatorTest {
                         .build())
                 .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
                         .trialId(trial1)
+                        .evaluable(true)
                         .open(true)
                         .slotsAvailable(true)
                         .blacklist(false)
@@ -66,6 +68,7 @@ public class TrialConfigDatabaseValidatorTest {
                         .build())
                 .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
                         .trialId(trial2)
+                        .evaluable(true)
                         .open(true)
                         .slotsAvailable(false)
                         .blacklist(false)

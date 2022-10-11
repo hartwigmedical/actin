@@ -93,6 +93,7 @@ public final class TestTreatmentFactory {
     private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortId)
+                .evaluable(true)
                 .open(true)
                 .slotsAvailable(true)
                 .blacklist(false)

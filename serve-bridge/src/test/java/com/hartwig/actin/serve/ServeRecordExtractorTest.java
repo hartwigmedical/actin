@@ -155,6 +155,7 @@ public class ServeRecordExtractorTest {
     private static CohortMetadata withCohortId(@NotNull String cohortId) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortId)
+                .evaluable(true)
                 .open(false)
                 .slotsAvailable(false)
                 .blacklist(false)

@@ -103,6 +103,7 @@ public class TrialFactory {
     private static CohortMetadata toMetadata(@NotNull CohortDefinitionConfig cohortConfig) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortConfig.cohortId())
+                .evaluable(cohortConfig.evaluable())
                 .open(cohortConfig.open())
                 .slotsAvailable(cohortConfig.slotsAvailable())
                 .blacklist(cohortConfig.blacklist())

@@ -14,7 +14,7 @@ public class CohortMetadataComparatorTest {
 
     @Test
     public void canSortCohortMetadata() {
-        ImmutableCohortMetadata.Builder builder = ImmutableCohortMetadata.builder().slotsAvailable(true);
+        ImmutableCohortMetadata.Builder builder = ImmutableCohortMetadata.builder().evaluable(true).slotsAvailable(true);
         CohortMetadata metadata1 = builder.cohortId("A").description("A First").open(true).blacklist(false).build();
         CohortMetadata metadata2 = builder.cohortId("A").description("A First").open(false).blacklist(false).build();
         CohortMetadata metadata3 = builder.cohortId("A").description("Second A").open(true).blacklist(false).build();

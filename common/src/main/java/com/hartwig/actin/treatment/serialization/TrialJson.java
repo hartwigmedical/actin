@@ -185,6 +185,7 @@ public final class TrialJson {
         private static CohortMetadata toMetadata(@NotNull JsonObject cohort) {
             return ImmutableCohortMetadata.builder()
                     .cohortId(string(cohort, "cohortId"))
+                    .evaluable(bool(cohort, "evaluable"))
                     .open(bool(cohort, "open"))
                     .slotsAvailable(bool(cohort, "slotsAvailable"))
                     .blacklist(bool(cohort, "blacklist"))

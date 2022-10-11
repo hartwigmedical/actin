@@ -11,6 +11,8 @@ public abstract class CohortMetadata {
     @NotNull
     public abstract String cohortId();
 
+    public abstract boolean evaluable();
+    
     public abstract boolean open();
 
     public abstract boolean slotsAvailable();

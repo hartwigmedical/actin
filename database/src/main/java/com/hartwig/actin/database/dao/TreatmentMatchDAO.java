@@ -98,6 +98,7 @@ public class TreatmentMatchDAO {
         return context.insertInto(COHORTMATCH,
                         COHORTMATCH.TRIALMATCHID,
                         COHORTMATCH.CODE,
+                        COHORTMATCH.EVALUABLE,
                         COHORTMATCH.OPEN,
                         COHORTMATCH.SLOTSAVAILABLE,
                         COHORTMATCH.BLACKLIST,
@@ -105,6 +106,7 @@ public class TreatmentMatchDAO {
                         TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
                         cohortMatch.metadata().cohortId(),
+                        DataUtil.toByte(cohortMatch.metadata().evaluable()),
                         DataUtil.toByte(cohortMatch.metadata().open()),
                         DataUtil.toByte(cohortMatch.metadata().slotsAvailable()),
                         DataUtil.toByte(cohortMatch.metadata().blacklist()),

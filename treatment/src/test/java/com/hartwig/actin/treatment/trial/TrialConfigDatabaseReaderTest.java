@@ -44,12 +44,18 @@ public class TrialConfigDatabaseReaderTest {
 
         CohortDefinitionConfig config1 = findCohort(configs, "A");
         assertEquals("ACTN 2021", config1.trialId());
+        assertTrue(config1.evaluable());
         assertTrue(config1.open());
+        assertTrue(config1.slotsAvailable());
+        assertFalse(config1.blacklist());
         assertEquals("Dose escalation phase (monotherapy)", config1.description());
 
         CohortDefinitionConfig config2 = findCohort(configs, "B");
         assertEquals("ACTN 2021", config2.trialId());
+        assertFalse(config2.evaluable());
         assertFalse(config2.open());
+        assertTrue(config2.slotsAvailable());
+        assertFalse(config2.blacklist());
         assertEquals("Dose escalation phase (combination therapy)", config2.description());
     }
 

@@ -32,6 +32,7 @@ public class CohortComparatorTest {
         return ImmutableCohort.builder()
                 .metadata(ImmutableCohortMetadata.builder()
                         .cohortId(id)
+                        .evaluable(true)
                         .open(true)
                         .slotsAvailable(true)
                         .blacklist(false)

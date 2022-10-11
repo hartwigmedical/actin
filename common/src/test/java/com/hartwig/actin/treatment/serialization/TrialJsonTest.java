@@ -62,6 +62,7 @@ public class TrialJsonTest {
         assertEquals(3, trial.cohorts().size());
 
         Cohort cohortA = findCohort(trial.cohorts(), "A");
+        assertTrue(cohortA.metadata().evaluable());
         assertTrue(cohortA.metadata().open());
         assertTrue(cohortA.metadata().slotsAvailable());
         assertEquals("Cohort A", cohortA.metadata().description());
@@ -74,12 +75,14 @@ public class TrialJsonTest {
         assertTrue(subFunctionA.parameters().isEmpty());
 
         Cohort cohortB = findCohort(trial.cohorts(), "B");
+        assertTrue(cohortB.metadata().evaluable());
         assertTrue(cohortB.metadata().open());
         assertTrue(cohortB.metadata().slotsAvailable());
         assertEquals("Cohort B", cohortB.metadata().description());
         assertTrue(cohortB.eligibility().isEmpty());
 
         Cohort cohortC = findCohort(trial.cohorts(), "C");
+        assertFalse(cohortC.metadata().evaluable());
         assertFalse(cohortC.metadata().open());
         assertFalse(cohortC.metadata().slotsAvailable());
         assertEquals("Cohort C", cohortC.metadata().description());

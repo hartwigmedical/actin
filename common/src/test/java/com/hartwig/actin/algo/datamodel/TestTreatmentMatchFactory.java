@@ -111,6 +111,7 @@ public final class TestTreatmentMatchFactory {
     private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean open, boolean slotsAvailable, boolean blacklist) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortId)
+                .evaluable(true)
                 .open(open)
                 .slotsAvailable(slotsAvailable)
                 .blacklist(blacklist)
