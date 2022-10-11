@@ -152,12 +152,22 @@ public final class Cells {
 
     @NotNull
     public static Cell createEvaluation(@NotNull Evaluation evaluation) {
+        return createEvaluationResult(evaluation.result(), evaluation.recoverable());
+    }
+
+    @NotNull
+    public static Cell createEvaluationResult(@NotNull EvaluationResult result) {
+        return createEvaluationResult(result, false);
+    }
+
+    @NotNull
+    public static Cell createEvaluationResult(@NotNull EvaluationResult result, boolean recoverable) {
         String addon = Strings.EMPTY;
-        if (evaluation.result() == EvaluationResult.FAIL && evaluation.recoverable()) {
+        if (result == EvaluationResult.FAIL && recoverable) {
             addon = " (potentially recoverable)";
         }
-        Cell cell = create(new Paragraph(evaluation.result() + addon));
-        cell.setFontColor(Formats.fontColorForEvaluation(evaluation.result()));
+        Cell cell = create(new Paragraph(result + addon));
+        cell.setFontColor(Formats.fontColorForEvaluation(result));
         return cell;
     }
 

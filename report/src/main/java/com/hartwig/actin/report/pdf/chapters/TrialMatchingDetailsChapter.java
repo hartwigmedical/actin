@@ -306,10 +306,18 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                     for (String passMessage : evaluation.passSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(passMessage)));
                     }
-                } else if (evaluation.result() == EvaluationResult.WARN || evaluation.result() == EvaluationResult.UNDETERMINED) {
+                } else if (evaluation.result() == EvaluationResult.WARN) {
                     for (String warnMessage : evaluation.warnSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(warnMessage)));
                     }
+
+                    if (!evaluation.undeterminedSpecificMessages().isEmpty()) {
+                        evalTable.addCell(Cells.createEvaluationResult(EvaluationResult.UNDETERMINED));
+                        for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
+                            evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
+                        }
+                    }
+                } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
                     for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
                         evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
                     }
@@ -318,11 +326,17 @@ public class TrialMatchingDetailsChapter implements ReportChapter {
                         evalTable.addCell(Cells.create(new Paragraph(failMessage)));
                     }
                     if (evaluation.recoverable()) {
-                        for (String warnMessage : evaluation.warnSpecificMessages()) {
-                            evalTable.addCell(Cells.create(new Paragraph(warnMessage)));
+                        if (!evaluation.warnSpecificMessages().isEmpty()) {
+                            evalTable.addCell(Cells.createEvaluationResult(EvaluationResult.WARN));
+                            for (String warnMessage : evaluation.warnSpecificMessages()) {
+                                evalTable.addCell(Cells.create(new Paragraph(warnMessage)));
+                            }
                         }
-                        for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
-                            evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
+                        if (!evaluation.undeterminedSpecificMessages().isEmpty()) {
+                            evalTable.addCell(Cells.createEvaluationResult(EvaluationResult.UNDETERMINED));
+                            for (String undeterminedMessage : evaluation.undeterminedSpecificMessages()) {
+                                evalTable.addCell(Cells.create(new Paragraph(undeterminedMessage)));
+                            }
                         }
                     }
                 }
