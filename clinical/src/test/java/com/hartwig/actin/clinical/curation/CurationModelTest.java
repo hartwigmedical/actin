@@ -350,6 +350,18 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canTranslateAdministrationRoute() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertNull(model.translateAdministrationRoute(null));
+        assertNull(model.translateAdministrationRoute(Strings.EMPTY));
+        assertNull(model.translateAdministrationRoute("not a route"));
+        assertNull(model.translateAdministrationRoute("ignore"));
+
+        assertEquals("oral", model.translateAdministrationRoute("oraal"));
+    }
+
+    @Test
     public void canCurateIntolerances() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 

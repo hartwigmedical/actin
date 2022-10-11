@@ -25,6 +25,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
@@ -63,6 +64,7 @@ public class CurationDatabaseReaderTest {
         assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
         assertAllergyConfigs(database.intoleranceConfigs());
 
+        assertAdministrationRouteTranslations(database.administrationRouteTranslations());
         assertLaboratoryTranslations(database.laboratoryTranslations());
         assertToxicityTranslations(database.toxicityTranslations());
         assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
@@ -299,6 +301,14 @@ public class CurationDatabaseReaderTest {
         }
 
         throw new IllegalStateException("Could not find input '" + input + "' in configs");
+    }
+
+    private static void assertAdministrationRouteTranslations(@NotNull List<AdministrationRouteTranslation> translations) {
+        assertEquals(1, translations.size());
+
+        AdministrationRouteTranslation translation = translations.get(0);
+        assertEquals("ORAAL", translation.administrationRoute());
+        assertEquals("Oral", translation.translatedAdministrationRoute());
     }
 
     private static void assertLaboratoryTranslations(@NotNull List<LaboratoryTranslation> translations) {

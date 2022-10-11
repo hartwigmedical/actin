@@ -32,7 +32,9 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
+import com.hartwig.actin.clinical.curation.translation.ImmutableAdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableLaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableToxicityTranslation;
@@ -80,6 +82,7 @@ public final class TestCurationFactory {
                 .medicationDosageConfigs(createTestMedicationDosageConfigs())
                 .medicationCategoryConfigs(createTestMedicationCategoryConfigs())
                 .intoleranceConfigs(createTestIntoleranceConfigs())
+                .administrationRouteTranslations(createTestAdministrationRouteTranslations())
                 .laboratoryTranslations(createTestLaboratoryTranslations())
                 .toxicityTranslations(createTestToxicityTranslations())
                 .bloodTransfusionTranslations(createTestBloodTransfusionTranslations())
@@ -348,6 +351,23 @@ public final class TestCurationFactory {
         List<IntoleranceConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableIntoleranceConfig.builder().input("Latex type 1").name("Latex (type 1)").addDoids("0060532").build());
+
+        return configs;
+    }
+
+    @NotNull
+    private static List<AdministrationRouteTranslation> createTestAdministrationRouteTranslations() {
+        List<AdministrationRouteTranslation> configs = Lists.newArrayList();
+
+        configs.add(ImmutableAdministrationRouteTranslation.builder()
+                .administrationRoute("ignore")
+                .translatedAdministrationRoute(Strings.EMPTY)
+                .build());
+
+        configs.add(ImmutableAdministrationRouteTranslation.builder()
+                .administrationRoute("oraal")
+                .translatedAdministrationRoute("oral")
+                .build());
 
         return configs;
     }

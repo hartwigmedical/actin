@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
@@ -69,6 +70,9 @@ public abstract class CurationDatabase {
 
     @NotNull
     public abstract List<IntoleranceConfig> intoleranceConfigs();
+
+    @NotNull
+    public abstract List<AdministrationRouteTranslation> administrationRouteTranslations();
 
     @NotNull
     public abstract List<LaboratoryTranslation> laboratoryTranslations();

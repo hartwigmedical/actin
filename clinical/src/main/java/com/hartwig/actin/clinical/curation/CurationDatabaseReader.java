@@ -32,6 +32,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory;
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
@@ -64,6 +66,7 @@ public final class CurationDatabaseReader {
     private static final String MEDICATION_CATEGORY_TSV = "medication_category.tsv";
     private static final String INTOLERANCE_TSV = "intolerance.tsv";
 
+    private static final String ADMINISTRATION_ROUTE_TRANSLATION_TSV = "administration_route_translation.tsv";
     private static final String LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv";
     private static final String TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv";
     private static final String BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv";
@@ -92,6 +95,7 @@ public final class CurationDatabaseReader {
                 .medicationDosageConfigs(readMedicationDosageConfigs(basePath + MEDICATION_DOSAGE_TSV))
                 .medicationCategoryConfigs(readMedicationCategoryConfigs(basePath + MEDICATION_CATEGORY_TSV))
                 .intoleranceConfigs(readIntoleranceConfigs(basePath + INTOLERANCE_TSV))
+                .administrationRouteTranslations(readAdministrationRouteTranslations(basePath + ADMINISTRATION_ROUTE_TRANSLATION_TSV))
                 .laboratoryTranslations(readLaboratoryTranslations(basePath + LABORATORY_TRANSLATION_TSV))
                 .toxicityTranslations(readToxicityTranslations(basePath + TOXICITY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
@@ -194,6 +198,13 @@ public final class CurationDatabaseReader {
         List<IntoleranceConfig> configs = CurationConfigFile.read(tsv, new IntoleranceConfigFactory());
         LOGGER.info(" Read {} intolerance configs from {}", configs.size(), tsv);
         return configs;
+    }
+
+    @NotNull
+    private static List<AdministrationRouteTranslation> readAdministrationRouteTranslations(@NotNull String tsv) throws IOException {
+        List<AdministrationRouteTranslation> translations = TranslationFile.read(tsv, new AdministrationRouteTranslationFactory());
+        LOGGER.info(" Read {} administration route translations from {}", translations.size(), tsv);
+        return translations;
     }
 
     @NotNull

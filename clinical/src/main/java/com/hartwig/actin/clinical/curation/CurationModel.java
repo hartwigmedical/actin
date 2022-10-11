@@ -42,6 +42,7 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
@@ -577,6 +578,35 @@ public class CurationModel {
         return configs.iterator().next().categories();
     }
 
+    @Nullable
+    public String translateAdministrationRoute(@Nullable String administrationRoute) {
+        if (administrationRoute == null || administrationRoute.isEmpty()) {
+            return null;
+        }
+
+        String trimmedAdministrationRoute = administrationRoute.trim();
+        AdministrationRouteTranslation translation = findAdministrationRouteTranslation(trimmedAdministrationRoute);
+
+        if (translation == null) {
+            LOGGER.warn("No translation found for medication administration route: '{}'", trimmedAdministrationRoute);
+            return null;
+        }
+
+        evaluatedTranslations.put(AdministrationRouteTranslation.class, translation);
+        return !translation.translatedAdministrationRoute().isEmpty() ? translation.translatedAdministrationRoute() : null;
+    }
+
+    @Nullable
+    private AdministrationRouteTranslation findAdministrationRouteTranslation(@NotNull String administrationRoute) {
+        for (AdministrationRouteTranslation entry : database.administrationRouteTranslations()) {
+            if (entry.administrationRoute().equals(administrationRoute)) {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
     @NotNull
     public Intolerance curateIntolerance(@NotNull Intolerance intolerance) {
         String reformatted = CurationUtil.capitalizeFirstLetterOnly(intolerance.name());
@@ -742,7 +772,9 @@ public class CurationModel {
 
     @NotNull
     private List<? extends Translation> translationsForClass(@NotNull Class<? extends Translation> classToLookup) {
-        if (classToLookup == LaboratoryTranslation.class) {
+        if (classToLookup == AdministrationRouteTranslation.class) {
+            return database.administrationRouteTranslations();
+        } else if (classToLookup == LaboratoryTranslation.class) {
             return database.laboratoryTranslations();
         } else if (classToLookup == ToxicityTranslation.class) {
             return database.toxicityTranslations();
