@@ -275,7 +275,7 @@
     },
     {
       "name": "Medication 2",
-      "codeATC": null,
+      "codeATC": "M2",
       "categories": [
       ],
       "status": "UNKNOWN",

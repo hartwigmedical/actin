@@ -30,7 +30,7 @@ final class MedicationTestFactory {
 
     @NotNull
     public static ImmutableMedication.Builder builder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY);
+        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 
     @NotNull

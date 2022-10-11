@@ -324,6 +324,15 @@ public class CurationModelTest {
     }
 
     @Test
+    public void canCurateMedicationCodeATC() {
+        CurationModel model = TestCurationFactory.createProperTestCurationModel();
+
+        assertEquals(Strings.EMPTY, model.curateMedicationCodeATC(Strings.EMPTY));
+        assertEquals("N12", model.curateMedicationCodeATC("N12"));
+        assertEquals(Strings.EMPTY, model.curateMedicationCodeATC("12N"));
+    }
+
+    @Test
     public void canCurateMedicationStatus() {
         CurationModel model = TestCurationFactory.createMinimalTestCurationModel();
 
@@ -338,15 +347,20 @@ public class CurationModelTest {
     public void canAnnotateWithMedicationCategory() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Medication proper = ImmutableMedication.builder().name("Paracetamol").build();
+        Medication proper = medicationBuilder().name("Paracetamol").build();
         Medication annotatedProper = model.annotateWithMedicationCategory(proper);
         assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories());
 
-        Medication empty = ImmutableMedication.builder().name(Strings.EMPTY).build();
+        Medication empty = medicationBuilder().name(Strings.EMPTY).build();
         Medication annotatedEmpty = model.annotateWithMedicationCategory(empty);
         assertEquals(empty, annotatedEmpty);
 
         model.evaluate();
+    }
+
+    @NotNull
+    private static ImmutableMedication.Builder medicationBuilder() {
+        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 
     @Test

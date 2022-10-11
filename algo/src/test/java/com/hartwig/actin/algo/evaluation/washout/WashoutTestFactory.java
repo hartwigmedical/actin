@@ -36,7 +36,7 @@ final class WashoutTestFactory {
 
     @NotNull
     public static ImmutableMedication.Builder builder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).status(MedicationStatus.ACTIVE);
+        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY).status(MedicationStatus.ACTIVE);
     }
 
     @NotNull

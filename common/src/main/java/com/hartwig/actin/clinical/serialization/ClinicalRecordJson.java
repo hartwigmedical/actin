@@ -476,7 +476,7 @@ public final class ClinicalRecordJson {
                 String status = nullableString(object, "status");
                 medicationList.add(ImmutableMedication.builder()
                         .name(string(object, "name"))
-                        .codeATC(nullableString(object, "codeATC"))
+                        .codeATC(string(object, "codeATC"))
                         .categories(stringList(object, "categories"))
                         .status(status != null ? MedicationStatus.valueOf(status) : null)
                         .administrationRoute(nullableString(object, "administrationRoute"))

@@ -389,6 +389,7 @@ public final class TestClinicalFactory {
 
         medications.add(ImmutableMedication.builder()
                 .name("Ibuprofen")
+                .codeATC("N12")
                 .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosageMin(750D)

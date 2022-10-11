@@ -14,7 +14,7 @@ public abstract class Medication {
     @NotNull
     public abstract String name();
 
-    @Nullable
+    @NotNull
     public abstract String codeATC();
 
     @NotNull

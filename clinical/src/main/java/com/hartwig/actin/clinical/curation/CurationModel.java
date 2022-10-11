@@ -506,6 +506,7 @@ public class CurationModel {
         MedicationDosageConfig config = configs.iterator().next();
         return ImmutableMedication.builder()
                 .name(Strings.EMPTY)
+                .codeATC(Strings.EMPTY)
                 .dosageMin(config.dosageMin())
                 .dosageMax(config.dosageMax())
                 .dosageUnit(config.dosageUnit())
@@ -534,6 +535,19 @@ public class CurationModel {
 
         MedicationNameConfig config = configs.iterator().next();
         return !config.ignore() ? config.name() : null;
+    }
+
+    @NotNull
+    public String curateMedicationCodeATC(@NotNull String input) {
+        String trimmedInput = CurationUtil.fullTrim(input);
+
+        if (trimmedInput.isEmpty()) {
+            return Strings.EMPTY;
+        }
+
+        // ATC codes should start with letters, otherwise the medication may be a trial.
+        char lower = Character.toLowerCase(input.charAt(0));
+        return lower >= 'a' && lower <= 'z' ? trimmedInput : Strings.EMPTY;
     }
 
     @Nullable

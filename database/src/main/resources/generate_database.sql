@@ -221,7 +221,7 @@ CREATE TABLE medication
 (   id int NOT NULL AUTO_INCREMENT,
     patientId varchar(50) NOT NULL,
     name varchar(100) NOT NULL,
-    codeATC varchar(50),
+    codeATC varchar(50) NOT NULL,
     categories varchar(100) NOT NULL,
     status varchar(50),
     administrationRoute varchar(50),

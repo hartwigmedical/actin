@@ -50,6 +50,12 @@ public class MedicationStatusInterpreterOnEvaluationDateTest {
 
     @NotNull
     private static Medication create(@Nullable MedicationStatus status, @Nullable LocalDate startDate, @Nullable LocalDate stopDate) {
-        return ImmutableMedication.builder().name(Strings.EMPTY).status(status).startDate(startDate).stopDate(stopDate).build();
+        return ImmutableMedication.builder()
+                .name(Strings.EMPTY)
+                .codeATC(Strings.EMPTY)
+                .status(status)
+                .startDate(startDate)
+                .stopDate(stopDate)
+                .build();
     }
 }

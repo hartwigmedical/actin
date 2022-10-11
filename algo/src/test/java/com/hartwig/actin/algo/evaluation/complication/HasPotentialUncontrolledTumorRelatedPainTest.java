@@ -8,6 +8,8 @@ import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
+import org.apache.logging.log4j.util.Strings;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class HasPotentialUncontrolledTumorRelatedPainTest {
@@ -33,10 +35,15 @@ public class HasPotentialUncontrolledTumorRelatedPainTest {
         HasPotentialUncontrolledTumorRelatedPain function =
                 new HasPotentialUncontrolledTumorRelatedPain(medication -> MedicationStatusInterpretation.ACTIVE);
 
-        Medication wrong = ImmutableMedication.builder().name("just some medication").build();
+        Medication wrong = medicationBuilder().name("just some medication").build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withMedication(wrong)));
 
-        Medication match = ImmutableMedication.builder().name(HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION).build();
+        Medication match = medicationBuilder().name(HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION).build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withMedication(match)));
+    }
+
+    @NotNull
+    private static ImmutableMedication.Builder medicationBuilder() {
+        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 }
