@@ -94,7 +94,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     private Set<String> appendPastMinPassDate(@NotNull Set<String> inputs) {
         Set<String> messages = Sets.newHashSet();
         for (String message : inputs) {
-            messages.add(message + ", but measurement occurred past " + DATE_FORMAT.format(minValidDate));
+            messages.add(message + ", but measurement occurred before " + DATE_FORMAT.format(minValidDate));
         }
         return messages;
     }
