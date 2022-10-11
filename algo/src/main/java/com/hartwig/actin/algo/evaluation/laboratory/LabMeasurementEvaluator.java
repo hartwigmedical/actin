@@ -1,7 +1,10 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -17,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class LabMeasurementEvaluator implements EvaluationFunction {
+
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
     @NotNull
     private final LabMeasurement measurement;
@@ -71,11 +76,10 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
             }
         }
 
-        //TODO: Make clearer that evaluation is fine but > 30 days
         if (evaluation.result() == EvaluationResult.PASS && !mostRecent.date().isAfter(minPassDate)) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.WARN)
-                    .addAllWarnSpecificMessages(evaluation.passSpecificMessages())
+                    .addAllWarnSpecificMessages(appendPastMinPassDate(evaluation.passSpecificMessages()))
                     .build();
         }
 
@@ -84,5 +88,14 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
 
     private boolean isValid(@Nullable LabValue value, @NotNull LabMeasurement measurement) {
         return value != null && value.unit().equals(measurement.defaultUnit()) && !value.date().isBefore(minValidDate);
+    }
+
+    @NotNull
+    private Set<String> appendPastMinPassDate(@NotNull Set<String> inputs) {
+        Set<String> messages = Sets.newHashSet();
+        for (String message : inputs) {
+            messages.add(message + ", but measurement occurred past " + DATE_FORMAT.format(minValidDate));
+        }
+        return messages;
     }
 }
