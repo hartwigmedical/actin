@@ -14,11 +14,17 @@ public abstract class Medication {
     @NotNull
     public abstract String name();
 
+    @Nullable
+    public abstract String codeATC();
+
     @NotNull
     public abstract Set<String> categories();
 
     @Nullable
     public abstract MedicationStatus status();
+
+    @Nullable
+    public abstract String administrationRoute();
 
     @Nullable
     public abstract Double dosageMin();

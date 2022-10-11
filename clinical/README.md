@@ -209,7 +209,7 @@ N medications
 | Field               | Example Value | Details                                                                                                |
 |---------------------|---------------|--------------------------------------------------------------------------------------------------------|
 | name                | Ibuprofen     | Medication name                                                                                        |
-| codeAtc             | 99A99A        | Medication ATC code                                                                                    |
+| codeATC             | 99A99A        | Medication ATC code                                                                                    |
 | categories          | NSAIDs        | Type of medication                                                                                     |
 | administrationRoute | Oral          | Type of administration route of medication                                                             |
 | status              | ON_HOLD       | Status of medication                                                                                   |

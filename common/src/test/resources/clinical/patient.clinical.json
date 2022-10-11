@@ -251,9 +251,11 @@
   "medications": [
     {
       "name": "Medication 1",
+      "codeATC": "code ATC",
       "categories": [
       ],
       "status": "ON_HOLD",
+      "administrationRoute": "oral",
       "dosageMin": 10,
       "dosageMax": 20,
       "dosageUnit": "mg",
@@ -273,9 +275,11 @@
     },
     {
       "name": "Medication 2",
+      "codeATC": null,
       "categories": [
       ],
       "status": "UNKNOWN",
+      "administrationRoute": null,
       "dosageMin": null,
       "dosageMax": null,
       "dosageUnit": null,

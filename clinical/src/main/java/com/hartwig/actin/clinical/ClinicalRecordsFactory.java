@@ -414,7 +414,11 @@ public class ClinicalRecordsFactory {
 
             if (name != null && !name.isEmpty()) {
                 Medication medication = builder.name(name)
+                        .codeATC(!entry.code5ATCCode().isEmpty() ? entry.code5ATCCode() : null)
                         .status(curation.curateMedicationStatus(entry.status()))
+                        .administrationRoute(!entry.dosageInstructionRouteDisplay().isEmpty()
+                                ? entry.dosageInstructionRouteDisplay()
+                                : null)
                         .startDate(entry.periodOfUseValuePeriodStart())
                         .stopDate(entry.periodOfUseValuePeriodEnd())
                         .build();
