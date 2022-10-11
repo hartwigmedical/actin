@@ -92,12 +92,14 @@ public final class EvaluatedTrialFactory {
     private static Set<String> extractWarnings(@NotNull Map<Eligibility, Evaluation> evaluationMap) {
         Set<String> messages = Sets.newTreeSet(Ordering.natural());
         for (Evaluation evaluation : evaluationMap.values()) {
-            if (evaluation.result() == EvaluationResult.WARN) {
-                messages.addAll(evaluation.warnGeneralMessages());
-            } else if (evaluation.result() == EvaluationResult.UNDETERMINED) {
-                messages.addAll(evaluation.undeterminedGeneralMessages());
-            } else if (evaluation.result() == EvaluationResult.FAIL && evaluation.recoverable()) {
+            boolean isRecoverableFail = evaluation.result() == EvaluationResult.FAIL && evaluation.recoverable();
+            boolean isWarn = evaluation.result() == EvaluationResult.WARN;
+            boolean isUnrecoverableUndetermined = evaluation.result() == EvaluationResult.UNDETERMINED && !evaluation.recoverable();
+
+            if (isRecoverableFail || isWarn || isUnrecoverableUndetermined) {
                 messages.addAll(evaluation.failGeneralMessages());
+                messages.addAll(evaluation.warnGeneralMessages());
+                messages.addAll(evaluation.undeterminedGeneralMessages());
             }
         }
         return messages;
