@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Check implementation for code errors
+//TODO: Update according to README
 public class MolecularResultsAreAvailableForPromoterOfGene implements EvaluationFunction {
 
     @NotNull

@@ -17,8 +17,8 @@ public class MolecularResultsAreGenerallyAvailable implements EvaluationFunction
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("Currently it is assumed that there are always molecular results available")
+                .result(EvaluationResult.NOT_EVALUATED)
+                .addPassSpecificMessages("It is assumed that there are molecular results available if applicable")
                 .build();
     }
 }

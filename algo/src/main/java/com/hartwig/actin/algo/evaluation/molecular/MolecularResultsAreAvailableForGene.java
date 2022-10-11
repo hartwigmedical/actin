@@ -15,6 +15,7 @@ public class MolecularResultsAreAvailableForGene implements EvaluationFunction {
     @NotNull
     private final String gene;
 
+    //TODO: Update according to README
     MolecularResultsAreAvailableForGene(@NotNull final String gene) {
         this.gene = gene;
     }
