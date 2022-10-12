@@ -18,6 +18,7 @@ public final class DoidConstants {
     public static final String BREAST_CANCER_DOID = "1612";
     public static final String OVARIAN_CANCER_DOID = "2394";
 
+
     public static final String HER2_NEGATIVE_BREAST_CANCER_DOID = "0060080";
     public static final String PROGESTERONE_POSITIVE_BREAST_CANCER_DOID = "0060077";
     public static final String ESTROGEN_POSITIVE_BREAST_CANCER_DOID = "0060075";
@@ -35,7 +36,9 @@ public final class DoidConstants {
     public static final String OVARIAN_SEROMUCINOUS_CARCINOMA_DOID = "6898";
 
     public static final String PROSTATE_SMALL_CELL_CARCINOMA_DOID = "7141";
+    public static final String PROSTATE_NEUROENDOCRINE_NEOPLASM = "2992";
 
+    public static final String SARCOMA_DOID = "1115";
     public static final String MUCINOUS_ADENOCARCINOMA_DOID = "3030";
     public static final String SMALL_CELL_CARCINOMA_DOID = "0050685";
     public static final String NEUROENDOCRINE_TUMOR_DOID = "169";
@@ -47,6 +50,7 @@ public final class DoidConstants {
     public static final String HEMATOLOGIC_CANCER_DOID = "2531";
     public static final String CENTRAL_NERVOUS_SYSTEM_HEMATOLOGIC_CANCER_DOID = "5772";
     public static final String LYMPHOMA_DOID = "0060058";
+    public static final String LYMPH_NODE_CANCER_DOID = "10619";
     public static final String MULTIPLE_MYELOMA_DOID = "9538";
     public static final String DENDRITIC_CELL_THYMOMA_DOID = "3282";
     public static final String HISTIOCYTIC_AND_DENDRITIC_CELL_CANCER_DOID = "5621";

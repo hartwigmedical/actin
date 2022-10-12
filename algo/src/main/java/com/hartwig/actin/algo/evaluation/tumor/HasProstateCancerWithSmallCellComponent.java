@@ -20,9 +20,9 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
     static final Set<Set<String>> PROSTATE_WARN_DOID_SETS = Sets.newHashSet();
 
     static {
-        PROSTATE_WARN_DOID_SETS.add(Sets.newHashSet("2922"));
-        PROSTATE_WARN_DOID_SETS.add(Sets.newHashSet("10283", "1800"));
-        PROSTATE_WARN_DOID_SETS.add(Sets.newHashSet("10283", "169"));
+        PROSTATE_WARN_DOID_SETS.add(Sets.newHashSet(DoidConstants.PROSTATE_NEUROENDOCRINE_NEOPLASM));
+        PROSTATE_WARN_DOID_SETS.add(Sets.newHashSet(DoidConstants.PROSTATE_CANCER_DOID, DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID));
+        PROSTATE_WARN_DOID_SETS.add(Sets.newHashSet(DoidConstants.PROSTATE_CANCER_DOID, DoidConstants.NEUROENDOCRINE_TUMOR_DOID));
     }
 
     @NotNull

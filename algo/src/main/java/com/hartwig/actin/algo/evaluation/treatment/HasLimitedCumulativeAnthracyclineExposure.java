@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
@@ -24,12 +25,12 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
     static final Set<String> PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS = Sets.newHashSet();
 
     static {
-        CANCER_DOIDS_FOR_ANTHRACYCLINE.add("1612"); // breast cancer
-        CANCER_DOIDS_FOR_ANTHRACYCLINE.add("10619"); // lymph node cancer
-        CANCER_DOIDS_FOR_ANTHRACYCLINE.add("1115"); // sarcoma
-        CANCER_DOIDS_FOR_ANTHRACYCLINE.add("2394"); // ovarian cancer
-        CANCER_DOIDS_FOR_ANTHRACYCLINE.add("9538"); // multiple myeloma
-        CANCER_DOIDS_FOR_ANTHRACYCLINE.add("1240"); // leukemia
+        CANCER_DOIDS_FOR_ANTHRACYCLINE.add(DoidConstants.BREAST_CANCER_DOID);
+        CANCER_DOIDS_FOR_ANTHRACYCLINE.add(DoidConstants.LYMPH_NODE_CANCER_DOID);
+        CANCER_DOIDS_FOR_ANTHRACYCLINE.add(DoidConstants.SARCOMA_DOID);
+        CANCER_DOIDS_FOR_ANTHRACYCLINE.add(DoidConstants.OVARIAN_CANCER_DOID);
+        CANCER_DOIDS_FOR_ANTHRACYCLINE.add(DoidConstants.MULTIPLE_MYELOMA_DOID);
+        CANCER_DOIDS_FOR_ANTHRACYCLINE.add(DoidConstants.LEUKEMIA_DOID);
 
         PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS.add("chemotherapy");
         PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS.add("anthracycline");
@@ -88,17 +89,12 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
                     .build();
         }
 
-        return EvaluationFactory.unrecoverable().
-
-                result(EvaluationResult.PASS).
-
-                addPassSpecificMessages(
-                        "Patient should not have been exposed to anthracycline chemotherapy, thus not exceeding maximum dose").
-
-                addPassGeneralMessages("Anthracycline exposure").
-
-                build();
-
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.PASS)
+                .addPassSpecificMessages(
+                        "Patient should not have been exposed to anthracycline chemotherapy, thus not exceeding maximum dose")
+                .addPassGeneralMessages("Anthracycline exposure")
+                .build();
     }
 
     private boolean hasSuspiciousCancerType(@Nullable Set<String> tumorDoids) {
@@ -131,5 +127,4 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
         }
         return false;
     }
-
 }
