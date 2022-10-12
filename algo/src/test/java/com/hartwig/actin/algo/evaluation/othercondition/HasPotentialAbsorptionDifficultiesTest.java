@@ -49,12 +49,14 @@ public class HasPotentialAbsorptionDifficultiesTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)));
 
         // Add a random complication
-        complications.add(ImmutableComplication.builder().name("not a problem").build());
+        complications.add(ImmutableComplication.builder().name("not a problem").addCategories("random complication").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)));
 
         // Add a real absorption one
-        String absorptionComplication = HasPotentialAbsorptionDifficulties.COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.iterator().next();
-        complications.add(ImmutableComplication.builder().name(absorptionComplication).build());
+        complications.add(ImmutableComplication.builder()
+                .name("real complication")
+                .addCategories(HasPotentialAbsorptionDifficulties.GASTROINTESTINAL_DISORDER_CATEGORY)
+                .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)));
     }
 

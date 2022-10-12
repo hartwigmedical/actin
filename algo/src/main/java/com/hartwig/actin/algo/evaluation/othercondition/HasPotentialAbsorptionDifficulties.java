@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -20,17 +21,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
 
-    static final Set<String> COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY = Sets.newHashSet();
+    static final String GASTROINTESTINAL_DISORDER_CATEGORY = "gastrointestinal disorder";
 
     static final Set<String> TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY = Sets.newHashSet();
 
     static {
-        COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.add("diarrhea");
-        COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.add("nausea");
-        COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.add("small bowel resection");
-        COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.add("colectomy");
-        COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY.add("vomit");
-
         TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY.add("diarrhea");
         TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY.add("nausea");
         TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY.add("vomit");
@@ -46,46 +41,57 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        Set<String> conditions = Sets.newHashSet();
         for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
             for (String doid : condition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID)) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages(
-                                    "Patient has potential absorption difficulties due to " + doidModel.resolveTermForDoid(doid))
-                            .addPassGeneralMessages("Potential absorption difficulties")
-                            .build();
+                    conditions.add(doidModel.resolveTermForDoid(doid));
                 }
             }
         }
 
-        //TODO: Update according to README
+        if (!conditions.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has potential absorption difficulties due to " + Format.concat(conditions))
+                    .addPassGeneralMessages("Potential absorption difficulties")
+                    .build();
+        }
+
+        Set<String> complications = Sets.newHashSet();
         if (record.clinical().complications() != null) {
             for (Complication complication : record.clinical().complications()) {
-                for (String termToFind : COMPLICATIONS_CAUSING_ABSORPTION_DIFFICULTY) {
-                    if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                        return EvaluationFactory.unrecoverable()
-                                .result(EvaluationResult.PASS)
-                                .addPassSpecificMessages("Patient has potential absorption difficulties due to " + complication.name())
-                                .addPassGeneralMessages("Potential absorption difficulties")
-                                .build();
-                    }
+                if (isOfCategory(complication, GASTROINTESTINAL_DISORDER_CATEGORY)) {
+                    complications.add(complication.name());
                 }
             }
         }
 
+        if (!complications.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has potential absorption difficulties due to " + Format.concat(complications))
+                    .addPassGeneralMessages("Potential absorption difficulties")
+                    .build();
+        }
+
+        Set<String> toxicities = Sets.newHashSet();
         for (Toxicity toxicity : record.clinical().toxicities()) {
             if (toxicity.source() == ToxicitySource.QUESTIONNAIRE || (toxicity.grade() != null && toxicity.grade() >= 2)) {
                 for (String termToFind : TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY) {
                     if (toxicity.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                        return EvaluationFactory.unrecoverable()
-                                .result(EvaluationResult.PASS)
-                                .addPassSpecificMessages("Patient has potential absorption difficulties due to " + toxicity.name())
-                                .addPassGeneralMessages("Potential absorption difficulties")
-                                .build();
+                        toxicities.add(toxicity.name());
                     }
                 }
             }
+        }
+
+        if (!toxicities.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has potential absorption difficulties due to " + Format.concat(toxicities))
+                    .addPassGeneralMessages("Potential absorption difficulties")
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()
@@ -93,5 +99,14 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
                 .addFailSpecificMessages("No potential reasons for absorption problems identified")
                 .addFailGeneralMessages("No potential absorption difficulties identified")
                 .build();
+    }
+
+    private static boolean isOfCategory(@NotNull Complication complication, @NotNull String categoryToFind) {
+        for (String category : complication.categories()) {
+            if (category.toLowerCase().contains(categoryToFind.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
