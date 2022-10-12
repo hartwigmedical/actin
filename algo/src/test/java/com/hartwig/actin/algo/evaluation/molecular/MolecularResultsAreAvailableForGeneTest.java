@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -20,13 +19,18 @@ public class MolecularResultsAreAvailableForGeneTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withExperimentType(ExperimentType.PANEL)));
 
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(MolecularTestFactory.withExperimentTypeAndPriorTest(ExperimentType.PANEL, createForGene("gene 1"))));
+                function.evaluate(MolecularTestFactory.withExperimentTypeAndPriorTest(ExperimentType.PANEL, create("gene 1", false))));
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(MolecularTestFactory.withExperimentTypeAndPriorTest(ExperimentType.PANEL, create("gene 1", true))));
         assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withExperimentTypeAndPriorTest(ExperimentType.PANEL, createForGene("gene 2"))));
+                function.evaluate(MolecularTestFactory.withExperimentTypeAndPriorTest(ExperimentType.PANEL, create("gene 2", false))));
     }
 
     @NotNull
-    private static PriorMolecularTest createForGene(@NotNull String gene) {
-        return MolecularTestFactory.priorBuilder().test(Strings.EMPTY).item(gene).build();
+    private static PriorMolecularTest create(@NotNull String gene, boolean impliesPotentialDeterminateStatus) {
+        return MolecularTestFactory.priorBuilder()
+                .item(gene)
+                .impliesPotentialIndeterminateStatus(impliesPotentialDeterminateStatus)
+                .build();
     }
 }

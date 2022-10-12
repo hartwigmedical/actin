@@ -9,8 +9,9 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class MolecularResultsAreAvailableForPromoterOfGene implements EvaluationFunction {
+
+    static final String PROMOTER = "promoter";
 
     @NotNull
     private final String gene;
@@ -22,21 +23,32 @@ public class MolecularResultsAreAvailableForPromoterOfGene implements Evaluation
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasValidPriorTest = false;
+        boolean hasIndeterminatePriorTest = false;
         for (PriorMolecularTest priorMolecularTest : record.clinical().priorMolecularTests()) {
-            if (priorMolecularTest.item().contains(gene) && priorMolecularTest.item().contains("promoter")) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages(gene + " promoter has been tested in a prior molecular test")
-                        .addPassGeneralMessages("Molecular requirements")
-                        .build();
-
-            } else if (priorMolecularTest.item().contains(gene)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(gene + " has been tested in a prior molecular test, but uncertain if this covered the promoter")
-                        .addUndeterminedGeneralMessages("Molecular requirements")
-                        .build();
+            String test = priorMolecularTest.item();
+            if (test.contains(gene) && test.toLowerCase().contains(PROMOTER.toLowerCase())) {
+                if (priorMolecularTest.impliesPotentialIndeterminateStatus()) {
+                    hasIndeterminatePriorTest = true;
+                } else {
+                    hasValidPriorTest = true;
+                }
             }
+        }
+
+        if (hasValidPriorTest) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages(gene + " promoter has been tested in a prior molecular test")
+                    .addPassGeneralMessages("Molecular requirements")
+                    .build();
+        } else if (hasIndeterminatePriorTest) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            gene + " promoter has been tested in a prior molecular test but with indeterminate status")
+                    .addUndeterminedGeneralMessages("Molecular requirements")
+                    .build();
         }
 
         return EvaluationFactory.recoverable()

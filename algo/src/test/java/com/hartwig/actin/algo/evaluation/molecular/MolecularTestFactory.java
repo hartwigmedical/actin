@@ -117,11 +117,20 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withExperimentTypeAndPriorTest(@NotNull ExperimentType type, PriorMolecularTest priorTest) {
+    public static PatientRecord withExperimentTypeAndPriorTest(@NotNull ExperimentType type, @NotNull PriorMolecularTest priorTest) {
         PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
         return ImmutablePatientRecord.builder()
                 .from(base)
                 .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
+                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withPriorTest(@NotNull PriorMolecularTest priorTest) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+        return ImmutablePatientRecord.builder()
+                .from(base)
                 .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
                 .build();
     }

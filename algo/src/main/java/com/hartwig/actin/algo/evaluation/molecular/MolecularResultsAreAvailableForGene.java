@@ -15,7 +15,6 @@ public class MolecularResultsAreAvailableForGene implements EvaluationFunction {
     @NotNull
     private final String gene;
 
-    //TODO: Update according to README
     MolecularResultsAreAvailableForGene(@NotNull final String gene) {
         this.gene = gene;
     }
@@ -30,13 +29,30 @@ public class MolecularResultsAreAvailableForGene implements EvaluationFunction {
                     .build();
         }
 
+        boolean hasPassPriorTestForGene = false;
+        boolean hasIndeterminatePriorTestForGene = false;
         for (PriorMolecularTest priorMolecularTest : record.clinical().priorMolecularTests()) {
             if (priorMolecularTest.item().equals(gene)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages(gene + " has been tested in a prior molecular test")
-                        .build();
+                if (priorMolecularTest.impliesPotentialIndeterminateStatus()) {
+                    hasIndeterminatePriorTestForGene = true;
+                } else {
+                    hasPassPriorTestForGene = true;
+                }
             }
+        }
+
+        if (hasPassPriorTestForGene) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages(gene + " has been tested in a prior molecular test")
+                    .addPassGeneralMessages("Molecular requirements")
+                    .build();
+        } else if (hasIndeterminatePriorTestForGene) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(gene + " has been tested in a prior molecular test but with indeterminate status")
+                    .addUndeterminedGeneralMessages("Molecular requirements")
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()

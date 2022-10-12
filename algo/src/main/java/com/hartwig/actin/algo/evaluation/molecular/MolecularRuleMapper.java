@@ -50,7 +50,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X, molecularResultsAreAvailableForGeneCreator());
         map.put(EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X,
-                molecularResultsAreAvailableForPromotorOfGeneCreator());
+                molecularResultsAreAvailableForPromoterOfGeneCreator());
 
         return map;
     }
@@ -240,12 +240,10 @@ public class MolecularRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator molecularResultsAreAvailableForPromotorOfGeneCreator() {
+    private FunctionCreator molecularResultsAreAvailableForPromoterOfGeneCreator() {
         return function -> {
             String gene = functionInputResolver().createOneStringInput(function);
             return new MolecularResultsAreAvailableForPromoterOfGene(gene);
         };
     }
-
-
 }
