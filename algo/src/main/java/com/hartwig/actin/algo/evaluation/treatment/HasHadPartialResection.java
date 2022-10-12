@@ -5,11 +5,16 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasHadPartialResection implements EvaluationFunction {
+
+    static final String PARTIAL_RESECTION = "partial resection";
+
+    static final String RESECTION_KEYWORD = "resection";
 
     HasHadPartialResection() {
     }
@@ -17,10 +22,40 @@ public class HasHadPartialResection implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasHadPartialResection = false;
+        boolean hasHadPotentialPartialResection = false;
+        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+            if (treatment.name().equalsIgnoreCase(PARTIAL_RESECTION)) {
+                hasHadPartialResection = true;
+            }
+
+            if (treatment.name().toLowerCase().contains(RESECTION_KEYWORD.toLowerCase())) {
+                hasHadPotentialPartialResection = true;
+            }
+
+            if (treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()) {
+                hasHadPotentialPartialResection = true;
+            }
+        }
+
+        if (hasHadPartialResection) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has had a partial resection")
+                    .addPassGeneralMessages("Partial resection")
+                    .build();
+        } else if (hasHadPotentialPartialResection) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Could not be determined whether patient has had a partial resection")
+                    .addUndeterminedSpecificMessages("Partial resection")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently history of partial resection cannot be determined yet")
-                .addUndeterminedGeneralMessages("Undetermined partial resection")
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient has not had a partial resection")
+                .addFailGeneralMessages("Partial resection")
                 .build();
     }
 }

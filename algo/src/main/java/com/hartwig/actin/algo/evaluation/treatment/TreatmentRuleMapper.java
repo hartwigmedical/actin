@@ -271,7 +271,11 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadResectionWithinWeeksCreator() {
-        return function -> new HasHadResectionWithinWeeks();
+        return function -> {
+            int maxWeeksAgo = functionInputResolver().createOneIntegerInput(function);
+            LocalDate minDate = referenceDateProvider().date().minusWeeks(maxWeeksAgo);
+            return new HasHadRecentResection(minDate);
+        };
     }
 
     @NotNull

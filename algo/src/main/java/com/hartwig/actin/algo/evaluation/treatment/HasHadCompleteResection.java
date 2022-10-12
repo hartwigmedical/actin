@@ -5,11 +5,16 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasHadCompleteResection implements EvaluationFunction {
+
+    static final String COMPLETE_RESECTION = "complete resection";
+
+    static final String RESECTION_KEYWORD = "resection";
 
     HasHadCompleteResection() {
     }
@@ -17,10 +22,40 @@ public class HasHadCompleteResection implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        boolean hasHadCompleteResection = false;
+        boolean hasHadPotentialCompleteResection = false;
+        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+            if (treatment.name().equalsIgnoreCase(COMPLETE_RESECTION)) {
+                hasHadCompleteResection = true;
+            }
+
+            if (treatment.name().toLowerCase().contains(RESECTION_KEYWORD.toLowerCase())) {
+                hasHadPotentialCompleteResection = true;
+            }
+
+            if (treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()) {
+                hasHadPotentialCompleteResection = true;
+            }
+        }
+
+        if (hasHadCompleteResection) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has had a complete resection")
+                    .addPassGeneralMessages("Complete resection")
+                    .build();
+        } else if (hasHadPotentialCompleteResection) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Could not be determined whether patient has had a complete resection")
+                    .addUndeterminedSpecificMessages("Complete resection")
+                    .build();
+        }
+
         return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently history of complete resection cannot be determined yet")
-                .addUndeterminedGeneralMessages("Undetermined complete resection")
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("Patient has not had a complete resection")
+                .addFailGeneralMessages("Complete resection")
                 .build();
     }
 }
