@@ -18,6 +18,7 @@ public final class DoidConstants {
     public static final String BREAST_CANCER_DOID = "1612";
     public static final String OVARIAN_CANCER_DOID = "2394";
 
+    //public static final String GLIOBLASTOMA_DOID = "3068";
 
     public static final String HER2_NEGATIVE_BREAST_CANCER_DOID = "0060080";
     public static final String PROGESTERONE_POSITIVE_BREAST_CANCER_DOID = "0060077";
@@ -45,10 +46,10 @@ public final class DoidConstants {
     public static final String NEUROENDOCRINE_CARCINOMA_DOID = "1800";
 
     public static final String LEUKEMIA_DOID = "1240";
-    public static final String REFRACTORY_HEMATOLOGIC_CANCER_DOID = "712";
-    public static final String BONE_MARROW_CANCER_DOID = "4960";
     public static final String HEMATOLOGIC_CANCER_DOID = "2531";
+    public static final String REFRACTORY_HEMATOLOGIC_CANCER_DOID = "712";
     public static final String CENTRAL_NERVOUS_SYSTEM_HEMATOLOGIC_CANCER_DOID = "5772";
+    public static final String BONE_MARROW_CANCER_DOID = "4960";
     public static final String LYMPHOMA_DOID = "0060058";
     public static final String LYMPH_NODE_CANCER_DOID = "10619";
     public static final String MULTIPLE_MYELOMA_DOID = "9538";

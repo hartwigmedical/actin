@@ -1,7 +1,10 @@
 package com.hartwig.actin.algo.evaluation.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -18,5 +21,10 @@ public class FormatTest {
 
         assertEquals("string1; string2", Format.concat(Sets.newHashSet("string1", "string2")));
         assertEquals("string1", Format.concat(Lists.newArrayList("string1", "string1")));
+    }
+
+    @Test
+    public void canFormatDates() {
+        assertNotNull(Format.date(LocalDate.of(2021, 8, 20)));
     }
 }

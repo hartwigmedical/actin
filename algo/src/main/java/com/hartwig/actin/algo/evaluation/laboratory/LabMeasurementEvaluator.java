@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -11,6 +10,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
 import com.hartwig.actin.clinical.interpretation.LabInterpreter;
@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class LabMeasurementEvaluator implements EvaluationFunction {
-
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
     @NotNull
     private final LabMeasurement measurement;
@@ -94,7 +92,7 @@ public class LabMeasurementEvaluator implements EvaluationFunction {
     private Set<String> appendPastMinPassDate(@NotNull Set<String> inputs) {
         Set<String> messages = Sets.newHashSet();
         for (String message : inputs) {
-            messages.add(message + ", but measurement occurred before " + DATE_FORMAT.format(minValidDate));
+            messages.add(message + ", but measurement occurred before " + Format.date(minValidDate));
         }
         return messages;
     }

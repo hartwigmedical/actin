@@ -33,7 +33,11 @@ public class BloodTransfusionRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator requiresRegularHematopoieticSupportCreator() {
-        return function -> new RequiresRegularHematopoieticSupport();
+        return function -> {
+            LocalDate minDate = referenceDateProvider().date().minusMonths(2);
+            LocalDate maxDate = referenceDateProvider().date().plusMonths(2);
+            return new RequiresRegularHematopoieticSupport(minDate, maxDate);
+        };
     }
 
     @NotNull

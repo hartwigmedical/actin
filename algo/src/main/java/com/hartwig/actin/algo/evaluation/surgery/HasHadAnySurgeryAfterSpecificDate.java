@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.surgery;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -9,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.DateComparison;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
@@ -17,8 +17,6 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import org.jetbrains.annotations.NotNull;
 
 public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
-
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @NotNull
     private final LocalDate minDate;
@@ -67,13 +65,13 @@ public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
         if (hasFinishedSurgeryBetweenMinAndEval || hasPlannedSurgeryAfterEval) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has had or will get surgery after " + DATE_FORMAT.format(minDate))
+                    .addPassSpecificMessages("Patient has had or will get surgery after " + Format.date(minDate))
                     .addPassGeneralMessages("Recent surgery")
                     .build();
         } else if (hasUnexpectedSurgeryAfterEval || hasUnexpectedSurgeryBetweenMinAndEval) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient may have had or may get surgery after " + DATE_FORMAT.format(minDate))
+                    .addWarnSpecificMessages("Patient may have had or may get surgery after " + Format.date(minDate))
                     .addWarnGeneralMessages("Recent surgery")
                     .build();
         }
@@ -88,7 +86,7 @@ public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
                 } else if (isAfterMinDate) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has had surgery after " + DATE_FORMAT.format(minDate))
+                            .addPassSpecificMessages("Patient has had surgery after " + Format.date(minDate))
                             .addPassGeneralMessages("Recent surgery")
                             .build();
                 }
