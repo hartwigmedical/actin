@@ -137,7 +137,7 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasSecondaryGlioblastomaCreator() {
-        return function -> new HasSecondaryGlioblastoma();
+        return function -> new HasSecondaryGlioblastoma(doidModel());
     }
 
     @NotNull
