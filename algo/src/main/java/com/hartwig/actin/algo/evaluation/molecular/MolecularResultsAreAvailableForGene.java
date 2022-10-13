@@ -22,10 +22,11 @@ public class MolecularResultsAreAvailableForGene implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.molecular().type() == ExperimentType.WGS) {
+        if (record.molecular().type() == ExperimentType.WGS && record.molecular().containsTumorCells()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("WGS has been performed so molecular results are available for gene " + gene)
+                    .addPassSpecificMessages("WGS has successfully been performed so molecular results are available for gene " + gene)
+                    .addPassGeneralMessages("Molecular requirements")
                     .build();
         }
 
@@ -46,6 +47,12 @@ public class MolecularResultsAreAvailableForGene implements EvaluationFunction {
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(gene + " has been tested in a prior molecular test")
                     .addPassGeneralMessages("Molecular requirements")
+                    .build();
+        } else if (record.molecular().type() == ExperimentType.WGS && !record.molecular().containsTumorCells()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells.")
+                    .addUndeterminedGeneralMessages("Molecular requirements")
                     .build();
         } else if (hasIndeterminatePriorTestForGene) {
             return EvaluationFactory.unrecoverable()

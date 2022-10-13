@@ -36,11 +36,20 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withPriorMolecularTests(@NotNull List<PriorMolecularTest> priorMolecularTests) {
+    public static PatientRecord withPriorTests(@NotNull List<PriorMolecularTest> priorTests) {
         PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
         return ImmutablePatientRecord.builder()
                 .from(base)
-                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).priorMolecularTests(priorMolecularTests).build())
+                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).priorMolecularTests(priorTests).build())
+                .build();
+    }
+
+    @NotNull
+    public static PatientRecord withPriorTest(@NotNull PriorMolecularTest priorTest) {
+        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
+        return ImmutablePatientRecord.builder()
+                .from(base)
+                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
                 .build();
     }
 
@@ -101,10 +110,17 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withExperimentType(@NotNull ExperimentType type) {
+    private static ActinTrialEvidence createActinEvidence(@NotNull MolecularEventType type, @Nullable String gene,
+            @Nullable String mutation) {
+        return ActinTrialEvidenceTestFactory.builder().type(type).gene(gene).mutation(mutation).build();
+    }
+
+    @NotNull
+    public static PatientRecord withExperimentTypeAndContainingTumorCells(@NotNull ExperimentType type, boolean containsTumorCells) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .type(type)
+                .containsTumorCells(containsTumorCells)
                 .build());
     }
 
@@ -124,21 +140,6 @@ final class MolecularTestFactory {
                 .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
                 .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
                 .build();
-    }
-
-    @NotNull
-    public static PatientRecord withPriorTest(@NotNull PriorMolecularTest priorTest) {
-        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
-        return ImmutablePatientRecord.builder()
-                .from(base)
-                .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
-                .build();
-    }
-
-    @NotNull
-    private static ActinTrialEvidence createActinEvidence(@NotNull MolecularEventType type, @Nullable String gene,
-            @Nullable String mutation) {
-        return ActinTrialEvidenceTestFactory.builder().type(type).gene(gene).mutation(mutation).build();
     }
 
     @NotNull

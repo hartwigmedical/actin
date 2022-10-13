@@ -23,23 +23,23 @@ public class HasSufficientPDL1ByIHCTest {
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with no result
         priorTests.add(pdl1Builder().build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with value too low
         priorTests.add(pdl1Builder().scoreValue(1D).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with right value but wrong comparator
         priorTests.add(pdl1Builder().scoreValuePrefix(ValueComparison.SMALLER_THAN).scoreValue(3D).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with right value
         priorTests.add(pdl1Builder().scoreValue(3D).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
     }
 
     @NotNull

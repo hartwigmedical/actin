@@ -21,23 +21,23 @@ public class GeneIsExpressedByIHCTest {
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with no result
         priorTests.add(ihcBuilder(gene).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with negative result
         priorTests.add(ihcBuilder(gene).scoreText("negative").build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with positive result
         priorTests.add(ihcBuilder(gene).scoreValue(2D).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorMolecularTests(priorTests)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Also works for score texts.
         List<PriorMolecularTest> otherPriorTests = Lists.newArrayList(ihcBuilder(gene).scoreText("positive").build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorMolecularTests(otherPriorTests)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(otherPriorTests)));
     }
 
     @NotNull
