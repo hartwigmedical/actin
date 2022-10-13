@@ -61,9 +61,7 @@ public class MedicationGenerator implements TableGenerator {
 
     @NotNull
     private static String administrationRoute(@NotNull Medication medication) {
-        String result = medication.administrationRoute() != null ? medication.administrationRoute() : "";
-
-        return result;
+        return medication.administrationRoute() != null ? medication.administrationRoute() : Strings.EMPTY;
     }
 
     @NotNull
