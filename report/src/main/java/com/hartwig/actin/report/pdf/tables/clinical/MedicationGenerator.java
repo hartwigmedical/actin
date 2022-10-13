@@ -34,10 +34,11 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1, 1).setWidth(totalWidth);
+        Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1, 1, 1).setWidth(totalWidth);
 
         table.addHeaderCell(Cells.createHeader("Medication"));
         table.addHeaderCell(Cells.createHeader("Categories"));
+        table.addHeaderCell(Cells.createHeader("Administration route"));
         table.addHeaderCell(Cells.createHeader("Start date"));
         table.addHeaderCell(Cells.createHeader("Stop date"));
         table.addHeaderCell(Cells.createHeader("Status"));
@@ -47,6 +48,7 @@ public class MedicationGenerator implements TableGenerator {
         for (Medication medication : medications) {
             table.addCell(Cells.createContent(medication.name()));
             table.addCell(Cells.createContent(concat(medication.categories())));
+            table.addCell(Cells.createContent(administrationRoute(medication)));
             table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
             table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
             table.addCell(Cells.createContent(medication.status() != null ? medication.status().display() : Strings.EMPTY));
@@ -55,6 +57,13 @@ public class MedicationGenerator implements TableGenerator {
         }
 
         return Tables.makeWrapping(table);
+    }
+
+    @NotNull
+    private static String administrationRoute(@NotNull Medication medication) {
+        String result = medication.administrationRoute() != null ? medication.administrationRoute() : "";
+
+        return result;
     }
 
     @NotNull
