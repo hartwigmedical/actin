@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class HasHadRecentBloodTransfusionTest {
@@ -20,16 +21,18 @@ public class HasHadRecentBloodTransfusionTest {
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(Lists.newArrayList())));
 
-        BloodTransfusion tooOld =
-                ImmutableBloodTransfusion.builder().product(TransfusionProduct.THROMBOCYTE.display()).date(minDate.minusWeeks(4)).build();
+        BloodTransfusion tooOld = create(TransfusionProduct.THROMBOCYTE, minDate.minusWeeks(4));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)));
 
-        BloodTransfusion wrongProduct =
-                ImmutableBloodTransfusion.builder().product(TransfusionProduct.ERYTHROCYTE.display()).date(minDate.plusWeeks(2)).build();
+        BloodTransfusion wrongProduct = create(TransfusionProduct.ERYTHROCYTE, minDate.plusWeeks(2));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(wrongProduct)));
 
-        BloodTransfusion correct =
-                ImmutableBloodTransfusion.builder().product(TransfusionProduct.THROMBOCYTE.display()).date(minDate.plusWeeks(2)).build();
+        BloodTransfusion correct = create(TransfusionProduct.THROMBOCYTE, minDate.plusWeeks(2));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(correct)));
+    }
+
+    @NotNull
+    private static BloodTransfusion create(@NotNull TransfusionProduct product, @NotNull LocalDate date) {
+        return ImmutableBloodTransfusion.builder().product(product.display()).date(date).build();
     }
 }
