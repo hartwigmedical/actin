@@ -8,52 +8,33 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>system</artifactId>
+    <artifactId>ckb-database</artifactId>
     <packaging>jar</packaging>
     <version>${actin.version}</version>
-    <name>HMF ACTIN - System</name>
+    <name>HMF ACTIN - CKB Database</name>
 
     <dependencies>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
             <artifactId>common</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>ckb-database</artifactId>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>clinical</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>molecular</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>treatment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>database</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>algo</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>serve-bridge</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>report</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -69,12 +50,11 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.system.SystemApplication</mainClass>
+                            <mainClass>com.hartwig.actin.ckb.CkbDatabaseReaderApplication
+                            </mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
-                        <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
-                        </manifestEntries>
                     </archive>
 
                     <descriptorRefs>

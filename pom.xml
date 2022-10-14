@@ -10,6 +10,7 @@
 
     <modules>
         <module>common</module>
+        <module>ckb-database</module>
         <module>clinical</module>
         <module>molecular</module>
         <module>treatment</module>
@@ -78,6 +79,11 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
+                <version>${actin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>ckb-database</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>
