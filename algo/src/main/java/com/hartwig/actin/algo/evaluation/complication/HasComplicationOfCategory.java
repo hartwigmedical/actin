@@ -40,6 +40,7 @@ public class HasComplicationOfCategory implements EvaluationFunction {
             }
         }
 
+        //TODO: Update message: if categoryToFind equals Format.concat(complications), then do not display " of category + categoryToFind"
         if (!complications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
