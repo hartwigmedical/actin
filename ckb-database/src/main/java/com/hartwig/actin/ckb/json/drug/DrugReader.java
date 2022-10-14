@@ -133,17 +133,10 @@ public class DrugReader extends CkbJsonDirectoryReader<JsonDrug> {
             JsonObject clinicalTrialObject = clinicalTrial.getAsJsonObject();
             clinicalTrialChecker.check(clinicalTrialObject);
 
-            String nctId = Json.string(clinicalTrialObject, "nctId");
-            String phase = Json.nullableString(clinicalTrialObject, "phase");
-
-            if (phase == null) {
-                LOGGER.warn("phase of study '{}' is null in DrugReader", nctId);
-            }
-
             clinicalTrials.add(ImmutableClinicalTrialInfo.builder()
-                    .nctId(nctId)
+                    .nctId(Json.string(clinicalTrialObject, "nctId"))
                     .title(Json.string(clinicalTrialObject, "title"))
-                    .phase(phase)
+                    .phase(Json.nullableString(clinicalTrialObject, "phase"))
                     .recruitment(Json.string(clinicalTrialObject, "recruitment"))
                     .therapies(extractClinicalTrialTherapies(clinicalTrialObject.getAsJsonArray("therapies")))
                     .build());
