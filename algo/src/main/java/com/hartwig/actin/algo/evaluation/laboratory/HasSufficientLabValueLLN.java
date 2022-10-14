@@ -24,12 +24,12 @@ public class HasSufficientLabValueLLN implements LabEvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " is insufficient versus LLN");
-            builder.addFailGeneralMessages(labValue.code() + " insufficient");
+            builder.addFailSpecificMessages(labValue.code() + " is below minimal LLN");
+            builder.addFailGeneralMessages(labValue.code() + " below minimal LLN");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated versus LLN");
+            builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated against minimal LLN");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is sufficient versus LLN");
+            builder.addPassSpecificMessages(labValue.code() + " is not below minimal LLN");
         }
 
         return builder.build();
