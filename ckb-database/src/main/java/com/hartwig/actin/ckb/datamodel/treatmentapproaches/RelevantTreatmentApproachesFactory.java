@@ -32,15 +32,15 @@ public final class RelevantTreatmentApproachesFactory {
     @NotNull
     private static RelevantTreatmentApproaches resolveRelevantTreatmentApproaches(@NotNull CkbJsonDatabase ckbJsonDatabase,
             @NotNull TreatmentApproachInfo treatmentApproachInfo) {
-        for (JsonTreatmentApproach treatmentApproah : ckbJsonDatabase.treatmentApproaches()) {
-            if (treatmentApproah.id() == treatmentApproachInfo.id()) {
+        for (JsonTreatmentApproach treatmentApproach : ckbJsonDatabase.treatmentApproaches()) {
+            if (treatmentApproach.id() == treatmentApproachInfo.id()) {
                 return ImmutableRelevantTreatmentApproaches.builder()
-                        .id(treatmentApproah.id())
-                        .drugClass(treatmentApproah.drugClass() != null ? DrugFactory.resolveDrugClass(ckbJsonDatabase,
-                                treatmentApproah.drugClass()) : null)
-                        .references(ReferenceFactory.extractReferences(ckbJsonDatabase, treatmentApproah.references()))
-                        .createDate(treatmentApproah.createDate())
-                        .updateDate(treatmentApproah.updateDate())
+                        .id(treatmentApproach.id())
+                        .drugClass(treatmentApproach.drugClass() != null ? DrugFactory.resolveDrugClass(ckbJsonDatabase,
+                                treatmentApproach.drugClass()) : null)
+                        .references(ReferenceFactory.extractReferences(ckbJsonDatabase, treatmentApproach.references()))
+                        .createDate(treatmentApproach.createDate())
+                        .updateDate(treatmentApproach.updateDate())
                         .build();
             }
         }

@@ -29,13 +29,10 @@ import com.hartwig.actin.ckb.util.DateConverter;
 import com.hartwig.actin.util.json.Json;
 import com.hartwig.actin.util.json.JsonDatamodelChecker;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DrugReader extends CkbJsonDirectoryReader<JsonDrug> {
-    private static final Logger LOGGER = LogManager.getLogger(DrugReader.class);
 
     public DrugReader(@Nullable final Integer maxFilesToRead) {
         super(maxFilesToRead);
