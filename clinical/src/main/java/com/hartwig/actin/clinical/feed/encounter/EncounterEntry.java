@@ -29,8 +29,8 @@ public abstract class EncounterEntry implements FeedEntry {
     public abstract String codeCodingDisplayOriginal();
 
     @NotNull
-    public abstract String status();
+    public abstract String encounterStatus();
 
     @NotNull
-    public abstract String reasonText();
+    public abstract String procedureStatus();
 }
