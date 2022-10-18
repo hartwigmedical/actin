@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Update according to README
 public class HasInjectionAmenableLesion implements EvaluationFunction {
 
     HasInjectionAmenableLesion() {
