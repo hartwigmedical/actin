@@ -15,6 +15,7 @@ final class LabUnitResolver {
 
     static {
         CURATION_MAP.put("10*6/L", LabUnit.MILLIONS_PER_LITER);
+        CURATION_MAP.put("*10E6/l", LabUnit.MILLIONS_PER_LITER);
         CURATION_MAP.put("10*9/L", LabUnit.BILLIONS_PER_LITER);
         CURATION_MAP.put("*10E9/l", LabUnit.BILLIONS_PER_LITER);
         CURATION_MAP.put("10*12/L", LabUnit.TRILLIONS_PER_LITER);
