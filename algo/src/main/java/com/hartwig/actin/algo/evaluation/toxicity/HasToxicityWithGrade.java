@@ -22,6 +22,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+//TODO: In case X => 2, ignore EHR toxicities in evaluation
 public class HasToxicityWithGrade implements EvaluationFunction {
 
     @VisibleForTesting
