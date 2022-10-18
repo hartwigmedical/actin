@@ -23,7 +23,7 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
                 .codeDisplayOriginal(line.string("code_display_original"))
                 .componentCodeDisplay(line.string("component_code_display"))
                 .quantityUnit(line.string("quantity_unit"))
-                .quantityValue(line.number("quantity_value"))
+                .quantityValue(line.number("value_quantity"))
                 .build();
     }
 
@@ -42,7 +42,7 @@ public class VitalFunctionEntryCreator implements FeedEntryCreator<VitalFunction
             LOGGER.warn("Invalid vital function category detected: {}", category);
         }
 
-        String value = line.string("quantity_value");
+        String value = line.string("value_quantity");
         boolean validValue = true;
         if (value.isEmpty()) {
             validValue = false;
