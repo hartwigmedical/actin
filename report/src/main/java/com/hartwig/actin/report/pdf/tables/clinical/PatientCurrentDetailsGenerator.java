@@ -88,7 +88,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         return table;
     }
 
-    //TODO: For source EHR, only consider the most recent value of each toxicity
+    //TODO: For source EHR, only consider the most recent value of each toxicity and write these with "From EHR: " for clarity
     @NotNull
     private static String unresolvedToxicities(@NotNull ClinicalRecord record) {
         StringJoiner joiner = Formats.commaJoiner();
