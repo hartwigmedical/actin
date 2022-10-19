@@ -32,6 +32,7 @@
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
+        <maven.exec.plugin.version>3.1.0</maven.exec.plugin.version>
 
         <intellij.annotations.version>12.0</intellij.annotations.version>
         <commons.cli.version>1.4</commons.cli.version>
@@ -64,6 +65,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven.jar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${maven.exec.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jooq</groupId>
