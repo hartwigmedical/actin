@@ -1,7 +1,6 @@
 package com.hartwig.actin.system;
 
 import com.hartwig.actin.algo.TreatmentMatcherApplication;
-import com.hartwig.actin.ckb.CkbDatabaseReaderApplication;
 import com.hartwig.actin.clinical.ClinicalIngestionApplication;
 import com.hartwig.actin.database.algo.TreatmentMatchLoaderApplication;
 import com.hartwig.actin.database.clinical.ClinicalLoaderApplication;
@@ -24,7 +23,6 @@ public class SystemApplication {
 
     public static void main(@NotNull String... args) {
         LOGGER.info("The following applications are available through ACTIN v{}", VERSION);
-        LOGGER.info(" {}", CkbDatabaseReaderApplication.class);
         LOGGER.info(" {}", ClinicalIngestionApplication.class);
         LOGGER.info(" {}", OrangeInterpreterApplication.class);
         LOGGER.info(" {}", TreatmentCreatorApplication.class);

@@ -18,12 +18,12 @@ public final class Json {
 
     @Nullable
     public static JsonObject optionalObject(@NotNull JsonObject object, @NotNull String field) {
-        return object.has(field) ? object.getAsJsonObject(field) : null;
+        return object.has(field) ? object(object, field) : null;
     }
 
     @Nullable
     public static JsonObject nullableObject(@NotNull JsonObject object, @NotNull String field) {
-        return !isNull(object, field) ? object.getAsJsonObject(field) : null;
+        return !isNull(object, field) ? object(object, field) : null;
     }
 
     @NotNull
