@@ -50,11 +50,14 @@ public class HasKnownActiveCnsMetastases implements EvaluationFunction {
 
         EvaluationResult result = hasActiveCnsMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        //TODO: Check code
         if (result == EvaluationResult.FAIL) {
+            ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
             builder.addFailSpecificMessages("No known active CNS metastases present");
             builder.addFailGeneralMessages("No known active CNS metastases");
+            return builder.build();
         } else if (result == EvaluationResult.PASS) {
+            ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
             if (hasAtLeastActiveBrainMetastases) {
                 builder.addPassSpecificMessages("Active brain metastases are present");
                 builder.addPassGeneralMessages("Active brain metastases");
@@ -62,8 +65,8 @@ public class HasKnownActiveCnsMetastases implements EvaluationFunction {
                 builder.addPassSpecificMessages("Active CNS metastases are present");
                 builder.addPassGeneralMessages("Active CNS metastases");
             }
+            return builder.build();
         }
-
-        return builder.build();
+        return null;
     }
 }
