@@ -42,6 +42,7 @@ public enum LabUnit {
     MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"),
     INTERNATIONAL_UNITS_PER_MILLILITER("IU/ml"),
     PRNT50("PRNT50"),
+    RATIO(Strings.EMPTY),
     NONE(Strings.EMPTY);
 
     @NotNull
