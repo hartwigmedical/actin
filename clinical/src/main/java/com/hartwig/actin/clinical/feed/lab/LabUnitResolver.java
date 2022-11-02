@@ -32,6 +32,8 @@ final class LabUnitResolver {
         CURATION_MAP.put("L/L", LabUnit.NONE);
 
         CURATION_MAP.put("mol/mol", LabUnit.NONE);
+
+        CURATION_MAP.put("Ratio", LabUnit.NONE);
     }
 
     private LabUnitResolver() {
