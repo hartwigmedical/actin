@@ -11,7 +11,6 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +60,6 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestInterpreter() {
-        EvidenceExtractor testEvidenceExtractor = new EvidenceExtractor(ExternalTreatmentMapperTestFactory.create());
-        return new OrangeInterpreter(testEvidenceExtractor);
+        return new OrangeInterpreter();
     }
 }

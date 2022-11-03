@@ -10,8 +10,6 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
@@ -92,10 +90,9 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<String> eventsForEligibleTrials(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull Set<ActinTrialEvidence> actinTrialEvidences) {
+    private static Set<String> eventsForEligibleTrials(@NotNull TreatmentMatch treatmentMatch) {
         Set<String> molecularEvents = Sets.newTreeSet(Ordering.natural());
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, actinTrialEvidences)) {
+        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch)) {
             if (trial.isPotentiallyEligible() && trial.isOpen()) {
                 molecularEvents.addAll(trial.molecularEvents());
             }
@@ -122,15 +119,6 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private static Cell addIndent(@NotNull Cell cell) {
         return cell.setPaddingLeft(10);
-    }
-
-    @NotNull
-    private static String formatResistanceEvidence(@NotNull Iterable<TreatmentEvidence> resistanceEvidences) {
-        Set<String> resistanceEvidenceStrings = Sets.newTreeSet();
-        for (TreatmentEvidence evidence : resistanceEvidences) {
-            resistanceEvidenceStrings.add(evidence.event() + ": " + evidence.treatment());
-        }
-        return concat(resistanceEvidenceStrings);
     }
 
     @NotNull

@@ -15,16 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public class OrangeInterpreter {
 
     @NotNull
-    private final EvidenceExtractor evidenceExtractor;
-
-    @NotNull
     public static OrangeInterpreter create(@NotNull List<ExternalTrialMapping> mappings) {
-        return new OrangeInterpreter(EvidenceExtractor.extract(mappings));
+        return new OrangeInterpreter();
     }
 
-    @VisibleForTesting
-    OrangeInterpreter(@NotNull final EvidenceExtractor evidenceExtractor) {
-        this.evidenceExtractor = evidenceExtractor;
+    OrangeInterpreter() {
     }
 
     @NotNull
