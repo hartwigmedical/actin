@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class VirusComparator implements Comparator<Virus> {
 
-    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
+    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
     @Override
     public int compare(@NotNull Virus virus1, @NotNull Virus virus2) {
-        int driverCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(virus1.driverLikelihood(), virus2.driverLikelihood());
+        int driverCompare = DRIVER_COMPARATOR.compare(virus1, virus2);
         if (driverCompare != 0) {
             return driverCompare;
         }
@@ -22,6 +22,7 @@ public class VirusComparator implements Comparator<Virus> {
             return nameCompare;
         }
 
-        return virus1.event().compareTo(virus2.event());
+        // TODO
+        return 0;
     }
 }

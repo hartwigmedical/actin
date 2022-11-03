@@ -8,12 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class HomozygousDisruptionComparator implements Comparator<HomozygousDisruption> {
 
-    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
+    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
     @Override
     public int compare(@NotNull HomozygousDisruption homozygousDisruption1, @NotNull HomozygousDisruption homozygousDisruption2) {
-        int driverCompare =
-                DRIVER_LIKELIHOOD_COMPARATOR.compare(homozygousDisruption1.driverLikelihood(), homozygousDisruption2.driverLikelihood());
+        int driverCompare = DRIVER_COMPARATOR.compare(homozygousDisruption1, homozygousDisruption2);
         if (driverCompare != 0) {
             return driverCompare;
         }

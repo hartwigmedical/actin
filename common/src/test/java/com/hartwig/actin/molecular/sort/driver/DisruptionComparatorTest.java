@@ -7,9 +7,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
+import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -34,14 +33,6 @@ public class DisruptionComparatorTest {
     @NotNull
     private static Disruption create(@NotNull String gene, @NotNull DriverLikelihood driverLikelihood, @NotNull String type,
             @NotNull String range) {
-        return ImmutableDisruption.builder()
-                .event(Strings.EMPTY)
-                .driverLikelihood(driverLikelihood)
-                .gene(gene)
-                .type(type)
-                .junctionCopyNumber(0D)
-                .undisruptedCopyNumber(0D)
-                .range(range)
-                .build();
+        return TestDisruptionFactory.builder().driverLikelihood(driverLikelihood).gene(gene).type(type).range(range).build();
     }
 }

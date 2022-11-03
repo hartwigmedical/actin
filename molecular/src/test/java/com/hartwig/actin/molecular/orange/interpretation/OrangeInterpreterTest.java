@@ -11,7 +11,6 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.orange.curation.ExternalTreatmentMapperTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 
@@ -47,12 +46,6 @@ public class OrangeInterpreterTest {
         assertEquals(1, drivers.viruses().size());
 
         assertEquals(1, record.pharmaco().size());
-
-        MolecularEvidence evidence = record.evidence();
-        assertEquals(1, evidence.actinTrials().size());
-        assertEquals(1, evidence.externalTrials().size());
-        assertEquals(1, evidence.approvedEvidence().size());
-        assertEquals(0, evidence.knownResistanceEvidence().size());
     }
 
     @Test

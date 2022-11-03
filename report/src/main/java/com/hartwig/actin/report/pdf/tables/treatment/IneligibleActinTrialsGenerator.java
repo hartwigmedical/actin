@@ -7,10 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -34,13 +32,15 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull MolecularEvidence evidence, float contentWidth) {
+            float contentWidth) {
         List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (!trial.isPotentiallyEligible()) {
-                ineligibleTrials.add(trial);
-            }
-        }
+
+        // TODO Implement
+//        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
+//            if (!trial.isPotentiallyEligible()) {
+//                ineligibleTrials.add(trial);
+//            }
+//        }
 
         float trialColWidth = contentWidth / 9;
         float acronymColWidth = contentWidth / 9;
@@ -48,8 +48,9 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         float recruitingColWidth = contentWidth / 11;
         float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + recruitingColWidth);
 
+        // TODO Replace hardcoded EMC
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
-                evidence.actinSource(),
+                "EMC",
                 trialColWidth,
                 acronymColWidth,
                 cohortColWidth,

@@ -1,11 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.driver;
 
-import org.jetbrains.annotations.NotNull;
-
-public interface CopyNumberDriver extends Driver {
-
-    @NotNull
-    String gene();
+public interface CopyNumberDriver extends Driver, GeneAlteration {
 
     boolean isPartial();
 }

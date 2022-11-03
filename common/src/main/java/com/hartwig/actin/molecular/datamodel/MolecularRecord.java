@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
@@ -29,6 +28,12 @@ public abstract class MolecularRecord {
     @Nullable
     public abstract LocalDate date();
 
+    @NotNull
+    public abstract String evidenceSource();
+
+    @NotNull
+    public abstract String externalTrialSource();
+
     public abstract boolean containsTumorCells();
 
     public abstract boolean hasSufficientQuality();
@@ -47,8 +52,5 @@ public abstract class MolecularRecord {
 
     @Nullable
     public abstract Set<String> wildTypeGenes();
-
-    @NotNull
-    public abstract MolecularEvidence evidence();
 
 }

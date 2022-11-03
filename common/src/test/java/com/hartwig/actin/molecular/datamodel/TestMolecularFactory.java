@@ -10,25 +10,15 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedT
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
-import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
-import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -54,12 +44,13 @@ public final class TestMolecularFactory {
                 .patientId(TestDataFactory.TEST_PATIENT)
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
+                .evidenceSource(Strings.EMPTY)
+                .externalTrialSource(Strings.EMPTY)
                 .containsTumorCells(true)
                 .hasSufficientQuality(true)
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .immunology(ImmutableMolecularImmunology.builder().isReliable(false).build())
-                .evidence(createMinimalTestEvidence())
                 .build();
     }
 
@@ -73,7 +64,6 @@ public final class TestMolecularFactory {
                 .immunology(createProperTestImmunology())
                 .pharmaco(createProperTestPharmaco())
                 .wildTypeGenes(createTestWildTypeGenes())
-                .evidence(createProperTestEvidence())
                 .build();
     }
 
@@ -82,16 +72,6 @@ public final class TestMolecularFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createProperTestMolecularRecord())
                 .drivers(createExhaustiveTestDrivers())
-                .evidence(createExhaustiveTestEvidence())
-                .build();
-    }
-
-    @NotNull
-    private static MolecularEvidence createMinimalTestEvidence() {
-        return ImmutableMolecularEvidence.builder()
-                .actinSource(Strings.EMPTY)
-                .externalTrialSource(Strings.EMPTY)
-                .evidenceSource(Strings.EMPTY)
                 .build();
     }
 
@@ -111,17 +91,13 @@ public final class TestMolecularFactory {
     private static MolecularDrivers createProperTestDrivers() {
         return ImmutableMolecularDrivers.builder()
                 .addVariants(TestVariantFactory.builder()
-                        .event("BRAF V600E")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("BRAF")
-                        .impact("p.V600E")
                         .variantCopyNumber(4.1)
                         .totalCopyNumber(6.0)
-                        .driverType(VariantDriverType.HOTSPOT)
                         .clonalLikelihood(1.0)
                         .build())
                 .addLosses(TestLossFactory.builder()
-                        .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
                         .isPartial(true)
@@ -146,135 +122,27 @@ public final class TestMolecularFactory {
     }
 
     @NotNull
-    private static Iterable<String> createTestWildTypeGenes() {
+    private static Set<String> createTestWildTypeGenes() {
         Set<String> wildTypeGenes = Sets.newHashSet();
         wildTypeGenes.add("KRAS");
         return wildTypeGenes;
     }
 
     @NotNull
-    private static MolecularEvidence createProperTestEvidence() {
-        return ImmutableMolecularEvidence.builder()
-                .actinSource("Local")
-                .actinTrials(createTestActinTrials())
-                .externalTrialSource("External")
-                .externalTrials(createTestExternalTrials())
-                .evidenceSource("General")
-                .onLabelExperimentalEvidence(createTestOnLabelExperimentalEvidence())
-                .offLabelExperimentalEvidence(createTestOffLabelExperimentalEvidence())
-                .preClinicalEvidence(createTestPreClinicalEvidence())
-                .build();
-    }
-
-    @NotNull
-    private static MolecularEvidence createExhaustiveTestEvidence() {
-        return ImmutableMolecularEvidence.builder()
-                .from(createProperTestEvidence())
-                .approvedEvidence(createTestApprovedEvidence())
-                .knownResistanceEvidence(createTestKnownResistanceEvidence())
-                .suspectResistanceEvidence(createTestSuspectResistanceEvidence())
-                .build();
-    }
-
-    @NotNull
-    private static Set<ActinTrialEvidence> createTestActinTrials() {
-        Set<ActinTrialEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableActinTrialEvidence.builder()
-                .event("PTEN del")
-                .trialAcronym("TEST-1")
-                .cohortId("B")
-                .isInclusionCriterion(true)
-                .type(MolecularEventType.INACTIVATED_GENE)
-                .gene("PTEN")
-                .mutation("del")
-                .build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<ExternalTrialEvidence> createTestExternalTrials() {
-        Set<ExternalTrialEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableExternalTrialEvidence.builder().event("PTEN del").trial("External test trial 1").build());
-        result.add(ImmutableExternalTrialEvidence.builder().event("High TML").trial("External test trial 2").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<TreatmentEvidence> createTestApprovedEvidence() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Vemurafenib").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<TreatmentEvidence> createTestOnLabelExperimentalEvidence() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableTreatmentEvidence.builder().event("High TML").treatment("Pembrolizumab").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<TreatmentEvidence> createTestOffLabelExperimentalEvidence() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Trametinib").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<TreatmentEvidence> createTestPreClinicalEvidence() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Pre-clinical treatment").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<TreatmentEvidence> createTestKnownResistanceEvidence() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Erlotinib").build());
-
-        return result;
-    }
-
-    @NotNull
-    private static Set<TreatmentEvidence> createTestSuspectResistanceEvidence() {
-        Set<TreatmentEvidence> result = Sets.newHashSet();
-
-        result.add(ImmutableTreatmentEvidence.builder().event("BRAF V600E").treatment("Some treatment").build());
-
-        return result;
-    }
-
-    @NotNull
     private static MolecularDrivers createExhaustiveTestDrivers() {
         return ImmutableMolecularDrivers.builder()
                 .from(createProperTestDrivers())
-                .addAmplifications(ImmutableAmplification.builder()
-                        .event("MYC amp")
+                .addAmplifications(TestAmplificationFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("MYC")
                         .copies(38)
                         .isPartial(false)
                         .build())
                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
-                        .event("PTEN disruption")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
                         .build())
-                .addDisruptions(ImmutableDisruption.builder()
-                        .event(Strings.EMPTY)
+                .addDisruptions(TestDisruptionFactory.builder()
                         .driverLikelihood(DriverLikelihood.LOW)
                         .gene("PTEN")
                         .type("DEL")
@@ -282,16 +150,14 @@ public final class TestMolecularFactory {
                         .undisruptedCopyNumber(1.8)
                         .range("Intron 1 downstream")
                         .build())
-                .addFusions(ImmutableFusion.builder()
-                        .event("EML4-ALK fusion")
+                .addFusions(TestFusionFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .fiveGene("EML4")
                         .threeGene("ALK")
                         .details("Exon 2 - Exon 4")
                         .driverType(FusionDriverType.KNOWN)
                         .build())
-                .addViruses(ImmutableVirus.builder()
-                        .event("HPV positive")
+                .addViruses(TestVirusFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .name("Human papillomavirus type 16d")
                         .integrations(3)

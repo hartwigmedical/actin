@@ -44,12 +44,13 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Type"));
         table.addHeaderCell(Cells.createHeader("Driver"));
         table.addHeaderCell(Cells.createHeader("Driver likelihood"));
-        table.addHeaderCell(Cells.createHeader("Trials in " + molecular.evidence().actinSource()));
-        table.addHeaderCell(Cells.createHeader("Trials in " + molecular.evidence().externalTrialSource()));
-        table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidence().evidenceSource()));
-        table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidence().evidenceSource()));
+        // TODO Don't hardcode EMC.
+        table.addHeaderCell(Cells.createHeader("Trials in EMC"));
+        table.addHeaderCell(Cells.createHeader("Trials in " + molecular.externalTrialSource()));
+        table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
+        table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(molecular.drivers(), molecular.evidence());
+        Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(molecular.drivers());
 
         for (MolecularDriverEntry entry : entries) {
             table.addCell(Cells.createContent(entry.driverType()));

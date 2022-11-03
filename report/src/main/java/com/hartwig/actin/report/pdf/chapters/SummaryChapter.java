@@ -14,7 +14,6 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenera
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator;
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator;
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -181,14 +180,15 @@ public class SummaryChapter implements ReportChapter {
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
                 new MolecularSummaryGenerator(report.clinical(), report.molecular(), report.treatmentMatch(), keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
-                EligibleActinTrialsGenerator.forOpenTrials(report.treatmentMatch(), report.molecular().evidence(), contentWidth()));
+                EligibleActinTrialsGenerator.forOpenTrials(report.treatmentMatch(), contentWidth()));
 
-        if (!report.molecular().evidence().externalTrials().isEmpty()) {
-            generators.add(new EligibleExternalTrialsGenerator(report.molecular().evidence().externalTrialSource(),
-                    report.molecular().evidence().externalTrials(),
-                    keyWidth,
-                    valueWidth));
-        }
+        // TODO Implement
+//        if (!report.molecular().evidence().externalTrials().isEmpty()) {
+//            generators.add(new EligibleExternalTrialsGenerator(report.molecular().evidence().externalTrialSource(),
+//                    report.molecular().evidence().externalTrials(),
+//                    keyWidth,
+//                    valueWidth));
+//        }
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

@@ -13,6 +13,7 @@ import static com.hartwig.actin.util.json.Json.nullableStringList;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
+import static com.hartwig.actin.util.json.Json.stringList;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,6 +45,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
@@ -51,22 +53,18 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableTranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
-import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableMolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableTreatmentEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
@@ -81,9 +79,6 @@ import com.hartwig.actin.molecular.sort.driver.FusionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
-import com.hartwig.actin.molecular.sort.evidence.ActinTrialEvidenceComparator;
-import com.hartwig.actin.molecular.sort.evidence.ExternalTrialEvidenceComparator;
-import com.hartwig.actin.molecular.sort.evidence.TreatmentEvidenceComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 
@@ -141,6 +136,8 @@ public class MolecularRecordJson {
                     .sampleId(string(record, "sampleId"))
                     .type(ExperimentType.valueOf(string(record, "type")))
                     .date(nullableDate(record, "date"))
+                    .evidenceSource(string(record, "evidenceSource"))
+                    .externalTrialSource(string(record, "externalTrialSource"))
                     .containsTumorCells(bool(record, "containsTumorCells"))
                     .hasSufficientQuality(bool(record, "hasSufficientQuality"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
@@ -148,7 +145,6 @@ public class MolecularRecordJson {
                     .immunology(toMolecularImmunology(object(record, "immunology")))
                     .pharmaco(toPharmacoEntries(array(record, "pharmaco")))
                     .wildTypeGenes(nullableStringList(record, "wildTypeGenes"))
-                    .evidence(toMolecularEvidence(object(record, "evidence")))
                     .build();
         }
 
@@ -158,9 +154,18 @@ public class MolecularRecordJson {
                     .purity(nullableNumber(characteristics, "purity"))
                     .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(characteristics, "predictedTumorOrigin")))
                     .isMicrosatelliteUnstable(nullableBool(characteristics, "isMicrosatelliteUnstable"))
+                    .microsatelliteEvidence(toNullableActionableEvidence(nullableObject(characteristics, "microsatelliteEvidence")))
                     .isHomologousRepairDeficient(nullableBool(characteristics, "isHomologousRepairDeficient"))
+                    .homologousRepairDeficiencyEvidence(toNullableActionableEvidence(nullableObject(characteristics,
+                            "homologousRepairDeficiencyEvidence")))
                     .tumorMutationalBurden(nullableNumber(characteristics, "tumorMutationalBurden"))
+                    .hasHighTumorMutationalBurden(nullableBool(characteristics, "hasHighTumorMutationalBurden"))
+                    .tumorMutationalBurdenEvidence(toNullableActionableEvidence(nullableObject(characteristics,
+                            "tumorMutationalBurdenEvidence")))
                     .tumorMutationalLoad(nullableInteger(characteristics, "tumorMutationalLoad"))
+                    .hasHighTumorMutationalLoad(nullableBool(characteristics, "hasHighTumorMutationalLoad"))
+                    .tumorMutationalLoadEvidence(toNullableActionableEvidence(nullableObject(characteristics,
+                            "tumorMutationalLoadEvidence")))
                     .build();
         }
 
@@ -174,6 +179,14 @@ public class MolecularRecordJson {
                     .tumorType(string(predictedTumorOrigin, "tumorType"))
                     .likelihood(number(predictedTumorOrigin, "likelihood"))
                     .build();
+        }
+
+        @Nullable
+        private static ActionableEvidence toNullableActionableEvidence(@Nullable JsonObject evidence) {
+            if (evidence == null) {
+                return null;
+            }
+            return toActionableEvidence(evidence);
         }
 
         @NotNull
@@ -195,17 +208,39 @@ public class MolecularRecordJson {
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutableVariant.builder()
-                        .event(string(variant, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(variant, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(variant, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(variant, "evidence")))
                         .gene(string(variant, "gene"))
-                        .impact(string(variant, "impact"))
+                        .geneRole(GeneRole.valueOf(string(variant, "geneRole")))
+                        .proteinEffect(ProteinEffect.valueOf(string(variant, "proteinEffect")))
+                        .associatedWithDrugResistance(nullableBool(variant, "associatedWithDrugResistance"))
+                        .type(VariantType.valueOf(string(variant, "type")))
                         .variantCopyNumber(number(variant, "variantCopyNumber"))
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
-                        .driverType(VariantDriverType.valueOf(string(variant, "driverType")))
+                        .isBiallelic(bool(variant, "isBiallelic"))
+                        .isHotspot(bool(variant, "isHotspot"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
+                        .impacts(toTranscriptImpacts(array(variant, "impacts")))
                         .build());
             }
             return variants;
+        }
+
+        @NotNull
+        private static Set<TranscriptImpact> toTranscriptImpacts(@NotNull JsonArray impactArray) {
+            Set<TranscriptImpact> impacts = Sets.newHashSet();
+            for (JsonElement element : impactArray) {
+                JsonObject impact = element.getAsJsonObject();
+                impacts.add(ImmutableTranscriptImpact.builder()
+                        .transcriptId(string(impact, "transcriptId"))
+                        .effect(string(impact, "effect"))
+                        .affectedCodon(nullableInteger(impact, "affectedCodon"))
+                        .affectedExon(nullableInteger(impact, "affectedExon"))
+                        .codingImpact(string(impact, "codingImpact"))
+                        .proteinImpact(string(impact, "proteinImpact"))
+                        .build());
+            }
+            return impacts;
         }
 
         @NotNull
@@ -214,11 +249,14 @@ public class MolecularRecordJson {
             for (JsonElement element : amplificationArray) {
                 JsonObject amplification = element.getAsJsonObject();
                 amplifications.add(ImmutableAmplification.builder()
-                        .event(string(amplification, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(amplification, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(amplification, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(amplification, "evidence")))
                         .gene(string(amplification, "gene"))
-                        .copies(integer(amplification, "copies"))
+                        .geneRole(GeneRole.valueOf(string(amplification, "geneRole")))
+                        .proteinEffect(ProteinEffect.valueOf(string(amplification, "proteinEffect")))
+                        .associatedWithDrugResistance(nullableBool(amplification, "associatedWithDrugResistance"))
                         .isPartial(bool(amplification, "isPartial"))
+                        .copies(integer(amplification, "copies"))
                         .build());
             }
             return amplifications;
@@ -230,9 +268,12 @@ public class MolecularRecordJson {
             for (JsonElement element : lossArray) {
                 JsonObject loss = element.getAsJsonObject();
                 losses.add(ImmutableLoss.builder()
-                        .event(string(loss, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(loss, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(loss, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(loss, "evidence")))
                         .gene(string(loss, "gene"))
+                        .geneRole(GeneRole.valueOf(string(loss, "geneRole")))
+                        .proteinEffect(ProteinEffect.valueOf(string(loss, "proteinEffect")))
+                        .associatedWithDrugResistance(nullableBool(loss, "associatedWithDrugResistance"))
                         .isPartial(bool(loss, "isPartial"))
                         .build());
             }
@@ -245,9 +286,12 @@ public class MolecularRecordJson {
             for (JsonElement element : homozygousDisruptionArray) {
                 JsonObject homozygousDisruption = element.getAsJsonObject();
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                        .event(string(homozygousDisruption, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(homozygousDisruption, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(homozygousDisruption, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(homozygousDisruption, "evidence")))
                         .gene(string(homozygousDisruption, "gene"))
+                        .geneRole(GeneRole.valueOf(string(homozygousDisruption, "geneRole")))
+                        .proteinEffect(ProteinEffect.valueOf(string(homozygousDisruption, "proteinEffect")))
+                        .associatedWithDrugResistance(nullableBool(homozygousDisruption, "associatedWithDrugResistance"))
                         .build());
             }
             return homozygousDisruptions;
@@ -259,9 +303,12 @@ public class MolecularRecordJson {
             for (JsonElement element : disruptionArray) {
                 JsonObject disruption = element.getAsJsonObject();
                 disruptions.add(ImmutableDisruption.builder()
-                        .event(string(disruption, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(disruption, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(disruption, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(disruption, "evidence")))
                         .gene(string(disruption, "gene"))
+                        .geneRole(GeneRole.valueOf(string(disruption, "geneRole")))
+                        .proteinEffect(ProteinEffect.valueOf(string(disruption, "proteinEffect")))
+                        .associatedWithDrugResistance(nullableBool(disruption, "associatedWithDrugResistance"))
                         .type(string(disruption, "type"))
                         .junctionCopyNumber(number(disruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
@@ -277,10 +324,12 @@ public class MolecularRecordJson {
             for (JsonElement element : fusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableFusion.builder()
-                        .event(string(fusion, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(fusion, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(fusion, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(fusion, "evidence")))
                         .fiveGene(string(fusion, "fiveGene"))
                         .threeGene(string(fusion, "threeGene"))
+                        .proteinEffect(ProteinEffect.valueOf(string(fusion, "proteinEffect")))
+                        .associatedWithDrugResistance(nullableBool(fusion, "associatedWithDrugResistance"))
                         .details(string(fusion, "details"))
                         .driverType(FusionDriverType.valueOf(string(fusion, "driverType")))
                         .build());
@@ -294,13 +343,31 @@ public class MolecularRecordJson {
             for (JsonElement element : virusArray) {
                 JsonObject virus = element.getAsJsonObject();
                 viruses.add(ImmutableVirus.builder()
-                        .event(string(virus, "event"))
-                        .driverLikelihood(DriverLikelihood.valueOf(string(virus, "driverLikelihood")))
+                        .driverLikelihood(toDriverLikelihood(nullableString(virus, "driverLikelihood")))
+                        .evidence(toActionableEvidence(object(virus, "evidence")))
                         .name(string(virus, "name"))
                         .integrations(integer(virus, "integrations"))
                         .build());
             }
             return viruses;
+        }
+
+        @Nullable
+        private static DriverLikelihood toDriverLikelihood(@Nullable String driverLikelihoodString) {
+            return driverLikelihoodString != null ? DriverLikelihood.valueOf(driverLikelihoodString) : null;
+        }
+
+        @NotNull
+        private static ActionableEvidence toActionableEvidence(@NotNull JsonObject evidence) {
+            return ImmutableActionableEvidence.builder()
+                    .approvedTreatments(stringList(evidence, "approvedTreatments"))
+                    .externalEligibleTrials(stringList(evidence, "externalEligibleTrials"))
+                    .onLabelExperimentalTreatments(stringList(evidence, "onLabelExperimentalTreatments"))
+                    .offLabelExperimentalTreatments(stringList(evidence, "offLabelExperimentalTreatments"))
+                    .preClinicalTreatments(stringList(evidence, "preClinicalTreatments"))
+                    .knownResistantTreatments(stringList(evidence, "knownResistantTreatments"))
+                    .suspectResistantTreatments(stringList(evidence, "suspectResistantTreatments"))
+                    .build();
         }
 
         @NotNull
@@ -349,67 +416,6 @@ public class MolecularRecordJson {
                         .build());
             }
             return haplotypes;
-        }
-
-        @NotNull
-        private static MolecularEvidence toMolecularEvidence(@NotNull JsonObject evidence) {
-            return ImmutableMolecularEvidence.builder()
-                    .actinSource(string(evidence, "actinSource"))
-                    .actinTrials(toActinTrialEvidences(array(evidence, "actinTrials")))
-                    .externalTrialSource(string(evidence, "externalTrialSource"))
-                    .externalTrials(toExternalTrialEvidences(array(evidence, "externalTrials")))
-                    .evidenceSource(string(evidence, "evidenceSource"))
-                    .approvedEvidence(toTreatmentEvidences(array(evidence, "approvedEvidence")))
-                    .onLabelExperimentalEvidence(toTreatmentEvidences(array(evidence, "onLabelExperimentalEvidence")))
-                    .offLabelExperimentalEvidence(toTreatmentEvidences(array(evidence, "offLabelExperimentalEvidence")))
-                    .preClinicalEvidence(toTreatmentEvidences(array(evidence, "preClinicalEvidence")))
-                    .knownResistanceEvidence(toTreatmentEvidences(array(evidence, "knownResistanceEvidence")))
-                    .suspectResistanceEvidence(toTreatmentEvidences(array(evidence, "suspectResistanceEvidence")))
-                    .build();
-        }
-
-        @NotNull
-        private static Set<ActinTrialEvidence> toActinTrialEvidences(@NotNull JsonArray actinTrialArray) {
-            Set<ActinTrialEvidence> actinTrialEvidences = Sets.newTreeSet(new ActinTrialEvidenceComparator());
-            for (JsonElement element : actinTrialArray) {
-                JsonObject actinTrialEvidence = element.getAsJsonObject();
-                actinTrialEvidences.add(ImmutableActinTrialEvidence.builder()
-                        .event(string(actinTrialEvidence, "event"))
-                        .trialAcronym(string(actinTrialEvidence, "trialAcronym"))
-                        .cohortId(nullableString(actinTrialEvidence, "cohortId"))
-                        .isInclusionCriterion(bool(actinTrialEvidence, "isInclusionCriterion"))
-                        .type(MolecularEventType.valueOf(string(actinTrialEvidence, "type")))
-                        .gene(nullableString(actinTrialEvidence, "gene"))
-                        .mutation(nullableString(actinTrialEvidence, "mutation"))
-                        .build());
-            }
-            return actinTrialEvidences;
-        }
-
-        @NotNull
-        private static Set<ExternalTrialEvidence> toExternalTrialEvidences(@NotNull JsonArray externalTrialArray) {
-            Set<ExternalTrialEvidence> evidences = Sets.newTreeSet(new ExternalTrialEvidenceComparator());
-            for (JsonElement element : externalTrialArray) {
-                JsonObject externalTrialEvidence = element.getAsJsonObject();
-                evidences.add(ImmutableExternalTrialEvidence.builder()
-                        .event(string(externalTrialEvidence, "event"))
-                        .trial(string(externalTrialEvidence, "trial"))
-                        .build());
-            }
-            return evidences;
-        }
-
-        @NotNull
-        private static Set<TreatmentEvidence> toTreatmentEvidences(@NotNull JsonArray evidenceArray) {
-            Set<TreatmentEvidence> evidences = Sets.newTreeSet(new TreatmentEvidenceComparator());
-            for (JsonElement element : evidenceArray) {
-                JsonObject treatmentEvidence = element.getAsJsonObject();
-                evidences.add(ImmutableTreatmentEvidence.builder()
-                        .event(string(treatmentEvidence, "event"))
-                        .treatment(string(treatmentEvidence, "treatment"))
-                        .build());
-            }
-            return evidences;
         }
     }
 }

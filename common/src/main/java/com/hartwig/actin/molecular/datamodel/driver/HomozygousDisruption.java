@@ -6,9 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class HomozygousDisruption implements Driver {
-
-    @NotNull
-    public abstract String gene();
+public abstract class HomozygousDisruption implements Driver, GeneAlteration {
 
 }

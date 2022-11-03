@@ -5,8 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEventType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,15 +20,16 @@ public class GeneIsAmplified implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (ActinTrialEvidence evidence : record.molecular().evidence().actinTrials()) {
-            if (evidence.type() == MolecularEventType.AMPLIFIED_GENE && gene.equals(evidence.gene())) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Amplification detected of gene " + gene)
-                        .addPassGeneralMessages("Molecular requirements")
-                        .build();
-            }
-        }
+        // TODO Implement
+//        for (ActinTrialEvidence evidence : record.molecular().evidence().actinTrials()) {
+//            if (evidence.type() == MolecularEventType.AMPLIFIED_GENE && gene.equals(evidence.gene())) {
+//                return EvaluationFactory.unrecoverable()
+//                        .result(EvaluationResult.PASS)
+//                        .addPassSpecificMessages("Amplification detected of gene " + gene)
+//                        .addPassGeneralMessages("Molecular requirements")
+//                        .build();
+//            }
+//        }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)

@@ -11,11 +11,9 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.evidence.ActinTrialEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
-import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -67,28 +65,28 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             table.addCell(createPredictedTumorOriginValue(molecular.characteristics().predictedTumorOrigin()));
         }
 
-        MolecularEvidence evidence = molecular.evidence();
-        table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
-
-        table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
-        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch, evidence.actinTrials()))));
-
-        table.addCell(addIndent(Cells.createKey(
-                "Additional events with trial eligibility in NL (" + evidence.externalTrialSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence))));
-
-        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + evidence.evidenceSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence))));
-
-        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + evidence.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence))));
-
-        Set<TreatmentEvidence> knownResistanceEvidence = evidence.knownResistanceEvidence();
-        if (!knownResistanceEvidence.isEmpty()) {
-            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
-            table.addCell(Cells.createValue(formatResistanceEvidence(knownResistanceEvidence)));
-        }
+        // TODO Implement
+//        table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
+//
+//        table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
+//        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch, evidence.actinTrials()))));
+//
+//        table.addCell(addIndent(Cells.createKey(
+//                "Additional events with trial eligibility in NL (" + evidence.externalTrialSource() + ")")));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence))));
+//
+//        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + evidence.evidenceSource() + ")")));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence))));
+//
+//        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + evidence.evidenceSource()));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence))));
+//
+//        Set<TreatmentEvidence> knownResistanceEvidence = evidence.knownResistanceEvidence();
+//        if (!knownResistanceEvidence.isEmpty()) {
+//            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
+//            table.addCell(Cells.createValue(formatResistanceEvidence(knownResistanceEvidence)));
+//        }
 
         return table;
     }

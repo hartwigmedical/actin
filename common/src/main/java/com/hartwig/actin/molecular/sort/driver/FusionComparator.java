@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class FusionComparator implements Comparator<Fusion> {
 
-    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
+    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
     @Override
     public int compare(@NotNull Fusion fusion1, @NotNull Fusion fusion2) {
-        int driverCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(fusion1.driverLikelihood(), fusion2.driverLikelihood());
+        int driverCompare = DRIVER_COMPARATOR.compare(fusion1, fusion2);
         if (driverCompare != 0) {
             return driverCompare;
         }

@@ -7,9 +7,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
+import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -31,6 +30,6 @@ public class HomozygousDisruptionComparatorTest {
 
     @NotNull
     private static HomozygousDisruption create(@NotNull String gene, @NotNull DriverLikelihood driverLikelihood) {
-        return ImmutableHomozygousDisruption.builder().event(Strings.EMPTY).driverLikelihood(driverLikelihood).gene(gene).build();
+        return TestHomozygousDisruptionFactory.builder().driverLikelihood(driverLikelihood).gene(gene).build();
     }
 }

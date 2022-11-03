@@ -7,10 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -34,31 +32,34 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
+    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull TreatmentMatch treatmentMatch,
             float width) {
         List<EvaluatedTrial> recruitingAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (trial.isPotentiallyEligible() && trial.isOpen()) {
-                recruitingAndEligible.add(trial);
-            }
-        }
+        // TODO Implement
+//        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
+//            if (trial.isPotentiallyEligible() && trial.isOpen()) {
+//                recruitingAndEligible.add(trial);
+//            }
+//        }
 
-        String title = evidence.actinSource() + " trials that are open and considered eligible (" + recruitingAndEligible.size() + ")";
+        // TODO Don't hardcode EMC.
+        String title = "EMC trials that are open and considered eligible (" + recruitingAndEligible.size() + ")";
         return create(recruitingAndEligible, title, width);
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularEvidence evidence,
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull TreatmentMatch treatmentMatch,
             float contentWidth) {
         List<EvaluatedTrial> unavailableAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
-            if (trial.isPotentiallyEligible() && !trial.isOpen()) {
-                unavailableAndEligible.add(trial);
-            }
-        }
+        // TODO Implement
+//        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch, evidence.actinTrials())) {
+//            if (trial.isPotentiallyEligible() && !trial.isOpen()) {
+//                unavailableAndEligible.add(trial);
+//            }
+//        }
 
-        String title = String.format("%s trials that are closed or blacklisted but considered eligible (%s)",
-                evidence.actinSource(),
+        // TODO Don't hardcode EMC
+        String title = String.format("EMC trials that are closed or blacklisted but considered eligible (%s)",
                 unavailableAndEligible.size());
         return create(unavailableAndEligible, title, contentWidth);
     }

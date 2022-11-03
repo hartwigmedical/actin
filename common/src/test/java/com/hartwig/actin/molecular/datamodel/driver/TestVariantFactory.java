@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver;
 
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,13 +13,16 @@ public final class TestVariantFactory {
     @NotNull
     public static ImmutableVariant.Builder builder() {
         return ImmutableVariant.builder()
-                .event(Strings.EMPTY)
                 .driverLikelihood(DriverLikelihood.LOW)
+                .evidence(ImmutableActionableEvidence.builder().build())
                 .gene(Strings.EMPTY)
-                .impact(Strings.EMPTY)
+                .geneRole(GeneRole.UNKNOWN)
+                .proteinEffect(ProteinEffect.UNKNOWN)
+                .type(VariantType.SNV)
                 .variantCopyNumber(0D)
                 .totalCopyNumber(0D)
-                .driverType(VariantDriverType.VUS)
+                .isBiallelic(false)
+                .isHotspot(false)
                 .clonalLikelihood(0D);
     }
 }

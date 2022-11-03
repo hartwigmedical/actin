@@ -8,12 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class CopyNumberComparator implements Comparator<CopyNumberDriver> {
 
-    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
+    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
     @Override
     public int compare(@NotNull CopyNumberDriver copyNumberDriver1, @NotNull CopyNumberDriver copyNumberDriver2) {
-        int driverCompare =
-                DRIVER_LIKELIHOOD_COMPARATOR.compare(copyNumberDriver1.driverLikelihood(), copyNumberDriver2.driverLikelihood());
+        int driverCompare = DRIVER_COMPARATOR.compare(copyNumberDriver1, copyNumberDriver2);
         if (driverCompare != 0) {
             return driverCompare;
         }
@@ -23,6 +22,7 @@ public class CopyNumberComparator implements Comparator<CopyNumberDriver> {
             return geneCompare;
         }
 
-        return copyNumberDriver1.event().compareTo(copyNumberDriver2.event());
+        // TODO
+        return 0;
     }
 }

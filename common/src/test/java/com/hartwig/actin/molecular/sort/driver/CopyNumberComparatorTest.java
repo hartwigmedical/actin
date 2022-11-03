@@ -7,9 +7,13 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberDriver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class CopyNumberComparatorTest {
@@ -35,6 +39,24 @@ public class CopyNumberComparatorTest {
                 return gene;
             }
 
+            @NotNull
+            @Override
+            public GeneRole geneRole() {
+                return GeneRole.UNKNOWN;
+            }
+
+            @NotNull
+            @Override
+            public ProteinEffect proteinEffect() {
+                return ProteinEffect.UNKNOWN;
+            }
+
+            @Nullable
+            @Override
+            public Boolean associatedWithDrugResistance() {
+                return null;
+            }
+
             @Override
             public boolean isPartial() {
                 return false;
@@ -42,14 +64,14 @@ public class CopyNumberComparatorTest {
 
             @NotNull
             @Override
-            public String event() {
-                return Strings.EMPTY;
+            public DriverLikelihood driverLikelihood() {
+                return DriverLikelihood.HIGH;
             }
 
             @NotNull
             @Override
-            public DriverLikelihood driverLikelihood() {
-                return DriverLikelihood.HIGH;
+            public ActionableEvidence evidence() {
+                return ImmutableActionableEvidence.builder().build();
             }
         };
     }

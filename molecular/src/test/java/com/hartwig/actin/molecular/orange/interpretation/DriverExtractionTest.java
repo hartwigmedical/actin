@@ -16,7 +16,6 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -118,13 +117,10 @@ public class DriverExtractionTest {
         assertEquals(1, variants.size());
 
         Variant variant = variants.iterator().next();
-        assertEquals("BRAF V600E", variant.event());
         assertEquals(DriverLikelihood.HIGH, variant.driverLikelihood());
         assertEquals("BRAF", variant.gene());
-        assertEquals("p.V600E", variant.impact());
         assertEquals(4.1, variant.variantCopyNumber(), EPSILON);
         assertEquals(6.0, variant.totalCopyNumber(), EPSILON);
-        assertEquals(VariantDriverType.HOTSPOT, variant.driverType());
         assertEquals(0.98, variant.clonalLikelihood(), EPSILON);
     }
 
@@ -132,7 +128,6 @@ public class DriverExtractionTest {
         assertEquals(1, amplifications.size());
 
         Amplification amplification = amplifications.iterator().next();
-        assertEquals("MYC amp", amplification.event());
         assertEquals(DriverLikelihood.HIGH, amplification.driverLikelihood());
         assertEquals("MYC", amplification.gene());
         assertFalse(amplification.isPartial());
@@ -143,7 +138,6 @@ public class DriverExtractionTest {
         assertEquals(1, losses.size());
 
         Loss loss = losses.iterator().next();
-        assertEquals("PTEN del", loss.event());
         assertEquals(DriverLikelihood.HIGH, loss.driverLikelihood());
         assertEquals("PTEN", loss.gene());
         assertTrue(loss.isPartial());
@@ -153,7 +147,6 @@ public class DriverExtractionTest {
         assertEquals(1, homozygousDisruptions.size());
 
         HomozygousDisruption homozygousDisruption = homozygousDisruptions.iterator().next();
-        assertEquals("TP53 hom disruption", homozygousDisruption.event());
         assertEquals(DriverLikelihood.HIGH, homozygousDisruption.driverLikelihood());
         assertEquals("TP53", homozygousDisruption.gene());
     }
@@ -162,7 +155,6 @@ public class DriverExtractionTest {
         assertEquals(1, disruptions.size());
 
         Disruption disruption = disruptions.iterator().next();
-        assertEquals("RB1 disruption", disruption.event());
         assertEquals(DriverLikelihood.LOW, disruption.driverLikelihood());
         assertEquals("RB1", disruption.gene());
         assertEquals("DEL", disruption.type());
@@ -175,7 +167,6 @@ public class DriverExtractionTest {
         assertEquals(1, fusions.size());
 
         Fusion fusion = fusions.iterator().next();
-        assertEquals("EML4-ALK fusion", fusion.event());
         assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
         assertEquals("EML4", fusion.fiveGene());
         assertEquals("ALK", fusion.threeGene());
@@ -187,7 +178,6 @@ public class DriverExtractionTest {
         assertEquals(1, viruses.size());
 
         Virus virus = viruses.iterator().next();
-        assertEquals("HPV positive", virus.event());
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals("Human papillomavirus type 16", virus.name());
         assertEquals(3, virus.integrations());
@@ -238,21 +228,6 @@ public class DriverExtractionTest {
 
         PurpleVariant low = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(0D).build();
         assertEquals(DriverLikelihood.LOW, DriverExtraction.interpretDriverLikelihood(low));
-    }
-
-    @Test
-    public void canExtractDriverTypeForAllVariants() {
-        PurpleVariant hotspot =
-                ImmutablePurpleVariant.builder().from(createTestVariant()).hotspot(VariantHotspot.HOTSPOT).biallelic(true).build();
-        assertEquals(VariantDriverType.HOTSPOT, DriverExtraction.extractVariantDriverType(hotspot));
-
-        PurpleVariant biallelic =
-                ImmutablePurpleVariant.builder().from(createTestVariant()).hotspot(VariantHotspot.NON_HOTSPOT).biallelic(true).build();
-        assertEquals(VariantDriverType.BIALLELIC, DriverExtraction.extractVariantDriverType(biallelic));
-
-        PurpleVariant vus =
-                ImmutablePurpleVariant.builder().from(createTestVariant()).hotspot(VariantHotspot.NON_HOTSPOT).biallelic(false).build();
-        assertEquals(VariantDriverType.VUS, DriverExtraction.extractVariantDriverType(vus));
     }
 
     @Test

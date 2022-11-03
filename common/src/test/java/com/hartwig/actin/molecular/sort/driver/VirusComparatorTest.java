@@ -6,10 +6,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
+import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -31,6 +30,6 @@ public class VirusComparatorTest {
 
     @NotNull
     private static Virus create(@NotNull DriverLikelihood driverLikelihood, @NotNull String name) {
-        return ImmutableVirus.builder().event(Strings.EMPTY).driverLikelihood(driverLikelihood).name(name).integrations(0).build();
+        return TestVirusFactory.builder().driverLikelihood(driverLikelihood).name(name).integrations(0).build();
     }
 }

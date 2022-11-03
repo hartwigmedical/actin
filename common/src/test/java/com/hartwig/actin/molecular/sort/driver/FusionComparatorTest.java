@@ -7,8 +7,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
+import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -37,13 +36,11 @@ public class FusionComparatorTest {
     @NotNull
     private static Fusion create(@NotNull DriverLikelihood driverLikelihood, @NotNull String fiveGene, @NotNull String threeGene,
             @NotNull String details) {
-        return ImmutableFusion.builder()
-                .event(Strings.EMPTY)
+        return TestFusionFactory.builder()
                 .driverLikelihood(driverLikelihood)
                 .fiveGene(fiveGene)
                 .threeGene(threeGene)
                 .details(details)
-                .driverType(FusionDriverType.KNOWN)
                 .build();
     }
 }

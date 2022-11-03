@@ -5,19 +5,20 @@ import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidenc
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestLossFactory {
+public final class TestFusionFactory {
 
-    private TestLossFactory() {
+    private TestFusionFactory() {
     }
 
     @NotNull
-    public static ImmutableLoss.Builder builder() {
-        return ImmutableLoss.builder()
+    public static ImmutableFusion.Builder builder() {
+        return ImmutableFusion.builder()
                 .driverLikelihood(DriverLikelihood.LOW)
                 .evidence(ImmutableActionableEvidence.builder().build())
-                .gene(Strings.EMPTY)
-                .geneRole(GeneRole.UNKNOWN)
+                .fiveGene(Strings.EMPTY)
+                .threeGene(Strings.EMPTY)
                 .proteinEffect(ProteinEffect.UNKNOWN)
-                .isPartial(false);
+                .details(Strings.EMPTY)
+                .driverType(FusionDriverType.KNOWN);
     }
 }

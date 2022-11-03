@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
@@ -20,9 +21,12 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.VariantDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
@@ -31,11 +35,9 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretatio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
-import com.hartwig.actin.molecular.orange.util.EventFormatter;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
@@ -43,7 +45,6 @@ import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class DriverExtraction {
@@ -60,7 +61,7 @@ final class DriverExtraction {
             return ImmutableMolecularDrivers.builder().build();
         }
 
-        Set<Loss> losses  = extractLosses(record.purple());
+        Set<Loss> losses = extractLosses(record.purple());
 
         return ImmutableMolecularDrivers.builder()
                 .variants(extractVariants(record.purple()))
@@ -77,16 +78,20 @@ final class DriverExtraction {
     private static Set<Variant> extractVariants(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
         for (PurpleVariant variant : purple.variants()) {
-            String impact = extractImpact(variant);
             variants.add(ImmutableVariant.builder()
-                    .event(variant.gene() + " " + EventFormatter.format(impact))
                     .driverLikelihood(interpretDriverLikelihood(variant))
+                    .evidence(createEmptyEvidence())
                     .gene(variant.gene())
-                    .impact(impact)
+                    .geneRole(GeneRole.UNKNOWN)
+                    .proteinEffect(ProteinEffect.UNKNOWN)
+                    .associatedWithDrugResistance(null)
+                    .type(VariantType.SNV)
                     .variantCopyNumber(keep3Digits(variant.alleleCopyNumber()))
                     .totalCopyNumber(keep3Digits(variant.totalCopyNumber()))
-                    .driverType(extractVariantDriverType(variant))
+                    .isBiallelic(false)
+                    .isHotspot(false)
                     .clonalLikelihood(keep3Digits(variant.clonalLikelihood()))
+                    .impacts(Sets.newHashSet())
                     .build());
         }
         return variants;
@@ -119,18 +124,6 @@ final class DriverExtraction {
     }
 
     @NotNull
-    @VisibleForTesting
-    static VariantDriverType extractVariantDriverType(@NotNull PurpleVariant variant) {
-        if (variant.hotspot() == VariantHotspot.HOTSPOT) {
-            return VariantDriverType.HOTSPOT;
-        } else if (variant.biallelic()) {
-            return VariantDriverType.BIALLELIC;
-        } else {
-            return VariantDriverType.VUS;
-        }
-    }
-
-    @NotNull
     private static Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
         Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
@@ -138,9 +131,12 @@ final class DriverExtraction {
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN) {
                 boolean isPartial = gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN;
                 amplifications.add(ImmutableAmplification.builder()
-                        .event(gainLoss.gene() + " " + EventFormatter.GAIN_EVENT)
                         .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
+                        .evidence(createEmptyEvidence())
                         .gene(gainLoss.gene())
+                        .geneRole(GeneRole.UNKNOWN)
+                        .proteinEffect(ProteinEffect.UNKNOWN)
+                        .associatedWithDrugResistance(null)
                         .isPartial(isPartial)
                         .copies(gainLoss.minCopies())
                         .build());
@@ -156,9 +152,12 @@ final class DriverExtraction {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_LOSS) {
                 losses.add(ImmutableLoss.builder()
-                        .event(gainLoss.gene() + " " + EventFormatter.LOSS_EVENT)
                         .driverLikelihood(DriverLikelihood.HIGH)
+                        .evidence(createEmptyEvidence())
                         .gene(gainLoss.gene())
+                        .geneRole(GeneRole.UNKNOWN)
+                        .proteinEffect(ProteinEffect.UNKNOWN)
+                        .associatedWithDrugResistance(null)
                         .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS)
                         .build());
             }
@@ -171,9 +170,12 @@ final class DriverExtraction {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
         for (String homozygous : linx.homozygousDisruptedGenes()) {
             homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                    .event(homozygous + " " + EventFormatter.HOM_DISRUPTION_EVENT)
                     .driverLikelihood(DriverLikelihood.HIGH)
+                    .evidence(createEmptyEvidence())
                     .gene(homozygous)
+                    .geneRole(GeneRole.UNKNOWN)
+                    .proteinEffect(ProteinEffect.UNKNOWN)
+                    .associatedWithDrugResistance(null)
                     .build());
         }
         return homozygousDisruptions;
@@ -186,9 +188,12 @@ final class DriverExtraction {
             // TODO: Linx should already filter or flag disruptions that are lost.
             if (include(disruption, losses)) {
                 disruptions.add(ImmutableDisruption.builder()
-                        .event(disruption.gene() + " " + EventFormatter.DISRUPTION_EVENT)
                         .driverLikelihood(DriverLikelihood.LOW)
+                        .evidence(createEmptyEvidence())
                         .gene(disruption.gene())
+                        .geneRole(GeneRole.UNKNOWN)
+                        .proteinEffect(ProteinEffect.UNKNOWN)
+                        .associatedWithDrugResistance(null)
                         .type(disruption.type())
                         .junctionCopyNumber(keep3Digits(disruption.junctionCopyNumber()))
                         .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
@@ -217,10 +222,12 @@ final class DriverExtraction {
         Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()
-                    .event(fusion.geneStart() + "-" + fusion.geneEnd() + " fusion")
                     .driverLikelihood(extractFusionDriverLikelihood(fusion))
+                    .evidence(createEmptyEvidence())
                     .fiveGene(fusion.geneStart())
                     .threeGene(fusion.geneEnd())
+                    .proteinEffect(ProteinEffect.UNKNOWN)
+                    .associatedWithDrugResistance(null)
                     .details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
                     .driverType(extractFusionDriverType(fusion))
                     .build());
@@ -270,10 +277,9 @@ final class DriverExtraction {
     private static Set<Virus> extractViruses(@NotNull VirusInterpreterRecord virusInterpreter) {
         Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
-            String event = virus.interpretation() != null ? virus.interpretation() + " positive" : Strings.EMPTY;
             viruses.add(ImmutableVirus.builder()
-                    .event(event)
                     .driverLikelihood(extractVirusDriverLikelihood(virus))
+                    .evidence(createEmptyEvidence())
                     .name(virus.name())
                     .integrations(virus.integrations())
                     .build());
@@ -297,6 +303,11 @@ final class DriverExtraction {
                         "Cannot determine driver likelihood type for virus driver likelihood: " + virus.driverLikelihood());
             }
         }
+    }
+
+    @NotNull
+    private static ActionableEvidence createEmptyEvidence() {
+        return ImmutableActionableEvidence.builder().build();
     }
 
     @VisibleForTesting

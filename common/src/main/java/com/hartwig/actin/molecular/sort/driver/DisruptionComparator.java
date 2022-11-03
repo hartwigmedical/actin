@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class DisruptionComparator implements Comparator<Disruption> {
 
-    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
+    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
     @Override
     public int compare(@NotNull Disruption disruption1, @NotNull Disruption disruption2) {
-        int driverCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(disruption1.driverLikelihood(), disruption2.driverLikelihood());
+        int driverCompare = DRIVER_COMPARATOR.compare(disruption1, disruption2);
         if (driverCompare != 0) {
             return driverCompare;
         }

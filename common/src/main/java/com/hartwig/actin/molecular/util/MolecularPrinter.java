@@ -5,14 +5,10 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceEntry;
-import com.hartwig.actin.molecular.datamodel.evidence.MolecularEvidence;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,15 +43,15 @@ public class MolecularPrinter {
         printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics().tumorMutationalBurden()));
         printer.print(" Tumor mutational load: " + formatInteger(record.characteristics().tumorMutationalLoad()));
 
-        MolecularEvidence evidence = record.evidence();
-        printer.print("Events with evidence for approved treatment: " + toEvents(evidence.approvedEvidence()));
-        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
-        printer.print("Events associated with external trials: " + toEvents(evidence.externalTrials()));
-        printer.print("Events with evidence for on-label experimental treatment: " + toEvents(evidence.onLabelExperimentalEvidence()));
-        printer.print("Events with evidence for off-label experimental treatment: " + toEvents(evidence.offLabelExperimentalEvidence()));
-        printer.print("Events with evidence for pre-clinical treatment: " + toEvents(evidence.preClinicalEvidence()));
-        printer.print("Events with known resistance evidence: " + toEvents(evidence.knownResistanceEvidence()));
-        printer.print("Events with suspect resistance evidence: " + toEvents(evidence.suspectResistanceEvidence()));
+        // TODO Print consolidated evidence.
+//        printer.print("Events with evidence for approved treatment: " + toEvents(evidence.approvedEvidence()));
+//        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
+//        printer.print("Events associated with external trials: " + toEvents(evidence.externalTrials()));
+//        printer.print("Events with evidence for on-label experimental treatment: " + toEvents(evidence.onLabelExperimentalEvidence()));
+//        printer.print("Events with evidence for off-label experimental treatment: " + toEvents(evidence.offLabelExperimentalEvidence()));
+//        printer.print("Events with evidence for pre-clinical treatment: " + toEvents(evidence.preClinicalEvidence()));
+//        printer.print("Events with known resistance evidence: " + toEvents(evidence.knownResistanceEvidence()));
+//        printer.print("Events with suspect resistance evidence: " + toEvents(evidence.suspectResistanceEvidence()));
     }
 
     @NotNull
@@ -85,15 +81,6 @@ public class MolecularPrinter {
         }
 
         return predictedTumorOrigin.tumorType() + " (" + formatPercentage(predictedTumorOrigin.likelihood()) + ")";
-    }
-
-    @NotNull
-    private static String toEvents(@NotNull Iterable<? extends EvidenceEntry> evidences) {
-        Set<String> events = Sets.newTreeSet();
-        for (EvidenceEntry evidence : evidences) {
-            events.add(evidence.event());
-        }
-        return concat(events);
     }
 
     @NotNull

@@ -15,6 +15,12 @@ public abstract class Fusion implements Driver {
     public abstract String threeGene();
 
     @NotNull
+    public abstract ProteinEffect proteinEffect();
+
+    @Nullable
+    public abstract Boolean associatedWithDrugResistance();
+
+    @NotNull
     public abstract String details();
 
     @NotNull

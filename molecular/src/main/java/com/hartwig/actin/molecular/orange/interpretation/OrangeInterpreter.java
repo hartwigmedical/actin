@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class OrangeInterpreter {
@@ -33,6 +34,8 @@ public class OrangeInterpreter {
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
                 .date(record.experimentDate())
+                .evidenceSource(Strings.EMPTY)
+                .externalTrialSource(Strings.EMPTY)
                 .containsTumorCells(record.purple().containsTumorCells())
                 .hasSufficientQuality(record.purple().hasSufficientQuality())
                 .characteristics(CharacteristicsExtraction.extract(record))
@@ -40,7 +43,6 @@ public class OrangeInterpreter {
                 .immunology(ImmunologyExtraction.extract(record))
                 .pharmaco(PharmacoExtraction.extract(record))
                 .wildTypeGenes(WildTypeExtraction.extract(record))
-                .evidence(evidenceExtractor.extract(record))
                 .build();
     }
 
