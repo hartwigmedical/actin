@@ -26,6 +26,13 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, geneIsActivatedOrAmplifiedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, geneIsInactivatedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, geneHasActivatingMutationCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, geneHasVariantWithAnyProteinImpactsCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_CODING_IMPACTS_Y, geneHasVariantWithAnyCodingImpactsCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_CODON_Y, geneHasVariantInCodonCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y, geneHasVariantInExonCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z, geneHasVariantInExonRangeCreator());
+        map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z, geneHasVariantInExonOfTypeCreator());
+        map.put(EligibilityRule.UTR_3_LOSS_IN_GENE_X, geneHasUTR3LossCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, geneHasSpecificMutationCreator());
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasFusionInGeneCreator());
@@ -77,6 +84,41 @@ public class MolecularRuleMapper extends RuleMapper {
             String gene = functionInputResolver().createOneStringInput(function);
             return new GeneHasActivatingMutation(gene);
         };
+    }
+
+    @NotNull
+    private FunctionCreator geneHasVariantWithAnyProteinImpactsCreator() {
+        return function -> new GeneHasVariantWithProteinImpacts();
+    }
+
+    @NotNull
+    private FunctionCreator geneHasVariantWithAnyCodingImpactsCreator() {
+        return function -> new GeneHasVariantWithCodingImpacts();
+    }
+
+    @NotNull
+    private FunctionCreator geneHasVariantInCodonCreator() {
+        return function -> new GeneHasVariantInCodon();
+    }
+
+    @NotNull
+    private FunctionCreator geneHasVariantInExonCreator() {
+        return function -> new GeneHasVariantInExon();
+    }
+
+    @NotNull
+    private FunctionCreator geneHasVariantInExonRangeCreator() {
+        return function -> new GeneHasVariantInExonRange();
+    }
+
+    @NotNull
+    private FunctionCreator geneHasVariantInExonOfTypeCreator() {
+        return function -> new GeneHasVariantInExonOfType();
+    }
+
+    @NotNull
+    private FunctionCreator geneHasUTR3LossCreator() {
+        return function -> new GeneHasUTR3Loss();
     }
 
     @NotNull
