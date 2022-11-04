@@ -40,11 +40,19 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && has3UTRCanonicalEffect(variant)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("3 UTR region of " + gene + " has been mutated which may lead to 3 UTR loss")
-                        .addWarnGeneralMessages("3 UTR loss of " + gene)
-                        .build();
+                if (variant.isHotspot()) {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.PASS)
+                            .addPassSpecificMessages("3 UTR region of " + gene + " has been mutated which leads to 3 UTR loss")
+                            .addPassGeneralMessages("3 UTR loss of " + gene)
+                            .build();
+                } else {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.WARN)
+                            .addWarnSpecificMessages("3 UTR region of " + gene + " has been mutated which may lead to 3 UTR loss")
+                            .addWarnGeneralMessages("3 UTR loss of " + gene)
+                            .build();
+                }
             }
         }
 
