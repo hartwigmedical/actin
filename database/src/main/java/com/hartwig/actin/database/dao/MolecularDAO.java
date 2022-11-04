@@ -19,7 +19,7 @@ import static com.hartwig.actin.database.Tables.TUMORMUTATIONALBURDENEVIDENCE;
 import static com.hartwig.actin.database.Tables.TUMORMUTATIONALLOADEVIDENCE;
 import static com.hartwig.actin.database.Tables.VARIANT;
 import static com.hartwig.actin.database.Tables.VARIANTEVIDENCE;
-import static com.hartwig.actin.database.Tables.VARIANTIMPACT;
+import static com.hartwig.actin.database.Tables.VARIANTOTHERIMPACT;
 import static com.hartwig.actin.database.Tables.VIRUS;
 import static com.hartwig.actin.database.Tables.VIRUSEVIDENCE;
 
@@ -42,6 +42,9 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Result;
 
 class MolecularDAO {
 
@@ -55,28 +58,42 @@ class MolecularDAO {
     public void clear(@NotNull MolecularRecord record) {
         String sampleId = record.sampleId();
 
-        context.delete(MOLECULAR).where(MOLECULAR.SAMPLEID.eq(sampleId)).execute();
         context.delete(MICROSATELLITEEVIDENCE).where(MICROSATELLITEEVIDENCE.SAMPLEID.eq(sampleId)).execute();
         context.delete(HOMOLOGOUSREPAIRDEFICIENCYEVIDENCE).where(HOMOLOGOUSREPAIRDEFICIENCYEVIDENCE.SAMPLEID.eq(sampleId)).execute();
         context.delete(TUMORMUTATIONALBURDENEVIDENCE).where(TUMORMUTATIONALBURDENEVIDENCE.SAMPLEID.eq(sampleId)).execute();
         context.delete(TUMORMUTATIONALLOADEVIDENCE).where(TUMORMUTATIONALLOADEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(VARIANT).where(VARIANT.SAMPLEID.eq(sampleId)).execute();
+
+        Result<Record1<Integer>> variantResults = context.select(VARIANT.ID).from(VARIANT).where(VARIANT.SAMPLEID.eq(sampleId)).fetch();
+        for (Record variantResult : variantResults) {
+            int variantId = variantResult.getValue(VARIANT.ID);
+            context.delete(VARIANTOTHERIMPACT).where(VARIANTOTHERIMPACT.VARIANTID.eq(variantId)).execute();
+        }
+
         context.delete(VARIANTEVIDENCE).where(VARIANTEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(VARIANTIMPACT).where(VARIANTIMPACT.SAMPLEID.eq(sampleId)).execute();
-        context.delete(AMPLIFICATION).where(AMPLIFICATION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(VARIANT).where(VARIANT.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(AMPLIFICATIONEVIDENCE).where(AMPLIFICATIONEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(LOSS).where(LOSS.SAMPLEID.eq(sampleId)).execute();
+        context.delete(AMPLIFICATION).where(AMPLIFICATION.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(LOSSEVIDENCE).where(LOSSEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(HOMOZYGOUSDISRUPTION).where(HOMOZYGOUSDISRUPTION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(LOSS).where(LOSS.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(HOMOZYGOUSDISRUPTIONEVIDENCE).where(HOMOZYGOUSDISRUPTIONEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(DISRUPTION).where(DISRUPTION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(HOMOZYGOUSDISRUPTION).where(HOMOZYGOUSDISRUPTION.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(DISRUPTIONEVIDENCE).where(DISRUPTIONEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(FUSION).where(FUSION.SAMPLEID.eq(sampleId)).execute();
+        context.delete(DISRUPTION).where(DISRUPTION.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(FUSIONEVIDENCE).where(FUSIONEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(VIRUS).where(VIRUS.SAMPLEID.eq(sampleId)).execute();
+        context.delete(FUSION).where(FUSION.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(VIRUSEVIDENCE).where(VIRUSEVIDENCE.SAMPLEID.eq(sampleId)).execute();
+        context.delete(VIRUS).where(VIRUS.SAMPLEID.eq(sampleId)).execute();
+
         context.delete(HLAALLELE).where(HLAALLELE.SAMPLEID.eq(sampleId)).execute();
         context.delete(PHARMACO).where(PHARMACO.SAMPLEID.eq(sampleId)).execute();
+
+        context.delete(MOLECULAR).where(MOLECULAR.SAMPLEID.eq(sampleId)).execute();
     }
 
     public void writeMolecularRecord(@NotNull MolecularRecord record) {
@@ -152,7 +169,14 @@ class MolecularDAO {
                             VARIANT.TOTALCOPYNUMBER,
                             VARIANT.ISBIALLELIC,
                             VARIANT.ISHOTSPOT,
-                            VARIANT.CLONALLIKELIHOOD)
+                            VARIANT.CLONALLIKELIHOOD,
+                            VARIANT.CANONICALTRANSCRIPTID,
+                            VARIANT.CANONICALEFFECT,
+                            VARIANT.CANONICALCODINGEFFECT,
+                            VARIANT.CANONICALAFFECTEDCODON,
+                            VARIANT.CANONICALAFFECTEDEXON,
+                            VARIANT.CANONICALCODINGIMPACT,
+                            VARIANT.CANONICALPROTEINIMPACT)
                     .values(sampleId,
                             variant.driverLikelihood().toString(),
                             variant.gene(),
@@ -164,7 +188,14 @@ class MolecularDAO {
                             variant.totalCopyNumber(),
                             DataUtil.toByte(variant.isBiallelic()),
                             DataUtil.toByte(variant.isHotspot()),
-                            variant.clonalLikelihood())
+                            variant.clonalLikelihood(),
+                            variant.canonicalImpact().transcriptId(),
+                            variant.canonicalImpact().effect(),
+                            DataUtil.nullableToString(variant.canonicalImpact().codingEffect()),
+                            variant.canonicalImpact().affectedCodon(),
+                            variant.canonicalImpact().affectedExon(),
+                            variant.canonicalImpact().codingImpact(),
+                            variant.canonicalImpact().proteinImpact())
                     .execute();
         }
     }
@@ -244,6 +275,8 @@ class MolecularDAO {
                             DISRUPTION.TYPE,
                             DISRUPTION.JUNCTIONCOPYNUMBER,
                             DISRUPTION.UNDISRUPTEDCOPYNUMBER,
+                            DISRUPTION.REGIONTYPE,
+                            DISRUPTION.CODINGCONTEXT,
                             DISRUPTION.DISRUPTEDRANGE)
                     .values(sampleId,
                             disruption.driverLikelihood().toString(),
@@ -254,6 +287,8 @@ class MolecularDAO {
                             disruption.type(),
                             disruption.junctionCopyNumber(),
                             disruption.undisruptedCopyNumber(),
+                            disruption.regionType().toString(),
+                            disruption.codingContext().toString(),
                             disruption.range())
                     .execute();
         }

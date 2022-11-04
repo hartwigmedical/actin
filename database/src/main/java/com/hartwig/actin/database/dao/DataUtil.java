@@ -38,5 +38,10 @@ final class DataUtil {
         }
         return joiner.toString();
     }
+
+    @Nullable
+    public static String nullableToString(@Nullable Object object) {
+        return object != null ? object.toString() : null;
+    }
 }
 

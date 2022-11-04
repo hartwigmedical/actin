@@ -24,4 +24,10 @@ public class DataUtilTest {
 
         assertNull(DataUtil.concat(null));
     }
+
+    @Test
+    public void canConvertNullableToString() {
+        assertNull(DataUtil.nullableToString(null));
+        assertEquals("test", DataUtil.nullableToString("test"));
+    }
 }

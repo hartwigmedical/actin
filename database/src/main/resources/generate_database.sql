@@ -313,6 +313,13 @@ CREATE TABLE variant
     isBiallelic BOOLEAN NOT NULL,
     isHotspot BOOLEAN NOT NULL,
     clonalLikelihood double precision NOT NULL,
+    canonicalTranscriptId varchar(50) NOT NULL,
+    canonicalEffect varchar(50) NOT NULL,
+    canonicalCodingEffect varchar(50) NOT NULL,
+    canonicalAffectedCodon int,
+    canonicalAffectedExon int,
+    canonicalCodingImpact varchar(50) NOT NULL,
+    canonicalProteinImpact varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -326,13 +333,13 @@ CREATE TABLE variantEvidence
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS variantImpact;
-CREATE TABLE variantImpact
+DROP TABLE IF EXISTS variantOtherImpact;
+CREATE TABLE variantOtherImpact
 (   id int NOT NULL AUTO_INCREMENT,
     variantId int NOT NULL,
-    sampleId varchar(50) NOT NULL,
     transcriptId varchar(50) NOT NULL,
     effect varchar(50) NOT NULL,
+    codingEffect varchar(50) NOT NULL,
     affectedCodon int,
     affectedExon int,
     codingImpact varchar(50) NOT NULL,
@@ -421,6 +428,8 @@ CREATE TABLE disruption
     type varchar(50) NOT NULL,
     junctionCopyNumber double precision NOT NULL,
     undisruptedCopyNumber double precision NOT NULL,
+    regionType varchar(50) NOT NULL,
+    codingContext varchar(50) NOT NULL,
     disruptedRange varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -600,6 +609,8 @@ CREATE TABLE evaluation
     eligibility varchar(5000) NOT NULL,
     result varchar(50) NOT NULL,
     recoverable BOOLEAN NOT NULL,
+    inclusionMolecularEvents varchar(300) NOT NULL,
+    exclusionMolecularEvents varchar(300) NOT NULL,
     passSpecificMessages varchar(1000) NOT NULL,
     passGeneralMessages varchar(1000) NOT NULL,
     warnSpecificMessages varchar(1000) NOT NULL,
