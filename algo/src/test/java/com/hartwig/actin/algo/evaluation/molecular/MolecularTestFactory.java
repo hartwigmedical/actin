@@ -14,6 +14,10 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 
 import org.apache.logging.log4j.util.Strings;
@@ -46,6 +50,16 @@ final class MolecularTestFactory {
                 .from(base)
                 .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
                 .build();
+    }
+
+    @NotNull
+    public static PatientRecord withDisruption(@NotNull Disruption disruption) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addDisruptions(disruption).build());
+    }
+
+    @NotNull
+    public static PatientRecord withVariant(@NotNull Variant variant) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
     }
 
     @NotNull
@@ -176,6 +190,17 @@ final class MolecularTestFactory {
                         .tumorMutationalLoad(tumorMutationalLoad)
                         .build())
                 .build());
+    }
+
+    @NotNull
+    private static PatientRecord withMolecularDrivers(@NotNull MolecularDrivers drivers) {
+        return ImmutablePatientRecord.builder()
+                .from(TestDataFactory.createMinimalTestPatientRecord())
+                .molecular(ImmutableMolecularRecord.builder()
+                        .from(TestMolecularFactory.createMinimalTestMolecularRecord())
+                        .drivers(drivers)
+                        .build())
+                .build();
     }
 
     @NotNull

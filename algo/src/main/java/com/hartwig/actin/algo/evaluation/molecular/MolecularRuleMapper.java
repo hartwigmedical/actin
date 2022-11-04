@@ -118,7 +118,10 @@ public class MolecularRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator geneHasUTR3LossCreator() {
-        return function -> new GeneHasUTR3Loss();
+        return function -> {
+            String gene = functionInputResolver().createOneStringInput(function);
+            return new GeneHasUTR3Loss(gene);
+        };
     }
 
     @NotNull
