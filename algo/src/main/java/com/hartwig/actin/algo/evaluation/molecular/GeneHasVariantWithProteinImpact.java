@@ -67,8 +67,7 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Variant(s) " + Format.concat(proteinImpactsOtherFound) + " in " + gene
                             + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages(
-                            Format.concat(proteinImpactsOtherFound) + " found in non-canonical transcript of gene " + gene)
+                    .addWarnGeneralMessages(Format.concat(proteinImpactsOtherFound) + " found in non-canonical transcript of gene " + gene)
                     .build();
         }
 
