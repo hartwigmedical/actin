@@ -121,7 +121,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.INACTIVATION_OF_GENE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, FunctionInput.ONE_STRING);
-        RULE_INPUT_MAP.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, FunctionInput.TWO_STRINGS);
         RULE_INPUT_MAP.put(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, FunctionInput.ONE_STRING_MANY_STRINGS);
         RULE_INPUT_MAP.put(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_CODING_IMPACTS_Y, FunctionInput.ONE_STRING_MANY_STRINGS);
         RULE_INPUT_MAP.put(EligibilityRule.MUTATION_IN_GENE_X_IN_CODON_Y, FunctionInput.TWO_STRINGS);

@@ -247,7 +247,7 @@ public final class TestOrangeFactory {
                 .onLabel(true)
                 .level(EvidenceLevel.A)
                 .direction(EvidenceDirection.RESPONSIVE)
-                .addSources(actinSourceBuilder.event(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y + ": BRAF V600E")
+                .addSources(actinSourceBuilder.event(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y + ": BRAF V600E")
                         .type(EvidenceType.HOTSPOT_MUTATION)
                         .build())
                 .build());

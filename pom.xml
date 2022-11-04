@@ -15,7 +15,6 @@
         <module>treatment</module>
         <module>algo</module>
         <module>report</module>
-        <module>serve-bridge</module>
         <module>database</module>
         <module>system</module>
     </modules>
@@ -131,11 +130,6 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>algo</artifactId>
-                <version>${actin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
-                <artifactId>serve-bridge</artifactId>
                 <version>${actin.version}</version>
             </dependency>
             <dependency>

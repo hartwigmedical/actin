@@ -40,10 +40,6 @@
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
-            <artifactId>serve-bridge</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
             <artifactId>report</artifactId>
         </dependency>
     </dependencies>

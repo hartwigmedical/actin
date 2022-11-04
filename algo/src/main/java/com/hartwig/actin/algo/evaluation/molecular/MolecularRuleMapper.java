@@ -36,7 +36,6 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z, geneHasVariantInExonRangeCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z, geneHasVariantInExonOfTypeCreator());
         map.put(EligibilityRule.UTR_3_LOSS_IN_GENE_X, geneHasUTR3LossCreator());
-        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_TYPE_Y, geneHasSpecificMutationCreator());
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasFusionInGeneCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildTypeCreator());
@@ -142,14 +141,6 @@ public class MolecularRuleMapper extends RuleMapper {
         return function -> {
             String gene = functionInputResolver().createOneStringInput(function);
             return new GeneHasUTR3Loss(gene);
-        };
-    }
-
-    @NotNull
-    private FunctionCreator geneHasSpecificMutationCreator() {
-        return function -> {
-            TwoStrings inputs = functionInputResolver().createTwoStringsInput(function);
-            return new GeneHasSpecificMutation(inputs.string1(), inputs.string2());
         };
     }
 

@@ -8,7 +8,6 @@ import com.hartwig.actin.database.molecular.MolecularLoaderApplication;
 import com.hartwig.actin.database.treatment.TreatmentLoaderApplication;
 import com.hartwig.actin.molecular.orange.OrangeInterpreterApplication;
 import com.hartwig.actin.report.ReporterApplication;
-import com.hartwig.actin.serve.ServeBridgeApplication;
 import com.hartwig.actin.treatment.TreatmentCreatorApplication;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +30,6 @@ public class SystemApplication {
         LOGGER.info(" {}", MolecularLoaderApplication.class);
         LOGGER.info(" {}", TreatmentLoaderApplication.class);
         LOGGER.info(" {}", TreatmentMatchLoaderApplication.class);
-        LOGGER.info(" {}", ServeBridgeApplication.class);
         LOGGER.info(" {}", ReporterApplication.class);
     }
 }
