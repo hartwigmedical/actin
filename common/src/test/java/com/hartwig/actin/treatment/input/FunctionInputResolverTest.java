@@ -18,6 +18,7 @@ import com.hartwig.actin.treatment.datamodel.TestFunctionInputResolveFactory;
 import com.hartwig.actin.treatment.input.datamodel.ImmutableTreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
+import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -28,13 +29,15 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
+import com.hartwig.actin.treatment.input.single.OneStringManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
+import com.hartwig.actin.treatment.input.single.TwoIntegersOneString;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class FunctionInputResolverTest {
@@ -42,7 +45,6 @@ public class FunctionInputResolverTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    @Ignore
     public void canDetermineInputValidityForEveryRule() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
         for (EligibilityRule rule : EligibilityRule.values()) {
@@ -276,6 +278,57 @@ public class FunctionInputResolverTest {
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "doid"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneStringOneIntegerOneVariantTypeInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_ONE_INTEGER_ONE_TYPED_VARIANT);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("string", "1", "SNV"));
+        assertTrue(resolver.hasValidInputs(valid));
+        OneIntegerOneStringOneVariantType inputs = resolver.createOneStringOneIntegerOneVariantTypeInput(valid);
+        assertEquals("string", inputs.string());
+        assertEquals(1, inputs.integer());
+        assertEquals(VariantTypeInput.SNV, inputs.variantType());
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "string", "SNV"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("string", "1", "not a variant type"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneStringTwoIntegersInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_TWO_INTEGERS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("string", "1", "2"));
+        assertTrue(resolver.hasValidInputs(valid));
+        TwoIntegersOneString inputs = resolver.createOneStringTwoIntegersInput(valid);
+        assertEquals(1, inputs.integer1());
+        assertEquals(2, inputs.integer2());
+        assertEquals("string", inputs.string());
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "string", "2"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneStringManyStringsInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_MANY_STRINGS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("string1", "string2;string3"));
+        assertTrue(resolver.hasValidInputs(valid));
+        OneStringManyStrings inputs = resolver.createOneStringManyStringsInput(valid);
+        assertEquals("string1", inputs.string1());
+        assertEquals(Lists.newArrayList("string2", "string3"), inputs.additionalStrings());
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "string", "2"))));
     }
 
     @Test

@@ -16,26 +16,33 @@ import com.hartwig.actin.treatment.input.datamodel.ImmutableTreatmentInputWithNa
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
+import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
+import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneStringOneVariantType;
+import com.hartwig.actin.treatment.input.single.ImmutableOneStringManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
+import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
+import com.hartwig.actin.treatment.input.single.OneStringManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
+import com.hartwig.actin.treatment.input.single.TwoIntegersOneString;
 import com.hartwig.actin.treatment.input.single.TwoStrings;
 
 import org.apache.logging.log4j.LogManager;
@@ -131,6 +138,18 @@ public class FunctionInputResolver {
                 }
                 case ONE_STRING_ONE_INTEGER: {
                     createOneStringOneIntegerInput(function);
+                    return true;
+                }
+                case ONE_STRING_ONE_INTEGER_ONE_TYPED_VARIANT: {
+                    createOneStringOneIntegerOneVariantTypeInput(function);
+                    return true;
+                }
+                case ONE_STRING_TWO_INTEGERS: {
+                    createOneStringTwoIntegersInput(function);
+                    return true;
+                }
+                case ONE_STRING_MANY_STRINGS: {
+                    createOneStringManyStringsInput(function);
                     return true;
                 }
                 case TWO_STRINGS: {
@@ -279,6 +298,38 @@ public class FunctionInputResolver {
         return ImmutableOneIntegerOneString.builder()
                 .string((String) function.parameters().get(0))
                 .integer(Integer.parseInt((String) function.parameters().get(1)))
+                .build();
+    }
+
+    @NotNull
+    public OneIntegerOneStringOneVariantType createOneStringOneIntegerOneVariantTypeInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_STRING_ONE_INTEGER_ONE_TYPED_VARIANT, 3);
+
+        return ImmutableOneIntegerOneStringOneVariantType.builder()
+                .string((String) function.parameters().get(0))
+                .integer(Integer.parseInt((String) function.parameters().get(1)))
+                .variantType(VariantTypeInput.valueOf((String) function.parameters().get(2)))
+                .build();
+    }
+
+    @NotNull
+    public TwoIntegersOneString createOneStringTwoIntegersInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_STRING_TWO_INTEGERS, 3);
+
+        return ImmutableTwoIntegersOneString.builder()
+                .string((String) function.parameters().get(0))
+                .integer1(Integer.parseInt((String) function.parameters().get(1)))
+                .integer2(Integer.parseInt((String) function.parameters().get(2)))
+                .build();
+    }
+
+    @NotNull
+    public OneStringManyStrings createOneStringManyStringsInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_STRING_MANY_STRINGS, 2);
+
+        return ImmutableOneStringManyStrings.builder()
+                .string1((String) function.parameters().get(0))
+                .additionalStrings(toStringList(function.parameters().get(1)))
                 .build();
     }
 
