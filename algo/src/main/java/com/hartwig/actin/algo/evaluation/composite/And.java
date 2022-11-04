@@ -47,6 +47,8 @@ public class And implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(worst).recoverable(recoverable);
         for (Evaluation eval : evaluations) {
             if (eval.result() == worst && eval.recoverable() == recoverable) {
+                builder.addAllInclusionMolecularEvents(eval.inclusionMolecularEvents());
+                builder.addAllExclusionMolecularEvents(eval.exclusionMolecularEvents());
                 builder.addAllPassSpecificMessages(eval.passSpecificMessages());
                 builder.addAllPassGeneralMessages(eval.passGeneralMessages());
                 builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());

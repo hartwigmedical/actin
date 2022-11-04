@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.composite;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -27,12 +28,17 @@ public class NotTest {
     }
 
     @Test
-    public void canFlipMessagesForPass() {
-        Evaluation passed = CompositeTestFactory.create(EvaluationResult.PASS);
+    public void canFlipMessagesAndMolecularEventsForPass() {
+        Evaluation passed = CompositeTestFactory.create(EvaluationResult.PASS, true);
 
         Evaluation result = new Not(record -> passed).evaluate(TEST_PATIENT);
 
         assertEquals(result.recoverable(), passed.recoverable());
+
+        assertFalse(passed.inclusionMolecularEvents().isEmpty());
+        assertEquals(passed.inclusionMolecularEvents(), result.exclusionMolecularEvents());
+        assertFalse(passed.exclusionMolecularEvents().isEmpty());
+        assertEquals(passed.exclusionMolecularEvents(), result.inclusionMolecularEvents());
 
         assertEquals(passed.passSpecificMessages(), result.failSpecificMessages());
         assertEquals(passed.passGeneralMessages(), result.failGeneralMessages());
@@ -46,12 +52,17 @@ public class NotTest {
     }
 
     @Test
-    public void canFlipMessagesForFail() {
-        Evaluation failed = CompositeTestFactory.create(EvaluationResult.FAIL);
+    public void canFlipMessagesAndMolecularEventsForFail() {
+        Evaluation failed = CompositeTestFactory.create(EvaluationResult.FAIL, true);
 
         Evaluation result = new Not(record -> failed).evaluate(TEST_PATIENT);
 
         assertEquals(result.recoverable(), failed.recoverable());
+
+        assertFalse(failed.inclusionMolecularEvents().isEmpty());
+        assertEquals(failed.inclusionMolecularEvents(), result.exclusionMolecularEvents());
+        assertFalse(failed.exclusionMolecularEvents().isEmpty());
+        assertEquals(failed.exclusionMolecularEvents(), result.inclusionMolecularEvents());
 
         assertEquals(failed.passSpecificMessages(), result.failSpecificMessages());
         assertEquals(failed.passGeneralMessages(), result.failGeneralMessages());
@@ -65,12 +76,17 @@ public class NotTest {
     }
 
     @Test
-    public void canRetainMessagesForUndetermined() {
-        Evaluation undetermined = CompositeTestFactory.create(EvaluationResult.UNDETERMINED);
+    public void canRetainMessagesAndMolecularEventsForUndetermined() {
+        Evaluation undetermined = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, true);
 
         Evaluation result = new Not(record -> undetermined).evaluate(TEST_PATIENT);
 
         assertEquals(result.recoverable(), undetermined.recoverable());
+
+        assertFalse(undetermined.inclusionMolecularEvents().isEmpty());
+        assertEquals(undetermined.inclusionMolecularEvents(), result.inclusionMolecularEvents());
+        assertFalse(undetermined.exclusionMolecularEvents().isEmpty());
+        assertEquals(undetermined.exclusionMolecularEvents(), result.exclusionMolecularEvents());
 
         assertEquals(undetermined.passSpecificMessages(), result.passSpecificMessages());
         assertEquals(undetermined.passGeneralMessages(), result.passGeneralMessages());

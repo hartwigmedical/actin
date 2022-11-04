@@ -35,6 +35,10 @@
           {
             "result": "PASS",
             "recoverable": false,
+            "inclusionMolecularEvents": [
+            ],
+            "exclusionMolecularEvents": [
+            ],
             "passSpecificMessages": [
             ],
             "passGeneralMessages": [
@@ -87,6 +91,10 @@
               {
                 "result": "NOT_IMPLEMENTED",
                 "recoverable": false,
+                "inclusionMolecularEvents": [
+                ],
+                "exclusionMolecularEvents": [
+                ],
                 "passSpecificMessages": [
                 ],
                 "passGeneralMessages": [

@@ -192,6 +192,8 @@ public final class TreatmentMatchJson {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.valueOf(string(evaluation, "result")))
                     .recoverable(bool(evaluation, "recoverable"))
+                    .inclusionMolecularEvents(stringList(evaluation, "inclusionMolecularEvents"))
+                    .exclusionMolecularEvents(stringList(evaluation, "exclusionMolecularEvents"))
                     .passSpecificMessages(stringList(evaluation, "passSpecificMessages"))
                     .passGeneralMessages(stringList(evaluation, "passGeneralMessages"))
                     .warnSpecificMessages(stringList(evaluation, "warnSpecificMessages"))

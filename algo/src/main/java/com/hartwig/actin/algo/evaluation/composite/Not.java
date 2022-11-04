@@ -25,24 +25,32 @@ public class Not implements EvaluationFunction {
         Evaluation evaluation = function.evaluate(record);
 
         EvaluationResult negatedResult;
+        Set<String> inclusionMolecularEvents;
+        Set<String> exclusionMolecularEvents;
         Set<String> passSpecificMessages;
         Set<String> passGeneralMessages;
         Set<String> failSpecificMessages;
         Set<String> failGeneralMessages;
         if (evaluation.result() == EvaluationResult.PASS) {
             negatedResult = EvaluationResult.FAIL;
+            inclusionMolecularEvents = evaluation.exclusionMolecularEvents();
+            exclusionMolecularEvents = evaluation.inclusionMolecularEvents();
             passSpecificMessages = evaluation.failSpecificMessages();
             passGeneralMessages = evaluation.failGeneralMessages();
             failSpecificMessages = evaluation.passSpecificMessages();
             failGeneralMessages = evaluation.passGeneralMessages();
         } else if (evaluation.result() == EvaluationResult.FAIL) {
             negatedResult = EvaluationResult.PASS;
+            inclusionMolecularEvents = evaluation.exclusionMolecularEvents();
+            exclusionMolecularEvents = evaluation.inclusionMolecularEvents();
             passSpecificMessages = evaluation.failSpecificMessages();
             passGeneralMessages = evaluation.failGeneralMessages();
             failSpecificMessages = evaluation.passSpecificMessages();
             failGeneralMessages = evaluation.passGeneralMessages();
         } else {
             negatedResult = evaluation.result();
+            inclusionMolecularEvents = evaluation.inclusionMolecularEvents();
+            exclusionMolecularEvents = evaluation.exclusionMolecularEvents();
             passSpecificMessages = evaluation.passSpecificMessages();
             passGeneralMessages = evaluation.passGeneralMessages();
             failSpecificMessages = evaluation.failSpecificMessages();
@@ -52,6 +60,8 @@ public class Not implements EvaluationFunction {
         return ImmutableEvaluation.builder()
                 .result(negatedResult)
                 .recoverable(evaluation.recoverable())
+                .inclusionMolecularEvents(inclusionMolecularEvents)
+                .exclusionMolecularEvents(exclusionMolecularEvents)
                 .passSpecificMessages(passSpecificMessages)
                 .passGeneralMessages(passGeneralMessages)
                 .warnSpecificMessages(evaluation.warnSpecificMessages())

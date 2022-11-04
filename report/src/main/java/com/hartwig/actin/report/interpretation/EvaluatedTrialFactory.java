@@ -71,18 +71,18 @@ public final class EvaluatedTrialFactory {
     private static Set<String> eventsForTrial(@NotNull String trialAcronymToFind, @Nullable String cohortIdToFind) {
         Set<String> events = Sets.newTreeSet(Ordering.natural());
         // TODO Implement
-//        for (ActinTrialEvidence evidence : evidences) {
-//            boolean isCohortMatch;
-//            if (evidence.cohortId() == null) {
-//                isCohortMatch = cohortIdToFind == null;
-//            } else {
-//                isCohortMatch = evidence.cohortId().equals(cohortIdToFind);
-//            }
-//
-//            if (evidence.isInclusionCriterion() && evidence.trialAcronym().equals(trialAcronymToFind) && isCohortMatch) {
-//                events.add(evidence.event());
-//            }
-//        }
+        //        for (ActinTrialEvidence evidence : evidences) {
+        //            boolean isCohortMatch;
+        //            if (evidence.cohortId() == null) {
+        //                isCohortMatch = cohortIdToFind == null;
+        //            } else {
+        //                isCohortMatch = evidence.cohortId().equals(cohortIdToFind);
+        //            }
+        //
+        //            if (evidence.isInclusionCriterion() && evidence.trialAcronym().equals(trialAcronymToFind) && isCohortMatch) {
+        //                events.add(evidence.event());
+        //            }
+        //        }
 
         return events;
     }

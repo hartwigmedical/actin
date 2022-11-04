@@ -109,6 +109,23 @@ public class AndTest {
     }
 
     @Test
+    public void combinesMolecularInclusionExclusionEvents() {
+        EvaluationFunction function1 = record -> CompositeTestFactory.create(EvaluationResult.FAIL, true, 1);
+        EvaluationFunction function2 = record -> CompositeTestFactory.create(EvaluationResult.FAIL, true, 2);
+        EvaluationFunction function3 = record -> CompositeTestFactory.create(EvaluationResult.PASS, true, 3);
+
+        Evaluation result = new And(Lists.newArrayList(function1, function2, function3)).evaluate(TEST_PATIENT);
+
+        assertEquals(2, result.inclusionMolecularEvents().size());
+        assertTrue(result.inclusionMolecularEvents().contains("inclusion event 1"));
+        assertTrue(result.inclusionMolecularEvents().contains("inclusion event 2"));
+
+        assertEquals(2, result.exclusionMolecularEvents().size());
+        assertTrue(result.exclusionMolecularEvents().contains("exclusion event 1"));
+        assertTrue(result.exclusionMolecularEvents().contains("exclusion event 2"));
+    }
+
+    @Test
     public void properlyRespectsRecoverable() {
         EvaluationFunction recoverable = record -> CompositeTestFactory.create(true, 1);
         EvaluationFunction unrecoverable = record -> CompositeTestFactory.create(false, 2);

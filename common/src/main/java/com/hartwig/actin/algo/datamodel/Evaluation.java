@@ -16,6 +16,12 @@ public abstract class Evaluation {
     public abstract boolean recoverable();
 
     @NotNull
+    public abstract Set<String> inclusionMolecularEvents();
+
+    @NotNull
+    public abstract Set<String> exclusionMolecularEvents();
+
+    @NotNull
     public abstract Set<String> passSpecificMessages();
 
     @NotNull

@@ -108,6 +108,23 @@ public class OrTest {
     }
 
     @Test
+    public void combinesMolecularInclusionExclusionEvents() {
+        EvaluationFunction function1 = record -> CompositeTestFactory.create(EvaluationResult.FAIL, true, 1);
+        EvaluationFunction function2 = record -> CompositeTestFactory.create(EvaluationResult.PASS, true, 2);
+        EvaluationFunction function3 = record -> CompositeTestFactory.create(EvaluationResult.PASS, true, 3);
+
+        Evaluation result = new Or(Lists.newArrayList(function1, function2, function3)).evaluate(TEST_PATIENT);
+
+        assertEquals(2, result.inclusionMolecularEvents().size());
+        assertTrue(result.inclusionMolecularEvents().contains("inclusion event 2"));
+        assertTrue(result.inclusionMolecularEvents().contains("inclusion event 3"));
+
+        assertEquals(2, result.exclusionMolecularEvents().size());
+        assertTrue(result.exclusionMolecularEvents().contains("exclusion event 2"));
+        assertTrue(result.exclusionMolecularEvents().contains("exclusion event 3"));
+    }
+
+    @Test
     public void properlyRespectsRecoverable() {
         EvaluationFunction recoverable = record -> CompositeTestFactory.create(true, 1);
         EvaluationFunction unrecoverable = record -> CompositeTestFactory.create(false, 2);
@@ -115,8 +132,9 @@ public class OrTest {
         Evaluation result = new Or(Lists.newArrayList(recoverable, unrecoverable)).evaluate(TEST_PATIENT);
 
         assertTrue(result.recoverable());
-        assertEquals(1, result.undeterminedGeneralMessages().size());
+        assertEquals(2, result.undeterminedGeneralMessages().size());
         assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 1"));
+        assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"));
     }
 
     @Test(expected = IllegalStateException.class)

@@ -46,7 +46,9 @@ public class Or implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(best).recoverable(recoverable);
         for (Evaluation eval : evaluations) {
-            if (eval.result() == best && eval.recoverable() == recoverable) {
+            if (eval.result() == best) {
+                builder.addAllInclusionMolecularEvents(eval.inclusionMolecularEvents());
+                builder.addAllExclusionMolecularEvents(eval.exclusionMolecularEvents());
                 builder.addAllPassSpecificMessages(eval.passSpecificMessages());
                 builder.addAllPassGeneralMessages(eval.passGeneralMessages());
                 builder.addAllWarnSpecificMessages(eval.warnSpecificMessages());

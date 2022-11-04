@@ -26,6 +26,8 @@ public class WarnIf implements EvaluationFunction {
             return ImmutableEvaluation.builder()
                     .result(EvaluationResult.WARN)
                     .recoverable(evaluation.recoverable())
+                    .inclusionMolecularEvents(evaluation.inclusionMolecularEvents())
+                    .exclusionMolecularEvents(evaluation.exclusionMolecularEvents())
                     .warnSpecificMessages(evaluation.passSpecificMessages())
                     .warnGeneralMessages(evaluation.passGeneralMessages())
                     .build();
@@ -36,6 +38,8 @@ public class WarnIf implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder()
                 .result(EvaluationResult.PASS)
                 .recoverable(evaluation.recoverable())
+                .addAllInclusionMolecularEvents(evaluation.inclusionMolecularEvents())
+                .addAllExclusionMolecularEvents(evaluation.exclusionMolecularEvents())
                 .addAllPassSpecificMessages(evaluation.passSpecificMessages())
                 .addAllPassSpecificMessages(evaluation.warnSpecificMessages())
                 .addAllPassSpecificMessages(evaluation.undeterminedSpecificMessages())
