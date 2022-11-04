@@ -50,27 +50,27 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
         if (has3UTRHotspot) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("3 UTR region of " + gene + " has been lost through mutation")
-                    .addPassGeneralMessages("3 UTR loss of " + gene)
+                    .addPassSpecificMessages("3' UTR hotspot mutation in " + gene + " should lead to 3' UTR loss")
+                    .addPassGeneralMessages("3' UTR loss of " + gene)
                     .build();
         } else if (has3UTRDisruption) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("3 UTR region of " + gene + " has been disrupted which may lead to 3 UTR loss")
-                    .addWarnGeneralMessages("3 UTR loss of " + gene)
+                    .addWarnSpecificMessages("Disruption detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss")
+                    .addWarnGeneralMessages("Potential 3' UTR loss of " + gene)
                     .build();
         } else if (has3UTRVUS) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("3 UTR region of " + gene + " has been mutated which may lead to 3 UTR loss")
-                    .addWarnGeneralMessages("3 UTR loss of " + gene)
+                    .addWarnSpecificMessages("VUS mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss")
+                    .addWarnGeneralMessages("Potential 3' UTR loss of " + gene)
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No mutations found in 3 UTR region of " + gene)
-                .addFailGeneralMessages("No 3 UTR loss of " + gene)
+                .addFailSpecificMessages("No variants detected in 3' UTR region of " + gene)
+                .addFailGeneralMessages("No 3' UTR loss of " + gene)
                 .build();
     }
 
