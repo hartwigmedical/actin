@@ -222,7 +222,8 @@ public class MolecularRecordJson {
                         .isBiallelic(bool(variant, "isBiallelic"))
                         .isHotspot(bool(variant, "isHotspot"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
-                        .impacts(toTranscriptImpacts(array(variant, "impacts")))
+                        .canonicalImpact(toTranscriptImpact(object(variant, "canonicalImpact")))
+                        .otherImpacts(toTranscriptImpacts(array(variant, "otherImpacts")))
                         .build());
             }
             return variants;
@@ -232,18 +233,21 @@ public class MolecularRecordJson {
         private static Set<TranscriptImpact> toTranscriptImpacts(@NotNull JsonArray impactArray) {
             Set<TranscriptImpact> impacts = Sets.newHashSet();
             for (JsonElement element : impactArray) {
-                JsonObject impact = element.getAsJsonObject();
-                impacts.add(ImmutableTranscriptImpact.builder()
-                        .transcriptId(string(impact, "transcriptId"))
-                        .isCanonical(bool(impact, "isCanonical"))
-                        .effect(string(impact, "effect"))
-                        .affectedCodon(nullableInteger(impact, "affectedCodon"))
-                        .affectedExon(nullableInteger(impact, "affectedExon"))
-                        .codingImpact(string(impact, "codingImpact"))
-                        .proteinImpact(string(impact, "proteinImpact"))
-                        .build());
+                impacts.add(toTranscriptImpact(element.getAsJsonObject()));
             }
             return impacts;
+        }
+
+        @NotNull
+        private static TranscriptImpact toTranscriptImpact(@NotNull JsonObject impact) {
+            return ImmutableTranscriptImpact.builder()
+                    .transcriptId(string(impact, "transcriptId"))
+                    .effect(string(impact, "effect"))
+                    .affectedCodon(nullableInteger(impact, "affectedCodon"))
+                    .affectedExon(nullableInteger(impact, "affectedExon"))
+                    .codingImpact(string(impact, "codingImpact"))
+                    .proteinImpact(string(impact, "proteinImpact"))
+                    .build();
         }
 
         @NotNull
@@ -315,7 +319,7 @@ public class MolecularRecordJson {
                         .type(string(disruption, "type"))
                         .junctionCopyNumber(number(disruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
-                                .regionType(RegionType.valueOf(string(disruption, "regionType")))
+                        .regionType(RegionType.valueOf(string(disruption, "regionType")))
                         .codingContext(CodingContext.valueOf(string(disruption, "codingContext")))
                         .range(string(disruption, "range"))
                         .build());

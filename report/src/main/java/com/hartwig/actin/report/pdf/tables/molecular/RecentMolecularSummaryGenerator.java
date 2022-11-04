@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
+import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -63,24 +64,23 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             table.addCell(createPredictedTumorOriginValue(molecular.characteristics().predictedTumorOrigin()));
         }
 
-        // TODO Implement
-//        table.addCell(Cells.createKey("Events with approved treatment evidence in " + evidence.evidenceSource()));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(evidence))));
-//
-//        table.addCell(Cells.createKey("Events with trial eligibility in " + evidence.actinSource() + " database"));
-//        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch, evidence.actinTrials()))));
+        table.addCell(Cells.createKey("Events with approved treatment evidence in " + molecular.evidenceSource()));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(molecular))));
+
+//        table.addCell(Cells.createKey("Events with trial eligibility in " + TreatmentConstants.ACTIN_SOURCE + " database"));
+//        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch))));
 //
 //        table.addCell(addIndent(Cells.createKey(
-//                "Additional events with trial eligibility in NL (" + evidence.externalTrialSource() + ")")));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(evidence))));
+//                "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(molecular))));
 //
-//        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + evidence.evidenceSource() + ")")));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence))));
+//        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + molecular.evidenceSource() + ")")));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(molecular))));
 //
-//        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + evidence.evidenceSource()));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence))));
+//        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + molecular.evidenceSource()));
+//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(molecular))));
 //
-//        Set<TreatmentEvidence> knownResistanceEvidence = evidence.knownResistanceEvidence();
+//        Set<TreatmentEvidence> knownResistanceEvidence = molecular.knownResistanceEvidence();
 //        if (!knownResistanceEvidence.isEmpty()) {
 //            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
 //            table.addCell(Cells.createValue(formatResistanceEvidence(knownResistanceEvidence)));

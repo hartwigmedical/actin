@@ -23,6 +23,7 @@ public final class TestVariantFactory {
                 .totalCopyNumber(0D)
                 .isBiallelic(false)
                 .isHotspot(false)
-                .clonalLikelihood(0D);
+                .clonalLikelihood(0D)
+                .canonicalImpact(TestTranscriptImpactFactory.builder().build());
     }
 }

@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
         boolean has3UTRHotspot = false;
         boolean has3UTRVUS = false;
         for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene) && has3UTRCanonicalEffect(variant)) {
+            if (variant.gene().equals(gene) && variant.canonicalImpact().effect().equals(THREE_UTR_EFFECT)) {
                 if (variant.isHotspot()) {
                     has3UTRHotspot = true;
                 } else {
@@ -72,14 +71,5 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
                 .addFailSpecificMessages("No variants detected in 3' UTR region of " + gene)
                 .addFailGeneralMessages("No 3' UTR loss of " + gene)
                 .build();
-    }
-
-    private static boolean has3UTRCanonicalEffect(@NotNull Variant variant) {
-        for (TranscriptImpact impact : variant.impacts()) {
-            if (impact.isCanonical() && impact.effect().equals(THREE_UTR_EFFECT)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

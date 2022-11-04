@@ -18,6 +18,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableTranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
@@ -47,6 +48,7 @@ import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class DriverExtraction {
@@ -93,7 +95,13 @@ final class DriverExtraction {
                     .isBiallelic(false)
                     .isHotspot(false)
                     .clonalLikelihood(keep3Digits(variant.clonalLikelihood()))
-                    .impacts(Sets.newHashSet())
+                    .canonicalImpact(ImmutableTranscriptImpact.builder()
+                            .transcriptId(Strings.EMPTY)
+                            .effect(Strings.EMPTY)
+                            .codingImpact(Strings.EMPTY)
+                            .proteinImpact(Strings.EMPTY)
+                            .build())
+                    .otherImpacts(Sets.newHashSet())
                     .build());
         }
         return variants;

@@ -11,8 +11,6 @@ public abstract class TranscriptImpact {
     @NotNull
     public abstract String transcriptId();
 
-    public abstract boolean isCanonical();
-
     @NotNull
     public abstract String effect();
 

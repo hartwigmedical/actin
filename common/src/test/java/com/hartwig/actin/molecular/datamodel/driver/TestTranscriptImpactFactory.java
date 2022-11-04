@@ -12,7 +12,6 @@ public final class TestTranscriptImpactFactory {
     public static ImmutableTranscriptImpact.Builder builder() {
         return ImmutableTranscriptImpact.builder()
                 .transcriptId(Strings.EMPTY)
-                .isCanonical(false)
                 .effect(Strings.EMPTY)
                 .codingImpact(Strings.EMPTY)
                 .proteinImpact(Strings.EMPTY);
