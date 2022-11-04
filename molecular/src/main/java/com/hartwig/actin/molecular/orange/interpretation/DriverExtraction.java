@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
@@ -22,6 +23,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
@@ -197,6 +199,8 @@ final class DriverExtraction {
                         .type(disruption.type())
                         .junctionCopyNumber(keep3Digits(disruption.junctionCopyNumber()))
                         .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
+                        .regionType(RegionType.INTRONIC)
+                        .codingContext(CodingContext.NON_CODING)
                         .range(disruption.range())
                         .build());
             }

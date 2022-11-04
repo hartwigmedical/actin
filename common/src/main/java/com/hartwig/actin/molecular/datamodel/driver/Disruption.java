@@ -16,5 +16,11 @@ public abstract class Disruption implements Driver, GeneAlteration {
     public abstract double undisruptedCopyNumber();
 
     @NotNull
+    public abstract RegionType regionType();
+
+    @NotNull
+    public abstract CodingContext codingContext();
+
+    @NotNull
     public abstract String range();
 }

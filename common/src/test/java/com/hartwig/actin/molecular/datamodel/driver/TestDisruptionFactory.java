@@ -21,6 +21,8 @@ public final class TestDisruptionFactory {
                 .type(Strings.EMPTY)
                 .junctionCopyNumber(0)
                 .undisruptedCopyNumber(0)
+                .regionType(RegionType.INTRONIC)
+                .codingContext(CodingContext.NON_CODING)
                 .range(Strings.EMPTY);
     }
 }

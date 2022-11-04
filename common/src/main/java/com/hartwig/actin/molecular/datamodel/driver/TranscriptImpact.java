@@ -17,6 +17,9 @@ public abstract class TranscriptImpact {
     public abstract String effect();
 
     @Nullable
+    public abstract CodingEffect codingEffect();
+
+    @Nullable
     public abstract Integer affectedCodon();
 
     @Nullable

@@ -41,6 +41,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedT
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
@@ -59,6 +60,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
@@ -313,6 +315,8 @@ public class MolecularRecordJson {
                         .type(string(disruption, "type"))
                         .junctionCopyNumber(number(disruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
+                                .regionType(RegionType.valueOf(string(disruption, "regionType")))
+                        .codingContext(CodingContext.valueOf(string(disruption, "codingContext")))
                         .range(string(disruption, "range"))
                         .build());
             }
