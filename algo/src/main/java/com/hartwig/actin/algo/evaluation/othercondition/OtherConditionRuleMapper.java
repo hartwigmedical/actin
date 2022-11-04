@@ -95,6 +95,7 @@ public class OtherConditionRuleMapper extends RuleMapper {
         };
     }
 
+    //TODO: Update according to README
     @NotNull
     private FunctionCreator hasPriorConditionWithDoidCreator(@NotNull String doidToFind) {
         return function -> new HasHadPriorConditionWithDoid(doidModel(), doidToFind);
