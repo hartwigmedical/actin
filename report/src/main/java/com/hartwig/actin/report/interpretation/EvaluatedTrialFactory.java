@@ -70,6 +70,7 @@ public final class EvaluatedTrialFactory {
     @NotNull
     private static Set<String> eventsForTrial(@NotNull String trialAcronymToFind, @Nullable String cohortIdToFind) {
         Set<String> events = Sets.newTreeSet(Ordering.natural());
+        // TODO Implement
 //        for (ActinTrialEvidence evidence : evidences) {
 //            boolean isCohortMatch;
 //            if (evidence.cohortId() == null) {

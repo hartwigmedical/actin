@@ -1,8 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
@@ -10,6 +12,8 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.report.interpretation.AggregatedEvidence;
+import com.hartwig.actin.report.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
@@ -19,6 +23,7 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
+import com.hartwig.actin.treatment.TreatmentConstants;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
@@ -64,27 +69,27 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             table.addCell(createPredictedTumorOriginValue(molecular.characteristics().predictedTumorOrigin()));
         }
 
+        AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(molecular);
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + molecular.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(molecular))));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(aggregatedEvidence))));
 
-//        table.addCell(Cells.createKey("Events with trial eligibility in " + TreatmentConstants.ACTIN_SOURCE + " database"));
-//        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch))));
-//
-//        table.addCell(addIndent(Cells.createKey(
-//                "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(molecular))));
-//
-//        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + molecular.evidenceSource() + ")")));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(molecular))));
-//
-//        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + molecular.evidenceSource()));
-//        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(molecular))));
-//
-//        Set<TreatmentEvidence> knownResistanceEvidence = molecular.knownResistanceEvidence();
-//        if (!knownResistanceEvidence.isEmpty()) {
-//            table.addCell(Cells.createKey("Events with resistance evidence in " + evidence.evidenceSource()));
-//            table.addCell(Cells.createValue(formatResistanceEvidence(knownResistanceEvidence)));
-//        }
+        table.addCell(Cells.createKey("Events with trial eligibility in " + TreatmentConstants.ACTIN_SOURCE + " database"));
+        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch))));
+
+        table.addCell(addIndent(Cells.createKey(
+                "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(aggregatedEvidence))));
+
+        table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + molecular.evidenceSource() + ")")));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(aggregatedEvidence))));
+
+        table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + molecular.evidenceSource()));
+        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(aggregatedEvidence))));
+
+        if (!aggregatedEvidence.knownResistantTreatmentsPerEvent().isEmpty()) {
+            table.addCell(Cells.createKey("Events with resistance evidence in " + molecular.evidenceSource()));
+            table.addCell(Cells.createValue(formatTreatmentsPerEvent(aggregatedEvidence.knownResistantTreatmentsPerEvent())));
+        }
 
         return table;
     }
@@ -119,6 +124,15 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private static Cell addIndent(@NotNull Cell cell) {
         return cell.setPaddingLeft(10);
+    }
+
+    @NotNull
+    private static String formatTreatmentsPerEvent(@NotNull Multimap<String, String> treatmentsPerEvent) {
+        Set<String> evidenceStrings = Sets.newTreeSet();
+        for (Map.Entry<String, String> entry : treatmentsPerEvent.entries()) {
+            evidenceStrings.add(entry.getKey() + ": " + entry.getValue());
+        }
+        return concat(evidenceStrings);
     }
 
     @NotNull
