@@ -27,33 +27,44 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (Disruption disruption : record.molecular().drivers().disruptions()) {
-            if (disruption.gene().equals(gene) && disruption.codingContext() == CodingContext.UTR_3P
-                    && disruption.regionType() == RegionType.EXONIC) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("3 UTR region of " + gene + " has been disrupted which may lead to 3 UTR loss")
-                        .addWarnGeneralMessages("3 UTR loss of " + gene)
-                        .build();
-            }
-        }
-
+        boolean has3UTRHotspot = false;
+        boolean has3UTRVUS = false;
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && has3UTRCanonicalEffect(variant)) {
                 if (variant.isHotspot()) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("3 UTR region of " + gene + " has been mutated which leads to 3 UTR loss")
-                            .addPassGeneralMessages("3 UTR loss of " + gene)
-                            .build();
+                    has3UTRHotspot = true;
                 } else {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.WARN)
-                            .addWarnSpecificMessages("3 UTR region of " + gene + " has been mutated which may lead to 3 UTR loss")
-                            .addWarnGeneralMessages("3 UTR loss of " + gene)
-                            .build();
+                    has3UTRVUS = true;
                 }
             }
+        }
+
+        boolean has3UTRDisruption = false;
+        for (Disruption disruption : record.molecular().drivers().disruptions()) {
+            if (disruption.gene().equals(gene) && disruption.codingContext() == CodingContext.UTR_3P
+                    && disruption.regionType() == RegionType.EXONIC) {
+                has3UTRDisruption = true;
+            }
+        }
+
+        if (has3UTRHotspot) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("3 UTR region of " + gene + " has been lost through mutation")
+                    .addPassGeneralMessages("3 UTR loss of " + gene)
+                    .build();
+        } else if (has3UTRDisruption) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("3 UTR region of " + gene + " has been disrupted which may lead to 3 UTR loss")
+                    .addWarnGeneralMessages("3 UTR loss of " + gene)
+                    .build();
+        } else if (has3UTRVUS) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("3 UTR region of " + gene + " has been mutated which may lead to 3 UTR loss")
+                    .addWarnGeneralMessages("3 UTR loss of " + gene)
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()
