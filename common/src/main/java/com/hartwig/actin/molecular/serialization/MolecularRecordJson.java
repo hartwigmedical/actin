@@ -233,6 +233,7 @@ public class MolecularRecordJson {
                 JsonObject impact = element.getAsJsonObject();
                 impacts.add(ImmutableTranscriptImpact.builder()
                         .transcriptId(string(impact, "transcriptId"))
+                        .isCanonical(bool(impact, "isCanonical"))
                         .effect(string(impact, "effect"))
                         .affectedCodon(nullableInteger(impact, "affectedCodon"))
                         .affectedExon(nullableInteger(impact, "affectedExon"))
