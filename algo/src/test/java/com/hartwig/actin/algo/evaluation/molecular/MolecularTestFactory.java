@@ -70,27 +70,6 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withActivatedGene(@NotNull String gene) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .build());
-    }
-
-    @NotNull
-    public static PatientRecord withInactivatedGene(@NotNull String gene) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .build());
-    }
-
-    @NotNull
-    public static PatientRecord withAmplifiedGene(@NotNull String gene) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .build());
-    }
-
-    @NotNull
     public static PatientRecord withUndeterminedWildTypes() {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
@@ -103,13 +82,6 @@ final class MolecularTestFactory {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .wildTypeGenes(Sets.newHashSet(gene))
-                .build());
-    }
-
-    @NotNull
-    public static PatientRecord withFusedGene(@NotNull String gene) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .build());
     }
 

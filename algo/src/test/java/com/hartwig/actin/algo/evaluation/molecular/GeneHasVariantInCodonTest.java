@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasFusionInGeneTest {
+public class GeneHasVariantInCodonTest {
 
     @Test
     public void canEvaluate() {
-        HasFusionInGene function = new HasFusionInGene("gene A");
+        GeneHasVariantInCodon function = new GeneHasVariantInCodon("gene A", "V600");
 
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }

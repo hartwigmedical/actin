@@ -11,7 +11,13 @@ import org.jetbrains.annotations.NotNull;
 //TODO: Implement according to README
 public class GeneHasSpecificExonSkipping implements EvaluationFunction {
 
-    GeneHasSpecificExonSkipping() {
+    @NotNull
+    private final String gene;
+    private final int exonToSkip;
+
+    GeneHasSpecificExonSkipping(@NotNull final String gene, final int exonToSkip) {
+        this.gene = gene;
+        this.exonToSkip = exonToSkip;
     }
 
     @NotNull

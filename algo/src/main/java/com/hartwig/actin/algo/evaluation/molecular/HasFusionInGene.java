@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
+// TODO Implement
 public class HasFusionInGene implements EvaluationFunction {
 
     @NotNull
@@ -20,18 +20,7 @@ public class HasFusionInGene implements EvaluationFunction {
 
     @NotNull
     @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-//        for (ActinTrialEvidence evidence : record.molecular().evidence().actinTrials()) {
-//            if (evidence.type() == MolecularEventType.FUSED_GENE && gene.equals(evidence.gene())) {
-//                return EvaluationFactory.unrecoverable()
-//                        .result(EvaluationResult.PASS)
-//                        .addPassSpecificMessages("Fusion detected with gene " + gene)
-//                        .addPassGeneralMessages("Molecular requirements")
-//                        .build();
-//            }
-//        }
-
+    public Evaluation evaluate(@NotNull PatientRecord record)  {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No fusion detected with gene " + gene)

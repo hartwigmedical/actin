@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
+// TODO Implement
 public class GeneIsInactivated implements EvaluationFunction {
 
     @NotNull
@@ -20,17 +21,6 @@ public class GeneIsInactivated implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        // TODO Implement
-//        for (ActinTrialEvidence evidence : record.molecular().evidence().actinTrials()) {
-//            if (evidence.type() == MolecularEventType.INACTIVATED_GENE && gene.equals(evidence.gene())) {
-//                return EvaluationFactory.unrecoverable()
-//                        .result(EvaluationResult.PASS)
-//                        .addPassSpecificMessages("Inactivation detected of gene " + gene)
-//                        .addPassGeneralMessages("Molecular requirements")
-//                        .build();
-//            }
-//        }
-
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No inactivation detected of gene " + gene)

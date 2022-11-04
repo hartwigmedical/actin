@@ -7,12 +7,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasFusionInGeneTest {
+public class GeneHasSpecificExonSkippingTest {
 
     @Test
     public void canEvaluate() {
-        HasFusionInGene function = new HasFusionInGene("gene A");
+        GeneHasSpecificExonSkipping function = new GeneHasSpecificExonSkipping("gene A", 2);
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
     }
 }

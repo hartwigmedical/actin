@@ -8,6 +8,9 @@ import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
+import com.hartwig.actin.treatment.input.single.OneStringManyStrings;
+import com.hartwig.actin.treatment.input.single.TwoIntegersOneString;
 import com.hartwig.actin.treatment.input.single.TwoStrings;
 
 import org.jetbrains.annotations.NotNull;
@@ -88,32 +91,50 @@ public class MolecularRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator geneHasVariantWithAnyProteinImpactsCreator() {
-        return function -> new GeneHasVariantWithProteinImpacts();
+        return function -> {
+            OneStringManyStrings input = functionInputResolver().createOneStringManyStringsInput(function);
+            return new GeneHasVariantWithProteinImpact(input.string1(), input.additionalStrings());
+        };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantWithAnyCodingImpactsCreator() {
-        return function -> new GeneHasVariantWithCodingImpacts();
+        return function -> {
+            OneStringManyStrings input = functionInputResolver().createOneStringManyStringsInput(function);
+            return new GeneHasVariantWithCodingImpact(input.string1(), input.additionalStrings());
+        };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInCodonCreator() {
-        return function -> new GeneHasVariantInCodon();
+        return function -> {
+            TwoStrings input = functionInputResolver().createTwoStringsInput(function);
+            return new GeneHasVariantInCodon(input.string1(), input.string2());
+        };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInExonCreator() {
-        return function -> new GeneHasVariantInExon();
+        return function -> {
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
+            return new GeneHasVariantInExonRangeOfType(input.string(), input.integer(), input.integer(), null);
+        };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInExonRangeCreator() {
-        return function -> new GeneHasVariantInExonRange();
+        return function -> {
+            TwoIntegersOneString input = functionInputResolver().createOneStringTwoIntegersInput(function);
+            return new GeneHasVariantInExonRangeOfType(input.string(), input.integer1(), input.integer2(), null);
+        };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInExonOfTypeCreator() {
-        return function -> new GeneHasVariantInExonOfType();
+        return function -> {
+            OneIntegerOneStringOneVariantType input = functionInputResolver().createOneStringOneIntegerOneVariantTypeInput(function);
+            return new GeneHasVariantInExonRangeOfType(input.string(), input.integer(), input.integer(), input.variantType());
+        };
     }
 
     @NotNull
@@ -158,7 +179,10 @@ public class MolecularRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator geneHasSpecificExonSkippingCreator() {
-        return function -> new GeneHasSpecificExonSkipping();
+        return function -> {
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
+            return new GeneHasSpecificExonSkipping(input.string(), input.integer());
+        };
     }
 
     @NotNull
