@@ -15,15 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLocallyAdvancedCancer implements EvaluationFunction {
 
-    private static final Set<TumorStage> STAGES_CONSIDERED_ADVANCED = Sets.newHashSet();
-
-    static {
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.III);
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.IIIA);
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.IIIB);
-        STAGES_CONSIDERED_ADVANCED.add(TumorStage.IIIC);
-    }
-
     HasLocallyAdvancedCancer() {
     }
 
@@ -40,14 +31,25 @@ public class HasLocallyAdvancedCancer implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result = STAGES_CONSIDERED_ADVANCED.contains(stage) ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        EvaluationResult result;
+        if (stage == TumorStage.III || stage.category() == TumorStage.III) {
+            result = EvaluationResult.PASS;
+        } else if (stage == TumorStage.II || stage.category() == TumorStage.II) {
+            result = EvaluationResult.WARN;
+        } else {
+            result = EvaluationResult.FAIL;
+        }
+
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered advanced");
-            builder.addFailGeneralMessages("Tumor stage");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered advanced");
-            builder.addPassGeneralMessages("Tumor stage");
+        if (result == EvaluationResult.PASS) {
+            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered locally advanced");
+            builder.addPassGeneralMessages("Locally advanced cancer");
+        } else if (result == EvaluationResult.WARN) {
+            builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
+            builder.addWarnGeneralMessages("Locally advanced cancer");
+        } else if (result == EvaluationResult.FAIL) {
+            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered locally advanced");
+            builder.addFailGeneralMessages("No locally advanced cancer");
         }
 
         return builder.build();

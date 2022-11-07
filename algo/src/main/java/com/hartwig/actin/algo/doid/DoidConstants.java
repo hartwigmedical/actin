@@ -17,6 +17,7 @@ public final class DoidConstants {
     public static final String STOMACH_CANCER_DOID = "10534";
     public static final String BREAST_CANCER_DOID = "1612";
     public static final String OVARIAN_CANCER_DOID = "2394";
+    public static final String HEAD_AND_NECK_CANCER_DOID = "11934";
 
     public static final String GLIOBLASTOMA_DOID = "3068";
 

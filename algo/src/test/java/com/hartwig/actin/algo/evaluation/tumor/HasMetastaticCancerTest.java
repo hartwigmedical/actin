@@ -4,6 +4,8 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluatio
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.junit.Test;
 
@@ -11,10 +13,17 @@ public class HasMetastaticCancerTest {
 
     @Test
     public void canEvaluate() {
-        HasMetastaticCancer function = new HasMetastaticCancer();
+        String matchDoid = "parent";
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(matchDoid, "child");
+        HasMetastaticCancer function = new HasMetastaticCancer(doidModel);
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIC)));
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIC)));
+        assertEvaluation(EvaluationResult.WARN,
+                function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II,
+                        HasMetastaticCancer.STAGE_II_POTENTIALLY_METASTATIC_CANCERS.iterator().next())));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, "random")));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, null))); //TODO: Fix test
     }
 }

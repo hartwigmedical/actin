@@ -15,6 +15,7 @@ public class HasLocallyAdvancedCancerTest {
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)));
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIB)));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)));
     }
 }

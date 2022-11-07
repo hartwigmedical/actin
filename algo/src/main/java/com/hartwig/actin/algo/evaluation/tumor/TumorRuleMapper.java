@@ -165,7 +165,7 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasMetastaticCancerCreator() {
-        return function -> new HasMetastaticCancer();
+        return function -> new HasMetastaticCancer(doidModel());
     }
 
     @NotNull
