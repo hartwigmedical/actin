@@ -9,9 +9,9 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CanProvideFreshSampleForFFPEAnalysis implements EvaluationFunction {
+public class CanProvideFreshSampleForFurtherAnalysis implements EvaluationFunction {
 
-    CanProvideFreshSampleForFFPEAnalysis() {
+    CanProvideFreshSampleForFurtherAnalysis() {
     }
 
     @NotNull

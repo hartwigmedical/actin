@@ -7,11 +7,11 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 
 import org.junit.Test;
 
-public class CanProvideSampleForFFPEAnalysisTest {
+public class CanProvideSampleForFurtherAnalysisTest {
 
     @Test
     public void canEvaluate() {
-        CanProvideSampleForFFPEAnalysis function = new CanProvideSampleForFFPEAnalysis();
+        CanProvideSampleForFurtherAnalysis function = new CanProvideSampleForFurtherAnalysis();
 
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.PANEL)));
