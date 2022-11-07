@@ -29,5 +29,5 @@ public abstract class Variant implements Driver, GeneAlteration {
     @NotNull
     public abstract Set<TranscriptImpact> otherImpacts();
 
-    public abstract boolean isReportable();
+    //public abstract boolean isReportable();
 }

@@ -37,10 +37,10 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
 
-                boolean isReportable = false;
-                if (variant.isReportable() == true) {
-                    isReportable = true;
-                }
+                // boolean isReportable = false;
+                // if (variant.isReportable() == true) {
+                //     isReportable = true;
+                // }
 
                 boolean exonRangeCanonicalMatch = false;
                 if (variant.canonicalImpact().affectedExon() != null) {
@@ -61,45 +61,45 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
                 boolean requiredVariantTypeMatch = false;
                 if (requiredVariantType == null) {
                     requiredVariantTypeMatch = true;
-                } else if ((requiredVariantType.equals(VariantTypeInput.INSERT) && variant.type().equals(VariantType.INSERT))
-                        || (requiredVariantType.equals(VariantTypeInput.DELETE) && variant.type().equals(VariantType.DELETE))
-                        || (requiredVariantType.equals(VariantTypeInput.MNV) && variant.type().equals(VariantType.MNV))
-                        || (requiredVariantType.equals(VariantTypeInput.SNV) && variant.type().equals(VariantType.SNV))) {
+                } else if ((requiredVariantType.equals(VariantTypeInput.INSERT) && variant.type().equals(VariantType.INSERT)) || (
+                        requiredVariantType.equals(VariantTypeInput.DELETE) && variant.type().equals(VariantType.DELETE)) || (
+                        requiredVariantType.equals(VariantTypeInput.MNV) && variant.type().equals(VariantType.MNV)) || (
+                        requiredVariantType.equals(VariantTypeInput.SNV) && variant.type().equals(VariantType.SNV))) {
                     requiredVariantTypeMatch = true;
                 } else if (requiredVariantType.equals(VariantTypeInput.INDEL) && (variant.type().equals(VariantType.INSERT)
                         || variant.type().equals(VariantType.DELETE))) {
                     requiredVariantTypeMatch = true;
                 }
 
-                if (exonRangeCanonicalMatch && requiredVariantTypeMatch && isReportable) {
+                if (exonRangeCanonicalMatch && requiredVariantTypeMatch) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
                                     + " of adequate type detected in canonical transcript")
                             .addPassGeneralMessages("Adequate variant(s) found in " + gene)
                             .build();
-                } else if (exonRangeCanonicalMatch && requiredVariantTypeMatch) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.WARN)
-                            .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                                    + " of adequate type detected in canonical transcript, but considered non-reportable")
-                            .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
-                            .build();
+                    // } else if (exonRangeCanonicalMatch && requiredVariantTypeMatch) {
+                    //     return EvaluationFactory.unrecoverable()
+                    //             .result(EvaluationResult.WARN)
+                    //             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
+                    //                     + " of adequate type detected in canonical transcript, but considered non-reportable")
+                    //             .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
+                    //             .build();
 
-                } else if (exonRangeOtherMatch && requiredVariantTypeMatch && isReportable) {
+                } else if (exonRangeOtherMatch && requiredVariantTypeMatch) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.WARN)
                             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
                                     + " of adequate type detected, but in non-canonical transcript")
                             .addWarnGeneralMessages("Adequate variant(s) found in non-canonical transcript of gene " + gene)
                             .build();
-                } else if (exonRangeOtherMatch && requiredVariantTypeMatch) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.WARN)
-                            .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                                    + " of adequate type detected in canonical transcript, but considered non-reportable")
-                            .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
-                            .build();
+                    // } else if (exonRangeOtherMatch && requiredVariantTypeMatch) {
+                    //     return EvaluationFactory.unrecoverable()
+                    //             .result(EvaluationResult.WARN)
+                    //             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
+                    //                     + " of adequate type detected in canonical transcript, but considered non-reportable")
+                    //             .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
+                    //             .build();
                 }
             }
         }
