@@ -16,7 +16,8 @@ public class GeneHasVariantInExonRangeOfTypeTest {
     @Test
     public void canEvaluate() {
         GeneHasVariantInExonRangeOfType function = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, VariantTypeInput.INSERT);
-        GeneHasVariantInExonRangeOfType function2 = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, null);
+        GeneHasVariantInExonRangeOfType function2 = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, VariantTypeInput.INDEL);
+        GeneHasVariantInExonRangeOfType function3 = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, null);
 
         // gene not present
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
@@ -34,7 +35,7 @@ public class GeneHasVariantInExonRangeOfTypeTest {
 
         // no variant type configured when input = null
         assertEvaluation(EvaluationResult.PASS,
-                function2.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                function3.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
@@ -46,6 +47,22 @@ public class GeneHasVariantInExonRangeOfTypeTest {
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
                         .build())));
 
+        // wrong variant type
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .type(VariantType.MNV)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
+                        .build())));
+
+        // wrong variant type
+        assertEvaluation(EvaluationResult.FAIL,
+                function2.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .type(VariantType.MNV)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
+                        .build())));
+
         // correct gene, correct exon, correct variant type, canonical
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
@@ -54,7 +71,15 @@ public class GeneHasVariantInExonRangeOfTypeTest {
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
-        // correct gene, protein impact detected in non-canonical only
+        // correct gene, correct exon, correct variant type, canonical
+        assertEvaluation(EvaluationResult.PASS,
+                function2.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .type(VariantType.INSERT)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .build())));
+
+        // correct gene, correct exon, correct variant type, non-canonical only
         assertEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")

@@ -52,11 +52,14 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
                     }
                 }
 
-                //TODO: Fix
+                //TODO: Clean fix
                 boolean requiredVariantTypeMatch = false;
                 if (requiredVariantType == null) {
                     requiredVariantTypeMatch = true;
-                } else if (requiredVariantType.equals(variant.type())) {
+                } else if ((requiredVariantType.equals(VariantTypeInput.INSERT) && variant.type().equals(VariantType.INSERT))
+                        || (requiredVariantType.equals(VariantTypeInput.DELETE) && variant.type().equals(VariantType.DELETE))
+                        || (requiredVariantType.equals(VariantTypeInput.MNV) && variant.type().equals(VariantType.MNV))
+                        || (requiredVariantType.equals(VariantTypeInput.SNV) && variant.type().equals(VariantType.SNV))) {
                     requiredVariantTypeMatch = true;
                 } else if (requiredVariantType.equals(VariantTypeInput.INDEL) && (variant.type().equals(VariantType.INSERT)
                         || variant.type().equals(VariantType.DELETE))) {
@@ -81,10 +84,10 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
             }
         }
 
-        return EvaluationFactory.unrecoverable().
-                result(EvaluationResult.FAIL).
-                addFailSpecificMessages("None adequate variant in exon range " + minExon + " - " + maxExon + " detected in gene " + gene).
-                addFailGeneralMessages("No specific variants in " + gene + " detected").
-                build();
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("No adequate variant in exon range " + minExon + " - " + maxExon + " detected in gene " + gene)
+                .addFailGeneralMessages("No specific variants in " + gene + " detected")
+                .build();
     }
 }
