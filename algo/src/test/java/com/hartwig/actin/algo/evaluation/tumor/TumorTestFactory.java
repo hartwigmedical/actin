@@ -85,6 +85,11 @@ final class TumorTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withTumorStageAndDoid(@Nullable TumorStage stage, @Nullable String doid) {
+        return withTumorDetails(builder().stage(stage).addDoids(doid).build());
+    }
+
+    @NotNull
     public static PatientRecord withMeasurableDisease(@Nullable Boolean hasMeasurableDisease) {
         return withTumorDetails(builder().hasMeasurableDisease(hasMeasurableDisease).build());
     }
