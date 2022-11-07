@@ -52,7 +52,7 @@ public class GeneHasVariantInExonRangeOfTypeTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .type(VariantType.MNV)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
         // wrong variant type
@@ -60,7 +60,7 @@ public class GeneHasVariantInExonRangeOfTypeTest {
                 function2.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .type(VariantType.MNV)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
         // correct gene, correct exon, correct variant type, canonical
