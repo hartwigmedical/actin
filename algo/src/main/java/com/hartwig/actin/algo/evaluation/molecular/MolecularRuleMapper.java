@@ -10,8 +10,8 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
 import com.hartwig.actin.treatment.input.single.OneStringManyStrings;
+import com.hartwig.actin.treatment.input.single.TwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoIntegersOneString;
-import com.hartwig.actin.treatment.input.single.TwoStrings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +45,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
         map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
         map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
+        map.put(EligibilityRule.TML_BETWEEN_X_AND_Y, hasCertainTumorMutationalLoadCreator());
         map.put(EligibilityRule.HAS_HLA_TYPE_X, hasSpecificHLATypeCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
@@ -198,7 +199,7 @@ public class MolecularRuleMapper extends RuleMapper {
     private FunctionCreator hasSufficientTumorMutationalLoadCreator() {
         return function -> {
             int minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
-            return new HasSufficientTumorMutationalLoad(minTumorMutationalLoad);
+            return new HasCertainTumorMutationalLoad(minTumorMutationalLoad, null);
         };
     }
 
@@ -206,7 +207,15 @@ public class MolecularRuleMapper extends RuleMapper {
     private FunctionCreator hasLimitedTumorMutationalLoadCreator() {
         return function -> {
             int maxTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
-            return new HasLimitedTumorMutationalLoad(maxTumorMutationalLoad);
+            return new HasCertainTumorMutationalLoad(null, maxTumorMutationalLoad);
+        };
+    }
+
+    @NotNull
+    private FunctionCreator hasCertainTumorMutationalLoadCreator() {
+        return function -> {
+            TwoIntegers input = functionInputResolver().createTwoIntegersInput(function);
+            return new HasCertainTumorMutationalLoad(input.integer1(), input.integer2());
         };
     }
 
