@@ -1,7 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -34,74 +37,63 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
+        Set<VariantType> allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType);
+
+        boolean hasCanonicalImpactMatch = false;
+        boolean hasOtherImpactMatch = false;
         for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene)) {
+            if (variant.gene().equals(gene) && allowedVariantTypes.contains(variant.type())) {
 
                 // boolean isReportable = false;
                 // if (variant.isReportable() == true) {
                 //     isReportable = true;
                 // }
 
-                boolean exonRangeCanonicalMatch = false;
-                if (variant.canonicalImpact().affectedExon() != null) {
-                    if (variant.canonicalImpact().affectedExon() >= minExon && variant.canonicalImpact().affectedExon() <= maxExon) {
-                        exonRangeCanonicalMatch = true;
-                    }
-                }
+                boolean matchesWithCanonicalExonRange = hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon);
 
-                boolean exonRangeOtherMatch = false;
+                boolean matchesWithOtherExonRange = false;
                 for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                    if (otherImpact.affectedExon() != null && otherImpact.affectedExon() >= minExon
-                            && otherImpact.affectedExon() <= maxExon) {
-                        exonRangeOtherMatch = true;
+                    if (hasEffectInExonRange(otherImpact.affectedExon(), minExon, maxExon)) {
+                        matchesWithOtherExonRange = true;
                     }
                 }
 
-                //TODO: Clean fix
-                boolean requiredVariantTypeMatch = false;
-                if (requiredVariantType == null) {
-                    requiredVariantTypeMatch = true;
-                } else if ((requiredVariantType.equals(VariantTypeInput.INSERT) && variant.type().equals(VariantType.INSERT)) || (
-                        requiredVariantType.equals(VariantTypeInput.DELETE) && variant.type().equals(VariantType.DELETE)) || (
-                        requiredVariantType.equals(VariantTypeInput.MNV) && variant.type().equals(VariantType.MNV)) || (
-                        requiredVariantType.equals(VariantTypeInput.SNV) && variant.type().equals(VariantType.SNV))) {
-                    requiredVariantTypeMatch = true;
-                } else if (requiredVariantType.equals(VariantTypeInput.INDEL) && (variant.type().equals(VariantType.INSERT)
-                        || variant.type().equals(VariantType.DELETE))) {
-                    requiredVariantTypeMatch = true;
-                }
-
-                if (exonRangeCanonicalMatch && requiredVariantTypeMatch) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                                    + " of adequate type detected in canonical transcript")
-                            .addPassGeneralMessages("Adequate variant(s) found in " + gene)
-                            .build();
-                    // } else if (exonRangeCanonicalMatch && requiredVariantTypeMatch) {
-                    //     return EvaluationFactory.unrecoverable()
-                    //             .result(EvaluationResult.WARN)
-                    //             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                    //                     + " of adequate type detected in canonical transcript, but considered non-reportable")
-                    //             .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
-                    //             .build();
-
-                } else if (exonRangeOtherMatch && requiredVariantTypeMatch) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.WARN)
-                            .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                                    + " of adequate type detected, but in non-canonical transcript")
-                            .addWarnGeneralMessages("Adequate variant(s) found in non-canonical transcript of gene " + gene)
-                            .build();
-                    // } else if (exonRangeOtherMatch && requiredVariantTypeMatch) {
-                    //     return EvaluationFactory.unrecoverable()
-                    //             .result(EvaluationResult.WARN)
-                    //             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                    //                     + " of adequate type detected in canonical transcript, but considered non-reportable")
-                    //             .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
-                    //             .build();
+                if (matchesWithCanonicalExonRange) {
+                    hasCanonicalImpactMatch = true;
+                } else if (matchesWithOtherExonRange) {
+                    hasOtherImpactMatch = true;
                 }
             }
+        }
+
+        if (hasCanonicalImpactMatch) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
+                            + " of adequate type detected in canonical transcript")
+                    .addPassGeneralMessages("Adequate variant(s) found in " + gene)
+                    .build();
+            // } else if (exonRangeCanonicalMatch && requiredVariantTypeMatch) {
+            //     return EvaluationFactory.unrecoverable()
+            //             .result(EvaluationResult.WARN)
+            //             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
+            //                     + " of adequate type detected in canonical transcript, but considered non-reportable")
+            //             .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
+            //             .build();
+        } else if (hasOtherImpactMatch) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
+                            + " of adequate type detected, but in non-canonical transcript")
+                    .addWarnGeneralMessages("Adequate variant(s) found in non-canonical transcript of gene " + gene)
+                    .build();
+            // } else if (exonRangeOtherMatch && requiredVariantTypeMatch) {
+            //     return EvaluationFactory.unrecoverable()
+            //             .result(EvaluationResult.WARN)
+            //             .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
+            //                     + " of adequate type detected in canonical transcript, but considered non-reportable")
+            //             .addWarnGeneralMessages("Adequate variant(s) found in " + gene)
+            //             .build();
         }
 
         return EvaluationFactory.unrecoverable()
@@ -109,5 +101,37 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
                 .addFailSpecificMessages("No adequate variant in exon range " + minExon + " - " + maxExon + " detected in gene " + gene)
                 .addFailGeneralMessages("No specific variants in " + gene + " detected")
                 .build();
+    }
+
+    private static boolean hasEffectInExonRange(@Nullable Integer affectedExon, int minExon, int maxExon) {
+        return affectedExon != null && affectedExon >= minExon && affectedExon <= maxExon;
+    }
+
+    @NotNull
+    private static Set<VariantType> determineAllowedVariantTypes(@Nullable VariantTypeInput requiredVariantType) {
+        if (requiredVariantType == null) {
+            return Sets.newHashSet(VariantType.values());
+        }
+
+        switch (requiredVariantType) {
+            case SNV: {
+                return Sets.newHashSet(VariantType.SNV);
+            }
+            case MNV: {
+                return Sets.newHashSet(VariantType.MNV);
+            }
+            case INSERT: {
+                return Sets.newHashSet(VariantType.INSERT);
+            }
+            case DELETE: {
+                return Sets.newHashSet(VariantType.DELETE);
+            }
+            case INDEL: {
+                return Sets.newHashSet(VariantType.INSERT, VariantType.DELETE);
+            }
+            default: {
+                throw new IllegalStateException("Could not map required variant type: " + requiredVariantType);
+            }
+        }
     }
 }
