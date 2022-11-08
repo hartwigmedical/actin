@@ -25,7 +25,6 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Integer tumorMutationalLoad = record.molecular().characteristics().tumorMutationalLoad();
-        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
 
         if (tumorMutationalLoad == null) {
             return EvaluationFactory.unrecoverable()
@@ -39,10 +38,8 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
         boolean meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad;
         boolean tumorMutationalLoadIsAllowed = meetsMinTumorLoad && meetsMaxTumorLoad;
 
-        boolean tumorMutationalLoadIsAlmostAllowed = false;
-        if (minTumorMutationalLoad != null && minTumorMutationalLoad - tumorMutationalLoad <= 5) {
-            tumorMutationalLoadIsAlmostAllowed = true;
-        }
+        boolean tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad != null && minTumorMutationalLoad - tumorMutationalLoad <= 5;
+        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
 
         if (tumorMutationalLoadIsAllowed) {
             return EvaluationFactory.unrecoverable()
