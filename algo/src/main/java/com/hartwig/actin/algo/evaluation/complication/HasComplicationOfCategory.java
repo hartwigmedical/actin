@@ -25,7 +25,6 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> complications = Sets.newHashSet();
         if (record.clinical().complications() == null) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
@@ -34,25 +33,28 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                     .build();
         }
 
+        Set<String> complicationMatches = Sets.newHashSet();
         for (Complication complication : record.clinical().complications()) {
             if (hasCategory(complication.categories(), categoryToFind)) {
-                complications.add(complication.name());
+                complicationMatches.add(complication.name());
             }
         }
 
-        //TODO: Check if code below is correct
-        if (!complications.isEmpty() && !Format.concat(complications).equalsIgnoreCase(categoryToFind)) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has complication " + Format.concat(complications) + " of category " + categoryToFind)
-                    .addPassGeneralMessages(Format.concat(complications))
-                    .build();
-        } else if (!complications.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
-                    .addPassGeneralMessages(Format.concat(complications))
-                    .build();
+        if (!complicationMatches.isEmpty()) {
+            if (complicationMatches.size() == 1 && complicationMatches.iterator().next().equalsIgnoreCase(categoryToFind)) {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.PASS)
+                        .addPassSpecificMessages("Patient has complication " + Format.concat(complicationMatches))
+                        .addPassGeneralMessages(Format.concat(complicationMatches))
+                        .build();
+            } else {
+                return EvaluationFactory.unrecoverable()
+                        .result(EvaluationResult.PASS)
+                        .addPassSpecificMessages(
+                                "Patient has complication " + Format.concat(complicationMatches) + " of category " + categoryToFind)
+                        .addPassGeneralMessages(Format.concat(complicationMatches))
+                        .build();
+            }
         }
 
         return EvaluationFactory.unrecoverable()
