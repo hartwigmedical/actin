@@ -23,7 +23,7 @@ public class HasMetastaticCancerTest {
         assertEvaluation(EvaluationResult.WARN,
                 function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II,
                         HasMetastaticCancer.STAGE_II_POTENTIALLY_METASTATIC_CANCERS.iterator().next())));
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, null)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, "random")));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, null))); //TODO: Fix test
     }
 }

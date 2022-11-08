@@ -45,15 +45,19 @@ public class HasMetastaticCancer implements EvaluationFunction {
         }
 
         Set<String> tumorDoids = record.clinical().tumor().doids();
-        boolean HasStageIIPotentiallyMetastaticCancer =
-                DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS);
+        boolean hasConfiguredDoids = DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids);
+        boolean hasStageIIPotentiallyMetastaticCancer = false;
+        if (hasConfiguredDoids) {
+            hasStageIIPotentiallyMetastaticCancer =
+                    DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS);
+        }
 
         EvaluationResult result;
-        if (stage == TumorStage.III || stage.category() == TumorStage.III || stage == TumorStage.IV || stage.category() == TumorStage.IV) {
+        if (isStageMatch(stage, TumorStage.III) || isStageMatch(stage, TumorStage.IV)) {
             result = EvaluationResult.PASS;
-        } else if ((stage == TumorStage.II || stage.category() == TumorStage.II) && HasStageIIPotentiallyMetastaticCancer) {
+        } else if (isStageMatch(stage, TumorStage.II) && hasStageIIPotentiallyMetastaticCancer) {
             result = EvaluationResult.WARN;
-        } else if ((stage == TumorStage.II || stage.category() == TumorStage.II) && tumorDoids.isEmpty()) { //TODO: Check if this works
+        } else if (isStageMatch(stage, TumorStage.II) && !hasConfiguredDoids) {
             result = EvaluationResult.UNDETERMINED;
         } else {
             result = EvaluationResult.FAIL;
@@ -67,13 +71,17 @@ public class HasMetastaticCancer implements EvaluationFunction {
             builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
             builder.addWarnGeneralMessages("Locally advanced cancer");
         } else if (result == EvaluationResult.UNDETERMINED) {
-                builder.addUndeterminedSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
-                builder.addUndeterminedGeneralMessages("Locally advanced cancer");
+            builder.addUndeterminedSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
+            builder.addUndeterminedGeneralMessages("Locally advanced cancer");
         } else if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered locally advanced");
             builder.addFailGeneralMessages("No locally advanced cancer");
         }
 
         return builder.build();
+    }
+
+    private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
+        return (stage == stageToMatch || stage.category() == stageToMatch);
     }
 }

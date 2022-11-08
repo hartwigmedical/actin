@@ -31,18 +31,6 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withTumorTypeAndDoids(@Nullable String primaryTumorType, @Nullable String primaryTumorSubType,
-            @NotNull String... doids) {
-        return withTumorTypeAndDoids(primaryTumorType, primaryTumorSubType, Sets.newHashSet(doids));
-    }
-
-    @NotNull
-    public static PatientRecord withTumorTypeAndDoids(@Nullable String primaryTumorType, @Nullable String primaryTumorSubType,
-            @Nullable Set<String> doids) {
-        return withTumorDetails(builder().primaryTumorType(primaryTumorType).primaryTumorSubType(primaryTumorSubType).doids(doids).build());
-    }
-
-    @NotNull
     public static PatientRecord withDoids(@NotNull String... doids) {
         return withDoids(Sets.newHashSet(doids));
     }
@@ -86,7 +74,11 @@ final class TumorTestFactory {
 
     @NotNull
     public static PatientRecord withTumorStageAndDoid(@Nullable TumorStage stage, @Nullable String doid) {
-        return withTumorDetails(builder().stage(stage).addDoids(doid).build());
+        Set<String> doids = null;
+        if (doid != null) {
+            doids = Sets.newHashSet(doid);
+        }
+        return withTumorDetails(builder().stage(stage).doids(doids).build());
     }
 
     @NotNull
