@@ -127,6 +127,7 @@ class MolecularDAO {
                         MOLECULAR.CONTAINSTUMORCELLS,
                         MOLECULAR.HASSUFFICIENTQUALITY,
                         MOLECULAR.PURITY,
+                        MOLECULAR.PLOIDY,
                         MOLECULAR.PREDICTEDTUMORTYPE,
                         MOLECULAR.PREDICTEDTUMORLIKELIHOOD,
                         MOLECULAR.ISMICROSATELLITEUNSTABLE,
@@ -144,6 +145,7 @@ class MolecularDAO {
                         DataUtil.toByte(record.containsTumorCells()),
                         DataUtil.toByte(record.hasSufficientQuality()),
                         record.characteristics().purity(),
+                        record.characteristics().ploidy(),
                         predictedTumorOrigin != null ? predictedTumorOrigin.tumorType() : null,
                         predictedTumorOrigin != null ? predictedTumorOrigin.likelihood() : null,
                         DataUtil.toByte(record.characteristics().isMicrosatelliteUnstable()),
@@ -159,6 +161,7 @@ class MolecularDAO {
         for (Variant variant : variants) {
             context.insertInto(VARIANT,
                             VARIANT.SAMPLEID,
+                            VARIANT.REPORTABLE,
                             VARIANT.DRIVERLIKELIHOOD,
                             VARIANT.GENE,
                             VARIANT.GENEROLE,
@@ -175,9 +178,11 @@ class MolecularDAO {
                             VARIANT.CANONICALCODINGEFFECT,
                             VARIANT.CANONICALAFFECTEDCODON,
                             VARIANT.CANONICALAFFECTEDEXON,
+                            VARIANT.CANONICALISSPLICEREGION,
                             VARIANT.CANONICALCODINGIMPACT,
                             VARIANT.CANONICALPROTEINIMPACT)
                     .values(sampleId,
+                            DataUtil.toByte(variant.reportable()),
                             variant.driverLikelihood().toString(),
                             variant.gene(),
                             variant.geneRole().toString(),
@@ -194,6 +199,7 @@ class MolecularDAO {
                             DataUtil.nullableToString(variant.canonicalImpact().codingEffect()),
                             variant.canonicalImpact().affectedCodon(),
                             variant.canonicalImpact().affectedExon(),
+                            DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
                             variant.canonicalImpact().codingImpact(),
                             variant.canonicalImpact().proteinImpact())
                     .execute();
@@ -204,21 +210,23 @@ class MolecularDAO {
         for (Amplification amplification : amplifications) {
             context.insertInto(AMPLIFICATION,
                             AMPLIFICATION.SAMPLEID,
+                            AMPLIFICATION.REPORTABLE,
                             AMPLIFICATION.DRIVERLIKELIHOOD,
                             AMPLIFICATION.GENE,
                             AMPLIFICATION.GENEROLE,
                             AMPLIFICATION.PROTEINEFFECT,
                             AMPLIFICATION.ASSOCIATEDWITHDRUGRESISTANCE,
-                            AMPLIFICATION.ISPARTIAL,
-                            AMPLIFICATION.COPIES)
+                            AMPLIFICATION.MINCOPIES,
+                            AMPLIFICATION.MAXCOPIES)
                     .values(sampleId,
+                            DataUtil.toByte(amplification.reportable()),
                             amplification.driverLikelihood().toString(),
                             amplification.gene(),
                             amplification.geneRole().toString(),
                             amplification.proteinEffect().toString(),
                             DataUtil.toByte(amplification.associatedWithDrugResistance()),
-                            DataUtil.toByte(amplification.isPartial()),
-                            amplification.copies())
+                            amplification.minCopies(),
+                            amplification.maxCopies())
                     .execute();
         }
     }
@@ -227,19 +235,23 @@ class MolecularDAO {
         for (Loss loss : losses) {
             context.insertInto(LOSS,
                             LOSS.SAMPLEID,
+                            LOSS.REPORTABLE,
                             LOSS.DRIVERLIKELIHOOD,
                             LOSS.GENE,
                             LOSS.GENEROLE,
                             LOSS.PROTEINEFFECT,
                             LOSS.ASSOCIATEDWITHDRUGRESISTANCE,
-                            LOSS.ISPARTIAL)
+                            LOSS.MINCOPIES,
+                            LOSS.MAXCOPIES)
                     .values(sampleId,
+                            DataUtil.toByte(loss.reportable()),
                             loss.driverLikelihood().toString(),
                             loss.gene(),
                             loss.geneRole().toString(),
                             loss.proteinEffect().toString(),
                             DataUtil.toByte(loss.associatedWithDrugResistance()),
-                            DataUtil.toByte(loss.isPartial()))
+                            loss.minCopies(),
+                            loss.maxCopies())
                     .execute();
         }
     }
@@ -248,12 +260,14 @@ class MolecularDAO {
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
             context.insertInto(HOMOZYGOUSDISRUPTION,
                             HOMOZYGOUSDISRUPTION.SAMPLEID,
+                            HOMOZYGOUSDISRUPTION.REPORTABLE,
                             HOMOZYGOUSDISRUPTION.DRIVERLIKELIHOOD,
                             HOMOZYGOUSDISRUPTION.GENE,
                             HOMOZYGOUSDISRUPTION.GENEROLE,
                             HOMOZYGOUSDISRUPTION.PROTEINEFFECT,
                             HOMOZYGOUSDISRUPTION.ASSOCIATEDWITHDRUGRESISTANCE)
                     .values(sampleId,
+                            DataUtil.toByte(homozygousDisruption.reportable()),
                             homozygousDisruption.driverLikelihood().toString(),
                             homozygousDisruption.gene(),
                             homozygousDisruption.geneRole().toString(),
@@ -267,6 +281,7 @@ class MolecularDAO {
         for (Disruption disruption : disruptions) {
             context.insertInto(DISRUPTION,
                             DISRUPTION.SAMPLEID,
+                            DISRUPTION.REPORTABLE,
                             DISRUPTION.DRIVERLIKELIHOOD,
                             DISRUPTION.GENE,
                             DISRUPTION.GENEROLE,
@@ -279,6 +294,7 @@ class MolecularDAO {
                             DISRUPTION.CODINGCONTEXT,
                             DISRUPTION.DISRUPTEDRANGE)
                     .values(sampleId,
+                            DataUtil.toByte(disruption.reportable()),
                             disruption.driverLikelihood().toString(),
                             disruption.gene(),
                             disruption.geneRole().toString(),
@@ -298,6 +314,7 @@ class MolecularDAO {
         for (Fusion fusion : fusions) {
             context.insertInto(FUSION,
                             FUSION.SAMPLEID,
+                            FUSION.REPORTABLE,
                             FUSION.DRIVERLIKELIHOOD,
                             FUSION.FIVEGENE,
                             FUSION.THREEGENE,
@@ -306,6 +323,7 @@ class MolecularDAO {
                             FUSION.DETAILS,
                             FUSION.DRIVERTYPE)
                     .values(sampleId,
+                            DataUtil.toByte(fusion.reportable()),
                             fusion.driverLikelihood().toString(),
                             fusion.fiveGene(),
                             fusion.threeGene(),
@@ -319,8 +337,12 @@ class MolecularDAO {
 
     private void writeViruses(@NotNull String sampleId, @NotNull Set<Virus> viruses) {
         for (Virus virus : viruses) {
-            context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.DRIVERLIKELIHOOD, VIRUS.NAME, VIRUS.INTEGRATIONS)
-                    .values(sampleId, virus.driverLikelihood().toString(), virus.name(), virus.integrations())
+            context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.REPORTABLE, VIRUS.DRIVERLIKELIHOOD, VIRUS.NAME, VIRUS.INTEGRATIONS)
+                    .values(sampleId,
+                            DataUtil.toByte(virus.reportable()),
+                            virus.driverLikelihood().toString(),
+                            virus.name(),
+                            virus.integrations())
                     .execute();
         }
     }

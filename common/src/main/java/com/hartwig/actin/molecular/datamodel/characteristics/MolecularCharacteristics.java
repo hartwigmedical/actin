@@ -14,6 +14,9 @@ public abstract class MolecularCharacteristics {
     public abstract Double purity();
 
     @Nullable
+    public abstract Double ploidy();
+
+    @Nullable
     public abstract PredictedTumorOrigin predictedTumorOrigin();
 
     @Nullable

@@ -251,6 +251,7 @@ CREATE TABLE molecular
     containsTumorCells BOOLEAN NOT NULL,
     hasSufficientQuality BOOLEAN NOT NULL,
     purity double precision,
+    ploidy double precision,
     predictedTumorType varchar(50),
     predictedTumorLikelihood double precision,
     isMicrosatelliteUnstable BOOLEAN,
@@ -302,6 +303,7 @@ DROP TABLE IF EXISTS variant;
 CREATE TABLE variant
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -318,6 +320,7 @@ CREATE TABLE variant
     canonicalCodingEffect varchar(50),
     canonicalAffectedCodon int,
     canonicalAffectedExon int,
+    canonicalIsSpliceRegion BOOLEAN NOT NULL,
     canonicalCodingImpact varchar(50) NOT NULL,
     canonicalProteinImpact varchar(50) NOT NULL,
     PRIMARY KEY (id)
@@ -342,6 +345,7 @@ CREATE TABLE variantOtherImpact
     codingEffect varchar(50),
     affectedCodon int,
     affectedExon int,
+    isSpliceRegion BOOLEAN NOT NULL,
     codingImpact varchar(50) NOT NULL,
     proteinImpact varchar(50) NOT NULL,
     PRIMARY KEY (id)
@@ -351,13 +355,14 @@ DROP TABLE IF EXISTS amplification;
 CREATE TABLE amplification
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
     associatedWithDrugResistance BOOLEAN,
-    isPartial BOOLEAN NOT NULL,
-    copies int NOT NULL,
+    minCopies int NOT NULL,
+    maxCopies int NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -375,12 +380,14 @@ DROP TABLE IF EXISTS loss;
 CREATE TABLE loss
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
     associatedWithDrugResistance BOOLEAN,
-    isPartial BOOLEAN NOT NULL,
+    minCopies int NOT NULL,
+    maxCopies int NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -398,6 +405,7 @@ DROP TABLE IF EXISTS homozygousDisruption;
 CREATE TABLE homozygousDisruption
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -420,6 +428,7 @@ DROP TABLE IF EXISTS disruption;
 CREATE TABLE disruption
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -448,6 +457,7 @@ DROP TABLE IF EXISTS fusion;
 CREATE TABLE fusion
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     fiveGene varchar(50) NOT NULL,
     threeGene varchar(50) NOT NULL,
@@ -472,6 +482,7 @@ DROP TABLE IF EXISTS virus;
 CREATE TABLE virus
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
+    reportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
     integrations int NOT NULL,

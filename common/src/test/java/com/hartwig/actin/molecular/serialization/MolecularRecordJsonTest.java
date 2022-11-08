@@ -104,14 +104,12 @@ public class MolecularRecordJsonTest {
         Amplification amplification = drivers.amplifications().iterator().next();
         assertEquals(DriverLikelihood.HIGH, amplification.driverLikelihood());
         assertEquals("MYC", amplification.gene());
-        assertEquals(38, amplification.copies());
-        assertFalse(amplification.isPartial());
+        assertEquals(38, amplification.minCopies());
 
         assertEquals(1, drivers.losses().size());
         Loss loss = drivers.losses().iterator().next();
         assertEquals(DriverLikelihood.HIGH, loss.driverLikelihood());
         assertEquals("PTEN", loss.gene());
-        assertTrue(loss.isPartial());
 
         assertEquals(1, drivers.homozygousDisruptions().size());
         HomozygousDisruption homozygousDisruption = drivers.homozygousDisruptions().iterator().next();

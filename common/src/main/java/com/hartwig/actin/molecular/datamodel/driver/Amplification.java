@@ -8,5 +8,4 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class Amplification implements CopyNumberDriver {
 
-    public abstract int copies();
 }

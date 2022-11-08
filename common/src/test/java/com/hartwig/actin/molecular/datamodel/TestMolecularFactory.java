@@ -100,7 +100,6 @@ public final class TestMolecularFactory {
                 .addLosses(TestLossFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
-                        .isPartial(true)
                         .build())
                 .build();
     }
@@ -135,8 +134,8 @@ public final class TestMolecularFactory {
                 .addAmplifications(TestAmplificationFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("MYC")
-                        .copies(38)
-                        .isPartial(false)
+                        .minCopies(38)
+                        .maxCopies(38)
                         .build())
                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)

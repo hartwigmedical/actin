@@ -23,6 +23,8 @@ public abstract class TranscriptImpact {
     @Nullable
     public abstract Integer affectedExon();
 
+    public abstract boolean isSpliceRegion();
+
     @NotNull
     public abstract String codingImpact();
 

@@ -13,6 +13,7 @@ public final class TestTranscriptImpactFactory {
         return ImmutableTranscriptImpact.builder()
                 .transcriptId(Strings.EMPTY)
                 .effect(Strings.EMPTY)
+                .isSpliceRegion(false)
                 .codingImpact(Strings.EMPTY)
                 .proteinImpact(Strings.EMPTY);
     }

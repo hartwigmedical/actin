@@ -80,9 +80,10 @@ public final class MolecularDriverEntryFactory {
         for (Amplification amplification : amplifications) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
-            String addon = amplification.isPartial() ? " (partial)" : Strings.EMPTY;
+            // TODO Replace partial
+            String addon = Strings.EMPTY; //amplification.isPartial() ? " (partial)" : Strings.EMPTY;
             entryBuilder.driverType("Amplification" + addon);
-            entryBuilder.driver(amplification.gene() + " amp, " + amplification.copies() + " copies");
+            entryBuilder.driver(amplification.gene() + " amp, " + amplification.minCopies() + " copies");
             entryBuilder.driverLikelihood(amplification.driverLikelihood());
 
             addActionability(entryBuilder, amplification);

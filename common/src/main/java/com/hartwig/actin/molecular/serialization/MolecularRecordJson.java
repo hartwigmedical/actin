@@ -43,6 +43,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigi
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
@@ -154,6 +155,7 @@ public class MolecularRecordJson {
         private static MolecularCharacteristics toMolecularCharacteristics(@NotNull JsonObject characteristics) {
             return ImmutableMolecularCharacteristics.builder()
                     .purity(nullableNumber(characteristics, "purity"))
+                    .ploidy(nullableNumber(characteristics, "ploidy"))
                     .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(characteristics, "predictedTumorOrigin")))
                     .isMicrosatelliteUnstable(nullableBool(characteristics, "isMicrosatelliteUnstable"))
                     .microsatelliteEvidence(toNullableActionableEvidence(nullableObject(characteristics, "microsatelliteEvidence")))
@@ -210,8 +212,7 @@ public class MolecularRecordJson {
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutableVariant.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(variant, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(variant, "evidence")))
+                        .from(toDriver(variant))
                         .gene(string(variant, "gene"))
                         .geneRole(GeneRole.valueOf(string(variant, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(variant, "proteinEffect")))
@@ -245,6 +246,7 @@ public class MolecularRecordJson {
                     .effect(string(impact, "effect"))
                     .affectedCodon(nullableInteger(impact, "affectedCodon"))
                     .affectedExon(nullableInteger(impact, "affectedExon"))
+                    .isSpliceRegion(bool(impact, "isSpliceRegion"))
                     .codingImpact(string(impact, "codingImpact"))
                     .proteinImpact(string(impact, "proteinImpact"))
                     .build();
@@ -256,14 +258,13 @@ public class MolecularRecordJson {
             for (JsonElement element : amplificationArray) {
                 JsonObject amplification = element.getAsJsonObject();
                 amplifications.add(ImmutableAmplification.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(amplification, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(amplification, "evidence")))
+                        .from(toDriver(amplification))
                         .gene(string(amplification, "gene"))
                         .geneRole(GeneRole.valueOf(string(amplification, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(amplification, "proteinEffect")))
                         .associatedWithDrugResistance(nullableBool(amplification, "associatedWithDrugResistance"))
-                        .isPartial(bool(amplification, "isPartial"))
-                        .copies(integer(amplification, "copies"))
+                        .minCopies(integer(amplification, "minCopies"))
+                        .maxCopies(integer(amplification, "maxCopies"))
                         .build());
             }
             return amplifications;
@@ -275,13 +276,13 @@ public class MolecularRecordJson {
             for (JsonElement element : lossArray) {
                 JsonObject loss = element.getAsJsonObject();
                 losses.add(ImmutableLoss.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(loss, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(loss, "evidence")))
+                        .from(toDriver(loss))
                         .gene(string(loss, "gene"))
                         .geneRole(GeneRole.valueOf(string(loss, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(loss, "proteinEffect")))
                         .associatedWithDrugResistance(nullableBool(loss, "associatedWithDrugResistance"))
-                        .isPartial(bool(loss, "isPartial"))
+                        .minCopies(integer(loss, "minCopies"))
+                        .maxCopies(integer(loss, "maxCopies"))
                         .build());
             }
             return losses;
@@ -293,8 +294,7 @@ public class MolecularRecordJson {
             for (JsonElement element : homozygousDisruptionArray) {
                 JsonObject homozygousDisruption = element.getAsJsonObject();
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(homozygousDisruption, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(homozygousDisruption, "evidence")))
+                        .from(toDriver(homozygousDisruption))
                         .gene(string(homozygousDisruption, "gene"))
                         .geneRole(GeneRole.valueOf(string(homozygousDisruption, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(homozygousDisruption, "proteinEffect")))
@@ -310,8 +310,7 @@ public class MolecularRecordJson {
             for (JsonElement element : disruptionArray) {
                 JsonObject disruption = element.getAsJsonObject();
                 disruptions.add(ImmutableDisruption.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(disruption, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(disruption, "evidence")))
+                        .from(toDriver(disruption))
                         .gene(string(disruption, "gene"))
                         .geneRole(GeneRole.valueOf(string(disruption, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(disruption, "proteinEffect")))
@@ -333,8 +332,7 @@ public class MolecularRecordJson {
             for (JsonElement element : fusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableFusion.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(fusion, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(fusion, "evidence")))
+                        .from(toDriver(fusion))
                         .fiveGene(string(fusion, "fiveGene"))
                         .threeGene(string(fusion, "threeGene"))
                         .proteinEffect(ProteinEffect.valueOf(string(fusion, "proteinEffect")))
@@ -352,13 +350,34 @@ public class MolecularRecordJson {
             for (JsonElement element : virusArray) {
                 JsonObject virus = element.getAsJsonObject();
                 viruses.add(ImmutableVirus.builder()
-                        .driverLikelihood(toDriverLikelihood(nullableString(virus, "driverLikelihood")))
-                        .evidence(toActionableEvidence(object(virus, "evidence")))
+                        .from(toDriver(virus))
                         .name(string(virus, "name"))
                         .integrations(integer(virus, "integrations"))
                         .build());
             }
             return viruses;
+        }
+
+        @NotNull
+        private static Driver toDriver(@NotNull JsonObject object) {
+            return new Driver() {
+                @Override
+                public boolean reportable() {
+                    return bool(object, "reportable");
+                }
+
+                @Nullable
+                @Override
+                public DriverLikelihood driverLikelihood() {
+                    return toDriverLikelihood(nullableString(object, "driverLikelihood"));
+                }
+
+                @NotNull
+                @Override
+                public ActionableEvidence evidence() {
+                    return toActionableEvidence(object(object, "evidence"));
+                }
+            };
         }
 
         @Nullable

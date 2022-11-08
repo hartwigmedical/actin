@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -130,8 +129,7 @@ public class DriverExtractionTest {
         Amplification amplification = amplifications.iterator().next();
         assertEquals(DriverLikelihood.HIGH, amplification.driverLikelihood());
         assertEquals("MYC", amplification.gene());
-        assertFalse(amplification.isPartial());
-        assertEquals(38, amplification.copies());
+        assertEquals(38, amplification.minCopies());
     }
 
     private static void assertLosses(@NotNull Set<Loss> losses) {
@@ -140,7 +138,6 @@ public class DriverExtractionTest {
         Loss loss = losses.iterator().next();
         assertEquals(DriverLikelihood.HIGH, loss.driverLikelihood());
         assertEquals("PTEN", loss.gene());
-        assertTrue(loss.isPartial());
     }
 
     private static void assertHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
