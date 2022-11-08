@@ -6,16 +6,17 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class HasCertainTumorMutationalLoad implements EvaluationFunction {
 
     @Nullable
     private final Integer minTumorMutationalLoad;
+    @Nullable
     private final Integer maxTumorMutationalLoad;
 
-    public HasCertainTumorMutationalLoad(@Nullable final Integer minTumorMutationalLoad, final Integer maxTumorMutationalLoad) {
+    public HasCertainTumorMutationalLoad(@Nullable final Integer minTumorMutationalLoad, @Nullable final Integer maxTumorMutationalLoad) {
         this.minTumorMutationalLoad = minTumorMutationalLoad;
         this.maxTumorMutationalLoad = maxTumorMutationalLoad;
     }
@@ -24,7 +25,7 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Integer tumorMutationalLoad = record.molecular().characteristics().tumorMutationalLoad();
-        Boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
+        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
 
         if (tumorMutationalLoad == null) {
             return EvaluationFactory.unrecoverable()
@@ -34,13 +35,9 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
                     .build();
         }
 
-        boolean tumorMutationalLoadIsAllowed = false;
-        if ((minTumorMutationalLoad == null && maxTumorMutationalLoad != null && tumorMutationalLoad <= maxTumorMutationalLoad) || (
-                minTumorMutationalLoad != null && maxTumorMutationalLoad == null && tumorMutationalLoad >= minTumorMutationalLoad) || (
-                minTumorMutationalLoad != null && maxTumorMutationalLoad != null && tumorMutationalLoad >= minTumorMutationalLoad
-                        && tumorMutationalLoad <= maxTumorMutationalLoad)) {
-            tumorMutationalLoadIsAllowed = true;
-        }
+        boolean meetsMinTumorLoad = minTumorMutationalLoad == null || tumorMutationalLoad >= minTumorMutationalLoad;
+        boolean meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad;
+        boolean tumorMutationalLoadIsAllowed = meetsMinTumorLoad && meetsMaxTumorLoad;
 
         boolean tumorMutationalLoadIsAlmostAllowed = false;
         if (minTumorMutationalLoad != null && minTumorMutationalLoad - tumorMutationalLoad <= 5) {
