@@ -332,20 +332,6 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithTwoStringInputs() {
-        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
-
-        EligibilityRule rule = firstOfType(FunctionInput.TWO_STRINGS);
-
-        EligibilityFunction valid = create(rule, Lists.newArrayList("BRAF", "V600E"));
-        assertTrue(resolver.hasValidInputs(valid));
-        assertEquals(ImmutableTwoStrings.builder().string1("BRAF").string2("V600E").build(), resolver.createTwoStringsInput(valid));
-
-        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
-        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("012"))));
-    }
-
-    @Test
     public void canResolveFunctionsWithManyStringsOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
