@@ -21,5 +21,9 @@ public class HasCertainTumorMutationalLoadTest {
         assertEvaluation(EvaluationResult.PASS, function3.evaluate(MolecularTestFactory.withTumorMutationalLoad(200)));
         assertEvaluation(EvaluationResult.PASS, function3.evaluate(MolecularTestFactory.withTumorMutationalLoad(280)));
 
+        assertEvaluation(EvaluationResult.FAIL,
+                function3.evaluate(MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQuality(136, true)));
+        assertEvaluation(EvaluationResult.WARN,
+                function3.evaluate(MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQuality(136, false)));
     }
 }
