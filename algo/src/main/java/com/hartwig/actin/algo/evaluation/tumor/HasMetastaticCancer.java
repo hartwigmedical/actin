@@ -44,21 +44,18 @@ public class HasMetastaticCancer implements EvaluationFunction {
                     .build();
         }
 
-        Set<String> tumorDoids = record.clinical().tumor().doids();
-        boolean hasConfiguredDoids = DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids);
-        boolean hasStageIIPotentiallyMetastaticCancer = false;
-        if (hasConfiguredDoids) {
-            hasStageIIPotentiallyMetastaticCancer =
-                    DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS);
-        }
-
         EvaluationResult result;
         if (isStageMatch(stage, TumorStage.III) || isStageMatch(stage, TumorStage.IV)) {
             result = EvaluationResult.PASS;
-        } else if (isStageMatch(stage, TumorStage.II) && hasStageIIPotentiallyMetastaticCancer) {
-            result = EvaluationResult.WARN;
-        } else if (isStageMatch(stage, TumorStage.II) && !hasConfiguredDoids) {
-            result = EvaluationResult.UNDETERMINED;
+        } else if (isStageMatch(stage, TumorStage.II)) {
+            Set<String> tumorDoids = record.clinical().tumor().doids();
+            if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+                result = EvaluationResult.UNDETERMINED;
+            } else if (DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)) {
+                result = EvaluationResult.WARN;
+            } else {
+                result = EvaluationResult.FAIL;
+            }
         } else {
             result = EvaluationResult.FAIL;
         }
@@ -82,6 +79,6 @@ public class HasMetastaticCancer implements EvaluationFunction {
     }
 
     private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
-        return (stage == stageToMatch || stage.category() == stageToMatch);
+        return stage == stageToMatch || stage.category() == stageToMatch;
     }
 }
