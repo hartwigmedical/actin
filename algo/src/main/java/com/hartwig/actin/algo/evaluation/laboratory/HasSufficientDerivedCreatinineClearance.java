@@ -32,6 +32,8 @@ public class HasSufficientDerivedCreatinineClearance implements LabEvaluationFun
         this.minCreatinineClearance = minCreatinineClearance;
     }
 
+
+    //TODO: Implement logics for method = "measured"
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {

@@ -32,6 +32,7 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator());
         map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, hasNormalCardiacFunctionByMUGAOrTTECreator());
         map.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH, hasFamilyHistoryOfIdiopathicSuddenDeathCreator());
+        map.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME, hasFamilyHistoryOfLongQTSyndromeCreator());
 
         return map;
     }
@@ -88,5 +89,10 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasFamilyHistoryOfIdiopathicSuddenDeathCreator() {
         return function -> new HasFamilyHistoryOfIdiopathicSuddenDeath();
+    }
+
+    @NotNull
+    private FunctionCreator hasFamilyHistoryOfLongQTSyndromeCreator() {
+        return function -> new HasFamilyHistoryOfLongQTSyndrome();
     }
 }

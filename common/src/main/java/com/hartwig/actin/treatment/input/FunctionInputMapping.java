@@ -182,6 +182,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y, FunctionInput.TWO_DOUBLES);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
@@ -207,6 +208,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PSA_UG_PER_L_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PSA_LLN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_PHOSPHORUS_MMOL_PER_L_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
@@ -264,6 +266,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LONG_QT_SYNDROME, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ACTIVE_INFECTION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_EBV_INFECTION, FunctionInput.NONE);
