@@ -40,11 +40,17 @@ public class HasComplicationOfCategory implements EvaluationFunction {
             }
         }
 
-        //TODO: Update message: if categoryToFind equals Format.concat(complications), then do not display " of category + categoryToFind"
-        if (!complications.isEmpty()) {
+        //TODO: Check if code below is correct
+        if (!complications.isEmpty() && !Format.concat(complications).equalsIgnoreCase(categoryToFind)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has complication " + Format.concat(complications) + " of category " + categoryToFind)
+                    .addPassGeneralMessages(Format.concat(complications))
+                    .build();
+        } else if (!complications.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
                     .addPassGeneralMessages(Format.concat(complications))
                     .build();
         }
