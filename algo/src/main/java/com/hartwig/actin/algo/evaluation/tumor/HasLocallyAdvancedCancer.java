@@ -1,8 +1,5 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -32,9 +29,9 @@ public class HasLocallyAdvancedCancer implements EvaluationFunction {
         }
 
         EvaluationResult result;
-        if (stage == TumorStage.III || stage.category() == TumorStage.III) {
+        if (isStageMatch(stage, TumorStage.III)) {
             result = EvaluationResult.PASS;
-        } else if (stage == TumorStage.II || stage.category() == TumorStage.II) {
+        } else if (isStageMatch(stage, TumorStage.II)) {
             result = EvaluationResult.WARN;
         } else {
             result = EvaluationResult.FAIL;
@@ -53,5 +50,9 @@ public class HasLocallyAdvancedCancer implements EvaluationFunction {
         }
 
         return builder.build();
+    }
+
+    private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
+        return stage == stageToMatch || stage.category() == stageToMatch;
     }
 }

@@ -29,7 +29,7 @@ public class HasUnresectableStageIIICancer implements EvaluationFunction {
         }
 
         EvaluationResult result;
-        if (stage == TumorStage.III || stage.category() == TumorStage.III) {
+        if (isStageMatch(stage, TumorStage.III)) {
             result = EvaluationResult.UNDETERMINED;
         } else {
             result = EvaluationResult.FAIL;
@@ -45,5 +45,9 @@ public class HasUnresectableStageIIICancer implements EvaluationFunction {
         }
 
         return builder.build();
+    }
+
+    private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
+        return stage == stageToMatch || stage.category() == stageToMatch;
     }
 }
