@@ -2,10 +2,12 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
+import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
@@ -68,7 +70,7 @@ public class MolecularRuleMapper extends RuleMapper {
     private FunctionCreator geneIsActivatedOrAmplifiedCreator() {
         return function -> {
             String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneIsActivatedOrAmplified(gene);
+            return new Or(Lists.newArrayList(new GeneHasActivatingMutation(gene), new GeneIsAmplified(gene)));
         };
     }
 
