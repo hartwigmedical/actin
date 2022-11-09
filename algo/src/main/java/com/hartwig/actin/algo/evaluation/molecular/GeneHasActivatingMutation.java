@@ -30,9 +30,9 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> activatingVariants = Sets.newHashSet();
+        Set<String> activatingVariantsWithoutDrugResistance = Sets.newHashSet();
         Set<String> activatingVariantsAssociatedWithResistance = Sets.newHashSet();
-        Set<String> activatingMutationsInNonOncogene = Sets.newHashSet();
+        Set<String> activatingVariantsInNonOncogene = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
         Set<String> variantWithUnclearHotspotStatus = Sets.newHashSet();
@@ -48,19 +48,19 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                         if (isAssociatedWithDrugResistance(variant)) {
                             activatingVariantsAssociatedWithResistance.add(variantEvent);
                         } else {
-                            activatingVariants.add(variantEvent);
+                            activatingVariantsWithoutDrugResistance.add(variantEvent);
                         }
-                    } else if (variant.geneRole() == GeneRole.ONCO) {
+                    } else {
                         if (highDriverNoGainOfFunction(variant)) {
                             highDriverNoGainOfFunctionVariants.add(variantEvent);
                         }
 
-                        if (nonHighDriverWithGainFunction(variant)) {
-                            nonHighDriverGainOfFunctionVariants.add(variantEvent);
-                        }
-
                         if (nonHighDriver(variant)) {
                             nonHighDriverVariants.add(variantEvent);
+
+                            if (!isGainOfFunction(variant)) {
+                                nonHighDriverGainOfFunctionVariants.add(variantEvent);
+                            }
                         }
 
                         if (hasUnclearHotspotStatus(variant)) {
@@ -72,16 +72,16 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                         }
                     }
                 } else if (isActivating) {
-                    activatingMutationsInNonOncogene.add(variantEvent);
+                    activatingVariantsInNonOncogene.add(variantEvent);
                 }
             }
         }
 
-        if (!activatingVariants.isEmpty()) {
+        if (!activatingVariantsWithoutDrugResistance.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addAllInclusionMolecularEvents(activatingVariants)
-                    .addPassSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingVariants))
+                    .addAllInclusionMolecularEvents(activatingVariantsWithoutDrugResistance)
+                    .addPassSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingVariantsWithoutDrugResistance))
                     .addPassGeneralMessages(gene + " activation")
                     .build();
         }
@@ -97,12 +97,22 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .build();
         }
 
-        if (!activatingMutationsInNonOncogene.isEmpty()) {
+        if (!activatingVariantsInNonOncogene.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(activatingMutationsInNonOncogene)
-                    .addWarnSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingMutationsInNonOncogene)
+                    .addAllInclusionMolecularEvents(activatingVariantsInNonOncogene)
+                    .addWarnSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene)
                             + " but gene has not been not annotated as oncogene")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
+                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
+                            + " that have high driver likelihood but no gain-of-function")
                     .addWarnGeneralMessages(gene + " activation")
                     .build();
         }
@@ -133,16 +143,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .addAllInclusionMolecularEvents(variantWithUnclearHotspotStatus)
                     .addWarnSpecificMessages(
                             gene + " has mutation(s) " + Format.concat(variantWithUnclearHotspotStatus) + " with unclear hotspot status")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
-        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
-                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
-                            + " that have high driver likelihood but no gain-of-function")
                     .addWarnGeneralMessages(gene + " activation")
                     .build();
         }
@@ -179,12 +179,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         boolean isHighDriver = variant.driverLikelihood() == DriverLikelihood.HIGH;
         boolean isGainOfFunction = isGainOfFunction(variant);
         return variant.isReportable() && isHighDriver && !isGainOfFunction;
-    }
-
-    private static boolean nonHighDriverWithGainFunction(@NotNull Variant variant) {
-        boolean isNonHighDriver = variant.driverLikelihood() != DriverLikelihood.HIGH;
-        boolean isGainOfFunction = isGainOfFunction(variant);
-        return variant.isReportable() && isNonHighDriver && isGainOfFunction;
     }
 
     private static boolean nonHighDriver(@NotNull Variant variant) {
