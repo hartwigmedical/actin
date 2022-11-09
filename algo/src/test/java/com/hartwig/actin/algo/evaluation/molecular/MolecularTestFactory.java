@@ -53,20 +53,13 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withDisruption(@NotNull Disruption disruption) {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addDisruptions(disruption).build());
-    }
-
-    @NotNull
     public static PatientRecord withVariant(@NotNull Variant variant) {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
     }
 
     @NotNull
-    public static PatientRecord withGeneMutation(@NotNull String gene, @NotNull String mutation) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .build());
+    public static PatientRecord withDisruption(@NotNull Disruption disruption) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addDisruptions(disruption).build());
     }
 
     @NotNull
@@ -135,6 +128,21 @@ final class MolecularTestFactory {
                         .from(base.characteristics())
                         .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withHomologousRepairDeficiencyAndVariant(@Nullable Boolean isHomologousRepairDeficient,
+            @NotNull Variant variant) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
                 .build());
     }
 

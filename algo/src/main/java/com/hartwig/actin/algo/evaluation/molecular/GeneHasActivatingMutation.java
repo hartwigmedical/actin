@@ -39,10 +39,15 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
+                String variantEvent = MolecularEventFactory.variantEvent(variant);
                 if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH) {
                     if (isActivating(variant)) {
-                        activatingVariants.add(MolecularEventFactory.variantEvent(variant));
-                    } else {
+                        if (isAssociatedWithDrugResistance(variant)) {
+                            activatingVariantsAssociatedWithResistance.add(variantEvent);
+                        } else {
+                            activatingVariants.add(variantEvent);
+                        }
+                    } else if (variant.geneRole() == GeneRole.ONCO) {
 
                     }
                 }
@@ -61,5 +66,10 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         boolean hasSuitableProteinEffect = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
         return variant.isReportable() && isHighDriver && hasSuitableGeneRole && hasSuitableProteinEffect;
+    }
+
+    private static boolean isAssociatedWithDrugResistance(@NotNull Variant variant) {
+        Boolean isAssociatedWithDrugResistance = variant.isAssociatedWithDrugResistance();
+        return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance;
     }
 }
