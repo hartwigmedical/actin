@@ -39,7 +39,7 @@ public class GeneHasActivatingMutationTest {
                         .gene("gene B")
                         .build())));
 
-        assertMolecularEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .from(activatingVariant)
                         .geneRole(GeneRole.TSG)

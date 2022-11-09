@@ -32,6 +32,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> activatingVariants = Sets.newHashSet();
         Set<String> activatingVariantsAssociatedWithResistance = Sets.newHashSet();
+        Set<String> activatingMutationsInNonOncogene = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
         Set<String> variantWithUnclearHotspotStatus = Sets.newHashSet();
@@ -41,8 +42,9 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
                 String variantEvent = MolecularEventFactory.variantEvent(variant);
+                boolean isActivating = isActivating(variant);
                 if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH) {
-                    if (isActivating(variant)) {
+                    if (isActivating) {
                         if (isAssociatedWithDrugResistance(variant)) {
                             activatingVariantsAssociatedWithResistance.add(variantEvent);
                         } else {
@@ -69,6 +71,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                             unreportableMissenseOrHotspotVariants.add(variantEvent);
                         }
                     }
+                } else if (isActivating) {
+                    activatingMutationsInNonOncogene.add(variantEvent);
                 }
             }
         }
@@ -89,6 +93,17 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .addWarnSpecificMessages(
                             gene + " has activating mutation(s) " + Format.concat(activatingVariantsAssociatedWithResistance)
                                     + " but are also associated with drug resistance")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!activatingMutationsInNonOncogene.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(activatingMutationsInNonOncogene)
+                    .addWarnSpecificMessages(
+                            gene + " has activating mutation(s) " + Format.concat(activatingMutationsInNonOncogene)
+                                    + " but gene has not been not annotated as oncogene")
                     .addWarnGeneralMessages(gene + " activation")
                     .build();
         }
