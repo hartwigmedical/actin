@@ -1,10 +1,12 @@
 package com.hartwig.actin.molecular.util;
 
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 
@@ -27,8 +29,20 @@ public final class MolecularEventFactory {
 
     @NotNull
     public static String variantEvent(@NotNull Variant variant) {
+        return variant.gene() + " " + transcriptImpactEvent(variant.canonicalImpact());
+    }
 
-        return variant.gene() + " " + variant.canonicalImpact().hgvsProteinImpact();
+    @NotNull
+    private static String transcriptImpactEvent(@NotNull TranscriptImpact impact) {
+        if (!impact.hgvsProteinImpact().isEmpty() && !impact.hgvsProteinImpact().equals("p.?")) {
+            return impact.hgvsProteinImpact();
+        }
+
+        if (!impact.hgvsCodingImpact().isEmpty()) {
+            return impact.codingEffect() == CodingEffect.SPLICE ? impact.hgvsCodingImpact() + " splice" : impact.hgvsCodingImpact();
+        }
+
+        return impact.effect();
     }
 
     @NotNull
@@ -53,7 +67,7 @@ public final class MolecularEventFactory {
 
     @NotNull
     public static String fusionEvent(@NotNull Fusion fusion) {
-        return fusion.geneStart() + "-" + fusion.geneEnd() + " fusion";
+        return fusion.geneStart() + " - " + fusion.geneEnd() + " fusion";
     }
 
     @NotNull
