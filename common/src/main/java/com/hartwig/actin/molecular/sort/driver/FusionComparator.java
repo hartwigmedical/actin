@@ -17,16 +17,17 @@ public class FusionComparator implements Comparator<Fusion> {
             return driverCompare;
         }
 
-        int fiveGeneCompare = fusion1.fiveGene().compareTo(fusion2.fiveGene());
-        if (fiveGeneCompare != 0) {
-            return fiveGeneCompare;
+        int geneStartCompare = fusion1.geneStart().compareTo(fusion2.geneStart());
+        if (geneStartCompare != 0) {
+            return geneStartCompare;
         }
 
-        int threeGeneCompare = fusion1.threeGene().compareTo(fusion2.threeGene());
-        if (threeGeneCompare != 0) {
-            return threeGeneCompare;
+        int geneEndCompare = fusion1.geneEnd().compareTo(fusion2.geneEnd());
+        if (geneEndCompare != 0) {
+            return geneEndCompare;
         }
 
-        return fusion1.details().compareTo(fusion2.details());
+        // TODO
+        return 0;
     }
 }

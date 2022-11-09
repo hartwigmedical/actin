@@ -333,11 +333,12 @@ public class MolecularRecordJson {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableFusion.builder()
                         .from(toDriver(fusion))
-                        .fiveGene(string(fusion, "fiveGene"))
-                        .threeGene(string(fusion, "threeGene"))
+                        .geneStart(string(fusion, "geneStart"))
+                        .fusedExonUp(integer(fusion, "fusedExonUp"))
+                        .geneEnd(string(fusion, "geneEnd"))
+                        .fusedExonDown(integer(fusion, "fusedExonDown"))
                         .proteinEffect(ProteinEffect.valueOf(string(fusion, "proteinEffect")))
                         .isAssociatedWithDrugResistance(nullableBool(fusion, "isAssociatedWithDrugResistance"))
-                        .details(string(fusion, "details"))
                         .driverType(FusionDriverType.valueOf(string(fusion, "driverType")))
                         .build());
             }

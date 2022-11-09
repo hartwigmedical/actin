@@ -157,8 +157,9 @@ public final class MolecularDriverEntryFactory {
         for (Fusion fusion : fusions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType(fusion.driverType().display());
-            String name = fusion.fiveGene() + "-" + fusion.threeGene() + " fusion";
-            entryBuilder.driver(name + ", " + fusion.details());
+            String name = fusion.geneStart() + "-" + fusion.geneEnd() + " fusion";
+//            entryBuilder.driver(name + ", " + fusion.details());
+            entryBuilder.driver(name);
             entryBuilder.driverLikelihood(fusion.driverLikelihood());
 
             addActionability(entryBuilder, fusion);

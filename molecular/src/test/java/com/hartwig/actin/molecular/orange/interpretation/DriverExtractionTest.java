@@ -165,9 +165,8 @@ public class DriverExtractionTest {
 
         Fusion fusion = fusions.iterator().next();
         assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
-        assertEquals("EML4", fusion.fiveGene());
-        assertEquals("ALK", fusion.threeGene());
-        assertEquals("Exon 2 -> Exon 4", fusion.details());
+        assertEquals("EML4", fusion.geneStart());
+        assertEquals("ALK", fusion.geneEnd());
         assertEquals(FusionDriverType.KNOWN, fusion.driverType());
     }
 

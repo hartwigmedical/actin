@@ -459,11 +459,12 @@ CREATE TABLE fusion
     sampleId varchar(50) NOT NULL,
     isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
-    fiveGene varchar(50) NOT NULL,
-    threeGene varchar(50) NOT NULL,
+    geneStart varchar(50) NOT NULL,
+    fusedExonUp int NOT NULL,
+    geneEnd varchar(50) NOT NULL,
+    fusedExonDown int NOT NULL,
     proteinEffect varchar(50) NOT NULL,
     isAssociatedWithDrugResistance BOOLEAN,
-    details varchar(50) NOT NULL,
     driverType varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );

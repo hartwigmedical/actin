@@ -9,21 +9,22 @@ import org.jetbrains.annotations.Nullable;
 public abstract class Fusion implements Driver {
 
     @NotNull
-    public abstract String fiveGene();
+    public abstract String geneStart();
+
+    public abstract int fusedExonUp();
 
     @NotNull
-    public abstract String threeGene();
+    public abstract String geneEnd();
+
+    public abstract int fusedExonDown();
+
+    @NotNull
+    public abstract FusionDriverType driverType();
 
     @NotNull
     public abstract ProteinEffect proteinEffect();
 
     @Nullable
     public abstract Boolean isAssociatedWithDrugResistance();
-
-    @NotNull
-    public abstract String details();
-
-    @NotNull
-    public abstract FusionDriverType driverType();
 
 }

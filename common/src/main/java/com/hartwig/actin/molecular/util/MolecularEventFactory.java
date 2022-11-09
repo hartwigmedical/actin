@@ -47,7 +47,7 @@ public final class MolecularEventFactory {
 
     @NotNull
     public static String fusionEvent(@NotNull Fusion fusion) {
-        return fusion.fiveGene() + "-" + fusion.threeGene() + " fusion";
+        return fusion.geneStart() + "-" + fusion.geneEnd() + " fusion";
     }
 
     @NotNull

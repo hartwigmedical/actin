@@ -244,11 +244,13 @@ final class DriverExtraction {
                     .isReportable(true)
                     .driverLikelihood(extractFusionDriverLikelihood(fusion))
                     .evidence(createEmptyEvidence())
-                    .fiveGene(fusion.geneStart())
-                    .threeGene(fusion.geneEnd())
+                    .geneStart(fusion.geneStart())
+                    .fusedExonUp(0)
+                    .geneEnd(fusion.geneEnd())
+                    .fusedExonDown(0)
                     .proteinEffect(ProteinEffect.UNKNOWN)
                     .isAssociatedWithDrugResistance(null)
-                    .details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
+                    //.details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
                     .driverType(extractFusionDriverType(fusion))
                     .build());
         }

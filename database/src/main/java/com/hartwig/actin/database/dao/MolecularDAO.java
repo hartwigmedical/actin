@@ -316,20 +316,22 @@ class MolecularDAO {
                             FUSION.SAMPLEID,
                             FUSION.ISREPORTABLE,
                             FUSION.DRIVERLIKELIHOOD,
-                            FUSION.FIVEGENE,
-                            FUSION.THREEGENE,
+                            FUSION.GENESTART,
+                            FUSION.FUSEDEXONUP,
+                            FUSION.GENEEND,
+                            FUSION.FUSEDEXONDOWN,
                             FUSION.PROTEINEFFECT,
                             FUSION.ISASSOCIATEDWITHDRUGRESISTANCE,
-                            FUSION.DETAILS,
                             FUSION.DRIVERTYPE)
                     .values(sampleId,
                             DataUtil.toByte(fusion.isReportable()),
                             fusion.driverLikelihood().toString(),
-                            fusion.fiveGene(),
-                            fusion.threeGene(),
+                            fusion.geneStart(),
+                            fusion.fusedExonUp(),
+                            fusion.geneEnd(),
+                            fusion.fusedExonDown(),
                             fusion.proteinEffect().toString(),
                             DataUtil.toByte(fusion.isAssociatedWithDrugResistance()),
-                            fusion.details(),
                             fusion.driverType().toString())
                     .execute();
         }

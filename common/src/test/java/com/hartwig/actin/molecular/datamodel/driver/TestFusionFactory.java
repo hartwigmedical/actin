@@ -12,10 +12,11 @@ public final class TestFusionFactory {
     public static ImmutableFusion.Builder builder() {
         return ImmutableFusion.builder()
                 .from(TestDriverFactory.createEmptyDriver())
-                .fiveGene(Strings.EMPTY)
-                .threeGene(Strings.EMPTY)
+                .geneStart(Strings.EMPTY)
+                .fusedExonUp(-1)
+                .geneEnd(Strings.EMPTY)
+                .fusedExonDown(-1)
                 .proteinEffect(ProteinEffect.UNKNOWN)
-                .details(Strings.EMPTY)
                 .driverType(FusionDriverType.KNOWN);
     }
 }
