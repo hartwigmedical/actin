@@ -321,8 +321,8 @@ CREATE TABLE variant
     canonicalAffectedCodon int,
     canonicalAffectedExon int,
     canonicalIsSpliceRegion BOOLEAN NOT NULL,
-    canonicalCodingImpact varchar(50) NOT NULL,
-    canonicalProteinImpact varchar(50) NOT NULL,
+    canonicalHgvsCodingImpact varchar(50) NOT NULL,
+    canonicalHgvsProteinImpact varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -346,8 +346,8 @@ CREATE TABLE variantOtherImpact
     affectedCodon int,
     affectedExon int,
     isSpliceRegion BOOLEAN NOT NULL,
-    codingImpact varchar(50) NOT NULL,
-    proteinImpact varchar(50) NOT NULL,
+    hgvsCodingImpact varchar(50) NOT NULL,
+    hgvsProteinImpact varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 

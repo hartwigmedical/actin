@@ -14,7 +14,7 @@ public final class TestTranscriptImpactFactory {
                 .transcriptId(Strings.EMPTY)
                 .effect(Strings.EMPTY)
                 .isSpliceRegion(false)
-                .codingImpact(Strings.EMPTY)
-                .proteinImpact(Strings.EMPTY);
+                .hgvsCodingImpact(Strings.EMPTY)
+                .hgvsProteinImpact(Strings.EMPTY);
     }
 }

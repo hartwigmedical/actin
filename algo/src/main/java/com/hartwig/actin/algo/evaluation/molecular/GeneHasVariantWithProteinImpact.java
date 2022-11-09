@@ -36,12 +36,12 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
                 for (String allowedProteinImpact : allowedProteinImpacts) {
-                    if (variant.canonicalImpact().proteinImpact().equals(allowedProteinImpact)) {
+                    if (variant.canonicalImpact().hgvsProteinImpact().equals(allowedProteinImpact)) {
                         canonicalProteinImpactMatches.add(allowedProteinImpact);
                     }
 
                     for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                        if (otherImpact.proteinImpact().equals(allowedProteinImpact)) {
+                        if (otherImpact.hgvsProteinImpact().equals(allowedProteinImpact)) {
                             otherProteinImpactMatches.add(allowedProteinImpact);
                         }
                     }

@@ -100,8 +100,8 @@ final class DriverExtraction {
                             .transcriptId(Strings.EMPTY)
                             .effect(Strings.EMPTY)
                             .isSpliceRegion(false)
-                            .codingImpact(Strings.EMPTY)
-                            .proteinImpact(Strings.EMPTY)
+                            .hgvsCodingImpact(Strings.EMPTY)
+                            .hgvsProteinImpact(Strings.EMPTY)
                             .build())
                     .otherImpacts(Sets.newHashSet())
                     .build());

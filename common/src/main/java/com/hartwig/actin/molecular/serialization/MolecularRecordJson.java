@@ -247,8 +247,8 @@ public class MolecularRecordJson {
                     .affectedCodon(nullableInteger(impact, "affectedCodon"))
                     .affectedExon(nullableInteger(impact, "affectedExon"))
                     .isSpliceRegion(bool(impact, "isSpliceRegion"))
-                    .codingImpact(string(impact, "codingImpact"))
-                    .proteinImpact(string(impact, "proteinImpact"))
+                    .hgvsCodingImpact(string(impact, "hgvsCodingImpact"))
+                    .hgvsProteinImpact(string(impact, "hgvsProteinImpact"))
                     .build();
         }
 

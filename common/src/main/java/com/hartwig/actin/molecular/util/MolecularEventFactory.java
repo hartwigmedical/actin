@@ -27,7 +27,8 @@ public final class MolecularEventFactory {
 
     @NotNull
     public static String variantEvent(@NotNull Variant variant) {
-        return variant.gene() + " " + variant.canonicalImpact().proteinImpact();
+
+        return variant.gene() + " " + variant.canonicalImpact().hgvsProteinImpact();
     }
 
     @NotNull

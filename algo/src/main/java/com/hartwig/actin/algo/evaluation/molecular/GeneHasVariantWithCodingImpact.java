@@ -38,12 +38,12 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
                 for (String allowedCodingImpact : allowedCodingImpacts) {
                     boolean codingImpactOtherMatch = false;
                     for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                        if (otherImpact.codingImpact().equals(allowedCodingImpact)) {
+                        if (otherImpact.hgvsCodingImpact().equals(allowedCodingImpact)) {
                             codingImpactOtherMatch = true;
                         }
                     }
 
-                    if (variant.canonicalImpact().codingImpact().equals(allowedCodingImpact)) {
+                    if (variant.canonicalImpact().hgvsCodingImpact().equals(allowedCodingImpact)) {
                         codingImpactsCanonicalFound.add(allowedCodingImpact);
                     }
 

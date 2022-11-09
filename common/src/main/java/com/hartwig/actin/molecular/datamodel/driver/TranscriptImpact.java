@@ -26,9 +26,9 @@ public abstract class TranscriptImpact {
     public abstract boolean isSpliceRegion();
 
     @NotNull
-    public abstract String codingImpact();
+    public abstract String hgvsCodingImpact();
 
     @NotNull
-    public abstract String proteinImpact();
+    public abstract String hgvsProteinImpact();
 
 }

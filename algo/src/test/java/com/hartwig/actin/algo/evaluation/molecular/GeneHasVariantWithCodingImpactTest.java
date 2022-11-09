@@ -27,31 +27,31 @@ public class GeneHasVariantWithCodingImpactTest {
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("c999").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().proteinImpact("c999").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
                         .build())));
 
         // correct gene, protein impact detected in canonical
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("c100").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c100").build())
                         .build())));
 
         // incorrect gene, protein impact detected in canonical
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene B")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("c100").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c100").build())
                         .build())));
 
         // correct gene, protein impact detected in non-canonical only
         assertEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("c999").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().proteinImpact("c999").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().proteinImpact("c100").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c100").build())
                         .build())));
     }
 }

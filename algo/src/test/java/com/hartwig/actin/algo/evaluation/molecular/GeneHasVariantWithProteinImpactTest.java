@@ -27,31 +27,31 @@ public class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().proteinImpact("V600P").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
                         .build())));
 
         // correct gene, protein impact detected in canonical
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
 
         // incorrect gene, protein impact detected in canonical
         assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene B")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
 
         // correct gene, protein impact detected in non-canonical only
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().proteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().proteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().proteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
     }
 }

@@ -179,8 +179,8 @@ class MolecularDAO {
                             VARIANT.CANONICALAFFECTEDCODON,
                             VARIANT.CANONICALAFFECTEDEXON,
                             VARIANT.CANONICALISSPLICEREGION,
-                            VARIANT.CANONICALCODINGIMPACT,
-                            VARIANT.CANONICALPROTEINIMPACT)
+                            VARIANT.CANONICALHGVSCODINGIMPACT,
+                            VARIANT.CANONICALHGVSPROTEINIMPACT)
                     .values(sampleId,
                             DataUtil.toByte(variant.isReportable()),
                             variant.driverLikelihood().toString(),
@@ -200,8 +200,8 @@ class MolecularDAO {
                             variant.canonicalImpact().affectedCodon(),
                             variant.canonicalImpact().affectedExon(),
                             DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
-                            variant.canonicalImpact().codingImpact(),
-                            variant.canonicalImpact().proteinImpact())
+                            variant.canonicalImpact().hgvsCodingImpact(),
+                            variant.canonicalImpact().hgvsProteinImpact())
                     .execute();
         }
     }
