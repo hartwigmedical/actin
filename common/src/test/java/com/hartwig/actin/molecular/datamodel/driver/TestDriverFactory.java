@@ -15,7 +15,7 @@ final class TestDriverFactory {
     public static Driver createEmptyDriver() {
         return new Driver() {
             @Override
-            public boolean reportable() {
+            public boolean isReportable() {
                 return false;
             }
 

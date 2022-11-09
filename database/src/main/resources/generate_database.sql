@@ -303,7 +303,7 @@ DROP TABLE IF EXISTS variant;
 CREATE TABLE variant
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -355,7 +355,7 @@ DROP TABLE IF EXISTS amplification;
 CREATE TABLE amplification
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -380,7 +380,7 @@ DROP TABLE IF EXISTS loss;
 CREATE TABLE loss
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -405,7 +405,7 @@ DROP TABLE IF EXISTS homozygousDisruption;
 CREATE TABLE homozygousDisruption
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -428,7 +428,7 @@ DROP TABLE IF EXISTS disruption;
 CREATE TABLE disruption
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
@@ -457,7 +457,7 @@ DROP TABLE IF EXISTS fusion;
 CREATE TABLE fusion
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50),
     fiveGene varchar(50) NOT NULL,
     threeGene varchar(50) NOT NULL,
@@ -482,7 +482,7 @@ DROP TABLE IF EXISTS virus;
 CREATE TABLE virus
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
-    reportable BOOLEAN NOT NULL,
+    isReportable BOOLEAN NOT NULL,
     driverLikelihood varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
     integrations int NOT NULL,

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Driver {
 
-    boolean reportable();
+    boolean isReportable();
 
     @Nullable
     DriverLikelihood driverLikelihood();

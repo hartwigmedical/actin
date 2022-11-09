@@ -83,7 +83,7 @@ final class DriverExtraction {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
         for (PurpleVariant variant : purple.variants()) {
             variants.add(ImmutableVariant.builder()
-                    .reportable(true)
+                    .isReportable(true)
                     .driverLikelihood(interpretDriverLikelihood(variant))
                     .evidence(createEmptyEvidence())
                     .gene(variant.gene())
@@ -143,7 +143,7 @@ final class DriverExtraction {
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN) {
                 boolean isPartial = gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN;
                 amplifications.add(ImmutableAmplification.builder()
-                        .reportable(true)
+                        .isReportable(true)
                         .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
                         .evidence(createEmptyEvidence())
                         .gene(gainLoss.gene())
@@ -165,7 +165,7 @@ final class DriverExtraction {
             if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS
                     || gainLoss.interpretation() == GainLossInterpretation.FULL_LOSS) {
                 losses.add(ImmutableLoss.builder()
-                        .reportable(true)
+                        .isReportable(true)
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(createEmptyEvidence())
                         .gene(gainLoss.gene())
@@ -185,7 +185,7 @@ final class DriverExtraction {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
         for (String homozygous : linx.homozygousDisruptedGenes()) {
             homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                    .reportable(true)
+                    .isReportable(true)
                     .driverLikelihood(DriverLikelihood.HIGH)
                     .evidence(createEmptyEvidence())
                     .gene(homozygous)
@@ -204,7 +204,7 @@ final class DriverExtraction {
             // TODO: Linx should already filter or flag disruptions that are lost.
             if (include(disruption, losses)) {
                 disruptions.add(ImmutableDisruption.builder()
-                        .reportable(true)
+                        .isReportable(true)
                         .driverLikelihood(DriverLikelihood.LOW)
                         .evidence(createEmptyEvidence())
                         .gene(disruption.gene())
@@ -241,7 +241,7 @@ final class DriverExtraction {
         Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()
-                    .reportable(true)
+                    .isReportable(true)
                     .driverLikelihood(extractFusionDriverLikelihood(fusion))
                     .evidence(createEmptyEvidence())
                     .fiveGene(fusion.geneStart())
@@ -298,7 +298,7 @@ final class DriverExtraction {
         Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
             viruses.add(ImmutableVirus.builder()
-                    .reportable(true)
+                    .isReportable(true)
                     .driverLikelihood(extractVirusDriverLikelihood(virus))
                     .evidence(createEmptyEvidence())
                     .name(virus.name())

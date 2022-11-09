@@ -362,8 +362,8 @@ public class MolecularRecordJson {
         private static Driver toDriver(@NotNull JsonObject object) {
             return new Driver() {
                 @Override
-                public boolean reportable() {
-                    return bool(object, "reportable");
+                public boolean isReportable() {
+                    return bool(object, "isReportable");
                 }
 
                 @Nullable
