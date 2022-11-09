@@ -88,7 +88,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
                                 "Homologous repair deficiency (HRD) status detected, but no drivers in HRD genes (" + Format.concat(
                                         HRD_GENES) + ") were detected")
                         .addWarnGeneralMessages("HRD")
-                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT)
+                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
                         .build();
             }
         }

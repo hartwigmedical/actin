@@ -15,7 +15,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
@@ -65,11 +64,6 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withFusion(@NotNull Fusion fusion) {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addFusions(fusion).build());
-    }
-
-    @NotNull
     public static PatientRecord withUndeterminedWildTypes() {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
@@ -113,7 +107,8 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withMicrosatelliteInstability(@Nullable Boolean isMicrosatelliteUnstable) {
+    public static PatientRecord withMicrosatelliteInstabilityAndVariant(@Nullable Boolean isMicrosatelliteUnstable,
+            @NotNull Variant variant) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
@@ -122,6 +117,21 @@ final class MolecularTestFactory {
                         .from(base.characteristics())
                         .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
                         .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withMicrosatelliteInstabilityAndLoss(@Nullable Boolean isMicrosatelliteUnstable, @NotNull Loss loss) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addLosses(loss).build())
                 .build());
     }
 
@@ -141,8 +151,7 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withHomologousRepairDeficiencyAndLoss(@Nullable Boolean isHomologousRepairDeficient,
-            @NotNull Loss loss) {
+    public static PatientRecord withHomologousRepairDeficiencyAndLoss(@Nullable Boolean isHomologousRepairDeficient, @NotNull Loss loss) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
