@@ -16,6 +16,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -143,6 +144,21 @@ final class MolecularTestFactory {
                         .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
                 .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withHomologousRepairDeficiencyAndLoss(@Nullable Boolean isHomologousRepairDeficient,
+            @NotNull Loss loss) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addLosses(loss).build())
                 .build());
     }
 
