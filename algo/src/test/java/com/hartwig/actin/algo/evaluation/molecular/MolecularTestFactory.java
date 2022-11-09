@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
@@ -61,6 +62,11 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withDisruption(@NotNull Disruption disruption) {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addDisruptions(disruption).build());
+    }
+
+    @NotNull
+    public static PatientRecord withFusion(@NotNull Fusion fusion) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addFusions(fusion).build());
     }
 
     @NotNull
@@ -115,19 +121,6 @@ final class MolecularTestFactory {
                 .characteristics(ImmutableMolecularCharacteristics.builder()
                         .from(base.characteristics())
                         .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
-                        .build())
-                .build());
-    }
-
-    @NotNull
-    public static PatientRecord withHomologousRepairDeficiency(@Nullable Boolean isHomologousRepairDeficient) {
-        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
-
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
                 .build());
     }
