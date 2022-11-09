@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -10,8 +9,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,33 +34,34 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> hrdGenesWithVariant = Sets.newHashSet();
-        Set<String> hrdGenesWithLoss = Sets.newHashSet();
-
+        Set<String> hrdGenesWithDriver = Sets.newHashSet();
+        Set<String> hrdGenesWithPreviousMutation = Sets.newHashSet();
         for (String gene : HRD_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
                 if (variant.gene().equals(gene) && variant.isReportable()) {
-                    hrdGenesWithVariant.add(gene);
+                    hrdGenesWithDriver.add(gene);
                 }
             }
             for (Loss loss : record.molecular().drivers().losses()) {
                 if (loss.gene().equals(gene)) {
-                    hrdGenesWithLoss.add(gene);
+                    hrdGenesWithDriver.add(gene);
+                }
+            }
+            for (PriorMolecularTest priorTest : record.clinical().priorMolecularTests()) {
+                if (priorTest.item().equals(gene)) {
+                    // TODO Determine whether a mutation was found
                 }
             }
         }
 
-        Set<String> hrdGenesWithDriver = Sets.union(hrdGenesWithVariant, hrdGenesWithLoss);
-        Boolean hasHrdGenesWithDriver = !hrdGenesWithDriver.isEmpty();
-
         Boolean isHomologousRepairDeficient = record.molecular().characteristics().isHomologousRepairDeficient();
-
         if (isHomologousRepairDeficient == null) {
-            if (hasHrdGenesWithDriver) {
+            if (!hrdGenesWithDriver.isEmpty()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("Unknown homologous repair deficiency (HRD) status, but drivers in HRD genes: "
-                                + Format.concat(hrdGenesWithDriver) + " are detected; a HRD test may be recommended")
+                        .addUndeterminedSpecificMessages(
+                                "Unknown homologous repair deficiency (HRD) status, but drivers in HRD genes: " + Format.concat(
+                                        hrdGenesWithDriver) + " are detected; a HRD test may be recommended")
                         .addUndeterminedGeneralMessages("Unknown HRD status")
                         .build();
             } else {
@@ -70,14 +72,14 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
                         .build();
             }
         } else if (isHomologousRepairDeficient) {
-            if (hasHrdGenesWithDriver) {
+            if (!hrdGenesWithDriver.isEmpty()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages(
                                 "Homologous repair deficiency (HRD) status detected, together with drivers in HRD genes: " + Format.concat(
                                         hrdGenesWithDriver))
                         .addPassGeneralMessages("HRD")
-                        .addAllInclusionMolecularEvents(Collections.singleton("HRD"))
+                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT)
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
@@ -86,15 +88,15 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
                                 "Homologous repair deficiency (HRD) status detected, but no drivers in HRD genes (" + Format.concat(
                                         HRD_GENES) + ") were detected")
                         .addWarnGeneralMessages("HRD")
-                        .addAllInclusionMolecularEvents(Collections.singleton("HRD"))
+                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT)
                         .build();
             }
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("No homologous repair deficiency (HRD) status detected")
-                    .addFailGeneralMessages("HRD")
-                    .build();
         }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("No homologous repair deficiency (HRD) status detected")
+                .addFailGeneralMessages("HRD")
+                .build();
     }
 }
