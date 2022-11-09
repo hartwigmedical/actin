@@ -14,6 +14,13 @@ public final class EvaluationAssert {
     private EvaluationAssert() {
     }
 
+    public static void assertMolecularEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
+        assertEvaluation(expected, actual);
+        if (actual.result() == EvaluationResult.PASS || actual.result() == EvaluationResult.WARN) {
+            assertFalse(actual.inclusionMolecularEvents().isEmpty());
+        }
+    }
+
     public static void assertEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
         assertEquals(expected, actual.result());
 

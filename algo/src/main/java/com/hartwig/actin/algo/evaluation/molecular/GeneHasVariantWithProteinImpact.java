@@ -9,7 +9,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
@@ -58,6 +57,7 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
         if (!proteinImpactsCanonicalFound.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
+                    .addAllInclusionMolecularEvents(toInclusionEvents(proteinImpactsCanonicalFound))
                     .addPassSpecificMessages("Variant(s) " + Format.concat(proteinImpactsCanonicalFound) + " in gene " + gene
                             + " detected in canonical transcript")
                     .addPassGeneralMessages(Format.concat(proteinImpactsCanonicalFound) + " found in " + gene)
@@ -65,6 +65,7 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
         } else if (!proteinImpactsOtherFound.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(toInclusionEvents(proteinImpactsOtherFound))
                     .addWarnSpecificMessages("Variant(s) " + Format.concat(proteinImpactsOtherFound) + " in " + gene
                             + " detected, but in non-canonical transcript")
                     .addWarnGeneralMessages(Format.concat(proteinImpactsOtherFound) + " found in non-canonical transcript of gene " + gene)
@@ -76,5 +77,14 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
                 .addFailSpecificMessages("None of " + Format.concat(allowedProteinImpacts) + " detected in gene " + gene)
                 .addFailGeneralMessages("No specific variants in " + gene + " detected")
                 .build();
+    }
+
+    @NotNull
+    private Set<String> toInclusionEvents(@NotNull Set<String> proteinImpacts) {
+        Set<String> inclusionEvents = Sets.newHashSet();
+        for (String proteinImpact : proteinImpacts) {
+            inclusionEvents.add(gene + " " + proteinImpact);
+        }
+        return inclusionEvents;
     }
 }
