@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
@@ -57,6 +58,17 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withVariant(@NotNull Variant variant) {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
+    }
+
+    @NotNull
+    public static PatientRecord withPloidyAndAmplification(@Nullable Double ploidy, @NotNull Amplification amplification) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder().from(base.characteristics()).ploidy(ploidy).build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addAmplifications(amplification).build())
+                .build());
     }
 
     @NotNull
