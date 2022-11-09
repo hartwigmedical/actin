@@ -8,6 +8,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
@@ -30,12 +32,11 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> activatingVariants = Sets.newHashSet();
         Set<String> activatingVariantsAssociatedWithResistance = Sets.newHashSet();
+        Set<String> highDriverNoGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
-        Set<String> highDriverNoGainOfFunctionVariants = Sets.newHashSet();
         Set<String> variantWithUnclearHotspotStatus = Sets.newHashSet();
-        Set<String> unreportableMissenseVariants = Sets.newHashSet();
-        Set<String> variantsAssociatedWithResistance = Sets.newHashSet();
+        Set<String> unreportableMissenseOrHotspotVariants = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
@@ -48,28 +49,145 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                             activatingVariants.add(variantEvent);
                         }
                     } else if (variant.geneRole() == GeneRole.ONCO) {
+                        if (highDriverNoGainOfFunction(variant)) {
+                            highDriverNoGainOfFunctionVariants.add(variantEvent);
+                        }
 
+                        if (nonHighDriverWithGainFunction(variant)) {
+                            nonHighDriverGainOfFunctionVariants.add(variantEvent);
+                        }
+
+                        if (nonHighDriver(variant)) {
+                            nonHighDriverVariants.add(variantEvent);
+                        }
+
+                        if (hasUnclearHotspotStatus(variant)) {
+                            variantWithUnclearHotspotStatus.add(variantEvent);
+                        }
+
+                        if (isUnreportableMissenseOrHotspot(variant)) {
+                            unreportableMissenseOrHotspotVariants.add(variantEvent);
+                        }
                     }
                 }
             }
         }
 
-        return EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("fail")
-                .addFailGeneralMessages("fail")
+        if (!activatingVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addAllInclusionMolecularEvents(activatingVariants)
+                    .addPassSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingVariants))
+                    .addPassGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!activatingVariantsAssociatedWithResistance.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(activatingVariantsAssociatedWithResistance)
+                    .addWarnSpecificMessages(
+                            gene + " has activating mutation(s) " + Format.concat(activatingVariantsAssociatedWithResistance)
+                                    + " but are also associated with drug resistance")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
+                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
+                            + " that have high driver likelihood but no gain-of-function")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(nonHighDriverGainOfFunctionVariants)
+                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
+                            + " that do not have high driver likelihood but are associated with gain-of-function")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!nonHighDriverVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(nonHighDriverVariants)
+                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(nonHighDriverVariants)
+                            + " that do not have a high driver likelihood")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!variantWithUnclearHotspotStatus.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(variantWithUnclearHotspotStatus)
+                    .addWarnSpecificMessages(
+                            gene + " has mutation(s) " + Format.concat(variantWithUnclearHotspotStatus) + " with unclear hotspot status")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!unreportableMissenseOrHotspotVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(unreportableMissenseOrHotspotVariants)
+                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(unreportableMissenseOrHotspotVariants)
+                            + " with unreportable missense or hotspot status")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages(gene + " does not have any activating mutations")
+                .addFailGeneralMessages("no " + gene + " activation")
                 .build();
     }
 
     private static boolean isActivating(@NotNull Variant variant) {
         boolean isHighDriver = variant.driverLikelihood() == DriverLikelihood.HIGH;
-        boolean hasSuitableGeneRole = variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH;
-        boolean hasSuitableProteinEffect = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
+        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
-        return variant.isReportable() && isHighDriver && hasSuitableGeneRole && hasSuitableProteinEffect;
+        return variant.isReportable() && isHighDriver && isGainOfFunction;
     }
 
     private static boolean isAssociatedWithDrugResistance(@NotNull Variant variant) {
         Boolean isAssociatedWithDrugResistance = variant.isAssociatedWithDrugResistance();
         return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance;
+    }
+
+    private static boolean highDriverNoGainOfFunction(@NotNull Variant variant) {
+        boolean isHighDriver = variant.driverLikelihood() == DriverLikelihood.HIGH;
+        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
+                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+        return variant.isReportable() && isHighDriver && !isGainOfFunction;
+    }
+
+    private static boolean nonHighDriverWithGainFunction(@NotNull Variant variant) {
+        boolean isNonHighDriver = variant.driverLikelihood() != DriverLikelihood.HIGH;
+        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
+                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+        return variant.isReportable() && isNonHighDriver && isGainOfFunction;
+    }
+
+    private static boolean nonHighDriver(@NotNull Variant variant) {
+        boolean isNonHighDriver = variant.driverLikelihood() != DriverLikelihood.HIGH;
+        return variant.isReportable() && isNonHighDriver;
+    }
+
+    private static boolean hasUnclearHotspotStatus(@NotNull Variant variant) {
+        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
+                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+        return variant.isHotspot() && !isGainOfFunction;
+    }
+
+    private boolean isUnreportableMissenseOrHotspot(@NotNull Variant variant) {
+        return (variant.isHotspot() || variant.canonicalImpact().codingEffect() == CodingEffect.MISSENSE) && !variant.isReportable();
     }
 }
