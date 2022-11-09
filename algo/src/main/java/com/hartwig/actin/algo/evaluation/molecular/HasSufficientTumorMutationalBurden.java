@@ -30,7 +30,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
         }
 
         boolean tumorMutationalBurdenIsAllowed = tumorMutationalBurden >= minTumorMutationalBurden;
-        boolean tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 5;
+        boolean tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5;
         boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
 
         if (tumorMutationalBurdenIsAllowed) {
