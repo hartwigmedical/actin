@@ -130,7 +130,6 @@ public enum EligibilityRule {
     HRD_SIGNATURE,
     TMB_OF_AT_LEAST_X,
     TML_OF_AT_LEAST_X,
-    TML_OF_AT_MOST_X,
     TML_BETWEEN_X_AND_Y,
     HAS_HLA_TYPE_X,
     OVEREXPRESSION_OF_GENE_X,

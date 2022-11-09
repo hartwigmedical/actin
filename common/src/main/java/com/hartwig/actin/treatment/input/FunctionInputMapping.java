@@ -136,7 +136,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HRD_SIGNATURE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.TMB_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.TML_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
-        RULE_INPUT_MAP.put(EligibilityRule.TML_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.TML_BETWEEN_X_AND_Y, FunctionInput.TWO_INTEGERS);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HLA_TYPE_X, FunctionInput.ONE_HLA_ALLELE);
         RULE_INPUT_MAP.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, FunctionInput.ONE_STRING);

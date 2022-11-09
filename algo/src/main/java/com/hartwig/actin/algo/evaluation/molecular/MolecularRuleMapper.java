@@ -44,7 +44,6 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HRD_SIGNATURE, isHomologousRepairDeficientCreator());
         map.put(EligibilityRule.TMB_OF_AT_LEAST_X, hasSufficientTumorMutationalBurdenCreator());
         map.put(EligibilityRule.TML_OF_AT_LEAST_X, hasSufficientTumorMutationalLoadCreator());
-        map.put(EligibilityRule.TML_OF_AT_MOST_X, hasLimitedTumorMutationalLoadCreator());
         map.put(EligibilityRule.TML_BETWEEN_X_AND_Y, hasCertainTumorMutationalLoadCreator());
         map.put(EligibilityRule.HAS_HLA_TYPE_X, hasSpecificHLATypeCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
@@ -200,14 +199,6 @@ public class MolecularRuleMapper extends RuleMapper {
         return function -> {
             int minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
             return new HasCertainTumorMutationalLoad(minTumorMutationalLoad, null);
-        };
-    }
-
-    @NotNull
-    private FunctionCreator hasLimitedTumorMutationalLoadCreator() {
-        return function -> {
-            int maxTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
-            return new HasCertainTumorMutationalLoad(null, maxTumorMutationalLoad);
         };
     }
 
