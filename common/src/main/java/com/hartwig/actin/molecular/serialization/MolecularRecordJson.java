@@ -353,6 +353,7 @@ public class MolecularRecordJson {
                 viruses.add(ImmutableVirus.builder()
                         .from(toDriver(virus))
                         .name(string(virus, "name"))
+                        .interpretation(nullableString(virus, "interpretation"))
                         .integrations(integer(virus, "integrations"))
                         .build());
             }

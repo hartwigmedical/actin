@@ -339,11 +339,18 @@ class MolecularDAO {
 
     private void writeViruses(@NotNull String sampleId, @NotNull Set<Virus> viruses) {
         for (Virus virus : viruses) {
-            context.insertInto(VIRUS, VIRUS.SAMPLEID, VIRUS.ISREPORTABLE, VIRUS.DRIVERLIKELIHOOD, VIRUS.NAME, VIRUS.INTEGRATIONS)
+            context.insertInto(VIRUS,
+                            VIRUS.SAMPLEID,
+                            VIRUS.ISREPORTABLE,
+                            VIRUS.DRIVERLIKELIHOOD,
+                            VIRUS.NAME,
+                            VIRUS.INTERPRETATION,
+                            VIRUS.INTEGRATIONS)
                     .values(sampleId,
                             DataUtil.toByte(virus.isReportable()),
                             virus.driverLikelihood().toString(),
                             virus.name(),
+                            virus.interpretation(),
                             virus.integrations())
                     .execute();
         }

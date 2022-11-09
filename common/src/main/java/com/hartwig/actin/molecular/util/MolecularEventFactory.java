@@ -72,6 +72,7 @@ public final class MolecularEventFactory {
 
     @NotNull
     public static String virusEvent(@NotNull Virus virus) {
-        return virus.name();
+        String interpretation = virus.interpretation();
+        return interpretation != null ? interpretation + " positive" : virus.name() + " positive";
     }
 }

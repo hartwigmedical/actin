@@ -11,5 +11,8 @@ public abstract class Virus implements Driver {
     @NotNull
     public abstract String name();
 
+    @Nullable
+    public abstract String interpretation();
+
     public abstract int integrations();
 }
