@@ -19,16 +19,6 @@ import org.jetbrains.annotations.NotNull;
 //TODO: Add implementation for previous molecular tests
 public class IsMicrosatelliteUnstable implements EvaluationFunction {
 
-    static final Set<String> MSI_GENES = Sets.newHashSet();
-
-    static {
-        MSI_GENES.add("MLH1");
-        MSI_GENES.add("MSH2");
-        MSI_GENES.add("MSH6");
-        MSI_GENES.add("PMS2");
-        MSI_GENES.add("EPCAM");
-    }
-
     IsMicrosatelliteUnstable() {
     }
 
@@ -37,7 +27,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> msiGenesWithDriver = Sets.newHashSet();
         Set<String> msiGenesWithPreviousMutation = Sets.newHashSet();
-        for (String gene : MSI_GENES) {
+        for (String gene : MolecularConstants.MSI_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
                 if (variant.gene().equals(gene) && variant.isReportable()) {
                     msiGenesWithDriver.add(gene);
@@ -86,9 +76,8 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
                         .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_POTENTIALLY_UNSTABLE)
-                        .addWarnSpecificMessages(
-                                "Microsatellite instability (MSI) detected, but no drivers in MSI genes (" + Format.concat(MSI_GENES)
-                                        + ") were detected")
+                        .addWarnSpecificMessages("Microsatellite instability (MSI) detected, but no drivers in MSI genes (" + Format.concat(
+                                MolecularConstants.MSI_GENES) + ") were detected")
                         .addWarnGeneralMessages("MSI")
                         .build();
             }

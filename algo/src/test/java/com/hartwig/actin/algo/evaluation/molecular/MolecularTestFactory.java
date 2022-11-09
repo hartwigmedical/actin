@@ -17,6 +17,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularC
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
@@ -69,6 +70,16 @@ final class MolecularTestFactory {
                 .characteristics(ImmutableMolecularCharacteristics.builder().from(base.characteristics()).ploidy(ploidy).build())
                 .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addAmplifications(amplification).build())
                 .build());
+    }
+
+    @NotNull
+    public static PatientRecord withLoss(@NotNull Loss loss) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addLosses(loss).build());
+    }
+
+    @NotNull
+    public static PatientRecord withHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addHomozygousDisruptions(homozygousDisruption).build());
     }
 
     @NotNull

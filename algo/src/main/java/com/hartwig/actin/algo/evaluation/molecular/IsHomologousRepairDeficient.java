@@ -19,15 +19,6 @@ import org.jetbrains.annotations.NotNull;
 //TODO: Add implementation for previous molecular tests
 public class IsHomologousRepairDeficient implements EvaluationFunction {
 
-    static final Set<String> HRD_GENES = Sets.newHashSet();
-
-    static {
-        HRD_GENES.add("BRCA1");
-        HRD_GENES.add("BRCA2");
-        HRD_GENES.add("RAD51C");
-        HRD_GENES.add("PALB2");
-    }
-
     IsHomologousRepairDeficient() {
     }
 
@@ -36,7 +27,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> hrdGenesWithDriver = Sets.newHashSet();
         Set<String> hrdGenesWithPreviousMutation = Sets.newHashSet();
-        for (String gene : HRD_GENES) {
+        for (String gene : MolecularConstants.HRD_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
                 if (variant.gene().equals(gene) && variant.isReportable()) {
                     hrdGenesWithDriver.add(gene);
@@ -87,7 +78,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
                         .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
                         .addWarnSpecificMessages(
                                 "Homologous repair deficiency (HRD) status detected, but no drivers in HRD genes (" + Format.concat(
-                                        HRD_GENES) + ") were detected")
+                                        MolecularConstants.HRD_GENES) + ") were detected")
                         .addWarnGeneralMessages("HRD")
                         .build();
             }

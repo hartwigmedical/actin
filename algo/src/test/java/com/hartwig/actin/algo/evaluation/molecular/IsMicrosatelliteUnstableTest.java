@@ -17,32 +17,32 @@ public class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null,
                         TestVariantFactory.builder()
-                                .gene(IsMicrosatelliteUnstable.MSI_GENES.iterator().next())
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
                                 .isReportable(false)
                                 .build())));
 
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null,
                         TestVariantFactory.builder()
-                                .gene(IsMicrosatelliteUnstable.MSI_GENES.iterator().next())
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
                                 .isReportable(true)
                                 .build())));
 
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true,
                         TestVariantFactory.builder()
-                                .gene(IsMicrosatelliteUnstable.MSI_GENES.iterator().next())
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
                                 .isReportable(true)
                                 .build())));
 
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndLoss(true,
-                        TestLossFactory.builder().gene(IsMicrosatelliteUnstable.MSI_GENES.iterator().next()).build())));
+                        TestLossFactory.builder().gene(MolecularConstants.MSI_GENES.iterator().next()).build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true,
                         TestVariantFactory.builder()
-                                .gene(IsMicrosatelliteUnstable.MSI_GENES.iterator().next())
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
                                 .isReportable(false)
                                 .build())));
 
@@ -53,7 +53,7 @@ public class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(false,
                         TestVariantFactory.builder()
-                                .gene(IsMicrosatelliteUnstable.MSI_GENES.iterator().next())
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
                                 .isReportable(true)
                                 .build())));
     }
