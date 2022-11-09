@@ -216,7 +216,7 @@ public class MolecularRecordJson {
                         .gene(string(variant, "gene"))
                         .geneRole(GeneRole.valueOf(string(variant, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(variant, "proteinEffect")))
-                        .associatedWithDrugResistance(nullableBool(variant, "associatedWithDrugResistance"))
+                        .isAssociatedWithDrugResistance(nullableBool(variant, "isAssociatedWithDrugResistance"))
                         .type(VariantType.valueOf(string(variant, "type")))
                         .variantCopyNumber(number(variant, "variantCopyNumber"))
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
@@ -262,7 +262,7 @@ public class MolecularRecordJson {
                         .gene(string(amplification, "gene"))
                         .geneRole(GeneRole.valueOf(string(amplification, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(amplification, "proteinEffect")))
-                        .associatedWithDrugResistance(nullableBool(amplification, "associatedWithDrugResistance"))
+                        .isAssociatedWithDrugResistance(nullableBool(amplification, "isAssociatedWithDrugResistance"))
                         .minCopies(integer(amplification, "minCopies"))
                         .maxCopies(integer(amplification, "maxCopies"))
                         .build());
@@ -280,7 +280,7 @@ public class MolecularRecordJson {
                         .gene(string(loss, "gene"))
                         .geneRole(GeneRole.valueOf(string(loss, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(loss, "proteinEffect")))
-                        .associatedWithDrugResistance(nullableBool(loss, "associatedWithDrugResistance"))
+                        .isAssociatedWithDrugResistance(nullableBool(loss, "isAssociatedWithDrugResistance"))
                         .minCopies(integer(loss, "minCopies"))
                         .maxCopies(integer(loss, "maxCopies"))
                         .build());
@@ -298,7 +298,7 @@ public class MolecularRecordJson {
                         .gene(string(homozygousDisruption, "gene"))
                         .geneRole(GeneRole.valueOf(string(homozygousDisruption, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(homozygousDisruption, "proteinEffect")))
-                        .associatedWithDrugResistance(nullableBool(homozygousDisruption, "associatedWithDrugResistance"))
+                        .isAssociatedWithDrugResistance(nullableBool(homozygousDisruption, "isAssociatedWithDrugResistance"))
                         .build());
             }
             return homozygousDisruptions;
@@ -314,7 +314,7 @@ public class MolecularRecordJson {
                         .gene(string(disruption, "gene"))
                         .geneRole(GeneRole.valueOf(string(disruption, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(disruption, "proteinEffect")))
-                        .associatedWithDrugResistance(nullableBool(disruption, "associatedWithDrugResistance"))
+                        .isAssociatedWithDrugResistance(nullableBool(disruption, "isAssociatedWithDrugResistance"))
                         .type(string(disruption, "type"))
                         .junctionCopyNumber(number(disruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
@@ -336,7 +336,7 @@ public class MolecularRecordJson {
                         .fiveGene(string(fusion, "fiveGene"))
                         .threeGene(string(fusion, "threeGene"))
                         .proteinEffect(ProteinEffect.valueOf(string(fusion, "proteinEffect")))
-                        .associatedWithDrugResistance(nullableBool(fusion, "associatedWithDrugResistance"))
+                        .isAssociatedWithDrugResistance(nullableBool(fusion, "isAssociatedWithDrugResistance"))
                         .details(string(fusion, "details"))
                         .driverType(FusionDriverType.valueOf(string(fusion, "driverType")))
                         .build());

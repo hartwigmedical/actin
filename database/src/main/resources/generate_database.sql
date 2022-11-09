@@ -308,7 +308,7 @@ CREATE TABLE variant
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
-    associatedWithDrugResistance BOOLEAN,
+    isAssociatedWithDrugResistance BOOLEAN,
     type varchar(50) NOT NULL,
     variantCopyNumber double precision NOT NULL,
     totalCopyNumber double precision NOT NULL,
@@ -360,7 +360,7 @@ CREATE TABLE amplification
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
-    associatedWithDrugResistance BOOLEAN,
+    isAssociatedWithDrugResistance BOOLEAN,
     minCopies int NOT NULL,
     maxCopies int NOT NULL,
     PRIMARY KEY (id)
@@ -385,7 +385,7 @@ CREATE TABLE loss
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
-    associatedWithDrugResistance BOOLEAN,
+    isAssociatedWithDrugResistance BOOLEAN,
     minCopies int NOT NULL,
     maxCopies int NOT NULL,
     PRIMARY KEY (id)
@@ -410,7 +410,7 @@ CREATE TABLE homozygousDisruption
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
-    associatedWithDrugResistance BOOLEAN,
+    isAssociatedWithDrugResistance BOOLEAN,
     PRIMARY KEY (id)
 );
 
@@ -433,7 +433,7 @@ CREATE TABLE disruption
     gene varchar(50) NOT NULL,
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
-    associatedWithDrugResistance BOOLEAN,
+    isAssociatedWithDrugResistance BOOLEAN,
     type varchar(50) NOT NULL,
     junctionCopyNumber double precision NOT NULL,
     undisruptedCopyNumber double precision NOT NULL,
@@ -462,7 +462,7 @@ CREATE TABLE fusion
     fiveGene varchar(50) NOT NULL,
     threeGene varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
-    associatedWithDrugResistance BOOLEAN,
+    isAssociatedWithDrugResistance BOOLEAN,
     details varchar(50) NOT NULL,
     driverType varchar(50) NOT NULL,
     PRIMARY KEY (id)

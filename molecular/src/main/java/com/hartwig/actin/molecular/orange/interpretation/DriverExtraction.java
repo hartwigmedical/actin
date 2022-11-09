@@ -89,7 +89,7 @@ final class DriverExtraction {
                     .gene(variant.gene())
                     .geneRole(GeneRole.UNKNOWN)
                     .proteinEffect(ProteinEffect.UNKNOWN)
-                    .associatedWithDrugResistance(null)
+                    .isAssociatedWithDrugResistance(null)
                     .type(VariantType.SNV)
                     .variantCopyNumber(keep3Digits(variant.alleleCopyNumber()))
                     .totalCopyNumber(keep3Digits(variant.totalCopyNumber()))
@@ -149,7 +149,7 @@ final class DriverExtraction {
                         .gene(gainLoss.gene())
                         .geneRole(GeneRole.UNKNOWN)
                         .proteinEffect(ProteinEffect.UNKNOWN)
-                        .associatedWithDrugResistance(null)
+                        .isAssociatedWithDrugResistance(null)
                         .minCopies(gainLoss.minCopies())
                         .maxCopies(0)
                         .build());
@@ -171,7 +171,7 @@ final class DriverExtraction {
                         .gene(gainLoss.gene())
                         .geneRole(GeneRole.UNKNOWN)
                         .proteinEffect(ProteinEffect.UNKNOWN)
-                        .associatedWithDrugResistance(null)
+                        .isAssociatedWithDrugResistance(null)
                         .minCopies(gainLoss.minCopies())
                         .maxCopies(0)
                         .build());
@@ -191,7 +191,7 @@ final class DriverExtraction {
                     .gene(homozygous)
                     .geneRole(GeneRole.UNKNOWN)
                     .proteinEffect(ProteinEffect.UNKNOWN)
-                    .associatedWithDrugResistance(null)
+                    .isAssociatedWithDrugResistance(null)
                     .build());
         }
         return homozygousDisruptions;
@@ -210,7 +210,7 @@ final class DriverExtraction {
                         .gene(disruption.gene())
                         .geneRole(GeneRole.UNKNOWN)
                         .proteinEffect(ProteinEffect.UNKNOWN)
-                        .associatedWithDrugResistance(null)
+                        .isAssociatedWithDrugResistance(null)
                         .type(disruption.type())
                         .junctionCopyNumber(keep3Digits(disruption.junctionCopyNumber()))
                         .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
@@ -247,7 +247,7 @@ final class DriverExtraction {
                     .fiveGene(fusion.geneStart())
                     .threeGene(fusion.geneEnd())
                     .proteinEffect(ProteinEffect.UNKNOWN)
-                    .associatedWithDrugResistance(null)
+                    .isAssociatedWithDrugResistance(null)
                     .details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
                     .driverType(extractFusionDriverType(fusion))
                     .build());

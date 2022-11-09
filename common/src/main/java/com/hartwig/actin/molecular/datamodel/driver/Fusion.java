@@ -18,7 +18,7 @@ public abstract class Fusion implements Driver {
     public abstract ProteinEffect proteinEffect();
 
     @Nullable
-    public abstract Boolean associatedWithDrugResistance();
+    public abstract Boolean isAssociatedWithDrugResistance();
 
     @NotNull
     public abstract String details();

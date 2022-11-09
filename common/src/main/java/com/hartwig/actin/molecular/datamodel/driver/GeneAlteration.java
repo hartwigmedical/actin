@@ -15,5 +15,5 @@ public interface GeneAlteration {
     ProteinEffect proteinEffect();
 
     @Nullable
-    Boolean associatedWithDrugResistance();
+    Boolean isAssociatedWithDrugResistance();
 }

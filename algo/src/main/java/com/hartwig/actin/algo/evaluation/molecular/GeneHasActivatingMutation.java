@@ -29,6 +29,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> activatingVariants = Sets.newHashSet();
+        Set<String> activatingVariantsAssociatedWithResistance = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
         Set<String> highDriverNoGainOfFunctionVariants = Sets.newHashSet();
@@ -41,6 +42,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                 if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH) {
                     if (isActivating(variant)) {
                         activatingVariants.add(MolecularEventFactory.variantEvent(variant));
+                    } else {
+
                     }
                 }
             }

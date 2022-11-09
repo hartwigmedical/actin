@@ -166,7 +166,7 @@ class MolecularDAO {
                             VARIANT.GENE,
                             VARIANT.GENEROLE,
                             VARIANT.PROTEINEFFECT,
-                            VARIANT.ASSOCIATEDWITHDRUGRESISTANCE,
+                            VARIANT.ISASSOCIATEDWITHDRUGRESISTANCE,
                             VARIANT.TYPE,
                             VARIANT.VARIANTCOPYNUMBER,
                             VARIANT.TOTALCOPYNUMBER,
@@ -187,7 +187,7 @@ class MolecularDAO {
                             variant.gene(),
                             variant.geneRole().toString(),
                             variant.proteinEffect().toString(),
-                            DataUtil.toByte(variant.associatedWithDrugResistance()),
+                            DataUtil.toByte(variant.isAssociatedWithDrugResistance()),
                             variant.type().toString(),
                             variant.variantCopyNumber(),
                             variant.totalCopyNumber(),
@@ -215,7 +215,7 @@ class MolecularDAO {
                             AMPLIFICATION.GENE,
                             AMPLIFICATION.GENEROLE,
                             AMPLIFICATION.PROTEINEFFECT,
-                            AMPLIFICATION.ASSOCIATEDWITHDRUGRESISTANCE,
+                            AMPLIFICATION.ISASSOCIATEDWITHDRUGRESISTANCE,
                             AMPLIFICATION.MINCOPIES,
                             AMPLIFICATION.MAXCOPIES)
                     .values(sampleId,
@@ -224,7 +224,7 @@ class MolecularDAO {
                             amplification.gene(),
                             amplification.geneRole().toString(),
                             amplification.proteinEffect().toString(),
-                            DataUtil.toByte(amplification.associatedWithDrugResistance()),
+                            DataUtil.toByte(amplification.isAssociatedWithDrugResistance()),
                             amplification.minCopies(),
                             amplification.maxCopies())
                     .execute();
@@ -240,7 +240,7 @@ class MolecularDAO {
                             LOSS.GENE,
                             LOSS.GENEROLE,
                             LOSS.PROTEINEFFECT,
-                            LOSS.ASSOCIATEDWITHDRUGRESISTANCE,
+                            LOSS.ISASSOCIATEDWITHDRUGRESISTANCE,
                             LOSS.MINCOPIES,
                             LOSS.MAXCOPIES)
                     .values(sampleId,
@@ -249,7 +249,7 @@ class MolecularDAO {
                             loss.gene(),
                             loss.geneRole().toString(),
                             loss.proteinEffect().toString(),
-                            DataUtil.toByte(loss.associatedWithDrugResistance()),
+                            DataUtil.toByte(loss.isAssociatedWithDrugResistance()),
                             loss.minCopies(),
                             loss.maxCopies())
                     .execute();
@@ -265,14 +265,14 @@ class MolecularDAO {
                             HOMOZYGOUSDISRUPTION.GENE,
                             HOMOZYGOUSDISRUPTION.GENEROLE,
                             HOMOZYGOUSDISRUPTION.PROTEINEFFECT,
-                            HOMOZYGOUSDISRUPTION.ASSOCIATEDWITHDRUGRESISTANCE)
+                            HOMOZYGOUSDISRUPTION.ISASSOCIATEDWITHDRUGRESISTANCE)
                     .values(sampleId,
                             DataUtil.toByte(homozygousDisruption.isReportable()),
                             homozygousDisruption.driverLikelihood().toString(),
                             homozygousDisruption.gene(),
                             homozygousDisruption.geneRole().toString(),
                             homozygousDisruption.proteinEffect().toString(),
-                            DataUtil.toByte(homozygousDisruption.associatedWithDrugResistance()))
+                            DataUtil.toByte(homozygousDisruption.isAssociatedWithDrugResistance()))
                     .execute();
         }
     }
@@ -286,7 +286,7 @@ class MolecularDAO {
                             DISRUPTION.GENE,
                             DISRUPTION.GENEROLE,
                             DISRUPTION.PROTEINEFFECT,
-                            DISRUPTION.ASSOCIATEDWITHDRUGRESISTANCE,
+                            DISRUPTION.ISASSOCIATEDWITHDRUGRESISTANCE,
                             DISRUPTION.TYPE,
                             DISRUPTION.JUNCTIONCOPYNUMBER,
                             DISRUPTION.UNDISRUPTEDCOPYNUMBER,
@@ -299,7 +299,7 @@ class MolecularDAO {
                             disruption.gene(),
                             disruption.geneRole().toString(),
                             disruption.proteinEffect().toString(),
-                            DataUtil.toByte(disruption.associatedWithDrugResistance()),
+                            DataUtil.toByte(disruption.isAssociatedWithDrugResistance()),
                             disruption.type(),
                             disruption.junctionCopyNumber(),
                             disruption.undisruptedCopyNumber(),
@@ -319,7 +319,7 @@ class MolecularDAO {
                             FUSION.FIVEGENE,
                             FUSION.THREEGENE,
                             FUSION.PROTEINEFFECT,
-                            FUSION.ASSOCIATEDWITHDRUGRESISTANCE,
+                            FUSION.ISASSOCIATEDWITHDRUGRESISTANCE,
                             FUSION.DETAILS,
                             FUSION.DRIVERTYPE)
                     .values(sampleId,
@@ -328,7 +328,7 @@ class MolecularDAO {
                             fusion.fiveGene(),
                             fusion.threeGene(),
                             fusion.proteinEffect().toString(),
-                            DataUtil.toByte(fusion.associatedWithDrugResistance()),
+                            DataUtil.toByte(fusion.isAssociatedWithDrugResistance()),
                             fusion.details(),
                             fusion.driverType().toString())
                     .execute();
