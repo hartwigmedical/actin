@@ -101,9 +101,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addAllInclusionMolecularEvents(activatingMutationsInNonOncogene)
-                    .addWarnSpecificMessages(
-                            gene + " has activating mutation(s) " + Format.concat(activatingMutationsInNonOncogene)
-                                    + " but gene has not been not annotated as oncogene")
+                    .addWarnSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingMutationsInNonOncogene)
+                            + " but gene has not been not annotated as oncogene")
                     .addWarnGeneralMessages(gene + " activation")
                     .build();
         }
@@ -167,8 +166,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
     private static boolean isActivating(@NotNull Variant variant) {
         boolean isHighDriver = variant.driverLikelihood() == DriverLikelihood.HIGH;
-        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+        boolean isGainOfFunction = isGainOfFunction(variant);
         return variant.isReportable() && isHighDriver && isGainOfFunction;
     }
 
@@ -179,15 +177,13 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
     private static boolean highDriverNoGainOfFunction(@NotNull Variant variant) {
         boolean isHighDriver = variant.driverLikelihood() == DriverLikelihood.HIGH;
-        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+        boolean isGainOfFunction = isGainOfFunction(variant);
         return variant.isReportable() && isHighDriver && !isGainOfFunction;
     }
 
     private static boolean nonHighDriverWithGainFunction(@NotNull Variant variant) {
         boolean isNonHighDriver = variant.driverLikelihood() != DriverLikelihood.HIGH;
-        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+        boolean isGainOfFunction = isGainOfFunction(variant);
         return variant.isReportable() && isNonHighDriver && isGainOfFunction;
     }
 
@@ -197,12 +193,17 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     }
 
     private static boolean hasUnclearHotspotStatus(@NotNull Variant variant) {
-        boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
-        return variant.isHotspot() && !isGainOfFunction;
+        boolean isGainOfFunction = isGainOfFunction(variant);
+        return variant.isReportable() && variant.isHotspot() && !isGainOfFunction;
     }
 
-    private boolean isUnreportableMissenseOrHotspot(@NotNull Variant variant) {
-        return (variant.isHotspot() || variant.canonicalImpact().codingEffect() == CodingEffect.MISSENSE) && !variant.isReportable();
+    private static boolean isUnreportableMissenseOrHotspot(@NotNull Variant variant) {
+        boolean isMissenseOrHotspot = variant.canonicalImpact().codingEffect() == CodingEffect.MISSENSE || variant.isHotspot();
+        return !variant.isReportable() && isMissenseOrHotspot;
+    }
+
+    private static boolean isGainOfFunction(@NotNull Variant variant) {
+        return variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
+                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
     }
 }
