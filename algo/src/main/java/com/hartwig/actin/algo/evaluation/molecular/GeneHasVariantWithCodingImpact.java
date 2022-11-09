@@ -35,8 +35,8 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
         Set<String> canonicalUnreportableVariantMatches = Sets.newHashSet();
         Set<String> canonicalCodingImpactMatches = Sets.newHashSet();
 
-        Set<String> otherVariantMatches = Sets.newHashSet();
-        Set<String> otherCodingImpactMatches = Sets.newHashSet();
+        Set<String> reportableOtherVariantMatches = Sets.newHashSet();
+        Set<String> reportableOtherCodingImpactMatches = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
@@ -53,8 +53,8 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
                     if (variant.isReportable()) {
                         for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                             if (otherImpact.hgvsCodingImpact().equals(allowedCodingImpact)) {
-                                otherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
-                                otherCodingImpactMatches.add(allowedCodingImpact);
+                                reportableOtherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                                reportableOtherCodingImpactMatches.add(allowedCodingImpact);
                             }
                         }
                     }
@@ -74,17 +74,17 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addAllInclusionMolecularEvents(canonicalUnreportableVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) " + Format.concat(otherCodingImpactMatches) + " in " + gene
+                    .addWarnSpecificMessages("Variant(s) " + Format.concat(reportableOtherCodingImpactMatches) + " in " + gene
                             + " detected in canonical transcript, but considered non-reportable")
                     .addWarnGeneralMessages(Format.concat(canonicalCodingImpactMatches) + " found in " + gene)
                     .build();
-        } else if (!otherVariantMatches.isEmpty()) {
+        } else if (!reportableOtherVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(otherVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) " + Format.concat(otherCodingImpactMatches) + " in " + gene
+                    .addAllInclusionMolecularEvents(reportableOtherVariantMatches)
+                    .addWarnSpecificMessages("Variant(s) " + Format.concat(reportableOtherCodingImpactMatches) + " in " + gene
                             + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages(Format.concat(otherCodingImpactMatches) + " found in non-canonical transcript of " + gene)
+                    .addWarnGeneralMessages(Format.concat(reportableOtherCodingImpactMatches) + " found in non-canonical transcript of " + gene)
                     .build();
         }
 

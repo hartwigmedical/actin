@@ -40,45 +40,42 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<VariantType> allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType);
 
-        Set<String> reportableCanonicalMatchVariants = Sets.newHashSet();
+        Set<String> canonicalReportableVariantMatches = Sets.newHashSet();
+        Set<String> canonicalUnreportableVariantMatches = Sets.newHashSet();
         Set<String> reportableOtherMatchVariants = Sets.newHashSet();
-        Set<String> unreportedCanonicalMatchVariants = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && allowedVariantTypes.contains(variant.type())) {
-                boolean matchesWithCanonicalExonRange = hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon);
-
-                boolean matchesWithOtherExonRange = false;
-                for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                    if (hasEffectInExonRange(otherImpact.affectedExon(), minExon, maxExon)) {
-                        matchesWithOtherExonRange = true;
+                if (hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon)) {
+                    if (variant.isReportable()) {
+                        canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                    } else {
+                        canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
                     }
                 }
 
-                if (matchesWithCanonicalExonRange) {
-                    if (variant.isReportable()) {
-                        reportableCanonicalMatchVariants.add(MolecularEventFactory.variantEvent(variant));
-                    } else {
-                        unreportedCanonicalMatchVariants.add(MolecularEventFactory.variantEvent(variant));
+                if (variant.isReportable()) {
+                    for (TranscriptImpact otherImpact : variant.otherImpacts()) {
+                        if (hasEffectInExonRange(otherImpact.affectedExon(), minExon, maxExon)) {
+                            reportableOtherMatchVariants.add(MolecularEventFactory.variantEvent(variant));
+                        }
                     }
-                } else if (matchesWithOtherExonRange && variant.isReportable()) {
-                    reportableOtherMatchVariants.add(MolecularEventFactory.variantEvent(variant));
                 }
             }
         }
 
-        if (!reportableCanonicalMatchVariants.isEmpty()) {
+        if (!canonicalReportableVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addAllInclusionMolecularEvents(reportableCanonicalMatchVariants)
+                    .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
                     .addPassSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
                             + " of adequate type detected in canonical transcript")
                     .addPassGeneralMessages("Adequate variant(s) found in " + gene)
                     .build();
-        } else if (!unreportedCanonicalMatchVariants.isEmpty()) {
+        } else if (!canonicalUnreportableVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(unreportedCanonicalMatchVariants)
+                    .addAllInclusionMolecularEvents(canonicalUnreportableVariantMatches)
                     .addWarnSpecificMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
                             + " of adequate type detected in canonical transcript, but considered non-reportable")
                     .addWarnGeneralMessages("Adequate variant(s) found in " + gene)

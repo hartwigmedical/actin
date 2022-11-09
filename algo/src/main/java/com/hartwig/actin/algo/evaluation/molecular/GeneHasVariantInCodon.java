@@ -32,44 +32,60 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> canonicalVariantMatches = Sets.newHashSet();
+        Set<String> canonicalReportableVariantMatches = Sets.newHashSet();
+        Set<String> canonicalUnreportableVariantMatches = Sets.newHashSet();
         Set<String> canonicalCodonMatches = Sets.newHashSet();
 
-        Set<String> otherVariantMatches = Sets.newHashSet();
-        Set<String> otherCodonMatches = Sets.newHashSet();
+        Set<String> reportableOtherVariantMatches = Sets.newHashSet();
+        Set<String> reportableOtherCodonMatches = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene) && variant.isReportable()) {
+            if (variant.gene().equals(gene)) {
                 for (String codon : codons) {
                     if (isCodonMatch(variant.canonicalImpact().affectedCodon(), codon)) {
-                        canonicalVariantMatches.add(MolecularEventFactory.variantEvent(variant));
                         canonicalCodonMatches.add(codon);
+                        if (variant.isReportable()) {
+                            canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                        } else {
+                            canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                        }
                     }
 
-                    for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                        if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
-                            otherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
-                            otherCodonMatches.add(codon);
+                    if (variant.isReportable()) {
+                        for (TranscriptImpact otherImpact : variant.otherImpacts()) {
+                            if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
+                                reportableOtherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                                reportableOtherCodonMatches.add(codon);
+                            }
                         }
                     }
                 }
-
             }
         }
 
-        if (!canonicalCodonMatches.isEmpty()) {
+        if (!canonicalReportableVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addAllInclusionMolecularEvents(canonicalVariantMatches)
+                    .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
                     .addPassSpecificMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in gene " + gene
                             + " detected in canonical transcript")
                     .addPassGeneralMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in " + gene)
                     .build();
-        } else if (!otherCodonMatches.isEmpty()) {
+        } else if (!canonicalUnreportableVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(otherVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(otherCodonMatches) + " in " + gene
+                    .addAllInclusionMolecularEvents(canonicalUnreportableVariantMatches)
+                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in " + gene
+                            + " detected in canonical transcript, but not considered reportable")
+                    .addWarnGeneralMessages(
+                            "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in canonical transcript of gene "
+                                    + gene)
+                    .build();
+        } else if (!reportableOtherCodonMatches.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(reportableOtherVariantMatches)
+                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(reportableOtherCodonMatches) + " in " + gene
                             + " detected, but in non-canonical transcript")
                     .addWarnGeneralMessages(
                             "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
