@@ -16,6 +16,7 @@ import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: Add implementation for previous molecular tests
 public class IsMicrosatelliteUnstable implements EvaluationFunction {
 
     static final Set<String> MSI_GENES = Sets.newHashSet();
@@ -49,7 +50,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
             }
             for (PriorMolecularTest priorTest : record.clinical().priorMolecularTests()) {
                 if (priorTest.item().equals(gene)) {
-                    // TODO Determine whether a mutation was found
+
                 }
             }
         }
@@ -75,20 +76,20 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
             if (!msiGenesWithDriver.isEmpty()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
+                        .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_UNSTABLE)
                         .addPassSpecificMessages(
                                 "Microsatellite instability (MSI) status detected, together with drivers in MSI genes: " + Format.concat(
                                         msiGenesWithDriver))
                         .addPassGeneralMessages("MSI")
-                        .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_UNSTABLE)
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
+                        .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_POTENTIALLY_UNSTABLE)
                         .addWarnSpecificMessages(
                                 "Microsatellite instability (MSI) detected, but no drivers in MSI genes (" + Format.concat(MSI_GENES)
                                         + ") were detected")
                         .addWarnGeneralMessages("MSI")
-                        .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_POTENTIALLY_UNSTABLE)
                         .build();
             }
         }

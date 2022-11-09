@@ -49,7 +49,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
             }
             for (PriorMolecularTest priorTest : record.clinical().priorMolecularTests()) {
                 if (priorTest.item().equals(gene)) {
-                    // TODO Determine whether a mutation was found
+
                 }
             }
         }
@@ -75,20 +75,20 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
             if (!hrdGenesWithDriver.isEmpty()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
+                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT)
                         .addPassSpecificMessages(
                                 "Homologous repair deficiency (HRD) status detected, together with drivers in HRD genes: " + Format.concat(
                                         hrdGenesWithDriver))
                         .addPassGeneralMessages("HRD")
-                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT)
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
+                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
                         .addWarnSpecificMessages(
                                 "Homologous repair deficiency (HRD) status detected, but no drivers in HRD genes (" + Format.concat(
                                         HRD_GENES) + ") were detected")
                         .addWarnGeneralMessages("HRD")
-                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
                         .build();
             }
         }

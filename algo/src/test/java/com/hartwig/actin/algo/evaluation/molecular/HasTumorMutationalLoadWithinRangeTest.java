@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
-public class HasCertainTumorMutationalLoadTest {
+public class HasTumorMutationalLoadWithinRangeTest {
 
     @Test
     public void canEvaluate() {
-        HasCertainTumorMutationalLoad function = new HasCertainTumorMutationalLoad(140, null);
-        HasCertainTumorMutationalLoad function2 = new HasCertainTumorMutationalLoad(140, 280);
+        HasTumorMutationalLoadWithinRange function = new HasTumorMutationalLoadWithinRange(140, null);
+        HasTumorMutationalLoadWithinRange function2 = new HasTumorMutationalLoadWithinRange(140, 280);
 
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(null)));
 

@@ -10,14 +10,13 @@ import com.hartwig.actin.molecular.util.MolecularEventFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HasCertainTumorMutationalLoad implements EvaluationFunction {
+public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
 
-    @NotNull
-    private final Integer minTumorMutationalLoad;
+    private final int minTumorMutationalLoad;
     @Nullable
     private final Integer maxTumorMutationalLoad;
 
-    public HasCertainTumorMutationalLoad(@NotNull final Integer minTumorMutationalLoad, @Nullable final Integer maxTumorMutationalLoad) {
+    HasTumorMutationalLoadWithinRange(final int minTumorMutationalLoad, @Nullable final Integer maxTumorMutationalLoad) {
         this.minTumorMutationalLoad = minTumorMutationalLoad;
         this.maxTumorMutationalLoad = maxTumorMutationalLoad;
     }
@@ -54,8 +53,9 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("TML of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad + " - "
-                                + maxTumorMutationalLoad)
+                        .addPassSpecificMessages(
+                                "TML of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad
+                                        + " - " + maxTumorMutationalLoad)
                         .addPassGeneralMessages("Adequate TML")
                         .addInclusionMolecularEvents(MolecularEventFactory.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
                         .build();
@@ -68,12 +68,12 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
                     .addWarnGeneralMessages("Inadequate TML")
                     .addInclusionMolecularEvents(MolecularEventFactory.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
                     .build();
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("TML of sample " + tumorMutationalLoad + " is not within specified range")
-                    .addFailGeneralMessages("Inadequate TML")
-                    .build();
         }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("TML of sample " + tumorMutationalLoad + " is not within specified range")
+                .addFailGeneralMessages("Inadequate TML")
+                .build();
     }
 }

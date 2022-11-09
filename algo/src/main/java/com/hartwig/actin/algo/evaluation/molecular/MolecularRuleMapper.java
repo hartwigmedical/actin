@@ -200,7 +200,7 @@ public class MolecularRuleMapper extends RuleMapper {
     private FunctionCreator hasSufficientTumorMutationalLoadCreator() {
         return function -> {
             int minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function);
-            return new HasCertainTumorMutationalLoad(minTumorMutationalLoad, null);
+            return new HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null);
         };
     }
 
@@ -208,7 +208,7 @@ public class MolecularRuleMapper extends RuleMapper {
     private FunctionCreator hasCertainTumorMutationalLoadCreator() {
         return function -> {
             TwoIntegers input = functionInputResolver().createTwoIntegersInput(function);
-            return new HasCertainTumorMutationalLoad(input.integer1(), input.integer2());
+            return new HasTumorMutationalLoadWithinRange(input.integer1(), input.integer2());
         };
     }
 
