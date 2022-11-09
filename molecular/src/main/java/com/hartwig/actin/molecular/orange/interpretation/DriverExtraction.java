@@ -98,7 +98,6 @@ final class DriverExtraction {
                     .clonalLikelihood(keep3Digits(variant.clonalLikelihood()))
                     .canonicalImpact(ImmutableTranscriptImpact.builder()
                             .transcriptId(Strings.EMPTY)
-                            .effect(Strings.EMPTY)
                             .isSpliceRegion(false)
                             .hgvsCodingImpact(Strings.EMPTY)
                             .hgvsProteinImpact(Strings.EMPTY)

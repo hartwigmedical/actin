@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -42,6 +43,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
@@ -62,6 +64,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
@@ -243,13 +246,28 @@ public class MolecularRecordJson {
         private static TranscriptImpact toTranscriptImpact(@NotNull JsonObject impact) {
             return ImmutableTranscriptImpact.builder()
                     .transcriptId(string(impact, "transcriptId"))
-                    .effect(string(impact, "effect"))
+                    .hgvsCodingImpact(string(impact, "hgvsCodingImpact"))
+                    .hgvsProteinImpact(string(impact, "hgvsProteinImpact"))
                     .affectedCodon(nullableInteger(impact, "affectedCodon"))
                     .affectedExon(nullableInteger(impact, "affectedExon"))
                     .isSpliceRegion(bool(impact, "isSpliceRegion"))
-                    .hgvsCodingImpact(string(impact, "hgvsCodingImpact"))
-                    .hgvsProteinImpact(string(impact, "hgvsProteinImpact"))
+                    .effects(toTranscriptEffects(stringList(impact, "effects")))
+                    .codingEffect(toCodingEffect(nullableString(impact, "codingEffect")))
                     .build();
+        }
+
+        @NotNull
+        private static Set<TranscriptEffect> toTranscriptEffects(@NotNull List<String> effectStrings) {
+            Set<TranscriptEffect> effects = Sets.newHashSet();
+            for (String effect : effectStrings) {
+                effects.add(TranscriptEffect.valueOf(effect));
+            }
+            return effects;
+        }
+
+        @Nullable
+        private static CodingEffect toCodingEffect(@Nullable String codingEffectString) {
+            return codingEffectString != null ? CodingEffect.valueOf(codingEffectString) : null;
         }
 
         @NotNull

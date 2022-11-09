@@ -24,6 +24,7 @@ import static com.hartwig.actin.database.Tables.VIRUS;
 import static com.hartwig.actin.database.Tables.VIRUSEVIDENCE;
 
 import java.util.Set;
+import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
@@ -33,6 +34,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
@@ -174,13 +176,13 @@ class MolecularDAO {
                             VARIANT.ISHOTSPOT,
                             VARIANT.CLONALLIKELIHOOD,
                             VARIANT.CANONICALTRANSCRIPTID,
-                            VARIANT.CANONICALEFFECT,
-                            VARIANT.CANONICALCODINGEFFECT,
+                            VARIANT.CANONICALHGVSCODINGIMPACT,
+                            VARIANT.CANONICALHGVSPROTEINIMPACT,
                             VARIANT.CANONICALAFFECTEDCODON,
                             VARIANT.CANONICALAFFECTEDEXON,
                             VARIANT.CANONICALISSPLICEREGION,
-                            VARIANT.CANONICALHGVSCODINGIMPACT,
-                            VARIANT.CANONICALHGVSPROTEINIMPACT)
+                            VARIANT.CANONICALEFFECTS,
+                            VARIANT.CANONICALCODINGEFFECT)
                     .values(sampleId,
                             DataUtil.toByte(variant.isReportable()),
                             variant.driverLikelihood().toString(),
@@ -195,15 +197,24 @@ class MolecularDAO {
                             DataUtil.toByte(variant.isHotspot()),
                             variant.clonalLikelihood(),
                             variant.canonicalImpact().transcriptId(),
-                            variant.canonicalImpact().effect(),
-                            DataUtil.nullableToString(variant.canonicalImpact().codingEffect()),
+                            variant.canonicalImpact().hgvsCodingImpact(),
+                            variant.canonicalImpact().hgvsProteinImpact(),
                             variant.canonicalImpact().affectedCodon(),
                             variant.canonicalImpact().affectedExon(),
                             DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
-                            variant.canonicalImpact().hgvsCodingImpact(),
-                            variant.canonicalImpact().hgvsProteinImpact())
+                            concatTranscriptEffects(variant.canonicalImpact().effects()),
+                            DataUtil.nullableToString(variant.canonicalImpact().codingEffect()))
                     .execute();
         }
+    }
+
+    @NotNull
+    private static String concatTranscriptEffects(@NotNull Iterable<TranscriptEffect> effects) {
+        StringJoiner joiner = new StringJoiner("&");
+        for (TranscriptEffect effect : effects) {
+            joiner.add(effect.toString());
+        }
+        return joiner.toString();
     }
 
     private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {

@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,10 +14,10 @@ public abstract class TranscriptImpact {
     public abstract String transcriptId();
 
     @NotNull
-    public abstract String effect();
+    public abstract String hgvsCodingImpact();
 
-    @Nullable
-    public abstract CodingEffect codingEffect();
+    @NotNull
+    public abstract String hgvsProteinImpact();
 
     @Nullable
     public abstract Integer affectedCodon();
@@ -26,9 +28,9 @@ public abstract class TranscriptImpact {
     public abstract boolean isSpliceRegion();
 
     @NotNull
-    public abstract String hgvsCodingImpact();
+    public abstract Set<TranscriptEffect> effects();
 
-    @NotNull
-    public abstract String hgvsProteinImpact();
+    @Nullable
+    public abstract CodingEffect codingEffect();
 
 }

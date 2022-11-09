@@ -316,13 +316,13 @@ CREATE TABLE variant
     isHotspot BOOLEAN NOT NULL,
     clonalLikelihood double precision NOT NULL,
     canonicalTranscriptId varchar(50) NOT NULL,
-    canonicalEffect varchar(50) NOT NULL,
-    canonicalCodingEffect varchar(50),
+    canonicalHgvsCodingImpact varchar(50) NOT NULL,
+    canonicalHgvsProteinImpact varchar(50) NOT NULL,
     canonicalAffectedCodon int,
     canonicalAffectedExon int,
     canonicalIsSpliceRegion BOOLEAN NOT NULL,
-    canonicalHgvsCodingImpact varchar(50) NOT NULL,
-    canonicalHgvsProteinImpact varchar(50) NOT NULL,
+    canonicalEffects varchar(250) NOT NULL,
+    canonicalCodingEffect varchar(50),
     PRIMARY KEY (id)
 );
 
@@ -341,13 +341,13 @@ CREATE TABLE variantOtherImpact
 (   id int NOT NULL AUTO_INCREMENT,
     variantId int NOT NULL,
     transcriptId varchar(50) NOT NULL,
-    effect varchar(50) NOT NULL,
-    codingEffect varchar(50),
+    hgvsCodingImpact varchar(50) NOT NULL,
+    hgvsProteinImpact varchar(50) NOT NULL,
     affectedCodon int,
     affectedExon int,
     isSpliceRegion BOOLEAN NOT NULL,
-    hgvsCodingImpact varchar(50) NOT NULL,
-    hgvsProteinImpact varchar(50) NOT NULL,
+    effects varchar(250) NOT NULL,
+    codingEffect varchar(50),
     PRIMARY KEY (id)
 );
 

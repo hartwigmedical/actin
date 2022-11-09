@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 
 import org.junit.Test;
 
@@ -35,13 +36,13 @@ public class GeneHasUTR3LossTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isHotspot(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().effect(GeneHasUTR3Loss.THREE_UTR_EFFECT).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(TranscriptEffect.THREE_PRIME_UTR).build())
                         .build())));
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isHotspot(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().effect(GeneHasUTR3Loss.THREE_UTR_EFFECT).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(TranscriptEffect.THREE_PRIME_UTR).build())
                         .build())));
     }
 }
