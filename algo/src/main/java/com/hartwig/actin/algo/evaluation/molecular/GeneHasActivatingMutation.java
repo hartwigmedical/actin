@@ -32,10 +32,10 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> activatingVariants = Sets.newHashSet();
         Set<String> activatingVariantsAssociatedWithResistance = Sets.newHashSet();
-        Set<String> highDriverNoGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
         Set<String> variantWithUnclearHotspotStatus = Sets.newHashSet();
+        Set<String> highDriverNoGainOfFunctionVariants = Sets.newHashSet();
         Set<String> unreportableMissenseOrHotspotVariants = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
@@ -93,16 +93,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .build();
         }
 
-        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
-                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
-                            + " that have high driver likelihood but no gain-of-function")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
         if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
@@ -129,6 +119,16 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .addAllInclusionMolecularEvents(variantWithUnclearHotspotStatus)
                     .addWarnSpecificMessages(
                             gene + " has mutation(s) " + Format.concat(variantWithUnclearHotspotStatus) + " with unclear hotspot status")
+                    .addWarnGeneralMessages(gene + " activation")
+                    .build();
+        }
+
+        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
+                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
+                            + " that have high driver likelihood but no gain-of-function")
                     .addWarnGeneralMessages(gene + " activation")
                     .build();
         }
