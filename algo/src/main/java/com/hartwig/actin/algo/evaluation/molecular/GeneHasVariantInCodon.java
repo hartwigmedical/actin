@@ -12,10 +12,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-//TODO: Check implementation
 public class GeneHasVariantInCodon implements EvaluationFunction {
 
     @NotNull
@@ -31,54 +32,48 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> codonsCanonicalFound = Sets.newHashSet();
-        Set<String> codonsOtherFound = Sets.newHashSet();
+        Set<String> canonicalVariantMatches = Sets.newHashSet();
+        Set<String> canonicalCodonMatches = Sets.newHashSet();
+
+        Set<String> otherVariantMatches = Sets.newHashSet();
+        Set<String> otherCodonMatches = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene)) {
-
-                // boolean isReportable = false;
-                // if (variant.isReportable() == true) {
-                //     isReportable = true;
-                // }
-
+            if (variant.gene().equals(gene) && variant.isReportable()) {
                 for (String codon : codons) {
-                    boolean codonOtherMatch = false;
+                    if (isCodonMatch(variant.canonicalImpact().affectedCodon(), codon)) {
+                        canonicalVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                        canonicalCodonMatches.add(codon);
+                    }
+
                     for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                        if (otherImpact.affectedCodon() != null && otherImpact.affectedCodon()
-                                .toString()
-                                .equals(codon.replaceAll("[^0-9]", ""))) {
-                            codonOtherMatch = true;
+                        if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
+                            otherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            otherCodonMatches.add(codon);
                         }
-                    }
-
-                    if (variant.canonicalImpact().affectedCodon() != null && variant.canonicalImpact()
-                            .affectedCodon()
-                            .toString()
-                            .equals(codon.replaceAll("[^0-9]", ""))) {
-                        codonsCanonicalFound.add(codon);
-                    }
-
-                    if (codonOtherMatch) {
-                        codonsOtherFound.add(codon);
                     }
                 }
 
             }
         }
-        if (!codonsCanonicalFound.isEmpty()) {
+
+        if (!canonicalCodonMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                            "Variant(s) in codon(s) " + Format.concat(codonsCanonicalFound) + " in gene " + gene + " detected in canonical transcript")
-                    .addPassGeneralMessages("Variant(s) in codon(s) " + Format.concat(codonsCanonicalFound) + " found in " + gene)
+                    .addAllInclusionMolecularEvents(canonicalVariantMatches)
+                    .addPassSpecificMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in gene " + gene
+                            + " detected in canonical transcript")
+                    .addPassGeneralMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in " + gene)
                     .build();
-        } else if (!codonsOtherFound.isEmpty()) {
+        } else if (!otherCodonMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(codonsOtherFound) + " in " + gene
+                    .addAllInclusionMolecularEvents(otherVariantMatches)
+                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(otherCodonMatches) + " in " + gene
                             + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages("Variant(s) in codon(s) " + Format.concat(codonsCanonicalFound) + " found in non-canonical transcript of gene " + gene)
+                    .addWarnGeneralMessages(
+                            "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
+                                    + gene)
                     .build();
         }
 
@@ -87,5 +82,15 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
                 .addFailSpecificMessages("No variants in codon(s) " + Format.concat(codons) + " detected in gene " + gene)
                 .addFailGeneralMessages("No specific variants in codon(s) in " + gene + " detected")
                 .build();
+    }
+
+    private static boolean isCodonMatch(@Nullable Integer affectedCodon, @NotNull String codonToMatch) {
+        if (affectedCodon == null) {
+            return false;
+        }
+
+        // TODO Make a more explicit datamodel.
+        int codonIndexToMatch = Integer.parseInt(codonToMatch.substring(1));
+        return codonIndexToMatch == affectedCodon;
     }
 }
