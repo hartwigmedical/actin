@@ -245,12 +245,15 @@ final class DriverExtraction {
                     .driverLikelihood(extractFusionDriverLikelihood(fusion))
                     .evidence(createEmptyEvidence())
                     .geneStart(fusion.geneStart())
+                    .geneTranscriptStart(Strings.EMPTY)
+                    .geneContextStart(Strings.EMPTY)
                     .fusedExonUp(0)
                     .geneEnd(fusion.geneEnd())
+                    .geneTranscriptEnd(Strings.EMPTY)
+                    .geneContextEnd(Strings.EMPTY)
                     .fusedExonDown(0)
                     .proteinEffect(ProteinEffect.UNKNOWN)
                     .isAssociatedWithDrugResistance(null)
-                    //.details(fusion.geneContextStart() + " -> " + fusion.geneContextEnd())
                     .driverType(extractFusionDriverType(fusion))
                     .build());
         }
