@@ -18,6 +18,8 @@ public final class EvaluationAssert {
         assertEvaluation(expected, actual);
         if (actual.result() == EvaluationResult.PASS || actual.result() == EvaluationResult.WARN) {
             assertFalse(actual.inclusionMolecularEvents().isEmpty());
+        } else {
+            assertTrue(actual.inclusionMolecularEvents().isEmpty());
         }
     }
 

@@ -30,45 +30,40 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> proteinImpactsCanonicalFound = Sets.newHashSet();
-        Set<String> proteinImpactsOtherFound = Sets.newHashSet();
+        Set<String> canonicalProteinImpactMatches = Sets.newHashSet();
+        Set<String> otherProteinImpactMatches = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
                 for (String allowedProteinImpact : allowedProteinImpacts) {
-                    boolean proteinImpactOtherMatch = false;
+                    if (variant.canonicalImpact().proteinImpact().equals(allowedProteinImpact)) {
+                        canonicalProteinImpactMatches.add(allowedProteinImpact);
+                    }
+
                     for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                         if (otherImpact.proteinImpact().equals(allowedProteinImpact)) {
-                            proteinImpactOtherMatch = true;
+                            otherProteinImpactMatches.add(allowedProteinImpact);
                         }
-                    }
-
-                    if (variant.canonicalImpact().proteinImpact().equals(allowedProteinImpact)) {
-                        proteinImpactsCanonicalFound.add(allowedProteinImpact);
-                    }
-
-                    if (proteinImpactOtherMatch) {
-                        proteinImpactsOtherFound.add(allowedProteinImpact);
                     }
                 }
             }
         }
 
-        if (!proteinImpactsCanonicalFound.isEmpty()) {
+        if (!canonicalProteinImpactMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addAllInclusionMolecularEvents(toInclusionEvents(proteinImpactsCanonicalFound))
-                    .addPassSpecificMessages("Variant(s) " + Format.concat(proteinImpactsCanonicalFound) + " in gene " + gene
+                    .addAllInclusionMolecularEvents(toInclusionEvents(canonicalProteinImpactMatches))
+                    .addPassSpecificMessages("Variant(s) " + Format.concat(canonicalProteinImpactMatches) + " in gene " + gene
                             + " detected in canonical transcript")
-                    .addPassGeneralMessages(Format.concat(proteinImpactsCanonicalFound) + " found in " + gene)
+                    .addPassGeneralMessages(Format.concat(canonicalProteinImpactMatches) + " found in " + gene)
                     .build();
-        } else if (!proteinImpactsOtherFound.isEmpty()) {
+        } else if (!otherProteinImpactMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(toInclusionEvents(proteinImpactsOtherFound))
-                    .addWarnSpecificMessages("Variant(s) " + Format.concat(proteinImpactsOtherFound) + " in " + gene
+                    .addAllInclusionMolecularEvents(toInclusionEvents(otherProteinImpactMatches))
+                    .addWarnSpecificMessages("Variant(s) " + Format.concat(otherProteinImpactMatches) + " in " + gene
                             + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages(Format.concat(proteinImpactsOtherFound) + " found in non-canonical transcript of gene " + gene)
+                    .addWarnGeneralMessages(Format.concat(otherProteinImpactMatches) + " found in non-canonical transcript of gene " + gene)
                     .build();
         }
 
