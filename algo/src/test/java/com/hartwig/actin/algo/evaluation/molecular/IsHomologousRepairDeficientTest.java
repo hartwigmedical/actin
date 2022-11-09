@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
@@ -14,43 +14,43 @@ public class IsHomologousRepairDeficientTest {
     public void canEvaluate() {
         IsHomologousRepairDeficient function = new IsHomologousRepairDeficient();
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null,
                         TestVariantFactory.builder()
                                 .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
                                 .isReportable(false)
                                 .build())));
 
-        assertEvaluation(EvaluationResult.UNDETERMINED,
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null,
                         TestVariantFactory.builder()
                                 .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
                                 .isReportable(true)
                                 .build())));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true,
                         TestVariantFactory.builder()
                                 .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
                                 .isReportable(true)
                                 .build())));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(true,
                         TestLossFactory.builder().gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next()).build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true,
                         TestVariantFactory.builder()
                                 .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
                                 .isReportable(false)
                                 .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true,
                         TestVariantFactory.builder().gene("other gene").isReportable(true).build())));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(false,
                         TestVariantFactory.builder()
                                 .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
