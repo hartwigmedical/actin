@@ -16,16 +16,24 @@ public class IsHomologousRepairDeficientTest {
 
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null,
-                        TestVariantFactory.builder().gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next()).isReportable(false).build())));
+                        TestVariantFactory.builder()
+                                .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
+                                .isReportable(false)
+                                .build())));
 
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null,
-                        TestVariantFactory.builder().gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next()).isReportable(true).build())));
+                        TestVariantFactory.builder()
+                                .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
+                                .isReportable(true)
+                                .build())));
 
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true,
-                        TestVariantFactory.builder().gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next()).isReportable(true).build())));
-
+                        TestVariantFactory.builder()
+                                .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
+                                .isReportable(true)
+                                .build())));
 
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(true,
@@ -33,7 +41,10 @@ public class IsHomologousRepairDeficientTest {
 
         assertEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true,
-                        TestVariantFactory.builder().gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next()).isReportable(false).build())));
+                        TestVariantFactory.builder()
+                                .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
+                                .isReportable(false)
+                                .build())));
 
         assertEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true,
@@ -41,6 +52,9 @@ public class IsHomologousRepairDeficientTest {
 
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(false,
-                        TestVariantFactory.builder().gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next()).isReportable(true).build())));
+                        TestVariantFactory.builder()
+                                .gene(IsHomologousRepairDeficient.HRD_GENES.iterator().next())
+                                .isReportable(true)
+                                .build())));
     }
 }
