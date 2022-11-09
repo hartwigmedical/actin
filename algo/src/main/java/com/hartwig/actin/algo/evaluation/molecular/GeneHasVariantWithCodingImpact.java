@@ -12,6 +12,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,43 +31,60 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> codingImpactsCanonicalFound = Sets.newHashSet();
-        Set<String> codingImpactsOtherFound = Sets.newHashSet();
+        Set<String> canonicalReportableVariantMatches = Sets.newHashSet();
+        Set<String> canonicalUnreportableVariantMatches = Sets.newHashSet();
+        Set<String> canonicalCodingImpactMatches = Sets.newHashSet();
+
+        Set<String> otherVariantMatches = Sets.newHashSet();
+        Set<String> otherCodingImpactMatches = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
                 for (String allowedCodingImpact : allowedCodingImpacts) {
-                    boolean codingImpactOtherMatch = false;
-                    for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                        if (otherImpact.hgvsCodingImpact().equals(allowedCodingImpact)) {
-                            codingImpactOtherMatch = true;
+                    if (variant.canonicalImpact().hgvsCodingImpact().equals(allowedCodingImpact)) {
+                        canonicalCodingImpactMatches.add(allowedCodingImpact);
+                        if (variant.isReportable()) {
+                            canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                        } else {
+                            canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
                         }
                     }
 
-                    if (variant.canonicalImpact().hgvsCodingImpact().equals(allowedCodingImpact)) {
-                        codingImpactsCanonicalFound.add(allowedCodingImpact);
-                    }
-
-                    if (codingImpactOtherMatch) {
-                        codingImpactsOtherFound.add(allowedCodingImpact);
+                    if (variant.isReportable()) {
+                        for (TranscriptImpact otherImpact : variant.otherImpacts()) {
+                            if (otherImpact.hgvsCodingImpact().equals(allowedCodingImpact)) {
+                                otherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                                otherCodingImpactMatches.add(allowedCodingImpact);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        if (!codingImpactsCanonicalFound.isEmpty()) {
+        if (!canonicalReportableVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Variant(s) " + Format.concat(codingImpactsCanonicalFound) + " in gene " + gene
+                    .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
+                    .addPassSpecificMessages("Variant(s) " + Format.concat(canonicalCodingImpactMatches) + " in gene " + gene
                             + " detected in canonical transcript")
-                    .addPassGeneralMessages(Format.concat(codingImpactsCanonicalFound) + " found in " + gene)
+                    .addPassGeneralMessages(Format.concat(canonicalCodingImpactMatches) + " found in " + gene)
                     .build();
-        } else if (!codingImpactsOtherFound.isEmpty()) {
+        } else if (!canonicalUnreportableVariantMatches.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Variant(s) " + Format.concat(codingImpactsOtherFound) + " in " + gene
+                    .addAllInclusionMolecularEvents(canonicalUnreportableVariantMatches)
+                    .addWarnSpecificMessages("Variant(s) " + Format.concat(otherCodingImpactMatches) + " in " + gene
+                            + " detected in canonical transcript, but considered non-reportable")
+                    .addWarnGeneralMessages(Format.concat(canonicalCodingImpactMatches) + " found in " + gene)
+                    .build();
+        } else if (!otherVariantMatches.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(otherVariantMatches)
+                    .addWarnSpecificMessages("Variant(s) " + Format.concat(otherCodingImpactMatches) + " in " + gene
                             + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages(Format.concat(codingImpactsOtherFound) + " found in non-canonical transcript of gene " + gene)
+                    .addWarnGeneralMessages(Format.concat(otherCodingImpactMatches) + " found in non-canonical transcript of " + gene)
                     .build();
         }
 

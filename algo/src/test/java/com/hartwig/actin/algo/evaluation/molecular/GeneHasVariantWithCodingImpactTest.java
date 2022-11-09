@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
@@ -14,44 +14,59 @@ public class GeneHasVariantWithCodingImpactTest {
 
     @Test
     public void canEvaluate() {
-        GeneHasVariantWithProteinImpact function = new GeneHasVariantWithProteinImpact("gene A", Lists.newArrayList("c100", "c200"));
+        GeneHasVariantWithCodingImpact function = new GeneHasVariantWithCodingImpact("gene A", Lists.newArrayList("c100", "c200"));
 
         // gene not present
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        // correct gene, no protein impacts configured
-        assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder().gene("gene A").build())));
-
-        // correct gene, only wrong protein impacts configured
-        assertEvaluation(EvaluationResult.FAIL,
+        // correct gene, no coding impacts configured
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
+                        .isReportable(true)
                         .build())));
 
-        // correct gene, protein impact detected in canonical
-        assertEvaluation(EvaluationResult.PASS,
+        // correct gene, only wrong coding impacts configured
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c100").build())
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c999").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c999").build())
                         .build())));
 
-        // incorrect gene, protein impact detected in canonical
-        assertEvaluation(EvaluationResult.FAIL,
+        // correct gene, coding impact detected in canonical
+        assertMolecularEvaluation(EvaluationResult.PASS,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c100").build())
+                        .build())));
+
+        // correct gene, coding impact detected in canonical, but not reportable
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(false)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c100").build())
+                        .build())));
+
+        // incorrect gene, coding impact detected in canonical
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene B")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c100").build())
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c100").build())
                         .build())));
 
-        // correct gene, protein impact detected in non-canonical only
-        assertEvaluation(EvaluationResult.WARN,
+        // correct gene, coding impact detected in non-canonical only
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c999").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("c100").build())
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c999").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c999").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsCodingImpact("c100").build())
                         .build())));
     }
 }
