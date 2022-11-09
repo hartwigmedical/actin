@@ -16,5 +16,10 @@ public class HasSufficientTumorMutationalBurdenTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalBurden(20D)));
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalBurden(10D)));
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withTumorMutationalBurden(1D)));
+
+        assertEvaluation(EvaluationResult.FAIL,
+                function.evaluate(MolecularTestFactory.withTumorMutationalBurdenAndHasSufficientQuality(5D, true)));
+        assertEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withTumorMutationalBurdenAndHasSufficientQuality(5D, false)));
     }
 }

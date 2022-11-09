@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
@@ -29,18 +28,30 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
                     .build();
         }
 
-        EvaluationResult result =
-                Double.compare(tumorMutationalBurden, minTumorMutationalBurden) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        boolean tumorMutationalBurdenIsAllowed = tumorMutationalBurden >= minTumorMutationalBurden;
+        boolean tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 5;
+        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Tumor mutational burden does not exceed " + minTumorMutationalBurden);
-            builder.addFailGeneralMessages("Molecular requirements");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Tumor mutational burden exceeds " + minTumorMutationalBurden);
-            builder.addPassGeneralMessages("Molecular requirements");
+        if (tumorMutationalBurdenIsAllowed) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.PASS)
+                    .addPassSpecificMessages("TMB of sample " + tumorMutationalBurden + " is sufficient")
+                    .addPassGeneralMessages("Adequate TMB")
+                    .build();
+        } else if (tumorMutationalBurdenIsAlmostAllowed && !hasSufficientQuality) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages("TMB of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
+                            + " while data quality is insufficient")
+                    .addWarnGeneralMessages("Inadequate TMB")
+                    .build();
+        } else {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.FAIL)
+                    .addFailSpecificMessages("TMB of sample " + tumorMutationalBurden + " is not within specified range")
+                    .addFailGeneralMessages("Inadequate TMB")
+                    .build();
+
         }
-
-        return builder.build();
     }
 }

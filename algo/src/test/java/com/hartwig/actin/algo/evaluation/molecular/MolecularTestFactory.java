@@ -176,6 +176,21 @@ final class MolecularTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withTumorMutationalBurdenAndHasSufficientQuality(@Nullable Double tumorMutationalBurden,
+            @NotNull Boolean hasSufficientQuality) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .tumorMutationalBurden(tumorMutationalBurden)
+                        .build())
+                .hasSufficientQuality(hasSufficientQuality)
+                .build());
+    }
+
+    @NotNull
     public static PatientRecord withTumorMutationalLoad(@Nullable Integer tumorMutationalLoad) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
