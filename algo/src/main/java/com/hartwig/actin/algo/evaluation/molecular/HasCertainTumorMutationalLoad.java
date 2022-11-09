@@ -54,7 +54,7 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("TML of sample " + tumorMutationalLoad + " is between " + minTumorMutationalLoad + " - "
+                        .addPassSpecificMessages("TML of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad + " - "
                                 + maxTumorMutationalLoad)
                         .addPassGeneralMessages("Adequate TML")
                         .addInclusionMolecularEvents(MolecularEventFactory.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
@@ -64,7 +64,7 @@ public class HasCertainTumorMutationalLoad implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("TML of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
-                            + " while data quality is insufficient")
+                            + " while data quality is insufficient (perhaps a few mutations are missed)")
                     .addWarnGeneralMessages("Inadequate TML")
                     .addInclusionMolecularEvents(MolecularEventFactory.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
                     .build();

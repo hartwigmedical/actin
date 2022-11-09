@@ -44,7 +44,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("TMB of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
-                            + " while data quality is insufficient")
+                            + " while data quality is insufficient (perhaps a few mutations are missed)")
                     .addWarnGeneralMessages("Inadequate TMB")
                     .addInclusionMolecularEvents(MolecularEventFactory.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN)
                     .build();
