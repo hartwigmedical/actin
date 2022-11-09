@@ -1,6 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
+
+import static org.junit.Assert.assertNotNull;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -16,77 +19,110 @@ public class GeneHasVariantInExonRangeOfTypeTest {
     @Test
     public void canEvaluate() {
         GeneHasVariantInExonRangeOfType function = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, VariantTypeInput.INSERT);
-        GeneHasVariantInExonRangeOfType function2 = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, VariantTypeInput.INDEL);
-        GeneHasVariantInExonRangeOfType function3 = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, null);
 
         // gene not present
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         // no exons configured
-        assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder().gene("gene A").build())));
-
-        // no variant type configured
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .isReportable(true)
                         .build())));
 
-        // no variant type configured when input = null
-        assertEvaluation(EvaluationResult.PASS,
-                function3.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+        // no variant type configured
+        assertMolecularEvaluation(EvaluationResult.FAIL,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
         // wrong exon range
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
                         .build())));
 
         // wrong variant type
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
-                        .type(VariantType.MNV)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
-                        .build())));
-
-        // wrong variant type
-        assertEvaluation(EvaluationResult.FAIL,
-                function2.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
-                        .gene("gene A")
+                        .isReportable(true)
                         .type(VariantType.MNV)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
         // correct gene, correct exon, correct variant type, canonical
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .type(VariantType.INSERT)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
-        // correct gene, correct exon, correct variant type, canonical
-        assertEvaluation(EvaluationResult.PASS,
-                function2.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+        // correct gene, correct exon, correct variant type, canonical, but not reportable
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(false)
                         .type(VariantType.INSERT)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
 
         // correct gene, correct exon, correct variant type, non-canonical only
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .type(VariantType.INSERT)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
                         .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedExon(6).build())
                         .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .build())));
+    }
+
+    @Test
+    public void canEvaluateForINDELs() {
+        GeneHasVariantInExonRangeOfType function = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, VariantTypeInput.INDEL);
+
+        assertMolecularEvaluation(EvaluationResult.FAIL,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .type(VariantType.MNV)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .build())));
+
+        assertMolecularEvaluation(EvaluationResult.PASS,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .type(VariantType.INSERT)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .build())));
+    }
+
+    @Test
+    public void canEvaluateForAllVariantInputTypes() {
+        for (VariantTypeInput input : VariantTypeInput.values()) {
+            GeneHasVariantInExonRangeOfType function = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, input);
+            assertNotNull(function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        }
+    }
+
+    @Test
+    public void canEvaluateWithoutVariantTypes() {
+        GeneHasVariantInExonRangeOfType function = new GeneHasVariantInExonRangeOfType("gene A", 1, 2, null);
+
+        assertMolecularEvaluation(EvaluationResult.PASS,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
                         .build())));
     }
 }
