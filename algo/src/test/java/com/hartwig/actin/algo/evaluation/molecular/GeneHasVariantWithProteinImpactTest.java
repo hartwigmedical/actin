@@ -21,27 +21,41 @@ public class GeneHasVariantWithProteinImpactTest {
 
         // correct gene, no protein impacts configured
         assertMolecularEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder().gene("gene A").build())));
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .build())));
 
         // correct gene, only wrong protein impacts configured
         assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
                         .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .build())));
-
-        // correct gene, protein impact detected in canonical
-        assertMolecularEvaluation(EvaluationResult.PASS,
-                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
-                        .gene("gene A")
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
 
         // incorrect gene, protein impact detected in canonical
         assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene B")
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .build())));
+
+        // correct gene, protein impact detected in canonical
+        assertMolecularEvaluation(EvaluationResult.PASS,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .build())));
+
+        // correct gene, protein impact detected in canonical, but non-reportable
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(false)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
 
@@ -49,6 +63,7 @@ public class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
                         .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
                         .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
