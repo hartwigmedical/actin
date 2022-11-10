@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
@@ -28,6 +29,27 @@ public final class MolecularEventFactory {
     public static final String ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD = "Almost sufficient TML";
 
     private MolecularEventFactory() {
+    }
+
+    @NotNull
+    public static String event(@NotNull Driver driver) {
+        if (driver instanceof Variant) {
+            return variantEvent((Variant) driver);
+        } else if (driver instanceof Amplification) {
+            return amplificationEvent((Amplification) driver);
+        } else if (driver instanceof Loss) {
+            return lossEvent((Loss) driver);
+        } else if (driver instanceof HomozygousDisruption) {
+            return homozygousDisruptionEvent((HomozygousDisruption) driver);
+        } else if (driver instanceof Disruption) {
+            return disruptionEvent((Disruption) driver);
+        } else if (driver instanceof Fusion) {
+            return fusionEvent((Fusion) driver);
+        } else if (driver instanceof Virus) {
+            return virusEvent((Virus) driver);
+        }
+
+        throw new IllegalStateException("Cannot generate event for driver: " + driver);
     }
 
     @NotNull

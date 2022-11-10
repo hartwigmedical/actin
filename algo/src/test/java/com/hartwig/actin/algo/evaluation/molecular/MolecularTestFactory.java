@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
@@ -73,6 +72,11 @@ final class MolecularTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withAmplification(@NotNull Amplification amplification) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addAmplifications(amplification).build());
+    }
+
+    @NotNull
     public static PatientRecord withPloidyAndAmplification(@Nullable Double ploidy, @NotNull Amplification amplification) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
@@ -101,22 +105,6 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withFusion(@NotNull Fusion fusion) {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addFusions(fusion).build());
-    }
-
-    @NotNull
-    public static PatientRecord withUndeterminedWildTypes() {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .wildTypeGenes(null)
-                .build());
-    }
-
-    @NotNull
-    public static PatientRecord withWildTypeGene(@NotNull String gene) {
-        return withMolecularRecord(ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .wildTypeGenes(Sets.newHashSet(gene))
-                .build());
     }
 
     @NotNull
