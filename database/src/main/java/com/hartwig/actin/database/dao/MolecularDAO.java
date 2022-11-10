@@ -226,6 +226,7 @@ class MolecularDAO {
             context.insertInto(AMPLIFICATION,
                             AMPLIFICATION.SAMPLEID,
                             AMPLIFICATION.ISREPORTABLE,
+                            AMPLIFICATION.EVENT,
                             AMPLIFICATION.DRIVERLIKELIHOOD,
                             AMPLIFICATION.GENE,
                             AMPLIFICATION.GENEROLE,
@@ -235,6 +236,7 @@ class MolecularDAO {
                             AMPLIFICATION.MAXCOPIES)
                     .values(sampleId,
                             DataUtil.toByte(amplification.isReportable()),
+                            amplification.event(),
                             amplification.driverLikelihood().toString(),
                             amplification.gene(),
                             amplification.geneRole().toString(),
