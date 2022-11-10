@@ -14,7 +14,7 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
+import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,27 +53,27 @@ public final class AggregatedEvidenceFactory {
         List<AggregatedEvidence> evidences = Lists.newArrayList();
 
         if (hasCharacteristic(characteristics.isMicrosatelliteUnstable())) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.MICROSATELLITE_UNSTABLE, characteristics.microsatelliteEvidence()));
+            evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE, characteristics.microsatelliteEvidence()));
         } else if (hasEvidence(characteristics.microsatelliteEvidence())) {
             LOGGER.warn("There is evidence for microsatellite stability without presence of signature");
         }
 
         if (hasCharacteristic(characteristics.isHomologousRepairDeficient())) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT,
+            evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT,
                     characteristics.homologousRepairDeficiencyEvidence()));
         } else if (hasEvidence(characteristics.homologousRepairDeficiencyEvidence())) {
             LOGGER.warn("There is evidence for homologous repair deficiency without presence of signature");
         }
 
         if (hasCharacteristic(characteristics.hasHighTumorMutationalBurden())) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.HIGH_TUMOR_MUTATIONAL_BURDEN,
+            evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN,
                     characteristics.tumorMutationalBurdenEvidence()));
         } else if (hasEvidence(characteristics.tumorMutationalBurdenEvidence())) {
             LOGGER.warn("There is evidence for high tumor mutational burden without presence of signature");
         }
 
         if (hasCharacteristic(characteristics.hasHighTumorMutationalLoad())) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.HIGH_TUMOR_MUTATIONAL_LOAD,
+            evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD,
                     characteristics.tumorMutationalLoadEvidence()));
         } else if (hasEvidence(characteristics.tumorMutationalLoadEvidence())) {
             LOGGER.warn("There is evidence for high tumor mutational load without presence of signature");
@@ -90,31 +90,31 @@ public final class AggregatedEvidenceFactory {
     private static List<AggregatedEvidence> aggregateDriverEvidence(@NotNull MolecularDrivers drivers) {
         List<AggregatedEvidence> evidences = Lists.newArrayList();
         for (Variant variant : drivers.variants()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(variant), variant.evidence()));
+            evidences.add(createAggregateEvidence(variant.event(), variant.evidence()));
         }
 
         for (Amplification amplification : drivers.amplifications()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(amplification), amplification.evidence()));
+            evidences.add(createAggregateEvidence(amplification.event(), amplification.evidence()));
         }
 
         for (Loss loss : drivers.losses()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(loss), loss.evidence()));
+            evidences.add(createAggregateEvidence(loss.event(), loss.evidence()));
         }
 
         for (HomozygousDisruption homozygousDisruption : drivers.homozygousDisruptions()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(homozygousDisruption), homozygousDisruption.evidence()));
+            evidences.add(createAggregateEvidence(homozygousDisruption.event(), homozygousDisruption.evidence()));
         }
 
         for (Disruption disruption : drivers.disruptions()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(disruption), disruption.evidence()));
+            evidences.add(createAggregateEvidence(disruption.event(), disruption.evidence()));
         }
 
         for (Fusion fusion : drivers.fusions()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(fusion), fusion.evidence()));
+            evidences.add(createAggregateEvidence(fusion.event(), fusion.evidence()));
         }
 
         for (Virus virus : drivers.viruses()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.event(virus), virus.evidence()));
+            evidences.add(createAggregateEvidence(virus.event(), virus.evidence()));
         }
 
         return evidences;

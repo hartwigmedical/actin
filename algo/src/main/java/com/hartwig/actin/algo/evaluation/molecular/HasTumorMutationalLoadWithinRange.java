@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
+import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
                         .addPassSpecificMessages("TML of sample " + tumorMutationalLoad + " is higher than requested minimal TML of "
                                 + minTumorMutationalLoad)
                         .addPassGeneralMessages("Adequate TML")
-                        .addInclusionMolecularEvents(MolecularEventFactory.HIGH_TUMOR_MUTATIONAL_LOAD)
+                        .addInclusionMolecularEvents(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD)
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
@@ -57,7 +57,7 @@ public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
                                 "TML of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad
                                         + " - " + maxTumorMutationalLoad)
                         .addPassGeneralMessages("Adequate TML")
-                        .addInclusionMolecularEvents(MolecularEventFactory.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
+                        .addInclusionMolecularEvents(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
                         .build();
             }
         } else if (tumorMutationalLoadIsAlmostAllowed && !hasSufficientQuality) {
@@ -66,7 +66,7 @@ public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
                     .addWarnSpecificMessages("TML of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
                             + " while data quality is insufficient (perhaps a few mutations are missed)")
                     .addWarnGeneralMessages("Inadequate TML")
-                    .addInclusionMolecularEvents(MolecularEventFactory.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
+                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
                     .build();
         }
 

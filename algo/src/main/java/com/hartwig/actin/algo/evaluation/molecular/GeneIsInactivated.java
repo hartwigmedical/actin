@@ -17,7 +17,6 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,34 +47,32 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         for (HomozygousDisruption homozygousDisruption : record.molecular().drivers().homozygousDisruptions()) {
             if (homozygousDisruption.gene().equals(gene)) {
-                String homDisruptionEvent = MolecularEventFactory.event(homozygousDisruption);
                 boolean isGainOfFunction = homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                         || homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!homozygousDisruption.isReportable()) {
-                    inactivationEventsThatAreUnreportable.add(homDisruptionEvent);
+                    inactivationEventsThatAreUnreportable.add(homozygousDisruption.event());
                 } else if (homozygousDisruption.geneRole() != GeneRole.TSG) {
-                    inactivationEventsNoTSG.add(homDisruptionEvent);
+                    inactivationEventsNoTSG.add(homozygousDisruption.event());
                 } else if (isGainOfFunction) {
-                    inactivationEventsGainOfFunction.add(homDisruptionEvent);
+                    inactivationEventsGainOfFunction.add(homozygousDisruption.event());
                 } else {
-                    inactivationEventsThatQualify.add(homDisruptionEvent);
+                    inactivationEventsThatQualify.add(homozygousDisruption.event());
                 }
             }
         }
 
         for (Loss loss : record.molecular().drivers().losses()) {
             if (loss.gene().equals(gene)) {
-                String lossEvent = MolecularEventFactory.event(loss);
                 boolean isGainOfFunction = loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                         || loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!loss.isReportable()) {
-                    inactivationEventsThatAreUnreportable.add(lossEvent);
+                    inactivationEventsThatAreUnreportable.add(loss.event());
                 } else if (loss.geneRole() != GeneRole.TSG) {
-                    inactivationEventsNoTSG.add(lossEvent);
+                    inactivationEventsNoTSG.add(loss.event());
                 } else if (isGainOfFunction) {
-                    inactivationEventsGainOfFunction.add(lossEvent);
+                    inactivationEventsGainOfFunction.add(loss.event());
                 } else {
-                    inactivationEventsThatQualify.add(lossEvent);
+                    inactivationEventsThatQualify.add(loss.event());
                 }
             }
         }
@@ -86,15 +83,13 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
-                String variantEvent = MolecularEventFactory.event(variant);
-
                 if (!variant.isReportable()) {
-                    inactivationEventsThatAreUnreportable.add(variantEvent);
+                    inactivationEventsThatAreUnreportable.add(variant.event());
                 } else {
                     Integer phaseGroup = null;
                     if (phaseGroup == null || !evaluatedPhaseGroups.contains(phaseGroup)) {
                         evaluatedPhaseGroups.add(phaseGroup);
-                        eventsThatMayBeUnphased.add(variantEvent);
+                        eventsThatMayBeUnphased.add(variant.event());
                     }
 
                     boolean isLossOfFunction = variant.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
@@ -106,14 +101,14 @@ public class GeneIsInactivated implements EvaluationFunction {
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
 
                         if (variant.geneRole() != GeneRole.TSG) {
-                            inactivationEventsNoTSG.add(variantEvent);
+                            inactivationEventsNoTSG.add(variant.event());
                         } else if (isGainOfFunction) {
-                            inactivationEventsGainOfFunction.add(variantEvent);
+                            inactivationEventsGainOfFunction.add(variant.event());
                         } else {
-                            inactivationEventsThatQualify.add(variantEvent);
+                            inactivationEventsThatQualify.add(variant.event());
                         }
                     } else if (isLossOfFunction) {
-                        reportableNonDriverVariantsWithLossOfFunction.add(variantEvent);
+                        reportableNonDriverVariantsWithLossOfFunction.add(variant.event());
                     }
                 }
             }
@@ -125,7 +120,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                 Integer clusterGroup = disruption.clusterGroup();
                 if (clusterGroup == null || !evaluatedClusterGroups.contains(clusterGroup)) {
                     evaluatedClusterGroups.add(clusterGroup);
-                    eventsThatMayBeUnphased.add(MolecularEventFactory.event(disruption));
+                    eventsThatMayBeUnphased.add(disruption.event());
                 }
             }
         }

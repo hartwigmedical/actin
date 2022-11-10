@@ -12,7 +12,6 @@ import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,22 +34,21 @@ public class HasFusionInGene implements EvaluationFunction {
 
         for (Fusion fusion : record.molecular().drivers().fusions()) {
             if (fusion.geneStart().equals(gene) || fusion.geneEnd().equals(gene)) {
-                String fusionEvent = MolecularEventFactory.event(fusion);
                 if (fusion.isReportable()) {
                     boolean hasNoEffect = fusion.proteinEffect() == ProteinEffect.NO_EFFECT
                             || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                     if (fusion.driverLikelihood() != DriverLikelihood.HIGH) {
-                        fusionsWithNoHighDriverLikelihood.add(fusionEvent);
+                        fusionsWithNoHighDriverLikelihood.add(fusion.event());
                     } else if (hasNoEffect) {
-                        fusionsWithNoEffect.add(fusionEvent);
+                        fusionsWithNoEffect.add(fusion.event());
                     } else {
-                        matchingFusions.add(fusionEvent);
+                        matchingFusions.add(fusion.event());
                     }
                 } else {
                     boolean isGainOfFunction = fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                             || fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                     if (isGainOfFunction) {
-                        unreportableFusionsWithGainOfFunction.add(fusionEvent);
+                        unreportableFusionsWithGainOfFunction.add(fusion.event());
                     }
                 }
             }

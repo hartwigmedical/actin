@@ -12,7 +12,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,21 +40,20 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
-                String variantEvent = MolecularEventFactory.event(variant);
                 for (String codon : codons) {
                     if (isCodonMatch(variant.canonicalImpact().affectedCodon(), codon)) {
                         canonicalCodonMatches.add(codon);
                         if (variant.isReportable()) {
-                            canonicalReportableVariantMatches.add(variantEvent);
+                            canonicalReportableVariantMatches.add(variant.event());
                         } else {
-                            canonicalUnreportableVariantMatches.add(variantEvent);
+                            canonicalUnreportableVariantMatches.add(variant.event());
                         }
                     }
 
                     if (variant.isReportable()) {
                         for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                             if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
-                                reportableOtherVariantMatches.add(variantEvent);
+                                reportableOtherVariantMatches.add(variant.event());
                                 reportableOtherCodonMatches.add(codon);
                             }
                         }

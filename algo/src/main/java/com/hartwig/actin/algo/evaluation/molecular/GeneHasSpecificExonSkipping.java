@@ -12,7 +12,6 @@ import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +33,7 @@ public class GeneHasSpecificExonSkipping implements EvaluationFunction {
         for (Fusion fusion : record.molecular().drivers().fusions()) {
             if (fusion.isReportable() && fusion.geneStart().equals(gene) && fusion.geneEnd().equals(gene)
                     && fusion.fusedExonUp() == exonToSkip - 1 && fusion.fusedExonDown() == exonToSkip + 1) {
-                fusionSkippingEvents.add(MolecularEventFactory.event(fusion));
+                fusionSkippingEvents.add(fusion.event());
             }
         }
 
@@ -46,7 +45,7 @@ public class GeneHasSpecificExonSkipping implements EvaluationFunction {
             boolean isCanonicalExonAffected = canonicalExonAffected != null && canonicalExonAffected == exonToSkip;
 
             if (variant.isReportable() && variant.gene().equals(gene) && isCanonicalExonAffected && isCanonicalSplice) {
-                exonSplicingVariants.add(MolecularEventFactory.event(variant));
+                exonSplicingVariants.add(variant.event());
             }
         }
 

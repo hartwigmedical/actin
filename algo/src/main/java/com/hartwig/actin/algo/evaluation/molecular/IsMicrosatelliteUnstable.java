@@ -11,7 +11,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
+import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> msiGenesWithDriver = Sets.newHashSet();
-        for (String gene : MolecularConstants.MSI_GENES) {
+        for (String gene : com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
                 if (variant.gene().equals(gene) && variant.isReportable()) {
                     msiGenesWithDriver.add(gene);
@@ -58,7 +58,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
             if (!msiGenesWithDriver.isEmpty()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_UNSTABLE)
+                        .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                         .addPassSpecificMessages(
                                 "Microsatellite instability (MSI) status detected, together with drivers in MSI genes: " + Format.concat(
                                         msiGenesWithDriver))
@@ -67,9 +67,9 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
-                        .addInclusionMolecularEvents(MolecularEventFactory.MICROSATELLITE_POTENTIALLY_UNSTABLE)
+                        .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_POTENTIALLY_UNSTABLE)
                         .addWarnSpecificMessages("Microsatellite instability (MSI) detected, but no drivers in MSI genes (" + Format.concat(
-                                MolecularConstants.MSI_GENES) + ") were detected")
+                                com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES) + ") were detected")
                         .addWarnGeneralMessages("MSI")
                         .build();
             }

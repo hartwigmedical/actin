@@ -14,7 +14,6 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,35 +39,34 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
-                String variantEvent = MolecularEventFactory.event(variant);
                 boolean isActivating = isActivating(variant);
 
                 if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH) {
                     if (isActivating) {
                         if (isAssociatedWithDrugResistance(variant)) {
-                            activatingVariantsAssociatedWithResistance.add(variantEvent);
+                            activatingVariantsAssociatedWithResistance.add(variant.event());
                         } else {
-                            activatingVariantsWithoutDrugResistance.add(variantEvent);
+                            activatingVariantsWithoutDrugResistance.add(variant.event());
                         }
                     } else {
                         if (highDriverNoGainOfFunction(variant)) {
-                            highDriverNoGainOfFunctionVariants.add(variantEvent);
+                            highDriverNoGainOfFunctionVariants.add(variant.event());
                         }
 
                         if (nonHighDriver(variant)) {
-                            nonHighDriverVariants.add(variantEvent);
+                            nonHighDriverVariants.add(variant.event());
 
                             if (!isGainOfFunction(variant)) {
-                                nonHighDriverGainOfFunctionVariants.add(variantEvent);
+                                nonHighDriverGainOfFunctionVariants.add(variant.event());
                             }
                         }
 
                         if (isUnreportableMissenseOrHotspot(variant)) {
-                            unreportableMissenseOrHotspotVariants.add(variantEvent);
+                            unreportableMissenseOrHotspotVariants.add(variant.event());
                         }
                     }
                 } else if (isActivating) {
-                    activatingVariantsInNonOncogene.add(variantEvent);
+                    activatingVariantsInNonOncogene.add(variant.event());
                 }
             }
         }

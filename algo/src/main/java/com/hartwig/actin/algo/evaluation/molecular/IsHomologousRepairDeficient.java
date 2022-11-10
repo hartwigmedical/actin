@@ -11,7 +11,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
+import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> hrdGenesWithDriver = Sets.newHashSet();
-        for (String gene : MolecularConstants.HRD_GENES) {
+        for (String gene : com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.HRD_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
                 if (variant.gene().equals(gene) && variant.isReportable()) {
                     hrdGenesWithDriver.add(gene);
@@ -58,7 +58,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
             if (!hrdGenesWithDriver.isEmpty()) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_DEFICIENT)
+                        .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                         .addPassSpecificMessages(
                                 "Homologous repair deficiency (HRD) status detected, together with drivers in HRD genes: " + Format.concat(
                                         hrdGenesWithDriver))
@@ -67,10 +67,10 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
-                        .addInclusionMolecularEvents(MolecularEventFactory.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
+                        .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
                         .addWarnSpecificMessages(
                                 "Homologous repair deficiency (HRD) status detected, but no drivers in HRD genes (" + Format.concat(
-                                        MolecularConstants.HRD_GENES) + ") were detected")
+                                        com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.HRD_GENES) + ") were detected")
                         .addWarnGeneralMessages("HRD")
                         .build();
             }

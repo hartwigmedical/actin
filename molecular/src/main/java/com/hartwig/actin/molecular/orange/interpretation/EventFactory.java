@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.util;
+package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.StringJoiner;
 
@@ -16,21 +16,12 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class MolecularEventFactory {
+final class EventFactory {
 
-    public static final String MICROSATELLITE_UNSTABLE = "MSI";
-    public static final String MICROSATELLITE_POTENTIALLY_UNSTABLE = "Potential MSI";
-    public static final String HOMOLOGOUS_REPAIR_DEFICIENT = "HRD";
-    public static final String HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT = "Potential HRD";
-    public static final String HIGH_TUMOR_MUTATIONAL_BURDEN = "TMB High";
-    public static final String ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN = "Almost sufficient TMB";
-    public static final String HIGH_TUMOR_MUTATIONAL_LOAD = "TML High";
-    public static final String ADEQUATE_TUMOR_MUTATIONAL_LOAD = "TML High";
-    public static final String ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD = "Almost sufficient TML";
-
-    private MolecularEventFactory() {
+    private EventFactory() {
     }
 
+    // TODO Refactor to be used in ORANGE datamodel and use.
     @NotNull
     public static String event(@NotNull Driver driver) {
         if (driver instanceof Variant) {

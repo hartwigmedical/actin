@@ -17,7 +17,6 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,39 +37,36 @@ public class GeneIsWildType implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && variant.isReportable()) {
-                String variantEvent = MolecularEventFactory.event(variant);
                 boolean hasNoEffect =
                         variant.proteinEffect() == ProteinEffect.NO_EFFECT || variant.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(variantEvent);
+                    reportableEventsWithNoEffect.add(variant.event());
                 } else {
-                    reportableEventsWithEffect.add(variantEvent);
+                    reportableEventsWithEffect.add(variant.event());
                 }
             }
         }
 
         for (Amplification amplification : record.molecular().drivers().amplifications()) {
             if (amplification.gene().equals(gene) && amplification.isReportable() && amplification.geneRole() != GeneRole.TSG) {
-                String ampEvent = MolecularEventFactory.event(amplification);
                 boolean hasNoEffect = amplification.proteinEffect() == ProteinEffect.NO_EFFECT
                         || amplification.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(ampEvent);
+                    reportableEventsWithNoEffect.add(amplification.event());
                 } else {
-                    reportableEventsWithEffect.add(ampEvent);
+                    reportableEventsWithEffect.add(amplification.event());
                 }
             }
         }
 
         for (Loss loss : record.molecular().drivers().losses()) {
             if (loss.gene().equals(gene) && loss.isReportable() && loss.geneRole() != GeneRole.ONCO) {
-                String lossEvent = MolecularEventFactory.event(loss);
                 boolean hasNoEffect =
                         loss.proteinEffect() == ProteinEffect.NO_EFFECT || loss.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(lossEvent);
+                    reportableEventsWithNoEffect.add(loss.event());
                 } else {
-                    reportableEventsWithEffect.add(lossEvent);
+                    reportableEventsWithEffect.add(loss.event());
                 }
             }
         }
@@ -78,39 +74,36 @@ public class GeneIsWildType implements EvaluationFunction {
         for (HomozygousDisruption homozygousDisruption : record.molecular().drivers().homozygousDisruptions()) {
             if (homozygousDisruption.gene().equals(gene) && homozygousDisruption.isReportable()
                     && homozygousDisruption.geneRole() != GeneRole.ONCO) {
-                String homDisruptionEvent = MolecularEventFactory.event(homozygousDisruption);
                 boolean hasNoEffect = homozygousDisruption.proteinEffect() == ProteinEffect.NO_EFFECT
                         || homozygousDisruption.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(homDisruptionEvent);
+                    reportableEventsWithNoEffect.add(homozygousDisruption.event());
                 } else {
-                    reportableEventsWithEffect.add(homDisruptionEvent);
+                    reportableEventsWithEffect.add(homozygousDisruption.event());
                 }
             }
         }
 
         for (Disruption disruption : record.molecular().drivers().disruptions()) {
             if (disruption.gene().equals(gene) && disruption.isReportable() && disruption.geneRole() != GeneRole.ONCO) {
-                String disruptionEvent = MolecularEventFactory.event(disruption);
                 boolean hasNoEffect = disruption.proteinEffect() == ProteinEffect.NO_EFFECT
                         || disruption.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(disruptionEvent);
+                    reportableEventsWithNoEffect.add(disruption.event());
                 } else {
-                    reportableEventsWithEffect.add(disruptionEvent);
+                    reportableEventsWithEffect.add(disruption.event());
                 }
             }
         }
 
         for (Fusion fusion : record.molecular().drivers().fusions()) {
             if ((fusion.geneStart().equals(gene) || fusion.geneEnd().equals(gene)) && fusion.isReportable()) {
-                String fusionEvent = MolecularEventFactory.event(fusion);
                 boolean hasNoEffect =
                         fusion.proteinEffect() == ProteinEffect.NO_EFFECT || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(fusionEvent);
+                    reportableEventsWithNoEffect.add(fusion.event());
                 } else {
-                    reportableEventsWithEffect.add(fusionEvent);
+                    reportableEventsWithEffect.add(fusion.event());
                 }
             }
         }

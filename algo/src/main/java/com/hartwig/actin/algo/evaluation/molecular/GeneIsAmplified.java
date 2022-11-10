@@ -11,7 +11,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,21 +59,20 @@ public class GeneIsAmplified implements EvaluationFunction {
                 boolean isLossOfFunction = amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
                         || amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
-                String amplificationEvent = MolecularEventFactory.event(amplification);
                 if (isAmp) {
                     if (!isPotentialOncogene) {
-                        ampsOnNonOncogenes.add(amplificationEvent);
+                        ampsOnNonOncogenes.add(amplification.event());
                     } else if (isLossOfFunction) {
-                        ampsWithLossOfFunction.add(amplificationEvent);
+                        ampsWithLossOfFunction.add(amplification.event());
                     } else if (!amplification.isReportable()) {
-                        ampsThatAreUnreportable.add(amplificationEvent);
+                        ampsThatAreUnreportable.add(amplification.event());
                     } else if (isPartialAmp) {
-                        reportablePartialAmps.add(amplificationEvent);
+                        reportablePartialAmps.add(amplification.event());
                     } else {
-                        reportableFullAmps.add(amplificationEvent);
+                        reportableFullAmps.add(amplification.event());
                     }
                 } else if (isNearAmp) {
-                    ampsThatAreNearCutoff.add(amplificationEvent);
+                    ampsThatAreNearCutoff.add(amplification.event());
                 }
             }
         }

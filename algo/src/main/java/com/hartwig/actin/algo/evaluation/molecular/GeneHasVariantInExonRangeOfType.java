@@ -13,7 +13,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
-import com.hartwig.actin.molecular.util.MolecularEventFactory;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,19 +45,18 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && allowedVariantTypes.contains(variant.type())) {
-                String variantEvent = MolecularEventFactory.event(variant);
                 if (hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon)) {
                     if (variant.isReportable()) {
-                        canonicalReportableVariantMatches.add(variantEvent);
+                        canonicalReportableVariantMatches.add(variant.event());
                     } else {
-                        canonicalUnreportableVariantMatches.add(variantEvent);
+                        canonicalUnreportableVariantMatches.add(variant.event());
                     }
                 }
 
                 if (variant.isReportable()) {
                     for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                         if (hasEffectInExonRange(otherImpact.affectedExon(), minExon, maxExon)) {
-                            reportableOtherMatchVariants.add(variantEvent);
+                            reportableOtherMatchVariants.add(variant.event());
                         }
                     }
                 }
