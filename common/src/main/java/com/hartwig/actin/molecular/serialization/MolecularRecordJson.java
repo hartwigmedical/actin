@@ -46,6 +46,7 @@ import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
+import com.hartwig.actin.molecular.datamodel.driver.Effect;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
@@ -63,7 +64,6 @@ import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
@@ -256,10 +256,10 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static Set<TranscriptEffect> toTranscriptEffects(@NotNull List<String> effectStrings) {
-            Set<TranscriptEffect> effects = Sets.newHashSet();
+        private static Set<Effect> toTranscriptEffects(@NotNull List<String> effectStrings) {
+            Set<Effect> effects = Sets.newHashSet();
             for (String effect : effectStrings) {
-                effects.add(TranscriptEffect.valueOf(effect));
+                effects.add(Effect.valueOf(effect));
             }
             return effects;
         }

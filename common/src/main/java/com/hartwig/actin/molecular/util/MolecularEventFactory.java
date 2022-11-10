@@ -6,10 +6,10 @@ import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
+import com.hartwig.actin.molecular.datamodel.driver.Effect;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
@@ -68,7 +68,7 @@ public final class MolecularEventFactory {
         }
 
         StringJoiner effectJoiner = new StringJoiner("&");
-        for (TranscriptEffect effect : impact.effects()) {
+        for (Effect effect : impact.effects()) {
             effectJoiner.add(effect.toString().toLowerCase());
         }
         return effectJoiner.toString();

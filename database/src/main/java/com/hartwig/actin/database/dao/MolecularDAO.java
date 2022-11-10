@@ -30,11 +30,11 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Effect;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
@@ -211,9 +211,9 @@ class MolecularDAO {
     }
 
     @NotNull
-    private static String concatTranscriptEffects(@NotNull Iterable<TranscriptEffect> effects) {
+    private static String concatTranscriptEffects(@NotNull Iterable<Effect> effects) {
         StringJoiner joiner = new StringJoiner("&");
-        for (TranscriptEffect effect : effects) {
+        for (Effect effect : effects) {
             joiner.add(effect.toString());
         }
         return joiner.toString();

@@ -22,13 +22,13 @@ public abstract class Fusion implements Driver {
     @NotNull
     public abstract String geneEnd();
 
-    public abstract int fusedExonDown();
-
     @NotNull
     public abstract String geneTranscriptEnd();
 
     @NotNull
     public abstract String geneContextEnd();
+
+    public abstract int fusedExonDown();
 
     @NotNull
     public abstract FusionDriverType driverType();

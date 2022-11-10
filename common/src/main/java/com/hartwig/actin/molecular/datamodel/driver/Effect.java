@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.driver;
 
-public enum TranscriptEffect {
+public enum Effect {
     STOP_GAINED,
     STOP_LOST,
     START_LOST,

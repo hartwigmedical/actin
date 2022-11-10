@@ -7,8 +7,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Effect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
         boolean has3UTRHotspot = false;
         boolean has3UTRVUS = false;
         for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene) && variant.canonicalImpact().effects().contains(TranscriptEffect.THREE_PRIME_UTR)) {
+            if (variant.gene().equals(gene) && variant.canonicalImpact().effects().contains(Effect.THREE_PRIME_UTR)) {
                 if (variant.isHotspot()) {
                     has3UTRHotspot = true;
                 } else {
