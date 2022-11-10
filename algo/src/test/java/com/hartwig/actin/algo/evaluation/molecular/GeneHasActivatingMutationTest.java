@@ -73,13 +73,6 @@ public class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .from(activatingVariant)
-                        .proteinEffect(ProteinEffect.NO_EFFECT)
-                        .isHotspot(true)
-                        .build())));
-
-        assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
-                        .from(activatingVariant)
                         .isReportable(false)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.MISSENSE).build())
                         .build())));

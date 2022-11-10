@@ -35,7 +35,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         Set<String> activatingVariantsInNonOncogene = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
-        Set<String> variantWithUnclearHotspotStatus = Sets.newHashSet();
         Set<String> highDriverNoGainOfFunctionVariants = Sets.newHashSet();
         Set<String> unreportableMissenseOrHotspotVariants = Sets.newHashSet();
 
@@ -62,10 +61,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                             if (!isGainOfFunction(variant)) {
                                 nonHighDriverGainOfFunctionVariants.add(variantEvent);
                             }
-                        }
-
-                        if (hasUnclearHotspotStatus(variant)) {
-                            variantWithUnclearHotspotStatus.add(variantEvent);
                         }
 
                         if (isUnreportableMissenseOrHotspot(variant)) {
@@ -138,16 +133,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .build();
         }
 
-        if (!variantWithUnclearHotspotStatus.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(variantWithUnclearHotspotStatus)
-                    .addWarnSpecificMessages(
-                            gene + " has mutation(s) " + Format.concat(variantWithUnclearHotspotStatus) + " with unclear hotspot status")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
         if (!unreportableMissenseOrHotspotVariants.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
@@ -185,11 +170,6 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     private static boolean nonHighDriver(@NotNull Variant variant) {
         boolean isNonHighDriver = variant.driverLikelihood() != DriverLikelihood.HIGH;
         return variant.isReportable() && isNonHighDriver;
-    }
-
-    private static boolean hasUnclearHotspotStatus(@NotNull Variant variant) {
-        boolean isGainOfFunction = isGainOfFunction(variant);
-        return variant.isReportable() && variant.isHotspot() && !isGainOfFunction;
     }
 
     private static boolean isUnreportableMissenseOrHotspot(@NotNull Variant variant) {

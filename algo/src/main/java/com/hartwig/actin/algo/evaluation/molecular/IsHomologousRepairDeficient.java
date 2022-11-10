@@ -9,14 +9,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.util.MolecularEventFactory;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Add implementation for previous molecular tests
 public class IsHomologousRepairDeficient implements EvaluationFunction {
 
     IsHomologousRepairDeficient() {
@@ -26,7 +24,6 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> hrdGenesWithDriver = Sets.newHashSet();
-        Set<String> hrdGenesWithPreviousMutation = Sets.newHashSet();
         for (String gene : MolecularConstants.HRD_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
                 if (variant.gene().equals(gene) && variant.isReportable()) {
@@ -36,11 +33,6 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
             for (Loss loss : record.molecular().drivers().losses()) {
                 if (loss.gene().equals(gene)) {
                     hrdGenesWithDriver.add(gene);
-                }
-            }
-            for (PriorMolecularTest priorTest : record.clinical().priorMolecularTests()) {
-                if (priorTest.item().equals(gene)) {
-
                 }
             }
         }
