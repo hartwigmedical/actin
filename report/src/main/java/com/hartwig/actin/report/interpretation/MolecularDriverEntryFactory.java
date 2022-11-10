@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
@@ -25,22 +26,22 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    public static Set<MolecularDriverEntry> create(@NotNull MolecularDrivers drivers) {
+    public static Set<MolecularDriverEntry> create(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularDrivers drivers) {
         Set<MolecularDriverEntry> entries = Sets.newTreeSet(new MolecularDriverEntryComparator());
 
-        entries.addAll(fromVariants(drivers.variants()));
-        entries.addAll(fromAmplifications(drivers.amplifications()));
-        entries.addAll(fromLosses(drivers.losses()));
-        entries.addAll(fromHomozygousDisruptions(drivers.homozygousDisruptions()));
-        entries.addAll(fromDisruptions(drivers.disruptions()));
-        entries.addAll(fromFusions(drivers.fusions()));
-        entries.addAll(fromViruses(drivers.viruses()));
+        entries.addAll(fromVariants(treatmentMatch, drivers.variants()));
+        entries.addAll(fromAmplifications(treatmentMatch, drivers.amplifications()));
+        entries.addAll(fromLosses(treatmentMatch, drivers.losses()));
+        entries.addAll(fromHomozygousDisruptions(treatmentMatch, drivers.homozygousDisruptions()));
+        entries.addAll(fromDisruptions(treatmentMatch, drivers.disruptions()));
+        entries.addAll(fromFusions(treatmentMatch, drivers.fusions()));
+        entries.addAll(fromViruses(treatmentMatch, drivers.viruses()));
 
         return entries;
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromVariants(@NotNull Set<Variant> variants) {
+    private static Set<MolecularDriverEntry> fromVariants(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Variant> variants) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Variant variant : variants) {
@@ -74,7 +75,8 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromAmplifications(@NotNull Set<Amplification> amplifications) {
+    private static Set<MolecularDriverEntry> fromAmplifications(@NotNull TreatmentMatch treatmentMatch,
+            @NotNull Set<Amplification> amplifications) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Amplification amplification : amplifications) {
@@ -95,7 +97,7 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromLosses(@NotNull Set<Loss> losses) {
+    private static Set<MolecularDriverEntry> fromLosses(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Loss> losses) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Loss loss : losses) {
@@ -113,7 +115,8 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
+    private static Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull TreatmentMatch treatmentMatch,
+            @NotNull Set<HomozygousDisruption> homozygousDisruptions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
@@ -131,14 +134,14 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions) {
+    private static Set<MolecularDriverEntry> fromDisruptions(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Disruption> disruptions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Disruption disruption : disruptions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Disruption");
-            String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / " + Formats.singleDigitNumber(
-                    disruption.undisruptedCopyNumber()) + " undisr. copies";
+            String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / "
+                    + Formats.singleDigitNumber(disruption.undisruptedCopyNumber()) + " undisr. copies";
             entryBuilder.driver(disruption.gene() + ", " + disruption.type() + " (" + addon + ")");
             entryBuilder.driverLikelihood(disruption.driverLikelihood());
 
@@ -151,14 +154,14 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromFusions(@NotNull Set<Fusion> fusions) {
+    private static Set<MolecularDriverEntry> fromFusions(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Fusion> fusions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Fusion fusion : fusions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType(fusion.driverType().display());
             String name = fusion.geneStart() + "-" + fusion.geneEnd() + " fusion";
-//            entryBuilder.driver(name + ", " + fusion.details());
+            //            entryBuilder.driver(name + ", " + fusion.details());
             entryBuilder.driver(name);
             entryBuilder.driverLikelihood(fusion.driverLikelihood());
 
@@ -171,7 +174,7 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromViruses(@NotNull Set<Virus> viruses) {
+    private static Set<MolecularDriverEntry> fromViruses(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Virus> viruses) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Virus virus : viruses) {
@@ -200,11 +203,11 @@ public final class MolecularDriverEntryFactory {
     private static Set<String> inclusiveActinTrials(@NotNull Driver driver) {
         Set<String> trials = Sets.newTreeSet(Ordering.natural());
         // TODO figure out how to implement
-//        for (ActinTrialEvidence evidence : actinTrials) {
-//            if (evidence.isInclusionCriterion() && evidence.event().equals(driver.event())) {
-//                trials.add(evidence.trialAcronym());
-//            }
-//        }
+        //        for (ActinTrialEvidence evidence : actinTrials) {
+        //            if (evidence.isInclusionCriterion() && evidence.event().equals(driver.event())) {
+        //                trials.add(evidence.trialAcronym());
+        //            }
+        //        }
         return trials;
     }
 
@@ -218,14 +221,14 @@ public final class MolecularDriverEntryFactory {
     @Nullable
     private static String bestResponsiveEvidence(@NotNull Driver driver) {
         // TODO Implement
-//        if (hasEvidence(driver, evidence.approvedEvidence())) {
-//            return "Approved";
-//        } else if (hasEvidence(driver, evidence.onLabelExperimentalEvidence()) || hasEvidence(driver,
-//                evidence.offLabelExperimentalEvidence())) {
-//            return "Experimental";
-//        } else if (hasEvidence(driver, evidence.preClinicalEvidence())) {
-//            return "Pre-clinical";
-//        }
+        //        if (hasEvidence(driver, evidence.approvedEvidence())) {
+        //            return "Approved";
+        //        } else if (hasEvidence(driver, evidence.onLabelExperimentalEvidence()) || hasEvidence(driver,
+        //                evidence.offLabelExperimentalEvidence())) {
+        //            return "Experimental";
+        //        } else if (hasEvidence(driver, evidence.preClinicalEvidence())) {
+        //            return "Pre-clinical";
+        //        }
 
         return null;
     }
@@ -233,11 +236,11 @@ public final class MolecularDriverEntryFactory {
     @Nullable
     private static String bestResistanceEvidence(@NotNull Driver driver) {
         // TODO Implement
-//        if (hasEvidence(driver, evidence.knownResistanceEvidence())) {
-//            return "Known";
-//        } else if (hasEvidence(driver, evidence.suspectResistanceEvidence())) {
-//            return "Suspect";
-//        }
+        //        if (hasEvidence(driver, evidence.knownResistanceEvidence())) {
+        //            return "Known";
+        //        } else if (hasEvidence(driver, evidence.suspectResistanceEvidence())) {
+        //            return "Suspect";
+        //        }
 
         return null;
     }

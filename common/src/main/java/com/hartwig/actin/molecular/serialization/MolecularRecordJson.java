@@ -390,6 +390,12 @@ public class MolecularRecordJson {
                     return bool(object, "isReportable");
                 }
 
+                @NotNull
+                @Override
+                public String event() {
+                    return string(object, "event");
+                }
+
                 @Nullable
                 @Override
                 public DriverLikelihood driverLikelihood() {

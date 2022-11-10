@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
@@ -53,13 +54,14 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("HR Status"));
         table.addHeaderCell(Cells.createHeader("DPYD"));
 
-        table.addCell(createPurityCell(molecular.characteristics().purity()));
+        MolecularCharacteristics characteristics = molecular.characteristics();
+        table.addCell(createPurityCell(characteristics.purity()));
         table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQuality())));
-        table.addCell(createPredictedTumorOriginCell(molecular.characteristics().predictedTumorOrigin()));
-        table.addCell(createTMLStatusCell(molecular.characteristics().tumorMutationalLoad()));
-        table.addCell(createTMBStatusCell(molecular.characteristics().tumorMutationalBurden()));
-        table.addCell(createMSStabilityCell(molecular.characteristics().isMicrosatelliteUnstable()));
-        table.addCell(createHRStatusCell(molecular.characteristics().isHomologousRepairDeficient()));
+        table.addCell(createPredictedTumorOriginCell(characteristics.predictedTumorOrigin()));
+        table.addCell(createTMLStatusCell(characteristics.hasHighTumorMutationalLoad(), characteristics.tumorMutationalLoad()));
+        table.addCell(createTMBStatusCell(characteristics.hasHighTumorMutationalBurden(), characteristics.tumorMutationalBurden()));
+        table.addCell(createMSStabilityCell(characteristics.isMicrosatelliteUnstable()));
+        table.addCell(createHRStatusCell(characteristics.isHomologousRepairDeficient()));
         table.addCell(Cells.createContent(createDPYDString(molecular.pharmaco())));
 
         return table;
@@ -67,7 +69,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
 
     @NotNull
     private Cell createPurityCell(@Nullable Double purity) {
-        if (!molecular.containsTumorCells() ) {
+        if (!molecular.containsTumorCells()) {
             return Cells.createContentWarn("None");
         }
 
@@ -98,20 +100,20 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Cell createTMLStatusCell(@Nullable Integer tumorMutationalLoad) {
+    private Cell createTMLStatusCell(@Nullable Boolean hasHighTumorMutationalLoad, @Nullable Integer tumorMutationalLoad) {
         if (!molecular.containsTumorCells()) {
             return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
         }
 
-        if (tumorMutationalLoad == null) {
+        if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
             return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
         }
 
-        String interpretation = tumorMutationalLoad >= 140 ? "High" : "Low";
+        String interpretation = hasHighTumorMutationalLoad ? "High" : "Low";
         String value = interpretation + " (" + tumorMutationalLoad + ")";
         Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
-        if (interpretation.equals("High")) {
+        if (hasHighTumorMutationalLoad) {
             cell.addStyle(Styles.tableHighlightStyle());
         }
 
@@ -119,20 +121,20 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Cell createTMBStatusCell(@Nullable Double tumorMutationalBurden) {
+    private Cell createTMBStatusCell(@Nullable Boolean hasHighTumorMutationalBurden, @Nullable Double tumorMutationalBurden) {
         if (!molecular.containsTumorCells()) {
             return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
         }
 
-        if (tumorMutationalBurden == null) {
+        if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
             return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
         }
 
-        String interpretation = tumorMutationalBurden >= 10 ? "High" : "Low";
+        String interpretation = hasHighTumorMutationalBurden ? "High" : "Low";
         String value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")";
         Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
-        if (interpretation.equals("High")) {
+        if (hasHighTumorMutationalBurden) {
             cell.addStyle(Styles.tableHighlightStyle());
         }
 
@@ -185,6 +187,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         if (dpyd == null) {
             return Formats.VALUE_UNKNOWN;
         }
+
         StringJoiner joiner = Formats.commaJoiner();
         for (Haplotype haplotype : dpyd.haplotypes()) {
             joiner.add(haplotype.name() + " (" + haplotype.function() + ")");

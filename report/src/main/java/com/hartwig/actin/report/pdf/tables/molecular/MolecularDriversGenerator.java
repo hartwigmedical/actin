@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
@@ -22,10 +23,14 @@ import org.jetbrains.annotations.Nullable;
 public class MolecularDriversGenerator implements TableGenerator {
 
     @NotNull
+    private final TreatmentMatch treatmentMatch;
+    @NotNull
     private final MolecularRecord molecular;
     private final float width;
 
-    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, final float width) {
+    public MolecularDriversGenerator(@NotNull final TreatmentMatch treatmentMatch, @NotNull final MolecularRecord molecular,
+            final float width) {
+        this.treatmentMatch = treatmentMatch;
         this.molecular = molecular;
         this.width = width;
     }
@@ -50,7 +55,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(molecular.drivers());
+        Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(treatmentMatch, molecular.drivers());
 
         for (MolecularDriverEntry entry : entries) {
             table.addCell(Cells.createContent(entry.driverType()));

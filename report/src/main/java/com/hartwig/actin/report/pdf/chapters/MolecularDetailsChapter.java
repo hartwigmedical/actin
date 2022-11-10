@@ -52,7 +52,7 @@ public class MolecularDetailsChapter implements ReportChapter {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),
-                new MolecularDriversGenerator(report.molecular(), contentWidth()));
+                new MolecularDriversGenerator(report.treatmentMatch(), report.molecular(), contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

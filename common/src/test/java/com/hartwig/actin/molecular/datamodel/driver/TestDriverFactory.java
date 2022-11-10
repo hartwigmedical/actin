@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.datamodel.driver;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,12 @@ final class TestDriverFactory {
             @Override
             public boolean isReportable() {
                 return false;
+            }
+
+            @NotNull
+            @Override
+            public String event() {
+                return Strings.EMPTY;
             }
 
             @Nullable

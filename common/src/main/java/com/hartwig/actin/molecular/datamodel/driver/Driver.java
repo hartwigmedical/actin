@@ -9,6 +9,9 @@ public interface Driver {
 
     boolean isReportable();
 
+    @NotNull
+    String event();
+
     @Nullable
     DriverLikelihood driverLikelihood();
 
