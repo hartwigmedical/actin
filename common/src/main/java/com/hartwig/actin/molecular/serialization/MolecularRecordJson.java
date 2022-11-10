@@ -226,6 +226,7 @@ public class MolecularRecordJson {
                         .isBiallelic(bool(variant, "isBiallelic"))
                         .isHotspot(bool(variant, "isHotspot"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
+                        .phaseGroup(nullableInteger(variant, "phaseGroup"))
                         .canonicalImpact(toTranscriptImpact(object(variant, "canonicalImpact")))
                         .otherImpacts(toTranscriptImpacts(array(variant, "otherImpacts")))
                         .build());
@@ -338,6 +339,7 @@ public class MolecularRecordJson {
                         .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
                         .regionType(RegionType.valueOf(string(disruption, "regionType")))
                         .codingContext(CodingContext.valueOf(string(disruption, "codingContext")))
+                        .clusterGroup(nullableInteger(disruption, "clusterGroup"))
                         .range(string(disruption, "range"))
                         .build());
             }

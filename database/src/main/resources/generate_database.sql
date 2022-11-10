@@ -315,6 +315,7 @@ CREATE TABLE variant
     isBiallelic BOOLEAN NOT NULL,
     isHotspot BOOLEAN NOT NULL,
     clonalLikelihood double precision NOT NULL,
+    phaseGroup int,
     canonicalTranscriptId varchar(50) NOT NULL,
     canonicalHgvsCodingImpact varchar(50) NOT NULL,
     canonicalHgvsProteinImpact varchar(50) NOT NULL,
@@ -439,6 +440,7 @@ CREATE TABLE disruption
     undisruptedCopyNumber double precision NOT NULL,
     regionType varchar(50) NOT NULL,
     codingContext varchar(50) NOT NULL,
+    clusterGroup int,
     disruptedRange varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );

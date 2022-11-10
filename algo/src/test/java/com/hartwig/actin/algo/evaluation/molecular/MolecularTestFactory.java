@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
@@ -59,6 +60,16 @@ final class MolecularTestFactory {
     @NotNull
     public static PatientRecord withVariant(@NotNull Variant variant) {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
+    }
+
+    @NotNull
+    public static PatientRecord withVariants(@NotNull Variant... variants) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addAllVariants(Lists.newArrayList(variants)).build());
+    }
+
+    @NotNull
+    public static PatientRecord withVariantAndDisruption(@NotNull Variant variant, @NotNull Disruption disruption) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).addDisruptions(disruption).build());
     }
 
     @NotNull

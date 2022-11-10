@@ -23,6 +23,9 @@ public abstract class Variant implements Driver, GeneAlteration {
 
     public abstract double clonalLikelihood();
 
+    @Nullable
+    public abstract Integer phaseGroup();
+
     @NotNull
     public abstract TranscriptImpact canonicalImpact();
 

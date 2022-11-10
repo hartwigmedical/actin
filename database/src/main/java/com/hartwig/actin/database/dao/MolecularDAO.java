@@ -175,6 +175,7 @@ class MolecularDAO {
                             VARIANT.ISBIALLELIC,
                             VARIANT.ISHOTSPOT,
                             VARIANT.CLONALLIKELIHOOD,
+                            VARIANT.PHASEGROUP,
                             VARIANT.CANONICALTRANSCRIPTID,
                             VARIANT.CANONICALHGVSCODINGIMPACT,
                             VARIANT.CANONICALHGVSPROTEINIMPACT,
@@ -196,6 +197,7 @@ class MolecularDAO {
                             DataUtil.toByte(variant.isBiallelic()),
                             DataUtil.toByte(variant.isHotspot()),
                             variant.clonalLikelihood(),
+                            variant.phaseGroup(),
                             variant.canonicalImpact().transcriptId(),
                             variant.canonicalImpact().hgvsCodingImpact(),
                             variant.canonicalImpact().hgvsProteinImpact(),
@@ -303,6 +305,7 @@ class MolecularDAO {
                             DISRUPTION.UNDISRUPTEDCOPYNUMBER,
                             DISRUPTION.REGIONTYPE,
                             DISRUPTION.CODINGCONTEXT,
+                            DISRUPTION.CLUSTERGROUP,
                             DISRUPTION.DISRUPTEDRANGE)
                     .values(sampleId,
                             DataUtil.toByte(disruption.isReportable()),
@@ -316,6 +319,7 @@ class MolecularDAO {
                             disruption.undisruptedCopyNumber(),
                             disruption.regionType().toString(),
                             disruption.codingContext().toString(),
+                            disruption.clusterGroup(),
                             disruption.range())
                     .execute();
         }
