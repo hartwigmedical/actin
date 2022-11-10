@@ -60,7 +60,7 @@ public class GeneIsAmplified implements EvaluationFunction {
                 boolean isLossOfFunction = amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
                         || amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
-                String amplificationEvent = MolecularEventFactory.amplificationEvent(amplification);
+                String amplificationEvent = MolecularEventFactory.event(amplification);
                 if (isAmp) {
                     if (!isPotentialOncogene) {
                         ampsOnNonOncogenes.add(amplificationEvent);

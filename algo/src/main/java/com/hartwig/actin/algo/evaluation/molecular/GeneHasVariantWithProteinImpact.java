@@ -40,20 +40,21 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
+                String variantEvent = MolecularEventFactory.event(variant);
                 for (String allowedProteinImpact : allowedProteinImpacts) {
                     if (variant.canonicalImpact().hgvsProteinImpact().equals(allowedProteinImpact)) {
                         canonicalProteinImpactMatches.add(allowedProteinImpact);
                         if (variant.isReportable()) {
-                            canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            canonicalReportableVariantMatches.add(variantEvent);
                         } else {
-                            canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            canonicalUnreportableVariantMatches.add(variantEvent);
                         }
                     }
 
                     if (variant.isReportable()) {
                         for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                             if (otherImpact.hgvsProteinImpact().equals(allowedProteinImpact)) {
-                                reportableOtherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                                reportableOtherVariantMatches.add(variantEvent);
                                 reportableOtherProteinImpactMatches.add(allowedProteinImpact);
                             }
                         }

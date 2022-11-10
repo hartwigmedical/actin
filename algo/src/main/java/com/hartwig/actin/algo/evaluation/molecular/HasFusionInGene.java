@@ -35,7 +35,7 @@ public class HasFusionInGene implements EvaluationFunction {
 
         for (Fusion fusion : record.molecular().drivers().fusions()) {
             if (fusion.geneStart().equals(gene) || fusion.geneEnd().equals(gene)) {
-                String fusionEvent = MolecularEventFactory.fusionEvent(fusion);
+                String fusionEvent = MolecularEventFactory.event(fusion);
                 if (fusion.isReportable()) {
                     boolean hasNoEffect = fusion.proteinEffect() == ProteinEffect.NO_EFFECT
                             || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;

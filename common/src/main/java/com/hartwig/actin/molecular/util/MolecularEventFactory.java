@@ -53,7 +53,7 @@ public final class MolecularEventFactory {
     }
 
     @NotNull
-    public static String variantEvent(@NotNull Variant variant) {
+    private static String variantEvent(@NotNull Variant variant) {
         return variant.gene() + " " + transcriptImpactEvent(variant.canonicalImpact());
     }
 
@@ -75,32 +75,32 @@ public final class MolecularEventFactory {
     }
 
     @NotNull
-    public static String amplificationEvent(@NotNull Amplification amplification) {
+    private static String amplificationEvent(@NotNull Amplification amplification) {
         return amplification.gene() + " amp";
     }
 
     @NotNull
-    public static String lossEvent(@NotNull Loss loss) {
+    private static String lossEvent(@NotNull Loss loss) {
         return loss.gene() + " del";
     }
 
     @NotNull
-    public static String homozygousDisruptionEvent(@NotNull HomozygousDisruption homozygousDisruption) {
+    private static String homozygousDisruptionEvent(@NotNull HomozygousDisruption homozygousDisruption) {
         return homozygousDisruption.gene() + " hom disruption";
     }
 
     @NotNull
-    public static String disruptionEvent(@NotNull Disruption disruption) {
+    private static String disruptionEvent(@NotNull Disruption disruption) {
         return disruption.gene() + " disruption";
     }
 
     @NotNull
-    public static String fusionEvent(@NotNull Fusion fusion) {
+    private static String fusionEvent(@NotNull Fusion fusion) {
         return fusion.geneStart() + " - " + fusion.geneEnd() + " fusion";
     }
 
     @NotNull
-    public static String virusEvent(@NotNull Virus virus) {
+    private static String virusEvent(@NotNull Virus virus) {
         String interpretation = virus.interpretation();
         return interpretation != null ? interpretation + " positive" : virus.name() + " positive";
     }

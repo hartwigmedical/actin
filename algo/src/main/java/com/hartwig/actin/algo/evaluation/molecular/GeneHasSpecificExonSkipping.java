@@ -34,7 +34,7 @@ public class GeneHasSpecificExonSkipping implements EvaluationFunction {
         for (Fusion fusion : record.molecular().drivers().fusions()) {
             if (fusion.isReportable() && fusion.geneStart().equals(gene) && fusion.geneEnd().equals(gene)
                     && fusion.fusedExonUp() == exonToSkip - 1 && fusion.fusedExonDown() == exonToSkip + 1) {
-                fusionSkippingEvents.add(MolecularEventFactory.fusionEvent(fusion));
+                fusionSkippingEvents.add(MolecularEventFactory.event(fusion));
             }
         }
 
@@ -46,7 +46,7 @@ public class GeneHasSpecificExonSkipping implements EvaluationFunction {
             boolean isCanonicalExonAffected = canonicalExonAffected != null && canonicalExonAffected == exonToSkip;
 
             if (variant.isReportable() && variant.gene().equals(gene) && isCanonicalExonAffected && isCanonicalSplice) {
-                exonSplicingVariants.add(MolecularEventFactory.variantEvent(variant));
+                exonSplicingVariants.add(MolecularEventFactory.event(variant));
             }
         }
 

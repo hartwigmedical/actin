@@ -46,18 +46,19 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && allowedVariantTypes.contains(variant.type())) {
+                String variantEvent = MolecularEventFactory.event(variant);
                 if (hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon)) {
                     if (variant.isReportable()) {
-                        canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                        canonicalReportableVariantMatches.add(variantEvent);
                     } else {
-                        canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                        canonicalUnreportableVariantMatches.add(variantEvent);
                     }
                 }
 
                 if (variant.isReportable()) {
                     for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                         if (hasEffectInExonRange(otherImpact.affectedExon(), minExon, maxExon)) {
-                            reportableOtherMatchVariants.add(MolecularEventFactory.variantEvent(variant));
+                            reportableOtherMatchVariants.add(variantEvent);
                         }
                     }
                 }

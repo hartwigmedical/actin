@@ -40,20 +40,21 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
+                String variantEvent = MolecularEventFactory.event(variant);
                 for (String allowedCodingImpact : allowedCodingImpacts) {
                     if (variant.canonicalImpact().hgvsCodingImpact().equals(allowedCodingImpact)) {
                         canonicalCodingImpactMatches.add(allowedCodingImpact);
                         if (variant.isReportable()) {
-                            canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            canonicalReportableVariantMatches.add(variantEvent);
                         } else {
-                            canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            canonicalUnreportableVariantMatches.add(variantEvent);
                         }
                     }
 
                     if (variant.isReportable()) {
                         for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                             if (otherImpact.hgvsCodingImpact().equals(allowedCodingImpact)) {
-                                reportableOtherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                                reportableOtherVariantMatches.add(variantEvent);
                                 reportableOtherCodingImpactMatches.add(allowedCodingImpact);
                             }
                         }

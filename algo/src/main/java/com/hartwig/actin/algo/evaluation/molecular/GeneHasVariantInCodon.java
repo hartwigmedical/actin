@@ -41,20 +41,21 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
+                String variantEvent = MolecularEventFactory.event(variant);
                 for (String codon : codons) {
                     if (isCodonMatch(variant.canonicalImpact().affectedCodon(), codon)) {
                         canonicalCodonMatches.add(codon);
                         if (variant.isReportable()) {
-                            canonicalReportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            canonicalReportableVariantMatches.add(variantEvent);
                         } else {
-                            canonicalUnreportableVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                            canonicalUnreportableVariantMatches.add(variantEvent);
                         }
                     }
 
                     if (variant.isReportable()) {
                         for (TranscriptImpact otherImpact : variant.otherImpacts()) {
                             if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
-                                reportableOtherVariantMatches.add(MolecularEventFactory.variantEvent(variant));
+                                reportableOtherVariantMatches.add(variantEvent);
                                 reportableOtherCodonMatches.add(codon);
                             }
                         }

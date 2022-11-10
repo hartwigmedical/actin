@@ -90,32 +90,31 @@ public final class AggregatedEvidenceFactory {
     private static List<AggregatedEvidence> aggregateDriverEvidence(@NotNull MolecularDrivers drivers) {
         List<AggregatedEvidence> evidences = Lists.newArrayList();
         for (Variant variant : drivers.variants()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.variantEvent(variant), variant.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(variant), variant.evidence()));
         }
 
         for (Amplification amplification : drivers.amplifications()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.amplificationEvent(amplification), amplification.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(amplification), amplification.evidence()));
         }
 
         for (Loss loss : drivers.losses()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.lossEvent(loss), loss.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(loss), loss.evidence()));
         }
 
         for (HomozygousDisruption homozygousDisruption : drivers.homozygousDisruptions()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.homozygousDisruptionEvent(homozygousDisruption),
-                    homozygousDisruption.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(homozygousDisruption), homozygousDisruption.evidence()));
         }
 
         for (Disruption disruption : drivers.disruptions()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.disruptionEvent(disruption), disruption.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(disruption), disruption.evidence()));
         }
 
         for (Fusion fusion : drivers.fusions()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.fusionEvent(fusion), fusion.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(fusion), fusion.evidence()));
         }
 
         for (Virus virus : drivers.viruses()) {
-            evidences.add(createAggregateEvidence(MolecularEventFactory.virusEvent(virus), virus.evidence()));
+            evidences.add(createAggregateEvidence(MolecularEventFactory.event(virus), virus.evidence()));
         }
 
         return evidences;

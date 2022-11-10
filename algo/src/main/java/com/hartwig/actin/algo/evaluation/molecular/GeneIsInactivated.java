@@ -48,7 +48,7 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         for (HomozygousDisruption homozygousDisruption : record.molecular().drivers().homozygousDisruptions()) {
             if (homozygousDisruption.gene().equals(gene)) {
-                String homDisruptionEvent = MolecularEventFactory.homozygousDisruptionEvent(homozygousDisruption);
+                String homDisruptionEvent = MolecularEventFactory.event(homozygousDisruption);
                 boolean isGainOfFunction = homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                         || homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!homozygousDisruption.isReportable()) {
@@ -65,7 +65,7 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         for (Loss loss : record.molecular().drivers().losses()) {
             if (loss.gene().equals(gene)) {
-                String lossEvent = MolecularEventFactory.lossEvent(loss);
+                String lossEvent = MolecularEventFactory.event(loss);
                 boolean isGainOfFunction = loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                         || loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!loss.isReportable()) {
@@ -86,7 +86,7 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
-                String variantEvent = MolecularEventFactory.variantEvent(variant);
+                String variantEvent = MolecularEventFactory.event(variant);
 
                 if (!variant.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(variantEvent);
@@ -125,7 +125,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                 Integer clusterGroup = disruption.clusterGroup();
                 if (clusterGroup == null || !evaluatedClusterGroups.contains(clusterGroup)) {
                     evaluatedClusterGroups.add(clusterGroup);
-                    eventsThatMayBeUnphased.add(MolecularEventFactory.disruptionEvent(disruption));
+                    eventsThatMayBeUnphased.add(MolecularEventFactory.event(disruption));
                 }
             }
         }

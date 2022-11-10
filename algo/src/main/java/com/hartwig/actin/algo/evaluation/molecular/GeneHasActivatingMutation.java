@@ -40,7 +40,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
-                String variantEvent = MolecularEventFactory.variantEvent(variant);
+                String variantEvent = MolecularEventFactory.event(variant);
                 boolean isActivating = isActivating(variant);
 
                 if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH) {
