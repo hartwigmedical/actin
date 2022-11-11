@@ -51,7 +51,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         || homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!homozygousDisruption.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(homozygousDisruption.event());
-                } else if (homozygousDisruption.geneRole() != GeneRole.TSG || homozygousDisruption.geneRole() != GeneRole.BOTH) {
+                } else if (homozygousDisruption.geneRole() == GeneRole.ONCO || homozygousDisruption.geneRole() == GeneRole.UNKNOWN) {
                     inactivationEventsNoTSG.add(homozygousDisruption.event());
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(homozygousDisruption.event());
@@ -67,7 +67,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         || loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!loss.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(loss.event());
-                } else if (loss.geneRole() != GeneRole.TSG || loss.geneRole() != GeneRole.BOTH) {
+                } else if (loss.geneRole() == GeneRole.ONCO || loss.geneRole() == GeneRole.UNKNOWN) {
                     inactivationEventsNoTSG.add(loss.event());
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(loss.event());
@@ -100,7 +100,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
 
-                        if (variant.geneRole() != GeneRole.TSG || variant.geneRole() != GeneRole.BOTH) {
+                        if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.UNKNOWN) {
                             inactivationEventsNoTSG.add(variant.event());
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event());
