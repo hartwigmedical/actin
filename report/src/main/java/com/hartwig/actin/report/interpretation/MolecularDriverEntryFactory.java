@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.report.pdf.util.Formats;
 
 import org.apache.logging.log4j.util.Strings;
@@ -205,45 +206,45 @@ public class MolecularDriverEntryFactory {
     @NotNull
     private Set<String> inclusiveActinTrials(@NotNull Driver driver) {
         Set<String> trials = Sets.newTreeSet(Ordering.natural());
-        // TODO figure out how to implement
-        //        for (ActinTrialEvidence evidence : actinTrials) {
-        //            if (evidence.isInclusionCriterion() && evidence.event().equals(driver.event())) {
-        //                trials.add(evidence.trialAcronym());
-        //            }
-        //        }
+
+        if (trialsPerInclusionEvent.containsKey(driver.event())) {
+            trials.addAll(trialsPerInclusionEvent.get(driver.event()));
+        }
+
         return trials;
     }
 
     @NotNull
     private static Set<String> externalTrials(@NotNull Driver driver) {
         Set<String> trials = Sets.newTreeSet(Ordering.natural());
-        // TODO Implement
+
+        trials.addAll(driver.evidence().externalEligibleTrials());
+
         return trials;
     }
 
     @Nullable
     private static String bestResponsiveEvidence(@NotNull Driver driver) {
-        // TODO Implement
-        //        if (hasEvidence(driver, evidence.approvedEvidence())) {
-        //            return "Approved";
-        //        } else if (hasEvidence(driver, evidence.onLabelExperimentalEvidence()) || hasEvidence(driver,
-        //                evidence.offLabelExperimentalEvidence())) {
-        //            return "Experimental";
-        //        } else if (hasEvidence(driver, evidence.preClinicalEvidence())) {
-        //            return "Pre-clinical";
-        //        }
+        ActionableEvidence evidence = driver.evidence();
+        if (!evidence.approvedTreatments().isEmpty()) {
+            return "Approved";
+        } else if (!evidence.onLabelExperimentalTreatments().isEmpty() || !evidence.offLabelExperimentalTreatments().isEmpty()) {
+            return "Experimental";
+        } else if (!evidence.preClinicalTreatments().isEmpty()) {
+            return "Pre-clinical";
+        }
 
         return null;
     }
 
     @Nullable
     private static String bestResistanceEvidence(@NotNull Driver driver) {
-        // TODO Implement
-        //        if (hasEvidence(driver, evidence.knownResistanceEvidence())) {
-        //            return "Known";
-        //        } else if (hasEvidence(driver, evidence.suspectResistanceEvidence())) {
-        //            return "Suspect";
-        //        }
+        ActionableEvidence evidence = driver.evidence();
+        if ((!evidence.knownResistantTreatments().isEmpty())) {
+            return "Known";
+        } else if (!evidence.suspectResistantTreatments().isEmpty()) {
+            return "Suspect";
+        }
 
         return null;
     }

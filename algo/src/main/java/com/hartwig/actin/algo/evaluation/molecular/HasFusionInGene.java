@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -20,22 +19,22 @@ import org.jetbrains.annotations.Nullable;
 
 public class HasFusionInGene implements EvaluationFunction {
 
+    static final Set<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_5 = Sets.newHashSet(FusionDriverType.KNOWN_PAIR,
+            FusionDriverType.KNOWN_PAIR_DEL_DUP,
+            FusionDriverType.PROMISCUOUS_BOTH,
+            FusionDriverType.PROMISCUOUS_5);
+
+    static final Set<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_3 = Sets.newHashSet(FusionDriverType.KNOWN_PAIR,
+            FusionDriverType.KNOWN_PAIR_DEL_DUP,
+            FusionDriverType.PROMISCUOUS_BOTH,
+            FusionDriverType.PROMISCUOUS_3);
+
     @NotNull
     private final String gene;
 
     HasFusionInGene(@NotNull final String gene) {
         this.gene = gene;
     }
-
-    static final EnumSet<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_3 = EnumSet.of(FusionDriverType.KNOWN_PAIR,
-            FusionDriverType.KNOWN_PAIR_DEL_DUP,
-            FusionDriverType.PROMISCUOUS_BOTH,
-            FusionDriverType.PROMISCUOUS_3);
-
-    static final EnumSet<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_5 = EnumSet.of(FusionDriverType.KNOWN_PAIR,
-            FusionDriverType.KNOWN_PAIR_DEL_DUP,
-            FusionDriverType.PROMISCUOUS_BOTH,
-            FusionDriverType.PROMISCUOUS_5);
 
     @NotNull
     @Override
