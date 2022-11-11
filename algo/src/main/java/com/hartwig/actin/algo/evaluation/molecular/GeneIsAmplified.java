@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GeneIsAmplified implements EvaluationFunction {
 
@@ -86,49 +87,14 @@ public class GeneIsAmplified implements EvaluationFunction {
                     .build();
         }
 
-        if (!reportablePartialAmps.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(reportablePartialAmps)
-                    .addWarnSpecificMessages(gene + " is partially amplified")
-                    .addWarnGeneralMessages(gene + " is partially amplified")
-                    .build();
-        }
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(reportablePartialAmps,
+                ampsWithLossOfFunction,
+                ampsOnNonOncogenes,
+                ampsThatAreUnreportable,
+                ampsThatAreNearCutoff);
 
-        if (!ampsWithLossOfFunction.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(ampsWithLossOfFunction)
-                    .addWarnSpecificMessages(gene + " is amplified but considered having loss-of-function impact")
-                    .addWarnGeneralMessages("Potential " + gene + " amplification")
-                    .build();
-        }
-
-        if (!ampsOnNonOncogenes.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(ampsOnNonOncogenes)
-                    .addWarnSpecificMessages(gene + " is amplified but not known as an oncogene")
-                    .addWarnGeneralMessages("Potential " + gene + " amplification")
-                    .build();
-        }
-
-        if (!ampsThatAreUnreportable.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(ampsThatAreUnreportable)
-                    .addWarnSpecificMessages(gene + " is amplified but not considered reportable")
-                    .addWarnGeneralMessages("Potential " + gene + " amplification")
-                    .build();
-        }
-
-        if (!ampsThatAreNearCutoff.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(ampsThatAreNearCutoff)
-                    .addWarnSpecificMessages(gene + " is near-amplified")
-                    .addWarnGeneralMessages("Potential " + gene + " amplification")
-                    .build();
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -137,4 +103,55 @@ public class GeneIsAmplified implements EvaluationFunction {
                 .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> reportablePartialAmps, @NotNull Set<String> ampsWithLossOfFunction,
+            @NotNull Set<String> ampsOnNonOncogenes, @NotNull Set<String> ampsThatAreUnreportable,
+            @NotNull Set<String> ampsThatAreNearCutoff) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!reportablePartialAmps.isEmpty()) {
+            warnEvents.addAll(reportablePartialAmps);
+            warnSpecificMessages.add(gene + " is partially amplified");
+            warnGeneralMessages.add(gene + " is partially amplified");
+        }
+
+        if (!ampsWithLossOfFunction.isEmpty()) {
+            warnEvents.addAll(ampsWithLossOfFunction);
+            warnSpecificMessages.add(gene + " is amplified but considered having loss-of-function impact");
+            warnGeneralMessages.add("Potential " + gene + " amplification");
+        }
+
+        if (!ampsOnNonOncogenes.isEmpty()) {
+            warnEvents.addAll(ampsOnNonOncogenes);
+            warnSpecificMessages.add(gene + " is amplified but not known as an oncogene");
+            warnGeneralMessages.add("Potential " + gene + " amplification");
+        }
+
+        if (!ampsThatAreUnreportable.isEmpty()) {
+            warnEvents.addAll(ampsThatAreUnreportable);
+            warnSpecificMessages.add(gene + " is amplified but not considered reportable");
+            warnGeneralMessages.add("Potential " + gene + " amplification");
+        }
+
+        if (!ampsThatAreNearCutoff.isEmpty()) {
+            warnEvents.addAll(ampsThatAreNearCutoff);
+            warnSpecificMessages.add(gene + " is near-amplified");
+            warnGeneralMessages.add("Potential " + gene + " amplification");
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+
+        return null;
+    }
+
 }

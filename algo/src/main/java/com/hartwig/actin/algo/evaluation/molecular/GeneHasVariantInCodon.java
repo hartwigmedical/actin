@@ -70,26 +70,15 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
                             + " detected in canonical transcript")
                     .addPassGeneralMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in " + gene)
                     .build();
-        } else if (!canonicalUnreportableVariantMatches.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(canonicalUnreportableVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in " + gene
-                            + " detected in canonical transcript, but not considered reportable")
-                    .addWarnGeneralMessages(
-                            "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in canonical transcript of gene "
-                                    + gene)
-                    .build();
-        } else if (!reportableOtherCodonMatches.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(reportableOtherVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) in codon(s) " + Format.concat(reportableOtherCodonMatches) + " in " + gene
-                            + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages(
-                            "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
-                                    + gene)
-                    .build();
+        }
+
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(canonicalUnreportableVariantMatches,
+                canonicalCodonMatches,
+                reportableOtherVariantMatches,
+                reportableOtherCodonMatches);
+
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -107,5 +96,42 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
         // TODO Make a more explicit datamodel.
         int codonIndexToMatch = Integer.parseInt(codonToMatch.substring(1));
         return codonIndexToMatch == affectedCodon;
+    }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> canonicalUnreportableVariantMatches,
+            @NotNull Set<String> canonicalCodonMatches, @NotNull Set<String> reportableOtherVariantMatches,
+            @NotNull Set<String> reportableOtherCodonMatches) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!canonicalUnreportableVariantMatches.isEmpty()) {
+            warnEvents.addAll(canonicalUnreportableVariantMatches);
+            warnSpecificMessages.add("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in " + gene
+                    + " detected in canonical transcript, but not considered reportable");
+            warnGeneralMessages.add(
+                    "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in canonical transcript of gene " + gene);
+        }
+
+        if (!reportableOtherVariantMatches.isEmpty()) {
+            warnEvents.addAll(reportableOtherVariantMatches);
+            warnSpecificMessages.add("Variant(s) in codon(s) " + Format.concat(reportableOtherCodonMatches) + " in " + gene
+                    + " detected, but in non-canonical transcript");
+            warnGeneralMessages.add(
+                    "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
+                            + gene);
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+
+        return null;
     }
 }

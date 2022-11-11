@@ -3,6 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -69,22 +71,15 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
                             + " detected in canonical transcript")
                     .addPassGeneralMessages(Format.concat(canonicalCodingImpactMatches) + " found in " + gene)
                     .build();
-        } else if (!canonicalUnreportableVariantMatches.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(canonicalUnreportableVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) " + Format.concat(reportableOtherCodingImpactMatches) + " in " + gene
-                            + " detected in canonical transcript, but considered non-reportable")
-                    .addWarnGeneralMessages(Format.concat(canonicalCodingImpactMatches) + " found in " + gene)
-                    .build();
-        } else if (!reportableOtherVariantMatches.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(reportableOtherVariantMatches)
-                    .addWarnSpecificMessages("Variant(s) " + Format.concat(reportableOtherCodingImpactMatches) + " in " + gene
-                            + " detected, but in non-canonical transcript")
-                    .addWarnGeneralMessages(Format.concat(reportableOtherCodingImpactMatches) + " found in non-canonical transcript of " + gene)
-                    .build();
+        }
+
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(canonicalUnreportableVariantMatches,
+                canonicalCodingImpactMatches,
+                reportableOtherVariantMatches,
+                reportableOtherCodingImpactMatches);
+
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -92,5 +87,39 @@ public class GeneHasVariantWithCodingImpact implements EvaluationFunction {
                 .addFailSpecificMessages("None of " + Format.concat(allowedCodingImpacts) + " detected in gene " + gene)
                 .addFailGeneralMessages("No specific variants in " + gene + " detected")
                 .build();
+    }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> canonicalUnreportableVariantMatches,
+            @NotNull Set<String> canonicalCodingImpactMatches, @NotNull Set<String> reportableOtherVariantMatches,
+            @NotNull Set<String> reportableOtherCodingImpactMatches) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!canonicalUnreportableVariantMatches.isEmpty()) {
+            warnEvents.addAll(canonicalUnreportableVariantMatches);
+            warnSpecificMessages.add("Variant(s) " + Format.concat(canonicalCodingImpactMatches) + " in " + gene
+                    + " detected in canonical transcript, but considered non-reportable");
+            warnGeneralMessages.add(Format.concat(canonicalCodingImpactMatches) + " found in " + gene);
+        }
+
+        if (!reportableOtherVariantMatches.isEmpty()) {
+            warnEvents.addAll(reportableOtherVariantMatches);
+            warnSpecificMessages.add("Variant(s) " + Format.concat(reportableOtherCodingImpactMatches) + " in " + gene
+                    + " detected, but in non-canonical transcript");
+            warnGeneralMessages.add(Format.concat(reportableOtherCodingImpactMatches) + " found in non-canonical transcript of " + gene);
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+
+        return null;
     }
 }
