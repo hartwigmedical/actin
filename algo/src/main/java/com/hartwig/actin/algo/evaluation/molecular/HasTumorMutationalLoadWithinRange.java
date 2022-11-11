@@ -38,9 +38,6 @@ public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
         boolean meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad;
         boolean tumorMutationalLoadIsAllowed = meetsMinTumorLoad && meetsMaxTumorLoad;
 
-        boolean tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5;
-        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
-
         if (tumorMutationalLoadIsAllowed) {
             if (maxTumorMutationalLoad == null) {
                 return EvaluationFactory.unrecoverable()
@@ -60,7 +57,12 @@ public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
                         .build();
             }
-        } else if (tumorMutationalLoadIsAlmostAllowed && !hasSufficientQuality) {
+        }
+
+        boolean tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5;
+        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
+
+        if (tumorMutationalLoadIsAlmostAllowed && !hasSufficientQuality) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("TML of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad

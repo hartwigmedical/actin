@@ -21,6 +21,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Double tumorMutationalBurden = record.molecular().characteristics().tumorMutationalBurden();
+
         if (tumorMutationalBurden == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
@@ -30,8 +31,6 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
         }
 
         boolean tumorMutationalBurdenIsAllowed = tumorMutationalBurden >= minTumorMutationalBurden;
-        boolean tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5;
-        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
 
         if (tumorMutationalBurdenIsAllowed) {
             return EvaluationFactory.unrecoverable()
@@ -40,7 +39,12 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
                     .addPassGeneralMessages("Adequate TMB")
                     .addInclusionMolecularEvents(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN)
                     .build();
-        } else if (tumorMutationalBurdenIsAlmostAllowed && !hasSufficientQuality) {
+        }
+
+        boolean tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5;
+        boolean hasSufficientQuality = record.molecular().hasSufficientQuality();
+
+        if (tumorMutationalBurdenIsAlmostAllowed && !hasSufficientQuality) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("TMB of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
@@ -48,13 +52,12 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
                     .addWarnGeneralMessages("Inadequate TMB")
                     .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN)
                     .build();
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("TMB of sample " + tumorMutationalBurden + " is not within specified range")
-                    .addFailGeneralMessages("Inadequate TMB")
-                    .build();
-
         }
+
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.FAIL)
+                .addFailSpecificMessages("TMB of sample " + tumorMutationalBurden + " is not within specified range")
+                .addFailGeneralMessages("Inadequate TMB")
+                .build();
     }
 }

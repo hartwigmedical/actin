@@ -153,5 +153,4 @@ public class GeneIsAmplified implements EvaluationFunction {
 
         return null;
     }
-
 }

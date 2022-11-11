@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class HasFusionInGene implements EvaluationFunction {
 
@@ -63,35 +64,11 @@ public class HasFusionInGene implements EvaluationFunction {
                     .build();
         }
 
-        if (!fusionsWithNoEffect.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(fusionsWithNoEffect)
-                    .addWarnSpecificMessages("Fusion(s) " + Format.concat(fusionsWithNoEffect) + " detected in gene " + gene
-                            + " but annotated as having no effect")
-                    .addWarnGeneralMessages("Potential fusion(s) detected in gene " + gene)
-                    .build();
-        }
+        Evaluation potentialWarnEvaluation =
+                evaluatePotentialWarns(fusionsWithNoEffect, fusionsWithNoHighDriverLikelihood, unreportableFusionsWithGainOfFunction);
 
-        if (!fusionsWithNoHighDriverLikelihood.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(fusionsWithNoHighDriverLikelihood)
-                    .addWarnSpecificMessages("Fusion(s) " + Format.concat(fusionsWithNoHighDriverLikelihood) + " detected in gene " + gene
-                            + " but annotated as having no high driver likelihood")
-                    .addWarnGeneralMessages("Potential fusion(s) detected in gene " + gene)
-                    .build();
-        }
-
-        if (!unreportableFusionsWithGainOfFunction.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(unreportableFusionsWithGainOfFunction)
-                    .addWarnSpecificMessages(
-                            "Fusion(s) " + Format.concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene
-                                    + " but not considered reportable yet having gain-of-function")
-                    .addWarnGeneralMessages("Potential fusion(s) detected in gene " + gene)
-                    .build();
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -99,5 +76,45 @@ public class HasFusionInGene implements EvaluationFunction {
                 .addFailSpecificMessages("No fusion detected with gene " + gene)
                 .addFailGeneralMessages("Molecular requirements")
                 .build();
+    }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> fusionsWithNoEffect,
+            @NotNull Set<String> fusionsWithNoHighDriverLikelihood, @NotNull Set<String> unreportableFusionsWithGainOfFunction) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!fusionsWithNoEffect.isEmpty()) {
+            warnEvents.addAll(fusionsWithNoEffect);
+            warnSpecificMessages.add(
+                    "Fusion(s) " + Format.concat(fusionsWithNoEffect) + " detected in gene " + gene + " but annotated as having no effect");
+            warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
+        }
+
+        if (!fusionsWithNoHighDriverLikelihood.isEmpty()) {
+            warnEvents.addAll(fusionsWithNoHighDriverLikelihood);
+            warnSpecificMessages.add("Fusion(s) " + Format.concat(fusionsWithNoHighDriverLikelihood) + " detected in gene " + gene
+                    + " but annotated as having no high driver likelihood");
+            warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
+        }
+
+        if (!unreportableFusionsWithGainOfFunction.isEmpty()) {
+            warnEvents.addAll(unreportableFusionsWithGainOfFunction);
+            warnSpecificMessages.add("Fusion(s) " + Format.concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene
+                    + " but not considered reportable yet having gain-of-function");
+            warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+
+        return null;
     }
 }
