@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -26,20 +27,15 @@ public class HasFusionInGene implements EvaluationFunction {
         this.gene = gene;
     }
 
-    static final Set<Enum> ALLOWED_DRIVER_TYPES_FOR_GENE_3 = Sets.newHashSet();
-    static final Set<Enum> ALLOWED_DRIVER_TYPES_FOR_GENE_5 = Sets.newHashSet();
+    static final EnumSet<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_3 = EnumSet.of(FusionDriverType.KNOWN_PAIR,
+            FusionDriverType.KNOWN_PAIR_DEL_DUP,
+            FusionDriverType.PROMISCUOUS_BOTH,
+            FusionDriverType.PROMISCUOUS_3);
 
-    static {
-        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.KNOWN_PAIR);
-        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.KNOWN_PAIR_DEL_DUP);
-        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.PROMISCUOUS_BOTH);
-        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.PROMISCUOUS_3);
-
-        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.KNOWN_PAIR);
-        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.KNOWN_PAIR_DEL_DUP);
-        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.PROMISCUOUS_BOTH);
-        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.PROMISCUOUS_5);
-    }
+    static final EnumSet<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_5 = EnumSet.of(FusionDriverType.KNOWN_PAIR,
+            FusionDriverType.KNOWN_PAIR_DEL_DUP,
+            FusionDriverType.PROMISCUOUS_BOTH,
+            FusionDriverType.PROMISCUOUS_5);
 
     @NotNull
     @Override
@@ -107,22 +103,22 @@ public class HasFusionInGene implements EvaluationFunction {
 
         if (!fusionsWithNoEffect.isEmpty()) {
             warnEvents.addAll(fusionsWithNoEffect);
-            warnSpecificMessages.add(
-                    "Fusion(s) " + Format.concat(fusionsWithNoEffect) + " detected in gene " + gene + " but annotated as having no effect");
+            warnSpecificMessages.add("Fusion(s) " + Format.concat(fusionsWithNoEffect) + " detected in gene " + gene
+                    + " but annotated as having no protein effect");
             warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
         }
 
         if (!fusionsWithNoHighDriverLikelihood.isEmpty()) {
             warnEvents.addAll(fusionsWithNoHighDriverLikelihood);
             warnSpecificMessages.add("Fusion(s) " + Format.concat(fusionsWithNoHighDriverLikelihood) + " detected in gene " + gene
-                    + " but annotated as having no high driver likelihood");
+                    + " but not with high driver likelihood");
             warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
         }
 
         if (!unreportableFusionsWithGainOfFunction.isEmpty()) {
             warnEvents.addAll(unreportableFusionsWithGainOfFunction);
             warnSpecificMessages.add("Fusion(s) " + Format.concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene
-                    + " but not considered reportable yet having gain-of-function");
+                    + " but not considered reportable; however fusion is annotated as having gain-of-function");
             warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
         }
 
