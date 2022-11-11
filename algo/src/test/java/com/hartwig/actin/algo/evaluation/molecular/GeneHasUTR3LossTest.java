@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -19,26 +19,26 @@ public class GeneHasUTR3LossTest {
     public void canEvaluate() {
         GeneHasUTR3Loss function = new GeneHasUTR3Loss("gene A");
 
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.builder().gene("gene A").build())));
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.builder()
                         .gene("gene A")
                         .regionType(RegionType.EXONIC)
                         .codingContext(CodingContext.UTR_3P)
                         .build())));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder().gene("gene A").build())));
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isHotspot(false)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
                         .build())));
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isHotspot(true)

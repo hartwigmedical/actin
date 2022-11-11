@@ -1,10 +1,14 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Effect;
@@ -12,6 +16,7 @@ import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GeneHasUTR3Loss implements EvaluationFunction {
 
@@ -25,44 +30,40 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean has3UTRHotspot = false;
-        boolean has3UTRVUS = false;
+        Set<String> hotspotsIn3UTR = Sets.newHashSet();
+        Set<String> vusIn3UTR = Sets.newHashSet();
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && variant.canonicalImpact().effects().contains(Effect.THREE_PRIME_UTR)) {
                 if (variant.isHotspot()) {
-                    has3UTRHotspot = true;
+                    hotspotsIn3UTR.add(variant.event());
                 } else {
-                    has3UTRVUS = true;
+                    vusIn3UTR.add(variant.event());
                 }
             }
         }
 
-        boolean has3UTRDisruption = false;
+        Set<String> disruptionsIn3UTR = Sets.newHashSet();
         for (Disruption disruption : record.molecular().drivers().disruptions()) {
             if (disruption.gene().equals(gene) && disruption.codingContext() == CodingContext.UTR_3P
                     && disruption.regionType() == RegionType.EXONIC) {
-                has3UTRDisruption = true;
+                disruptionsIn3UTR.add(disruption.event());
             }
         }
 
-        if (has3UTRHotspot) {
+        if (!hotspotsIn3UTR.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("3' UTR hotspot mutation in " + gene + " should lead to 3' UTR loss")
+                    .addAllInclusionMolecularEvents(hotspotsIn3UTR)
+                    .addPassSpecificMessages(
+                            "3' UTR hotspot mutation(s) in " + gene + " should lead to 3' UTR loss: " + Format.concat(hotspotsIn3UTR))
                     .addPassGeneralMessages("3' UTR loss of " + gene)
                     .build();
-        } else if (has3UTRDisruption) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Disruption detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss")
-                    .addWarnGeneralMessages("Potential 3' UTR loss of " + gene)
-                    .build();
-        } else if (has3UTRVUS) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("VUS mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss")
-                    .addWarnGeneralMessages("Potential 3' UTR loss of " + gene)
-                    .build();
+        }
+
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(vusIn3UTR, disruptionsIn3UTR);
+
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -70,5 +71,38 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
                 .addFailSpecificMessages("No variants detected in 3' UTR region of " + gene)
                 .addFailGeneralMessages("No 3' UTR loss of " + gene)
                 .build();
+    }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> vusIn3UTR, @NotNull Set<String> disruptionsIn3UTR) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!vusIn3UTR.isEmpty()) {
+            warnEvents.addAll(vusIn3UTR);
+            warnSpecificMessages.add(
+                    "VUS mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: " + Format.concat(vusIn3UTR));
+            warnGeneralMessages.add("Potential 3' UTR loss of " + gene);
+        }
+
+        if (!disruptionsIn3UTR.isEmpty()) {
+            warnEvents.addAll(disruptionsIn3UTR);
+            warnSpecificMessages.add(
+                    "Disruption(s) detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: " + Format.concat(
+                            disruptionsIn3UTR));
+            warnGeneralMessages.add("Potential 3' UTR loss of " + gene);
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+
+        return null;
     }
 }
