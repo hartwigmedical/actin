@@ -12,7 +12,6 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class EvaluatedTrialFactoryTest {
@@ -25,12 +24,12 @@ public class EvaluatedTrialFactoryTest {
         assertEquals(5, trials.size());
 
         EvaluatedTrial trial1A = findByTrialAndCohort(trials, "TEST-1", "Cohort A");
-        assertTrue(trial1A.molecularEvents().isEmpty());
-        assertFalse(trial1A.isPotentiallyEligible());
+        assertFalse(trial1A.molecularEvents().isEmpty());
+        assertTrue(trial1A.isPotentiallyEligible());
         assertTrue(trial1A.isOpen());
         assertFalse(trial1A.hasSlotsAvailable());
         assertFalse(trial1A.warnings().isEmpty());
-        assertFalse(trial1A.fails().isEmpty());
+        assertTrue(trial1A.fails().isEmpty());
 
         EvaluatedTrial trial1B = findByTrialAndCohort(trials, "TEST-1", "Cohort B");
         assertTrue(trial1B.molecularEvents().isEmpty());
@@ -49,7 +48,7 @@ public class EvaluatedTrialFactoryTest {
         assertFalse(trial1C.fails().isEmpty());
 
         EvaluatedTrial trial2A = findByTrialAndCohort(trials, "TEST-2", "Cohort A");
-        assertTrue(trial2A.molecularEvents().isEmpty());
+        assertFalse(trial2A.molecularEvents().isEmpty());
         assertTrue(trial2A.isPotentiallyEligible());
         assertTrue(trial2A.isOpen());
         assertFalse(trial2A.hasSlotsAvailable());
@@ -66,17 +65,16 @@ public class EvaluatedTrialFactoryTest {
     }
 
     @Test
-    @Ignore
     public void canAnnotateWithMolecularEvents() {
         TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch);
 
-        assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort A").molecularEvents().contains("Event A"));
+        assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort A").molecularEvents().contains("BRAF V600E"));
         assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort B").molecularEvents().isEmpty());
         assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort C").molecularEvents().isEmpty());
-        assertTrue(findByTrialAndCohort(trials, "TEST-2", "Cohort A").molecularEvents().isEmpty());
-        assertTrue(findByTrialAndCohort(trials, "TEST-2", "Cohort B").molecularEvents().contains("Event B"));
+        assertTrue(findByTrialAndCohort(trials, "TEST-2", "Cohort A").molecularEvents().contains("BRAF V600E"));
+        assertTrue(findByTrialAndCohort(trials, "TEST-2", "Cohort B").molecularEvents().isEmpty());
     }
 
     @NotNull

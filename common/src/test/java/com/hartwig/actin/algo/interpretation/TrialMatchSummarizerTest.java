@@ -24,7 +24,8 @@ public class TrialMatchSummarizerTest {
         assertEquals(2, summary.eligibleTrialMap().size());
 
         List<CohortMetadata> eligibleCohorts = summary.eligibleTrialMap().get(findByTrialId(summary, "Test Trial 1"));
-        assertEquals(1, eligibleCohorts.size());
+        assertEquals(2, eligibleCohorts.size());
+        assertNotNull(findByCohortId(eligibleCohorts, "A"));
         assertNotNull(findByCohortId(eligibleCohorts, "B"));
     }
 

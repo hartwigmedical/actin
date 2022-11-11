@@ -15,7 +15,6 @@ import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class EvaluatedTrialFactory {
 
@@ -29,6 +28,7 @@ public final class EvaluatedTrialFactory {
         for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
             Set<String> trialWarnings = extractWarnings(trialMatch.evaluations());
             Set<String> trialFails = extractFails(trialMatch.evaluations());
+            Set<String> trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations());
 
             String trialAcronym = trialMatch.identification().acronym();
             ImmutableEvaluatedTrial.Builder builder =
@@ -38,9 +38,10 @@ public final class EvaluatedTrialFactory {
             for (CohortMatch cohortMatch : trialMatch.cohorts()) {
                 Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
                 Set<String> cohortFails = extractFails(cohortMatch.evaluations());
+                Set<String> cohortInclusionEvents = extractInclusionEvents(cohortMatch.evaluations());
 
                 trials.add(builder.cohort(cohortMatch.metadata().description())
-                        .molecularEvents(eventsForTrial(trialAcronym, cohortMatch.metadata().cohortId()))
+                        .molecularEvents(Sets.union(trialInclusionEvents, cohortInclusionEvents))
                         .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
                         .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
@@ -52,7 +53,7 @@ public final class EvaluatedTrialFactory {
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts().isEmpty()) {
                 trials.add(builder.cohort(null)
-                        .molecularEvents(eventsForTrial(trialAcronym, null))
+                        .molecularEvents(trialInclusionEvents)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen)
                         .hasSlotsAvailable(trialIsOpen)
@@ -68,23 +69,14 @@ public final class EvaluatedTrialFactory {
     }
 
     @NotNull
-    private static Set<String> eventsForTrial(@NotNull String trialAcronymToFind, @Nullable String cohortIdToFind) {
-        Set<String> events = Sets.newTreeSet(Ordering.natural());
-        // TODO Implement
-        //        for (ActinTrialEvidence evidence : evidences) {
-        //            boolean isCohortMatch;
-        //            if (evidence.cohortId() == null) {
-        //                isCohortMatch = cohortIdToFind == null;
-        //            } else {
-        //                isCohortMatch = evidence.cohortId().equals(cohortIdToFind);
-        //            }
-        //
-        //            if (evidence.isInclusionCriterion() && evidence.trialAcronym().equals(trialAcronymToFind) && isCohortMatch) {
-        //                events.add(evidence.event());
-        //            }
-        //        }
+    private static Set<String> extractInclusionEvents(@NotNull Map<Eligibility, Evaluation> evaluationMap) {
+        Set<String> inclusionEvents = Sets.newTreeSet(Ordering.natural());
 
-        return events;
+        for (Evaluation evaluation : evaluationMap.values()) {
+            inclusionEvents.addAll(evaluation.inclusionMolecularEvents());
+        }
+
+        return inclusionEvents;
     }
 
     @NotNull

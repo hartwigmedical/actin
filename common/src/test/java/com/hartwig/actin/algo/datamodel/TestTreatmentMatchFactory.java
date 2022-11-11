@@ -78,7 +78,7 @@ public final class TestTreatmentMatchFactory {
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Patient must be an adult").build())
-                .build(), unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", "Patient is adult"));
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", "Patient is adult", null));
 
         map.put(ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder()
@@ -91,7 +91,7 @@ public final class TestTreatmentMatchFactory {
                         .id("I-02")
                         .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC")
                         .build())
-                .build(), unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases"));
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases", null));
 
         map.put(ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
@@ -102,7 +102,8 @@ public final class TestTreatmentMatchFactory {
                         .build(),
                 unrecoverable(EvaluationResult.UNDETERMINED,
                         "Could not be determined if patient has exhausted SOC",
-                        "Undetermined SOC exhaustion"));
+                        "Undetermined SOC exhaustion",
+                        null));
 
         return map;
     }
@@ -125,8 +126,8 @@ public final class TestTreatmentMatchFactory {
 
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("A", true, false, false))
-                .isPotentiallyEligible(false)
-                .evaluations(createTestCohortEvaluationsTrial1())
+                .isPotentiallyEligible(true)
+                .evaluations(createTestCohortEvaluationsTrial1CohortA())
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("B", true, true, false))
@@ -135,14 +136,29 @@ public final class TestTreatmentMatchFactory {
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("C", false, false, false))
                 .isPotentiallyEligible(false)
-                .evaluations(createTestCohortEvaluationsTrial1())
+                .evaluations(createTestCohortEvaluationsTrial1CohortC())
                 .build());
 
         return cohorts;
     }
 
     @NotNull
-    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial1() {
+    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial1CohortA() {
+        Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder()
+                        .rule(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X)
+                        .addParameters("BRAF")
+                        .build())
+                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("BRAF Activation").build())
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E"));
+
+        return map;
+    }
+
+    @NotNull
+    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial1CohortC() {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
@@ -151,7 +167,7 @@ public final class TestTreatmentMatchFactory {
                         .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES).build())
                         .build())
                 .addReferences(ImmutableCriterionReference.builder().id("E-01").text("Active CNS metastases").build())
-                .build(), unrecoverable(EvaluationResult.FAIL, "Patient has active CNS metastases", "Active CNS metastases"));
+                .build(), unrecoverable(EvaluationResult.FAIL, "Patient has active CNS metastases", "Active CNS metastases", null));
 
         return map;
     }
@@ -184,18 +200,34 @@ public final class TestTreatmentMatchFactory {
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("A", true, false, false))
                 .isPotentiallyEligible(true)
+                .evaluations(createTestCohortEvaluationsTrial2CohortA())
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("B", true, true, false))
                 .isPotentiallyEligible(false)
-                .evaluations(createTestCohortEvaluationsTrial2())
+                .evaluations(createTestCohortEvaluationsTrial2CohortB())
                 .build());
 
         return cohorts;
     }
 
     @NotNull
-    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial2() {
+    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial2CohortA() {
+        Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
+
+        map.put(ImmutableEligibility.builder()
+                .function(ImmutableEligibilityFunction.builder()
+                        .rule(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X)
+                        .addParameters("BRAF")
+                        .build())
+                .addReferences(ImmutableCriterionReference.builder().id("I-01").text("BRAF Activation").build())
+                .build(), unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E"));
+
+        return map;
+    }
+
+    @NotNull
+    private static Map<Eligibility, Evaluation> createTestCohortEvaluationsTrial2CohortB() {
         Map<Eligibility, Evaluation> map = Maps.newTreeMap(new EligibilityComparator());
 
         map.put(ImmutableEligibility.builder()
@@ -207,19 +239,19 @@ public final class TestTreatmentMatchFactory {
                         .id("I-03")
                         .text("Patient should not have had Vemurafenib treatment")
                         .build())
-                .build(), unrecoverable(EvaluationResult.FAIL, "Patient has had Vemurafenib treatment", "Vemurafenib treatment"));
+                .build(), unrecoverable(EvaluationResult.FAIL, "Patient has had Vemurafenib treatment", "Vemurafenib treatment", null));
 
         return map;
     }
 
     @NotNull
     private static Evaluation unrecoverable(@NotNull EvaluationResult result, @NotNull String specificMessage) {
-        return unrecoverable(result, specificMessage, null);
+        return unrecoverable(result, specificMessage, null, null);
     }
 
     @NotNull
     private static Evaluation unrecoverable(@NotNull EvaluationResult result, @NotNull String specificMessage,
-            @Nullable String generalMessage) {
+            @Nullable String generalMessage, @Nullable String inclusionMolecularEvent) {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result).recoverable(false);
 
         switch (result) {
@@ -254,6 +286,9 @@ public final class TestTreatmentMatchFactory {
             }
         }
 
+        if (inclusionMolecularEvent != null) {
+            builder.addInclusionMolecularEvents(inclusionMolecularEvent);
+        }
         return builder.build();
     }
 }
