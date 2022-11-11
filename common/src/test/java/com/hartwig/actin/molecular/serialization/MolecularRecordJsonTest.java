@@ -134,7 +134,7 @@ public class MolecularRecordJsonTest {
         assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
         assertEquals("EML4", fusion.geneStart());
         assertEquals("ALK", fusion.geneEnd());
-        assertEquals(FusionDriverType.KNOWN, fusion.driverType());
+        assertEquals(FusionDriverType.KNOWN_PAIR, fusion.driverType());
 
         assertEquals(1, drivers.viruses().size());
         Virus virus = drivers.viruses().iterator().next();

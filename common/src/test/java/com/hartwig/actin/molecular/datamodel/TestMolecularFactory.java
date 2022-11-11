@@ -147,7 +147,7 @@ public final class TestMolecularFactory {
                         .fusedExonUp(2)
                         .geneEnd("ALK")
                         .fusedExonDown(4)
-                        .driverType(FusionDriverType.KNOWN)
+                        .driverType(FusionDriverType.KNOWN_PAIR)
                         .build())
                 .addViruses(TestVirusFactory.builder()
                         .driverLikelihood(DriverLikelihood.HIGH)

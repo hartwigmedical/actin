@@ -167,7 +167,7 @@ public class DriverExtractionTest {
         assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood());
         assertEquals("EML4", fusion.geneStart());
         assertEquals("ALK", fusion.geneEnd());
-        assertEquals(FusionDriverType.KNOWN, fusion.driverType());
+        assertEquals(FusionDriverType.KNOWN_PAIR, fusion.driverType());
     }
 
     private static void assertViruses(@NotNull Set<Virus> viruses) {

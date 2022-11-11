@@ -269,16 +269,26 @@ final class DriverExtraction {
     @VisibleForTesting
     static FusionDriverType extractFusionDriverType(@NotNull LinxFusion fusion) {
         switch (fusion.type()) {
-            case PROMISCUOUS_3:
-            case PROMISCUOUS_5:
-            case PROMISCUOUS_BOTH:
-            case IG_PROMISCUOUS: {
-                return FusionDriverType.PROMISCUOUS;
+            case PROMISCUOUS_3: {
+                return FusionDriverType.PROMISCUOUS_3;
             }
-            case KNOWN_PAIR:
-            case IG_KNOWN_PAIR:
+            case PROMISCUOUS_5: {
+                return FusionDriverType.PROMISCUOUS_5;
+            }
+            case PROMISCUOUS_BOTH: {
+                return FusionDriverType.PROMISCUOUS_BOTH;
+            }
+            case IG_PROMISCUOUS: {
+                return FusionDriverType.PROMISCUOUS_IG;
+            }
+            case KNOWN_PAIR: {
+                return FusionDriverType.KNOWN_PAIR;
+            }
+            case IG_KNOWN_PAIR: {
+                return FusionDriverType.KNOWN_PAIR_IG;
+            }
             case EXON_DEL_DUP: {
-                return FusionDriverType.KNOWN;
+                return FusionDriverType.KNOWN_PAIR_DEL_DUP;
             }
             default: {
                 throw new IllegalStateException("Cannot determine fusion driver type for fusion of type: " + fusion.type());

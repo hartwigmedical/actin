@@ -21,6 +21,6 @@ public final class TestFusionFactory {
                 .geneContextEnd(Strings.EMPTY)
                 .fusedExonDown(-1)
                 .proteinEffect(ProteinEffect.UNKNOWN)
-                .driverType(FusionDriverType.KNOWN);
+                .driverType(FusionDriverType.KNOWN_PAIR);
     }
 }
