@@ -6,42 +6,46 @@ import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class EvidenceInterpreter {
+public class EvidenceInterpreter {
 
-    private EvidenceInterpreter() {
+    @NotNull
+    private final Set<String> actinInclusionEvents;
+
+    public EvidenceInterpreter(@NotNull final Set<String> actinInclusionEvents) {
+        this.actinInclusionEvents = actinInclusionEvents;
     }
 
     @NotNull
-    public static Set<String> eventsWithApprovedEvidence(@NotNull AggregatedEvidence evidence) {
+    public Set<String> eventsWithApprovedEvidence(@NotNull AggregatedEvidence evidence) {
         return evidence.approvedTreatmentsPerEvent().keySet();
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithExternalTrialEvidence(@NotNull AggregatedEvidence evidence) {
+    public Set<String> additionalEventsWithExternalTrialEvidence(@NotNull AggregatedEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
-        // TODO Add ACTIN events for filtering
+        eventsToFilter.addAll(actinInclusionEvents);
 
         Set<String> events = evidence.externalEligibleTrialsPerEvent().keySet();
         return filter(events, eventsToFilter);
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithOnLabelExperimentalEvidence(@NotNull AggregatedEvidence evidence) {
+    public Set<String> additionalEventsWithOnLabelExperimentalEvidence(@NotNull AggregatedEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
-        // TODO Add ACTIN events for filtering
+        eventsToFilter.addAll(actinInclusionEvents);
 
         Set<String> events = evidence.onLabelExperimentalTreatmentsPerEvent().keySet();
         return filter(events, eventsToFilter);
     }
 
     @NotNull
-    public static Set<String> additionalEventsWithOffLabelExperimentalEvidence(@NotNull AggregatedEvidence evidence) {
+    public Set<String> additionalEventsWithOffLabelExperimentalEvidence(@NotNull AggregatedEvidence evidence) {
         Set<String> eventsToFilter = Sets.newHashSet();
         eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
+        eventsToFilter.addAll(actinInclusionEvents);
         eventsToFilter.addAll(additionalEventsWithOnLabelExperimentalEvidence(evidence));
-        // TODO Add ACTIN events for filtering
 
         Set<String> events = evidence.offLabelExperimentalTreatmentsPerEvent().keySet();
         return filter(events, eventsToFilter);

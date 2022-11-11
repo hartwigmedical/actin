@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.interpretation;
 
+import java.util.Set;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
@@ -12,7 +14,12 @@ public final class ActinEvidenceFactory {
     }
 
     @NotNull
-    public static Multimap<String, String> create(@NotNull TreatmentMatch treatmentMatch) {
+    public static Set<String> inclusionEvents(@NotNull TreatmentMatch treatmentMatch) {
+        return trialsPerInclusionEvent(treatmentMatch).keySet();
+    }
+
+    @NotNull
+    public static Multimap<String, String> trialsPerInclusionEvent(@NotNull TreatmentMatch treatmentMatch) {
         Multimap<String, String> trialsPerInclusionEvent = ArrayListMultimap.create();
 
         return trialsPerInclusionEvent;

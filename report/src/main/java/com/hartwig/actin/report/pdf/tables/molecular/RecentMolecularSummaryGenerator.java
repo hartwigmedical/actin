@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.report.interpretation.ActinEvidenceFactory;
 import com.hartwig.actin.report.interpretation.AggregatedEvidence;
 import com.hartwig.actin.report.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
@@ -70,21 +71,22 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         }
 
         AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(molecular);
+        EvidenceInterpreter interpreter = new EvidenceInterpreter(ActinEvidenceFactory.inclusionEvents(treatmentMatch));
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + molecular.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.eventsWithApprovedEvidence(aggregatedEvidence))));
+        table.addCell(Cells.createValue(concat(interpreter.eventsWithApprovedEvidence(aggregatedEvidence))));
 
         table.addCell(Cells.createKey("Events with trial eligibility in " + TreatmentConstants.ACTIN_SOURCE + " database"));
         table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch))));
 
         table.addCell(addIndent(Cells.createKey(
                 "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithExternalTrialEvidence(aggregatedEvidence))));
+        table.addCell(Cells.createValue(concat(interpreter.additionalEventsWithExternalTrialEvidence(aggregatedEvidence))));
 
         table.addCell(addIndent(Cells.createKey("Additional events with experimental evidence (" + molecular.evidenceSource() + ")")));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOnLabelExperimentalEvidence(aggregatedEvidence))));
+        table.addCell(Cells.createValue(concat(interpreter.additionalEventsWithOnLabelExperimentalEvidence(aggregatedEvidence))));
 
         table.addCell(Cells.createKey("Additional events with off-label experimental evidence in " + molecular.evidenceSource()));
-        table.addCell(Cells.createValue(concat(EvidenceInterpreter.additionalEventsWithOffLabelExperimentalEvidence(aggregatedEvidence))));
+        table.addCell(Cells.createValue(concat(interpreter.additionalEventsWithOffLabelExperimentalEvidence(aggregatedEvidence))));
 
         if (!aggregatedEvidence.knownResistantTreatmentsPerEvent().isEmpty()) {
             table.addCell(Cells.createKey("Events with resistance evidence in " + molecular.evidenceSource()));

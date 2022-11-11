@@ -56,7 +56,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(ActinEvidenceFactory.create(treatmentMatch));
+        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(ActinEvidenceFactory.trialsPerInclusionEvent(treatmentMatch));
         Set<MolecularDriverEntry> entries = factory.create(molecular);
 
         for (MolecularDriverEntry entry : entries) {
