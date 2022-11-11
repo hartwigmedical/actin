@@ -79,7 +79,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         }
 
         Set<String> reportableNonDriverVariantsWithLossOfFunction = Sets.newHashSet();
-        Set<String> eventsThatMayBeUnphased = Sets.newHashSet();
+        Set<String> eventsThatMayBeTransPhased = Sets.newHashSet();
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
@@ -90,7 +90,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                     Integer phaseGroup = null;
                     if (phaseGroup == null || !evaluatedPhaseGroups.contains(phaseGroup)) {
                         evaluatedPhaseGroups.add(phaseGroup);
-                        eventsThatMayBeUnphased.add(variant.event());
+                        eventsThatMayBeTransPhased.add(variant.event());
                     }
 
                     boolean isLossOfFunction = variant.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
@@ -121,7 +121,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                 Integer clusterGroup = disruption.clusterGroup();
                 if (clusterGroup == null || !evaluatedClusterGroups.contains(clusterGroup)) {
                     evaluatedClusterGroups.add(clusterGroup);
-                    eventsThatMayBeUnphased.add(disruption.event());
+                    eventsThatMayBeTransPhased.add(disruption.event());
                 }
             }
         }
@@ -136,57 +136,14 @@ public class GeneIsInactivated implements EvaluationFunction {
                     .build();
         }
 
-        if (!inactivationEventsThatAreUnreportable.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(inactivationEventsThatAreUnreportable)
-                    .addWarnSpecificMessages(
-                            "Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsThatAreUnreportable)
-                                    + " but considered non-reportable")
-                    .addWarnGeneralMessages("Potential inactivation of " + gene)
-                    .build();
-        }
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(inactivationEventsThatAreUnreportable,
+                inactivationEventsNoTSG,
+                inactivationEventsGainOfFunction,
+                reportableNonDriverVariantsWithLossOfFunction,
+                eventsThatMayBeTransPhased);
 
-        if (!inactivationEventsNoTSG.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(inactivationEventsNoTSG)
-                    .addWarnSpecificMessages("Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsNoTSG)
-                            + " but gene is not annotated with function TSG")
-                    .addWarnGeneralMessages("Potential inactivation of " + gene)
-                    .build();
-        }
-
-        if (!inactivationEventsGainOfFunction.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(inactivationEventsGainOfFunction)
-                    .addWarnSpecificMessages(
-                            "Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsGainOfFunction)
-                                    + " but no events annotated as having gain-of-function impact")
-                    .addWarnGeneralMessages("Potential inactivation of " + gene)
-                    .build();
-        }
-
-        if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(reportableNonDriverVariantsWithLossOfFunction)
-                    .addWarnSpecificMessages(
-                            "Inactivation events detected for " + gene + ": " + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
-                                    + " but events are low-driver yet annotated with loss-of-function")
-                    .addWarnGeneralMessages("Potential inactivation of " + gene)
-                    .build();
-        }
-
-        if (!eventsThatMayBeUnphased.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(eventsThatMayBeUnphased)
-                    .addWarnSpecificMessages("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeUnphased)
-                            + " that may together potentially inactivate the gene")
-                    .addWarnGeneralMessages("Potential inactivation of " + gene)
-                    .build();
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -197,41 +154,48 @@ public class GeneIsInactivated implements EvaluationFunction {
     }
 
     @Nullable
-    private Evaluation evaluatePotentialWarns(@NotNull Set<String> reportablePartialAmps, @NotNull Set<String> ampsWithLossOfFunction,
-            @NotNull Set<String> ampsOnNonOncogenes, @NotNull Set<String> ampsThatAreUnreportable,
-            @NotNull Set<String> ampsThatAreNearCutoff) {
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> inactivationEventsThatAreUnreportable,
+            @NotNull Set<String> inactivationEventsNoTSG, @NotNull Set<String> inactivationEventsGainOfFunction,
+            @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull Set<String> eventsThatMayBeUnphased) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
         Set<String> warnGeneralMessages = Sets.newHashSet();
 
-        if (!reportablePartialAmps.isEmpty()) {
-            warnEvents.addAll(reportablePartialAmps);
-            warnSpecificMessages.add(gene + " is partially amplified");
-            warnGeneralMessages.add(gene + " is partially amplified");
+        if (!inactivationEventsThatAreUnreportable.isEmpty()) {
+            warnEvents.addAll(inactivationEventsThatAreUnreportable);
+            warnSpecificMessages.add(
+                    "Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsThatAreUnreportable)
+                            + " but considered non-reportable");
+            warnGeneralMessages.add("Potential inactivation of " + gene);
         }
 
-        if (!ampsWithLossOfFunction.isEmpty()) {
-            warnEvents.addAll(ampsWithLossOfFunction);
-            warnSpecificMessages.add(gene + " is amplified but considered having loss-of-function impact");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+        if (!inactivationEventsNoTSG.isEmpty()) {
+            warnEvents.addAll(inactivationEventsNoTSG);
+            warnSpecificMessages.add("Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsNoTSG)
+                    + " but gene is not annotated with function TSG");
+            warnGeneralMessages.add("Potential inactivation of " + gene);
         }
 
-        if (!ampsOnNonOncogenes.isEmpty()) {
-            warnEvents.addAll(ampsOnNonOncogenes);
-            warnSpecificMessages.add(gene + " is amplified but not known as an oncogene");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+        if (!inactivationEventsGainOfFunction.isEmpty()) {
+            warnEvents.addAll(inactivationEventsGainOfFunction);
+            warnSpecificMessages.add("Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsGainOfFunction)
+                    + " but no events annotated as having gain-of-function impact");
+            warnGeneralMessages.add("Potential inactivation of " + gene);
         }
 
-        if (!ampsThatAreUnreportable.isEmpty()) {
-            warnEvents.addAll(ampsThatAreUnreportable);
-            warnSpecificMessages.add(gene + " is amplified but not considered reportable");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+        if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {
+            warnEvents.addAll(reportableNonDriverVariantsWithLossOfFunction);
+            warnSpecificMessages.add(
+                    "Inactivation events detected for " + gene + ": " + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
+                            + " but events are low-driver yet annotated with loss-of-function");
+            warnGeneralMessages.add("Potential inactivation of " + gene);
         }
 
-        if (!ampsThatAreNearCutoff.isEmpty()) {
-            warnEvents.addAll(ampsThatAreNearCutoff);
-            warnSpecificMessages.add(gene + " is near-amplified");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+        if (!eventsThatMayBeUnphased.isEmpty()) {
+            warnEvents.addAll(eventsThatMayBeUnphased);
+            warnSpecificMessages.add("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeUnphased)
+                    + " that may together potentially inactivate the gene");
+            warnGeneralMessages.add("Potential inactivation of " + gene);
         }
 
         if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {

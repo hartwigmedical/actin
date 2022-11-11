@@ -101,7 +101,9 @@ public class GeneIsInactivatedTest {
                 .isBiallelic(true)
                 .geneRole(GeneRole.TSG)
                 .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
-                .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
+                .canonicalImpact(TestTranscriptImpactFactory.builder()
+                        .codingEffect(GeneIsInactivated.INACTIVATING_CODING_EFFECTS.iterator().next())
+                        .build())
                 .build();
 
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(matchingVariant)));
