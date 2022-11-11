@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,21 @@ public class HasFusionInGene implements EvaluationFunction {
         this.gene = gene;
     }
 
+    static final Set<Enum> ALLOWED_DRIVER_TYPES_FOR_GENE_3 = Sets.newHashSet();
+    static final Set<Enum> ALLOWED_DRIVER_TYPES_FOR_GENE_5 = Sets.newHashSet();
+
+    static {
+        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.KNOWN_PAIR);
+        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.KNOWN_PAIR_DEL_DUP);
+        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.PROMISCUOUS_BOTH);
+        ALLOWED_DRIVER_TYPES_FOR_GENE_3.add(FusionDriverType.PROMISCUOUS_3);
+
+        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.KNOWN_PAIR);
+        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.KNOWN_PAIR_DEL_DUP);
+        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.PROMISCUOUS_BOTH);
+        ALLOWED_DRIVER_TYPES_FOR_GENE_5.add(FusionDriverType.PROMISCUOUS_5);
+    }
+
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
@@ -34,7 +50,11 @@ public class HasFusionInGene implements EvaluationFunction {
         Set<String> unreportableFusionsWithGainOfFunction = Sets.newHashSet();
 
         for (Fusion fusion : record.molecular().drivers().fusions()) {
-            if (fusion.geneStart().equals(gene) || fusion.geneEnd().equals(gene)) {
+            boolean isAllowedDriverType = (fusion.geneStart().equals(fusion.geneEnd()) || (fusion.geneStart().equals(gene)
+                    && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType())) || (fusion.geneEnd().equals(gene)
+                    && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType())));
+
+            if (isAllowedDriverType) {
                 if (fusion.isReportable()) {
                     boolean hasNoEffect = fusion.proteinEffect() == ProteinEffect.NO_EFFECT
                             || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
