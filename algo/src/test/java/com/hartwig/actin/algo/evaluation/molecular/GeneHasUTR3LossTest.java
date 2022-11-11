@@ -38,9 +38,19 @@ public class GeneHasUTR3LossTest {
                         .isHotspot(false)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
                         .build())));
+
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(false)
+                        .isHotspot(true)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
+                        .build())));
+
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
+                        .isReportable(true)
                         .isHotspot(true)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
                         .build())));

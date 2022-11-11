@@ -31,11 +31,15 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> hotspotsIn3UTR = Sets.newHashSet();
+        Set<String> hotspotsIn3UTRUnreportable = Sets.newHashSet();
         Set<String> vusIn3UTR = Sets.newHashSet();
+
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && variant.canonicalImpact().effects().contains(Effect.THREE_PRIME_UTR)) {
-                if (variant.isHotspot()) {
+                if (variant.isHotspot() && variant.isReportable()) {
                     hotspotsIn3UTR.add(variant.event());
+                } else if (variant.isHotspot()) {
+                    hotspotsIn3UTRUnreportable.add(variant.event());
                 } else {
                     vusIn3UTR.add(variant.event());
                 }
@@ -60,7 +64,7 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
                     .build();
         }
 
-        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(vusIn3UTR, disruptionsIn3UTR);
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(hotspotsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR);
 
         if (potentialWarnEvaluation != null) {
             return potentialWarnEvaluation;
@@ -74,10 +78,19 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
     }
 
     @Nullable
-    private Evaluation evaluatePotentialWarns(@NotNull Set<String> vusIn3UTR, @NotNull Set<String> disruptionsIn3UTR) {
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> vusIn3UTR, @NotNull Set<String> hotspotsIn3UTRUnreportable,
+            @NotNull Set<String> disruptionsIn3UTR) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
         Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!hotspotsIn3UTRUnreportable.isEmpty()) {
+            warnEvents.addAll(hotspotsIn3UTRUnreportable);
+            warnSpecificMessages.add(
+                    "Hotspot mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: "
+                            + Format.concat(hotspotsIn3UTRUnreportable) + " but variant is not considered reportable");
+            warnGeneralMessages.add("Potential 3' UTR loss of " + gene);
+        }
 
         if (!vusIn3UTR.isEmpty()) {
             warnEvents.addAll(vusIn3UTR);
