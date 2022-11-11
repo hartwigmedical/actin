@@ -16,6 +16,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GeneHasActivatingMutation implements EvaluationFunction {
 
@@ -80,65 +81,15 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .build();
         }
 
-        if (!activatingVariantsAssociatedWithResistance.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(activatingVariantsAssociatedWithResistance)
-                    .addWarnSpecificMessages(
-                            gene + " has activating mutation(s) " + Format.concat(activatingVariantsAssociatedWithResistance)
-                                    + " but are also associated with drug resistance")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(activatingVariantsAssociatedWithResistance,
+                activatingVariantsInNonOncogene,
+                highDriverNoGainOfFunctionVariants,
+                nonHighDriverGainOfFunctionVariants,
+                nonHighDriverVariants,
+                unreportableMissenseOrHotspotVariants);
 
-        if (!activatingVariantsInNonOncogene.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(activatingVariantsInNonOncogene)
-                    .addWarnSpecificMessages(gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene)
-                            + " but gene has not been not annotated as oncogene")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
-        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
-                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
-                            + " that have high driver likelihood but are not associated with gain-of-function")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
-        if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(nonHighDriverGainOfFunctionVariants)
-                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
-                            + " that do not have high driver likelihood but are associated with gain-of-function")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
-        if (!nonHighDriverVariants.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(nonHighDriverVariants)
-                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(nonHighDriverVariants)
-                            + " that do not have a high driver likelihood")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
-        }
-
-        if (!unreportableMissenseOrHotspotVariants.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(unreportableMissenseOrHotspotVariants)
-                    .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(unreportableMissenseOrHotspotVariants)
-                            + " with unreportable missense or hotspot status")
-                    .addWarnGeneralMessages(gene + " activation")
-                    .build();
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
@@ -178,5 +129,68 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     private static boolean isGainOfFunction(@NotNull Variant variant) {
         return variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+    }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> activatingVariantsAssociatedWithResistance,
+            @NotNull Set<String> activatingVariantsInNonOncogene, @NotNull Set<String> highDriverNoGainOfFunctionVariants,
+            @NotNull Set<String> nonHighDriverGainOfFunctionVariants, @NotNull Set<String> nonHighDriverVariants,
+            @NotNull Set<String> unreportableMissenseOrHotspotVariants) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!activatingVariantsAssociatedWithResistance.isEmpty()) {
+            warnEvents.addAll(activatingVariantsAssociatedWithResistance);
+            warnSpecificMessages.add(gene + " has activating mutation(s) " + Format.concat(activatingVariantsAssociatedWithResistance)
+                    + " but are also associated with drug resistance");
+            warnGeneralMessages.add(gene + " activation");
+        }
+
+        if (!activatingVariantsInNonOncogene.isEmpty()) {
+            warnEvents.addAll(activatingVariantsInNonOncogene);
+            warnSpecificMessages.add(gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene)
+                    + " but gene has not been not annotated as oncogene");
+            warnGeneralMessages.add(gene + " activation");
+        }
+
+        if (!highDriverNoGainOfFunctionVariants.isEmpty()) {
+            warnEvents.addAll(highDriverNoGainOfFunctionVariants);
+            warnSpecificMessages.add(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
+                    + " that have high driver likelihood but are not associated with gain-of-function");
+            warnGeneralMessages.add(gene + " activation");
+        }
+
+        if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
+            warnEvents.addAll(nonHighDriverGainOfFunctionVariants);
+            warnSpecificMessages.add(gene + " has mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
+                    + " that do not have high driver likelihood but are associated with gain-of-function");
+            warnGeneralMessages.add(gene + " activation");
+        }
+
+        if (!nonHighDriverVariants.isEmpty()) {
+            warnEvents.addAll(nonHighDriverVariants);
+            warnSpecificMessages.add(
+                    gene + " has mutation(s) " + Format.concat(nonHighDriverVariants) + " that do not have a high driver likelihood");
+            warnGeneralMessages.add(gene + " activation");
+        }
+
+        if (!unreportableMissenseOrHotspotVariants.isEmpty()) {
+            warnEvents.addAll(unreportableMissenseOrHotspotVariants);
+            warnSpecificMessages.add(gene + " has mutation(s) " + Format.concat(unreportableMissenseOrHotspotVariants)
+                    + " with unreportable missense or hotspot status");
+            warnGeneralMessages.add(gene + " activation");
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+
+        return null;
     }
 }
