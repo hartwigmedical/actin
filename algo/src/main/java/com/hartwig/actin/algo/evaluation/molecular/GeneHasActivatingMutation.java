@@ -106,7 +106,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     .result(EvaluationResult.WARN)
                     .addAllInclusionMolecularEvents(highDriverNoGainOfFunctionVariants)
                     .addWarnSpecificMessages(gene + " has mutation(s) " + Format.concat(highDriverNoGainOfFunctionVariants)
-                            + " that have high driver likelihood but no gain-of-function")
+                            + " that have high driver likelihood but are not associated with gain-of-function")
                     .addWarnGeneralMessages(gene + " activation")
                     .build();
         }

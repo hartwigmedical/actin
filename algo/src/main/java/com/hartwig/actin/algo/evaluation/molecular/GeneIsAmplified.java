@@ -81,8 +81,8 @@ public class GeneIsAmplified implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addAllInclusionMolecularEvents(reportableFullAmps)
-                    .addPassSpecificMessages(gene + " is fully amplified")
-                    .addPassGeneralMessages(gene + " is fully amplified")
+                    .addPassSpecificMessages(gene + " is amplified")
+                    .addPassGeneralMessages(gene + " is amplified")
                     .build();
         }
 
