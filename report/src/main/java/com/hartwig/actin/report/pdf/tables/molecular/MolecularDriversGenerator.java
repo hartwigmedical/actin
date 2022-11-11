@@ -6,6 +6,7 @@ import java.util.StringJoiner;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.report.interpretation.ActinEvidenceFactory;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
@@ -55,7 +56,8 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        Set<MolecularDriverEntry> entries = MolecularDriverEntryFactory.create(treatmentMatch, molecular.drivers());
+        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(ActinEvidenceFactory.create(treatmentMatch));
+        Set<MolecularDriverEntry> entries = factory.create(molecular);
 
         for (MolecularDriverEntry entry : entries) {
             table.addCell(Cells.createContent(entry.driverType()));

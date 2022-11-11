@@ -2,9 +2,10 @@ package com.hartwig.actin.report.interpretation;
 
 import java.util.Set;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
@@ -20,34 +21,42 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class MolecularDriverEntryFactory {
+public class MolecularDriverEntryFactory {
 
-    private MolecularDriverEntryFactory() {
+    @NotNull
+    private final Multimap<String, String> trialsPerInclusionEvent;
+
+    public MolecularDriverEntryFactory(@NotNull final Multimap<String, String> trialsPerInclusionEvent) {
+        this.trialsPerInclusionEvent = trialsPerInclusionEvent;
     }
 
     @NotNull
-    public static Set<MolecularDriverEntry> create(@NotNull TreatmentMatch treatmentMatch, @NotNull MolecularDrivers drivers) {
+    public Set<MolecularDriverEntry> create(@NotNull MolecularRecord molecular) {
         Set<MolecularDriverEntry> entries = Sets.newTreeSet(new MolecularDriverEntryComparator());
 
-        entries.addAll(fromVariants(treatmentMatch, drivers.variants()));
-        entries.addAll(fromAmplifications(treatmentMatch, drivers.amplifications()));
-        entries.addAll(fromLosses(treatmentMatch, drivers.losses()));
-        entries.addAll(fromHomozygousDisruptions(treatmentMatch, drivers.homozygousDisruptions()));
-        entries.addAll(fromDisruptions(treatmentMatch, drivers.disruptions()));
-        entries.addAll(fromFusions(treatmentMatch, drivers.fusions()));
-        entries.addAll(fromViruses(treatmentMatch, drivers.viruses()));
+        MolecularDrivers drivers = molecular.drivers();
+        entries.addAll(fromVariants(drivers.variants()));
+        entries.addAll(fromAmplifications(molecular.characteristics().ploidy(), drivers.amplifications()));
+        entries.addAll(fromLosses(drivers.losses()));
+        entries.addAll(fromHomozygousDisruptions(drivers.homozygousDisruptions()));
+        entries.addAll(fromDisruptions(drivers.disruptions()));
+        entries.addAll(fromFusions(drivers.fusions()));
+        entries.addAll(fromViruses(drivers.viruses()));
 
         return entries;
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromVariants(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Variant> variants) {
+    private Set<MolecularDriverEntry> fromVariants(@NotNull Set<Variant> variants) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Variant variant : variants) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            // TODO Implement
-            entryBuilder.driverType("Mutation (TODO type))");
+
+            String mutationTypeString = variant.isHotspot() ? "Hotspot" : "VUS";
+            mutationTypeString = variant.isBiallelic() ? "Biallelic " + mutationTypeString : mutationTypeString;
+
+            entryBuilder.driverType("Mutation (" + mutationTypeString + "))");
 
             double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
             String variantCopyString = boundedVariantCopies < 1
@@ -58,8 +67,7 @@ public final class MolecularDriverEntryFactory {
             String totalCopyString =
                     boundedTotalCopies < 1 ? Formats.singleDigitNumber(boundedTotalCopies) : Formats.noDigitNumber(boundedTotalCopies);
 
-            // TODO Add Impact
-            String driver = variant.gene() + " <impact> (" + variantCopyString + "/" + totalCopyString + " copies)";
+            String driver = variant.event() + ", " + variantCopyString + "/" + totalCopyString + " copies)";
             if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
                 driver = driver + "*";
             }
@@ -75,17 +83,15 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromAmplifications(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull Set<Amplification> amplifications) {
+    private Set<MolecularDriverEntry> fromAmplifications(@Nullable Double ploidy, @NotNull Set<Amplification> amplifications) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Amplification amplification : amplifications) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
-            // TODO Replace partial
-            String addon = Strings.EMPTY; //amplification.isPartial() ? " (partial)" : Strings.EMPTY;
+            String addon = ploidy != null && amplification.minCopies() < 3 * ploidy ? " (partial)" : Strings.EMPTY;
             entryBuilder.driverType("Amplification" + addon);
-            entryBuilder.driver(amplification.gene() + " amp, " + amplification.minCopies() + " copies");
+            entryBuilder.driver(amplification.event() + ", " + amplification.minCopies() + " copies");
             entryBuilder.driverLikelihood(amplification.driverLikelihood());
 
             addActionability(entryBuilder, amplification);
@@ -97,13 +103,13 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromLosses(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Loss> losses) {
+    private Set<MolecularDriverEntry> fromLosses(@NotNull Set<Loss> losses) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Loss loss : losses) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Loss");
-            entryBuilder.driver(loss.gene() + " del");
+            entryBuilder.driver(loss.event());
             entryBuilder.driverLikelihood(loss.driverLikelihood());
 
             addActionability(entryBuilder, loss);
@@ -115,8 +121,7 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull TreatmentMatch treatmentMatch,
-            @NotNull Set<HomozygousDisruption> homozygousDisruptions) {
+    private Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
@@ -134,7 +139,7 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromDisruptions(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Disruption> disruptions) {
+    private Set<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Disruption disruption : disruptions) {
@@ -154,15 +159,13 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromFusions(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Fusion> fusions) {
+    private Set<MolecularDriverEntry> fromFusions(@NotNull Set<Fusion> fusions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Fusion fusion : fusions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType(fusion.driverType().display());
-            String name = fusion.geneStart() + "-" + fusion.geneEnd() + " fusion";
-            //            entryBuilder.driver(name + ", " + fusion.details());
-            entryBuilder.driver(name);
+            entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " to exon " + fusion.fusedExonDown());
             entryBuilder.driverLikelihood(fusion.driverLikelihood());
 
             addActionability(entryBuilder, fusion);
@@ -174,13 +177,13 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<MolecularDriverEntry> fromViruses(@NotNull TreatmentMatch treatmentMatch, @NotNull Set<Virus> viruses) {
+    private Set<MolecularDriverEntry> fromViruses(@NotNull Set<Virus> viruses) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Virus virus : viruses) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Virus");
-            entryBuilder.driver(virus.name() + ", " + virus.integrations() + " integrations detected");
+            entryBuilder.driver(virus.event() + ", " + virus.integrations() + " integrations detected");
             entryBuilder.driverLikelihood(virus.driverLikelihood());
 
             addActionability(entryBuilder, virus);
@@ -191,7 +194,7 @@ public final class MolecularDriverEntryFactory {
         return entries;
     }
 
-    private static void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {
+    private void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {
         entryBuilder.actinTrials(inclusiveActinTrials(driver));
         entryBuilder.externalTrials(externalTrials(driver));
 
@@ -200,7 +203,7 @@ public final class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private static Set<String> inclusiveActinTrials(@NotNull Driver driver) {
+    private Set<String> inclusiveActinTrials(@NotNull Driver driver) {
         Set<String> trials = Sets.newTreeSet(Ordering.natural());
         // TODO figure out how to implement
         //        for (ActinTrialEvidence evidence : actinTrials) {
