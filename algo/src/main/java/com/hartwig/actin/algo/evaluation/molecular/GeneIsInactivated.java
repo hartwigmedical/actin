@@ -51,7 +51,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         || homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!homozygousDisruption.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(homozygousDisruption.event());
-                } else if (homozygousDisruption.geneRole() != GeneRole.TSG) {
+                } else if (homozygousDisruption.geneRole() != GeneRole.TSG || homozygousDisruption.geneRole() != GeneRole.BOTH) {
                     inactivationEventsNoTSG.add(homozygousDisruption.event());
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(homozygousDisruption.event());
@@ -67,7 +67,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         || loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!loss.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(loss.event());
-                } else if (loss.geneRole() != GeneRole.TSG) {
+                } else if (loss.geneRole() != GeneRole.TSG || loss.geneRole() != GeneRole.BOTH) {
                     inactivationEventsNoTSG.add(loss.event());
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(loss.event());
@@ -100,7 +100,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
 
-                        if (variant.geneRole() != GeneRole.TSG) {
+                        if (variant.geneRole() != GeneRole.TSG || variant.geneRole() != GeneRole.BOTH) {
                             inactivationEventsNoTSG.add(variant.event());
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event());
@@ -141,7 +141,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                     .addAllInclusionMolecularEvents(inactivationEventsThatAreUnreportable)
                     .addWarnSpecificMessages(
                             "Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsThatAreUnreportable)
-                                    + " but non-reportable")
+                                    + " but considered non-reportable")
                     .addWarnGeneralMessages("Potential inactivation of " + gene)
                     .build();
         }
@@ -151,7 +151,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                     .result(EvaluationResult.WARN)
                     .addAllInclusionMolecularEvents(inactivationEventsNoTSG)
                     .addWarnSpecificMessages("Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsNoTSG)
-                            + " but not events not annotated as impacting TSG")
+                            + " but gene is not annotated with function TSG")
                     .addWarnGeneralMessages("Potential inactivation of " + gene)
                     .build();
         }
