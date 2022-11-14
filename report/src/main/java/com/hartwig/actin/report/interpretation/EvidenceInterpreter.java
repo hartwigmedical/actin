@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.molecular.interpretation;
 
 import com.google.common.collect.Multimap;
 

@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.sort.PriorMolecularTestComparator;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.report.interpretation.AggregatedEvidence;
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;

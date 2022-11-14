@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
+import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence;
 
 import org.junit.Test;
 

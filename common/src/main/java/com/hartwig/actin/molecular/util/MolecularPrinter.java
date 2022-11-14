@@ -9,6 +9,8 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.util.DatamodelPrinter;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,15 +45,17 @@ public class MolecularPrinter {
         printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics().tumorMutationalBurden()));
         printer.print(" Tumor mutational load: " + formatInteger(record.characteristics().tumorMutationalLoad()));
 
-        // TODO Print consolidated evidence.
-//        printer.print("Events with evidence for approved treatment: " + toEvents(evidence.approvedEvidence()));
-//        printer.print("Events associated with ACTIN trial eligibility: " + toEvents(evidence.actinTrials()));
-//        printer.print("Events associated with external trials: " + toEvents(evidence.externalTrials()));
-//        printer.print("Events with evidence for on-label experimental treatment: " + toEvents(evidence.onLabelExperimentalEvidence()));
-//        printer.print("Events with evidence for off-label experimental treatment: " + toEvents(evidence.offLabelExperimentalEvidence()));
-//        printer.print("Events with evidence for pre-clinical treatment: " + toEvents(evidence.preClinicalEvidence()));
-//        printer.print("Events with known resistance evidence: " + toEvents(evidence.knownResistanceEvidence()));
-//        printer.print("Events with suspect resistance evidence: " + toEvents(evidence.suspectResistanceEvidence()));
+        AggregatedEvidence evidence = AggregatedEvidenceFactory.create(record);
+        printer.print("Events with evidence for approved treatment: " + concat(evidence.approvedTreatmentsPerEvent().keySet()));
+        printer.print("Events associated with external trials: " + concat(evidence.externalEligibleTrialsPerEvent().keySet()));
+        printer.print("Events with evidence for on-label experimental treatment: " + concat(evidence.onLabelExperimentalTreatmentsPerEvent()
+                .keySet()));
+        printer.print(
+                "Events with evidence for off-label experimental treatment: " + concat(evidence.offLabelExperimentalTreatmentsPerEvent()
+                        .keySet()));
+        printer.print("Events with evidence for pre-clinical treatment: " + concat(evidence.preClinicalTreatmentsPerEvent().keySet()));
+        printer.print("Events with known resistance evidence: " + concat(evidence.knownResistantTreatmentsPerEvent().keySet()));
+        printer.print("Events with suspect resistance evidence: " + concat(evidence.suspectResistanceTreatmentsPerEvent().keySet()));
     }
 
     @NotNull
